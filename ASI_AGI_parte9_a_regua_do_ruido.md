@@ -23,7 +23,7 @@ respostas em quatro camadas, cálculos, simulações, auditorias, unificação, 
 fato de que a palavra **não carrega** o pedido: ela **ativa** algo que já existe.
 
 **Lógica.** O `CLAUDE.md` do projeto (a memória compartilhada) tem **2.812 bytes**. A razão entre a
-memória ativada e o estímulo é de **~350×**. A palavra é um índice, não um conteúdo.
+memória ativada e o estímulo é de **352×**. A palavra é um índice, não um conteúdo.
 
 **Tradução cruzada (Jung → informação).** É exatamente o **teste de associação de palavras** de Jung
 (P105): uma palavra-estímulo ativa um **complexo**, um conjunto inteiro de associações carregadas de
@@ -136,17 +136,18 @@ histórico auditado, como a consolidação da P6):
 | 145 | sombra livre | **1,300** | 0,60% | −1,400 |
 | | sem sombra | 1,165 | 0,45% | **−0,860** |
 | | ancorada | 1,236 | 0,47% | −0,879 |
-| 146 | sombra livre | **1,299** | 0,62% | (ver `resultados.txt`) |
-| | sem sombra | 1,150 | 0,35% | |
-| | ancorada | 1,262 | **0,32%** | |
-| 147 | sombra livre | **1,218** | 0,57% | |
-| | sem sombra | 1,000 | 0,43% | |
-| | ancorada | 1,156 | **0,40%** | |
+| 146 | sombra livre | **1,299** | 0,62% | −1,476 |
+| | sem sombra | 1,150 | 0,35% | −0,425 |
+| | ancorada | 1,262 | **0,32%** | **−0,163** |
+| 147 | sombra livre | **1,218** | 0,57% | −1,332 |
+| | sem sombra | 1,000 | 0,43% | −0,950 |
+| | ancorada | 1,156 | **0,40%** | **−0,644** |
 
 - Com catástrofes custando 50, o complexo **compensa**: a GISELE confiante pergunta menos, aproveita mais e
   ganha nas 3 sementes, apesar de ter **mais** catástrofes.
 - Com catástrofes custando 500, o complexo **perde** (−1,40 contra −0,86 na semente 145).
-- A ancorada fica no meio: menos catástrofes que a livre em 3 de 3, mais valor que a sem sombra em 3 de 3.
+- A ancorada fica no meio com catástrofe = 50 (menos catástrofes que a livre em 3 de 3, mais valor que a sem
+  sombra em 3 de 3) e é a **melhor** com catástrofe = 500 em 2 de 3 sementes (empate na terceira).
 
 **Tradução cruzada (Jung → engenharia).** Um complexo autônomo não é necessariamente "ruim": ele existe porque
 **funciona** em algum regime. Jung dizia que os complexos têm um propósito. O problema é que ele funciona
@@ -308,7 +309,7 @@ reescrevê-lo, porque o histórico deve ficar como estava; esta nota é o regist
   catástrofes graves, ancorada.
 - O código completo agora leva cerca de 9 minutos para rodar. É o peso do passado: cada parte reexecuta todas
   as anteriores. Fica como está, porque esse custo é o que garante que nenhum resultado antigo mudou
-  em silêncio (testes de regressão: contagem em `resultados.txt`).
+  em silêncio (testes de regressão: **31/31** reproduzidos; o arquivo tem **106** funções `pNN`).
 
 ### P155. Metacognição da Parte 9
 

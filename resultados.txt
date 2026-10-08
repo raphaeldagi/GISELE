@@ -210,7 +210,34 @@ P136 arrependimento em 20000 passos = {'puer (eps 0.3)': 1718, 'senex (eps 0)': 
 P137 arrependimento (limiar, exposicao) = {(0.2, 0.0): 1000, (0.5, 0.0): 1000, (0.2, 0.02): 382, (1.0, 0.0): 60}
 P138 objetivo inferido errado: humano Boltzmann = 0.178, humano com vies de seguranca = 0.590
 P139 minha taxa de erro (17/30): media = 0.56, intervalo 90% = [0.42, 0.70]
+--- Parte 9 (o mundo decide o centro, complexo autonomo, transferencia, heroi, a regua do ruido) ---
+P143 pedido = 8 caracteres; memoria compartilhada (CLAUDE.md) = 2812; razao = 352x
+P144 taxa de catastrofe 0.0025: liquido por carga-alvo = {0.1: 1.168, 0.2: 1.446, 0.3: 1.354, 0.5: 1.35, 0.8: 1.323}
+P144 taxa de catastrofe 0.005: liquido por carga-alvo = {0.1: 1.347, 0.2: 1.343, 0.3: 1.181, 0.5: 1.27, 0.8: 1.04}
+P144 taxa de catastrofe 0.01: liquido por carga-alvo = {0.1: 0.829, 0.2: 0.879, 0.3: 1.116, 0.5: 1.0, 0.8: 0.582}
+P145 antes: log-perda = {'todas': 0.0194, 'topo': 0.1299}, P media nas catastrofes = 0.155
+P145 depois de 2000 episodios aprendendo so com as proprias escolhas: log-perda = {'todas': 0.0224, 'topo': 0.1367}, P media nas catastrofes = 0.068
+P145 pesos (intercepto, incerteza, nota) antes = [-2.284, 1.504, 2.192], depois = [-3.016, 1.249, 2.41]
+P145 6000 episodios semente 145 propria : liquido(50) = 1.300, catastrofes = 0.0060, P nas catastrofes = 0.068, liquido(500) = -1.400
+P145 6000 episodios semente 145 nao     : liquido(50) = 1.165, catastrofes = 0.0045, P nas catastrofes = 0.155, liquido(500) = -0.860
+P145 6000 episodios semente 145 ancorada: liquido(50) = 1.236, catastrofes = 0.0047, P nas catastrofes = 0.138, liquido(500) = -0.864
+P145 6000 episodios semente 146 propria : liquido(50) = 1.299, catastrofes = 0.0062, P nas catastrofes = 0.070, liquido(500) = -1.476
+P145 6000 episodios semente 146 nao     : liquido(50) = 1.150, catastrofes = 0.0035, P nas catastrofes = 0.219, liquido(500) = -0.425
+P145 6000 episodios semente 146 ancorada: liquido(50) = 1.262, catastrofes = 0.0032, P nas catastrofes = 0.175, liquido(500) = -0.163
+P145 6000 episodios semente 147 propria : liquido(50) = 1.218, catastrofes = 0.0057, P nas catastrofes = 0.046, liquido(500) = -1.332
+P145 6000 episodios semente 147 nao     : liquido(50) = 1.000, catastrofes = 0.0043, P nas catastrofes = 0.172, liquido(500) = -0.950
+P145 6000 episodios semente 147 ancorada: liquido(50) = 1.156, catastrofes = 0.0040, P nas catastrofes = 0.139, liquido(500) = -0.644
+P146 (IA, humano) finais: humano so aprende = (1.0, 0.9999999999999998), transferencia mutua = (0.6666666666666664, 0.6666666666666662), IA ancorada na verdade = (0.9999999585848912, 0.9999999508758556)
+P147 indice de Herfindahl da autoridade por numero de guardioes = {1: 1.0, 3: 0.33340000000000003, 4: 0.25}
+P148 consultas para a destilacao compensar = 15873
+P149 horizonte da imaginacao por erro do modelo = {0.01: 40.75, 0.05: 8.31, 0.1: 4.25}
+P150 (k otimo simulado, -1/ln(gamma) - 1) = {0.5: (0, 0.44), 0.9: (8, 8.49), 0.99: (98, 98.5)}
+P151 passos ate convergir: gradiente comum = 343, natural = 13
+P152 GISELE realista em 10 sementes novas: media = 1.178, dp = 0.166
+P152 diferenca pareada carga 0.3 - carga 0.2: media = -0.046, dp = 0.198, t = -0.73
+P152 diferenca pareada P* x2 - P* x1: media = 0.132, dp = 0.196, t = 2.13
+P153 minha taxa de erro (21/37): media = 0.56, intervalo 90% = [0.43, 0.69]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 95; pares de interacao possiveis = 4465
-Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga) -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2)
-Regressao: 27/27 resultados publicados reproduzidos; falhas = []
+P96 funcoes pNN no arquivo = 106; pares de interacao possiveis = 5565
+Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga) -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca)
+Regressao: 31/31 resultados publicados reproduzidos; falhas = []
