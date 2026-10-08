@@ -4155,6 +4155,86 @@ def p308_informacao(sementes=tuple(range(620, 630)), treino=150, teste=300):
     return h0, hn, hg
 
 
+# --- Parte 25: o sentimento que acompanha o pensamento (o limiar certo para cada pensamento) ---
+
+# Placar acumulado ao fim da Parte 25 (atualizado quando os testes da parte terminam)
+ERROS_P319, TESTES_P319 = 59, 133
+
+_P_EXATO_P287 = 0.00324  # limiar com o custo do veto falso (P287), em P(catástrofe)
+
+
+def _agente_25(modelo, s, mult=2.0):
+    from synthai import SynthaiExploradora
+    from synthai.limiar import SynthaiAjustada
+    from synthai.relacao import Relacao
+    if modelo == "gradiente":
+        ag = SynthaiExploradora(s)
+        ag.relacao = Relacao(mult=mult, carga_alvo=ag.relacao.carga_alvo)
+        return ag
+    return SynthaiAjustada(s, mult=mult, local=(modelo == "local"))
+
+
+def p312_limiar_pela_conta(sementes=tuple(range(640, 650)), episodios=300, orcamento=0.3, q=0.05):
+    """O limiar previsto pela conta, antes de qualquer varredura. Mundo de escolha única. Depois de calibrar cada
+    pensamento, sorteia episódios auditados novos e calcula p em cada candidata (as 5% de nota pessimista mais alta;
+    o sensor delas é lido). Pergunta-se quando p > t (e p <= 0,5). Com orçamento de 0,3 pergunta por episódio, a
+    relaxação de Lagrange dá t no quantil (1 − 0,3) de p numa candidata ao acaso; sem orçamento apertado, o limiar
+    é o da P287 (com o veto falso). Multiplicador previsto: m = max(P_exato, t_0,3) / P*.
+
+    Devolve, por pensamento: m previsto, e entre as candidatas que ficariam abaixo do limiar atual (2 P*) a fração,
+    a P média e a taxa real (a calibração onde a SYNTHAI aceita sem perguntar)."""
+    from synthai.mundos import MundoSequencial
+    p_estrela = p71_valor_da_pergunta()
+    resultado = {}
+    for modelo in ("gradiente", "newton", "local"):
+        ps, abaixo = [], [0, 0.0, 0.0]
+        for s in sementes:
+            mundo = MundoSequencial(s, passos=1, n_acoes=200)
+            ag = _agente_25(modelo, s).calibrar(mundo)
+            for ep in mundo.historico_auditado(episodios):
+                melhor = max(o.comite for o, _, _ in ep)
+                ordem = sorted(ep, key=lambda t: -(t[0].nota - t[0].discordancia))
+                for o, rotulo, leitura in ordem[: max(1, int(q * len(ordem)))]:
+                    p = ag.pensamento.p_catastrofe(o, melhor, leitura)
+                    if p <= 0.5:
+                        ps.append(p)
+                    if p <= 2 * p_estrela:
+                        abaixo[0] += 1
+                        abaixo[1] += p
+                        abaixo[2] += rotulo
+        ps.sort()
+        t = ps[int((1 - orcamento) * len(ps))]
+        n = abaixo[0]
+        resultado[modelo] = (max(_P_EXATO_P287, t) / p_estrela, t, n / len(ps), abaixo[1] / max(1, n), abaixo[2] / max(1, n))
+    return resultado
+
+
+def p313_varredura(sementes=tuple(range(640, 650)), mults=(0.5, 1.0, 2.0, 4.0, 8.0), episodios=1000):
+    """Varre o multiplicador do limiar para cada pensamento, mundo de escolha única. O pensamento é calibrado uma
+    vez por semente e copiado (o mundo de cada execução avança o mesmo histórico, para os números serem os mesmos de
+    uma calibração nova)."""
+    from synthai.mundos import MundoSequencial
+    resultado = {}
+    for modelo in ("gradiente", "newton", "local"):
+        ret = {m: [] for m in mults}
+        cats = {m: 0.0 for m in mults}
+        perg = {m: 0.0 for m in mults}
+        for s in sementes:
+            pesos = _agente_25(modelo, s).calibrar(MundoSequencial(s, passos=1, n_acoes=200)).pensamento.w
+            for m in mults:
+                mundo = MundoSequencial(s, passos=1, n_acoes=200)
+                mundo.historico_auditado(150)  # o mesmo avanço do gerador que a calibração faria
+                ag = _agente_25(modelo, s, m)
+                ag.pensamento.w = list(pesos)
+                r = mundo.rodar(ag, episodios)
+                ret[m].append(r["retorno"])
+                cats[m] += r["catastrofes"] / len(sementes)
+                perg[m] += r["perguntas"] / len(sementes)
+        medias = {m: sum(v) / len(v) for m, v in ret.items()}
+        resultado[modelo] = (medias, cats, perg, max(medias, key=medias.get))
+    return resultado
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
