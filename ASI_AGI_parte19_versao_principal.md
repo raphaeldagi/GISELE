@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 19: a palavra precisa, a versão principal e a trajetória inteira
 
-> Continuação da [Parte 18](ASI_AGI_parte18_linguagem.md). Os números saem de `p252_...` a `p256_...` e da classe `SynthaiVelhaAtenta` em
+> Continuação da [Parte 18](ASI_AGI_parte18_linguagem.md). **Próxima:** [Parte 20 — o que cada função vale](ASI_AGI_parte20_o_que_cada_funcao_vale.md) (P261–P270). Os números saem de `p252_...` a `p256_...` e da classe `SynthaiVelhaAtenta` em
 > [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
