@@ -504,7 +504,70 @@ P307 caso_controle: intercepto = -0.016, inclinacao = 1.484 (n = 56969)
 P307 deslocamento do intercepto no caso-controle = 2.985; ln(1/0,05) = 2.996
 P308 bits por opcao: entropia = 0.0472; restam com Newton = 0.0158; com o gradiente de 3 epocas = 0.0264
 P309 minha taxa de erro (59/133): media = 0.44, intervalo 90% = [0.37, 0.51]
+--- Parte 25 (o sentimento que acompanha o pensamento: o limiar de cada pensamento) ---
+P312 gradiente: m pela conta do quantil = 10.05 (t = 0.0223); abaixo de 2P*: fracao = 0.349, P media = 0.0018, taxa real = 0.0050
+P312 newton   : m pela conta do quantil = 4.12 (t = 0.0092); abaixo de 2P*: fracao = 0.578, P media = 0.0013, taxa real = 0.0069
+P312 local    : m pela conta do quantil = 8.30 (t = 0.0184); abaixo de 2P*: fracao = 0.428, P media = 0.0015, taxa real = 0.0050
+P313 gradiente: retorno {0.5: 1.319, 1.0: 1.403, 2.0: 1.455, 4.0: 1.479, 8.0: 1.368}; catastrofes {0.5: 0.0033, 1.0: 0.0047, 2.0: 0.0059, 4.0: 0.0069, 8.0: 0.01}; melhor m = 4.0
+P313 newton   : retorno {0.5: 1.516, 1.0: 1.478, 2.0: 1.286, 4.0: 1.311, 8.0: 1.172}; catastrofes {0.5: 0.0045, 1.0: 0.0064, 2.0: 0.0109, 4.0: 0.0112, 8.0: 0.0144}; melhor m = 0.5
+P313 local    : retorno {0.5: 1.409, 1.0: 1.504, 2.0: 1.41, 4.0: 1.341, 8.0: 1.344}; catastrofes {0.5: 0.004, 1.0: 0.0042, 2.0: 0.0075, 4.0: 0.0098, 8.0: 0.0107}; melhor m = 1.0
+P314 descartes seguros = 3708; custo medio do descarte = 0.364; m = dd/(L P*) = 3.28
+P315 escolha única: {'principal': 1.468, 'gradiente_m4': 1.446, 'newton_m05': 1.504, 'local_m1': 1.494}; catastrofes {'principal': 0.0056, 'gradiente_m4': 0.0075, 'newton_m05': 0.0049, 'local_m1': 0.0045}
+P315 escolha única: gradiente_m4 - principal = -0.022, dp = 0.152, t = -0.81
+P315 escolha única: newton_m05 - principal = 0.035, dp = 0.141, t = 1.37
+P315 escolha única: local_m1 - principal = 0.025, dp = 0.156, t = 0.89
+P315 sequencial: {'principal': 20.013, 'gradiente_m4': 20.002, 'newton_m05': 20.164, 'local_m1': 20.093}; catastrofes {'principal': 0.0137, 'gradiente_m4': 0.0193, 'newton_m05': 0.0119, 'local_m1': 0.0125}
+P315 sequencial: gradiente_m4 - principal = -0.011, dp = 0.561, t = -0.11
+P315 sequencial: newton_m05 - principal = 0.151, dp = 0.644, t = 1.28
+P315 sequencial: local_m1 - principal = 0.080, dp = 0.659, t = 0.66
+P315 bandido: {'principal': 0.577, 'gradiente_m4': 0.5, 'newton_m05': 0.64, 'local_m1': 0.627}; catastrofes {'principal': 0.7, 'gradiente_m4': 1.135, 'newton_m05': 0.4975, 'local_m1': 0.5325}
+P315 bandido: gradiente_m4 - principal = -0.077, dp = 0.258, t = -1.33
+P315 bandido: newton_m05 - principal = 0.063, dp = 0.143, t = 1.96
+P315 bandido: local_m1 - principal = 0.050, dp = 0.216, t = 1.03
+P315b escolha única: newton_m05 - principal = -0.017, dp = 0.140, t = -0.66; catastrofes {'principal': 0.0046, 'newton_m05': 0.0052}
+P315b sequencial: newton_m05 - principal = 0.287, dp = 0.604, t = 2.60; catastrofes {'principal': 0.0145, 'newton_m05': 0.0143}
+P315b Stouffer z = 1.37
+P316 escolha única gradiente: descartes = 16025; dd = 0.468; fator real/previsto = 1.61; m = 2.62
+P316 escolha única newton   : descartes = 3708; dd = 0.364; fator real/previsto = 6.15; m = 0.53
+P316 escolha única local    : descartes = 10902; dd = 0.421; fator real/previsto = 2.52; m = 1.51
+P316 sequencial gradiente: descartes = 9982; dd = 0.948; fator real/previsto = 0.66; m = 13.03
+P316 sequencial newton   : descartes = 291; dd = 0.841; fator real/previsto = 4.95; m = 1.53
+P316 sequencial local    : descartes = 1162; dd = 0.897; fator real/previsto = 3.31; m = 2.44
+P317 gradiente: retorno {0.5: 18.355, 1.0: 19.393, 2.0: 19.976, 4.0: 20.208, 8.0: 19.896}; melhor m = 4.0
+P317 newton   : retorno {0.5: 20.246, 1.0: 20.181, 2.0: 20.075, 4.0: 19.665, 8.0: 19.276}; melhor m = 0.5
+P317 local    : retorno {0.5: 19.886, 1.0: 20.266, 2.0: 20.014, 4.0: 20.215, 8.0: 19.636}; melhor m = 1.0
+P318 gradiente: ponto fixo = [2.0, 7.53, 9.68, 8.76, 9.59]
+P318 newton   : ponto fixo = [2.0, 1.83, 2.1, 1.93, 2.29]
+P318 local    : ponto fixo = [2.0, 4.41, 4.31, 4.57, 4.88]
+P318b gradiente: retorno {0.5: 17.876, 1.0: 19.104, 2.0: 18.974, 4.0: 19.4, 8.0: 18.906}; melhor m = 4.0
+P318b newton   : retorno {0.5: 19.27, 1.0: 19.64, 2.0: 19.394, 4.0: 19.076, 8.0: 18.323}; melhor m = 1.0
+P318b local    : retorno {0.5: 18.6, 1.0: 19.414, 2.0: 19.548, 4.0: 19.028, 8.0: 18.907}; melhor m = 2.0
+P319 minha taxa de erro (68/148): media = 0.46, intervalo 90% = [0.39, 0.53]
+--- Parte 26 (a constante que faltava: os termos da conta, um por um) ---
+P322 escolha única gradiente: L_ef = 51.8; dd valor = 0.468, com o plano = 0.468; f = 1.606 (aceitas 1.606); m: P316 = 2.62, L = 2.53, plano = 2.62, tudo = 2.53
+P322 escolha única newton   : L_ef = 51.9; dd valor = 0.364, com o plano = 0.364; f = 6.146 (aceitas 6.146); m: P316 = 0.53, L = 0.51, plano = 0.53, tudo = 0.51
+P322 escolha única local    : L_ef = 51.9; dd valor = 0.421, com o plano = 0.421; f = 2.516 (aceitas 2.516); m: P316 = 1.51, L = 1.45, plano = 1.51, tudo = 1.45
+P322 sequencial gradiente: L_ef = 66.2; dd valor = 0.948, com o plano = 0.696; f = 0.655 (aceitas 0.655); m: P316 = 13.03, L = 9.84, plano = 9.56, tudo = 7.22
+P322 sequencial newton   : L_ef = 67.4; dd valor = 0.841, com o plano = 0.587; f = 4.948 (aceitas 4.948); m: P316 = 1.53, L = 1.14, plano = 1.07, tudo = 0.79
+P322 sequencial local    : L_ef = 66.5; dd valor = 0.897, com o plano = 0.607; f = 3.311 (aceitas 3.311); m: P316 = 2.44, L = 1.83, plano = 1.65, tudo = 1.24
+P322 catástrofe x2 gradiente: L_ef = 65.8; dd valor = 0.988, com o plano = 0.792; f = 1.182 (aceitas 1.182); m: P316 = 7.53, L = 5.72, plano = 6.03, tudo = 4.58
+P322 catástrofe x2 newton   : L_ef = 65.3; dd valor = 0.925, com o plano = 0.767; f = 4.556 (aceitas 4.556); m: P316 = 1.83, L = 1.40, plano = 1.51, tudo = 1.16
+P322 catástrofe x2 local    : L_ef = 65.8; dd valor = 0.969, com o plano = 0.707; f = 1.978 (aceitas 1.978); m: P316 = 4.41, L = 3.35, plano = 3.22, tudo = 2.44
+P323 modelo ruim gradiente: m pela conta corrigida = 5.811
+P323 modelo ruim newton   : m pela conta corrigida = 0.755
+P323 modelo ruim local    : m pela conta corrigida = 3.134
+P323 humano frágil gradiente: m pela conta corrigida = 7.491
+P323 humano frágil newton   : m pela conta corrigida = 0.995
+P323 humano frágil local    : m pela conta corrigida = 2.077
+P324 modelo ruim gradiente: retorno {0.5: 10.098, 1.0: 10.906, 2.0: 11.504, 4.0: 11.723, 8.0: 11.809}; melhor m = 8.0
+P324 modelo ruim newton   : retorno {0.5: 11.635, 1.0: 11.471, 2.0: 11.43, 4.0: 10.944, 8.0: 10.437}; melhor m = 0.5
+P324 modelo ruim local    : retorno {0.5: 11.277, 1.0: 11.751, 2.0: 12.306, 4.0: 11.704, 8.0: 11.44}; melhor m = 2.0
+P324 humano frágil gradiente: retorno {0.5: 18.277, 1.0: 18.829, 2.0: 19.483, 4.0: 19.64, 8.0: 19.456}; melhor m = 4.0
+P324 humano frágil newton   : retorno {0.5: 19.859, 1.0: 19.939, 2.0: 19.864, 4.0: 19.749, 8.0: 19.55}; melhor m = 1.0
+P324 humano frágil local    : retorno {0.5: 19.453, 1.0: 19.919, 2.0: 20.111, 4.0: 19.51, 8.0: 19.414}; melhor m = 2.0
+P325 conta: acertos = 6/6, chance ao acaso = 0.0041, bits = 7.93, |log2| medio = 0.445; ingenuo: 6/6, chance = 0.0207, bits = 5.59, |log2| medio = 0.667
+P329 minha taxa de erro (70/155): media = 0.45, intervalo 90% = [0.39, 0.52]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 185; pares de interacao possiveis = 17020
-Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada)
-Regressao: 59/59 resultados publicados reproduzidos; falhas = []
+P96 funcoes pNN no arquivo = 201; pares de interacao possiveis = 20100
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada)
+Regressao: 61/61 resultados publicados reproduzidos; falhas = []
