@@ -11,6 +11,16 @@ camadas, novos cálculos e simulações em `calculos.py`, auditoria de afirmaç�
 evolução do agente `Synthai`, seção de unificação, `resultados.txt`, link a partir da parte
 anterior, commit e push.
 
+## Pedidos permanentes do usuário (gravados na memória)
+- Cada parte começa listando as perguntas; depois as respostas; depois o código da parte (Parte 23).
+- "Calcule sempre. Pesquise sempre. Muito!": pesquisar na web as fontes de cada resposta e citá-las no fim da
+  parte; cada resposta tem cálculo (Parte 23).
+- "Vá mais longe com os cálculos" (Parte 24): não parar no número simulado. Para cada resultado, derivar a
+  conta que o explica (forma fechada, cota, ordem de grandeza ou expansão) e conferir a conta contra a
+  simulação; quando possível, prever o número pela conta antes de simular.
+- O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
+  testar se as premissas delas valem no agente (Parte 23).
+
 ## Base teórica
 - A partir da Parte 6, Carl Jung é a base psicológica: "calcular Jung" (cada conceito junguiano
   vira equação, simulação ou módulo da Synthai), dizendo onde a formalização funciona e onde quebra.
