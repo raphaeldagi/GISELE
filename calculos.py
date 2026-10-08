@@ -2820,7 +2820,7 @@ def p227_velha_com_sentido(sementes=tuple(range(420, 430)), episodios=400):
 # --- Parte 17: quanto vale perceber, e onde olhar ---
 
 # Placar acumulado ao fim da Parte 17 (atualizado quando os testes da parte terminam)
-ERROS_P239, TESTES_P239 = 37, 67
+ERROS_P239, TESTES_P239 = 37, 71
 
 
 def p234_valor_do_sentido(d_sensores=(0.5, 1.0, 2.0), sementes=tuple(range(430, 440)), episodios=1000):
@@ -2965,6 +2965,7 @@ def testes_de_regressao():
         "P206": p206_identidade(),
         "P215": round(p215_distinguivel()["conhecida"], 2) == 0.91,
         "P223": round(p223_sinal_combinado()[2], 3) == 0.835,
+        "P234": round(p223_sinal_combinado(d_sensor=2.0)[2], 3) == 0.941,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -3402,6 +3403,25 @@ def _parte_16():
     print(f"P230 minha taxa de erro ({ERROS_P230}/{TESTES_P230}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_17():
+    print("--- Parte 17 (quanto vale perceber, e onde olhar) ---")
+    upsilon = p168_upsilon_trajetoria(versoes=("p8_x2", "p16_sentidos"))
+    print(f"P233 Upsilon na familia de 9 mundos = { {v: round(u, 3) for v, u in upsilon.items()} }")
+    for v, (m, dp, minimo) in p185_familia_aleatoria(versoes=("p8_x2", "p16_sentidos")).items():
+        print(f"P233 {v}: Upsilon em 20 mundos sorteados = {m:.3f} (dp {dp:.3f}, pior mundo {minimo:.3f})")
+    for d, (m, dp, tt, cat_base, cat_com, auc) in p234_valor_do_sentido().items():
+        print(f"P234 sensor d' = {d}: ganho no liquido = {m:.3f} (dp {dp:.3f}, t = {tt:.2f}); catastrofes {cat_base:.4f} -> {cat_com:.4f}; "
+              f"AUC prevista = {auc:.3f}")
+    ganho, (m, dp, tt), foco = p235_atencao()
+    print(f"P235 ganho sobre a realista, ja descontado o custo das leituras: ler todas = {ganho['todas']:.3f}, "
+          f"ler so as {foco:.0%} melhores = {ganho['seletiva']:.3f}")
+    print(f"P235 seletiva - todas: diferenca media = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    for b, (teoria, sim) in p237_auditoria_p57().items():
+        print(f"P237 ponto cego do verificador {b:.0%}: corrigivel apos 1000 modificacoes = {teoria:.3f} (teoria), {sim:.3f} (simulado)")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P239, testes=TESTES_P239)
+    print(f"P239 minha taxa de erro ({ERROS_P239}/{TESTES_P239}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -3418,11 +3438,11 @@ def _unificacao():
           " -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder)"
           " -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe)"
           " | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada)"
-          " -> SynthaiVelhaSentidos (P227: a velha com um sentido novo)")
+          " -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17}
 
 
 if __name__ == "__main__":
