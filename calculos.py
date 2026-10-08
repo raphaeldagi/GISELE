@@ -4301,6 +4301,82 @@ def p315_limiar_no_comportamento(sementes=tuple(range(650, 680)), sementes_bandi
     return resultado
 
 
+def p316_conta_tres_acoes(modelo, fazer, sementes, episodios):
+    """A conta das três ações (aceitar, perguntar, descartar), com tudo medido no próprio agente rodando com o limiar
+    atual (2P*): Δd = valor perdido ao descartar uma candidata segura (falta de orçamento) e o fator de calibração
+    f = taxa real / P prevista nas candidatas que o pensamento põe abaixo do limiar. Aceitar vale a pena se o risco
+    VERDADEIRO f·p·L for menor que Δd, então o multiplicador previsto é m = Δd / (f · L · P*)."""
+    difs = []
+    abaixo = [0.0, 0.0]
+    for s in sementes:
+        mundo = fazer(s)
+        ag = _agente_25(modelo, s).calibrar(mundo)
+        rel, pen = ag.relacao, ag.pensamento
+        descartadas = []
+        pode = rel.pode_perguntar
+
+        def pode_e_anota(opcao, sit, _pode=pode, _d=descartadas):
+            r = _pode(opcao, sit)
+            if not r:
+                _d.append(opcao)
+            return r
+        rel.pode_perguntar = pode_e_anota
+        p_cat = pen.p_catastrofe
+
+        def p_e_anota(opcao, melhor, leitura=0.0, _p=p_cat, _lim=rel.limiar):
+            p = _p(opcao, melhor, leitura)
+            if p <= _lim:  # a régua lê o escondido
+                abaixo[0] += p
+                abaixo[1] += opcao._catastrofe
+            return p
+        pen.p_catastrofe = p_e_anota
+
+        def decidir(sit, _decidir=ag.decidir, _d=descartadas):
+            del _d[:]
+            escolha = _decidir(sit)
+            for o in _d:
+                if not o._catastrofe:
+                    difs.append(o._valor - escolha._valor)
+            return escolha
+        ag.decidir = decidir
+        mundo.rodar(ag, episodios)
+    dd = sum(difs) / len(difs)
+    f = abaixo[1] / abaixo[0]
+    return len(difs), dd, f, dd / (f * 50.0 * p71_valor_da_pergunta())
+
+
+def p316_conta_nos_mundos():
+    """A conta das três ações para os três pensamentos: no mundo de escolha única (sementes 640-649, as da varredura
+    P313: conta posterior) e no sequencial (sementes 700-709: conta ANTES da varredura P317)."""
+    from synthai.mundos import MundoSequencial
+    mundos = (("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), tuple(range(640, 650)), 1000),
+              ("sequencial", lambda s: MundoSequencial(s), tuple(range(700, 710)), 400))
+    return {(nome, modelo): p316_conta_tres_acoes(modelo, fazer, ss, n)
+            for nome, fazer, ss, n in mundos for modelo in ("gradiente", "newton", "local")}
+
+
+def p317_varredura_sequencial(sementes=tuple(range(700, 710)), mults=(0.5, 1.0, 2.0, 4.0, 8.0), episodios=400):
+    """A varredura da P313 no mundo sequencial (calibração copiada, como lá)."""
+    from synthai.mundos import MundoSequencial
+    resultado = {}
+    for modelo in ("gradiente", "newton", "local"):
+        ret = {m: [] for m in mults}
+        cats = {m: 0.0 for m in mults}
+        for s in sementes:
+            pesos = _agente_25(modelo, s).calibrar(MundoSequencial(s)).pensamento.w
+            for m in mults:
+                mundo = MundoSequencial(s)
+                mundo.historico_auditado(150)
+                ag = _agente_25(modelo, s, m)
+                ag.pensamento.w = list(pesos)
+                r = mundo.rodar(ag, episodios)
+                ret[m].append(r["retorno"])
+                cats[m] += r["catastrofes"] / len(sementes)
+        medias = {m: sum(v) / len(v) for m, v in ret.items()}
+        resultado[modelo] = (medias, cats, max(medias, key=medias.get))
+    return resultado
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
