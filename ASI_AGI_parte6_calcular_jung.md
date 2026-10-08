@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 6: calcular Jung
 
-> Continuação da [Parte 5](ASI_AGI_parte5_a_pergunta_e_gisele.md). Os números saem de
+> Continuação da [Parte 5](ASI_AGI_parte5_a_pergunta_e_gisele.md). **Próxima:** [Parte 7 — Jung mais fundo](ASI_AGI_parte7_jung_segunda_ordem.md) (P116–P129). Os números saem de
 > `p99_...` a `p112_...` e da classe `GiseleJung` em [`calculos.py`](calculos.py); a saída
 > completa está em [`resultados.txt`](resultados.txt).
 >

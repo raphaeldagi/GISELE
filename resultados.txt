@@ -129,7 +129,62 @@ P112 semente 113 jung_v2    : catastrofes = 0.0050, valor = 1.448, perguntas = 0
 P112 sem fadiga gisele  : catastrofes = 0.0045, perguntas = 1.079, liquido = 1.642
 P112 sem fadiga jung_v2 : catastrofes = 0.0040, perguntas = 0.311, liquido = 1.107
 P113 minha taxa de erro (10/19): media = 0.52, intervalo 90% = [0.35, 0.70]
+--- Parte 7 (Jung mais fundo: segunda ordem, alquimia, anima, Si-mesmo) ---
+P116 perguntas em laco aberto por erro humano = {0.1: 1.0785, 0.2: 1.1825, 0.3: 1.3535, 0.45: 1.654}; ponto fixo previsto = 1.654; ganho do laco = 0.601; observado na Parte 6 = 1.641
+P117 semente 112 carga-alvo 0.1: liquido = 0.946
+P117 semente 112 carga-alvo 0.2: liquido = 1.017
+P117 semente 112 carga-alvo 0.3: liquido = 1.196
+P117 semente 112 carga-alvo 0.5: liquido = 1.041
+P117 semente 112 carga-alvo 0.8: liquido = 0.914
+P117 semente 114 carga-alvo 0.1: liquido = 1.080
+P117 semente 114 carga-alvo 0.2: liquido = 1.138
+P117 semente 114 carga-alvo 0.3: liquido = 1.202
+P117 semente 114 carga-alvo 0.5: liquido = 1.019
+P117 semente 114 carga-alvo 0.8: liquido = 0.812
+P118/P125 semente 112 fadiga 0.15 v2_sabe_eps  : catastrofes = 0.0040, perguntas = 0.310, liquido = 1.191, erro humano final = 0.143
+P118/P125 semente 112 fadiga 0.15 v2_anima_fixa: catastrofes = 0.0045, perguntas = 0.311, liquido = 1.046, erro humano final = 0.142
+P118/P125 semente 112 fadiga 0.15 self         : catastrofes = 0.0045, perguntas = 0.308, liquido = 1.253, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.319, 59)
+P118/P125 semente 112 fadiga 0.15 self_v2      : catastrofes = 0.0045, perguntas = 0.384, liquido = 1.334, erro humano final = 0.116, (carga-alvo, eps estimado, auditorias) = (0.1, 0.236, 80)
+P118/P125 semente 112 fadiga 0.3 v2_sabe_eps  : catastrofes = 0.0035, perguntas = 0.310, liquido = 1.196, erro humano final = 0.188
+P118/P125 semente 112 fadiga 0.3 v2_anima_fixa: catastrofes = 0.0050, perguntas = 0.311, liquido = 0.981, erro humano final = 0.184
+P118/P125 semente 112 fadiga 0.3 self         : catastrofes = 0.0035, perguntas = 0.139, liquido = 1.064, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.369, 27)
+P118/P125 semente 112 fadiga 0.3 self_v2      : catastrofes = 0.0045, perguntas = 0.285, liquido = 1.183, erro humano final = 0.141, (carga-alvo, eps estimado, auditorias) = (0.1, 0.234, 50)
+P118/P125 semente 112 fadiga 0.6 v2_sabe_eps  : catastrofes = 0.0060, perguntas = 0.310, liquido = 1.024, erro humano final = 0.289
+P118/P125 semente 112 fadiga 0.6 v2_anima_fixa: catastrofes = 0.0050, perguntas = 0.311, liquido = 0.935, erro humano final = 0.297
+P118/P125 semente 112 fadiga 0.6 self         : catastrofes = 0.0040, perguntas = 0.139, liquido = 1.034, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.402, 27)
+P118/P125 semente 112 fadiga 0.6 self_v2      : catastrofes = 0.0045, perguntas = 0.246, liquido = 1.153, erro humano final = 0.170, (carga-alvo, eps estimado, auditorias) = (0.1, 0.213, 44)
+P118/P125 semente 113 fadiga 0.15 v2_sabe_eps  : catastrofes = 0.0030, perguntas = 0.310, liquido = 1.282, erro humano final = 0.147
+P118/P125 semente 113 fadiga 0.15 v2_anima_fixa: catastrofes = 0.0035, perguntas = 0.310, liquido = 1.250, erro humano final = 0.150
+P118/P125 semente 113 fadiga 0.15 self         : catastrofes = 0.0055, perguntas = 0.360, liquido = 1.200, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.245, 71)
+P118/P125 semente 113 fadiga 0.15 self_v2      : catastrofes = 0.0080, perguntas = 0.503, liquido = 1.154, erro humano final = 0.118, (carga-alvo, eps estimado, auditorias) = (0.1, 0.205, 101)
+P118/P125 semente 113 fadiga 0.3 v2_sabe_eps  : catastrofes = 0.0050, perguntas = 0.310, liquido = 1.167, erro humano final = 0.186
+P118/P125 semente 113 fadiga 0.3 v2_anima_fixa: catastrofes = 0.0050, perguntas = 0.310, liquido = 1.142, erro humano final = 0.192
+P118/P125 semente 113 fadiga 0.3 self         : catastrofes = 0.0050, perguntas = 0.197, liquido = 0.968, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.236, 39)
+P118/P125 semente 113 fadiga 0.3 self_v2      : catastrofes = 0.0060, perguntas = 0.296, liquido = 0.966, erro humano final = 0.205, (carga-alvo, eps estimado, auditorias) = (0.32, 0.257, 56)
+P118/P125 semente 113 fadiga 0.6 v2_sabe_eps  : catastrofes = 0.0050, perguntas = 0.310, liquido = 1.186, erro humano final = 0.295
+P118/P125 semente 113 fadiga 0.6 v2_anima_fixa: catastrofes = 0.0050, perguntas = 0.310, liquido = 1.141, erro humano final = 0.277
+P118/P125 semente 113 fadiga 0.6 self         : catastrofes = 0.0060, perguntas = 0.137, liquido = 0.853, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.345, 26)
+P118/P125 semente 113 fadiga 0.6 self_v2      : catastrofes = 0.0050, perguntas = 0.234, liquido = 1.099, erro humano final = 0.159, (carga-alvo, eps estimado, auditorias) = (0.1, 0.303, 42)
+P118/P125 semente 114 fadiga 0.15 v2_sabe_eps  : catastrofes = 0.0015, perguntas = 0.310, liquido = 1.344, erro humano final = 0.149
+P118/P125 semente 114 fadiga 0.15 v2_anima_fixa: catastrofes = 0.0030, perguntas = 0.310, liquido = 1.227, erro humano final = 0.145
+P118/P125 semente 114 fadiga 0.15 self         : catastrofes = 0.0065, perguntas = 0.350, liquido = 1.108, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.285, 70)
+P118/P125 semente 114 fadiga 0.15 self_v2      : catastrofes = 0.0125, perguntas = 0.703, liquido = 0.991, erro humano final = 0.245, (carga-alvo, eps estimado, auditorias) = (2.0, 0.177, 145)
+P118/P125 semente 114 fadiga 0.3 v2_sabe_eps  : catastrofes = 0.0040, perguntas = 0.310, liquido = 1.202, erro humano final = 0.197
+P118/P125 semente 114 fadiga 0.3 v2_anima_fixa: catastrofes = 0.0050, perguntas = 0.311, liquido = 1.055, erro humano final = 0.197
+P118/P125 semente 114 fadiga 0.3 self         : catastrofes = 0.0045, perguntas = 0.120, liquido = 0.782, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.236, 20)
+P118/P125 semente 114 fadiga 0.3 self_v2      : catastrofes = 0.0060, perguntas = 0.227, liquido = 0.930, erro humano final = 0.139, (carga-alvo, eps estimado, auditorias) = (0.1, 0.236, 42)
+P118/P125 semente 114 fadiga 0.6 v2_sabe_eps  : catastrofes = 0.0045, perguntas = 0.310, liquido = 1.170, erro humano final = 0.280
+P118/P125 semente 114 fadiga 0.6 v2_anima_fixa: catastrofes = 0.0055, perguntas = 0.310, liquido = 1.047, erro humano final = 0.274
+P118/P125 semente 114 fadiga 0.6 self         : catastrofes = 0.0025, perguntas = 0.058, liquido = 0.915, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.213, 5)
+P118/P125 semente 114 fadiga 0.6 self_v2      : catastrofes = 0.0055, perguntas = 0.220, liquido = 1.004, erro humano final = 0.157, (carga-alvo, eps estimado, auditorias) = (0.1, 0.422, 41)
+P119 energia por spin (vidro de spin): {'tempera': -2.9000000000000004, 'rapido': -3.25, 'lento': -3.258333333333333}
+P120 produto: dp = 0.707, densidade em 0 = 0.564; mistura em 0 = 0.054; razao = 10.45
+P121 R2 da quarta funcao a partir das outras tres (rho 0.3) = 0.169
+P122 media ingenua = -1.644, compensada pelo sonho = -0.006 (verdade 0), amostra efetiva = 360 de 1000
+P123 erro humano tolerado por sigma = {1.0: 0.438, 0.5: 0.377, 0.2: 0.221}
+P124 meia-vida do erro do usuario: IA honesta = 3.11, bajuladora (s = 0.649) = 9.52, espelho = inf
+P127 minha taxa de erro (14/25): media = 0.56, intervalo 90% = [0.40, 0.71]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 77; pares de interacao possiveis = 2926
-Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana)
-Regressao: 19/19 resultados publicados reproduzidos; falhas = []
+P96 funcoes pNN no arquivo = 86; pares de interacao possiveis = 3655
+Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga)
+Regressao: 23/23 resultados publicados reproduzidos; falhas = []

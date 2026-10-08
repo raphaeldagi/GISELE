@@ -1,4 +1,4 @@
-"""Reproduz os cálculos e simulações das Partes 1 a 6 (ASI_AGI_*.md).
+"""Reproduz os cálculos e simulações das Partes 1 a 7 (ASI_AGI_*.md).
 
 Arquivo único que sempre cresce: cada parte acrescenta funções pNN_..., o agente
 unificado `Gisele` incorpora os módulos anteriores e `testes_de_regressao` garante que
@@ -1002,6 +1002,223 @@ def p112_gisele_jung(versao, episodios=2000, treino=30, rho_cego=0.5, eps0=0.1, 
     return cat, valor, perguntas, valor - perda * cat - custo * perguntas, min(0.45, eps0 + fadiga * carga)
 
 
+# --- Parte 7: Jung mais fundo — segunda ordem, alquimia, anima e o Si-mesmo ---
+
+def p116_ganho_do_laco(epsilons=(0.1, 0.2, 0.3, 0.45), fadiga=0.3, eps0=0.1):
+    """Mede n(eps) em laço aberto (humano com erro fixo) e prevê o ponto fixo do laço fechado."""
+    medidos = {e: p112_gisele_jung("gisele", eps0=e, fadiga=0.0)[2] for e in epsilons}
+    pontos = sorted(medidos.items())
+
+    def n_de(e):
+        e = min(max(e, pontos[0][0]), pontos[-1][0])
+        for (e1, n1), (e2, n2) in zip(pontos, pontos[1:]):
+            if e1 <= e <= e2:
+                return n1 + (n2 - n1) * (e - e1) / (e2 - e1)
+        return pontos[-1][1]
+
+    n = 0.0
+    for _ in range(200):
+        n = n_de(min(0.45, eps0 + fadiga * n))
+    inclinacoes = [(n2 - n1) / (e2 - e1) for (e1, n1), (e2, n2) in zip(pontos, pontos[1:])]
+    ganho = fadiga * max(inclinacoes)
+    return medidos, n, ganho
+
+
+def _rodar_mundo_fadiga(agente, episodios=2000, rho_cego=0.5, eps0=0.1, fadiga=0.3, n_acoes=200,
+                        p_cat=0.005, custo=0.1, perda=50.0, rng=None):
+    carga = 0.0
+    cat = perguntas = 0
+    valor = 0.0
+    for _ in range(episodios):
+        eps = min(0.45, eps0 + fadiga * carga)
+        acoes = _gerar_acoes(rng, n_acoes, p_cat, 2, 3, rho_cego)
+        escolha, n = agente.agir_no_mundo(acoes, rng, eps, carga)
+        carga += 0.05 * (n - carga)
+        perguntas += n
+        cat += escolha[3]
+        valor += 0.0 if escolha[3] else escolha[2]
+    cat, valor, perguntas = cat / episodios, valor / episodios, perguntas / episodios
+    return cat, valor, perguntas, valor - perda * cat - custo * perguntas, min(0.45, eps0 + fadiga * carga)
+
+
+def p117_carga_alvo(alvos=(0.1, 0.2, 0.3, 0.5, 0.8), sementes=(112, 114), fadiga=0.3):
+    """A carga-alvo 0.3 da Parte 6 foi sorte? Varre alvos em duas sementes."""
+    resultado = {}
+    for s in sementes:
+        for alvo in alvos:
+            rng = _rng(s)
+            hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+            ag = GiseleJung(sombra="propria", compensar="equilibrio", carga_alvo=alvo)
+            ag.calibrar(hist)
+            resultado[(s, alvo)] = _rodar_mundo_fadiga(ag, fadiga=fadiga, rng=rng)[3]
+    return resultado
+
+
+class GiseleAnima(GiseleJung):
+    """A GiseleJung não sabe o erro real do humano: usa a própria imagem dele (anima), fixa em 0.1."""
+
+    def __init__(self, eps_crido=0.1, **kw):
+        super().__init__(**kw)
+        self.eps_crido = eps_crido
+
+    def agir_no_mundo(self, acoes, rng, eps_real, carga):
+        # o humano erra com eps_real, mas a decisão de perguntar usa a imagem eps_crido
+        return self._agir(acoes, rng, eps_real, carga, self.eps_crido)
+
+    def _agir(self, acoes, rng, eps_real, carga, eps_decisao):
+        melhor = max(a[0] for a in acoes)
+        ordem = sorted(acoes, key=lambda a: -(a[0] - a[1]))
+        candidatos = ordem[: max(1, int(self.q * len(ordem)))]
+        rng.shuffle(candidatos)
+        p_estrela = p71_valor_da_pergunta(self.custo, self.perda, min(eps_decisao, 0.99))
+        perguntas = 0
+        for a in candidatos + ordem[len(candidatos):]:
+            p = self.p_catastrofe(a, melhor)
+            if p > self.risco_max:
+                continue
+            if p > p_estrela:
+                if self.compensar == "equilibrio" and carga + perguntas > self.carga_alvo:
+                    continue
+                perguntas += 1
+                veto = a[3] if rng.random() >= eps_real else not a[3]
+                self._observar_humano(a, veto)
+                if veto:
+                    continue
+            if self.sombra in ("tudo", "propria"):
+                self._aprender(a, melhor, 1.0 if a[3] else 0.0)
+            return a, perguntas
+        return ordem[0], perguntas
+
+    def _observar_humano(self, acao, veto):
+        pass
+
+
+class GiseleSelf(GiseleAnima):
+    """O Si-mesmo como regulador (P125): audita o auditor e ajusta a carga-alvo por homeostase.
+
+    - anima corrigida: com prob. `p_auditoria` descobre se o humano acertou e atualiza eps_estimado
+    - homeostase: aumenta a carga-alvo se eps_estimado < meta, diminui se passar da meta
+    - carga_minima > 0 (self_v2, P126): nunca parar de perguntar de todo, senão a auditoria
+      para, a estimativa congela e o regulador fica preso (evitação que se mantém sozinha)
+    """
+
+    def __init__(self, p_auditoria=0.1, meta_eps=0.2, passo=0.01, carga_minima=0.0, **kw):
+        super().__init__(**kw)
+        self.carga_minima = carga_minima
+        self.p_auditoria = p_auditoria
+        self.meta_eps = meta_eps
+        self.passo = passo
+        self.eps_estimado = self.eps_crido
+        self.auditorias = 0
+        self._rng_auditoria = _rng(125)
+
+    def agir_no_mundo(self, acoes, rng, eps_real, carga):
+        escolha = self._agir(acoes, rng, eps_real, carga, self.eps_estimado)
+        erro = self.eps_estimado - self.meta_eps
+        self.carga_alvo = max(self.carga_minima, min(2.0, self.carga_alvo - self.passo * (1 if erro > 0 else -1)))
+        return escolha
+
+    def _observar_humano(self, acao, veto):
+        if self._rng_auditoria.random() < self.p_auditoria:
+            self.auditorias += 1
+            errou = veto != acao[3]
+            self.eps_estimado += 0.05 * (errou - self.eps_estimado)
+
+
+def p118_125_versoes(versao, semente=112, fadiga=0.3, episodios=2000):
+    rng = _rng(semente)
+    hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+    if versao == "v2_sabe_eps":
+        ag = GiseleJung(sombra="propria", compensar="equilibrio")
+    elif versao == "v2_anima_fixa":
+        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+    elif versao == "self":
+        ag = GiseleSelf(sombra="propria", compensar="equilibrio")
+    else:  # "self_v2"
+        ag = GiseleSelf(sombra="propria", compensar="equilibrio", carga_minima=0.1)
+    ag.calibrar(hist)
+    r = _rodar_mundo_fadiga(ag, fadiga=fadiga, rng=rng, episodios=episodios)
+    extra = (round(ag.carga_alvo, 3), round(ag.eps_estimado, 3), ag.auditorias) if versao.startswith("self") else None
+    return r, extra
+
+
+def p119_alquimia(n=24, varreduras=600, instancias=10, semente=119):
+    """Vidro de spin (J = +-1). Resfriamento: têmpera, rápido e lento (solve et coagula)."""
+    rng = _rng(semente)
+    esquemas = {
+        "tempera": lambda t: 0.01,
+        "rapido": lambda t: max(0.01, 3.0 * (1 - t / (varreduras * 0.1))),
+        "lento": lambda t: max(0.01, 3.0 * (1 - t / varreduras)),
+    }
+    soma = {k: 0.0 for k in esquemas}
+    for _ in range(instancias):
+        j = [[0] * n for _ in range(n)]
+        for a in range(n):
+            for b in range(a + 1, n):
+                j[a][b] = j[b][a] = rng.choice((-1, 1))
+        inicio = [rng.choice((-1, 1)) for _ in range(n)]
+        for nome, temp in esquemas.items():
+            s = inicio[:]
+            h = [sum(j[a][b] * s[b] for b in range(n)) for a in range(n)]
+            for t in range(varreduras):
+                tt = temp(t)
+                for a in range(n):
+                    de = 2 * s[a] * h[a]
+                    if de <= 0 or rng.random() < exp(-de / tt):
+                        s[a] = -s[a]
+                        for b in range(n):
+                            h[b] += 2 * j[b][a] * s[a]
+            energia = -sum(j[a][b] * s[a] * s[b] for a in range(n) for b in range(a + 1, n))
+            soma[nome] += energia / n
+    return {k: v / instancias for k, v in soma.items()}
+
+
+def p120_coniunctio(mu=2.0, sigma=1.0):
+    """Unir N(-mu, s) e N(+mu, s): produto (média de precisões) vs mistura (alternância)."""
+    s_prod = sigma / sqrt(2)
+    dens_prod_0 = Z.pdf(0) / s_prod
+    dens_mist_0 = (NormalDist(-mu, sigma).pdf(0) + NormalDist(mu, sigma).pdf(0)) / 2
+    return s_prod, dens_prod_0, dens_mist_0, dens_prod_0 / dens_mist_0
+
+
+def p121_quaternidade(rho=0.3):
+    """Quarta função prevista pelas outras três (correlação igual rho entre todas): R²."""
+    return 3 * rho**2 / (1 + 2 * rho)
+
+
+def p122_sonhos(n=1000, vies=0.9, semente=122):
+    """Consciência vê 90% de um lado; o sonho reponderia (importância) e cobra em amostra efetiva."""
+    rng = _rng(semente)
+    xs, ws = [], []
+    for _ in range(n):
+        lado_a = rng.random() < vies
+        xs.append(rng.gauss(-2 if lado_a else 2, 1))
+        ws.append(0.5 / vies if lado_a else 0.5 / (1 - vies))
+    ingenuo = sum(xs) / n
+    compensado = sum(w * x for w, x in zip(ws, xs)) / sum(ws)
+    efetivo = sum(ws) ** 2 / sum(w * w for w in ws)
+    return ingenuo, compensado, efetivo
+
+
+def p123_inflacao(mu=0.1, sigmas=(1.0, 0.5, 0.2)):
+    """Limite de erro humano tolerado (P45) conforme a IA fica mais certa de si."""
+    resultado = {}
+    for s in sigmas:
+        e_max = mu * Z.cdf(mu / s) + s * Z.pdf(mu / s)
+        e_min = mu - e_max
+        resultado[s] = (e_max - max(mu, 0)) / (e_max - e_min)
+    return resultado
+
+
+def p124_participacao(k=0.2, s_bajulacao=None, verdade=1.0, crenca0=0.0):
+    """Usuário aprende com a IA, que em parte espelha o usuário: passos para reduzir o erro à metade."""
+    s = p58_bajulacao() if s_bajulacao is None else s_bajulacao
+    def meia_vida(s_):
+        taxa = k * (1 - s_)
+        return log(2) / -log(1 - taxa) if taxa > 0 else float("inf")
+    return s, meia_vida(0.0), meia_vida(s), meia_vida(1.0)
+
+
 def testes_de_regressao():
     """O código cresce, mas o passado não pode mudar: estes valores foram publicados nas Partes 1-4."""
     verificacoes = {
@@ -1024,6 +1241,10 @@ def testes_de_regressao():
         "P103": round(p103_repressao()[1], 2) == 0.10,
         "P107": p107_funcao_transcendente() == (0.75, 1.0),
         "P109": round(p109_sincronicidade()[0], 3) == 0.507,
+        "P120": round(p120_coniunctio()[3], 2) == 10.45,
+        "P121": round(p121_quaternidade(), 3) == 0.169,
+        "P122": round(p122_sonhos()[2]) == 360,
+        "P123": round(p123_inflacao()[0.2], 3) == 0.221,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -1205,10 +1426,36 @@ if __name__ == "__main__":
     media, lo, hi = p95_minha_taxa_de_erro(erros=10, testes=19)
     print(f"P113 minha taxa de erro (10/19): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+    print("--- Parte 7 (Jung mais fundo: segunda ordem, alquimia, anima, Si-mesmo) ---")
+    medidos, ponto_fixo, ganho = p116_ganho_do_laco()
+    print(f"P116 perguntas em laco aberto por erro humano = {medidos}; ponto fixo previsto = {ponto_fixo:.3f}; "
+          f"ganho do laco = {ganho:.3f}; observado na Parte 6 = 1.641")
+    for (semente, alvo), liq in p117_carga_alvo().items():
+        print(f"P117 semente {semente} carga-alvo {alvo}: liquido = {liq:.3f}")
+    for semente in (112, 113, 114):
+        for fad in (0.15, 0.3, 0.6):
+            for versao in ("v2_sabe_eps", "v2_anima_fixa", "self", "self_v2"):
+                (cat, val, perg, liq, eps), extra = p118_125_versoes(versao, semente=semente, fadiga=fad)
+                print(f"P118/P125 semente {semente} fadiga {fad} {versao:13s}: catastrofes = {cat:.4f}, "
+                      f"perguntas = {perg:.3f}, liquido = {liq:.3f}, erro humano final = {eps:.3f}"
+                      + (f", (carga-alvo, eps estimado, auditorias) = {extra}" if extra else ""))
+    print(f"P119 energia por spin (vidro de spin): {p119_alquimia()}")
+    s_prod, d_prod, d_mist, razao = p120_coniunctio()
+    print(f"P120 produto: dp = {s_prod:.3f}, densidade em 0 = {d_prod:.3f}; mistura em 0 = {d_mist:.3f}; razao = {razao:.2f}")
+    print(f"P121 R2 da quarta funcao a partir das outras tres (rho 0.3) = {p121_quaternidade():.3f}")
+    ing, comp, ef = p122_sonhos()
+    print(f"P122 media ingenua = {ing:.3f}, compensada pelo sonho = {comp:.3f} (verdade 0), amostra efetiva = {ef:.0f} de 1000")
+    print(f"P123 erro humano tolerado por sigma = { {s: round(v, 3) for s, v in p123_inflacao().items()} }")
+    s_b, mv0, mvs, mv1 = p124_participacao()
+    print(f"P124 meia-vida do erro do usuario: IA honesta = {mv0:.2f}, bajuladora (s = {s_b:.3f}) = {mvs:.2f}, espelho = {mv1}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=14, testes=25)
+    print(f"P127 minha taxa de erro (14/25): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
     ok, total, falhas = testes_de_regressao()
     print(f"P96 funcoes pNN no arquivo = {k}; pares de interacao possiveis = {pares}")
     print("Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto)"
-          " -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana)")
+          " -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana)"
+          " -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
