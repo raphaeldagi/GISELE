@@ -3189,7 +3189,7 @@ def p256_auditoria_p121(rho=0.3, amostras=200000, semente=256):
 # --- Parte 20: o símbolo com o tempo, o Υ do mundo sequencial e o que cada função contribui ---
 
 # Placar acumulado ao fim da Parte 20 (atualizado quando os testes da parte terminam)
-ERROS_P269, TESTES_P269 = 39, 78
+ERROS_P269, TESTES_P269 = 42, 84
 
 
 class SynthaiOuvinte(SynthaiAnima):
@@ -3385,6 +3385,16 @@ def p267_auditoria_p146(eta=0.1, k=0.2, ruido=0.05, passos=500, rodadas=2000, se
     return media, dp, p146_transferencia(eta=eta, k=k)[0]
 
 
+
+def p268_efeito_combinado(estimativas=((0.662, 0.752), (0.990, 0.970), (-0.129, 1.016)), n=10):
+    """Combina, por variância inversa, três estimativas do ganho do sentido novo no mundo sequencial
+    (P227, P253 e a ablação da P266), cada uma com 10 sementes: (média, dp das diferenças)."""
+    pesos = [n / dp**2 for _, dp in estimativas]
+    media = sum(w * m for w, (m, _) in zip(pesos, estimativas)) / sum(pesos)
+    ep = 1 / sqrt(sum(pesos))
+    return media, ep, media / ep
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
@@ -3443,6 +3453,7 @@ def testes_de_regressao():
         "P242": [round(x, 3) for x in p242_bits_do_veto()[:2]] == [0.211, 0.106],
         "P252": round(p252_bits_da_palavra_precisa()[1], 3) == 0.192,
         "P255": round(p255_quaternidade()[1], 3) == 1.950,
+        "P268": round(p268_efeito_combinado()[0], 3) == 0.552,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -3942,6 +3953,28 @@ def _parte_19():
     print(f"P258 minha taxa de erro ({ERROS_P258}/{TESTES_P258}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_20():
+    print("--- Parte 20 (o simbolo com o tempo, o Upsilon sequencial e o que cada funcao vale) ---")
+    resumo, (m, dp, tt) = p262_simbolo_com_o_tempo()
+    for v, (auc, liq) in resumo.items():
+        print(f"P262 {v:12s}: AUC final = {auc:.3f}, liquido = {liq:.3f}")
+    print(f"P262 AUC(veto) - AUC(fala): diferenca media = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    upsilon, por_mundo = p265_upsilon_sequencial()
+    print(f"P265 Upsilon sequencial = { {v: round(u, 3) for v, u in upsilon.items()} }")
+    for mundo, notas in por_mundo.items():
+        print(f"P265 {mundo:15s}: { {v: round(n, 3) for v, n in notas.items()} }")
+    completa, resultado = p266_o_que_cada_funcao_vale()
+    print(f"P266 versao principal completa (armadilha nova): retorno = {completa:.3f}")
+    for nome, (m, dp, tt) in resultado.items():
+        print(f"P266 {nome}: perda ao tirar = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    media, ep, tt = p268_efeito_combinado()
+    print(f"P268 ganho do sentido novo no mundo sequencial, tres estimativas combinadas = {media:.3f} (ep {ep:.3f}, t = {tt:.2f})")
+    media, dp, teoria = p267_auditoria_p146()
+    print(f"P267 crenca compartilhada final com ruido = {media:.3f} (dp {dp:.3f}); formula da P146 = {teoria:.3f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P269, testes=TESTES_P269)
+    print(f"P269 minha taxa de erro ({ERROS_P269}/{TESTES_P269}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -3960,11 +3993,12 @@ def _unificacao():
           " | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada)"
           " -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa)"
           " | SynthaiFala (P245: o humano responde com palavras)"
-          " -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva)")
+          " -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva)"
+          " | SynthaiOuvinte (P262: aprende com o que o humano responde)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20}
 
 
 if __name__ == "__main__":
