@@ -4602,6 +4602,64 @@ def p325_chance(conta=((5.811, 8.0), (0.755, 0.5), (3.134, 2.0), (7.491, 4.0), (
     return avaliar([p for p, _ in conta], otimos), avaliar(list(ingenuo), otimos)
 
 
+# --- Parte 27: a autorregulação (a SYNTHAI calcula o próprio limiar) ---
+
+# Placar acumulado ao fim da Parte 27 (atualizado quando os testes da parte terminam)
+ERROS_P339, TESTES_P339 = 70, 155
+
+
+def p332_estimadores_proprios(sementes=tuple(range(700, 710)), episodios=400):
+    """A SYNTHAI com Newton e limiar FIXO em 2P* (autorregulação desligada), nas sementes da P322 (mundo sequencial):
+    os termos que ela estima sozinha (só com o que observa) contra os da régua (P322). Mesmo agente, mesmas sementes:
+    as escolhas são as mesmas da P322."""
+    from synthai.autorregulacao import SynthaiAutorregulada
+    from synthai.mundos import MundoSequencial
+    soma = [0.0, 0.0, 0.0, 0.0, 0.0]
+    for s in sementes:
+        mundo = MundoSequencial(s)
+        ag = SynthaiAutorregulada(s, aquecimento=10 ** 9).calibrar(mundo)
+        mundo.rodar(ag, episodios)
+        l_ef, f, dd, b = ag.termos()
+        m = dd / (f * l_ef * ag.p_estrela)
+        for i, x in enumerate((l_ef, f, dd, b, m)):
+            soma[i] += x / len(sementes)
+    return tuple(soma)
+
+
+def p333_autorregulada(sementes=tuple(range(770, 800))):
+    """30 sementes NOVAS. Principal (gradiente, 2P* fixo) contra: a autorregulada com o pensamento de gradiente, a
+    autorregulada com Newton, e Newton com o limiar fixo no ótimo das varreduras (0,5P*, a referência 'que já sabia').
+    Três mundos: escolha única, sequencial e sequencial com modelo ruim (σ = 2)."""
+    from synthai import SynthaiExploradora
+    from synthai.autorregulacao import SynthaiAutorregulada
+    from synthai.limiar import SynthaiAjustada
+    from synthai.mundos import MundoSequencial
+    agentes = {"principal": lambda s: SynthaiExploradora(s),
+               "auto_gradiente": lambda s: SynthaiAutorregulada(s, newton=False),
+               "auto_newton": lambda s: SynthaiAutorregulada(s),
+               "newton_m05": lambda s: SynthaiAjustada(s, mult=0.5)}
+    tarefas = (("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), 1000),
+               ("sequencial", lambda s: MundoSequencial(s), 400),
+               ("modelo ruim", lambda s: MundoSequencial(s, sigma_modelo=2.0), 400))
+    resultado = {}
+    for tarefa, fazer, n in tarefas:
+        ret = {v: [] for v in agentes}
+        cats = {v: 0.0 for v in agentes}
+        ms = {v: 0.0 for v in agentes}
+        for s in sementes:
+            for v, f in agentes.items():
+                mundo = fazer(s)
+                ag = f(s).calibrar(mundo)
+                r = mundo.rodar(ag, n)
+                ret[v].append(r["retorno"])
+                cats[v] += r["catastrofes"] / len(sementes)
+                ms[v] += ag.relacao.limiar / p71_valor_da_pergunta() / len(sementes)  # o multiplicador no fim
+        resultado[tarefa] = ({v: sum(x) / len(x) for v, x in ret.items()}, cats, ms,
+                             {v: _pareado(ret["principal"], ret[v]) for v in agentes if v != "principal"},
+                             _pareado(ret["newton_m05"], ret["auto_newton"]))
+    return resultado
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
