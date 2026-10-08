@@ -144,7 +144,7 @@ Acumulado: **31 de 55** afirmações testadas precisaram de correção. Posterio
 - Linhagem: … → `GiselePlanejadora` → **`GiselePrudente`** (P192).
 - O código ganhou uma tarefa de outro tipo (`_bandido_arriscado`), onde o módulo de cautela é reusado sem re-treino: a primeira
   medida de transferência entre tipos de tarefa da série.
-- Testes de regressão: contagem em `resultados.txt`.
+- Testes de regressão: **41/41** resultados publicados reproduzidos; o arquivo tem **128** funções `pNN`.
 
 ### P199. Metacognição da Parte 13
 

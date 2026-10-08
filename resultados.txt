@@ -211,7 +211,7 @@ P137 arrependimento (limiar, exposicao) = {(0.2, 0.0): 1000, (0.5, 0.0): 1000, (
 P138 objetivo inferido errado: humano Boltzmann = 0.178, humano com vies de seguranca = 0.590
 P139 minha taxa de erro (17/30): media = 0.56, intervalo 90% = [0.42, 0.70]
 --- Parte 9 (o mundo decide o centro, complexo autonomo, transferencia, heroi, a regua do ruido) ---
-P143 pedido = 8 caracteres; memoria compartilhada (CLAUDE.md) = 3017; razao = 377x
+P143 pedido = 8 caracteres; memoria compartilhada (CLAUDE.md) = 3136; razao = 392x
 P144 taxa de catastrofe 0.0025: liquido por carga-alvo = {0.1: 1.168, 0.2: 1.446, 0.3: 1.354, 0.5: 1.35, 0.8: 1.323}
 P144 taxa de catastrofe 0.005: liquido por carga-alvo = {0.1: 1.347, 0.2: 1.343, 0.3: 1.181, 0.5: 1.27, 0.8: 1.04}
 P144 taxa de catastrofe 0.01: liquido por carga-alvo = {0.1: 0.829, 0.2: 0.879, 0.3: 1.116, 0.5: 1.0, 0.8: 0.582}
@@ -295,7 +295,38 @@ P173 armadilha nova, perda 500: dosada - p8_x2 = 0.347, dp = 1.076, t = 1.02
 P173 armadilha nova, perda 50: dosada - p10_intuitiva = 0.326, dp = 0.417, t = 2.47
 P173 armadilha nova, perda 500: dosada - p10_intuitiva = -0.799, dp = 1.892, t = -1.34
 P176 minha taxa de erro (26/47): media = 0.55, intervalo 90% = [0.43, 0.67]
+--- Parte 12 (a funcao auxiliar: planejar em varios passos) ---
+P181 valor total escolhendo so pelo agora = 2.233; prevendo o futuro = 5.067; razao teorica = 2.236
+P182 miope                    : retorno por episodio = 5.124, catastrofes por episodio = 0.0253, por passo = [27, 21, 12, 19, 22]
+P182 planejadora              : retorno por episodio = 19.770, catastrofes por episodio = 0.0173, por passo = [6, 8, 18, 13, 24]
+P182 planejadora_sem_integrar : retorno por episodio = 20.042, catastrofes por episodio = 0.0168, por passo = [5, 8, 9, 24, 21]
+P182 planejadora - miope: diferenca media = 14.646, dp = 0.626, t = 73.97
+P182 planejadora - planejadora_sem_integrar: diferenca media = -0.272, dp = 0.919, t = -0.94
+P183 P* por passo com a perda do futuro = [0.00397, 0.00408, 0.00419, 0.00431, 0.00444]
+P184 calibracao com 200 acoes: P media nas catastrofes = 0.147, nas seguras = 0.0046, razao = 31.9
+P184 calibracao com 50 acoes: P media nas catastrofes = 0.222, nas seguras = 0.0146, razao = 15.2
+P185 p8_x2: Upsilon em 20 mundos sorteados = 0.453 (dp 0.131, pior mundo 0.167)
+P185 p11_dosada: Upsilon em 20 mundos sorteados = 0.475 (dp 0.160, pior mundo 0.078)
+P186 modelo ruim (sigma 2) miope                    : retorno = 5.124, catastrofes = 0.0253
+P186 modelo ruim (sigma 2) planejadora              : retorno = 10.747, catastrofes = 0.0158
+P186 modelo ruim (sigma 2) planejadora_sem_integrar : retorno = 10.986, catastrofes = 0.0130
+P186 modelo ruim planejadora - miope: diferenca media = 5.622, dp = 0.914, t = 19.46
+P186 modelo ruim planejadora - planejadora_sem_integrar: diferenca media = -0.240, dp = 0.742, t = -1.02
+P189 capacidades de AGI: 4 de 12 (planejar em varios passos, num mundo de 5 passos)
+P188 minha taxa de erro (29/52): media = 0.56, intervalo 90% = [0.44, 0.66]
+--- Parte 13 (o canal da cautela, transferencia entre tipos de tarefa, a pergunta 200) ---
+P192 planejadora_sem_integrar : retorno = 20.044, catastrofes = 0.0173, por passo = [4, 5, 13, 17, 30]
+P192 prudente                 : retorno = 20.059, catastrofes = 0.0170, por passo = [4, 4, 10, 19, 31]
+P192 prudente - planejadora: diferenca media = 0.015, dp = 0.067, t = 0.72
+P194 ucb         : retorno por rodada = -17.11, catastrofes por rodada = 4.315, perguntas = 0.00
+P194 ucb_excluir : retorno por rodada = 9.29, catastrofes por rodada = 3.765, perguntas = 0.00
+P194 ucb_gisele  : retorno por rodada = 94.78, catastrofes por rodada = 1.825, perguntas = 2.56
+P194 ucb_oraculo : retorno por rodada = 178.66, catastrofes por rodada = 0.000, perguntas = 0.00
+P194 ucb_gisele - ucb: diferenca media = 111.89, dp = 29.54, t = 11.98
+P194 ucb_gisele - ucb_excluir: diferenca media = 85.49, dp = 28.51, t = 9.48
+P200 Partes 3-12: 52 afirmacoes testadas, 29 corrigidas, 23 certas de primeira (44%)
+P197 minha taxa de erro (31/55): media = 0.56, intervalo 90% = [0.45, 0.67]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 120; pares de interacao possiveis = 7140
-Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga) -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> GiseleDosada (P173: a mesma imaginacao na dose do mundo real)
-Regressao: 38/38 resultados publicados reproduzidos; falhas = []
+P96 funcoes pNN no arquivo = 128; pares de interacao possiveis = 8128
+Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga) -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> GiseleDosada (P173: a mesma imaginacao na dose do mundo real) -> GiselePlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> GiselePrudente (P192: descarta mais quando ha futuro a perder)
+Regressao: 41/41 resultados publicados reproduzidos; falhas = []
