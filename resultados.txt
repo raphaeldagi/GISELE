@@ -326,7 +326,18 @@ P194 ucb_gisele - ucb: diferenca media = 111.89, dp = 29.54, t = 11.98
 P194 ucb_gisele - ucb_excluir: diferenca media = 85.49, dp = 28.51, t = 9.48
 P200 Partes 3-12: 52 afirmacoes testadas, 29 corrigidas, 23 certas de primeira (44%)
 P197 minha taxa de erro (31/55): media = 0.56, intervalo 90% = [0.45, 0.67]
+--- Parte 14 (o ultimo passo, a memoria de um so golpe, o peso do passado) ---
+P203 planejadora_sem_integrar : retorno = 19.998, catastrofes = 0.0168, por passo = [4, 8, 12, 16, 27]
+P203 velha                    : retorno = 19.960, catastrofes = 0.0138, por passo = [10, 5, 15, 13, 12]
+P203 velha - planejadora: diferenca media = -0.039, dp = 0.836, t = -0.15
+P204 armadilha nova, p8_x2   : catastrofes 1a metade = 0.0079, 2a metade = 0.0084
+P204 armadilha nova, memoria : catastrofes 1a metade = 0.0068, 2a metade = 0.0062
+P204 memoria - realista: diferenca media no liquido = -0.033, dp = 0.160, t = -0.64
+P205 memorias guardadas (media) = 147.1; acoes seguras marcadas como suspeitas = 0.242
+P206 gerador rapido identico ao original = True
+P207 variancia compensada / equilibrada = 2.747; prevista pela amostra efetiva (P122) = 2.777
+P210 minha taxa de erro (32/58): media = 0.55, intervalo 90% = [0.44, 0.65]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 128; pares de interacao possiveis = 8128
-Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga) -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> GiseleDosada (P173: a mesma imaginacao na dose do mundo real) -> GiselePlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> GiselePrudente (P192: descarta mais quando ha futuro a perder)
-Regressao: 41/41 resultados publicados reproduzidos; falhas = []
+P96 funcoes pNN no arquivo = 132; pares de interacao possiveis = 8646
+Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga) -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> GiseleDosada (P173: a mesma imaginacao na dose do mundo real) -> GiselePlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> GiselePrudente (P192: descarta mais quando ha futuro a perder) -> GiseleVelha (P202: diversifica no ultimo passo) | GiseleMemoria (P204: memoria de um so golpe)
+Regressao: 42/42 resultados publicados reproduzidos; falhas = []

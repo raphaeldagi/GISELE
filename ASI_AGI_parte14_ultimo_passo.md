@@ -109,7 +109,8 @@ operações em ponto flutuante, na mesma ordem.
 - **Identidade:** o gerador rápido produz exatamente as mesmas ações que o original e deixa o gerador aleatório no mesmo estado
   (`p206_identidade()` = `True`, agora nos testes de regressão). As simulações das P112, P145, P159, P182 e P194 deram resultados
   idênticos.
-- **Velocidade:** cerca de **1,5×** mais rápido nas simulações que usam o gerador.
+- **Velocidade:** cerca de **1,5×** mais rápido nas simulações que usam o gerador. A execução completa de `calculos.py` (14 partes)
+  levou **12 min 52 s**, com as Partes 1–13 idênticas linha a linha à execução anterior (exceto a P143, que mede o `CLAUDE.md`).
 - **O teste de regressão pegou um efeito que eu não tinha previsto.** A P169 mede a complexidade do mundo comprimindo o **código-fonte**
   do gerador. Com o código novo, o número mudou. A correção foi guardar a versão original (`_gerar_acoes_original`), que é a que a
   P169 mede: a complexidade do **mundo** não muda quando a **implementação** fica mais rápida.
@@ -159,7 +160,7 @@ Acumulado: **32 de 58** afirmações testadas precisaram de correção. Posterio
 - Linhagem: … → `GiselePrudente` → **`GiseleVelha`** (P202) e, num ramo lateral, **`GiseleMemoria`** (P204). Pela primeira vez a linhagem
   se **bifurca**: a memória não entrou na versão principal porque não melhorou o resultado.
 - O gerador rápido (`_gerar_acoes_rapido`) passou a ser o usado por todos; o original continua no código.
-- Testes de regressão: contagem em `resultados.txt` (com o novo teste de identidade do gerador).
+- Testes de regressão: **42/42** (com o novo teste de identidade do gerador); o arquivo tem **132** funções `pNN`.
 
 ### P211. Metacognição da Parte 14
 
