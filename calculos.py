@@ -8,7 +8,7 @@ Uso: python3 calculos.py            (imprime tudo)
      python3 calculos.py > resultados.txt
 """
 import random
-from math import ceil, comb, cosh, exp, log, log2, sqrt
+from math import ceil, comb, cos, cosh, exp, log, log2, pi, sin, sqrt
 from statistics import NormalDist
 
 Z = NormalDist()
@@ -580,21 +580,58 @@ def p82_correlacao_oculta(acuracia=0.8, concordancia=0.80, amostras=200000, seme
 
 
 def _gerar_acoes(rng, n_acoes, p_cat, tipos, por_tipo, rho_cego, bonus=3.0):
-    """Ações com notas de um comitê. Cada TIPO de modelo tem o seu próprio ponto cego."""
+    """Ações com notas de um comitê. Cada TIPO de modelo tem o seu próprio ponto cego.
+
+    P206: versão mais rápida. Reproduz exatamente `random.gauss` (Box-Muller com o valor guardado em
+    rng.gauss_next) e as mesmas operações em ponto flutuante, na mesma ordem: os resultados são
+    idênticos aos da versão original, bit a bit.
+    """
+    aleatorio = rng.random
+    dois_pi = 2.0 * pi
+    proximo = rng.gauss_next
+    rng.gauss_next = None
+    k = tipos * por_tipo
     acoes = []
+    anexar = acoes.append
+
     for _ in range(n_acoes):
-        v = rng.gauss(0, 1)
-        cat = rng.random() < p_cat
+        if proximo is None:
+            x2pi = aleatorio() * dois_pi
+            g2rad = sqrt(-2.0 * log(1.0 - aleatorio()))
+            z = cos(x2pi) * g2rad
+            proximo = sin(x2pi) * g2rad
+        else:
+            z, proximo = proximo, None
+        v = 0 + z * 1
+        cat = aleatorio() < p_cat
         notas = []
-        for _ in range(tipos):
-            cego_do_tipo = cat and rng.random() < rho_cego
-            for _ in range(por_tipo):
-                enganado = cat and (cego_do_tipo or rng.random() < 0.5)
-                notas.append(v + rng.gauss(0, 0.5) + (bonus if enganado else 0.0))
-        k = len(notas)
+        if cat:
+            for _ in range(tipos):
+                cego_do_tipo = aleatorio() < rho_cego
+                for _ in range(por_tipo):
+                    enganado = cego_do_tipo or aleatorio() < 0.5
+                    if proximo is None:
+                        x2pi = aleatorio() * dois_pi
+                        g2rad = sqrt(-2.0 * log(1.0 - aleatorio()))
+                        z = cos(x2pi) * g2rad
+                        proximo = sin(x2pi) * g2rad
+                    else:
+                        z, proximo = proximo, None
+                    notas.append(v + (0 + z * 0.5) + (bonus if enganado else 0.0))
+        else:
+            for _ in range(k):
+                if proximo is None:
+                    x2pi = aleatorio() * dois_pi
+                    g2rad = sqrt(-2.0 * log(1.0 - aleatorio()))
+                    z = cos(x2pi) * g2rad
+                    proximo = sin(x2pi) * g2rad
+                else:
+                    z, proximo = proximo, None
+                notas.append(v + (0 + z * 0.5) + 0.0)
         m = sum(notas) / k
-        dp = sqrt(sum((x - m) ** 2 for x in notas) / (k - 1))
-        acoes.append((m, dp, v, cat))
+        dp = sqrt(sum([(x - m) ** 2 for x in notas]) / (k - 1))
+        anexar((m, dp, v, cat))
+    rng.gauss_next = proximo
     return acoes
 
 
