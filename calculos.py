@@ -3401,7 +3401,7 @@ def p268_efeito_combinado(estimativas=((0.662, 0.752), (0.990, 0.970), (-0.129, 
 # --- Parte 21: a intuição corrigida pela sensação ---
 
 # Placar acumulado ao fim da Parte 21 (atualizado quando os testes da parte terminam)
-ERROS_P279, TESTES_P279 = 42, 84
+ERROS_P279, TESTES_P279 = 45, 91
 
 
 def p272_encolhimento(sigmas=(0.5, 2.0), k=50, r=2.0, amostras=6000, semente=272):
@@ -3555,6 +3555,7 @@ def testes_de_regressao():
         "P252": round(p252_bits_da_palavra_precisa()[1], 3) == 0.192,
         "P255": round(p255_quaternidade()[1], 3) == 1.950,
         "P268": round(p268_efeito_combinado()[0], 3) == 0.552,
+        "P272": [p272_encolhimento(amostras=300)[x][0] for x in (0.5, 2.0)] == [0.8, 0.2],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -4076,6 +4077,24 @@ def _parte_20():
     print(f"P269 minha taxa de erro ({ERROS_P269}/{TESTES_P269}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_21():
+    print("--- Parte 21 (a intuicao corrigida pela sensacao) ---")
+    for sigma, (w_otimo, w_teoria, val_1, val_otimo) in p272_encolhimento().items():
+        print(f"P272 sigma do modelo = {sigma}: peso otimo simulado = {w_otimo}, teoria 1/(1+sigma^2) = {w_teoria:.2f}; "
+              f"valor com peso 1 = {val_1:.3f}, com o peso otimo = {val_otimo:.3f}")
+    for mundo, ((m, dp, tt), peso, teoria) in p274_intuicao_calibrada().items():
+        print(f"P274 {mundo}: calibrada - versao principal = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}; peso aprendido = {peso:.3f} "
+              f"(teoria {teoria:.3f})")
+    upsilon, por_mundo = p265_upsilon_sequencial(versoes=("velha_atenta", "calibrada"))
+    print(f"P275 Upsilon sequencial = { {v: round(u, 3) for v, u in upsilon.items()} }")
+    for mundo, notas in por_mundo.items():
+        print(f"P275 {mundo:15s}: { {v: round(n, 3) for v, n in notas.items()} }")
+    for d, (sim, formula) in p277_auditoria_p149().items():
+        print(f"P277 erro medio por passo {d}: horizonte mediano simulado = {sim}; formula da P149 = {formula:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P279, testes=TESTES_P279)
+    print(f"P279 minha taxa de erro ({ERROS_P279}/{TESTES_P279}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -4095,11 +4114,12 @@ def _unificacao():
           " -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa)"
           " | SynthaiFala (P245: o humano responde com palavras)"
           " -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva)"
-          " | SynthaiOuvinte (P262: aprende com o que o humano responde)")
+          " | SynthaiOuvinte (P262: aprende com o que o humano responde)"
+          " -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21}
 
 
 if __name__ == "__main__":
