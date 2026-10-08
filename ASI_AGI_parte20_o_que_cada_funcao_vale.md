@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 20: o símbolo com o tempo, o Υ sequencial e o que cada função vale
 
-> Continuação da [Parte 19](ASI_AGI_parte19_versao_principal.md). Os números saem de `p262_...` a `p268_...` e das classes `SynthaiOuvinte` e
+> Continuação da [Parte 19](ASI_AGI_parte19_versao_principal.md). **Próxima:** [Parte 21 — a intuição corrigida](ASI_AGI_parte21_intuicao_corrigida.md) (P271–P280). Os números saem de `p262_...` a `p268_...` e das classes `SynthaiOuvinte` e
 > `OraculoSequencial` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
