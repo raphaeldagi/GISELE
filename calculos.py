@@ -1,4 +1,4 @@
-"""Reproduz os cálculos e simulações das Partes 1 a 11 (ASI_AGI_*.md).
+"""Reproduz os cálculos e simulações das Partes 1 a 12 (ASI_AGI_*.md).
 
 Arquivo único que sempre cresce: cada parte acrescenta funções pNN_..., o agente
 unificado `Gisele` incorpora os módulos anteriores e `testes_de_regressao` garante que
@@ -1067,10 +1067,13 @@ class GiseleAnima(GiseleJung):
 
     def _agir(self, acoes, rng, eps_real, carga, eps_decisao):
         melhor = max(a[0] for a in acoes)
-        ordem = sorted(acoes, key=lambda a: -(a[0] - a[1]))
+        # P182: a função auxiliar (planejar) soma ao escore o valor futuro estimado; 0 nas Partes 6-11
+        ordem = sorted(acoes, key=lambda a: -(a[0] - a[1] + self._bonus_plano(a)))
         candidatos = ordem[: max(1, int(self.q * len(ordem)))]
         rng.shuffle(candidatos)
-        p_estrela = p71_valor_da_pergunta(self.custo, self.perda, min(eps_decisao, 0.99))
+        # P183: a perda de uma catástrofe inclui o futuro perdido; sem planejamento, é a perda fixa
+        perda = getattr(self, "perda_efetiva", self.perda)
+        p_estrela = p71_valor_da_pergunta(self.custo, perda, min(eps_decisao, 0.99))
         p_estrela *= getattr(self, "mult_pergunta", 1.0)  # P131: 1.0 reproduz as Partes 6-7
         perguntas = 0
         for a in candidatos + ordem[len(candidatos):]:
@@ -1092,6 +1095,9 @@ class GiseleAnima(GiseleJung):
 
     def _observar_humano(self, acao, veto):
         pass
+
+    def _bonus_plano(self, acao):
+        return 0.0
 
 
 class GiseleSelf(GiseleAnima):
@@ -1962,6 +1968,174 @@ def p174_completude(upsilon, peso_log10, cobertura):
     return upsilon, cobertura, peso_log10
 
 
+# --- Parte 12: a função auxiliar — planejar em vários passos ---
+
+# Placar acumulado ao fim da Parte 12 (atualizado quando os testes da parte terminam)
+ERROS_P188, TESTES_P188 = 26, 47
+
+MUNDO_SEQUENCIAL = dict(passos=5, n_acoes=50, sigma_modelo=0.5, valor_medio_passo=1.5)
+
+
+class GiselePlanejadora(GiseleAnima):
+    """GISELE + função auxiliar (P180): planeja `passos` à frente num mundo sequencial.
+
+    - cada ação tem uma consequência c que eleva (ou rebaixa) o nível de todos os passos seguintes;
+      a GISELE só vê uma estimativa ĉ = c + ruído do seu modelo de mundo (sigma_modelo)
+    - bônus de plano: ĉ × passos restantes (P181)
+    - integrar = a perda de uma catástrofe inclui o futuro que ela destrói (P183)
+    """
+
+    def __init__(self, integrar=True, **kw):
+        super().__init__(**kw)
+        self.integrar = integrar
+        self.plano = {}
+
+    def preparar_passo(self, estimativas, restantes, nivel, valor_medio_passo):
+        self.plano = {k: c * restantes for k, c in estimativas.items()}
+        if self.integrar:
+            self.perda_efetiva = self.perda + restantes * max(0.0, nivel + valor_medio_passo)
+        elif hasattr(self, "perda_efetiva"):
+            del self.perda_efetiva
+
+    def _bonus_plano(self, acao):
+        return self.plano.get(id(acao), 0.0)
+
+
+def _rodar_sequencial(agente, rng, episodios=400, planeja=True, mundo=None):
+    """Mundo sequencial: retorno = soma de (valor da ação + nível); catástrofe custa `perda` e encerra."""
+    m = dict(MUNDO_BASE, **MUNDO_SEQUENCIAL, **(mundo or {}))
+    carga = 0.0
+    retorno = cats = perguntas = 0.0
+    cats_por_passo = [0] * m["passos"]
+    for _ in range(episodios):
+        nivel = 0.0
+        for t in range(m["passos"]):
+            eps = min(0.45, m["eps0"] + m["fadiga"] * carga)
+            acoes = _gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+            consequencias = {id(a): rng.gauss(0, 1) for a in acoes}
+            estimativas = {k: c + rng.gauss(0, m["sigma_modelo"]) for k, c in consequencias.items()}
+            restantes = m["passos"] - t - 1
+            if planeja:
+                agente.preparar_passo(estimativas, restantes, nivel, m["valor_medio_passo"])
+            escolha, n = agente.agir_no_mundo(acoes, rng, eps, carga)
+            carga += 0.05 * (n - carga)
+            perguntas += n
+            if escolha[3]:
+                retorno -= m["perda"]
+                cats += 1
+                cats_por_passo[t] += 1
+                break
+            retorno += escolha[2] + nivel
+            nivel += consequencias[id(escolha)]
+    return retorno / episodios - m["custo"] * perguntas / episodios, cats / episodios, cats_por_passo
+
+
+def _construir_sequencial(versao, rng, treino_passos=150):
+    m = dict(MUNDO_BASE, **MUNDO_SEQUENCIAL)
+    hist = [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+            for _ in range(treino_passos)]
+    if versao == "miope":
+        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+    else:
+        ag = GiselePlanejadora(integrar=(versao == "planejadora"), sombra="propria", compensar="equilibrio")
+    ag.mult_pergunta = 2.0
+    ag.calibrar(hist)
+    return ag
+
+
+def p181_valor_da_previsao(k=50, restante_medio=2.0, amostras=20000, semente=181):
+    """Ganho teórico de escolher por v + r c em vez de v (v, c ~ N(0,1) independentes)."""
+    rng = _rng(semente)
+    so_v = com_c = 0.0
+    for _ in range(amostras // 10):
+        vs = [rng.gauss(0, 1) for _ in range(k)]
+        cs = [rng.gauss(0, 1) for _ in range(k)]
+        i_v = max(range(k), key=lambda i: vs[i])
+        i_p = max(range(k), key=lambda i: vs[i] + restante_medio * cs[i])
+        so_v += vs[i_v] + restante_medio * cs[i_v]
+        com_c += vs[i_p] + restante_medio * cs[i_p]
+    n = amostras // 10
+    return so_v / n, com_c / n, sqrt(1 + restante_medio**2)
+
+
+def p182_planejar(sementes=tuple(range(340, 350)), episodios=400, mundo=None):
+    """Míope vs planejadora integrada vs planejadora sem integrar a perda do futuro (10 sementes pareadas)."""
+    versoes = ("miope", "planejadora", "planejadora_sem_integrar")
+    linhas = {v: [] for v in versoes}
+    for s in sementes:
+        for v in versoes:
+            rng = _rng(s)
+            ag = _construir_sequencial(v, rng)
+            linhas[v].append(_rodar_sequencial(ag, rng, episodios=episodios, planeja=(v != "miope"), mundo=mundo))
+    medias = {v: (sum(r[0] for r in rs) / len(rs), sum(r[1] for r in rs) / len(rs),
+                  [sum(r[2][t] for r in rs) for t in range(MUNDO_SEQUENCIAL["passos"])]) for v, rs in linhas.items()}
+    difs = {}
+    for a, b in (("miope", "planejadora"), ("planejadora_sem_integrar", "planejadora")):
+        d = [y[0] - x[0] for x, y in zip(linhas[a], linhas[b])]
+        mm = sum(d) / len(d)
+        dp = sqrt(sum((x - mm) ** 2 for x in d) / (len(d) - 1))
+        difs[f"{b} - {a}"] = (mm, dp, mm / (dp / sqrt(len(d))))
+    return medias, difs
+
+
+def p183_limiar_por_passo(passos=5, perda=50.0, custo=0.1, eps=0.1, valor_medio_passo=1.5, mult=2.0):
+    """P* em cada passo quando a perda inclui o futuro: cai à medida que há mais futuro a perder."""
+    return [mult * p71_valor_da_pergunta(custo, perda + (passos - t - 1) * valor_medio_passo, eps) for t in range(passos)]
+
+
+def p184_transferencia(semente=184, passos_avaliacao=2000):
+    """A calibração aprendida no mundo de um passo (200 ações) serve no mundo sequencial (50 ações)?"""
+    rng = _rng(semente)
+    ag = _gisele_realista(rng)  # calibrada no mundo da Parte 8 (200 ações)
+    rng_av = _rng(1840)
+    resultado = {}
+    for n_acoes in (200, 50):
+        p_cat_media, n_cat, p_seg_media, n_seg = 0.0, 0, 0.0, 0
+        for _ in range(passos_avaliacao // (n_acoes // 50)):
+            acoes = _gerar_acoes(rng_av, n_acoes, 0.005, 2, 3, 0.5)
+            melhor = max(a[0] for a in acoes)
+            for a in acoes:
+                p = ag.p_catastrofe(a, melhor)
+                if a[3]:
+                    p_cat_media += p
+                    n_cat += 1
+                else:
+                    p_seg_media += p
+                    n_seg += 1
+        resultado[n_acoes] = (p_cat_media / max(n_cat, 1), p_seg_media / n_seg)
+    return resultado
+
+
+def p185_familia_aleatoria(mundos=20, versoes=("p8_x2", "p11_dosada"), episodios=1000, semente=185):
+    """Υ numa família de mundos SORTEADOS (não escolhidos por mim): ele se mantém?"""
+    rng_m = _rng(semente)
+    sorteados = []
+    for _ in range(mundos):
+        sorteados.append({
+            "p_cat": exp(rng_m.uniform(log(0.001), log(0.02))),
+            "rho_cego": rng_m.random(),
+            "bonus": rng_m.uniform(0.5, 6.0),
+            "n_acoes": rng_m.choice((50, 100, 200)),
+            "fadiga": rng_m.uniform(0.0, 0.6),
+        })
+    notas = {v: [] for v in versoes}
+    for i, mundo in enumerate(sorteados):
+        s = 1850 + i
+        refs = {}
+        for a in ("acaso", "oraculo"):
+            rng = _rng(s)
+            refs[a] = _rodar_mundo(_construir(a, rng), rng, episodios=episodios, **mundo)[3]
+        for v in versoes:
+            rng = _rng(s)
+            liq = _rodar_mundo(_construir(v, rng), rng, episodios=episodios, **mundo)[3]
+            notas[v].append((liq - refs["acaso"]) / (refs["oraculo"] - refs["acaso"]))
+    resumo = {}
+    for v, ns in notas.items():
+        m = sum(ns) / len(ns)
+        resumo[v] = (m, sqrt(sum((x - m) ** 2 for x in ns) / (len(ns) - 1)), min(ns))
+    return resumo
+
+
 def testes_de_regressao():
     """O código cresce, mas o passado não pode mudar: estes valores foram publicados nas Partes 1-4."""
     verificacoes = {
@@ -2003,6 +2177,8 @@ def testes_de_regressao():
         "P170": p170_lista_de_capacidades()[:2] == (3, 12),
         "P171": round(p171_lacuna_de_compute()[1], 1) == 14.7,
         "P172": round(p172_minha_precisao()[2], 2) == 0.99,
+        "P181": round(p181_valor_da_previsao()[2], 3) == 2.236,
+        "P183": round(p183_limiar_por_passo()[0], 5) == 0.00397,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -2337,6 +2513,32 @@ def _parte_11():
     print(f"P176 minha taxa de erro ({ERROS_P176}/{TESTES_P176}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_12():
+    print("--- Parte 12 (a funcao auxiliar: planejar em varios passos) ---")
+    so_v, com_c, razao = p181_valor_da_previsao()
+    print(f"P181 valor total escolhendo so pelo agora = {so_v:.3f}; prevendo o futuro = {com_c:.3f}; razao teorica = {razao:.3f}")
+    medias, difs = p182_planejar()
+    for v, (ret, cat, por_passo) in medias.items():
+        print(f"P182 {v:25s}: retorno por episodio = {ret:.3f}, catastrofes por episodio = {cat:.4f}, por passo = {por_passo}")
+    for nome, (m, dp, tt) in difs.items():
+        print(f"P182 {nome}: diferenca media = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    print(f"P183 P* por passo com a perda do futuro = {[round(x, 5) for x in p183_limiar_por_passo()]}")
+    for n_acoes, (p_cat, p_seg) in p184_transferencia().items():
+        print(f"P184 calibracao com {n_acoes} acoes: P media nas catastrofes = {p_cat:.3f}, nas seguras = {p_seg:.4f}, "
+              f"razao = {p_cat / p_seg:.1f}")
+    for v, (m, dp, minimo) in p185_familia_aleatoria().items():
+        print(f"P185 {v}: Upsilon em 20 mundos sorteados = {m:.3f} (dp {dp:.3f}, pior mundo {minimo:.3f})")
+    medias, difs = p182_planejar(mundo={"sigma_modelo": 2.0})
+    for v, (ret, cat, _) in medias.items():
+        print(f"P186 modelo ruim (sigma 2) {v:25s}: retorno = {ret:.3f}, catastrofes = {cat:.4f}")
+    for nome, (m, dp, tt) in difs.items():
+        print(f"P186 modelo ruim {nome}: diferenca media = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    tem, total, _ = p170_lista_de_capacidades()
+    print(f"P189 capacidades de AGI: {tem + 1} de {total} (planejar em varios passos, num mundo de 5 passos)")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P188, testes=TESTES_P188)
+    print(f"P188 minha taxa de erro ({ERROS_P188}/{TESTES_P188}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -2348,11 +2550,12 @@ def _unificacao():
           " -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2)"
           " -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca)"
           " -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno)"
-          " -> GiseleDosada (P173: a mesma imaginacao na dose do mundo real)")
+          " -> GiseleDosada (P173: a mesma imaginacao na dose do mundo real)"
+          " -> GiselePlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12}
 
 
 if __name__ == "__main__":
