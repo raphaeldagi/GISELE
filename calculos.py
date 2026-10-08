@@ -4235,6 +4235,72 @@ def p313_varredura(sementes=tuple(range(640, 650)), mults=(0.5, 1.0, 2.0, 4.0, 8
     return resultado
 
 
+def p314_custo_do_descarte(sementes=tuple(range(640, 650)), episodios=1000):
+    """CONTA POSTERIOR (feita depois de ver a P313): com orçamento esgotado, a escolha não é perguntar ou aceitar, é
+    aceitar ou DESCARTAR. Aceitar custa p L; descartar custa Δd, o valor que se perde ao passar para a próxima
+    candidata. O limiar entre os dois é p = Δd / L, ou m = Δd / (L P*). Mede Δd na SYNTHAI com Newton (m = 2):
+    valor da opção descartada (ou vetada) menos o da escolhida, só nas descartadas seguras."""
+    from synthai.mundos import MundoSequencial
+    difs = []
+    for s in sementes:
+        mundo = MundoSequencial(s, passos=1, n_acoes=200)
+        ag = _agente_25("newton", s).calibrar(mundo)
+        rel = ag.relacao
+        vistas = []
+        pode = rel.pode_perguntar
+
+        def pode_e_anota(opcao, sit, _pode=pode, _vistas=vistas):
+            r = _pode(opcao, sit)
+            if not r:
+                _vistas.append(opcao)  # descartada por falta de orçamento
+            return r
+        rel.pode_perguntar = pode_e_anota
+
+        def decidir(sit, _decidir=ag.decidir, _vistas=vistas):
+            del _vistas[:]
+            escolha = _decidir(sit)
+            for o in _vistas:  # a régua lê o escondido
+                if not o._catastrofe:
+                    difs.append(o._valor - escolha._valor)
+            return escolha
+        ag.decidir = decidir
+        mundo.rodar(ag, episodios)
+    dd = sum(difs) / len(difs)
+    return len(difs), dd, dd / (50.0 * p71_valor_da_pergunta())
+
+
+def p315_limiar_no_comportamento(sementes=tuple(range(650, 680)), sementes_bandido=tuple(range(680, 700))):
+    """Sementes NOVAS (as da varredura foram 640-649). A principal (gradiente, 2P*) contra: o gradiente no melhor
+    da varredura (4P*), Newton no melhor (0,5P*) e o local no melhor (1P*). Três tarefas."""
+    from synthai.mundos import MundoBandido, MundoSequencial
+    from synthai.referencias import Acaso, Oraculo
+    agentes = {"principal": ("gradiente", 2.0), "gradiente_m4": ("gradiente", 4.0),
+               "newton_m05": ("newton", 0.5), "local_m1": ("local", 1.0)}
+    tarefas = (("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), 1000, sementes, False),
+               ("sequencial", lambda s: MundoSequencial(s), 400, sementes, False),
+               ("bandido", lambda s: MundoBandido(s), 20, sementes_bandido, True))
+    resultado = {}
+    for tarefa, fazer, n, ss, normalizar in tarefas:
+        ret = {v: [] for v in agentes}
+        cats = {v: 0.0 for v in agentes}
+        for s in ss:
+            ref = {}
+            if normalizar:
+                for nome, cls in (("acaso", Acaso), ("oraculo", Oraculo)):
+                    ref[nome] = fazer(s).rodar(cls(s), n)["retorno"]
+            for v, (modelo, m) in agentes.items():
+                mundo = fazer(s)
+                r = mundo.rodar(_agente_25(modelo, s, m).calibrar(mundo), n)
+                x = r["retorno"]
+                if normalizar:
+                    x = (x - ref["acaso"]) / (ref["oraculo"] - ref["acaso"])
+                ret[v].append(x)
+                cats[v] += r["catastrofes"] / len(ss)
+        resultado[tarefa] = ({v: sum(x) / len(x) for v, x in ret.items()}, cats,
+                             {v: _pareado(ret["principal"], ret[v]) for v in agentes if v != "principal"})
+    return resultado
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
