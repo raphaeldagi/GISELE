@@ -4301,7 +4301,7 @@ def p315_limiar_no_comportamento(sementes=tuple(range(650, 680)), sementes_bandi
     return resultado
 
 
-def p316_conta_tres_acoes(modelo, fazer, sementes, episodios):
+def p316_conta_tres_acoes(modelo, fazer, sementes, episodios, mult=2.0):
     """A conta das três ações (aceitar, perguntar, descartar), com tudo medido no próprio agente rodando com o limiar
     atual (2P*): Δd = valor perdido ao descartar uma candidata segura (falta de orçamento) e o fator de calibração
     f = taxa real / P prevista nas candidatas que o pensamento põe abaixo do limiar. Aceitar vale a pena se o risco
@@ -4310,7 +4310,7 @@ def p316_conta_tres_acoes(modelo, fazer, sementes, episodios):
     abaixo = [0.0, 0.0]
     for s in sementes:
         mundo = fazer(s)
-        ag = _agente_25(modelo, s).calibrar(mundo)
+        ag = _agente_25(modelo, s, mult).calibrar(mundo)
         rel, pen = ag.relacao, ag.pensamento
         descartadas = []
         pode = rel.pode_perguntar
@@ -4353,6 +4353,44 @@ def p316_conta_nos_mundos():
               ("sequencial", lambda s: MundoSequencial(s), tuple(range(700, 710)), 400))
     return {(nome, modelo): p316_conta_tres_acoes(modelo, fazer, ss, n)
             for nome, fazer, ss, n in mundos for modelo in ("gradiente", "newton", "local")}
+
+
+def p318_ponto_fixo(modelo, fazer, sementes, episodios, m0=2.0, iteracoes=4):
+    """A conta das três ações como ponto fixo: mede Δd e f com o limiar em m, calcula m' = Δd / (f L P*), e repete com
+    m'. Devolve a sequência de multiplicadores."""
+    ms = [m0]
+    for _ in range(iteracoes):
+        ms.append(p316_conta_tres_acoes(modelo, fazer, sementes, episodios, ms[-1])[3])
+    return ms
+
+
+def p318_ponto_fixo_nos_mundos(sementes=tuple(range(710, 720))):
+    """O ponto fixo no mundo sequencial com catástrofes ×2 (p_cat = 0,01), um mundo ainda não varrido."""
+    from synthai.mundos import MundoSequencial
+    fazer = lambda s: MundoSequencial(s, p_cat=0.01)
+    return {modelo: p318_ponto_fixo(modelo, fazer, sementes, 400) for modelo in ("gradiente", "newton", "local")}
+
+
+def p318b_varredura_catastrofe_x2(sementes=tuple(range(710, 720)), mults=(0.5, 1.0, 2.0, 4.0, 8.0)):
+    """A varredura no mundo sequencial com catástrofes ×2 (mesma mecânica da P317)."""
+    from synthai.mundos import MundoSequencial
+    resultado = {}
+    for modelo in ("gradiente", "newton", "local"):
+        ret = {m: [] for m in mults}
+        cats = {m: 0.0 for m in mults}
+        for s in sementes:
+            pesos = _agente_25(modelo, s).calibrar(MundoSequencial(s, p_cat=0.01)).pensamento.w
+            for m in mults:
+                mundo = MundoSequencial(s, p_cat=0.01)
+                mundo.historico_auditado(150)
+                ag = _agente_25(modelo, s, m)
+                ag.pensamento.w = list(pesos)
+                r = mundo.rodar(ag, 400)
+                ret[m].append(r["retorno"])
+                cats[m] += r["catastrofes"] / len(sementes)
+        medias = {m: sum(v) / len(v) for m, v in ret.items()}
+        resultado[modelo] = (medias, cats, max(medias, key=medias.get))
+    return resultado
 
 
 def p317_varredura_sequencial(sementes=tuple(range(700, 710)), mults=(0.5, 1.0, 2.0, 4.0, 8.0), episodios=400):
