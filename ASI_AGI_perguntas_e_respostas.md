@@ -13,6 +13,8 @@
 > digo onde.
 >
 > Todos os números foram recalculados em [`calculos.py`](calculos.py).
+>
+> **Continuação:** [Parte 2 — mais fundo](ASI_AGI_parte2_mais_fundo.md) (P21–P40).
 
 ---
 
