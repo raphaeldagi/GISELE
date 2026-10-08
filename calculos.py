@@ -4030,6 +4030,24 @@ def p304b_conferir_epocas(epocas, sementes=tuple(range(620, 630)), treino=150):
     return sum(erros) / len(erros), max(erros)
 
 
+def p304c_piso_de_ruido(taxa=0.01, epocas=1000, sementes=tuple(range(620, 630)), treino=150):
+    """O gradiente amostra a amostra com taxa fixa não converge: oscila num piso. Cada catástrofe do histórico
+    empurra w3 por η (1 − p) s, com E|s| ≈ 1,17 para d' = 1; o piso deve escalar com η. Mede |w3 − w3*| médio
+    com outra taxa e épocas suficientes para a direção lenta (η n λ_min ≈ 0,034 η/0,05 por época)."""
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento import Pensamento
+    from synthai.pensamento_exato import ajustar_logistica, dados_do_historico
+    erros = []
+    for s in sementes:
+        hist = MundoSequencial(s).historico_auditado(treino)
+        xs, ys = dados_do_historico(hist)
+        w = ajustar_logistica(xs, ys, firth=False)
+        g = Pensamento(taxa)
+        g.calibrar(hist, epocas=epocas)
+        erros.append(abs(g.w[3] - w[3]))
+    return sum(erros) / len(erros), max(erros)
+
+
 def p306_newton_quadratico(semente=620, treino=150):
     """Convergência quadrática de Newton, contada: o tamanho do passo a cada iteração e a razão
     log(passo_k+1)/log(passo_k), que tende a 2 quando o número de dígitos certos dobra."""
