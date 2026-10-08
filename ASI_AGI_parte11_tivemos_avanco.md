@@ -224,7 +224,7 @@ Acumulado: **26 de 47** afirmações testadas precisaram de correção. Posterio
   **`GiseleDosada`** (P173).
 - O código ganhou a lista de capacidades (`CAPACIDADES_AGI`) e uma medida de complexidade da própria família de mundos (P169), para
   que a pergunta "avançamos?" possa ser refeita a cada parte com os mesmos critérios.
-- Testes de regressão: contagem em `resultados.txt`.
+- Testes de regressão: **38/38** resultados publicados reproduzidos; o arquivo tem **120** funções `pNN`.
 
 ### P178. Metacognição da Parte 11
 

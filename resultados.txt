@@ -266,7 +266,36 @@ P162 armadilha nova: catastrofes = {'p8_x2': 0.009, 'p10_intuitiva': 0.005}
 P162 armadilha nova, perda 50: intuitiva - realista = -0.237, dp = 0.276, t = -2.71
 P162 armadilha nova, perda 500: intuitiva - realista = 1.563, dp = 2.101, t = 2.35
 P164 minha taxa de erro (24/43): media = 0.56, intervalo 90% = [0.43, 0.67]
+--- Parte 11 (tivemos avanco rumo a AGI/ASI?) ---
+P168 Upsilon por versao da linhagem = {'p5_gisele': 0.287, 'p7_anima': 0.414, 'p8_x2': 0.465, 'p9_ancorada': 0.449, 'p10_intuitiva': 0.409, 'p11_dosada': 0.486}
+P169 K(familia de mundos) <= 6896 bits (codigo comprimido); peso no Upsilon universal ~ 10^-2076
+P170 capacidades de AGI cobertas pela GISELE = 3 de 12 (25%)
+P170   [x] decidir sob incerteza com supervisao humana (P83-P162)
+P170   [x] calibrar a propria confianca (P43, P83)
+P170   [x] generalizar para variacoes do mesmo mundo (P158)
+P170   [ ] linguagem natural (-)
+P170   [ ] percepcao (visao, audio) (-)
+P170   [ ] aprender tarefas novas de tipo diferente (-)
+P170   [ ] planejar em varios passos (-)
+P170   [ ] modelo causal do mundo (-)
+P170   [ ] memoria de longo prazo aberta (-)
+P170   [ ] usar ferramentas / agir no mundo real (-)
+P170   [ ] raciocinio matematico e cientifico (-)
+P170   [ ] melhorar o proprio codigo (-)
+P171 compute de uma execucao completa ~ 1.8e+12 FLOP; lacuna para a fronteira = 14.7 ordens de grandeza
+P172 minha taxa de erro por parte (3 a 10) = [0.4, 0.571, 0.5, 0.6, 0.667, 0.6, 0.571, 0.5]; inclinacao = 0.013/parte; qui2 = 0.984, p = 0.986
+P173 base: catastrofes = {'p8_x2': 0.0055, 'p10_intuitiva': 0.0024, 'p11_dosada': 0.0041}
+P173 base, perda 50: dosada - p8_x2 = 0.130, dp = 0.226, t = 1.82
+P173 base, perda 500: dosada - p8_x2 = 0.760, dp = 1.817, t = 1.32
+P173 base, perda 50: dosada - p10_intuitiva = 0.325, dp = 0.157, t = 6.55
+P173 base, perda 500: dosada - p10_intuitiva = -0.440, dp = 1.005, t = -1.39
+P173 armadilha nova: catastrofes = {'p8_x2': 0.0087, 'p10_intuitiva': 0.0055, 'p11_dosada': 0.008}
+P173 armadilha nova, perda 50: dosada - p8_x2 = 0.032, dp = 0.192, t = 0.53
+P173 armadilha nova, perda 500: dosada - p8_x2 = 0.347, dp = 1.076, t = 1.02
+P173 armadilha nova, perda 50: dosada - p10_intuitiva = 0.326, dp = 0.417, t = 2.47
+P173 armadilha nova, perda 500: dosada - p10_intuitiva = -0.799, dp = 1.892, t = -1.34
+P176 minha taxa de erro (26/47): media = 0.55, intervalo 90% = [0.43, 0.67]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 113; pares de interacao possiveis = 6328
-Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga) -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno)
-Regressao: 34/34 resultados publicados reproduzidos; falhas = []
+P96 funcoes pNN no arquivo = 120; pares de interacao possiveis = 7140
+Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga) -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> GiseleDosada (P173: a mesma imaginacao na dose do mundo real)
+Regressao: 38/38 resultados publicados reproduzidos; falhas = []
