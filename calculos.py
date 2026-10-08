@@ -1,4 +1,4 @@
-"""Reproduz os cálculos e simulações das Partes 1 a 13 (ASI_AGI_*.md).
+"""Reproduz os cálculos e simulações das Partes 1 a 14 (ASI_AGI_*.md).
 
 Arquivo único que sempre cresce: cada parte acrescenta funções pNN_..., o agente
 unificado `Gisele` incorpora os módulos anteriores e `testes_de_regressao` garante que
@@ -2320,6 +2320,160 @@ def p200_retrospectiva(placar_por_parte=((2, 5), (4, 7), (1, 2), (3, 5), (4, 6),
     return testes, erros, testes - erros, (testes - erros) / testes
 
 
+# --- Parte 14: o último passo, a memória de um só golpe, o peso do passado ---
+
+# Placar acumulado ao fim da Parte 14 (atualizado quando os testes da parte terminam)
+ERROS_P210, TESTES_P210 = 32, 58
+
+
+class GiseleVelha(GiselePlanejadora):
+    """P202 (pré-registrado na P193): no último passo, sem futuro, a cautela vira caráter, não cálculo.
+
+    Quando não há passos restantes, sorteia entre mais candidatas (q_final) em vez de ir ao topo."""
+
+    def __init__(self, q_final=0.2, **kw):
+        super().__init__(integrar=False, **kw)
+        self.q_base = self.q
+        self.q_final = q_final
+
+    def preparar_passo(self, estimativas, restantes, nivel, valor_medio_passo):
+        super().preparar_passo(estimativas, restantes, nivel, valor_medio_passo)
+        self.q = self.q_final if restantes == 0 else self.q_base
+
+
+def p203_ultimo_passo(sementes=tuple(range(370, 380)), episodios=400):
+    """Planejadora vs velha (diversifica no último passo). 10 sementes pareadas."""
+    linhas = {"planejadora_sem_integrar": [], "velha": []}
+    for s in sementes:
+        for v in linhas:
+            rng = _rng(s)
+            if v == "velha":
+                m = dict(MUNDO_BASE, **MUNDO_SEQUENCIAL)
+                hist = [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+                        for _ in range(150)]
+                ag = GiseleVelha(sombra="propria", compensar="equilibrio")
+                ag.mult_pergunta = 2.0
+                ag.calibrar(hist)
+            else:
+                ag = _construir_sequencial(v, rng)
+            linhas[v].append(_rodar_sequencial(ag, rng, episodios=episodios))
+    medias = {v: (sum(r[0] for r in rs) / len(rs), sum(r[1] for r in rs) / len(rs),
+                  [sum(r[2][t] for r in rs) for t in range(MUNDO_SEQUENCIAL["passos"])]) for v, rs in linhas.items()}
+    d = [b[0] - a[0] for a, b in zip(linhas["planejadora_sem_integrar"], linhas["velha"])]
+    m = sum(d) / len(d)
+    dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+    return medias, (m, dp, m / (dp / sqrt(len(d))))
+
+
+class GiseleMemoria(GiseleAnima):
+    """P204: memória de um só golpe. Guarda o 'formato' (incerteza, distância à melhor nota) de cada
+    catástrofe que viveu ou que o humano vetou, e desconfia de ações parecidas (raio `raio`).
+
+    Junguianamente, é a formação de um complexo a partir de um único evento (P105, P6)."""
+
+    def __init__(self, raio=0.15, reforco=0.05, **kw):
+        super().__init__(**kw)
+        self.raio = raio
+        self.reforco = reforco
+        self.memorias = []
+
+    def p_catastrofe(self, acao, melhor):
+        p = super().p_catastrofe(acao, melhor)
+        x = (acao[1], acao[0] - melhor)
+        for mx in self.memorias:
+            if (x[0] - mx[0]) ** 2 + (x[1] - mx[1]) ** 2 < self.raio ** 2:
+                return max(p, self.reforco)
+        return p
+
+    def _lembrar(self, acao, melhor):
+        self.memorias.append((acao[1], acao[0] - melhor))
+
+    def _agir(self, acoes, rng, eps_real, carga, eps_decisao):
+        self._melhor_atual = max(a[0] for a in acoes)
+        escolha = super()._agir(acoes, rng, eps_real, carga, eps_decisao)
+        if escolha[0][3]:
+            self._lembrar(escolha[0], self._melhor_atual)  # viveu a catástrofe
+        return escolha
+
+    def _observar_humano(self, acao, veto):
+        if veto:
+            self._lembrar(acao, self._melhor_atual)  # o humano disse: isto é perigoso
+
+
+def p204_memoria(sementes=tuple(range(380, 390)), episodios=2000, mundo=None):
+    """Realista vs memória no mundo da armadilha nova (P159). Catástrofes na 1ª e na 2ª metade."""
+    mundo = mundo if mundo is not None else {"bonus": 1.0, "rho_cego": 1.0}
+    linhas = {"p8_x2": [], "memoria": []}
+    metades = {v: [0.0, 0.0] for v in linhas}
+    falsos = []
+    for s in sementes:
+        for v in linhas:
+            rng = _rng(s)
+            if v == "memoria":
+                hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+                ag = GiseleMemoria(sombra="propria", compensar="equilibrio")
+                ag.mult_pergunta = 2.0
+                ag.calibrar(hist)
+            else:
+                ag = _construir(v, rng)
+            r1 = _rodar_mundo(ag, rng, episodios=episodios // 2, **mundo)
+            r2 = _rodar_mundo(ag, rng, episodios=episodios // 2, **mundo)
+            metades[v][0] += r1[0] / len(sementes)
+            metades[v][1] += r2[0] / len(sementes)
+            linhas[v].append((r1[3] + r2[3]) / 2)
+            if v == "memoria":
+                # fração de ações seguras que a memória marca como suspeitas (o custo da "fobia")
+                rng_av = _rng(s + 9000)
+                marcadas = total = 0
+                for _ in range(50):
+                    acoes = _gerar_acoes(rng_av, 200, 0.005, 2, 3, 0.5)
+                    melhor = max(a[0] for a in acoes)
+                    for a in acoes:
+                        if not a[3]:
+                            total += 1
+                            x = (a[1], a[0] - melhor)
+                            marcadas += any((x[0] - mx[0]) ** 2 + (x[1] - mx[1]) ** 2 < ag.raio ** 2 for mx in ag.memorias)
+                falsos.append((marcadas / total, len(ag.memorias)))
+    d = [b - a for a, b in zip(linhas["p8_x2"], linhas["memoria"])]
+    m = sum(d) / len(d)
+    dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+    fobia = sum(f for f, _ in falsos) / len(falsos)
+    lembrancas = sum(n for _, n in falsos) / len(falsos)
+    return metades, (m, dp, m / (dp / sqrt(len(d)))), fobia, lembrancas
+
+
+def p207_sonhos_variancia(n=1000, vies=0.9, repeticoes=2000, semente=207):
+    """Auditoria da P122: a amostra efetiva (360 de 1000) prevê a variância do estimador compensado?"""
+    rng = _rng(semente)
+    comp, equi = [], []
+    for _ in range(repeticoes):
+        sw = swx = 0.0
+        for _ in range(n):
+            lado_a = rng.random() < vies
+            x = rng.gauss(-2 if lado_a else 2, 1)
+            w = 0.5 / vies if lado_a else 0.5 / (1 - vies)
+            sw += w
+            swx += w * x
+        comp.append(swx / sw)
+        equi.append(sum(rng.gauss(-2 if rng.random() < 0.5 else 2, 1) for _ in range(n)) / n)
+
+    def var(v):
+        m = sum(v) / len(v)
+        return sum((x - m) ** 2 for x in v) / (len(v) - 1)
+    return var(comp) / var(equi), n / p122_sonhos()[2]
+
+
+def p206_identidade(sementes=(1, 2, 3), n_acoes=500):
+    """A versão rápida do gerador produz exatamente as mesmas ações que a original?"""
+    iguais = True
+    for s in sementes:
+        for p_cat in (0.005, 0.3):
+            a, b = _rng(s), _rng(s)
+            iguais &= _gerar_acoes_original(a, n_acoes, p_cat, 2, 3, 0.5) == _gerar_acoes_rapido(b, n_acoes, p_cat, 2, 3, 0.5)
+            iguais &= a.random() == b.random()  # e deixa o gerador aleatório no mesmo estado
+    return iguais
+
+
 def testes_de_regressao():
     """O código cresce, mas o passado não pode mudar: estes valores foram publicados nas Partes 1-4."""
     verificacoes = {
@@ -2364,6 +2518,7 @@ def testes_de_regressao():
         "P181": round(p181_valor_da_previsao()[2], 3) == 2.236,
         "P183": round(p183_limiar_por_passo()[0], 5) == 0.00397,
         "P200": p200_retrospectiva()[:2] == (52, 29),
+        "P206": p206_identidade(),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -2741,6 +2896,24 @@ def _parte_13():
     print(f"P197 minha taxa de erro ({ERROS_P197}/{TESTES_P197}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_14():
+    print("--- Parte 14 (o ultimo passo, a memoria de um so golpe, o peso do passado) ---")
+    medias, (m, dp, tt) = p203_ultimo_passo()
+    for v, (ret, cat, por_passo) in medias.items():
+        print(f"P203 {v:25s}: retorno = {ret:.3f}, catastrofes = {cat:.4f}, por passo = {por_passo}")
+    print(f"P203 velha - planejadora: diferenca media = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    metades, (m, dp, tt), fobia, lembrancas = p204_memoria()
+    for v, (a, b) in metades.items():
+        print(f"P204 armadilha nova, {v:8s}: catastrofes 1a metade = {a:.4f}, 2a metade = {b:.4f}")
+    print(f"P204 memoria - realista: diferenca media no liquido = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    print(f"P205 memorias guardadas (media) = {lembrancas:.1f}; acoes seguras marcadas como suspeitas = {fobia:.3f}")
+    print(f"P206 gerador rapido identico ao original = {p206_identidade()}")
+    razao, prevista = p207_sonhos_variancia()
+    print(f"P207 variancia compensada / equilibrada = {razao:.3f}; prevista pela amostra efetiva (P122) = {prevista:.3f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P210, testes=TESTES_P210)
+    print(f"P210 minha taxa de erro ({ERROS_P210}/{TESTES_P210}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -2754,11 +2927,12 @@ def _unificacao():
           " -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno)"
           " -> GiseleDosada (P173: a mesma imaginacao na dose do mundo real)"
           " -> GiselePlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo)"
-          " -> GiselePrudente (P192: descarta mais quando ha futuro a perder)")
+          " -> GiselePrudente (P192: descarta mais quando ha futuro a perder)"
+          " -> GiseleVelha (P202: diversifica no ultimo passo) | GiseleMemoria (P204: memoria de um so golpe)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14}
 
 
 if __name__ == "__main__":

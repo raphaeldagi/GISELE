@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 13: o canal da cautela, a transferência e a pergunta 200
 
-> Continuação da [Parte 12](ASI_AGI_parte12_funcao_auxiliar.md). Os números saem de `p192_...`, `p193_...`, `p200_...` e da
+> Continuação da [Parte 12](ASI_AGI_parte12_funcao_auxiliar.md). **Próxima:** [Parte 14 — o último passo](ASI_AGI_parte14_ultimo_passo.md) (P201–P211). Os números saem de `p192_...`, `p193_...`, `p200_...` e da
 > classe `GiselePrudente` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
