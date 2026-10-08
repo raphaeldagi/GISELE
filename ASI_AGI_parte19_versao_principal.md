@@ -157,7 +157,8 @@ Acumulado: **39 de 78** afirmações testadas precisaram de correção. Posterio
   **`SynthaiVelhaAtenta`** (P253).
 - Uma correção de código: a `SynthaiAtenta` usava `super()`, o que impedia o reuso do método pela `SynthaiVelhaAtenta`. Agora chama o sentido
   explicitamente; o comportamento da `SynthaiAtenta` não muda.
-- Testes de regressão: contagem em `resultados.txt`.
+- Testes de regressão: **48/48** reproduzidos; o arquivo tem **154** funções `pNN`. Execução completa (19 partes): 20 min 10 s, com as
+  Partes 1–14 idênticas à execução anterior, exceto o nome do agente nos rótulos.
 
 ### P260. Metacognição da Parte 19
 

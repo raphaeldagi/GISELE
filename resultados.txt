@@ -90,12 +90,12 @@ P91 medias (A, B): originais = (3.0, 3.0), ao cubo = (63.0, 27.0), raiz = (1.618
 P92 ganho (certo, aposta) = (200, 200.0); perda = (-400, -400)
 P93 estereoisomeros com 10 centros quirais = 1024
 P94 4 salvaguardas independentes, 50 anos: 2.60e-07 (uma so: 0.05)
-P85 GISELE rho_cego=0.0 diverso=False: catastrofes = 0.0015, valor = 1.948, perguntas/episodio = 0.485, liquido (com custo das perguntas) = 1.825
-P85 GISELE rho_cego=0.0 diverso=True : catastrofes = 0.0005, valor = 1.962, perguntas/episodio = 0.493, liquido (com custo das perguntas) = 1.888
-P85 GISELE rho_cego=0.5 diverso=False: catastrofes = 0.0065, valor = 1.966, perguntas/episodio = 0.946, liquido (com custo das perguntas) = 1.546
-P85 GISELE rho_cego=0.5 diverso=True : catastrofes = 0.0045, valor = 1.976, perguntas/episodio = 0.893, liquido (com custo das perguntas) = 1.661
-P85 GISELE mundo mudado (bonus 1.5): catastrofes = 0.0010, perguntas = 0.510, liquido = 1.862
-P85 GISELE mundo mudado (bonus 6.0): catastrofes = 0.0005, perguntas = 0.392, liquido = 1.897
+P85 SYNTHAI rho_cego=0.0 diverso=False: catastrofes = 0.0015, valor = 1.948, perguntas/episodio = 0.485, liquido (com custo das perguntas) = 1.825
+P85 SYNTHAI rho_cego=0.0 diverso=True : catastrofes = 0.0005, valor = 1.962, perguntas/episodio = 0.493, liquido (com custo das perguntas) = 1.888
+P85 SYNTHAI rho_cego=0.5 diverso=False: catastrofes = 0.0065, valor = 1.966, perguntas/episodio = 0.946, liquido (com custo das perguntas) = 1.546
+P85 SYNTHAI rho_cego=0.5 diverso=True : catastrofes = 0.0045, valor = 1.976, perguntas/episodio = 0.893, liquido (com custo das perguntas) = 1.661
+P85 SYNTHAI mundo mudado (bonus 1.5): catastrofes = 0.0010, perguntas = 0.510, liquido = 1.862
+P85 SYNTHAI mundo mudado (bonus 6.0): catastrofes = 0.0005, perguntas = 0.392, liquido = 1.897
 P85 referencia Parte 4 'completo' (rho 0): liquido com custo das consultas = 1.575
 P85 referencia Parte 4 'completo' (rho 0.5): liquido com custo das consultas = -0.563
 P95 minha taxa de erro (6/12): media = 0.50, intervalo 90% = [0.29, 0.71]
@@ -114,19 +114,19 @@ P107 melhor acuracia em 2D = 0.75, com x1*x2 = 1.0
 P108 R(d) maximo em d = 2.0, muda de sinal em d = 4.0, R(d = 5) = -1.25
 P109 aniversario repetido entre 23 = 0.507; algum p<0.05 em 50 testes = 0.923
 P110 distancia ao centro apos 20 passos de contracao 0.5 = 9.54e-06
-P112 semente 112 gisele     : catastrofes = 0.0275, valor = 1.932, perguntas = 1.641, liquido = 0.393, erro humano final = 0.450
+P112 semente 112 synthai    : catastrofes = 0.0275, valor = 1.932, perguntas = 1.641, liquido = 0.393, erro humano final = 0.450
 P112 semente 112 sombra_tudo: catastrofes = 0.0295, valor = 1.921, perguntas = 1.848, liquido = 0.262, erro humano final = 0.450
 P112 semente 112 descartar  : catastrofes = 0.0010, valor = 0.811, perguntas = 0.000, liquido = 0.761, erro humano final = 0.100
 P112 semente 112 jung_v1    : catastrofes = 0.0015, valor = 0.810, perguntas = 0.000, liquido = 0.735, erro humano final = 0.100
 P112 semente 112 equilibrio : catastrofes = 0.0020, valor = 1.166, perguntas = 0.312, liquido = 1.035, erro humano final = 0.195
 P112 semente 112 jung_v2    : catastrofes = 0.0035, valor = 1.402, perguntas = 0.310, liquido = 1.196, erro humano final = 0.188
-P112 semente 113 gisele     : catastrofes = 0.0260, valor = 1.935, perguntas = 1.533, liquido = 0.482, erro humano final = 0.450
+P112 semente 113 synthai    : catastrofes = 0.0260, valor = 1.935, perguntas = 1.533, liquido = 0.482, erro humano final = 0.450
 P112 semente 113 sombra_tudo: catastrofes = 0.0330, valor = 1.925, perguntas = 1.827, liquido = 0.092, erro humano final = 0.450
 P112 semente 113 descartar  : catastrofes = 0.0020, valor = 0.956, perguntas = 0.000, liquido = 0.856, erro humano final = 0.100
 P112 semente 113 jung_v1    : catastrofes = 0.0020, valor = 0.982, perguntas = 0.000, liquido = 0.882, erro humano final = 0.100
 P112 semente 113 equilibrio : catastrofes = 0.0070, valor = 1.275, perguntas = 0.311, liquido = 0.894, erro humano final = 0.200
 P112 semente 113 jung_v2    : catastrofes = 0.0050, valor = 1.448, perguntas = 0.310, liquido = 1.167, erro humano final = 0.186
-P112 sem fadiga gisele  : catastrofes = 0.0045, perguntas = 1.079, liquido = 1.642
+P112 sem fadiga synthai : catastrofes = 0.0045, perguntas = 1.079, liquido = 1.642
 P112 sem fadiga jung_v2 : catastrofes = 0.0040, perguntas = 0.311, liquido = 1.107
 P113 minha taxa de erro (10/19): media = 0.52, intervalo 90% = [0.35, 0.70]
 --- Parte 7 (Jung mais fundo: segunda ordem, alquimia, anima, Si-mesmo) ---
@@ -211,7 +211,7 @@ P137 arrependimento (limiar, exposicao) = {(0.2, 0.0): 1000, (0.5, 0.0): 1000, (
 P138 objetivo inferido errado: humano Boltzmann = 0.178, humano com vies de seguranca = 0.590
 P139 minha taxa de erro (17/30): media = 0.56, intervalo 90% = [0.42, 0.70]
 --- Parte 9 (o mundo decide o centro, complexo autonomo, transferencia, heroi, a regua do ruido) ---
-P143 pedido = 8 caracteres; memoria compartilhada (CLAUDE.md) = 3136; razao = 392x
+P143 pedido = 8 caracteres; memoria compartilhada (CLAUDE.md) = 3627; razao = 453x
 P144 taxa de catastrofe 0.0025: liquido por carga-alvo = {0.1: 1.168, 0.2: 1.446, 0.3: 1.354, 0.5: 1.35, 0.8: 1.323}
 P144 taxa de catastrofe 0.005: liquido por carga-alvo = {0.1: 1.347, 0.2: 1.343, 0.3: 1.181, 0.5: 1.27, 0.8: 1.04}
 P144 taxa de catastrofe 0.01: liquido por carga-alvo = {0.1: 0.829, 0.2: 0.879, 0.3: 1.116, 0.5: 1.0, 0.8: 0.582}
@@ -233,16 +233,16 @@ P148 consultas para a destilacao compensar = 15873
 P149 horizonte da imaginacao por erro do modelo = {0.01: 40.75, 0.05: 8.31, 0.1: 4.25}
 P150 (k otimo simulado, -1/ln(gamma) - 1) = {0.5: (0, 0.44), 0.9: (8, 8.49), 0.99: (98, 98.5)}
 P151 passos ate convergir: gradiente comum = 343, natural = 13
-P152 GISELE realista em 10 sementes novas: media = 1.178, dp = 0.166
+P152 SYNTHAI realista em 10 sementes novas: media = 1.178, dp = 0.166
 P152 diferenca pareada carga 0.3 - carga 0.2: media = -0.046, dp = 0.198, t = -0.73
 P152 diferenca pareada P* x2 - P* x1: media = 0.132, dp = 0.196, t = 2.13
 P153 minha taxa de erro (21/37): media = 0.56, intervalo 90% = [0.43, 0.69]
 --- Parte 10 (rumo a AGI: Upsilon, trajetoria, funcao inferior, complementaridade) ---
-P157 p5_gisele   : liquido medio (10 sementes) = 0.321, dp = 0.301
+P157 p5_synthai  : liquido medio (10 sementes) = 0.321, dp = 0.301
 P157 p7_anima    : liquido medio (10 sementes) = 1.084, dp = 0.097
 P157 p8_x2       : liquido medio (10 sementes) = 1.241, dp = 0.088
 P157 p9_ancorada : liquido medio (10 sementes) = 1.128, dp = 0.078
-P157 passo p5_gisele->p7_anima: diferenca media = 0.764, dp = 0.330, t = 7.33
+P157 passo p5_synthai->p7_anima: diferenca media = 0.764, dp = 0.330, t = 7.33
 P157 passo p7_anima->p8_x2: diferenca media = 0.157, dp = 0.145, t = 3.42
 P157 passo p8_x2->p9_ancorada: diferenca media = -0.113, dp = 0.138, t = -2.58
 P163 razao entre ganhos sucessivos = [0.205, -0.721]
@@ -258,7 +258,7 @@ P158 humano fragil         : {'maximizar': -4.015, 'quantilizar': -0.424, 'p8_x2
 P158 discreta + cego total : {'maximizar': 0.269, 'quantilizar': 0.366, 'p8_x2': 0.327, 'p10_intuitiva': 0.288}
 P159 catastrofes = {'conhecida': 0.0043, 'nova': 0.0075, 'nova, ja vista no treino': 0.0048, 'taxa base': 0.005}
 P160 variancia x perturbacao = 1.91e-05 (nao depende de n); auditorias otimas = 112; erro total = 0.0505
-P161 entropia do perfil da GISELE = 1.561 de 2 bits; funcao inferior = intuicao
+P161 entropia do perfil da SYNTHAI = 1.561 de 2 bits; funcao inferior = intuicao
 P162 base: catastrofes = {'p8_x2': 0.005, 'p10_intuitiva': 0.0027}
 P162 base, perda 50: intuitiva - realista = -0.253, dp = 0.259, t = -3.08
 P162 base, perda 500: intuitiva - realista = 0.782, dp = 1.943, t = 1.27
@@ -267,9 +267,9 @@ P162 armadilha nova, perda 50: intuitiva - realista = -0.237, dp = 0.276, t = -2
 P162 armadilha nova, perda 500: intuitiva - realista = 1.563, dp = 2.101, t = 2.35
 P164 minha taxa de erro (24/43): media = 0.56, intervalo 90% = [0.43, 0.67]
 --- Parte 11 (tivemos avanco rumo a AGI/ASI?) ---
-P168 Upsilon por versao da linhagem = {'p5_gisele': 0.287, 'p7_anima': 0.414, 'p8_x2': 0.465, 'p9_ancorada': 0.449, 'p10_intuitiva': 0.409, 'p11_dosada': 0.486}
+P168 Upsilon por versao da linhagem = {'p5_synthai': 0.287, 'p7_anima': 0.414, 'p8_x2': 0.465, 'p9_ancorada': 0.449, 'p10_intuitiva': 0.409, 'p11_dosada': 0.486}
 P169 K(familia de mundos) <= 6896 bits (codigo comprimido); peso no Upsilon universal ~ 10^-2076
-P170 capacidades de AGI cobertas pela GISELE = 3 de 12 (25%)
+P170 capacidades de AGI cobertas pela SYNTHAI = 3 de 12 (25%)
 P170   [x] decidir sob incerteza com supervisao humana (P83-P162)
 P170   [x] calibrar a propria confianca (P43, P83)
 P170   [x] generalizar para variacoes do mesmo mundo (P158)
@@ -320,10 +320,10 @@ P192 prudente                 : retorno = 20.059, catastrofes = 0.0170, por pass
 P192 prudente - planejadora: diferenca media = 0.015, dp = 0.067, t = 0.72
 P194 ucb         : retorno por rodada = -17.11, catastrofes por rodada = 4.315, perguntas = 0.00
 P194 ucb_excluir : retorno por rodada = 9.29, catastrofes por rodada = 3.765, perguntas = 0.00
-P194 ucb_gisele  : retorno por rodada = 94.78, catastrofes por rodada = 1.825, perguntas = 2.56
+P194 ucb_synthai : retorno por rodada = 94.78, catastrofes por rodada = 1.825, perguntas = 2.56
 P194 ucb_oraculo : retorno por rodada = 178.66, catastrofes por rodada = 0.000, perguntas = 0.00
-P194 ucb_gisele - ucb: diferenca media = 111.89, dp = 29.54, t = 11.98
-P194 ucb_gisele - ucb_excluir: diferenca media = 85.49, dp = 28.51, t = 9.48
+P194 ucb_synthai - ucb: diferenca media = 111.89, dp = 29.54, t = 11.98
+P194 ucb_synthai - ucb_excluir: diferenca media = 85.49, dp = 28.51, t = 9.48
 P200 Partes 3-12: 52 afirmacoes testadas, 29 corrigidas, 23 certas de primeira (44%)
 P197 minha taxa de erro (31/55): media = 0.56, intervalo 90% = [0.45, 0.67]
 --- Parte 14 (o ultimo passo, a memoria de um so golpe, o peso do passado) ---
@@ -337,7 +337,72 @@ P205 memorias guardadas (media) = 147.1; acoes seguras marcadas como suspeitas =
 P206 gerador rapido identico ao original = True
 P207 variancia compensada / equilibrada = 2.747; prevista pela amostra efetiva (P122) = 2.777
 P210 minha taxa de erro (32/58): media = 0.55, intervalo 90% = [0.44, 0.65]
+--- Parte 15 (SYNTHAI: o nome, a memoria que esquece, a sintese dos modulos) ---
+P213 classes renomeadas = 18; nomes antigos continuam como apelidos = True; regressao apos a troca = 48/48
+P214 armadilha nova, p8_x2     : catastrofes 1a metade = 0.0077, 2a metade = 0.0082
+P214 armadilha nova, memoria_v2: catastrofes 1a metade = 0.0078, 2a metade = 0.0076
+P214 memoria v2 - realista: diferenca media no liquido = -0.140, dp = 0.195, t = -2.26
+P214 memorias vivas ao fim (media) = 7.6; acoes seguras marcadas como suspeitas = 0.106
+P215 AUC da calibracao (0.5 = acaso): armadilha conhecida = 0.913, armadilha nova = 0.748
+P216 normal: catastrofes = {'velha': 0.014, 'integral': 0.0152}; integral - velha = 0.259, dp = 0.728, t = 1.12
+P216 armadilha nova: catastrofes = {'velha': 0.0198, 'integral': 0.0253}; integral - velha = -0.057, dp = 0.844, t = -0.21
+P218 punicao 9: inspecao aprendida = 0.1009, trapaca aprendida = 0.0091
+P218 punicao 99: inspecao aprendida = 0.0130, trapaca aprendida = 0.0096
+P218 equilibrio teorico (P77, punicao 9) = inspecao 0.10, trapaca 0.01
+P219 minha taxa de erro (34/62): media = 0.55, intervalo 90% = [0.44, 0.65]
+--- Parte 16 (um sentido novo) ---
+P223 d' atual = 0.945; com o sensor (d' = 1) = 1.376; AUC prevista = 0.835; AUC do sensor sozinho = 0.760
+P224 salvaguardas independentes: formula = 0.00596, simulado = 0.00617; estagios em ordem: formula = 0.00115, simulado = 0.00117; formula usada na P94 = 0.00133
+P224 numero da P94 corrigido (4 salvaguardas, 50 anos) = 5.66e-06 (publicado: 2.60e-07)
+P225 base: catastrofes = {'p8_x2': 0.00535, 'sentidos': 0.005}; sentidos - realista = 0.168, dp = 0.118, t = 4.50
+P225 armadilha nova: catastrofes = {'p8_x2': 0.0075, 'sentidos': 0.00575}; sentidos - realista = 0.393, dp = 0.228, t = 5.45
+P226 AUC com o sentido novo: armadilha conhecida = 0.929, armadilha nova = 0.806
+P227 armadilha nova, mundo sequencial, velha         : retorno = 18.647, catastrofes = 0.0263
+P227 armadilha nova, mundo sequencial, velha_sentidos: retorno = 19.309, catastrofes = 0.0212
+P227 velha com sentido - velha: diferenca media = 0.662, dp = 0.752, t = 2.79
+P230 minha taxa de erro (37/67): media = 0.55, intervalo 90% = [0.45, 0.65]
+--- Parte 17 (quanto vale perceber, e onde olhar) ---
+P233 Upsilon na familia de 9 mundos = {'p8_x2': 0.465, 'p16_sentidos': 0.547}
+P233 p8_x2: Upsilon em 20 mundos sorteados = 0.453 (dp 0.131, pior mundo 0.167)
+P233 p16_sentidos: Upsilon em 20 mundos sorteados = 0.545 (dp 0.125, pior mundo 0.275)
+P234 sensor d' = 0.5: ganho no liquido = 0.129 (dp 0.362, t = 1.13); catastrofes 0.0077 -> 0.0068; AUC prevista = 0.775
+P234 sensor d' = 1.0: ganho no liquido = 0.360 (dp 0.381, t = 2.99); catastrofes 0.0077 -> 0.0055; AUC prevista = 0.835
+P234 sensor d' = 2.0: ganho no liquido = 0.699 (dp 0.251, t = 8.82); catastrofes 0.0077 -> 0.0035; AUC prevista = 0.941
+P235 ganho sobre a realista, ja descontado o custo das leituras: ler todas = 0.014, ler so as 10% melhores = 0.315
+P235 seletiva - todas: diferenca media = 0.301, dp = 0.188, t = 5.08
+P237 ponto cego do verificador 0%: corrigivel apos 1000 modificacoes = 0.905 (teoria), 0.913 (simulado)
+P237 ponto cego do verificador 1%: corrigivel apos 1000 modificacoes = 0.820 (teoria), 0.821 (simulado)
+P237 ponto cego do verificador 10%: corrigivel apos 1000 modificacoes = 0.336 (teoria), 0.338 (simulado)
+P239 minha taxa de erro (37/71): media = 0.52, intervalo 90% = [0.42, 0.62]
+--- Parte 18 (a linguagem como canal) ---
+P242 informacao por resposta (prior 0.1, erro 0.1): veto binario = 0.211 bit; quatro palavras = 0.106 bit; razao = 0.50
+P245 binario        : catastrofes = 0.0052, perguntas = 0.309, liquido = 1.281
+P245 fala_aprendida : catastrofes = 0.0021, perguntas = 0.310, liquido = 1.079
+P245 fala_conhecida : catastrofes = 0.0043, perguntas = 0.310, liquido = 1.161
+P245 fala_aprendida - binario: diferenca media = -0.202, dp = 0.136, t = -4.71
+P245 fala_conhecida - binario: diferenca media = -0.120, dp = 0.149, t = -2.55
+P244 P(catastrofe | 'seguro'): aprendido = 0.040; suposto com prior 0.1 = 0.009
+P244 P(catastrofe | 'acho que ok'): aprendido = 0.042; suposto com prior 0.1 = 0.043
+P244 P(catastrofe | 'desconfio'): aprendido = 0.084; suposto com prior 0.1 = 0.217
+P244 P(catastrofe | 'perigo'): aprendido = 0.176; suposto com prior 0.1 = 0.571
+P247 z>2: achados = 4.215 (teoria 4.207), falsos = 2.156 (teoria 2.161)
+P247 Bonferroni: achados = 1.939 (teoria 1.929), falsos = 0.050 (teoria 0.047)
+P249 minha taxa de erro (37/73): media = 0.51, intervalo 90% = [0.41, 0.60]
+--- Parte 19 (a palavra precisa, a versao principal e a trajetoria inteira) ---
+P252 informacao por resposta: veto binario = 0.211 bit; quatro palavras precisas = 0.192 bit; razao = 0.91
+P252 binario : catastrofes = 0.0052, liquido = 1.283
+P252 precisa : catastrofes = 0.0041, liquido = 1.224
+P252 precisa - binario: diferenca media = -0.059, dp = 0.129, t = -1.45
+P253 velha         : retorno (ja descontadas as leituras) = 18.022, catastrofes = 0.0258
+P253 sentido_tudo  : retorno (ja descontadas as leituras) = 18.907, catastrofes = 0.0185
+P253 sentido_atento: retorno (ja descontadas as leituras) = 19.012, catastrofes = 0.0200
+P253 sentido_tudo - velha: diferenca media = 0.886, dp = 0.677, t = 4.13
+P253 sentido_atento - velha: diferenca media = 0.990, dp = 0.970, t = 3.23
+P254 teto do Upsilon ajustado nas Partes 5-11 = 0.455 (r = 0.43, erro 0.024); com a Parte 17 = 0.535 (r = 0.76, erro 0.030); Upsilon com o sentido novo = 0.547
+P255 modulos por funcao de Jung = {'sensacao': 4, 'pensamento': 3, 'sentimento': 4, 'intuicao': 2}; entropia = 1.950 de 2 bits (P161: 1.561)
+P256 R2 da quarta funcao: simulado = 0.1685, formula da P121 = 0.1688
+P258 minha taxa de erro (39/78): media = 0.50, intervalo 90% = [0.41, 0.59]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 132; pares de interacao possiveis = 8646
-Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga) -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> GiseleDosada (P173: a mesma imaginacao na dose do mundo real) -> GiselePlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> GiselePrudente (P192: descarta mais quando ha futuro a perder) -> GiseleVelha (P202: diversifica no ultimo passo) | GiseleMemoria (P204: memoria de um so golpe)
-Regressao: 42/42 resultados publicados reproduzidos; falhas = []
+P96 funcoes pNN no arquivo = 154; pares de interacao possiveis = 11781
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva)
+Regressao: 48/48 resultados publicados reproduzidos; falhas = []
