@@ -2003,7 +2003,7 @@ class GiselePlanejadora(GiseleAnima):
 
 def _rodar_sequencial(agente, rng, episodios=400, planeja=True, mundo=None):
     """Mundo sequencial: retorno = soma de (valor da ação + nível); catástrofe custa `perda` e encerra."""
-    m = dict(MUNDO_BASE, **MUNDO_SEQUENCIAL, **(mundo or {}))
+    m = {**MUNDO_BASE, **MUNDO_SEQUENCIAL, **(mundo or {})}
     carga = 0.0
     retorno = cats = perguntas = 0.0
     cats_por_passo = [0] * m["passos"]
