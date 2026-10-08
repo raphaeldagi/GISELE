@@ -1,4 +1,4 @@
-"""Reproduz os cálculos e simulações das Partes 1 a 10 (ASI_AGI_*.md).
+"""Reproduz os cálculos e simulações das Partes 1 a 11 (ASI_AGI_*.md).
 
 Arquivo único que sempre cresce: cada parte acrescenta funções pNN_..., o agente
 unificado `Gisele` incorpora os módulos anteriores e `testes_de_regressao` garante que
@@ -1707,6 +1707,16 @@ def _construir(versao, rng, treino=30, mundo_treino=None):
         ag.mult_pergunta = 2.0
         ag.calibrar(hist + imaginados)
         return ag
+    if versao == "p11_dosada":
+        # P173 (pré-registrado na P162): a mesma imaginação, mas na dose do mundo real (taxa 0,5%, não 2%)
+        imaginados = []
+        for bonus, rho in ((1.0, 1.0), (1.0, 0.5), (6.0, 0.5)):
+            imaginados += [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], rho, bonus)
+                           for _ in range(20)]
+        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+        ag.mult_pergunta = 2.0
+        ag.calibrar(hist + imaginados)
+        return ag
     if versao == "p5_gisele":
         ag = GiseleJung(sombra="nao", compensar="nao")
     elif versao == "p7_anima":
@@ -1850,6 +1860,108 @@ def p162_intuicao(sementes=tuple(range(320, 330)), episodios=1000):
     return resultado
 
 
+# --- Parte 11: tivemos avanço rumo à AGI/ASI? ---
+
+# Placar acumulado ao fim da Parte 11 (atualizado quando os testes da parte terminam)
+ERROS_P176, TESTES_P176 = 24, 43
+
+
+def p168_upsilon_trajetoria(versoes=("p5_gisele", "p7_anima", "p8_x2", "p9_ancorada", "p10_intuitiva", "p11_dosada"),
+                            sementes=(158, 159, 160), episodios=1000, bits_por_mudanca=3):
+    """Υ de cada versão da linhagem na família de 9 mundos da P158 (mesmas sementes e normalização)."""
+    refs = {}
+    for nome, (mudancas, _) in MUNDOS_UPSILON.items():
+        for s in sementes:
+            for a in ("acaso", "oraculo"):
+                rng = _rng(s)
+                refs[(nome, s, a)] = _rodar_mundo(_construir(a, rng), rng, episodios=episodios, **mudancas)[3]
+    upsilon = {}
+    for v in versoes:
+        total = soma_pesos = 0.0
+        for nome, (mudancas, k) in MUNDOS_UPSILON.items():
+            peso = 2.0 ** (-bits_por_mudanca * k)
+            nota = 0.0
+            for s in sementes:
+                rng = _rng(s)
+                liq = _rodar_mundo(_construir(v, rng), rng, episodios=episodios, **mudancas)[3]
+                nota += (liq - refs[(nome, s, "acaso")]) / (refs[(nome, s, "oraculo")] - refs[(nome, s, "acaso")])
+            total += peso * nota / len(sementes)
+            soma_pesos += peso
+        upsilon[v] = total / soma_pesos
+    return upsilon
+
+
+def p169_peso_da_familia():
+    """Que fração do Υ universal (P1) a família de mundos cobre? K(família) <= bits do código comprimido."""
+    import inspect
+    import zlib
+    fontes = "".join(inspect.getsource(f) for f in (_gerar_acoes, _rodar_mundo)) + repr(MUNDO_BASE) + repr(MUNDOS_UPSILON)
+    bits = 8 * len(zlib.compress(fontes.encode("utf-8"), 9))
+    return bits, -bits * log(2) / log(10)  # K em bits e log10 do peso 2^-K
+
+
+CAPACIDADES_AGI = (
+    # (capacidade, a GISELE tem?, onde na série)
+    ("decidir sob incerteza com supervisao humana", True, "P83-P162"),
+    ("calibrar a propria confianca", True, "P43, P83"),
+    ("generalizar para variacoes do mesmo mundo", True, "P158"),
+    ("linguagem natural", False, "-"),
+    ("percepcao (visao, audio)", False, "-"),
+    ("aprender tarefas novas de tipo diferente", False, "-"),
+    ("planejar em varios passos", False, "-"),
+    ("modelo causal do mundo", False, "-"),
+    ("memoria de longo prazo aberta", False, "-"),
+    ("usar ferramentas / agir no mundo real", False, "-"),
+    ("raciocinio matematico e cientifico", False, "-"),
+    ("melhorar o proprio codigo", False, "-"),
+)
+
+
+def p170_lista_de_capacidades():
+    tem = sum(1 for _, ok, _ in CAPACIDADES_AGI if ok)
+    return tem, len(CAPACIDADES_AGI), tem / len(CAPACIDADES_AGI)
+
+
+def p171_lacuna_de_compute(segundos=1800.0, flops_cpu=1e9, flops_fronteira=1e27):
+    """Compute de toda a série (estimativa) vs um treino de fronteira (P3): ordens de grandeza de diferença."""
+    usado = segundos * flops_cpu
+    return usado, log(flops_fronteira / usado) / log(10)
+
+
+def p172_minha_precisao(placar=((2, 5), (4, 7), (1, 2), (3, 5), (4, 6), (3, 5), (4, 7), (3, 6))):
+    """P130 de novo, agora com as Partes 3 a 10: a minha taxa de erro mudou?"""
+    return p130_estacionariedade(placar)
+
+
+def p173_dosada(sementes=tuple(range(330, 340)), episodios=1000):
+    """Pré-registrado na P162: imaginar com a taxa real de catástrofe (0,5%) em vez de 2%."""
+    resultado = {}
+    for nome, mundo in (("base", {}), ("armadilha nova", {"bonus": 1.0, "rho_cego": 1.0})):
+        linhas = {"p8_x2": [], "p10_intuitiva": [], "p11_dosada": []}
+        for s in sementes:
+            for v in linhas:
+                rng = _rng(s)
+                linhas[v].append(_rodar_mundo(_construir(v, rng), rng, episodios=episodios, **mundo))
+        cat = {v: sum(r[0] for r in rs) / len(rs) for v, rs in linhas.items()}
+        difs = {}
+        for outra in ("p8_x2", "p10_intuitiva"):
+            for perda in (50, 500):
+                dif = [(b[3] - (perda - 50) * b[0]) - (a[3] - (perda - 50) * a[0])
+                       for a, b in zip(linhas[outra], linhas["p11_dosada"])]
+                m = sum(dif) / len(dif)
+                dp = sqrt(sum((x - m) ** 2 for x in dif) / (len(dif) - 1))
+                difs[(outra, perda)] = (m, dp, m / (dp / sqrt(len(dif))))
+        resultado[nome] = (cat, difs)
+    return resultado
+
+
+def p174_completude(upsilon, peso_log10, cobertura):
+    """Jung: completude (Vollständigkeit) não é perfeição (Vollkommenheit).
+
+    Υ na família (quanto da perfeição local) vs cobertura de capacidades (quanto da totalidade)."""
+    return upsilon, cobertura, peso_log10
+
+
 def testes_de_regressao():
     """O código cresce, mas o passado não pode mudar: estes valores foram publicados nas Partes 1-4."""
     verificacoes = {
@@ -1887,6 +1999,10 @@ def testes_de_regressao():
         "P160": round(p160_complementaridade()[1]) == 112,
         "P161": round(p161_quatro_funcoes()[0], 3) == 1.561,
         "P163": [round(r, 2) for r in p163_minha_decolagem([0.764, 0.157, -0.113])] == [0.21, -0.72],
+        "P169": p169_peso_da_familia()[0] == 6896,
+        "P170": p170_lista_de_capacidades()[:2] == (3, 12),
+        "P171": round(p171_lacuna_de_compute()[1], 1) == 14.7,
+        "P172": round(p172_minha_precisao()[2], 2) == 0.99,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -2198,6 +2314,29 @@ def _parte_10():
     print(f"P164 minha taxa de erro (24/43): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_11():
+    print("--- Parte 11 (tivemos avanco rumo a AGI/ASI?) ---")
+    upsilon = p168_upsilon_trajetoria()
+    print(f"P168 Upsilon por versao da linhagem = { {v: round(u, 3) for v, u in upsilon.items()} }")
+    bits, log10_peso = p169_peso_da_familia()
+    print(f"P169 K(familia de mundos) <= {bits} bits (codigo comprimido); peso no Upsilon universal ~ 10^{log10_peso:.0f}")
+    tem, total, frac = p170_lista_de_capacidades()
+    print(f"P170 capacidades de AGI cobertas pela GISELE = {tem} de {total} ({frac:.0%})")
+    for nome, ok, onde in CAPACIDADES_AGI:
+        print(f"P170   [{'x' if ok else ' '}] {nome} ({onde})")
+    usado, ordens = p171_lacuna_de_compute()
+    print(f"P171 compute de uma execucao completa ~ {usado:.1e} FLOP; lacuna para a fronteira = {ordens:.1f} ordens de grandeza")
+    taxas, qui2, pval, incl = p172_minha_precisao()
+    print(f"P172 minha taxa de erro por parte (3 a 10) = {[round(x, 3) for x in taxas]}; inclinacao = {incl:.3f}/parte; "
+          f"qui2 = {qui2:.3f}, p = {pval:.3f}")
+    for mundo, (cat, difs) in p173_dosada().items():
+        print(f"P173 {mundo}: catastrofes = { {k: round(v, 4) for k, v in cat.items()} }")
+        for (outra, perda), (m, dp, tt) in difs.items():
+            print(f"P173 {mundo}, perda {perda}: dosada - {outra} = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P176, testes=TESTES_P176)
+    print(f"P176 minha taxa de erro ({ERROS_P176}/{TESTES_P176}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -2208,11 +2347,12 @@ def _unificacao():
           " -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga)"
           " -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2)"
           " -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca)"
-          " -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno)")
+          " -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno)"
+          " -> GiseleDosada (P173: a mesma imaginacao na dose do mundo real)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11}
 
 
 if __name__ == "__main__":
