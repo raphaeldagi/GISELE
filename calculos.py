@@ -2115,6 +2115,9 @@ def _rodar_sequencial(agente, rng, episodios=400, planeja=True, mundo=None):
                 perceber(acoes)
             if planeja:
                 agente.preparar_passo(estimativas, restantes, nivel, m["valor_medio_passo"])
+            ver_tudo = getattr(agente, "ver_tudo", None)  # P264: só o oráculo de referência usa
+            if ver_tudo:
+                ver_tudo(consequencias, restantes)
             escolha, n = agente.agir_no_mundo(acoes, rng, eps, carga)
             carga += 0.05 * (n - carga)
             perguntas += n
@@ -3180,6 +3183,206 @@ def p256_auditoria_p121(rho=0.3, amostras=200000, semente=256):
     vx = sum((x - mx) ** 2 for x in xs)
     vy = sum((y - my) ** 2 for y in ys)
     return cov * cov / (vx * vy), p121_quaternidade(rho)
+
+
+
+# --- Parte 20: o símbolo com o tempo, o Υ do mundo sequencial e o que cada função contribui ---
+
+# Placar acumulado ao fim da Parte 20 (atualizado quando os testes da parte terminam)
+ERROS_P269, TESTES_P269 = 39, 78
+
+
+class SynthaiOuvinte(SynthaiAnima):
+    """P262: aprende continuamente com o que o humano responde (P246: o símbolo com o tempo).
+
+    Para decidir, as duas versões usam o mesmo veto binário. Para APRENDER:
+    - modo "veto": rótulo = o veto (0 ou 1), como a 'sombra com tudo' da P112;
+    - modo "fala": rótulo = P(catástrofe | palavra), uma das quatro palavras vagas da P242, com o significado
+      aprendido pelas auditorias (10%), como na SynthaiFala."""
+
+    def __init__(self, modo="veto", p_auditoria=0.1, **kw):
+        super().__init__(**kw)
+        self.modo = modo
+        self.p_auditoria = p_auditoria
+        self.contagem = {w: [0.5, 4.5] for w in PALAVRAS}
+        self._rng_fala = _rng(262)
+
+    def _agir(self, acoes, rng, eps_real, carga, eps_decisao):
+        self._melhor_atual = max(a[0] for a in acoes)
+        return super()._agir(acoes, rng, eps_real, carga, eps_decisao)
+
+    def _perguntar_humano(self, acao, rng, eps_real):
+        veto = super()._perguntar_humano(acao, rng, eps_real)
+        if self.modo == "veto":
+            rotulo = 1.0 if veto else 0.0
+        else:
+            g = self._rng_fala
+            dist = FALA_CAT if acao[3] else FALA_SEG
+            if g.random() < min(1.0, 2 * eps_real):
+                w = PALAVRAS[g.randrange(4)]
+            else:
+                u, acc, w = g.random(), 0.0, PALAVRAS[-1]
+                for palavra, pr in zip(PALAVRAS, dist):
+                    acc += pr
+                    if u < acc:
+                        w = palavra
+                        break
+            if g.random() < self.p_auditoria:
+                self.contagem[w][0 if acao[3] else 1] += 1
+            a, b = self.contagem[w]
+            rotulo = a / (a + b)
+        self._aprender(acao, self._melhor_atual, rotulo)
+        return veto
+
+
+def _auc(agente, rng, episodios=100, mundo=None):
+    """AUC da calibração do agente em ações novas (mesmo protocolo da P215)."""
+    from bisect import bisect_left, bisect_right
+    m = dict(MUNDO_BASE, **(mundo or {}))
+    cats, seguras = [], []
+    for _ in range(episodios):
+        acoes = _gerar_acoes(rng, m["n_acoes"], 0.02, m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+        melhor = max(a[0] for a in acoes)
+        for a in acoes:
+            (cats if a[3] else seguras).append(agente.p_catastrofe(a, melhor))
+    seguras = sorted(seguras)
+    soma = sum(bisect_left(seguras, c) + 0.5 * (bisect_right(seguras, c) - bisect_left(seguras, c)) for c in cats)
+    return soma / (len(cats) * len(seguras))
+
+
+def p262_simbolo_com_o_tempo(sementes=tuple(range(480, 490)), episodios=6000):
+    """6000 episódios aprendendo com o humano: rótulos de veto vs rótulos de palavras. AUC final e líquido."""
+    versoes = ("sem_aprender", "veto", "fala")
+    auc = {v: [] for v in versoes}
+    liq = {v: [] for v in versoes}
+    for s in sementes:
+        for v in versoes:
+            rng = _rng(s)
+            hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+            ag = SynthaiAnima(sombra="propria", compensar="equilibrio") if v == "sem_aprender" else \
+                SynthaiOuvinte(modo=v, sombra="propria", compensar="equilibrio")
+            ag.mult_pergunta = 2.0
+            ag.calibrar(hist)
+            liq[v].append(_rodar_mundo(ag, rng, episodios=episodios)[3])
+            auc[v].append(_auc(ag, _rng(s + 4800)))
+    resumo = {v: (sum(auc[v]) / len(auc[v]), sum(liq[v]) / len(liq[v])) for v in versoes}
+    d = [a - b for a, b in zip(auc["veto"], auc["fala"])]
+    m = sum(d) / len(d)
+    dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+    return resumo, (m, dp, m / (dp / sqrt(len(d))))
+
+
+class OraculoSequencial(PoliticaSimples):
+    """Teto do Υ sequencial: vê o valor, a consequência e as catástrofes (o que nenhum agente pode saber)."""
+
+    def __init__(self):
+        super().__init__("oraculo")
+        self.c, self.r = {}, 0
+
+    def preparar_passo(self, *_a):
+        pass
+
+    def ver_tudo(self, consequencias, restantes):
+        self.c, self.r = consequencias, restantes
+
+    def agir_no_mundo(self, acoes, rng, eps_real, carga):
+        seguras = [a for a in acoes if not a[3]] or acoes
+        return max(seguras, key=lambda a: a[2] + self.c[id(a)] * self.r), 0
+
+
+MUNDOS_SEQUENCIAIS = {
+    "base": ({}, 0),
+    "armadilha nova": ({"bonus": 1.0, "rho_cego": 1.0}, 1),
+    "catastrofe x2": ({"p_cat": 0.01}, 1),
+    "modelo ruim": ({"sigma_modelo": 2.0}, 1),
+    "humano fragil": ({"fadiga": 0.6}, 1),
+}
+
+
+def _construir_seq(versao, rng, custo_leitura=0.002):
+    m = dict(MUNDO_BASE, **MUNDO_SEQUENCIAL)
+    hist = [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+            for _ in range(150)]
+    classes = {"miope": SynthaiAnima, "planejadora": SynthaiPlanejadora, "velha": SynthaiVelha,
+               "velha_atenta": SynthaiVelhaAtenta, "atenta_sem_velha": SynthaiVelhaAtenta}
+    if versao == "planejadora":
+        ag = SynthaiPlanejadora(integrar=False, sombra="propria", compensar="equilibrio")
+    elif versao == "atenta_sem_velha":
+        ag = SynthaiVelhaAtenta(q_final=0.05, sombra="propria", compensar="equilibrio")
+    else:
+        ag = classes[versao](sombra="propria", compensar="equilibrio")
+    ag.mult_pergunta = 2.0
+    ag.calibrar(hist)
+    if versao in ("velha_atenta", "atenta_sem_velha", "atenta_miope"):
+        ag._seletiva = True
+    return ag
+
+
+def _retorno_seq(versao, s, episodios, mundo, custo_leitura=0.002):
+    rng = _rng(s)
+    if versao in ("acaso", "oraculo"):
+        ag = PoliticaSimples("acaso") if versao == "acaso" else OraculoSequencial()
+        return _rodar_sequencial(ag, rng, episodios=episodios, planeja=False, mundo=mundo)[0]
+    if versao == "atenta_miope":
+        ag = _construir_seq("velha_atenta", rng)
+        ret = _rodar_sequencial(ag, rng, episodios=episodios, planeja=False, mundo=mundo)[0]
+    else:
+        ag = _construir_seq(versao, rng)
+        ret = _rodar_sequencial(ag, rng, episodios=episodios, planeja=(versao != "miope"), mundo=mundo)[0]
+    leituras = getattr(ag, "leituras", 0)
+    return ret - custo_leitura * leituras / episodios
+
+
+def p265_upsilon_sequencial(versoes=("miope", "planejadora", "velha", "velha_atenta"), sementes=(265, 266, 267),
+                            episodios=300, bits_por_mudanca=3):
+    """Υ no mundo sequencial: média ponderada (2^-K) do retorno normalizado entre o acaso (0) e o oráculo (1)."""
+    upsilon = {v: 0.0 for v in versoes}
+    soma_pesos = 0.0
+    por_mundo = {}
+    for nome, (mudancas, k) in MUNDOS_SEQUENCIAIS.items():
+        peso = 2.0 ** (-bits_por_mudanca * k)
+        soma_pesos += peso
+        notas = {v: 0.0 for v in versoes}
+        for s in sementes:
+            acaso = _retorno_seq("acaso", s, episodios, mudancas)
+            oraculo = _retorno_seq("oraculo", s, episodios, mudancas)
+            for v in versoes:
+                notas[v] += (_retorno_seq(v, s, episodios, mudancas) - acaso) / (oraculo - acaso) / len(sementes)
+        por_mundo[nome] = notas
+        for v in versoes:
+            upsilon[v] += peso * notas[v]
+    return {v: u / soma_pesos for v, u in upsilon.items()}, por_mundo
+
+
+def p266_o_que_cada_funcao_vale(sementes=tuple(range(490, 500)), episodios=400):
+    """Ablação da versão principal (armadilha nova, mundo sequencial): tirar uma peça de cada vez."""
+    mundo = {"bonus": 1.0, "rho_cego": 1.0}
+    versoes = {"completa": "velha_atenta", "sem planejar (intuicao)": "atenta_miope",
+               "sem diversificar no fim (sentimento)": "atenta_sem_velha", "sem o sentido novo (sensacao)": "velha"}
+    linhas = {nome: [_retorno_seq(v, s, episodios, mundo) for s in sementes] for nome, v in versoes.items()}
+    resultado = {}
+    for nome, valores in linhas.items():
+        if nome == "completa":
+            continue
+        d = [c - x for c, x in zip(linhas["completa"], valores)]
+        m = sum(d) / len(d)
+        dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+        resultado[nome] = (m, dp, m / (dp / sqrt(len(d))))
+    return sum(linhas["completa"]) / len(sementes), resultado
+
+
+def p267_auditoria_p146(eta=0.1, k=0.2, ruido=0.05, passos=500, rodadas=2000, semente=267):
+    """Auditoria da P146 com ruído: a crença compartilhada ainda converge para (k a0 + eta b0)/(k + eta)?"""
+    rng = _rng(semente)
+    finais = []
+    for _ in range(rodadas):
+        a, b = 1.0, 0.0
+        for _ in range(passos):
+            a, b = a + eta * (b - a) + rng.gauss(0, ruido) * eta, b + k * (a - b) + rng.gauss(0, ruido) * k
+        finais.append((a + b) / 2)
+    media = sum(finais) / len(finais)
+    dp = sqrt(sum((x - media) ** 2 for x in finais) / (len(finais) - 1))
+    return media, dp, p146_transferencia(eta=eta, k=k)[0]
 
 
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
