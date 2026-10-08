@@ -4048,6 +4048,32 @@ def p304c_piso_de_ruido(taxa=0.01, epocas=1000, sementes=tuple(range(620, 630)),
     return sum(erros) / len(erros), max(erros)
 
 
+def p304d_vies_de_primeira_ordem(sementes=tuple(range(620, 630)), treino=150):
+    """O viés O(1/n) da máxima verossimilhança logística tem forma fechada (Cordeiro e McCullagh, 1991): um passo
+    de Newton do escore de Firth a partir do ótimo, δ = I⁻¹ Σ h_i (½ − p_i) x_i, com h_i a alavanca. Compara δ3 com a
+    diferença Firth − máxima verossimilhança no peso da leitura."""
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento_exato import _inversa, ajustar_logistica, dados_do_historico
+    d_formula = d_firth = 0.0
+    for s in sementes:
+        xs, ys = dados_do_historico(MundoSequencial(s).historico_auditado(treino))
+        w = ajustar_logistica(xs, ys, firth=False)
+        wf = ajustar_logistica(xs, ys, firth=True)
+        k = len(w)
+        ps = [1 / (1 + exp(-max(-30.0, min(30.0, sum(a * b for a, b in zip(w, x)))))) for x in xs]
+        info = [[sum(p * (1 - p) * x[i] * x[j] for x, p in zip(xs, ps)) for j in range(k)] for i in range(k)]
+        inv = _inversa(info)
+        u = [0.0] * k
+        for x, p in zip(xs, ps):
+            h = p * (1 - p) * sum(x[i] * sum(inv[i][j] * x[j] for j in range(k)) for i in range(k))
+            for i in range(k):
+                u[i] += h * (0.5 - p) * x[i]
+        delta = [sum(inv[i][j] * u[j] for j in range(k)) for i in range(k)]
+        d_formula += delta[3] / len(sementes)
+        d_firth += (wf[3] - w[3]) / len(sementes)
+    return d_formula, d_firth
+
+
 def p306_newton_quadratico(semente=620, treino=150):
     """Convergência quadrática de Newton, contada: o tamanho do passo a cada iteração e a razão
     log(passo_k+1)/log(passo_k), que tende a 2 quando o número de dígitos certos dobra."""
