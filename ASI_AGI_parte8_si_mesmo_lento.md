@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 8: o Si-mesmo lento, o preço da pergunta e os arquétipos que faltavam
 
-> Continuação da [Parte 7](ASI_AGI_parte7_jung_segunda_ordem.md). Os números saem de `p130_...` a
+> Continuação da [Parte 7](ASI_AGI_parte7_jung_segunda_ordem.md). **Próxima:** [Parte 9 — a régua do ruído](ASI_AGI_parte9_a_regua_do_ruido.md) (P143–P155). Os números saem de `p130_...` a
 > `p138_...` e da classe `GiseleLenta` em [`calculos.py`](calculos.py); a saída completa está em
 > [`resultados.txt`](resultados.txt).
 >

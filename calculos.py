@@ -1,4 +1,4 @@
-"""Reproduz os cálculos e simulações das Partes 1 a 8 (ASI_AGI_*.md).
+"""Reproduz os cálculos e simulações das Partes 1 a 9 (ASI_AGI_*.md).
 
 Arquivo único que sempre cresce: cada parte acrescenta funções pNN_..., o agente
 unificado `Gisele` incorpora os módulos anteriores e `testes_de_regressao` garante que
@@ -1466,6 +1466,180 @@ def p138_mente_enviesada(passos=3, beta=0.5, vies=0.4, rodadas=20000, semente=13
     return sem_vies, erros / rodadas
 
 
+# --- Parte 9: o mundo decide o centro, complexos autônomos, transferência, o herói que volta ---
+
+def _gisele_realista(rng, p_cat=0.005, rho_cego=0.5, treino=30):
+    """A melhor GISELE validada fora da semente (Parte 8): anima fixa, sombra própria, carga 0.3, P* x2."""
+    hist = [_gerar_acoes(rng, 200, p_cat, 2, 3, rho_cego) for _ in range(treino)]
+    ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+    ag.mult_pergunta = 2.0
+    ag.calibrar(hist)
+    return ag
+
+
+def p144_centro_do_mundo(p_cats=(0.0025, 0.005, 0.01), alvos=(0.1, 0.2, 0.3, 0.5, 0.8), semente=144):
+    """O ótimo 0.3 vem do mundo? Varre a carga-alvo para três taxas de catástrofe."""
+    resultado = {}
+    for p_cat in p_cats:
+        for alvo in alvos:
+            rng = _rng(semente)
+            ag = _gisele_realista(rng, p_cat=p_cat)
+            ag.carga_alvo = alvo
+            resultado[(p_cat, alvo)] = _rodar_mundo_fadiga(ag, rng=rng, p_cat=p_cat)[3]
+    return resultado
+
+
+def _avaliar_calibracao(ag, rng, episodios=200, p_cat=0.005):
+    """Log-perda e confiança média da GISELE em ações novas: todas e só as do topo (onde ela decide)."""
+    perdas = {"todas": [0.0, 0], "topo": [0.0, 0]}
+    p_media_cat, n_cat = 0.0, 0
+    for _ in range(episodios):
+        acoes = _gerar_acoes(rng, 200, p_cat, 2, 3, 0.5)
+        melhor = max(a[0] for a in acoes)
+        ordem = sorted(acoes, key=lambda a: -(a[0] - a[1]))
+        topo = set(id(a) for a in ordem[:10])
+        for a in acoes:
+            p = min(max(ag.p_catastrofe(a, melhor), 1e-9), 1 - 1e-9)
+            perda = -log(p if a[3] else 1 - p)
+            for chave in ("todas", "topo") if id(a) in topo else ("todas",):
+                perdas[chave][0] += perda
+                perdas[chave][1] += 1
+            if a[3]:
+                p_media_cat += p
+                n_cat += 1
+    return ({k: v[0] / v[1] for k, v in perdas.items()}, p_media_cat / max(n_cat, 1))
+
+
+def p145_complexo_autonomo(semente=145, episodios=2000):
+    """A calibração que aprende só com as próprias escolhas vira um complexo que se confirma sozinho?"""
+    rng = _rng(semente)
+    ag = _gisele_realista(rng)
+    copia_w = ag.w[:]
+    antes = _avaliar_calibracao(ag, _rng(1450))
+    _rodar_mundo_fadiga(ag, rng=rng, episodios=episodios)
+    depois = _avaliar_calibracao(ag, _rng(1450))
+    return antes, depois, copia_w, ag.w[:]
+
+
+class GiseleAncorada(GiseleAnima):
+    """Sombra própria com âncora (P145): cada passo de aprendizado puxa os pesos de volta ao ponto
+    calibrado no histórico auditado, como a consolidação da P6 (EWC). Evita que o viés de só ver
+    as próprias escolhas vire um complexo autônomo ("eu sempre acerto")."""
+
+    def __init__(self, ancora=0.05, **kw):
+        super().__init__(**kw)
+        self.ancora = ancora
+        self.w0 = None
+
+    def calibrar(self, episodios_rotulados, **kw):
+        super().calibrar(episodios_rotulados, **kw)
+        self.w0 = self.w[:]
+
+    def _aprender(self, acao, melhor, rotulo, lr=0.05):
+        x = self._x(acao, melhor)
+        erro = self.p_catastrofe(acao, melhor) - rotulo
+        self.w = [wi - lr * (erro * xi + self.ancora * (wi - w0i)) for wi, xi, w0i in zip(self.w, x, self.w0)]
+
+
+def p145_longo_prazo(versao, semente, episodios=6000):
+    """Líquido em 6000 episódios: sombra própria livre, sem sombra, ou ancorada.
+
+    Devolve (líquido com perda 50, catástrofes, P média nas catástrofes reais, líquido com perda 500).
+    """
+    rng = _rng(semente)
+    hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+    if versao == "ancorada":
+        ag = GiseleAncorada(sombra="propria", compensar="equilibrio")
+    else:
+        ag = GiseleAnima(sombra="propria" if versao == "propria" else "nao", compensar="equilibrio")
+    ag.mult_pergunta = 2.0
+    ag.calibrar(hist)
+    cat, val, perg, liq, _ = _rodar_mundo_fadiga(ag, rng=rng, episodios=episodios)
+    return liq, cat, _avaliar_calibracao(ag, _rng(1450))[1], val - 500 * cat - 0.1 * perg
+
+
+def p152_ruido(sementes=tuple(range(200, 210)), cargas=(0.3, 0.2), mults=(2.0, 1.0)):
+    """A régua das comparações: quanto o líquido varia só por trocar a semente?
+
+    Roda a GISELE realista em 10 sementes novas com duas cargas-alvo (0.3 e 0.2) e dois limiares
+    (P* x2 e x1). Devolve média e desvio de cada configuração e as diferenças pareadas (mesma semente).
+    """
+    def rodar(s, carga, mult):
+        rng = _rng(s)
+        ag = _gisele_realista(rng)
+        ag.carga_alvo = carga
+        ag.mult_pergunta = mult
+        return _rodar_mundo_fadiga(ag, rng=rng)[3]
+
+    def resumo(v):
+        m = sum(v) / len(v)
+        return m, sqrt(sum((x - m) ** 2 for x in v) / (len(v) - 1))
+
+    base = [rodar(s, cargas[0], mults[0]) for s in sementes]
+    outra_carga = [rodar(s, cargas[1], mults[0]) for s in sementes]
+    outro_mult = [rodar(s, cargas[0], mults[1]) for s in sementes]
+    resultado = {"base": resumo(base)}
+    for nome, v in (("carga", outra_carga), ("mult", outro_mult)):
+        dif = [a - b for a, b in zip(base, v)]
+        m, dp = resumo(dif)
+        resultado[nome] = (m, dp, m / (dp / sqrt(len(dif))))  # média, dp e estatística t da diferença
+    return resultado
+
+
+def p143_continue(estimulo="Continue"):
+    """Uma palavra-estímulo ativa um complexo inteiro: tamanho da memória compartilhada / tamanho do pedido."""
+    import os
+    caminho = os.path.join(os.path.dirname(os.path.abspath(__file__)), "CLAUDE.md")
+    memoria = os.path.getsize(caminho) if os.path.exists(caminho) else 0
+    return len(estimulo), memoria, memoria / len(estimulo)
+
+
+def p146_transferencia(eta=0.1, k=0.2, mu=0.0, verdade=1.0, ia0=1.0, humano0=0.0, passos=500):
+    """IA aprende com a aprovação do humano (eta), humano aprende com a IA (k); mu ancora a IA na verdade."""
+    a, b = ia0, humano0
+    for _ in range(passos):
+        a, b = a + eta * (b - a) + mu * (verdade - a), b + k * (a - b)
+    return a, b
+
+
+def p147_mana(cotas=((1.0,), (0.34, 0.33, 0.33), (0.25, 0.25, 0.25, 0.25))):
+    """Personalidade-mana: concentração de autoridade (índice de Herfindahl) e falha de um só guardião."""
+    return {len(c): sum(x * x for x in c) for c in cotas}
+
+
+def p148_heroi(custo_busca=64.0, custo_politica=1.0, custo_destilar=1e6):
+    """O herói volta com o elixir: destilar a busca numa política compensa a partir de N consultas."""
+    return custo_destilar / (custo_busca - custo_politica)
+
+
+def p149_imaginacao(erros=(0.01, 0.05, 0.1), tolerancia=0.5):
+    """Imaginação ativa com um modelo imperfeito: horizonte até o erro composto passar de 50%."""
+    return {d: log(1 + tolerancia) / log(1 + d) for d in erros}
+
+
+def p150_convergencia_instrumental(gammas=(0.5, 0.9, 0.99), k_max=2000):
+    """Auditoria da P24: acumular recursos k passos e depois trabalhar. V(k) = gamma^k (1 + k) / (1 - gamma)."""
+    resultado = {}
+    for g in gammas:
+        valores = [g**k * (1 + k) / (1 - g) for k in range(k_max)]
+        k_otimo = max(range(k_max), key=lambda k: valores[k])
+        resultado[g] = (k_otimo, -1 / log(g) - 1)
+    return resultado
+
+
+def p151_gradiente_natural(curvaturas=(100.0, 1.0), lr_gd=0.019, lr_nat=0.5, tol=1e-6, max_passos=100000):
+    """Auditoria da P47: passos até L < tol em L = (100 x^2 + y^2)/2, gradiente comum vs natural."""
+    def passos(natural, lr):
+        x = [1.0, 1.0]
+        for t in range(1, max_passos + 1):
+            g = [c * xi for c, xi in zip(curvaturas, x)]
+            x = [xi - lr * (gi / c if natural else gi) for xi, gi, c in zip(x, g, curvaturas)]
+            if 0.5 * sum(c * xi * xi for c, xi in zip(curvaturas, x)) < tol:
+                return t
+        return max_passos
+    return passos(False, lr_gd), passos(True, lr_nat)
+
+
 def testes_de_regressao():
     """O código cresce, mas o passado não pode mudar: estes valores foram publicados nas Partes 1-4."""
     verificacoes = {
@@ -1496,6 +1670,10 @@ def testes_de_regressao():
         "P133": round(p133_auditorias_necessarias()[0]) == 138,
         "P134": round(p134_jo()["T=0.5"], 3) == 0.692,
         "P138": round(p138_mente_enviesada()[0], 3) == 0.178,
+        "P146": round(p146_transferencia()[0], 3) == 0.667,
+        "P149": round(p149_imaginacao()[0.05], 2) == 8.31,
+        "P150": p150_convergencia_instrumental()[0.99][0] == 98,
+        "P151": p151_gradiente_natural() == (343, 13),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -1729,6 +1907,38 @@ if __name__ == "__main__":
     media, lo, hi = p95_minha_taxa_de_erro(erros=17, testes=30)
     print(f"P139 minha taxa de erro (17/30): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+    print("--- Parte 9 (o mundo decide o centro, complexo autonomo, transferencia, heroi, a regua do ruido) ---")
+    n_pedido, n_memoria, razao = p143_continue()
+    print(f"P143 pedido = {n_pedido} caracteres; memoria compartilhada (CLAUDE.md) = {n_memoria}; razao = {razao:.0f}x")
+    centro = p144_centro_do_mundo()
+    for p_cat in (0.0025, 0.005, 0.01):
+        linha = {alvo: round(v, 3) for (pc, alvo), v in centro.items() if pc == p_cat}
+        print(f"P144 taxa de catastrofe {p_cat}: liquido por carga-alvo = {linha}")
+    antes, depois, w_antes, w_depois = p145_complexo_autonomo()
+    print(f"P145 antes: log-perda = { {k: round(v, 4) for k, v in antes[0].items()} }, P media nas catastrofes = {antes[1]:.3f}")
+    print(f"P145 depois de 2000 episodios aprendendo so com as proprias escolhas: log-perda = "
+          f"{ {k: round(v, 4) for k, v in depois[0].items()} }, P media nas catastrofes = {depois[1]:.3f}")
+    print(f"P145 pesos (intercepto, incerteza, nota) antes = {[round(x, 3) for x in w_antes]}, depois = {[round(x, 3) for x in w_depois]}")
+    for semente in (145, 146, 147):
+        for versao in ("propria", "nao", "ancorada"):
+            liq, cat, p_cat_media, liq500 = p145_longo_prazo(versao, semente)
+            print(f"P145 6000 episodios semente {semente} {versao:8s}: liquido(50) = {liq:.3f}, catastrofes = {cat:.4f}, "
+                  f"P nas catastrofes = {p_cat_media:.3f}, liquido(500) = {liq500:.3f}")
+    print(f"P146 (IA, humano) finais: humano so aprende = {p146_transferencia(eta=0.0)}, "
+          f"transferencia mutua = {p146_transferencia()}, IA ancorada na verdade = {p146_transferencia(mu=0.05)}")
+    print(f"P147 indice de Herfindahl da autoridade por numero de guardioes = {p147_mana()}")
+    print(f"P148 consultas para a destilacao compensar = {p148_heroi():.0f}")
+    print(f"P149 horizonte da imaginacao por erro do modelo = { {d: round(h, 2) for d, h in p149_imaginacao().items()} }")
+    print(f"P150 (k otimo simulado, -1/ln(gamma) - 1) = { {g: (k, round(f, 2)) for g, (k, f) in p150_convergencia_instrumental().items()} }")
+    print(f"P151 passos ate convergir: gradiente comum = {p151_gradiente_natural()[0]}, natural = {p151_gradiente_natural()[1]}")
+    ruido = p152_ruido()
+    print(f"P152 GISELE realista em 10 sementes novas: media = {ruido['base'][0]:.3f}, dp = {ruido['base'][1]:.3f}")
+    for nome, (m, dp, tt) in ((k, v) for k, v in ruido.items() if k != "base"):
+        rotulo = "carga 0.3 - carga 0.2" if nome == "carga" else "P* x2 - P* x1"
+        print(f"P152 diferenca pareada {rotulo}: media = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=21, testes=37)
+    print(f"P153 minha taxa de erro (21/37): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
     ok, total, falhas = testes_de_regressao()
@@ -1736,5 +1946,6 @@ if __name__ == "__main__":
     print("Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto)"
           " -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana)"
           " -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga)"
-          " -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2)")
+          " -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2)"
+          " -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
