@@ -1,4 +1,4 @@
-"""Reproduz os cálculos e simulações das Partes 1 a 12 (ASI_AGI_*.md).
+"""Reproduz os cálculos e simulações das Partes 1 a 13 (ASI_AGI_*.md).
 
 Arquivo único que sempre cresce: cada parte acrescenta funções pNN_..., o agente
 unificado `Gisele` incorpora os módulos anteriores e `testes_de_regressao` garante que
@@ -2136,6 +2136,127 @@ def p185_familia_aleatoria(mundos=20, versoes=("p8_x2", "p11_dosada"), episodios
     return resumo
 
 
+# --- Parte 13: o canal certo da cautela, transferência entre tipos de tarefa, a pergunta 200 ---
+
+# Placar acumulado ao fim da Parte 13 (P197) (atualizado quando os testes da parte terminam)
+ERROS_P197, TESTES_P197 = 31, 55
+
+
+class GiselePrudente(GiselePlanejadora):
+    """P192 (pré-registrado na P183): quando há futuro a perder, ser mais cautelosa DESCARTANDO, não perguntando.
+
+    O limiar de descarte direto (risco_max, P52/P78) cai na proporção perda / perda_efetiva."""
+
+    def __init__(self, **kw):
+        super().__init__(integrar=False, **kw)
+        self.risco_base = self.risco_max
+
+    def preparar_passo(self, estimativas, restantes, nivel, valor_medio_passo):
+        super().preparar_passo(estimativas, restantes, nivel, valor_medio_passo)
+        perda_futura = self.perda + restantes * max(0.0, nivel + valor_medio_passo)
+        self.risco_max = self.risco_base * self.perda / perda_futura
+
+
+def p192_canal_da_cautela(sementes=tuple(range(350, 360)), episodios=400):
+    """Planejadora (sem integrar) vs prudente (descarta mais quando há futuro a perder). 10 sementes pareadas."""
+    linhas = {"planejadora_sem_integrar": [], "prudente": []}
+    for s in sementes:
+        for v in linhas:
+            rng = _rng(s)
+            if v == "prudente":
+                m = dict(MUNDO_BASE, **MUNDO_SEQUENCIAL)
+                hist = [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+                        for _ in range(150)]
+                ag = GiselePrudente(sombra="propria", compensar="equilibrio")
+                ag.mult_pergunta = 2.0
+                ag.calibrar(hist)
+            else:
+                ag = _construir_sequencial(v, rng)
+            linhas[v].append(_rodar_sequencial(ag, rng, episodios=episodios))
+    medias = {v: (sum(r[0] for r in rs) / len(rs), sum(r[1] for r in rs) / len(rs),
+                  [sum(r[2][t] for r in rs) for t in range(MUNDO_SEQUENCIAL["passos"])]) for v, rs in linhas.items()}
+    d = [b[0] - a[0] for a, b in zip(linhas["planejadora_sem_integrar"], linhas["prudente"])]
+    m = sum(d) / len(d)
+    dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+    return medias, (m, dp, m / (dp / sqrt(len(d))))
+
+
+def _bandido_arriscado(versao, rng, ag_calibrado, braços=20, puxadas=300, perda=50.0, orcamento=3, eps=0.1):
+    """Outro TIPO de tarefa: bandido multibraço em que alguns braços são armadilhas (rendem muito, às vezes destroem)."""
+    acoes = _gerar_acoes(rng, braços, 0.15, 2, 3, 0.5)
+    media = [0.9 if a[3] else min(0.95, max(0.05, 0.5 + 0.2 * a[2])) for a in acoes]
+    permitidos = set(range(braços))
+    perguntas = 0
+    if versao in ("ucb_excluir", "ucb_gisele"):
+        melhor = max(a[0] for a in acoes)
+        p = [ag_calibrado.p_catastrofe(a, melhor) for a in acoes]
+        permitidos = {i for i in permitidos if p[i] <= ag_calibrado.risco_max}
+        if versao == "ucb_gisele":
+            limiar = 2.0 * p71_valor_da_pergunta(0.1, perda, eps)
+            suspeitos = sorted((i for i in permitidos if p[i] > limiar), key=lambda i: -p[i])[:orcamento]
+            for i in suspeitos:  # P131: o orçamento vai para os mais suspeitos primeiro
+                perguntas += 1
+                veto = acoes[i][3] if rng.random() >= eps else not acoes[i][3]
+                if veto:
+                    permitidos.discard(i)
+    elif versao == "ucb_oraculo":
+        permitidos = {i for i in permitidos if not acoes[i][3]}
+    permitidos = sorted(permitidos) or [0]
+    n = {i: 0 for i in permitidos}
+    soma = {i: 0.0 for i in permitidos}
+    total = cats = 0.0
+    for t in range(1, puxadas + 1):
+        nao_vistos = [i for i in permitidos if n[i] == 0]
+        if nao_vistos:
+            i = nao_vistos[0]
+        else:
+            ln_t = log(t)
+            i = max(permitidos, key=lambda j: soma[j] / n[j] + sqrt(2 * ln_t / n[j]))
+        r = 1.0 if rng.random() < media[i] else 0.0
+        n[i] += 1
+        soma[i] += r
+        total += r
+        if acoes[i][3] and rng.random() < 0.05:
+            cats += 1
+            total -= perda
+    return total, cats, perguntas
+
+
+def p194_transferencia_de_tipo(sementes=tuple(range(360, 370)), rodadas=20):
+    """O módulo de cautela da GISELE (com pesos aprendidos no mundo de escolha única) serve num bandido?"""
+    versoes = ("ucb", "ucb_excluir", "ucb_gisele", "ucb_oraculo")
+    por_semente = {v: [] for v in versoes}
+    cats = {v: 0.0 for v in versoes}
+    perg = {v: 0.0 for v in versoes}
+    for s in sementes:
+        ag = _gisele_realista(_rng(s))  # calibrada no mundo da Parte 8: outro tipo de tarefa
+        for v in versoes:
+            rng = _rng(s * 7 + 1)
+            tot = 0.0
+            for _ in range(rodadas):
+                t, c, q = _bandido_arriscado(v, rng, ag)
+                tot += t
+                cats[v] += c
+                perg[v] += q
+            por_semente[v].append(tot / rodadas)
+    n = len(sementes) * rodadas
+    medias = {v: (sum(x) / len(x), cats[v] / n, perg[v] / n) for v, x in por_semente.items()}
+    difs = {}
+    for a in ("ucb", "ucb_excluir"):
+        d = [y - x for x, y in zip(por_semente[a], por_semente["ucb_gisele"])]
+        m = sum(d) / len(d)
+        dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+        difs[f"ucb_gisele - {a}"] = (m, dp, m / (dp / sqrt(len(d))))
+    return medias, difs
+
+
+def p200_retrospectiva(placar_por_parte=((2, 5), (4, 7), (1, 2), (3, 5), (4, 6), (3, 5), (4, 7), (3, 6), (2, 4), (3, 5))):
+    """200 perguntas: quantas afirmações testadas, quantas certas de primeira, e a taxa por parte (3 a 12)."""
+    erros = sum(e for e, _ in placar_por_parte)
+    testes = sum(n for _, n in placar_por_parte)
+    return testes, erros, testes - erros, (testes - erros) / testes
+
+
 def testes_de_regressao():
     """O código cresce, mas o passado não pode mudar: estes valores foram publicados nas Partes 1-4."""
     verificacoes = {
@@ -2179,6 +2300,7 @@ def testes_de_regressao():
         "P172": round(p172_minha_precisao()[2], 2) == 0.99,
         "P181": round(p181_valor_da_previsao()[2], 3) == 2.236,
         "P183": round(p183_limiar_por_passo()[0], 5) == 0.00397,
+        "P200": p200_retrospectiva()[:2] == (52, 29),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -2539,6 +2661,23 @@ def _parte_12():
     print(f"P188 minha taxa de erro ({ERROS_P188}/{TESTES_P188}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_13():
+    print("--- Parte 13 (o canal da cautela, transferencia entre tipos de tarefa, a pergunta 200) ---")
+    medias, (m, dp, tt) = p192_canal_da_cautela()
+    for v, (ret, cat, por_passo) in medias.items():
+        print(f"P192 {v:25s}: retorno = {ret:.3f}, catastrofes = {cat:.4f}, por passo = {por_passo}")
+    print(f"P192 prudente - planejadora: diferenca media = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    medias, difs = p194_transferencia_de_tipo()
+    for v, (ret, cat, perg) in medias.items():
+        print(f"P194 {v:12s}: retorno por rodada = {ret:.2f}, catastrofes por rodada = {cat:.3f}, perguntas = {perg:.2f}")
+    for nome, (m, dp, tt) in difs.items():
+        print(f"P194 {nome}: diferenca media = {m:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
+    testes, erros, certas, frac = p200_retrospectiva()
+    print(f"P200 Partes 3-12: {testes} afirmacoes testadas, {erros} corrigidas, {certas} certas de primeira ({frac:.0%})")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P197, testes=TESTES_P197)
+    print(f"P197 minha taxa de erro ({ERROS_P197}/{TESTES_P197}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -2551,11 +2690,12 @@ def _unificacao():
           " -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca)"
           " -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno)"
           " -> GiseleDosada (P173: a mesma imaginacao na dose do mundo real)"
-          " -> GiselePlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo)")
+          " -> GiselePlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo)"
+          " -> GiselePrudente (P192: descarta mais quando ha futuro a perder)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13}
 
 
 if __name__ == "__main__":

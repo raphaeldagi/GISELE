@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 12: a função auxiliar — planejar em vários passos
 
-> Continuação da [Parte 11](ASI_AGI_parte11_tivemos_avanco.md). Os números saem de `p181_...` a `p186_...` e da
+> Continuação da [Parte 11](ASI_AGI_parte11_tivemos_avanco.md). **Próxima:** [Parte 13 — transferência](ASI_AGI_parte13_transferencia.md) (P191–P200). Os números saem de `p181_...` a `p186_...` e da
 > classe `GiselePlanejadora` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
