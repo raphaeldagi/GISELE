@@ -61,6 +61,8 @@ anterior, commit e push.
 - Antes de reusar uma conclusão de uma parte antiga, verificar se o mecanismo é o mesmo, não só o nome (Parte 12).
 - Quando um módulo for redesenhado depois de ver o resultado, validar numa semente de controle extra e dizer isso.
 - Simulações usam semente fixa; não trocar a semente nem ajustar parâmetros para obter um resultado mais bonito.
+- `SYNTHAI_completo.py` é o projeto inteiro num arquivo só, gerado por `python3 gerar_arquivo_unico.py`: regenerar e
+  commitar sempre que o código (ou este arquivo) mudar.
 - Cada parte do `__main__` é uma função `_parte_N`; para desenvolver, `python3 calculos.py N` roda só a parte N
   (mais a unificação). Depois de mudar o código: `python3 calculos.py > resultados.txt` (todas as partes,
   leva vários minutos: rodar em segundo plano) e commitar os dois.
