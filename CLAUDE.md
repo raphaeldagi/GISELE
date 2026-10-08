@@ -18,6 +18,9 @@ anterior, commit e push.
 - "Vá mais longe com os cálculos" (Parte 24): não parar no número simulado. Para cada resultado, derivar a
   conta que o explica (forma fechada, cota, ordem de grandeza ou expansão) e conferir a conta contra a
   simulação; quando possível, prever o número pela conta antes de simular.
+- "Sempre rode contínuos e incansáveis testes e simulações" (Parte 25): enquanto uma simulação longa roda, preparar e
+  rodar a próxima; cada resultado inesperado gera um teste novo (pré-registrado) em vez de uma explicação parada;
+  os testes de unidade de todo o pacote rodam a cada mudança no código.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
