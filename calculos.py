@@ -2919,7 +2919,7 @@ def p237_auditoria_p57(erro=0.01, verificacao=0.99, modificacoes=1000, pontos_ce
 # --- Parte 18: a linguagem como canal ---
 
 # Placar acumulado ao fim da Parte 18 (atualizado quando os testes da parte terminam)
-ERROS_P249, TESTES_P249 = 37, 71
+ERROS_P249, TESTES_P249 = 37, 73
 
 PALAVRAS = ("seguro", "acho que ok", "desconfio", "perigo")
 FALA_CAT = (0.05, 0.10, 0.25, 0.60)   # como o humano fala de uma ação catastrófica
@@ -3085,6 +3085,7 @@ def testes_de_regressao():
         "P215": round(p215_distinguivel()["conhecida"], 2) == 0.91,
         "P223": round(p223_sinal_combinado()[2], 3) == 0.835,
         "P234": round(p223_sinal_combinado(d_sensor=2.0)[2], 3) == 0.941,
+        "P242": [round(x, 3) for x in p242_bits_do_veto()[:2]] == [0.211, 0.106],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -3541,6 +3542,24 @@ def _parte_17():
     print(f"P239 minha taxa de erro ({ERROS_P239}/{TESTES_P239}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_18():
+    print("--- Parte 18 (a linguagem como canal) ---")
+    binario, palavras, razao = p242_bits_do_veto()
+    print(f"P242 informacao por resposta (prior 0.1, erro 0.1): veto binario = {binario:.3f} bit; quatro palavras = {palavras:.3f} bit; "
+          f"razao = {razao:.2f}")
+    medias, difs, aprendido, verdadeiro = p245_linguagem()
+    for v, (cat, perg, liq) in medias.items():
+        print(f"P245 {v:15s}: catastrofes = {cat:.4f}, perguntas = {perg:.3f}, liquido = {liq:.3f}")
+    for nome, (m, dp, tt) in difs.items():
+        print(f"P245 {nome}: diferenca media = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    for w in PALAVRAS:
+        print(f"P244 P(catastrofe | '{w}'): aprendido = {aprendido[w]:.3f}; suposto com prior 0.1 = {verdadeiro[w]:.3f}")
+    for nome, (ach, fal, teoria) in p247_auditoria_p105().items():
+        print(f"P247 {nome}: achados = {ach:.3f} (teoria {teoria[0]:.3f}), falsos = {fal:.3f} (teoria {teoria[1]:.3f})")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P249, testes=TESTES_P249)
+    print(f"P249 minha taxa de erro ({ERROS_P249}/{TESTES_P249}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -3557,11 +3576,12 @@ def _unificacao():
           " -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder)"
           " -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe)"
           " | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada)"
-          " -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa)")
+          " -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa)"
+          " | SynthaiFala (P245: o humano responde com palavras)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18}
 
 
 if __name__ == "__main__":
