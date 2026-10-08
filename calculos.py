@@ -4158,7 +4158,7 @@ def p308_informacao(sementes=tuple(range(620, 630)), treino=150, teste=300):
 # --- Parte 25: o sentimento que acompanha o pensamento (o limiar certo para cada pensamento) ---
 
 # Placar acumulado ao fim da Parte 25 (atualizado quando os testes da parte terminam)
-ERROS_P319, TESTES_P319 = 59, 133
+ERROS_P319, TESTES_P319 = 68, 148
 
 _P_EXATO_P287 = 0.00324  # limiar com o custo do veto falso (P287), em P(catástrofe)
 
@@ -4504,6 +4504,7 @@ def testes_de_regressao():
         "P304d": [round(x, 4) for x in p304d_vies_de_primeira_ordem()] == [-0.0296, -0.0286],
         "P306": [f"{x:.1e}" for x in p306_newton_quadratico()[8:10]] == ["9.3e-03", "2.6e-05"],
         "P307": [round(x, 2) for x in p307_selecao()[0]["caso_controle"][:2]] == [-0.02, 1.48],
+        "P314": round(p314_custo_do_descarte()[1], 3) == 0.364,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -5124,6 +5125,36 @@ def _parte_24():
     print(f"P309 minha taxa de erro ({ERROS_P309}/{TESTES_P309}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_25():
+    print("--- Parte 25 (o sentimento que acompanha o pensamento: o limiar de cada pensamento) ---")
+    for modelo, (m, t, frac, p_med, real) in p312_limiar_pela_conta().items():
+        print(f"P312 {modelo:9s}: m pela conta do quantil = {m:.2f} (t = {t:.4f}); abaixo de 2P*: fracao = {frac:.3f}, "
+              f"P media = {p_med:.4f}, taxa real = {real:.4f}")
+    for modelo, (medias, cats, perg, melhor) in p313_varredura().items():
+        print(f"P313 {modelo:9s}: retorno { {m: round(v, 3) for m, v in medias.items()} }; catastrofes "
+              f"{ {m: round(v, 4) for m, v in cats.items()} }; melhor m = {melhor}")
+    n, dd, m = p314_custo_do_descarte()
+    print(f"P314 descartes seguros = {n}; custo medio do descarte = {dd:.3f}; m = dd/(L P*) = {m:.2f}")
+    for tarefa, (medias, cats, difs) in p315_limiar_no_comportamento().items():
+        print(f"P315 {tarefa}: { {k: round(v, 3) for k, v in medias.items()} }; catastrofes { {k: round(v, 4) for k, v in cats.items()} }")
+        for v, (d, dp, tt) in difs.items():
+            print(f"P315 {tarefa}: {v} - principal = {d:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    conf, z = p315b_confirmacao()
+    for tarefa, (cats, (d, dp, tt)) in conf.items():
+        print(f"P315b {tarefa}: newton_m05 - principal = {d:.3f}, dp = {dp:.3f}, t = {tt:.2f}; catastrofes { {k: round(v, 4) for k, v in cats.items()} }")
+    print(f"P315b Stouffer z = {z:.2f}")
+    for (mundo, modelo), (n, dd, f, m) in p316_conta_nos_mundos().items():
+        print(f"P316 {mundo} {modelo:9s}: descartes = {n}; dd = {dd:.3f}; fator real/previsto = {f:.2f}; m = {m:.2f}")
+    for modelo, (medias, cats, melhor) in p317_varredura_sequencial().items():
+        print(f"P317 {modelo:9s}: retorno { {m: round(v, 3) for m, v in medias.items()} }; melhor m = {melhor}")
+    for modelo, ms in p318_ponto_fixo_nos_mundos().items():
+        print(f"P318 {modelo:9s}: ponto fixo = {[round(m, 2) for m in ms]}")
+    for modelo, (medias, cats, melhor) in p318b_varredura_catastrofe_x2().items():
+        print(f"P318b {modelo:9s}: retorno { {m: round(v, 3) for m, v in medias.items()} }; melhor m = {melhor}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P319, testes=TESTES_P319)
+    print(f"P319 minha taxa de erro ({ERROS_P319}/{TESTES_P319}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -5147,11 +5178,12 @@ def _unificacao():
           " -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo)"
           " => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas)"
           " -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha)"
-          " | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada)")
+          " | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada)"
+          " | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25}
 
 
 if __name__ == "__main__":

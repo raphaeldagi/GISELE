@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 24: o pensamento diferenciado
 
-> Continuação da [Parte 23](ASI_AGI_parte23_o_que_ja_estava_resolvido.md). Código novo: [`synthai/pensamento_exato.py`](synthai/pensamento_exato.py)
+> Continuação da [Parte 23](ASI_AGI_parte23_o_que_ja_estava_resolvido.md). **Próxima:** [Parte 25 — o sentimento que acompanha o pensamento](ASI_AGI_parte25_o_limiar_de_cada_pensamento.md) (P311–P320). Código novo: [`synthai/pensamento_exato.py`](synthai/pensamento_exato.py)
 > (testes em [`synthai/testes_pensamento.py`](synthai/testes_pensamento.py)). Os números saem de `p302_...` a `p308_...` em [`calculos.py`](calculos.py);
 > a saída completa está em [`resultados.txt`](resultados.txt).
 >
