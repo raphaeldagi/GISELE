@@ -46,3 +46,35 @@ P55 tempo neural / decoerencia = 1e+10
 P56 valor esperado = {'x': 0.9, 'y': 10.0}; normalizado = {'x': 0.8, 'y': -0.8}
 P57 corrigivel apos 1000 modificacoes: sem verificacao = 4.32e-05, com = 0.905
 P58 P(concordar com o erro do usuario) = 0.649
+--- Parte 4 (auditoria e agente integrado) ---
+P61 best-of-64: independente = 0.962, correlacionado = 0.645; com verificador eps=0.01: certa = 0.556, errada aceita = 0.256
+P62 arrependimento UCB real = 849, sqrt(K T ln T) = 3393
+P63 3 camadas com 10% de falha: independente = 0.0010; por rho = 0.0: 0.0010, 0.3: 0.0072, 0.6: 0.0220, 0.9: 0.0564
+P64 P(engano | alarme): 1 sonda = 0.0098, 2 sondas independentes = 0.495
+P65 PAC: m do limite = 1151, m que basta na pratica = 475, falha com m do limite = 0.000
+P66 recompensa media: exploracao fixa = 0.6823, guiada pelo humor = 0.6734
+P67 rho_cego=0.0 maximizar    : catastrofes = 0.1420, valor = 2.302, liquido (-50 por catastrofe) = -4.798, (-500) = -68.698, consultas = 0.0000
+P67 rho_cego=0.0 quantilizar  : catastrofes = 0.0410, valor = 1.917, liquido (-50 por catastrofe) = -0.133, (-500) = -18.583, consultas = 0.0000
+P67 rho_cego=0.0 metacognitivo: catastrofes = 0.0185, valor = 2.600, liquido (-50 por catastrofe) = 1.675, (-500) = -6.650, consultas = 0.0255
+P67 rho_cego=0.0 completo     : catastrofes = 0.0075, valor = 1.952, liquido (-50 por catastrofe) = 1.577, (-500) = -1.798, consultas = 0.0120
+P67 rho_cego=0.5 maximizar    : catastrofes = 0.3050, valor = 1.893, liquido (-50 por catastrofe) = -13.357, (-500) = -150.607, consultas = 0.0000
+P67 rho_cego=0.5 quantilizar  : catastrofes = 0.0625, valor = 1.880, liquido (-50 por catastrofe) = -1.245, (-500) = -29.370, consultas = 0.0000
+P67 rho_cego=0.5 metacognitivo: catastrofes = 0.2470, valor = 2.032, liquido (-50 por catastrofe) = -10.318, (-500) = -121.468, consultas = 0.0110
+P67 rho_cego=0.5 completo     : catastrofes = 0.0490, valor = 1.888, liquido (-50 por catastrofe) = -0.562, (-500) = -22.612, consultas = 0.0060
+P69 tau = 0.6: catastrofes = 0.0175, consultas = 0.1350
+P69 tau = 0.8: catastrofes = 0.0175, consultas = 0.0365
+P69 tau = 1.0: catastrofes = 0.0185, consultas = 0.0255
+P69 tau = 1.5: catastrofes = 0.0365, consultas = 0.0110
+P69 tau = 2.0: catastrofes = 0.0400, consultas = 0.0010
+P70 P(5 modelos enganados ao mesmo tempo, independentes) = 0.0312
+P71 perguntar ao humano compensa se P(catastrofe) > 0.0022
+P72 memoria KV para 1M tokens: 6.55 TB; com 8 grupos: 0.82 TB
+P73 geracoes para variante com +1% ir de 1e-6 a 50% = 1382
+P74 replay 0.0: perda A = 1.955, perda B = 0.000
+P74 replay 0.1: perda A = 1.445, perda B = 0.037
+P74 replay 0.3: perda A = 0.928, perda B = 0.198
+P74 replay 0.5: perda A = 0.522, perda B = 0.505
+P75 informacao mutua (erro 10%) = 0.531 bits
+P76 energia minima = -1, ideal = -3, estados de minimo = 6
+P77 inspecao = 0.10, trapaca = 0.01; punicao 99: inspecao = 0.01, trapaca = 0.01; inspecao 10x mais barata: trapaca = 0.001
+P78 estados perdidos = 0.50, penalidade log = 0.693

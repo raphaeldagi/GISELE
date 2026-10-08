@@ -1,7 +1,8 @@
 # Como eu construiria uma AGI/ASI — Parte 3: testar as ideias em código
 
 > Continuação de [Parte 1](ASI_AGI_perguntas_e_respostas.md) e
-> [Parte 2](ASI_AGI_parte2_mais_fundo.md). Mesmo protocolo: **Lógica → Tradução cruzada → Meta**.
+> [Parte 2](ASI_AGI_parte2_mais_fundo.md). **Próxima:** [Parte 4 — auditoria e agente integrado](ASI_AGI_parte4_auditoria_e_agente.md) (P61–P80).
+> Mesmo protocolo: **Lógica → Tradução cruzada → Meta**.
 >
 > **Mudança metacognitiva em relação à Parte 2.** As Partes 1 e 2 *afirmavam* resultados.
 > Aqui eu **simulo** várias delas em [`calculos.py`](calculos.py) (funções `p41_...` a

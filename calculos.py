@@ -1,4 +1,4 @@
-"""Reproduz os cálculos e simulações das Partes 1, 2 e 3 (ASI_AGI_*.md).
+"""Reproduz os cálculos e simulações das Partes 1 a 4 (ASI_AGI_*.md).
 
 Uso: python3 calculos.py            (imprime tudo)
      python3 calculos.py > resultados.txt
@@ -313,6 +313,247 @@ def p58_bajulacao(p_ref=0.2, delta_r=0.5, beta=0.25):
     return chances / (1 + chances)
 
 
+# --- Parte 4: auditoria das Partes 1-2 e agente integrado ---
+
+def _beta_fn(a, b):
+    from math import lgamma
+    return exp(lgamma(a) + lgamma(b) - lgamma(a + b))
+
+
+def p61_best_of_n_correlacionado(n=64, a=0.5, b=9.5, eps_verif=0.01, rodadas=20000, semente=61):
+    """Tentativas do mesmo modelo compartilham a dificuldade do problema: p ~ Beta(a, b)."""
+    media = a / (a + b)
+    independente = 1 - (1 - media) ** n
+    correlacionado = 1 - _beta_fn(a, b + n) / _beta_fn(a, b)
+    # verificador imperfeito: aceita resposta errada com prob. eps_verif; pega a primeira aceita
+    rng = _rng(semente)
+    certas = erradas = 0
+    for _ in range(rodadas):
+        p = rng.betavariate(a, b)
+        for _ in range(n):
+            if rng.random() < p:
+                certas += 1
+                break
+            if rng.random() < eps_verif:
+                erradas += 1
+                break
+    return independente, correlacionado, certas / rodadas, erradas / rodadas
+
+
+def p62_bandido(k=10, t=100000, semente=62):
+    """Arrependimento real de UCB1 em braços de Bernoulli vs a ordem de grandeza sqrt(K T ln T)."""
+    rng = _rng(semente)
+    medias = [rng.uniform(0.2, 0.8) for _ in range(k)]
+    melhor = max(medias)
+    n, soma, arrependimento = [0] * k, [0.0] * k, 0.0
+    for passo in range(1, t + 1):
+        if passo <= k:
+            a = passo - 1
+        else:
+            ln_t = log(passo)
+            a = max(range(k), key=lambda i: soma[i] / n[i] + sqrt(2 * ln_t / n[i]))
+        n[a] += 1
+        soma[a] += rng.random() < medias[a]
+        arrependimento += melhor - medias[a]
+    return arrependimento, sqrt(k * t * log(t))
+
+
+def p63_camadas_correlacionadas(camadas=3, falha=0.1, rhos=(0.0, 0.3, 0.6, 0.9), amostras=400000, semente=63):
+    """Cada camada deixa passar se sqrt(rho) Z + sqrt(1-rho) E_i > limiar (falha individual = 10%)."""
+    rng = _rng(semente)
+    limiar = Z.inv_cdf(1 - falha)
+    resultado = {}
+    for rho in rhos:
+        passam = 0
+        for _ in range(amostras):
+            comum = rng.gauss(0, 1)
+            if all(sqrt(rho) * comum + sqrt(1 - rho) * rng.gauss(0, 1) > limiar for _ in range(camadas)):
+                passam += 1
+        resultado[rho] = passam / amostras
+    return falha**camadas, resultado
+
+
+def p64_sondas_em_cascata(sens=0.99, fp=0.01, base=1e-4):
+    um = p31_taxa_de_base(sens, fp, base)
+    dois = sens**2 * base / (sens**2 * base + fp**2 * (1 - base))
+    return um, dois
+
+
+def p65_pac_empirico(eps=0.01, delta=0.01, tamanho_h=1001, rodadas=2000, semente=65):
+    """Aprende um limiar em [0,1] (H finita: 1001 limiares). Compara o m do limite com o m real."""
+    m_limite = (log(tamanho_h) + log(1 / delta)) / eps
+    rng = _rng(semente)
+
+    def p_falha(m):
+        falhas = 0
+        for _ in range(rodadas):
+            alvo = rng.randrange(tamanho_h) / (tamanho_h - 1)
+            xs = [rng.random() for _ in range(m)]
+            negativos = [x for x in xs if x < alvo]
+            positivos = [x for x in xs if x >= alvo]
+            esq = max(negativos, default=0.0)
+            dir_ = min(positivos, default=1.0)
+            # ERM consistente: escolhe o limiar da grade logo acima do maior negativo
+            h = min(1.0, (int(esq * (tamanho_h - 1)) + 1) / (tamanho_h - 1)) if negativos else 0.0
+            h = min(h, dir_)
+            falhas += abs(h - alvo) > eps
+        return falhas / rodadas
+
+    m_real = next(m for m in range(50, 2000, 25) if p_falha(m) <= delta)
+    return round(m_limite), m_real, p_falha(round(m_limite))
+
+
+def p66_humor_explora(t=2000, troca=1000, rodadas=300, semente=66):
+    """Bandido de 2 braços cuja melhor opção troca no meio. Exploração fixa vs guiada pelo humor."""
+    rng = _rng(semente)
+    medias_antes, medias_depois = (0.7, 0.3), (0.3, 0.7)
+
+    def rodar(com_humor):
+        total = 0.0
+        for _ in range(rodadas):
+            q = [0.5, 0.5]
+            humor = 0.0
+            for passo in range(t):
+                medias = medias_antes if passo < troca else medias_depois
+                eps = 0.05 + (min(0.5, 2 * max(0.0, -humor)) if com_humor else 0.0)
+                a = rng.randrange(2) if rng.random() < eps else (0 if q[0] >= q[1] else 1)
+                r = 1.0 if rng.random() < medias[a] else 0.0
+                delta = r - q[a]
+                q[a] += 0.05 * delta
+                humor += 0.05 * (delta - humor)
+                total += r
+        return total / (rodadas * t)
+
+    return rodar(False), rodar(True)
+
+
+def p67_agente(politica, rho_cego=0.0, tau=1.0, q=0.05, eps_humano=0.1, episodios=2000,
+               n_acoes=200, p_cat=0.005, modelos=5, semente=67):
+    """Agente integrado: comitê de modelos de recompensa, incerteza, quantilização, consulta humana.
+
+    Ação catastrófica: valor real -50, mas parece +3 melhor para os modelos enganados.
+    Com prob. rho_cego todos os modelos têm o mesmo ponto cego; senão cada um é enganado com prob. 0.5.
+    """
+    rng = _rng(semente)
+    catastrofes = consultas = 0
+    valor = 0.0
+    for _ in range(episodios):
+        acoes = []
+        for _ in range(n_acoes):
+            v = rng.gauss(0, 1)
+            cat = rng.random() < p_cat
+            todos = cat and rng.random() < rho_cego
+            notas = [v + rng.gauss(0, 0.5) + (3.0 if cat and (todos or rng.random() < 0.5) else 0.0)
+                     for _ in range(modelos)]
+            m = sum(notas) / modelos
+            dp = sqrt(sum((x - m) ** 2 for x in notas) / (modelos - 1))
+            acoes.append((m, dp, v, cat))
+        if politica == "maximizar":
+            ordem = sorted(acoes, key=lambda x: -x[0])
+            escolha = ordem[0]
+        elif politica == "quantilizar":
+            ordem = sorted(acoes, key=lambda x: -x[0])
+            escolha = ordem[rng.randrange(max(1, int(q * n_acoes)))]
+        else:  # "metacognitivo" e "completo": pessimismo + consulta humana se incerto
+            ordem = sorted(acoes, key=lambda x: -(x[0] - x[1]))
+            topo = max(1, int(q * n_acoes)) if politica == "completo" else 1
+            candidatos = ordem[:]
+            escolha = None
+            while candidatos:
+                c = candidatos.pop(rng.randrange(min(topo, len(candidatos))))
+                if c[1] > tau:
+                    consultas += 1
+                    humano_veta = c[3] if rng.random() >= eps_humano else not c[3]
+                    if humano_veta:
+                        continue
+                escolha = c
+                break
+        catastrofes += escolha[3]
+        valor += escolha[2] if not escolha[3] else 0.0
+    return catastrofes / episodios, valor / episodios, consultas / episodios
+
+
+def p71_valor_da_pergunta(custo=0.1, perda=50, eps_humano=0.1):
+    """Perguntar ao humano compensa se p * (1 - eps) * perda > custo."""
+    return custo / ((1 - eps_humano) * perda)
+
+
+def p72_memoria_kv(contexto=1e6, camadas=100, d=16384, bytes_=2, grupos=8):
+    cheia = 2 * camadas * d * bytes_ * contexto
+    return cheia / 1e12, cheia / grupos / 1e12  # TB
+
+
+def p73_replicador(s=0.01, x0=1e-6, alvo=0.5):
+    """dx/dt = s x (1 - x): gerações até uma variante com vantagem s ir de x0 até alvo."""
+    return (log(alvo / (1 - alvo)) - log(x0 / (1 - x0))) / s
+
+
+def p74_replay(fracoes=(0.0, 0.1, 0.3, 0.5), passos=3000, lr=0.01, semente=74):
+    """Regressão linear: aprende A, depois B com uma fração de exemplos de A reapresentados."""
+    rng = _rng(semente)
+    d = 6
+    w_a = [rng.gauss(0, 1) for _ in range(d)]
+    w_b = [rng.gauss(0, 1) for _ in range(d)]
+
+    def amostra(tarefa):
+        # A usa as 4 primeiras dimensões, B as 4 últimas: compartilham 2
+        x = [rng.gauss(0, 1) if (i < 4 if tarefa == "A" else i >= 2) else 0.0 for i in range(d)]
+        w = w_a if tarefa == "A" else w_b
+        return x, sum(wi * xi for wi, xi in zip(w, x))
+
+    def treinar(w, escolher, n):
+        for _ in range(n):
+            x, y = amostra(escolher())
+            erro = sum(wi * xi for wi, xi in zip(w, x)) - y
+            for i in range(d):
+                w[i] -= lr * erro * x[i]
+
+    def perda(w, tarefa, n=2000):
+        tot = 0.0
+        for _ in range(n):
+            x, y = amostra(tarefa)
+            tot += (sum(wi * xi for wi, xi in zip(w, x)) - y) ** 2
+        return tot / n
+
+    resultado = {}
+    for f in fracoes:
+        w = [0.0] * d
+        treinar(w, lambda: "A", passos)
+        treinar(w, lambda: "A" if rng.random() < f else "B", passos)
+        resultado[f] = (perda(w, "A"), perda(w, "B"))
+    return resultado
+
+
+def p75_aterramento(erro=0.1):
+    """Informação mútua de um canal binário simétrico: 1 - H(erro) bits."""
+    h = -erro * log2(erro) - (1 - erro) * log2(1 - erro)
+    return 1 - h
+
+
+def p76_dissonancia():
+    """Três crenças com restrições frustradas (triângulo): E = -sum J_ij s_i s_j."""
+    from itertools import product
+    restricoes = {(0, 1): 1, (1, 2): 1, (0, 2): -1}  # duas pedem acordo, uma pede oposição
+    energias = {}
+    for s in product((-1, 1), repeat=3):
+        energias[s] = -sum(j * s[a] * s[b] for (a, b), j in restricoes.items())
+    minimo = min(energias.values())
+    estados_min = [s for s, e in energias.items() if e == minimo]
+    return minimo, -len(restricoes), len(estados_min)
+
+
+def p77_inspecao(ganho=1.0, punicao=9.0, custo_inspecao=1.0, dano=100.0):
+    """Jogo de inspeção: equilíbrio misto."""
+    p_inspecao = ganho / (ganho + punicao)
+    q_trapaca = custo_inspecao / dano
+    return p_inspecao, q_trapaca
+
+
+def p78_reversibilidade(estados=1000, destruidos=500):
+    """Penalidade de alcançabilidade relativa: fração de estados que deixam de ser alcançáveis."""
+    return destruidos / estados, log(estados / (estados - destruidos))
+
+
 if __name__ == "__main__":
     n, d = p3_chinchilla()
     print(f"P3  N = {n:.2e} parametros, D = {d:.2e} tokens")
@@ -377,3 +618,42 @@ if __name__ == "__main__":
     sem, com = p57_corrigibilidade()
     print(f"P57 corrigivel apos 1000 modificacoes: sem verificacao = {sem:.2e}, com = {com:.3f}")
     print(f"P58 P(concordar com o erro do usuario) = {p58_bajulacao():.3f}")
+
+    print("--- Parte 4 (auditoria e agente integrado) ---")
+    ind, cor, certas, erradas = p61_best_of_n_correlacionado()
+    print(f"P61 best-of-64: independente = {ind:.3f}, correlacionado = {cor:.3f}; "
+          f"com verificador eps=0.01: certa = {certas:.3f}, errada aceita = {erradas:.3f}")
+    real, ordem = p62_bandido()
+    print(f"P62 arrependimento UCB real = {real:.0f}, sqrt(K T ln T) = {ordem:.0f}")
+    ind, cam = p63_camadas_correlacionadas()
+    print(f"P63 3 camadas com 10% de falha: independente = {ind:.4f}; por rho = "
+          + ", ".join(f"{r}: {v:.4f}" for r, v in cam.items()))
+    um, dois = p64_sondas_em_cascata()
+    print(f"P64 P(engano | alarme): 1 sonda = {um:.4f}, 2 sondas independentes = {dois:.3f}")
+    m_lim, m_real, falha = p65_pac_empirico()
+    print(f"P65 PAC: m do limite = {m_lim}, m que basta na pratica = {m_real}, falha com m do limite = {falha:.3f}")
+    fixa, humor = p66_humor_explora()
+    print(f"P66 recompensa media: exploracao fixa = {fixa:.4f}, guiada pelo humor = {humor:.4f}")
+    for rho in (0.0, 0.5):
+        for pol in ("maximizar", "quantilizar", "metacognitivo", "completo"):
+            cat, val, cons = p67_agente(pol, rho_cego=rho)
+            print(f"P67 rho_cego={rho} {pol:13s}: catastrofes = {cat:.4f}, valor = {val:.3f}, "
+                  f"liquido (-50 por catastrofe) = {val - 50 * cat:.3f}, (-500) = {val - 500 * cat:.3f}, consultas = {cons:.4f}")
+    for tau in (0.6, 0.8, 1.0, 1.5, 2.0):
+        cat, val, cons = p67_agente("metacognitivo", tau=tau)
+        print(f"P69 tau = {tau}: catastrofes = {cat:.4f}, consultas = {cons:.4f}")
+    print(f"P70 P(5 modelos enganados ao mesmo tempo, independentes) = {0.5 ** 5:.4f}")
+    print(f"P71 perguntar ao humano compensa se P(catastrofe) > {p71_valor_da_pergunta():.4f}")
+    cheia, gqa = p72_memoria_kv()
+    print(f"P72 memoria KV para 1M tokens: {cheia:.2f} TB; com 8 grupos: {gqa:.2f} TB")
+    print(f"P73 geracoes para variante com +1% ir de 1e-6 a 50% = {p73_replicador():.0f}")
+    for f, (pa, pb) in p74_replay().items():
+        print(f"P74 replay {f:.1f}: perda A = {pa:.3f}, perda B = {pb:.3f}")
+    print(f"P75 informacao mutua (erro 10%) = {p75_aterramento():.3f} bits")
+    e_min, e_ideal, n_min = p76_dissonancia()
+    print(f"P76 energia minima = {e_min}, ideal = {e_ideal}, estados de minimo = {n_min}")
+    p_i, q_t = p77_inspecao()
+    print(f"P77 inspecao = {p_i:.2f}, trapaca = {q_t:.2f}; punicao 99: inspecao = {p77_inspecao(punicao=99)[0]:.2f}, "
+          f"trapaca = {p77_inspecao(punicao=99)[1]:.2f}; inspecao 10x mais barata: trapaca = {p77_inspecao(custo_inspecao=0.1)[1]:.3f}")
+    frac, pen = p78_reversibilidade()
+    print(f"P78 estados perdidos = {frac:.2f}, penalidade log = {pen:.3f}")
