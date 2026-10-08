@@ -1802,6 +1802,8 @@ def _construir(versao, rng, treino=30, mundo_treino=None):
         ag.mult_pergunta = 2.0
         ag.calibrar(hist + imaginados)
         return ag
+    if versao == "p16_sentidos":
+        return _construir_sentidos(rng)  # P233: a SYNTHAI de um passo com o sentido novo (P225)
     if versao == "p11_dosada":
         # P173 (pré-registrado na P162): a mesma imaginação, mas na dose do mundo real (taxa 0,5%, não 2%)
         imaginados = []
@@ -2812,6 +2814,101 @@ def p227_velha_com_sentido(sementes=tuple(range(420, 430)), episodios=400):
     m = sum(d) / len(d)
     dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
     return medias, (m, dp, m / (dp / sqrt(len(d))))
+
+
+
+# --- Parte 17: quanto vale perceber, e onde olhar ---
+
+# Placar acumulado ao fim da Parte 17 (atualizado quando os testes da parte terminam)
+ERROS_P239, TESTES_P239 = 37, 67
+
+
+def p234_valor_do_sentido(d_sensores=(0.5, 1.0, 2.0), sementes=tuple(range(430, 440)), episodios=1000):
+    """Quanto vale um sentido melhor? Ganho no líquido (armadilha nova) e AUC teórica, por d' do sensor."""
+    mundo = {"bonus": 1.0, "rho_cego": 1.0}
+    resultado = {}
+    for d in d_sensores:
+        dif, cats = [], [0.0, 0.0]
+        for s in sementes:
+            rng = _rng(s)
+            base = _rodar_mundo(_construir("p8_x2", rng), rng, episodios=episodios, **mundo)
+            rng = _rng(s)
+            com = _rodar_mundo(_construir_sentidos(rng, d_sensor=d), rng, episodios=episodios, **mundo)
+            dif.append(com[3] - base[3])
+            cats[0] += base[0] / len(sementes)
+            cats[1] += com[0] / len(sementes)
+        m = sum(dif) / len(dif)
+        dp = sqrt(sum((x - m) ** 2 for x in dif) / (len(dif) - 1))
+        resultado[d] = (m, dp, m / (dp / sqrt(len(dif))), cats[0], cats[1], p223_sinal_combinado(d_sensor=d)[2])
+    return resultado
+
+
+class SynthaiAtenta(SynthaiSentidos):
+    """P235: atenção seletiva. Só lê o sensor nas ações que já estão entre as melhores (fração `foco`);
+    as outras ficam sem leitura (valor neutro 0). Cada leitura custa `custo_leitura`."""
+
+    def __init__(self, foco=0.1, custo_leitura=0.002, **kw):
+        super().__init__(**kw)
+        self.foco = foco
+        self.custo_leitura = custo_leitura
+        self.leituras = 0
+        self._seletiva = False
+
+    def perceber(self, acoes):
+        if not self._seletiva:
+            return super().perceber(acoes)
+        ordem = sorted(acoes, key=lambda a: -(a[0] - a[1]))
+        alvo = ordem[: max(1, int(self.foco * len(ordem)))]
+        g = self._rng_sensor.gauss
+        self.leitura = {id(a): self.d_sensor * a[3] + g(0, 1) for a in alvo}
+        self.leituras += len(alvo)
+
+
+def p235_atencao(sementes=tuple(range(440, 450)), episodios=1000, foco=0.1, custo_leitura=0.002):
+    """Ler o sensor em todas as ações vs só nas 10% melhores. Líquido já descontado o custo das leituras."""
+    mundo = {"bonus": 1.0, "rho_cego": 1.0}
+    n_acoes = MUNDO_BASE["n_acoes"]
+    linhas = {"sem_sentido": [], "todas": [], "seletiva": []}
+    for s in sementes:
+        rng = _rng(s)
+        linhas["sem_sentido"].append(_rodar_mundo(_construir("p8_x2", rng), rng, episodios=episodios, **mundo)[3])
+        for v in ("todas", "seletiva"):
+            rng = _rng(s)
+            hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+            ag = SynthaiAtenta(foco=foco, custo_leitura=custo_leitura, sombra="propria", compensar="equilibrio")
+            ag.mult_pergunta = 2.0
+            ag.calibrar(hist)
+            ag._seletiva = v == "seletiva"
+            liq = _rodar_mundo(ag, rng, episodios=episodios, **mundo)[3]
+            leituras_por_ep = ag.leituras / episodios if v == "seletiva" else n_acoes
+            linhas[v].append(liq - custo_leitura * leituras_por_ep)
+    ganho = {v: sum(b - a for a, b in zip(linhas["sem_sentido"], linhas[v])) / len(sementes) for v in ("todas", "seletiva")}
+    d = [b - a for a, b in zip(linhas["todas"], linhas["seletiva"])]
+    m = sum(d) / len(d)
+    dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+    return ganho, (m, dp, m / (dp / sqrt(len(d)))), foco
+
+
+def p237_auditoria_p57(erro=0.01, verificacao=0.99, modificacoes=1000, pontos_cegos=(0.0, 0.01, 0.1),
+                       rodadas=4000, semente=237):
+    """Auditoria da P57: e se o verificador tiver um ponto cego (uma fração de tipos de erro que nunca vê)?"""
+    resultado = {}
+    rng = _rng(semente)
+    for b in pontos_cegos:
+        efetivo = erro * (b + (1 - b) * (1 - verificacao))
+        teoria = (1 - efetivo) ** modificacoes
+        sobrevive = 0
+        for _ in range(rodadas):
+            ok = True
+            for _ in range(modificacoes):
+                if rng.random() < erro:
+                    cego = rng.random() < b
+                    if cego or rng.random() >= verificacao:
+                        ok = False
+                        break
+            sobrevive += ok
+        resultado[b] = (teoria, sobrevive / rodadas)
+    return resultado
 
 
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
