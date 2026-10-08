@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 25: o sentimento que acompanha o pensamento
 
-> Continuação da [Parte 24](ASI_AGI_parte24_pensamento_diferenciado.md). Código novo: [`synthai/limiar.py`](synthai/limiar.py) (testes em
+> Continuação da [Parte 24](ASI_AGI_parte24_pensamento_diferenciado.md). **Próxima:** [Parte 26 — a constante que faltava](ASI_AGI_parte26_a_constante_que_faltava.md) (P321–P330). Código novo: [`synthai/limiar.py`](synthai/limiar.py) (testes em
 > [`synthai/testes_limiar.py`](synthai/testes_limiar.py)). Os números saem de `p312_...` a `p318b_...` em [`calculos.py`](calculos.py); a saída
 > completa está em [`resultados.txt`](resultados.txt).
 >

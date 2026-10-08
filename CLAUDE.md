@@ -21,6 +21,8 @@ anterior, commit e push.
 - "Sempre rode contínuos e incansáveis testes e simulações" (Parte 25): enquanto uma simulação longa roda, preparar e
   rodar a próxima; cada resultado inesperado gera um teste novo (pré-registrado) em vez de uma explicação parada;
   os testes de unidade de todo o pacote rodam a cada mudança no código.
+- "KD os cálculos?" (Parte 26): no texto, toda conta aparece com a substituição feita, linha por linha, a partir de
+  quantidades medidas; e cada acerto vem com a chance de acertar ao acaso e contra um preditor ingênuo.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 

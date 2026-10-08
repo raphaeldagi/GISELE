@@ -4438,7 +4438,7 @@ def p317_varredura_sequencial(sementes=tuple(range(700, 710)), mults=(0.5, 1.0, 
 # --- Parte 26: a constante que faltava (os termos da conta das três ações, um por um) ---
 
 # Placar acumulado ao fim da Parte 26 (atualizado quando os testes da parte terminam)
-ERROS_P329, TESTES_P329 = 68, 148
+ERROS_P329, TESTES_P329 = 70, 155
 
 
 def p322_termos_da_conta(modelo, fazer, sementes, episodios=400, mult=2.0):
@@ -4578,6 +4578,30 @@ def p324_varredura_nos_mundos_novos(mults=(0.5, 1.0, 2.0, 4.0, 8.0)):
     return resultado
 
 
+def p325_chance(conta=((5.811, 8.0), (0.755, 0.5), (3.134, 2.0), (7.491, 4.0), (0.995, 1.0), (2.077, 2.0)),
+                ingenuo=(4.0, 0.5, 1.0, 4.0, 0.5, 1.0), grade=(0.5, 1.0, 2.0, 4.0, 8.0)):
+    """Qual a chance de acertar a P324 por sorte? Cada caso: (m da conta, ótimo da varredura). Uma faixa 'a um fator 2
+    da conta' cobre k pontos da grade de 5; ao acaso, acerta com probabilidade k/5. Compara com um preditor ingênuo
+    que repete o ótimo do mundo sequencial da P317 (gradiente 4, Newton 0,5, local 1), cuja faixa cobre 2 ou 3 pontos.
+    Devolve, para os dois: acertos, a chance de acertar tantos ou mais ao acaso, os bits de especificidade
+    (−log2 da chance de todos os acertos ao acaso) e a distância média |log2(previsto/ótimo)|."""
+    def avaliar(previstos, otimos):
+        faixas = [[g for g in grade if abs(log2(g / p)) <= 1] for p in previstos]
+        acertos = [o in f for f, o in zip(faixas, otimos)]
+        ps = [len(f) / len(grade) for f in faixas]
+        # chance de >= tantos acertos ao acaso (soma sobre subconjuntos: distribuição de Poisson-binomial)
+        dist = [1.0]
+        for q in ps:
+            dist = [a * (1 - q) + (dist[i - 1] * q if i else 0.0) for i, a in enumerate(dist + [0.0])]
+        k = sum(acertos)
+        chance = sum(dist[k:])
+        bits = -sum(log2(q) for q in ps)
+        dist_media = sum(abs(log2(p / o)) for p, o in zip(previstos, otimos)) / len(otimos)
+        return k, chance, bits, dist_media
+    otimos = [o for _, o in conta]
+    return avaliar([p for p, _ in conta], otimos), avaliar(list(ingenuo), otimos)
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
@@ -4648,6 +4672,7 @@ def testes_de_regressao():
         "P306": [f"{x:.1e}" for x in p306_newton_quadratico()[8:10]] == ["9.3e-03", "2.6e-05"],
         "P307": [round(x, 2) for x in p307_selecao()[0]["caso_controle"][:2]] == [-0.02, 1.48],
         "P314": round(p314_custo_do_descarte()[1], 3) == 0.364,
+        "P325": [round(x, 4) for x in p325_chance()[0][1:2] + p325_chance()[1][1:2]] == [0.0041, 0.0207],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -5298,6 +5323,23 @@ def _parte_25():
     print(f"P319 minha taxa de erro ({ERROS_P319}/{TESTES_P319}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_26():
+    print("--- Parte 26 (a constante que faltava: os termos da conta, um por um) ---")
+    for (mundo, modelo), t in p322_termos_nos_mundos().items():
+        print(f"P322 {mundo} {modelo:9s}: L_ef = {t['L_ef']:.1f}; dd valor = {t['dd_valor']:.3f}, com o plano = {t['dd_plano']:.3f}; "
+              f"f = {t['f_todas']:.3f} (aceitas {t['f_aceitas']:.3f}); m: P316 = {t['m_P316']:.2f}, L = {t['m_L']:.2f}, "
+              f"plano = {t['m_plano']:.2f}, tudo = {t['m_tudo']:.2f}")
+    for (mundo, modelo), m in p323_conta_nos_mundos_novos().items():
+        print(f"P323 {mundo} {modelo:9s}: m pela conta corrigida = {m:.3f}")
+    for (mundo, modelo), (medias, cats, melhor) in p324_varredura_nos_mundos_novos().items():
+        print(f"P324 {mundo} {modelo:9s}: retorno { {m: round(v, 3) for m, v in medias.items()} }; melhor m = {melhor}")
+    (k, ch, bits, d), (k2, ch2, bits2, d2) = p325_chance()
+    print(f"P325 conta: acertos = {k}/6, chance ao acaso = {ch:.4f}, bits = {bits:.2f}, |log2| medio = {d:.3f}; "
+          f"ingenuo: {k2}/6, chance = {ch2:.4f}, bits = {bits2:.2f}, |log2| medio = {d2:.3f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P329, testes=TESTES_P329)
+    print(f"P329 minha taxa de erro ({ERROS_P329}/{TESTES_P329}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -5326,7 +5368,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26}
 
 
 if __name__ == "__main__":
