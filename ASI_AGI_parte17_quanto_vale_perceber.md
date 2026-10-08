@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 17: quanto vale perceber, e onde olhar
 
-> Continuação da [Parte 16](ASI_AGI_parte16_sentido_novo.md). Os números saem de `p233` (Υ da P168/P185 com o sentido novo),
+> Continuação da [Parte 16](ASI_AGI_parte16_sentido_novo.md). **Próxima:** [Parte 18 — a linguagem como canal](ASI_AGI_parte18_linguagem.md) (P241–P250). Os números saem de `p233` (Υ da P168/P185 com o sentido novo),
 > `p234_...`, `p235_...`, `p237_...` e da classe `SynthaiAtenta` em [`calculos.py`](calculos.py); a saída completa está em
 > [`resultados.txt`](resultados.txt).
 >
