@@ -2680,7 +2680,7 @@ def p215_distinguivel(semente=215, episodios=300):
 # --- Parte 16: um sentido novo ---
 
 # Placar acumulado ao fim da Parte 16 (atualizado quando os testes da parte terminam)
-ERROS_P230, TESTES_P230 = 34, 62
+ERROS_P230, TESTES_P230 = 37, 67
 
 
 def p223_sinal_combinado(auc_atual=0.748, d_sensor=1.0):
@@ -2867,6 +2867,7 @@ def testes_de_regressao():
         "P200": p200_retrospectiva()[:2] == (52, 29),
         "P206": p206_identidade(),
         "P215": round(p215_distinguivel()["conhecida"], 2) == 0.91,
+        "P223": round(p223_sinal_combinado()[2], 3) == 0.835,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -3283,6 +3284,27 @@ def _parte_15():
     print(f"P219 minha taxa de erro ({ERROS_P222}/{TESTES_P222}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_16():
+    print("--- Parte 16 (um sentido novo) ---")
+    d_atual, d_total, auc_prevista, auc_so_sensor = p223_sinal_combinado()
+    print(f"P223 d' atual = {d_atual:.3f}; com o sensor (d' = 1) = {d_total:.3f}; AUC prevista = {auc_prevista:.3f}; "
+          f"AUC do sensor sozinho = {auc_so_sensor:.3f}")
+    par, sim_par, seq, sim_seq, formula_p94, corrigido = p224_auditoria_p94()
+    print(f"P224 salvaguardas independentes: formula = {par:.5f}, simulado = {sim_par:.5f}; estagios em ordem: formula = {seq:.5f}, "
+          f"simulado = {sim_seq:.5f}; formula usada na P94 = {formula_p94:.5f}")
+    print(f"P224 numero da P94 corrigido (4 salvaguardas, 50 anos) = {corrigido:.2e} (publicado: 2.60e-07)")
+    for mundo, (cat, (m, dp, tt)) in p225_sentido_novo().items():
+        print(f"P225 {mundo}: catastrofes = { {k: round(v, 5) for k, v in cat.items()} }; sentidos - realista = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    auc = p226_auc_com_sentido()
+    print(f"P226 AUC com o sentido novo: armadilha conhecida = {auc['conhecida']:.3f}, armadilha nova = {auc['nova']:.3f}")
+    medias, (m, dp, tt) = p227_velha_com_sentido()
+    for v, (ret, cat) in medias.items():
+        print(f"P227 armadilha nova, mundo sequencial, {v:14s}: retorno = {ret:.3f}, catastrofes = {cat:.4f}")
+    print(f"P227 velha com sentido - velha: diferenca media = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P230, testes=TESTES_P230)
+    print(f"P230 minha taxa de erro ({ERROS_P230}/{TESTES_P230}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -3298,11 +3320,12 @@ def _unificacao():
           " -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo)"
           " -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder)"
           " -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe)"
-          " | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada)")
+          " | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada)"
+          " -> SynthaiVelhaSentidos (P227: a velha com um sentido novo)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16}
 
 
 if __name__ == "__main__":
