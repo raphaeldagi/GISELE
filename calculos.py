@@ -2860,7 +2860,7 @@ class SynthaiAtenta(SynthaiSentidos):
 
     def perceber(self, acoes):
         if not self._seletiva:
-            return super().perceber(acoes)
+            return _SentidoNovo.perceber(self, acoes)  # explícito: o método também é usado pela SynthaiVelhaAtenta
         ordem = sorted(acoes, key=lambda a: -(a[0] - a[1]))
         alvo = ordem[: max(1, int(self.foco * len(ordem)))]
         g = self._rng_sensor.gauss
