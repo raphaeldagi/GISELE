@@ -26,6 +26,8 @@ anterior, commit e push.
   - **Meta**: suposições, confiança, onde pode estar errado.
 - Ir mais fundo que a parte anterior; indicar de qual pergunta anterior a nova nasceu (↩ Pn).
 - Testar afirmações antigas e manter o placar de erros (✅ ⚠️ ❌).
+- Previsões pré-registradas devem ser arriscadas: números que poderiam facilmente dar errado, não só a direção
+  de um efeito já conhecido (Parte 17).
 - Ligar a nova parte a partir da anterior.
 
 ## Código (sempre cresce, sempre unificado)

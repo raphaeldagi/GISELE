@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 16: um sentido novo
 
-> Continuação da [Parte 15](ASI_AGI_parte15_synthai.md). Os números saem de `p223_...` a `p227_...` e das classes
+> Continuação da [Parte 15](ASI_AGI_parte15_synthai.md). **Próxima:** [Parte 17 — quanto vale perceber](ASI_AGI_parte17_quanto_vale_perceber.md) (P232–P240). Os números saem de `p223_...` a `p227_...` e das classes
 > `SynthaiSentidos` e `SynthaiVelhaSentidos` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
