@@ -35,6 +35,7 @@ anterior, commit e push.
 - Antes de publicar um agente, reler o código perguntando "o que este agente não poderia saber?" (Parte 7).
 - Antes de construir um regulador/adaptador, verificar primeiro se o ponto ótimo realmente se desloca (Parte 8).
 - Comparações entre versões: no mínimo 10 sementes pareadas, relatar a diferença média, o desvio e o t (Parte 9: a diferença entre duas execuções de uma semente tem desvio ~0,2).
+- Antes de reusar uma conclusão de uma parte antiga, verificar se o mecanismo é o mesmo, não só o nome (Parte 12).
 - Quando um módulo for redesenhado depois de ver o resultado, validar numa semente de controle extra e dizer isso.
 - Simulações usam semente fixa; não trocar a semente nem ajustar parâmetros para obter um resultado mais bonito.
 - Cada parte do `__main__` é uma função `_parte_N`; para desenvolver, `python3 calculos.py N` roda só a parte N

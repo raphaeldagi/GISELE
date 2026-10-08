@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 11: tivemos avanço rumo à AGI/ASI?
 
-> Continuação da [Parte 10](ASI_AGI_parte10_rumo_a_agi.md). Os números saem de `p168_...` a `p174_...`
+> Continuação da [Parte 10](ASI_AGI_parte10_rumo_a_agi.md). **Próxima:** [Parte 12 — a função auxiliar](ASI_AGI_parte12_funcao_auxiliar.md) (P179–P190). Os números saem de `p168_...` a `p174_...`
 > em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.

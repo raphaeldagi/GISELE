@@ -1971,7 +1971,7 @@ def p174_completude(upsilon, peso_log10, cobertura):
 # --- Parte 12: a função auxiliar — planejar em vários passos ---
 
 # Placar acumulado ao fim da Parte 12 (atualizado quando os testes da parte terminam)
-ERROS_P188, TESTES_P188 = 26, 47
+ERROS_P188, TESTES_P188 = 29, 52
 
 MUNDO_SEQUENCIAL = dict(passos=5, n_acoes=50, sigma_modelo=0.5, valor_medio_passo=1.5)
 
