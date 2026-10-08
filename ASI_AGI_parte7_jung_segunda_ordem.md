@@ -111,7 +111,7 @@ dissolver a estrutura, depois resfriar devagar para cristalizar uma melhor. Test
 
 **Correção da minha expectativa ⚠️.** Eu esperava que o resfriamento lento fosse **muito** melhor que o
 rápido. Não foi: quase igual. O que importou foi **passar pelo calor**: sem a fase de dissolução, o
-sistema fica preso no primeiro mínimo que encontra (12% pior).
+sistema fica preso no primeiro mínimo que encontra (~11% pior).
 
 **Tradução cruzada (química → psicologia).** Os estágios do *opus*, como estágios de treino:
 
