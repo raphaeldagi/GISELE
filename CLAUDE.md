@@ -33,6 +33,7 @@ anterior, commit e push.
 - O bloco `__main__` termina sempre com a seção "Unificação": contagem de funções e
   `testes_de_regressao()`. Acrescentar aos testes os principais números de cada nova parte.
 - Antes de publicar um agente, reler o código perguntando "o que este agente não poderia saber?" (Parte 7).
+- Antes de construir um regulador/adaptador, verificar primeiro se o ponto ótimo realmente se desloca (Parte 8).
 - Quando um módulo for redesenhado depois de ver o resultado, validar numa semente de controle extra e dizer isso.
 - Simulações usam semente fixa; não trocar a semente nem ajustar parâmetros para obter um resultado mais bonito.
 - Depois de mudar o código: `python3 calculos.py > resultados.txt` e commitar os dois.

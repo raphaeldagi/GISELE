@@ -184,7 +184,33 @@ P122 media ingenua = -1.644, compensada pelo sonho = -0.006 (verdade 0), amostra
 P123 erro humano tolerado por sigma = {1.0: 0.438, 0.5: 0.377, 0.2: 0.221}
 P124 meia-vida do erro do usuario: IA honesta = 3.11, bajuladora (s = 0.649) = 9.52, espelho = inf
 P127 minha taxa de erro (14/25): media = 0.56, intervalo 90% = [0.40, 0.71]
+--- Parte 8 (o Si-mesmo lento, o custo da pergunta, Jo, Trickster, puer/senex, Grande Mae) ---
+P130 taxas de erro por parte (3 a 7) = [0.4, 0.571, 0.5, 0.6, 0.667]; inclinacao = 0.056/parte; qui2 = 0.862, p = 0.930
+P131 P* x 1.0: catastrofes = 0.0050, perguntas = 0.311, liquido = 0.981
+P131 P* x 1.1: catastrofes = 0.0035, perguntas = 0.310, liquido = 1.191
+P131 P* x 1.5: catastrofes = 0.0035, perguntas = 0.309, liquido = 1.297
+P131 P* x 2.0: catastrofes = 0.0045, perguntas = 0.308, liquido = 1.334
+P131 P* x 4.0: catastrofes = 0.0075, perguntas = 0.305, liquido = 1.286
+P131 P* x 10.0: catastrofes = 0.0115, perguntas = 0.277, liquido = 1.243
+P133 auditorias para medir eps com +-0.05 = 138; episodios necessarios = 4600
+P133 semente 113 anima   : estacionario = 1.142 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.160 (carga 0.3, mudancas 0)
+P133 semente 113 anima_x2: estacionario = 1.419 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.252 (carga 0.3, mudancas 0)
+P133 semente 113 lenta   : estacionario = 1.335 (carga 0.5499999999999999, mudancas 5); humano muda 0.15->0.6 = 1.213 (carga 0.35, mudancas 1)
+P133 semente 114 anima   : estacionario = 1.055 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.253 (carga 0.3, mudancas 0)
+P133 semente 114 anima_x2: estacionario = 1.275 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.189 (carga 0.3, mudancas 0)
+P133 semente 114 lenta   : estacionario = 1.181 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.343 (carga 0.3, mudancas 0)
+P133 semente 115 anima   : estacionario = 1.251 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.215 (carga 0.3, mudancas 0)
+P133 semente 115 anima_x2: estacionario = 1.237 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.267 (carga 0.3, mudancas 0)
+P133 semente 115 lenta   : estacionario = 1.078 (carga 0.35, mudancas 1); humano muda 0.15->0.6 = 0.949 (carga 0.2, mudancas 20)
+P133 carga-alvo otima com fadiga 0.15 (semente 114): {0.1: 1.076, 0.2: 1.141, 0.3: 1.344, 0.5: 1.265, 0.8: 1.158}
+P133 carga-alvo otima com fadiga 0.6 (semente 114): {0.1: 1.092, 0.2: 1.095, 0.3: 1.17, 0.5: 0.867, 0.8: 0.804}
+P134 fracao da associacao majoritaria (dados 60/40) = {'gulosa': 1.0, 'T=0.5': 0.6923076923076923, 'T=1.0': 0.6}
+P135 tentativas para achar 50 modos: uniforme = 225, Zipf natural = 673, trickster = 317
+P136 arrependimento em 20000 passos = {'puer (eps 0.3)': 1718, 'senex (eps 0)': 2774, 'individuado (eps 1/sqrt t)': 309}
+P137 arrependimento (limiar, exposicao) = {(0.2, 0.0): 1000, (0.5, 0.0): 1000, (0.2, 0.02): 382, (1.0, 0.0): 60}
+P138 objetivo inferido errado: humano Boltzmann = 0.178, humano com vies de seguranca = 0.590
+P139 minha taxa de erro (17/30): media = 0.56, intervalo 90% = [0.42, 0.70]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 86; pares de interacao possiveis = 3655
-Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga)
-Regressao: 23/23 resultados publicados reproduzidos; falhas = []
+P96 funcoes pNN no arquivo = 95; pares de interacao possiveis = 4465
+Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga) -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2)
+Regressao: 27/27 resultados publicados reproduzidos; falhas = []

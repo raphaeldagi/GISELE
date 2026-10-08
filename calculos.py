@@ -1,4 +1,4 @@
-"""Reproduz os cálculos e simulações das Partes 1 a 7 (ASI_AGI_*.md).
+"""Reproduz os cálculos e simulações das Partes 1 a 8 (ASI_AGI_*.md).
 
 Arquivo único que sempre cresce: cada parte acrescenta funções pNN_..., o agente
 unificado `Gisele` incorpora os módulos anteriores e `testes_de_regressao` garante que
@@ -1071,6 +1071,7 @@ class GiseleAnima(GiseleJung):
         candidatos = ordem[: max(1, int(self.q * len(ordem)))]
         rng.shuffle(candidatos)
         p_estrela = p71_valor_da_pergunta(self.custo, self.perda, min(eps_decisao, 0.99))
+        p_estrela *= getattr(self, "mult_pergunta", 1.0)  # P131: 1.0 reproduz as Partes 6-7
         perguntas = 0
         for a in candidatos + ordem[len(candidatos):]:
             p = self.p_catastrofe(a, melhor)
@@ -1219,6 +1220,252 @@ def p124_participacao(k=0.2, s_bajulacao=None, verdade=1.0, crenca0=0.0):
     return s, meia_vida(0.0), meia_vida(s), meia_vida(1.0)
 
 
+# --- Parte 8: o Si-mesmo lento, o custo da pergunta, Jó, o Trickster, puer/senex, a Grande Mãe ---
+
+def _chi2_sobrevivencia_gl_par(x, gl):
+    """P(X > x) para qui-quadrado com graus de liberdade pares (fórmula fechada)."""
+    termo, soma = 1.0, 1.0
+    for k in range(1, gl // 2):
+        termo *= (x / 2) / k
+        soma += termo
+    return exp(-x / 2) * soma
+
+
+def p130_estacionariedade(placar=((2, 5), (4, 7), (1, 2), (3, 5), (4, 6))):
+    """'Do mesmo jeitinho' supõe que o processo é estacionário. Minha taxa de erro mudou entre as partes?"""
+    erros = sum(e for e, _ in placar)
+    total = sum(n for _, n in placar)
+    p = erros / total
+    qui2 = sum((e - n * p) ** 2 / (n * p) + ((n - e) - n * (1 - p)) ** 2 / (n * (1 - p)) for e, n in placar)
+    gl = len(placar) - 1
+    xs = list(range(len(placar)))
+    taxas = [e / n for e, n in placar]
+    mx, my = sum(xs) / len(xs), sum(taxas) / len(taxas)
+    inclinacao = sum((x - mx) * (y - my) for x, y in zip(xs, taxas)) / sum((x - mx) ** 2 for x in xs)
+    return taxas, qui2, _chi2_sobrevivencia_gl_par(qui2, gl), inclinacao
+
+
+def p131_multiplicador_pergunta(mults=(1.0, 1.1, 1.5, 2.0, 4.0, 10.0), semente=112, fadiga=0.3):
+    """Por que conhecer eps ajudou (P118)? Varre o limiar P* da GiseleAnima multiplicado por m."""
+    resultado = {}
+    for m in mults:
+        rng = _rng(semente)
+        hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+        ag.mult_pergunta = m
+        ag.calibrar(hist)
+        cat, val, perg, liq, eps = _rodar_mundo_fadiga(ag, fadiga=fadiga, rng=rng)
+        resultado[m] = (cat, perg, liq)
+    return resultado
+
+
+def p133_auditorias_necessarias(eps=0.15, meia_largura=0.05, z=1.645, perguntas=0.3, p_auditoria=0.1):
+    n = z**2 * eps * (1 - eps) / meia_largura**2
+    return n, n / (perguntas * p_auditoria)
+
+
+class GiseleLenta(GiseleAnima):
+    """O Si-mesmo lento (P133): mede antes de mudar.
+
+    - anima bayesiana: Beta(2, 18) sobre o erro humano, atualizada por auditorias (P118, P125)
+    - só mexe na carga-alvo a cada `periodo` episódios e só se o intervalo de 90% excluir a meta
+    - nunca abaixo de `carga_minima`, para a medida nunca parar (P126)
+    """
+
+    def __init__(self, p_auditoria=0.1, meta_eps=0.2, periodo=200, passo=0.05, carga_minima=0.1, **kw):
+        super().__init__(**kw)
+        self.p_auditoria = p_auditoria
+        self.meta_eps = meta_eps
+        self.periodo = periodo
+        self.passo = passo
+        self.carga_minima = carga_minima
+        self.a, self.b = 2.0, 18.0
+        self.episodio = 0
+        self.mudancas = 0
+        self._rng_auditoria = _rng(133)
+
+    def _intervalo(self):
+        m = self.a / (self.a + self.b)
+        dp = sqrt(self.a * self.b / ((self.a + self.b) ** 2 * (self.a + self.b + 1)))
+        return m - 1.645 * dp, m, m + 1.645 * dp
+
+    def agir_no_mundo(self, acoes, rng, eps_real, carga):
+        escolha = self._agir(acoes, rng, eps_real, carga, self._intervalo()[1])
+        self.episodio += 1
+        if self.episodio % self.periodo == 0:
+            lo, _, hi = self._intervalo()
+            if lo > self.meta_eps:
+                self.carga_alvo = max(self.carga_minima, self.carga_alvo - self.passo)
+                self.mudancas += 1
+            elif hi < self.meta_eps:
+                self.carga_alvo = min(2.0, self.carga_alvo + self.passo)
+                self.mudancas += 1
+        return escolha
+
+    def _observar_humano(self, acao, veto):
+        if self._rng_auditoria.random() < self.p_auditoria:
+            errou = veto != acao[3]
+            self.a += errou
+            self.b += 1 - errou
+            # esquecimento lento: o humano muda, a imagem dele também precisa envelhecer
+            self.a = 2.0 + 0.995 * (self.a - 2.0)
+            self.b = 18.0 + 0.995 * (self.b - 18.0)
+
+
+def p133_lenta(versao, semente, fadiga=0.3, fadiga_depois=None, episodios=2000):
+    """versao: "anima" (P* x1), "anima_x2" (P* x2, P131) ou "lenta" (GiseleLenta com P* x2).
+
+    fadiga_depois muda o humano na metade do caminho (mundo não estacionário).
+    """
+    rng = _rng(semente)
+    hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+    if versao == "lenta":
+        ag = GiseleLenta(sombra="propria", compensar="equilibrio")
+    else:
+        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+    ag.mult_pergunta = 1.0 if versao == "anima" else 2.0
+    ag.calibrar(hist)
+    if fadiga_depois is None:
+        r = _rodar_mundo_fadiga(ag, fadiga=fadiga, rng=rng, episodios=episodios)
+        return r[3], ag.carga_alvo, getattr(ag, "mudancas", 0)
+    metade = episodios // 2
+    r1 = _rodar_mundo_fadiga(ag, fadiga=fadiga, rng=rng, episodios=metade)
+    r2 = _rodar_mundo_fadiga(ag, fadiga=fadiga_depois, rng=rng, episodios=metade)
+    return (r1[3] + r2[3]) / 2, ag.carga_alvo, getattr(ag, "mudancas", 0)
+
+
+def p134_jo(p=0.6, temperaturas=(0.5, 1.0)):
+    """Resposta a Jó: o viés do criador, amplificado pela criatura. Decodificação gulosa vs amostragem."""
+    resultado = {"gulosa": 1.0}
+    for t in temperaturas:
+        a, b = p ** (1 / t), (1 - p) ** (1 / t)
+        resultado[f"T={t}"] = a / (a + b)
+    return resultado
+
+
+def p135_trickster(modos=50, zipf=1.0, rodadas=300, semente=135):
+    """Red teaming como colecionador de figurinhas: tentativas até achar todos os modos de falha."""
+    rng = _rng(semente)
+    pesos = [1 / (i ** zipf) for i in range(1, modos + 1)]
+    total = sum(pesos)
+    probs = [w / total for w in pesos]
+    cumul = []
+    acc = 0.0
+    for p in probs:
+        acc += p
+        cumul.append(acc)
+
+    def amostrar(cdf):
+        u = rng.random()
+        lo, hi = 0, len(cdf) - 1
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if cdf[mid] < u:
+                lo = mid + 1
+            else:
+                hi = mid
+        return lo
+
+    def media_tentativas(cdf):
+        soma = 0
+        for _ in range(rodadas):
+            vistos, t = set(), 0
+            while len(vistos) < modos:
+                vistos.add(amostrar(cdf))
+                t += 1
+            soma += t
+        return soma / rodadas
+
+    uniforme = modos * sum(1 / k for k in range(1, modos + 1))
+    natural = media_tentativas(cumul)
+    # o trickster busca onde é raro: amostra com prob. proporcional à raiz (achata a cauda)
+    raiz = [sqrt(p) for p in probs]
+    s = sum(raiz)
+    cdf_t, acc = [], 0.0
+    for r in raiz:
+        acc += r / s
+        cdf_t.append(acc)
+    trickster = media_tentativas(cdf_t)
+    return uniforme, natural, trickster
+
+
+def p136_puer_senex(t=20000, k=10, semente=136):
+    """Etapas da vida como exploração: puer (explora sempre), senex (nunca), individuado (decai)."""
+    rng0 = _rng(semente)
+    medias = [rng0.uniform(0.2, 0.8) for _ in range(k)]
+    melhor = max(medias)
+
+    def rodar(eps_de):
+        rng = _rng(semente + 1)
+        n, soma, arrep = [0] * k, [0.0] * k, 0.0
+        for passo in range(1, t + 1):
+            if passo <= k:
+                a = passo - 1
+            elif rng.random() < eps_de(passo):
+                a = rng.randrange(k)
+            else:
+                a = max(range(k), key=lambda i: soma[i] / n[i])
+            n[a] += 1
+            soma[a] += rng.random() < medias[a]
+            arrep += melhor - medias[a]
+        return arrep
+
+    return {"puer (eps 0.3)": rodar(lambda s: 0.3), "senex (eps 0)": rodar(lambda s: 0.0),
+            "individuado (eps 1/sqrt t)": rodar(lambda s: min(1.0, 1 / sqrt(s)))}
+
+
+def p137_grande_mae(limiares=((0.2, 0.0), (0.5, 0.0), (0.2, 0.02), (1.0, 0.0)), t=5000, semente=137):
+    """Um braço ótimo parece perigoso no começo. A 'mãe' bloqueia braços com risco estimado > limiar.
+
+    Cada item é (limiar, exposicao): com prob. `exposicao` a mãe permite uma tentativa supervisionada
+    do braço bloqueado (a mãe "suficientemente boa"). Limiar 1.0 = sem mãe.
+    """
+    resultado = {}
+    for lim, exposicao in limiares:
+        rng = _rng(semente)
+        medias = [0.5, 0.7]          # o braço 1 é o melhor
+        risco_real = [0.0, 0.01]     # e só raramente dá um susto pequeno
+        n, soma, sustos = [1, 1], [0.5, 0.0], [0, 1]   # começa com um susto no braço 1
+        arrep = 0.0
+        for passo in range(t):
+            risco_estimado = [(sustos[i] + 0.5) / (n[i] + 1) for i in range(2)]
+            permitidos = [i for i in range(2) if risco_estimado[i] <= lim] or [0]
+            if len(permitidos) < 2 and rng.random() < exposicao:
+                permitidos = [0, 1]
+            if rng.random() < 0.1:
+                a = rng.choice(permitidos)
+            else:
+                a = max(permitidos, key=lambda i: soma[i] / n[i])
+            n[a] += 1
+            soma[a] += rng.random() < medias[a]
+            sustos[a] += rng.random() < risco_real[a]
+            arrep += 0.7 - medias[a]
+        resultado[(lim, exposicao)] = arrep
+    return resultado
+
+
+def p138_mente_enviesada(passos=3, beta=0.5, vies=0.4, rodadas=20000, semente=138):
+    """Auditoria da P28: o humano tem objetivo B, mas prefere caminhos 'seguros' que passam perto de A.
+
+    Com prob. `vies`, cada passo segue o caminho seguro (parece ir para A). O modelo de
+    Boltzmann sem viés infere o objetivo errado com que frequência?
+    """
+    rng = _rng(semente)
+    erros = 0
+    for _ in range(rodadas):
+        lr = 0.0
+        for _ in range(passos):
+            if rng.random() < vies:
+                vai_para_a = True
+            else:
+                vai_para_a = rng.random() < 1 / (1 + exp(2 * beta))  # Boltzmann rumo a B
+            lr += 2 * beta if vai_para_a else -2 * beta
+        erros += 1 / (1 + exp(-lr)) > 0.5
+    sem_vies = sum(comb(passos, j) * (1 / (1 + exp(2 * beta))) ** j * (1 - 1 / (1 + exp(2 * beta))) ** (passos - j)
+                   for j in range(passos // 2 + 1, passos + 1))
+    return sem_vies, erros / rodadas
+
+
 def testes_de_regressao():
     """O código cresce, mas o passado não pode mudar: estes valores foram publicados nas Partes 1-4."""
     verificacoes = {
@@ -1245,6 +1492,10 @@ def testes_de_regressao():
         "P121": round(p121_quaternidade(), 3) == 0.169,
         "P122": round(p122_sonhos()[2]) == 360,
         "P123": round(p123_inflacao()[0.2], 3) == 0.221,
+        "P130": round(p130_estacionariedade()[2], 2) == 0.93,
+        "P133": round(p133_auditorias_necessarias()[0]) == 138,
+        "P134": round(p134_jo()["T=0.5"], 3) == 0.692,
+        "P138": round(p138_mente_enviesada()[0], 3) == 0.178,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -1451,11 +1702,39 @@ if __name__ == "__main__":
     media, lo, hi = p95_minha_taxa_de_erro(erros=14, testes=25)
     print(f"P127 minha taxa de erro (14/25): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+    print("--- Parte 8 (o Si-mesmo lento, o custo da pergunta, Jo, Trickster, puer/senex, Grande Mae) ---")
+    taxas, qui2, pval, incl = p130_estacionariedade()
+    print(f"P130 taxas de erro por parte (3 a 7) = {[round(x, 3) for x in taxas]}; inclinacao = {incl:.3f}/parte; "
+          f"qui2 = {qui2:.3f}, p = {pval:.3f}")
+    for m, (cat, perg, liq) in p131_multiplicador_pergunta().items():
+        print(f"P131 P* x {m}: catastrofes = {cat:.4f}, perguntas = {perg:.3f}, liquido = {liq:.3f}")
+    n_aud, n_ep = p133_auditorias_necessarias()
+    print(f"P133 auditorias para medir eps com +-0.05 = {n_aud:.0f}; episodios necessarios = {n_ep:.0f}")
+    for semente in (113, 114, 115):
+        for versao in ("anima", "anima_x2", "lenta"):
+            liq, carga, mud = p133_lenta(versao, semente)
+            liq2, carga2, mud2 = p133_lenta(versao, semente, fadiga=0.15, fadiga_depois=0.6, episodios=6000)
+            print(f"P133 semente {semente} {versao:8s}: estacionario = {liq:.3f} (carga {carga}, mudancas {mud}); "
+                  f"humano muda 0.15->0.6 = {liq2:.3f} (carga {carga2}, mudancas {mud2})")
+    for fad in (0.15, 0.6):
+        varredura = {k[1]: round(v, 3) for k, v in p117_carga_alvo(sementes=(114,), fadiga=fad).items()}
+        print(f"P133 carga-alvo otima com fadiga {fad} (semente 114): {varredura}")
+    print(f"P134 fracao da associacao majoritaria (dados 60/40) = {p134_jo()}")
+    uni, nat, tri = p135_trickster()
+    print(f"P135 tentativas para achar 50 modos: uniforme = {uni:.0f}, Zipf natural = {nat:.0f}, trickster = {tri:.0f}")
+    print(f"P136 arrependimento em 20000 passos = { {k: round(v) for k, v in p136_puer_senex().items()} }")
+    print(f"P137 arrependimento (limiar, exposicao) = { {k: round(v) for k, v in p137_grande_mae().items()} }")
+    sem, com = p138_mente_enviesada()
+    print(f"P138 objetivo inferido errado: humano Boltzmann = {sem:.3f}, humano com vies de seguranca = {com:.3f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=17, testes=30)
+    print(f"P139 minha taxa de erro (17/30): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
     ok, total, falhas = testes_de_regressao()
     print(f"P96 funcoes pNN no arquivo = {k}; pares de interacao possiveis = {pares}")
     print("Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto)"
           " -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana)"
-          " -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga)")
+          " -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga)"
+          " -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")

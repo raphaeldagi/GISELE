@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 7: Jung mais fundo — segunda ordem, alquimia, anima e o Si-mesmo
 
-> Continuação da [Parte 6](ASI_AGI_parte6_calcular_jung.md). Os números saem de `p116_...` a
+> Continuação da [Parte 6](ASI_AGI_parte6_calcular_jung.md). **Próxima:** [Parte 8 — o Si-mesmo lento](ASI_AGI_parte8_si_mesmo_lento.md) (P130–P142). Os números saem de `p116_...` a
 > `p124_...` e das classes `GiseleAnima` e `GiseleSelf` em [`calculos.py`](calculos.py); a
 > saída completa está em [`resultados.txt`](resultados.txt).
 >
