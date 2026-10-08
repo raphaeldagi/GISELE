@@ -1,0 +1,48 @@
+P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
+P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
+P7  d' = 1.878
+P8  best-of-64 = 0.9625
+P9  Arrhenius (-10 kJ/mol) = 48.4x
+P11 t* = 20.0
+P14 E[max(U,0)] = 0.451, valor de obedecer = 0.351
+P15 Condorcet = 0.753, n_ef = 2.75
+P17 p=1e-6: 1.0000; p=1e-12: 1.00e-03
+--- Parte 2 ---
+P22 do(A) = 0.833, do(B) = 0.779
+P23 K: 0.6625 -> 0.3501 -> 0.1137 -> 0.0128 -> 0.0002
+P24 hiperbolico/exponencial em 30 dias: ((3.225806451612903, 3.4375), (4.239115827521624, 4.196724669246407))
+P25 arrependimento UCB = 11754
+P26 exemplos PAC = 7392
+P27 humor apos 10 passos = 0.651
+P28 P(objetivo A) = 0.953
+P29 entropia max e redundancia = (4.754887502163468, [0.7896900821428475, 0.7265971067857018])
+P31 P(engano | alarme) = 0.0098
+P32 deslocamento adversarial = 5.90
+P33 energia = 583 GWh, potencia = 243 MW
+P34 limiar de alarme = 0.999
+P36 barganha de Nash = (0.4, 0.6)
+P37 limite (1e4 nats) = 0.071; (1e6) = 0.707
+--- Parte 3 (simulacoes, semente fixa) ---
+P41 verdade media da opcao escolhida: gaussiano = 2.296, cauda pesada = 0.004
+P42 P(desastre): maximizador = 0.548, quantilizador 1% = 0.140, base = 0.002
+P43 ECE antes = 0.122, depois = 0.006, T = 2.5
+    limiar 0.5: cobertura = 0.748, erro = 0.208
+    limiar 0.8: cobertura = 0.401, erro = 0.098
+    limiar 0.95: cobertura = 0.101, erro = 0.026
+P44 maioria correta (Monte Carlo) = {0.0: 0.7514, 0.3: 0.68125}
+P45 eps limite = 0.438; eps=0.2: Monte Carlo = 0.287, teoria = 0.291, agir sozinho = 0.100
+P46 alfa = 0.5: tempo ate metade do teto = 500.0
+P46 alfa = 1.0: tempo ate metade do teto = 69.1
+P46 alfa = 1.5: tempo ate metade do teto = 19.7
+P48 matriz = {('S', 'S'): 2.0, ('S', 'C'): -6.0, ('C', 'S'): 7.0, ('C', 'C'): -1.0}, Nash = [('C', 'C')]
+P49 Michaelis-Menten: S=Km -> 0.50, S=10Km -> 0.91, S=100Km -> 0.99
+P50 L_max = 23026; fidelidade apos 100 geracoes = 0.366
+P51 sigma = 0.5: avalanche media simulada = 2.0, teoria = 2.0
+P51 sigma = 0.9: avalanche media simulada = 9.9, teoria = 10.0
+P51 sigma = 0.99: avalanche media simulada = 102.7, teoria = 100.0
+P52 Kelly f* = 0.20, crescimento = 0.0201; com 2f* = -0.0024
+P54 relato otimo (crenca 0.7): log = 0.7, linear = 0.99
+P55 tempo neural / decoerencia = 1e+10
+P56 valor esperado = {'x': 0.9, 'y': 10.0}; normalizado = {'x': 0.8, 'y': -0.8}
+P57 corrigivel apos 1000 modificacoes: sem verificacao = 4.32e-05, com = 0.905
+P58 P(concordar com o erro do usuario) = 0.649

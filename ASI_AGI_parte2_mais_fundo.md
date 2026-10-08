@@ -1,6 +1,7 @@
 # Como eu construiria uma AGI/ASI — Parte 2: mais fundo
 
 > Continuação de [`ASI_AGI_perguntas_e_respostas.md`](ASI_AGI_perguntas_e_respostas.md).
+> **Próxima:** [Parte 3 — testar as ideias em código](ASI_AGI_parte3_simulacoes.md) (P41–P60).
 > Mesmo protocolo: **Lógica → Tradução cruzada → Meta**. Os números estão em
 > [`calculos.py`](calculos.py) (funções `p21_...` a `p40_...`).
 >
