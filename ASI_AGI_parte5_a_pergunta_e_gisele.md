@@ -397,8 +397,8 @@ aplicado ao próprio código.
 **Lógica.** O arquivo agora tem **63 funções** `pNN`. Entre 63 módulos há
 $\binom{63}{2} = 1\,953$ pares de interação possíveis: complexidade quadrática. Duas práticas
 mantêm a identidade:
-1. **Testes de regressão** (`testes_de_regressao`): 10 resultados publicados nas Partes 1–4 são
-   recalculados a cada execução. Resultado: **10/10 reproduzidos**, nenhuma falha. O passado
+1. **Testes de regressão** (`testes_de_regressao`): 14 resultados publicados (10 das Partes 1–4 e 4 desta) são
+   recalculados a cada execução. Resultado: **14/14 reproduzidos**, nenhuma falha. O passado
    não muda.
 2. **Unificação no fim**: a classe `Gisele` **reusa** as funções anteriores (por exemplo, o $P^\*$
    vem diretamente de `p71_valor_da_pergunta`) em vez de copiá-las.
