@@ -168,7 +168,7 @@ Acumulado: **31 de 55** afirmações testadas precisaram de correção. Posterio
 | Afirmações testadas por simulação ou cálculo | **52** |
 | Precisaram de correção (⚠️ ou ❌) | 29 |
 | Certas de primeira (✅) | **23 (44%)** |
-| Funções `pNN` no código | 120+ |
+| Funções `pNN` no código | 125 |
 | Versões da GISELE na linhagem | 9 |
 | Υ da GISELE (família escolhida → sorteada) | 0,29 → 0,49; 0,45–0,48 em mundos sorteados |
 | Capacidades de AGI cobertas | 3 → 4 de 12 |

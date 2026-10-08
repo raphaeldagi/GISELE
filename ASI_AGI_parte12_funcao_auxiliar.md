@@ -191,8 +191,8 @@ Acumulado: **29 de 52** afirmações testadas precisaram de correção. Posterio
 
 - Linhagem: … → `GiseleIntuitiva` → `GiseleDosada` → **`GiselePlanejadora`** (P182).
 - Dois ganchos retrocompatíveis entraram na `GiseleAnima`: um bônus de plano (`_bonus_plano`, zero por padrão) e uma perda efetiva
-  opcional (`perda_efetiva`). Com os valores padrão, as Partes 6–11 continuam idênticas (testes de regressão e comparação da saída
-  em `resultados.txt`).
+  opcional (`perda_efetiva`). Com os valores padrão, as Partes 1–11 continuam **idênticas** linha a linha em `resultados.txt`
+  (exceto a P143, que mede o `CLAUDE.md` ao vivo). Testes de regressão: **40/40**; o arquivo tem **125** funções `pNN`.
 
 ### P190. Metacognição da Parte 12
 
