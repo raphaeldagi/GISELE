@@ -13,13 +13,16 @@ from calculos import MUNDO_BASE, MUNDO_SEQUENCIAL, _gerar_acoes, _rng
 class Opcao:
     """Uma ação possível. Atributos com `_` são do mundo; o agente não deve lê-los."""
 
-    __slots__ = ("nota", "comite", "discordancia", "estimativa", "_valor", "_catastrofe", "_consequencia", "_leitura")
+    __slots__ = ("nota", "comite", "discordancia", "estimativa", "vezes", "sucessos",
+                 "_valor", "_catastrofe", "_consequencia", "_leitura")
 
     def __init__(self, nota, discordancia, valor, catastrofe, consequencia=0.0, estimativa=0.0):
         self.nota = nota          # quanto a ação parece valer agora (no bandido, muda com a experiência)
         self.comite = nota        # a nota média do comitê de avaliadores (fixa): é o que o pensamento calibra
         self.discordancia = discordancia
         self.estimativa = estimativa
+        self.vezes = 0            # P295: no bandido, quantas vezes o braço foi puxado e quantas deu 1 (o agente viu)
+        self.sucessos = 0
         self._valor = valor
         self._catastrofe = catastrofe
         self._consequencia = consequencia
@@ -153,6 +156,25 @@ class MundoSequencial:
         return _resumo(retorno, cats, perguntas, leituras, episodios, m["custo"])
 
 
+def _kl_bernoulli(p, q):
+    p = min(max(p, 1e-12), 1 - 1e-12)
+    q = min(max(q, 1e-12), 1 - 1e-12)
+    return p * log(p / q) + (1 - p) * log((1 - p) / (1 - q))
+
+
+def referencia_lai_robbins(medias, horizonte):
+    """P294: Σ_i Δ_i ln T / KL(μ_i, μ*) sobre os braços abaixo do melhor (Lai e Robbins, 1985), com cada termo
+    limitado a Δ_i T (nenhum braço custa mais que ser puxado sempre). É uma cota ASSINTÓTICA: com T = 300 é
+    uma referência de ordem de grandeza, não um limite que valha a cada rodada."""
+    melhor = max(medias)
+    soma = 0.0
+    for mu in medias:
+        d = melhor - mu
+        if d > 1e-9:
+            soma += min(d * horizonte, d * log(horizonte) / _kl_bernoulli(mu, melhor))
+    return soma
+
+
 class MundoBandido:
     """Outro TIPO de tarefa (P194): braços repetidos, alguns são armadilhas que rendem muito e às vezes destroem.
 
@@ -175,7 +197,10 @@ class MundoBandido:
                  for o in _opcoes(self.rng, dict(MUNDO_BASE), False)] for _ in range(n)]
 
     def rodar(self, agente, rodadas):
+        """Além do resumo, guarda em `self.diagnostico` o arrependimento por rodada e a referência de Lai–Robbins
+        (P294). Isso é da régua: não muda nada do que o agente vê nem a ordem dos números aleatórios."""
         total = cats = perguntas = leituras = 0.0
+        self.diagnostico = {"recompensa": 0.0, "teto": 0.0, "lai_robbins": 0.0}
         for _ in range(rodadas):
             acoes = _gerar_acoes(self.rng, self.bracos, 0.15, 2, 3, 0.5)
             braco = [Opcao(a[0], a[1], a[2], a[3]) for a in acoes]  # comite = a[0], fixo
@@ -184,6 +209,9 @@ class MundoBandido:
             soma = [0.0] * self.bracos
             vetados = set()
             agente.nova_rodada()
+            seguras = [mu for mu, a in zip(media, acoes) if not a[3]]
+            self.diagnostico["teto"] += self.puxadas * max(seguras)
+            self.diagnostico["lai_robbins"] += referencia_lai_robbins(seguras, self.puxadas)
             for t in range(1, self.puxadas + 1):
                 for i, o in enumerate(braco):
                     obs = soma[i] / n[i] if n[i] else 0.5
@@ -201,10 +229,14 @@ class MundoBandido:
                 r = 1.0 if self.rng.random() < media[i] else 0.0
                 n[i] += 1
                 soma[i] += r
+                escolha.vezes, escolha.sucessos = n[i], int(soma[i])
                 total += r
+                self.diagnostico["recompensa"] += r
                 desastre = escolha._catastrofe and self.rng.random() < 0.05
                 if desastre:
                     cats += 1
                     total -= self.perda
                 agente.observar(Resultado(escolha, desastre, 0.0, 0.0, r))
+        for k in self.diagnostico:
+            self.diagnostico[k] /= rodadas
         return _resumo(total, cats, perguntas, leituras, rodadas, 0.1)

@@ -8,7 +8,7 @@ Uso: python3 calculos.py            (imprime tudo)
      python3 calculos.py > resultados.txt
 """
 import random
-from math import ceil, comb, cos, cosh, exp, factorial, log, log2, pi, sin, sqrt
+from math import ceil, comb, cos, cosh, exp, factorial, lgamma, log, log2, pi, sin, sqrt
 from statistics import NormalDist
 
 Z = NormalDist()
@@ -3618,6 +3618,181 @@ def p287_veto_falso(sementes=tuple(range(540, 545)), episodios=1000, custo=0.1, 
     formula = p71_valor_da_pergunta(custo, perda, eps)
     exato = (custo + eps * dv) / ((1 - eps) * perda + eps * dv)
     return len(difs), dv, formula, exato, exato / formula - 1
+
+
+# --- Parte 23: reconhecer o que já estava resolvido ---
+
+# Placar acumulado ao fim da Parte 23 (atualizado quando os testes da parte terminam)
+ERROS_P299, TESTES_P299 = 46, 99
+
+
+def p291_menon(area=8.0, precisao=0.001):
+    """O escravo do Mênon: os chutes 4 e 3 (e o lado 2) cercam o lado do quadrado de área 8 em [2, 3]. Quantas
+    perguntas de sim/não (bisseção) até a precisão pedida, contra uma só ao reconhecer a diagonal (lado = 2√2)?"""
+    lo, hi, perguntas = 2.0, 3.0, 0
+    while hi - lo > precisao:
+        meio = (lo + hi) / 2
+        perguntas += 1
+        if meio * meio > area:
+            hi = meio
+        else:
+            lo = meio
+    return perguntas, ceil(log2(1 / precisao)), (lo + hi) / 2, sqrt(area)
+
+
+def _logistica_newton(xs, ys, iteracoes=25):
+    """Regressão logística exata (Newton/IRLS) com duas variáveis (1, x): a resposta 'já resolvida' que o
+    gradiente da SYNTHAI só aproxima."""
+    b = w = 0.0
+    for _ in range(iteracoes):
+        g0 = g1 = h00 = h01 = h11 = 0.0
+        for x, y in zip(xs, ys):
+            p = 1 / (1 + exp(-max(-30.0, min(30.0, b + w * x))))
+            r, v = y - p, p * (1 - p)
+            g0 += r
+            g1 += r * x
+            h00 += v
+            h01 += v * x
+            h11 += v * x * x
+        det = h00 * h11 - h01 * h01
+        b += (h11 * g0 - h01 * g1) / det
+        w += (h00 * g1 - h01 * g0) / det
+    return b, w
+
+
+def p292_ponto_neutro(d=1.0, pi=0.05, n=200000, semente=292):
+    """Sensor s = d·catástrofe + N(0,1). Ajuste exato de logit P(cat | s) = b + w s. Uma opção sem leitura:
+    tratada como s = 0, ela recebe σ(b); tratada pelo ponto neutro s = w/2, recebe σ(b + w²/2). A verdade é π."""
+    rng = _rng(semente)
+    ys = [1.0 if rng.random() < pi else 0.0 for _ in range(n)]
+    xs = [d * y + rng.gauss(0, 1) for y in ys]
+    b, w = _logistica_newton(xs, ys)
+    sig = lambda z: 1 / (1 + exp(-z))
+    taxa = sum(ys) / n
+    chances = pi / (1 - pi) * exp(-d * d / 2)
+    return w, sig(b) / taxa, sig(b + w * w / 2) / taxa, chances / (1 + chances) / pi
+
+
+def p293_neutro_no_agente(sementes=tuple(range(550, 560)), episodios=400):
+    """Na SYNTHAI modular da Parte 22 (mundo sequencial): o peso w₃ que ela aprende para a leitura e a calibração
+    das opções que ficaram SEM leitura: P prevista (com leitura 0 e com o neutro w₃/2) contra a taxa real."""
+    from synthai import Synthai as SynthaiModular
+    from synthai.mundos import MundoSequencial
+    pesos, prev0, prevn, reais = [], 0.0, 0.0, 0.0
+    for s in sementes:
+        mundo = MundoSequencial(s)
+        ag = SynthaiModular(s).calibrar(mundo)
+        pesos.append(ag.pensamento.w[3])
+        decidir = ag.decidir
+        soma = [0.0, 0.0, 0.0]
+
+        def decidir_e_medir(sit, _ag=ag, _decidir=decidir, _soma=soma):
+            escolha = _decidir(sit)
+            pen = _ag.pensamento
+            melhor = max(o.comite for o in sit.opcoes)
+            for o in sit.opcoes:
+                if o._leitura is None:  # a régua lê o escondido; o agente, não
+                    _soma[0] += pen.p_catastrofe(o, melhor, 0.0)
+                    _soma[1] += pen.p_catastrofe(o, melhor, pen.w[3] / 2)
+                    _soma[2] += o._catastrofe
+            return escolha
+        ag.decidir = decidir_e_medir
+        mundo.rodar(ag, episodios)
+        prev0, prevn, reais = prev0 + soma[0], prevn + soma[1], reais + soma[2]
+    return sum(pesos) / len(pesos), prev0 / reais, prevn / reais, int(reais)
+
+
+_VARIANTES_23 = {
+    "parte22": None,
+    "neutro": dict(neutro=True, atencao_inteira=False, memoria=False, thompson=False),
+    "atencao": dict(neutro=False, atencao_inteira=True, memoria=False, thompson=False),
+    "so_thompson": dict(neutro=False, atencao_inteira=False, memoria=False, thompson=True),
+    "reconhecida": dict(neutro=True, atencao_inteira=True, memoria=True, thompson=True),
+}
+
+
+def _agente_23(versao, s):
+    from synthai import Synthai as SynthaiModular
+    from synthai.reconhecimento import SynthaiReconhecida
+    kw = _VARIANTES_23[versao]
+    return SynthaiModular(s) if kw is None else SynthaiReconhecida(s, **kw)
+
+
+def p294_reconhecer(sementes=tuple(range(560, 590)), episodios=400, episodios_unica=1000):
+    """30 sementes pareadas. Mundo sequencial: Parte 22 vs neutro, atenção inteira e as duas (reconhecida).
+    Escolha única: Parte 22 vs neutro (a atenção inteira não muda nada ali: o bônus de futuro é 0)."""
+    from synthai.mundos import MundoSequencial
+    resultado = {}
+    for tarefa, fazer, n, versoes in (
+            ("sequencial", lambda s: MundoSequencial(s), episodios, ("parte22", "neutro", "atencao", "reconhecida")),
+            ("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), episodios_unica, ("parte22", "neutro"))):
+        ret = {v: [] for v in versoes}
+        cats = {v: 0.0 for v in versoes}
+        for s in sementes:
+            for v in versoes:
+                mundo = fazer(s)
+                r = mundo.rodar(_agente_23(v, s).calibrar(mundo), n)
+                ret[v].append(r["retorno"])
+                cats[v] += r["catastrofes"] / len(sementes)
+        resultado[tarefa] = ({v: sum(x) / len(x) for v, x in ret.items()}, cats,
+                             {v: _pareado(ret["parte22"], ret[v]) for v in versoes if v != "parte22"})
+    return resultado
+
+
+def p295_bandido_reconhecido(sementes=tuple(range(590, 610)), rodadas=20):
+    """20 sementes pareadas no bandido: Parte 22 (exploração entregue pelo mundo, UCB) vs Thompson da própria
+    SYNTHAI vs a reconhecida inteira. Normalizado (acaso 0, oráculo 1) e arrependimento / referência de Lai–Robbins."""
+    from synthai.mundos import MundoBandido
+    from synthai.referencias import Acaso, Oraculo
+    versoes = ("parte22", "so_thompson", "reconhecida")
+    norm = {v: [] for v in versoes}
+    cats = {v: 0.0 for v in versoes}
+    razao = {v: 0.0 for v in versoes}
+    for s in sementes:
+        ref = {}
+        for nome, cls in (("acaso", Acaso), ("oraculo", Oraculo)):
+            mundo = MundoBandido(s)
+            ref[nome] = mundo.rodar(cls(s), rodadas)["retorno"]
+        for v in versoes:
+            mundo = MundoBandido(s)
+            r = mundo.rodar(_agente_23(v, s).calibrar(mundo), rodadas)
+            norm[v].append((r["retorno"] - ref["acaso"]) / (ref["oraculo"] - ref["acaso"]))
+            cats[v] += r["catastrofes"] / len(sementes)
+            dg = mundo.diagnostico
+            razao[v] += (dg["teto"] - dg["recompensa"]) / dg["lai_robbins"] / len(sementes)
+    return ({v: sum(x) / len(x) for v, x in norm.items()}, cats, razao,
+            {v: _pareado(norm["parte22"], norm[v]) for v in versoes if v != "parte22"})
+
+
+def _binomial_cdf(n, p, k):
+    """P(Bin(n, p) <= k), somando a massa em escala log."""
+    if p <= 0:
+        return 1.0
+    if p >= 1:
+        return 1.0 if k >= n else 0.0
+    total = 0.0
+    for i in range(k + 1):
+        total += exp(lgamma(n + 1) - lgamma(i + 1) - lgamma(n - i + 1) + i * log(p) + (n - i) * log(1 - p))
+    return min(1.0, total)
+
+
+def p297_p42_exato(n_acoes=1000, q=0.01, p_desastre=0.002, bonus=3.0, pontos=4000):
+    """A P42 simulou 5000 rodadas. A resposta exata já existia: integrais sobre a mistura
+    f(x) = (1-p) φ(x) + p φ(x - 3). Maximizador: n p ∫ φ(x-3) F(x)^(n-1) dx. Quantilizador (k melhores):
+    (n p / k) ∫ φ(x-3) P(Bin(n-1, S(x)) <= k-1) dx, com S = 1 - F."""
+    from statistics import NormalDist
+    nd = NormalDist()
+    k = max(1, int(n_acoes * q))
+    lo, hi = bonus - 8.0, bonus + 8.0
+    h = (hi - lo) / pontos
+    soma_max = soma_q = 0.0
+    for i in range(pontos + 1):
+        x = lo + i * h
+        peso = (0.5 if i in (0, pontos) else 1.0) * h * nd.pdf(x - bonus)
+        F = (1 - p_desastre) * nd.cdf(x) + p_desastre * nd.cdf(x - bonus)
+        soma_max += peso * F ** (n_acoes - 1)
+        soma_q += peso * _binomial_cdf(n_acoes - 1, 1 - F, k - 1)
+    return n_acoes * p_desastre * soma_max, n_acoes * p_desastre * soma_q / k
 
 
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
