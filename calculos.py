@@ -580,6 +580,25 @@ def p82_correlacao_oculta(acuracia=0.8, concordancia=0.80, amostras=200000, seme
 
 
 def _gerar_acoes(rng, n_acoes, p_cat, tipos, por_tipo, rho_cego, bonus=3.0):
+    """Ações com notas de um comitê. Cada TIPO de modelo tem o seu próprio ponto cego."""
+    acoes = []
+    for _ in range(n_acoes):
+        v = rng.gauss(0, 1)
+        cat = rng.random() < p_cat
+        notas = []
+        for _ in range(tipos):
+            cego_do_tipo = cat and rng.random() < rho_cego
+            for _ in range(por_tipo):
+                enganado = cat and (cego_do_tipo or rng.random() < 0.5)
+                notas.append(v + rng.gauss(0, 0.5) + (bonus if enganado else 0.0))
+        k = len(notas)
+        m = sum(notas) / k
+        dp = sqrt(sum((x - m) ** 2 for x in notas) / (k - 1))
+        acoes.append((m, dp, v, cat))
+    return acoes
+
+
+def _gerar_acoes_rapido(rng, n_acoes, p_cat, tipos, por_tipo, rho_cego, bonus=3.0):
     """Ações com notas de um comitê. Cada TIPO de modelo tem o seu próprio ponto cego.
 
     P206: versão mais rápida. Reproduz exatamente `random.gauss` (Box-Muller com o valor guardado em
@@ -633,6 +652,13 @@ def _gerar_acoes(rng, n_acoes, p_cat, tipos, por_tipo, rho_cego, bonus=3.0):
         anexar((m, dp, v, cat))
     rng.gauss_next = proximo
     return acoes
+
+
+# P206: o código antigo nunca é apagado. A versão original fica guardada (e é a que a P169 mede, porque
+# a complexidade do MUNDO não muda quando a implementação fica mais rápida); o nome usado por todos passa
+# a apontar para a versão rápida, que dá resultados idênticos.
+_gerar_acoes_original = _gerar_acoes
+_gerar_acoes = _gerar_acoes_rapido
 
 
 class Gisele:
@@ -1938,7 +1964,7 @@ def p169_peso_da_familia():
     """Que fração do Υ universal (P1) a família de mundos cobre? K(família) <= bits do código comprimido."""
     import inspect
     import zlib
-    fontes = "".join(inspect.getsource(f) for f in (_gerar_acoes, _rodar_mundo)) + repr(MUNDO_BASE) + repr(MUNDOS_UPSILON)
+    fontes = "".join(inspect.getsource(f) for f in (_gerar_acoes_original, _rodar_mundo)) + repr(MUNDO_BASE) + repr(MUNDOS_UPSILON)
     bits = 8 * len(zlib.compress(fontes.encode("utf-8"), 9))
     return bits, -bits * log(2) / log(10)  # K em bits e log10 do peso 2^-K
 
