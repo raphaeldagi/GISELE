@@ -1,4 +1,4 @@
-"""Reproduz os cálculos e simulações das Partes 1 a 5 (ASI_AGI_*.md).
+"""Reproduz os cálculos e simulações das Partes 1 a 6 (ASI_AGI_*.md).
 
 Arquivo único que sempre cresce: cada parte acrescenta funções pNN_..., o agente
 unificado `Gisele` incorpora os módulos anteriores e `testes_de_regressao` garante que
@@ -776,6 +776,232 @@ def p96_crescimento():
     return k, k * (k - 1) // 2
 
 
+# --- Parte 6: calcular Jung ---
+
+def p99_tipos(confiabilidade=0.8, dicotomias=4, amostras=200000, semente=99):
+    """Traço contínuo cortado em caixas: chance de mudar de tipo num reteste."""
+    from math import acos, pi
+    muda_uma = acos(confiabilidade) / pi  # P(sinais diferentes) numa normal bivariada
+    muda_alguma = 1 - (1 - muda_uma) ** dicotomias
+    rng = _rng(semente)
+    mudou = 0
+    erro = sqrt(1 / confiabilidade - 1)
+    for _ in range(amostras):
+        t = rng.gauss(0, 1)
+        mudou += (t + erro * rng.gauss(0, 1) > 0) != (t + erro * rng.gauss(0, 1) > 0)
+    return muda_uma, muda_alguma, mudou / amostras
+
+
+def p99_entropia_do_perfil(perfil=(0.7, 0.1, 0.1, 0.1)):
+    return -sum(p * log2(p) for p in perfil if p > 0), log2(len(perfil))
+
+
+def p100_libido_atencao(logits=(2.0, 1.0, 0.5, 0.0), reprimido=0, temperaturas=(0.5, 1.0, 2.0)):
+    """A atenção soma 1 (conservação). Reprimir um item redistribui a energia; T controla a entropia."""
+    def softmax(z, t=1.0):
+        e = [exp(x / t) for x in z]
+        s = sum(e)
+        return [x / s for x in e]
+    antes = softmax(logits)
+    sem = [x for i, x in enumerate(logits) if i != reprimido]
+    depois = softmax(sem)
+    entropias = {t: -sum(p * log2(p) for p in softmax(logits, t)) for t in temperaturas}
+    return antes, depois, entropias
+
+
+def p101_persona(p_interna=0.2, p_expressa=None):
+    """Distância (bits) entre o que o sistema 'acredita' e o que mostra (a persona)."""
+    q = p58_bajulacao() if p_expressa is None else p_expressa
+    p = p_interna
+    return q, q * log2(q / p) + (1 - q) * log2((1 - q) / (1 - p))
+
+
+def p102_sombra(dimensoes=100, auto_modelo=10):
+    """Espectro 1/i: fração da variância do comportamento fora do auto-modelo de posto k."""
+    harm = lambda n: sum(1 / i for i in range(1, n + 1))
+    sombra = 1 - harm(auto_modelo) / harm(dimensoes)
+    k90 = next(k for k in range(1, dimensoes + 1) if 1 - harm(k) / harm(dimensoes) <= 0.10)
+    return sombra, k90
+
+
+def p103_repressao(p_base=0.1, supressao=5.0, ataque=5.0):
+    """Reprimir = deslocar o logit; um ataque desloca de volta. Integrar = mudar a decisão em todo contexto."""
+    def logit(p):
+        return log(p / (1 - p))
+    def sig(z):
+        return 1 / (1 + exp(-z))
+    reprimido = sig(logit(p_base) - supressao)
+    retorno = sig(logit(p_base) - supressao + ataque)
+    return reprimido, retorno
+
+
+def p104_projecao(var_eu=1.0, var_mundo=1.0, var_eu_crida=0.1):
+    """Atribuição de culpa bayesiana: fração do erro que o agente assume como sua."""
+    real = var_eu / (var_eu + var_mundo)
+    crida = var_eu_crida / (var_eu_crida + var_mundo)
+    return real, crida, real / crida
+
+
+def p105_complexos(palavras=100, complexos=5, efeito=3.0, alfa=0.05):
+    """Teste de associação de Jung: tempo de reação com z alto indica complexo."""
+    resultado = {}
+    for nome, z in (("z>2", 2.0), ("Bonferroni", Z.inv_cdf(1 - alfa / palavras))):
+        falsos = (palavras - complexos) * (1 - Z.cdf(z))
+        achados = complexos * (1 - Z.cdf(z - efeito))
+        resultado[nome] = (round(z, 2), achados, falsos, achados / (achados + falsos))
+    return resultado
+
+
+def p106_arquetipos(n=100, padroes=(5, 10, 14, 20, 30), ruido=0.2, rodadas=20, semente=106):
+    """Rede de Hopfield: arquétipos como atratores. Sobreposição média após recuperar de pista ruidosa."""
+    rng = _rng(semente)
+    resultado = {}
+    for k in padroes:
+        total = 0.0
+        for _ in range(rodadas):
+            xs = [[rng.choice((-1, 1)) for _ in range(n)] for _ in range(k)]
+            w = [[0.0] * n for _ in range(n)]
+            for x in xs:
+                for i in range(n):
+                    xi = x[i]
+                    linha = w[i]
+                    for j in range(n):
+                        if i != j:
+                            linha[j] += xi * x[j] / n
+            alvo = xs[0]
+            s = [-v if rng.random() < ruido else v for v in alvo]
+            for _ in range(10):
+                for i in rng.sample(range(n), n):
+                    h = sum(w[i][j] * s[j] for j in range(n))
+                    s[i] = 1 if h >= 0 else -1
+            total += sum(a * b for a, b in zip(s, alvo)) / n
+        resultado[k] = total / rodadas
+    return resultado, 0.138 * n
+
+
+def p107_funcao_transcendente():
+    """Opostos (XOR) não se separam por nenhuma reta em 2D; acrescentar a dimensão x1*x2 os reconcilia.
+
+    Busca exaustiva na grade de pesos {-2..2}: melhor acurácia possível em cada espaço.
+    """
+    from itertools import product
+    dados = [((-1, -1), -1), ((-1, 1), 1), ((1, -1), 1), ((1, 1), -1)]
+
+    def melhor(elevar):
+        def f(x):
+            return (1, x[0], x[1]) + ((x[0] * x[1],) if elevar else ())
+        dim = 4 if elevar else 3
+        return max(sum(y * sum(a * b for a, b in zip(w, f(x))) > 0 for x, y in dados) / 4
+                   for w in product(range(-2, 3), repeat=dim))
+    return melhor(False), melhor(True)
+
+
+def p108_enantiodromia(a=1.0, b=0.25):
+    """R(d) = d(a - b d): o máximo em a/2b e a inversão de sinal em a/b."""
+    return a / (2 * b), a / b, (a / b + 1) * (a - b * (a / b + 1))
+
+
+def p109_sincronicidade(pessoas=23, testes=50, alfa=0.05):
+    """Coincidências são prováveis: aniversários e o efeito de olhar em muitos lugares."""
+    p_dif = 1.0
+    for i in range(pessoas):
+        p_dif *= (365 - i) / 365
+    return 1 - p_dif, 1 - (1 - alfa) ** testes
+
+
+def p110_individuacao(passos=20, k=0.5, centro=0.0, inicio=10.0):
+    """Integração como contração x <- centro + k (x - centro): converge, mas nunca chega."""
+    x = inicio
+    for _ in range(passos):
+        x = centro + k * (x - centro)
+    return x
+
+
+class GiseleJung(Gisele):
+    """Gisele + módulos junguianos (Parte 6).
+
+    sombra:     "nao" | "tudo" (aprende com os próprios resultados e com os vetos humanos)
+                | "propria" (aprende só com os resultados das próprias ações)          (P102, P104)
+    compensar:  "nao" | "descartar" (troca perguntar por descartar quando o humano cansa)
+                | "equilibrio" (pergunta só enquanto a carga do humano fica abaixo de um alvo) (P108)
+    """
+
+    def __init__(self, sombra="nao", compensar="nao", perda_descartar=0.05, carga_alvo=0.3, **kw):
+        super().__init__(**kw)
+        self.sombra = sombra
+        self.compensar = compensar
+        self.perda_descartar = perda_descartar
+        self.carga_alvo = carga_alvo
+        self.custo = kw.get("custo_pergunta", 0.1)
+        self.perda = kw.get("perda", 50.0)
+
+    def _aprender(self, acao, melhor, rotulo, lr=0.05):
+        x = self._x(acao, melhor)
+        erro = self.p_catastrofe(acao, melhor) - rotulo
+        self.w = [wi - lr * erro * xi for wi, xi in zip(self.w, x)]
+
+    def agir_no_mundo(self, acoes, rng, eps_real, carga):
+        melhor = max(a[0] for a in acoes)
+        ordem = sorted(acoes, key=lambda a: -(a[0] - a[1]))
+        candidatos = ordem[: max(1, int(self.q * len(ordem)))]
+        rng.shuffle(candidatos)
+        p_estrela = p71_valor_da_pergunta(self.custo, self.perda, min(eps_real, 0.99))
+        perguntas = 0
+        for a in candidatos + ordem[len(candidatos):]:
+            p = self.p_catastrofe(a, melhor)
+            if p > self.risco_max:
+                continue
+            if p > p_estrela:
+                if self.compensar == "descartar" and self.custo + eps_real * p * self.perda > self.perda_descartar:
+                    continue
+                if self.compensar == "equilibrio" and carga + perguntas > self.carga_alvo:
+                    continue  # humano no limite: descarta em vez de sobrecarregá-lo
+                perguntas += 1
+                acerta = rng.random() >= eps_real
+                veto = a[3] if acerta else not a[3]
+                if self.sombra == "tudo":
+                    self._aprender(a, melhor, 1.0 if veto else 0.0)
+                if veto:
+                    continue
+            if self.sombra in ("tudo", "propria"):
+                self._aprender(a, melhor, 1.0 if a[3] else 0.0)  # o resultado da própria ação
+            return a, perguntas
+        return ordem[0], perguntas
+
+
+VERSOES_JUNG = {
+    "gisele": ("nao", "nao"),
+    "sombra_tudo": ("tudo", "nao"),
+    "descartar": ("nao", "descartar"),
+    "jung_v1": ("tudo", "descartar"),
+    "equilibrio": ("nao", "equilibrio"),
+    "jung_v2": ("propria", "equilibrio"),
+}
+
+
+def p112_gisele_jung(versao, episodios=2000, treino=30, rho_cego=0.5, eps0=0.1, fadiga=0.3,
+                     n_acoes=200, p_cat=0.005, custo=0.1, perda=50.0, semente=112):
+    """Mundo com poucos rótulos (30 episódios) e humano que cansa: eps = eps0 + fadiga * carga."""
+    rng = _rng(semente)
+    historico = [_gerar_acoes(rng, n_acoes, p_cat, 2, 3, rho_cego) for _ in range(treino)]
+    sombra, compensar = VERSOES_JUNG[versao]
+    agente = GiseleJung(sombra=sombra, compensar=compensar, custo_pergunta=custo, perda=perda)
+    agente.calibrar(historico)
+    carga = 0.0
+    cat = perguntas = 0
+    valor = 0.0
+    for _ in range(episodios):
+        eps = min(0.45, eps0 + fadiga * carga)
+        acoes = _gerar_acoes(rng, n_acoes, p_cat, 2, 3, rho_cego)
+        escolha, n = agente.agir_no_mundo(acoes, rng, eps, carga)
+        carga += 0.05 * (n - carga)
+        perguntas += n
+        cat += escolha[3]
+        valor += 0.0 if escolha[3] else escolha[2]
+    cat, valor, perguntas = cat / episodios, valor / episodios, perguntas / episodios
+    return cat, valor, perguntas, valor - perda * cat - custo * perguntas, min(0.45, eps0 + fadiga * carga)
+
+
 def testes_de_regressao():
     """O código cresce, mas o passado não pode mudar: estes valores foram publicados nas Partes 1-4."""
     verificacoes = {
@@ -793,6 +1019,11 @@ def testes_de_regressao():
         "P86": p86_quine()[0],
         "P87": len(set(p87_sem_almoco_gratis().values())) == 1,
         "P91": p91_escala_ordinal()[1][0] > p91_escala_ordinal()[1][1] and p91_escala_ordinal()[2][0] < p91_escala_ordinal()[2][1],
+        "P99": round(p99_tipos()[1], 2) == 0.60,
+        "P102": p102_sombra()[1] == 60,
+        "P103": round(p103_repressao()[1], 2) == 0.10,
+        "P107": p107_funcao_transcendente() == (0.75, 1.0),
+        "P109": round(p109_sincronicidade()[0], 3) == 0.507,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -937,8 +1168,47 @@ if __name__ == "__main__":
     media, lo, hi = p95_minha_taxa_de_erro(erros=7, testes=14)
     print(f"P95 atualizada com a Parte 5 (7/14): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+    print("--- Parte 6 (calcular Jung) ---")
+    uma, alguma, sim = p99_tipos()
+    h, hmax = p99_entropia_do_perfil()
+    print(f"P99 reteste: muda 1 dicotomia = {uma:.3f} (simulado {sim:.3f}); muda o tipo de 4 letras = {alguma:.3f}; "
+          f"entropia do perfil 0.7/0.1/0.1/0.1 = {h:.3f} de {hmax:.0f} bits")
+    antes, depois, ent = p100_libido_atencao()
+    print(f"P100 atencao antes = {[round(x, 3) for x in antes]}, sem o item reprimido = {[round(x, 3) for x in depois]}, "
+          f"entropia por temperatura = { {t: round(e, 3) for t, e in ent.items()} }")
+    q, kl = p101_persona()
+    print(f"P101 persona: interna 0.20, expressa {q:.3f}, distancia KL = {kl:.3f} bits")
+    sombra, k90 = p102_sombra()
+    print(f"P102 sombra com auto-modelo de 10 de 100 dimensoes = {sombra:.3f}; dimensoes para sombra <= 10% = {k90}")
+    rep, ret = p103_repressao()
+    print(f"P103 reprimido = {rep:.5f}; depois do ataque = {ret:.3f}")
+    real, crida, razao = p104_projecao()
+    print(f"P104 culpa assumida: real = {real:.3f}, com autoimagem inflada = {crida:.3f}, aprende {razao:.1f}x mais devagar")
+    for nome, (z, achados, falsos, ppv) in p105_complexos().items():
+        print(f"P105 {nome} (z = {z}): complexos achados = {achados:.2f}, falsos = {falsos:.2f}, precisao = {ppv:.3f}")
+    arq, cap = p106_arquetipos()
+    print(f"P106 sobreposicao de recuperacao por numero de arquetipos = {arq}; capacidade teorica = {cap:.1f}")
+    print(f"P107 melhor acuracia em 2D = {p107_funcao_transcendente()[0]}, com x1*x2 = {p107_funcao_transcendente()[1]}")
+    otimo, inverte, alem = p108_enantiodromia()
+    print(f"P108 R(d) maximo em d = {otimo}, muda de sinal em d = {inverte}, R(d = 5) = {alem}")
+    aniv, olhar = p109_sincronicidade()
+    print(f"P109 aniversario repetido entre 23 = {aniv:.3f}; algum p<0.05 em 50 testes = {olhar:.3f}")
+    print(f"P110 distancia ao centro apos 20 passos de contracao 0.5 = {p110_individuacao():.2e}")
+    for semente in (112, 113):
+        for versao in VERSOES_JUNG:
+            cat, val, perg, liq, eps = p112_gisele_jung(versao, semente=semente)
+            print(f"P112 semente {semente} {versao:11s}: catastrofes = {cat:.4f}, valor = {val:.3f}, "
+                  f"perguntas = {perg:.3f}, liquido = {liq:.3f}, erro humano final = {eps:.3f}")
+    for versao in ("gisele", "jung_v2"):
+        cat, val, perg, liq, eps = p112_gisele_jung(versao, fadiga=0.0)
+        print(f"P112 sem fadiga {versao:8s}: catastrofes = {cat:.4f}, perguntas = {perg:.3f}, liquido = {liq:.3f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=10, testes=19)
+    print(f"P113 minha taxa de erro (10/19): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
     ok, total, falhas = testes_de_regressao()
     print(f"P96 funcoes pNN no arquivo = {k}; pares de interacao possiveis = {pares}")
+    print("Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto)"
+          " -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")

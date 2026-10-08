@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 5: a resposta dentro da pergunta, e a GISELE unificada
 
-> Continuação da [Parte 4](ASI_AGI_parte4_auditoria_e_agente.md). Os números saem de
+> Continuação da [Parte 4](ASI_AGI_parte4_auditoria_e_agente.md). **Próxima:** [Parte 6 — calcular Jung](ASI_AGI_parte6_calcular_jung.md) (P98–P115). Os números saem de
 > `p81_...` a `p96_...` e da classe `Gisele` em [`calculos.py`](calculos.py); a saída está em
 > [`resultados.txt`](resultados.txt).
 >
