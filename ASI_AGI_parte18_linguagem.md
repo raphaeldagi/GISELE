@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 18: a linguagem como canal
 
-> Continuação da [Parte 17](ASI_AGI_parte17_quanto_vale_perceber.md). Os números saem de `p242_...` a `p247_...` e da classe
+> Continuação da [Parte 17](ASI_AGI_parte17_quanto_vale_perceber.md). **Próxima:** [Parte 19 — a versão principal](ASI_AGI_parte19_versao_principal.md) (P251–P260). Os números saem de `p242_...` a `p247_...` e da classe
 > `SynthaiFala` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
