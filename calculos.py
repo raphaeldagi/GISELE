@@ -4544,6 +4544,40 @@ def p322_termos_nos_mundos():
             for nome, fazer, ss, n in mundos for modelo in ("gradiente", "newton", "local")}
 
 
+MUNDOS_NOVOS_26 = {"modelo ruim": ({"sigma_modelo": 2.0}, tuple(range(750, 760))),
+                   "humano frágil": ({"fadiga": 0.6}, tuple(range(760, 770)))}
+
+
+def p323_conta_nos_mundos_novos():
+    """A conta corrigida (L efetivo e Δd com o plano) em dois mundos sequenciais ainda não varridos."""
+    from synthai.mundos import MundoSequencial
+    return {(nome, modelo): p322_termos_da_conta(modelo, lambda s, kw=kw: MundoSequencial(s, **kw), ss)["m_tudo"]
+            for nome, (kw, ss) in MUNDOS_NOVOS_26.items() for modelo in ("gradiente", "newton", "local")}
+
+
+def p324_varredura_nos_mundos_novos(mults=(0.5, 1.0, 2.0, 4.0, 8.0)):
+    """A varredura (mecânica da P317) nos dois mundos novos."""
+    from synthai.mundos import MundoSequencial
+    resultado = {}
+    for nome, (kw, ss) in MUNDOS_NOVOS_26.items():
+        for modelo in ("gradiente", "newton", "local"):
+            ret = {m: [] for m in mults}
+            cats = {m: 0.0 for m in mults}
+            for s in ss:
+                pesos = _agente_25(modelo, s).calibrar(MundoSequencial(s, **kw)).pensamento.w
+                for m in mults:
+                    mundo = MundoSequencial(s, **kw)
+                    mundo.historico_auditado(150)
+                    ag = _agente_25(modelo, s, m)
+                    ag.pensamento.w = list(pesos)
+                    r = mundo.rodar(ag, 400)
+                    ret[m].append(r["retorno"])
+                    cats[m] += r["catastrofes"] / len(ss)
+            medias = {m: sum(v) / len(v) for m, v in ret.items()}
+            resultado[(nome, modelo)] = (medias, cats, max(medias, key=medias.get))
+    return resultado
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
