@@ -1,4 +1,4 @@
-"""Reproduz os cálculos e simulações das Partes 1 a 15 (ASI_AGI_*.md).
+"""Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
 Arquivo único que sempre cresce: cada parte acrescenta funções pNN_..., o agente
 unificado `Synthai` incorpora os módulos anteriores e `testes_de_regressao` garante que
@@ -8,7 +8,7 @@ Uso: python3 calculos.py            (imprime tudo)
      python3 calculos.py > resultados.txt
 """
 import random
-from math import ceil, comb, cos, cosh, exp, log, log2, pi, sin, sqrt
+from math import ceil, comb, cos, cosh, exp, factorial, log, log2, pi, sin, sqrt
 from statistics import NormalDist
 
 Z = NormalDist()
@@ -1724,6 +1724,9 @@ def _rodar_mundo(agente, rng, episodios=1000, **mundo):
     for _ in range(episodios):
         eps = min(0.45, m["eps0"] + m["fadiga"] * carga)
         acoes = _gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+        perceber = getattr(agente, "perceber", None)  # P225: um sentido novo, se o agente tiver
+        if perceber:
+            perceber(acoes)
         escolha, n = agente.agir_no_mundo(acoes, rng, eps, carga)
         carga += 0.05 * (n - carga)
         perguntas += n
@@ -2078,6 +2081,9 @@ def _rodar_sequencial(agente, rng, episodios=400, planeja=True, mundo=None):
             consequencias = {id(a): rng.gauss(0, 1) for a in acoes}
             estimativas = {k: c + rng.gauss(0, m["sigma_modelo"]) for k, c in consequencias.items()}
             restantes = m["passos"] - t - 1
+            perceber = getattr(agente, "perceber", None)  # P227: o sentido novo também no mundo sequencial
+            if perceber:
+                perceber(acoes)
             if planeja:
                 agente.preparar_passo(estimativas, restantes, nivel, m["valor_medio_passo"])
             escolha, n = agente.agir_no_mundo(acoes, rng, eps, carga)
@@ -2646,6 +2652,143 @@ def p215_distinguivel(semente=215, episodios=300):
         soma = sum(bisect_left(seguras, c) + 0.5 * (bisect_right(seguras, c) - bisect_left(seguras, c)) for c in cats)
         resultado[nome] = soma / (len(cats) * len(seguras))
     return resultado
+
+
+# --- Parte 16: um sentido novo ---
+
+# Placar acumulado ao fim da Parte 16 (atualizado quando os testes da parte terminam)
+ERROS_P230, TESTES_P230 = 34, 62
+
+
+def p223_sinal_combinado(auc_atual=0.748, d_sensor=1.0):
+    """Dois sinais independentes e gaussianos: d' se soma em quadratura. AUC = Phi(d'/sqrt 2)."""
+    d_atual = sqrt(2) * Z.inv_cdf(auc_atual)
+    d_total = sqrt(d_atual**2 + d_sensor**2)
+    return d_atual, d_total, Z.cdf(d_total / sqrt(2)), Z.cdf(d_sensor / sqrt(2))
+
+
+def p224_auditoria_p94(mu=0.02, t=10.0, k=3, amostras=400000, semente=224):
+    """Auditoria da P94: k salvaguardas que falham de forma independente vs k estágios que precisam ocorrer em ordem."""
+    x = mu * t
+    paralelo = (1 - exp(-x)) ** k
+    sequencial = 1 - exp(-x) * sum(x**j / factorial(j) for j in range(k))
+    rng = _rng(semente)
+    sim_par = sim_seq = 0
+    for _ in range(amostras):
+        tempos = [rng.expovariate(mu) for _ in range(k)]
+        sim_par += max(tempos) <= t
+        sim_seq += sum(tempos) <= t
+    formula_p94 = x**k / factorial(k)
+    corrigido_p94 = (1 - exp(-1e-3 * 50)) ** 4
+    return paralelo, sim_par / amostras, sequencial, sim_seq / amostras, formula_p94, corrigido_p94
+
+
+class _SentidoNovo:
+    """Mistura (mixin) da P225: um sensor de outra natureza, que lê o dano diretamente com ruído.
+
+    Leitura s = d' * catástrofe + N(0, 1), com gerador próprio (o mundo não muda). Entra como 4º sinal da calibração.
+    O que o agente pode saber: só a leitura ruidosa, nunca o rótulo."""
+
+    def __init__(self, d_sensor=1.0, semente_sensor=225, **kw):
+        super().__init__(**kw)
+        self.d_sensor = d_sensor
+        self._rng_sensor = _rng(semente_sensor)
+        self.leitura = {}
+        self.w = [0.0, 0.0, 0.0, 0.0]
+
+    def perceber(self, acoes):
+        g = self._rng_sensor.gauss
+        self.leitura = {id(a): self.d_sensor * a[3] + g(0, 1) for a in acoes}
+
+    def _x(self, acao, melhor):
+        m, dp, _, _ = acao
+        return (1.0, dp, m - melhor, self.leitura.get(id(acao), 0.0))
+
+    def calibrar(self, episodios_rotulados, **kw):
+        leituras = {}
+        for acoes in episodios_rotulados:
+            self.perceber(acoes)
+            leituras.update(self.leitura)
+        self.leitura = leituras
+        super().calibrar(episodios_rotulados, **kw)
+        self.leitura = {}
+
+
+class SynthaiSentidos(_SentidoNovo, SynthaiAnima):
+    """SYNTHAI de um passo com o sentido novo (P225)."""
+
+
+class SynthaiVelhaSentidos(_SentidoNovo, SynthaiVelha):
+    """SYNTHAI velha (planeja, diversifica no fim) com o sentido novo (P227)."""
+
+
+def _construir_sentidos(rng, d_sensor=1.0):
+    hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+    ag = SynthaiSentidos(d_sensor=d_sensor, sombra="propria", compensar="equilibrio")
+    ag.mult_pergunta = 2.0
+    ag.calibrar(hist)
+    return ag
+
+
+def p225_sentido_novo(sementes=tuple(range(410, 420)), episodios=2000):
+    """Realista vs com sentido novo (d' = 1), no mundo base e no da armadilha nova. 10 sementes pareadas."""
+    resultado = {}
+    for nome, mundo in (("base", {}), ("armadilha nova", {"bonus": 1.0, "rho_cego": 1.0})):
+        linhas = {"p8_x2": [], "sentidos": []}
+        for s in sementes:
+            for v in linhas:
+                rng = _rng(s)
+                ag = _construir_sentidos(rng) if v == "sentidos" else _construir(v, rng)
+                linhas[v].append(_rodar_mundo(ag, rng, episodios=episodios, **mundo))
+        cat = {v: sum(r[0] for r in rs) / len(rs) for v, rs in linhas.items()}
+        d = [b[3] - a[3] for a, b in zip(linhas["p8_x2"], linhas["sentidos"])]
+        m = sum(d) / len(d)
+        dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+        resultado[nome] = (cat, (m, dp, m / (dp / sqrt(len(d)))))
+    return resultado
+
+
+def p226_auc_com_sentido(semente=215, episodios=300):
+    """AUC da calibração com o sentido novo, no mesmo protocolo da P215."""
+    ag = _construir_sentidos(_rng(semente))
+    resultado = {}
+    from bisect import bisect_left, bisect_right
+    for nome, mundo in (("conhecida", {}), ("nova", {"bonus": 1.0, "rho_cego": 1.0})):
+        m = dict(MUNDO_BASE, **mundo)
+        rng = _rng(semente + 1)
+        cats, seguras = [], []
+        for _ in range(episodios):
+            acoes = _gerar_acoes(rng, m["n_acoes"], 0.02, m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+            ag.perceber(acoes)
+            melhor = max(a[0] for a in acoes)
+            for a in acoes:
+                (cats if a[3] else seguras).append(ag.p_catastrofe(a, melhor))
+        seguras = sorted(seguras)
+        soma = sum(bisect_left(seguras, c) + 0.5 * (bisect_right(seguras, c) - bisect_left(seguras, c)) for c in cats)
+        resultado[nome] = soma / (len(cats) * len(seguras))
+    return resultado
+
+
+def p227_velha_com_sentido(sementes=tuple(range(420, 430)), episodios=400):
+    """Mundo sequencial com a armadilha nova: velha vs velha com sentido novo."""
+    mundo = {"bonus": 1.0, "rho_cego": 1.0}
+    linhas = {"velha": [], "velha_sentidos": []}
+    for s in sementes:
+        for v in linhas:
+            rng = _rng(s)
+            m = dict(MUNDO_BASE, **MUNDO_SEQUENCIAL)
+            hist = [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+                    for _ in range(150)]
+            classe = SynthaiVelhaSentidos if v == "velha_sentidos" else SynthaiVelha
+            ag = classe(sombra="propria", compensar="equilibrio")
+            ag.mult_pergunta = 2.0
+            ag.calibrar(hist)
+            linhas[v].append(_rodar_sequencial(ag, rng, episodios=episodios, mundo=mundo))
+    medias = {v: (sum(r[0] for r in rs) / len(rs), sum(r[1] for r in rs) / len(rs)) for v, rs in linhas.items()}
+    d = [b[0] - a[0] for a, b in zip(linhas["velha"], linhas["velha_sentidos"])]
+    m = sum(d) / len(d)
+    dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+    return medias, (m, dp, m / (dp / sqrt(len(d))))
 
 
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
