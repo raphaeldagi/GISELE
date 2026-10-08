@@ -11,7 +11,8 @@
 >
 > **Mudança no código:** `calculos.py` agora roda por partes (`python3 calculos.py 9 10`) para
 > desenvolver mais rápido. O `resultados.txt` continua sendo gerado com **todas** as partes, e a
-> saída das partes antigas ficou idêntica byte a byte.
+> saída das partes antigas ficou idêntica, com uma exceção esperada: a P143 mede o tamanho do `CLAUDE.md`
+> ao vivo, e ele cresceu (2.812 → 3.017 bytes, razão 352× → 377×).
 
 ---
 
@@ -47,7 +48,7 @@ em cada mundo é normalizado entre o **acaso** (0) e um **oráculo** (1) que vê
 | Maximizar (P67) | **−4,00** (muito pior que o acaso) |
 | Quantilizar (P42) | −0,44 |
 | **GISELE realista** (Parte 8) | **+0,46** |
-| GISELE intuitiva (P162) | ver `resultados.txt` |
+| GISELE intuitiva (P162) | +0,41 |
 
 ✅ A previsão (GISELE > quantilizar > maximizar) se confirmou com folga.
 
@@ -171,15 +172,16 @@ encontrar; só treina contra a **variedade**. É a imaginação ativa (P149) usa
 
 | Mundo | Catástrofes realista → intuitiva | Diferença no líquido (perda 50) | Diferença no líquido (perda 500) |
 |---|---|---|---|
-| Base | 0,50% → **0,27%** | **−0,25** (t = −3,1) | ver `resultados.txt` |
-| Armadilha nova | 0,90% → **0,50%** | **−0,24** (t = −2,7) | ver `resultados.txt` |
+| Base | 0,50% → **0,27%** | **−0,25** (t = −3,1) | +0,78 (t = 1,3) |
+| Armadilha nova | 0,90% → **0,50%** | **−0,24** (t = −2,7) | **+1,56** (t = 2,4) |
 
 ❌ A segunda metade da previsão falhou: a intuitiva **corta as catástrofes quase pela metade** nos dois mundos, mas
 perde 0,25 de líquido com catástrofe = 50. Imaginar perigos a torna desconfiada **demais**: ela recusa ações boas
 que lembram as imaginadas.
 
-⚠️ Com catástrofe = 500 a conta se inverte (a diferença exata está em `resultados.txt`). De novo, como na P145: **qual
-GISELE é melhor depende do preço do pior caso.**
+⚠️ Com catástrofe = 500 a conta se inverte: a intuitiva ganha +1,56 diante da armadilha nova (t = 2,4) e +0,78 no
+mundo base (t = 1,3, ainda dentro do ruído). De novo, como na P145: **qual GISELE é melhor depende do preço do
+pior caso.** E no Υ (que usa perda 50) ela fica em 0,41, abaixo da realista (0,46), como eu previa.
 
 **Tradução cruzada (Jung → engenharia).** Jung avisava que a função inferior, quando ativada, chega **carregada de
 afeto**, primitiva, exagerada. A intuição recém-desenvolvida da GISELE é exatamente isso: vê perigo em tudo que
@@ -239,7 +241,7 @@ Acumulado: **24 de 43** afirmações testadas precisaram de correção. Posterio
 ### P165. Unificação
 
 - Linhagem: `Gisele` → `GiseleJung` → `GiseleAnima` → `GiseleSelf` → `GiseleLenta` → `GiseleAncorada` →
-  **`GiseleIntuitiva`** (P162).
+  **`GiseleIntuitiva`** (P162). Testes de regressão: **34/34**; o arquivo tem **113** funções `pNN`.
 - O código ganhou referências fixas para medir progresso (`PoliticaSimples`: maximizar, quantilizar, acaso,
   oráculo), um mundo geral parametrizável (`_rodar_mundo`) e a execução por partes.
 - **Não existe mais "a melhor GISELE"; existe a melhor para cada preço de catástrofe.** Com perda 50, a realista

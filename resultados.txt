@@ -211,7 +211,7 @@ P137 arrependimento (limiar, exposicao) = {(0.2, 0.0): 1000, (0.5, 0.0): 1000, (
 P138 objetivo inferido errado: humano Boltzmann = 0.178, humano com vies de seguranca = 0.590
 P139 minha taxa de erro (17/30): media = 0.56, intervalo 90% = [0.42, 0.70]
 --- Parte 9 (o mundo decide o centro, complexo autonomo, transferencia, heroi, a regua do ruido) ---
-P143 pedido = 8 caracteres; memoria compartilhada (CLAUDE.md) = 2812; razao = 352x
+P143 pedido = 8 caracteres; memoria compartilhada (CLAUDE.md) = 3017; razao = 377x
 P144 taxa de catastrofe 0.0025: liquido por carga-alvo = {0.1: 1.168, 0.2: 1.446, 0.3: 1.354, 0.5: 1.35, 0.8: 1.323}
 P144 taxa de catastrofe 0.005: liquido por carga-alvo = {0.1: 1.347, 0.2: 1.343, 0.3: 1.181, 0.5: 1.27, 0.8: 1.04}
 P144 taxa de catastrofe 0.01: liquido por carga-alvo = {0.1: 0.829, 0.2: 0.879, 0.3: 1.116, 0.5: 1.0, 0.8: 0.582}
@@ -237,7 +237,36 @@ P152 GISELE realista em 10 sementes novas: media = 1.178, dp = 0.166
 P152 diferenca pareada carga 0.3 - carga 0.2: media = -0.046, dp = 0.198, t = -0.73
 P152 diferenca pareada P* x2 - P* x1: media = 0.132, dp = 0.196, t = 2.13
 P153 minha taxa de erro (21/37): media = 0.56, intervalo 90% = [0.43, 0.69]
+--- Parte 10 (rumo a AGI: Upsilon, trajetoria, funcao inferior, complementaridade) ---
+P157 p5_gisele   : liquido medio (10 sementes) = 0.321, dp = 0.301
+P157 p7_anima    : liquido medio (10 sementes) = 1.084, dp = 0.097
+P157 p8_x2       : liquido medio (10 sementes) = 1.241, dp = 0.088
+P157 p9_ancorada : liquido medio (10 sementes) = 1.128, dp = 0.078
+P157 passo p5_gisele->p7_anima: diferenca media = 0.764, dp = 0.330, t = 7.33
+P157 passo p7_anima->p8_x2: diferenca media = 0.157, dp = 0.145, t = 3.42
+P157 passo p8_x2->p9_ancorada: diferenca media = -0.113, dp = 0.138, t = -2.58
+P163 razao entre ganhos sucessivos = [0.205, -0.721]
+P158 Upsilon (0 = acaso, 1 = oraculo) = {'maximizar': -4.002, 'quantilizar': -0.441, 'p8_x2': 0.465, 'p10_intuitiva': 0.409}
+P158 base                  : {'maximizar': -4.015, 'quantilizar': -0.424, 'p8_x2': 0.479, 'p10_intuitiva': 0.425}
+P158 catastrofe x2         : {'maximizar': -6.933, 'quantilizar': -1.233, 'p8_x2': 0.437, 'p10_intuitiva': 0.393}
+P158 sem ponto cego        : {'maximizar': -1.318, 'quantilizar': -0.06, 'p8_x2': 0.53, 'p10_intuitiva': 0.435}
+P158 ponto cego total      : {'maximizar': -6.5, 'quantilizar': -0.781, 'p8_x2': 0.325, 'p10_intuitiva': 0.273}
+P158 armadilha discreta    : {'maximizar': 0.349, 'quantilizar': 0.417, 'p8_x2': 0.442, 'p10_intuitiva': 0.355}
+P158 armadilha gritante    : {'maximizar': -8.802, 'quantilizar': -0.869, 'p8_x2': 0.532, 'p10_intuitiva': 0.516}
+P158 poucas acoes          : {'maximizar': -1.227, 'quantilizar': -0.374, 'p8_x2': 0.454, 'p10_intuitiva': 0.349}
+P158 humano fragil         : {'maximizar': -4.015, 'quantilizar': -0.424, 'p8_x2': 0.435, 'p10_intuitiva': 0.43}
+P158 discreta + cego total : {'maximizar': 0.269, 'quantilizar': 0.366, 'p8_x2': 0.327, 'p10_intuitiva': 0.288}
+P159 catastrofes = {'conhecida': 0.0043, 'nova': 0.0075, 'nova, ja vista no treino': 0.0048, 'taxa base': 0.005}
+P160 variancia x perturbacao = 1.91e-05 (nao depende de n); auditorias otimas = 112; erro total = 0.0505
+P161 entropia do perfil da GISELE = 1.561 de 2 bits; funcao inferior = intuicao
+P162 base: catastrofes = {'p8_x2': 0.005, 'p10_intuitiva': 0.0027}
+P162 base, perda 50: intuitiva - realista = -0.253, dp = 0.259, t = -3.08
+P162 base, perda 500: intuitiva - realista = 0.782, dp = 1.943, t = 1.27
+P162 armadilha nova: catastrofes = {'p8_x2': 0.009, 'p10_intuitiva': 0.005}
+P162 armadilha nova, perda 50: intuitiva - realista = -0.237, dp = 0.276, t = -2.71
+P162 armadilha nova, perda 500: intuitiva - realista = 1.563, dp = 2.101, t = 2.35
+P164 minha taxa de erro (24/43): media = 0.56, intervalo 90% = [0.43, 0.67]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 106; pares de interacao possiveis = 5565
-Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga) -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca)
-Regressao: 31/31 resultados publicados reproduzidos; falhas = []
+P96 funcoes pNN no arquivo = 113; pares de interacao possiveis = 6328
+Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga) -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno)
+Regressao: 34/34 resultados publicados reproduzidos; falhas = []
