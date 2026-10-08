@@ -3804,6 +3804,136 @@ def p297_p42_exato(n_acoes=1000, q=0.01, p_desastre=0.002, bonus=3.0, pontos=400
     return n_acoes * p_desastre * soma_max, n_acoes * p_desastre * soma_q / k
 
 
+# --- Parte 24: o pensamento diferenciado (ajustar até convergir) ---
+
+# Placar acumulado ao fim da Parte 24 (atualizado quando os testes da parte terminam)
+ERROS_P309, TESTES_P309 = 53, 113
+
+
+def p302_convergencia(sementes=tuple(range(620, 630)), treino=150, teste=300, epocas=(3, 10, 30, 100)):
+    """Quão longe da convergência está o pensamento de 3 épocas? Mesmo histórico auditado (mundo sequencial):
+    gradiente com várias épocas, Newton (máxima verossimilhança) e Newton com Firth. Peso da leitura (w3, d' = 1),
+    log-perda no treino e num histórico novo, e o número de catástrofes no treino (eventos raros)."""
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento import Pensamento
+    from synthai.pensamento_exato import ajustar_logistica, dados_do_historico, perda_logistica
+    metodos = [f"gradiente_{e}" for e in epocas] + ["newton", "newton_firth"]
+    soma = {m: [0.0, 0.0, 0.0] for m in metodos}
+    positivos = 0
+    for s in sementes:
+        mundo = MundoSequencial(s)
+        hist = mundo.historico_auditado(treino)
+        xs, ys = dados_do_historico(hist)
+        xt, yt = dados_do_historico(mundo.historico_auditado(teste))
+        positivos += sum(ys)
+        pesos = {}
+        for e in epocas:
+            p = Pensamento()
+            p.calibrar(hist, epocas=e)
+            pesos[f"gradiente_{e}"] = p.w
+        pesos["newton"] = ajustar_logistica(xs, ys, firth=False)
+        pesos["newton_firth"] = ajustar_logistica(xs, ys, firth=True)
+        for m, w in pesos.items():
+            soma[m][0] += w[3] / len(sementes)
+            soma[m][1] += perda_logistica(w, xs, ys) / len(sementes)
+            soma[m][2] += perda_logistica(w, xt, yt) / len(sementes)
+    return {m: tuple(v) for m, v in soma.items()}, positivos / len(sementes)
+
+
+def _fora_da_atencao(fazer_agente, sementes, episodios=400):
+    """A régua da P293 para qualquer agente: P prevista (com leitura 0 e com o neutro w3/2) / taxa real nas opções
+    que ficaram sem leitura, mundo sequencial."""
+    from synthai.mundos import MundoSequencial
+    prev0 = prevn = reais = 0.0
+    pesos = []
+    for s in sementes:
+        mundo = MundoSequencial(s)
+        ag = fazer_agente(s).calibrar(mundo)
+        pesos.append(ag.pensamento.w[3])
+        decidir = ag.decidir
+        soma = [0.0, 0.0, 0.0]
+
+        def decidir_e_medir(sit, _ag=ag, _decidir=decidir, _soma=soma):
+            escolha = _decidir(sit)
+            pen = _ag.pensamento
+            melhor = max(o.comite for o in sit.opcoes)
+            for o in sit.opcoes:
+                if o._leitura is None:  # a régua lê o escondido; o agente, não
+                    _soma[0] += pen.p_catastrofe(o, melhor, 0.0)
+                    _soma[1] += pen.p_catastrofe(o, melhor, pen.w[3] / 2)
+                    _soma[2] += o._catastrofe
+            return escolha
+        ag.decidir = decidir_e_medir
+        mundo.rodar(ag, episodios)
+        prev0, prevn, reais = prev0 + soma[0], prevn + soma[1], reais + soma[2]
+    return sum(pesos) / len(pesos), prev0 / reais, prevn / reais, int(reais)
+
+
+def p303_fora_da_atencao_exato(sementes=tuple(range(550, 560))):
+    """A P293 de novo (mesmas sementes), com o pensamento de 3 épocas, com Newton e com Newton + Firth."""
+    from synthai import SynthaiExploradora
+    from synthai.pensamento_exato import SynthaiPensante
+    agentes = {"gradiente_3": lambda s: SynthaiExploradora(s),
+               "newton": lambda s: SynthaiPensante(s, firth=False),
+               "newton_firth": lambda s: SynthaiPensante(s, firth=True)}
+    return {nome: _fora_da_atencao(f, sementes) for nome, f in agentes.items()}
+
+
+def p305_pensante(sementes=tuple(range(630, 660)), sementes_bandido=tuple(range(660, 680))):
+    """Comportamento: a versão principal (Parte 23) contra a mesma com o pensamento de Newton + Firth, e com o
+    neutro ligado (agora que o peso da leitura deveria estar certo). Três tarefas."""
+    from synthai import SynthaiExploradora
+    from synthai.mundos import MundoBandido, MundoSequencial
+    from synthai.pensamento_exato import SynthaiPensante
+    from synthai.referencias import Acaso, Oraculo
+    agentes = {"exploradora": lambda s: SynthaiExploradora(s),
+               "pensante": lambda s: SynthaiPensante(s),
+               "pensante_neutro": lambda s: SynthaiPensante(s, neutro=True)}
+    tarefas = (("sequencial", lambda s: MundoSequencial(s), 400, sementes, False),
+               ("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), 1000, sementes, False),
+               ("bandido", lambda s: MundoBandido(s), 20, sementes_bandido, True))
+    resultado = {}
+    for tarefa, fazer, n, ss, normalizar in tarefas:
+        ret = {v: [] for v in agentes}
+        cats = {v: 0.0 for v in agentes}
+        for s in ss:
+            ref = {}
+            if normalizar:
+                for nome, cls in (("acaso", Acaso), ("oraculo", Oraculo)):
+                    ref[nome] = fazer(s).rodar(cls(s), n)["retorno"]
+            for v, f in agentes.items():
+                mundo = fazer(s)
+                r = mundo.rodar(f(s).calibrar(mundo), n)
+                x = r["retorno"]
+                if normalizar:
+                    x = (x - ref["acaso"]) / (ref["oraculo"] - ref["acaso"])
+                ret[v].append(x)
+                cats[v] += r["catastrofes"] / len(ss)
+        resultado[tarefa] = ({v: sum(x) / len(x) for v, x in ret.items()}, cats,
+                             {v: _pareado(ret["exploradora"], ret[v]) for v in agentes if v != "exploradora"})
+    return resultado
+
+
+def p307_selecao(n=400000, b=-3.0, w=1.5, frac_x=0.2, frac_negativos=0.05, semente=307):
+    """Auditoria da P273 ('selecionar pelo eixo x não muda a reta de y em x') na logística, com a resposta de
+    Prentice e Pyke (1979): selecionar pelo DESFECHO (caso-controle) só desloca o intercepto, de ln(1/fração)."""
+    from synthai.pensamento_exato import ajustar_logistica
+    rng = _rng(semente)
+    dados = []
+    for _ in range(n):
+        x = rng.gauss(0, 1)
+        dados.append((x, 1.0 if rng.random() < 1 / (1 + exp(-(b + w * x))) else 0.0))
+    corte = sorted(x for x, _ in dados)[int((1 - frac_x) * n)]
+    amostras = {"tudo": dados,
+                "seleciona_x": [(x, y) for x, y in dados if x >= corte],
+                "caso_controle": [(x, y) for x, y in dados if y == 1.0 or rng.random() < frac_negativos]}
+    ajustes = {}
+    for nome, d in amostras.items():
+        bb, ww = ajustar_logistica([(1.0, x) for x, _ in d], [y for _, y in d], firth=False)
+        ajustes[nome] = (bb, ww, len(d))
+    return ajustes, log(1 / frac_negativos)
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
