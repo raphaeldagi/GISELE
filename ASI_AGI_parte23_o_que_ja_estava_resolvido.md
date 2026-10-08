@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 23: reconhecer o que já estava resolvido
 
-> Continuação da [Parte 22](ASI_AGI_parte22_prototipo_em_modulos.md). O código novo está em [`synthai/reconhecimento.py`](synthai/reconhecimento.py)
+> Continuação da [Parte 22](ASI_AGI_parte22_prototipo_em_modulos.md). **Próxima:** [Parte 24 — o pensamento diferenciado](ASI_AGI_parte24_pensamento_diferenciado.md) (P301–P310). O código novo está em [`synthai/reconhecimento.py`](synthai/reconhecimento.py)
 > (com testes em [`synthai/testes_reconhecimento.py`](synthai/testes_reconhecimento.py)); os números saem de `p291_...` a `p297_...` em
 > [`calculos.py`](calculos.py), e a saída completa está em [`resultados.txt`](resultados.txt).
 >

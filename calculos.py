@@ -3807,7 +3807,7 @@ def p297_p42_exato(n_acoes=1000, q=0.01, p_desastre=0.002, bonus=3.0, pontos=400
 # --- Parte 24: o pensamento diferenciado (ajustar até convergir) ---
 
 # Placar acumulado ao fim da Parte 24 (atualizado quando os testes da parte terminam)
-ERROS_P309, TESTES_P309 = 53, 113
+ERROS_P309, TESTES_P309 = 59, 133
 
 
 def p302_convergencia(sementes=tuple(range(620, 630)), treino=150, teste=300, epocas=(3, 10, 30, 100)):
@@ -4074,6 +4074,52 @@ def p304d_vies_de_primeira_ordem(sementes=tuple(range(620, 630)), treino=150):
     return d_formula, d_firth
 
 
+def p305b_onde_se_decide(sementes=tuple(range(630, 640)), episodios=1000, topo=10):
+    """EXPLORATÓRIO (desenhado depois de ver a P305): calibração do pensamento ONDE a decisão acontece. Mundo de
+    escolha única: nas `topo` opções de nota pessimista mais alta (as candidatas e as primeiras de reserva), P
+    prevista / taxa real de catástrofe; e, em todas as opções, a mesma razão. Mais perguntas e catástrofes, e,
+    entre as opções do topo que ela aceitaria SEM perguntar (p <= limiar), a fração, a P média e a taxa real."""
+    from synthai import SynthaiExploradora
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento_exato import SynthaiPensante
+    resultado = {}
+    for nome, fazer in (("gradiente_3", lambda s: SynthaiExploradora(s)), ("newton_firth", lambda s: SynthaiPensante(s))):
+        soma = {"topo_prev": 0.0, "topo_real": 0.0, "todas_prev": 0.0, "todas_real": 0.0,
+                "abaixo_n": 0.0, "abaixo_prev": 0.0, "abaixo_real": 0.0}
+        perguntas = cats = 0.0
+        for s in sementes:
+            mundo = MundoSequencial(s, passos=1, n_acoes=200)
+            ag = fazer(s).calibrar(mundo)
+            pen = ag.pensamento
+
+            def medir(sit, _decidir=ag.decidir, _pen=pen):
+                ordem = sorted(sit.opcoes, key=lambda o: -(o.nota - o.discordancia))
+                escolha = _decidir(sit)
+                melhor = max(o.comite for o in sit.opcoes)
+                for i, o in enumerate(ordem):
+                    leitura = o._leitura if o._leitura is not None else 0.0  # a régua lê o escondido
+                    p = _pen.p_catastrofe(o, melhor, leitura)
+                    soma["todas_prev"] += p
+                    soma["todas_real"] += o._catastrofe
+                    if i < topo:
+                        soma["topo_prev"] += p
+                        soma["topo_real"] += o._catastrofe
+                        if p <= ag.relacao.limiar:  # o que ela aceitaria sem perguntar
+                            soma["abaixo_n"] += 1
+                            soma["abaixo_prev"] += p
+                            soma["abaixo_real"] += o._catastrofe
+                return escolha
+            ag.decidir = medir
+            r = mundo.rodar(ag, episodios)
+            perguntas += r["perguntas"] / len(sementes)
+            cats += r["catastrofes"] / len(sementes)
+        n_topo = len(sementes) * episodios * topo
+        resultado[nome] = (soma["topo_prev"] / soma["topo_real"], soma["todas_prev"] / soma["todas_real"],
+                           soma["topo_real"] / n_topo, perguntas, cats, soma["abaixo_n"] / n_topo,
+                           soma["abaixo_prev"] / max(1.0, soma["abaixo_n"]), soma["abaixo_real"] / max(1.0, soma["abaixo_n"]))
+    return resultado
+
+
 def p306_newton_quadratico(semente=620, treino=150):
     """Convergência quadrática de Newton, contada: o tamanho do passo a cada iteração e a razão
     log(passo_k+1)/log(passo_k), que tende a 2 quando o número de dígitos certos dobra."""
@@ -4175,6 +4221,9 @@ def testes_de_regressao():
         "P291": p291_menon()[0] == 10,
         "P292": [round(x, 3) for x in p292_ponto_neutro()[:3]] == [1.003, 0.614, 0.996],
         "P297": [round(x, 3) for x in p297_p42_exato()] == [0.547, 0.144],
+        "P304d": [round(x, 4) for x in p304d_vies_de_primeira_ordem()] == [-0.0296, -0.0286],
+        "P306": [f"{x:.1e}" for x in p306_newton_quadratico()[8:10]] == ["9.3e-03", "2.6e-05"],
+        "P307": [round(x, 2) for x in p307_selecao()[0]["caso_controle"][:2]] == [-0.02, 1.48],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -4758,6 +4807,43 @@ def _parte_23():
     print(f"P299 minha taxa de erro ({ERROS_P299}/{TESTES_P299}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_24():
+    print("--- Parte 24 (o pensamento diferenciado: ajustar ate convergir) ---")
+    metodos, positivos = p302_convergencia()
+    print(f"P302 catastrofes por historico de treino = {positivos:.1f}")
+    for m, (w3, treino, teste) in metodos.items():
+        print(f"P302 {m:13s}: w3 = {w3:.3f}; log-perda treino = {treino:.5f}, teste = {teste:.5f}")
+    for nome, (w3, r0, rn, n) in p303_fora_da_atencao_exato().items():
+        print(f"P303 {nome:13s}: w3 = {w3:.3f}; sem leitura ({n} catastrofes): prevista/real com 0 = {r0:.3f}, com o neutro = {rn:.3f}")
+    taxas, kappa, epocas, w3, pos = p304_teoria_da_convergencia()
+    print(f"P304 taxas por epoca (eta n lambda) = {[round(t, 3) for t in taxas]}; kappa mediano = {kappa:.0f}; "
+          f"epocas pedidas pela teoria = {epocas}")
+    for e in (118, 237):
+        m, mx = p304b_conferir_epocas(e)
+        print(f"P304 gradiente com {e} epocas: |w3 - w3*| medio = {m:.4f}, maximo = {mx:.4f}")
+    m, mx = p304c_piso_de_ruido()
+    print(f"P304 piso com eta = 0,01 e 1000 epocas: |w3 - w3*| medio = {m:.4f}, maximo = {mx:.4f}")
+    f, d = p304d_vies_de_primeira_ordem()
+    print(f"P304 vies de primeira ordem (Cordeiro-McCullagh) delta3 = {f:.4f}; Firth - maxima verossimilhanca = {d:.4f}")
+    for tarefa, (medias, cats, difs) in p305_pensante().items():
+        print(f"P305 {tarefa}: { {k: round(v, 3) for k, v in medias.items()} }; catastrofes { {k: round(v, 4) for k, v in cats.items()} }")
+        for v, (m, dp, tt) in difs.items():
+            print(f"P305 {tarefa}: {v} - exploradora = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    for nome, r in p305b_onde_se_decide().items():
+        print(f"P305b (exploratorio) {nome}: prevista/real no topo = {r[0]:.3f}, em todas = {r[1]:.3f}; taxa real no topo = {r[2]:.4f}; "
+              f"perguntas = {r[3]:.3f}; catastrofes = {r[4]:.4f}; aceitas sem perguntar = {r[5]:.3f} do topo, "
+              f"P media = {r[6]:.4f}, taxa real = {r[7]:.4f}")
+    print(f"P306 Newton, erro por iteracao = {[f'{x:.1e}' for x in p306_newton_quadratico()]}")
+    ajustes, desloc = p307_selecao()
+    for nome, (b, w, n) in ajustes.items():
+        print(f"P307 {nome:13s}: intercepto = {b:.3f}, inclinacao = {w:.3f} (n = {n})")
+    print(f"P307 deslocamento do intercepto no caso-controle = {ajustes['caso_controle'][0] - ajustes['tudo'][0]:.3f}; ln(1/0,05) = {desloc:.3f}")
+    h0, hn, hg = p308_informacao()
+    print(f"P308 bits por opcao: entropia = {h0:.4f}; restam com Newton = {hn:.4f}; com o gradiente de 3 epocas = {hg:.4f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P309, testes=TESTES_P309)
+    print(f"P309 minha taxa de erro ({ERROS_P309}/{TESTES_P309}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -4780,11 +4866,12 @@ def _unificacao():
           " | SynthaiOuvinte (P262: aprende com o que o humano responde)"
           " -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo)"
           " => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas)"
-          " -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha)")
+          " -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha)"
+          " | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24}
 
 
 if __name__ == "__main__":
