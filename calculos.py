@@ -3623,7 +3623,7 @@ def p287_veto_falso(sementes=tuple(range(540, 545)), episodios=1000, custo=0.1, 
 # --- Parte 23: reconhecer o que já estava resolvido ---
 
 # Placar acumulado ao fim da Parte 23 (atualizado quando os testes da parte terminam)
-ERROS_P299, TESTES_P299 = 46, 99
+ERROS_P299, TESTES_P299 = 53, 113
 
 
 def p291_menon(area=8.0, precisao=0.001):
@@ -3708,6 +3708,9 @@ _VARIANTES_23 = {
     "atencao": dict(neutro=False, atencao_inteira=True, memoria=False, thompson=False),
     "so_thompson": dict(neutro=False, atencao_inteira=False, memoria=False, thompson=True),
     "reconhecida": dict(neutro=True, atencao_inteira=True, memoria=True, thompson=True),
+    "thompson_neutro": dict(neutro=True, atencao_inteira=False, memoria=False, thompson=True),
+    "thompson_atencao": dict(neutro=False, atencao_inteira=True, memoria=False, thompson=True),
+    "thompson_memoria": dict(neutro=False, atencao_inteira=False, memoria=True, thompson=True),
 }
 
 
@@ -3739,12 +3742,11 @@ def p294_reconhecer(sementes=tuple(range(560, 590)), episodios=400, episodios_un
     return resultado
 
 
-def p295_bandido_reconhecido(sementes=tuple(range(590, 610)), rodadas=20):
+def p295_bandido_reconhecido(sementes=tuple(range(590, 610)), rodadas=20, versoes=("parte22", "so_thompson", "reconhecida")):
     """20 sementes pareadas no bandido: Parte 22 (exploração entregue pelo mundo, UCB) vs Thompson da própria
     SYNTHAI vs a reconhecida inteira. Normalizado (acaso 0, oráculo 1) e arrependimento / referência de Lai–Robbins."""
     from synthai.mundos import MundoBandido
     from synthai.referencias import Acaso, Oraculo
-    versoes = ("parte22", "so_thompson", "reconhecida")
     norm = {v: [] for v in versoes}
     cats = {v: 0.0 for v in versoes}
     razao = {v: 0.0 for v in versoes}
@@ -3761,7 +3763,14 @@ def p295_bandido_reconhecido(sementes=tuple(range(590, 610)), rodadas=20):
             dg = mundo.diagnostico
             razao[v] += (dg["teto"] - dg["recompensa"]) / dg["lai_robbins"] / len(sementes)
     return ({v: sum(x) / len(x) for v, x in norm.items()}, cats, razao,
-            {v: _pareado(norm["parte22"], norm[v]) for v in versoes if v != "parte22"})
+            {v: _pareado(norm[versoes[0]], norm[v]) for v in versoes[1:]})
+
+
+def p296_ablacao_bandido(sementes=tuple(range(590, 610)), rodadas=20):
+    """EXPLORATÓRIO (desenhado depois de ver a P295): Thompson + cada peça da reconhecida, uma de cada vez,
+    para achar a que aumenta as catástrofes. Comparações contra 'so_thompson'."""
+    return p295_bandido_reconhecido(sementes, rodadas, ("so_thompson", "thompson_neutro", "thompson_atencao",
+                                                         "thompson_memoria", "reconhecida"))
 
 
 def _binomial_cdf(n, p, k):
@@ -3858,6 +3867,9 @@ def testes_de_regressao():
         "P285": p285_acoplamento()[0:4:3] == (6, 0) and len(p285_acoplamento()[1]) == 5,
         "P286": p286_testes_de_unidade() == (10, 0),
         "P287": round(p287_veto_falso()[1], 2) == 0.46,
+        "P291": p291_menon()[0] == 10,
+        "P292": [round(x, 3) for x in p292_ponto_neutro()[:3]] == [1.003, 0.614, 0.996],
+        "P297": [round(x, 3) for x in p297_p42_exato()] == [0.547, 0.144],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -4416,6 +4428,31 @@ def _parte_22():
     print(f"P289 minha taxa de erro ({ERROS_P289}/{TESTES_P289}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_23():
+    print("--- Parte 23 (reconhecer o que ja estava resolvido) ---")
+    n, teoria, lado, exato = p291_menon()
+    print(f"P291 Menon: perguntas de sim/nao ate 0,001 = {n} (log2: {teoria}); lado = {lado:.5f}; diagonal 2*sqrt(2) = {exato:.5f}")
+    w, r0, rn, teoria = p292_ponto_neutro()
+    print(f"P292 peso da leitura = {w:.3f}; prevista/real sem leitura: com 0 = {r0:.3f} (teoria {teoria:.3f}), com o neutro w/2 = {rn:.3f}")
+    w3, r0, rn, n = p293_neutro_no_agente()
+    print(f"P293 w3 aprendido = {w3:.3f}; opcoes sem leitura ({n} catastrofes): prevista/real com 0 = {r0:.3f}, com o neutro = {rn:.3f}")
+    for tarefa, (medias, cats, difs) in p294_reconhecer().items():
+        print(f"P294 {tarefa}: { {k: round(v, 3) for k, v in medias.items()} }; catastrofes { {k: round(v, 4) for k, v in cats.items()} }")
+        for v, (m, dp, tt) in difs.items():
+            print(f"P294 {tarefa}: {v} - parte22 = {m:.4f}, dp = {dp:.4f}, t = {tt:.2f}")
+    for nome, f in (("P295", p295_bandido_reconhecido), ("P296 (exploratorio)", p296_ablacao_bandido)):
+        norm, cats, razao, difs = f()
+        print(f"{nome} normalizado { {k: round(v, 3) for k, v in norm.items()} }")
+        print(f"{nome} catastrofes por rodada { {k: round(v, 3) for k, v in cats.items()} }; "
+              f"arrependimento / Lai-Robbins { {k: round(v, 3) for k, v in razao.items()} }")
+        for v, (m, dp, tt) in difs.items():
+            print(f"{nome} {v}: diferenca = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    mx, qt = p297_p42_exato()
+    print(f"P297 P42 em forma fechada: maximizador = {mx:.4f} (simulado 0,548), quantilizador = {qt:.4f} (simulado 0,140)")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P299, testes=TESTES_P299)
+    print(f"P299 minha taxa de erro ({ERROS_P299}/{TESTES_P299}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -4437,11 +4474,12 @@ def _unificacao():
           " -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva)"
           " | SynthaiOuvinte (P262: aprende com o que o humano responde)"
           " -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo)"
-          " => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas)")
+          " => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas)"
+          " -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23}
 
 
 if __name__ == "__main__":

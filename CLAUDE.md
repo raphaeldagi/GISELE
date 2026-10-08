@@ -51,10 +51,14 @@ anterior, commit e push.
   leva vários minutos: rodar em segundo plano) e commitar os dois.
 - Se a simulação discordar do texto, corrigir o texto e registrar a correção.
 - Registrar as previsões antes de **qualquer** execução que mostre os números medidos, inclusive um teste de fumaça (Parte 22).
+- Antes de trocar uma heurística por uma solução exata (um teorema), verificar se as premissas da solução valem no agente (Parte 23).
 
 ## O protótipo em módulos (`synthai/`, desde a Parte 22)
-- A versão principal é `synthai.Synthai`: um módulo por função de Jung (`percepcao`, `pensamento`, `intuicao`, `sentimento`,
+- A base é `synthai.Synthai`: um módulo por função de Jung (`percepcao`, `pensamento`, `intuicao`, `sentimento`,
   `relacao`), integrados pelo `agente`. Módulos novos entram no pacote; os experimentos continuam em `calculos.py` (`pNN_...`).
 - O pacote reusa `calculos.py` (importa, não copia). Só biblioteca padrão.
 - Os módulos do agente nunca leem atributos `_` de outros objetos (o escondido do mundo); `synthai/testes.py` verifica.
-  Cada módulo novo ganha testes de unidade em `synthai/testes.py` (`python3 -m unittest synthai.testes`).
+  Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento`); a suíte
+  `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
+- Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
+- Versão principal desde a Parte 23: `synthai.SynthaiExploradora` (Thompson no bandido; igual à Synthai fora dele).

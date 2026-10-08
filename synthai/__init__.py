@@ -13,6 +13,7 @@ Módulos:
     relacao      a relação com o humano: quando perguntar e quanto da atenção dele gastar
     metacognicao a régua: AUC, comparações pareadas, Υ normalizado
     agente       a SYNTHAI, que integra os módulos num ciclo
+    reconhecimento  Parte 23: o que já estava resolvido (ponto neutro, atenção, memória, Thompson)
     referencias  as réguas: acaso, guloso (só a função dominante) e oráculo (vê o escondido)
     testes       testes de unidade: python3 -m unittest synthai.testes
 
@@ -21,5 +22,6 @@ nunca leem atributos que começam com `_` de outros objetos; um teste verifica i
 """
 
 from .agente import Synthai
+from .reconhecimento import SynthaiExploradora
 
-__all__ = ["Synthai"]
+__all__ = ["Synthai", "SynthaiExploradora"]

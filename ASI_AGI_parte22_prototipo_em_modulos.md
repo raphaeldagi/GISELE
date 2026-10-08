@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 22: o protótipo em módulos
 
-> Continuação da [Parte 21](ASI_AGI_parte21_intuicao_corrigida.md). O código do protótipo está no pacote [`synthai/`](synthai/) (uma função de Jung por
+> Continuação da [Parte 21](ASI_AGI_parte21_intuicao_corrigida.md). **Próxima:** [Parte 23 — reconhecer o que já estava resolvido](ASI_AGI_parte23_o_que_ja_estava_resolvido.md) (P291–P300). O código do protótipo está no pacote [`synthai/`](synthai/) (uma função de Jung por
 > arquivo). Os números saem de `p283_...` a `p287_...` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.

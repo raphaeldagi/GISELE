@@ -94,3 +94,12 @@ class SynthaiReconhecida(Synthai):
         if hasattr(self.intuicao, "nova_decisao"):
             self.intuicao.nova_decisao()
         return super().decidir(sit)
+
+
+class SynthaiExploradora(SynthaiReconhecida):
+    """A versão principal depois da Parte 23 (P295): só a exploração de Thompson. Fora do bandido é idêntica à
+    Synthai da Parte 22 (conferido com os mesmos números); as outras três peças não passaram no comportamento."""
+
+    def __init__(self, semente=0, **kw):
+        kw = {"neutro": False, "atencao_inteira": False, "memoria": False, "thompson": True, **kw}
+        super().__init__(semente, **kw)
