@@ -4301,6 +4301,26 @@ def p315_limiar_no_comportamento(sementes=tuple(range(650, 680)), sementes_bandi
     return resultado
 
 
+def p315b_confirmacao(sementes=tuple(range(720, 750))):
+    """Confirmação em mais 30 sementes novas (720-749): principal (gradiente, 2P*) contra Newton com 0,5P*, na escolha
+    única e no sequencial. Devolve as diferenças por tarefa e a combinação de Stouffer dos dois t."""
+    from synthai.mundos import MundoSequencial
+    resultado = {}
+    for tarefa, fazer, n in (("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), 1000),
+                             ("sequencial", lambda s: MundoSequencial(s), 400)):
+        ret = {v: [] for v in ("principal", "newton_m05")}
+        cats = {v: 0.0 for v in ret}
+        for s in sementes:
+            for v, (modelo, m) in (("principal", ("gradiente", 2.0)), ("newton_m05", ("newton", 0.5))):
+                mundo = fazer(s)
+                r = mundo.rodar(_agente_25(modelo, s, m).calibrar(mundo), n)
+                ret[v].append(r["retorno"])
+                cats[v] += r["catastrofes"] / len(sementes)
+        resultado[tarefa] = (cats, _pareado(ret["principal"], ret["newton_m05"]))
+    z = sum(r[1][2] for r in resultado.values()) / sqrt(len(resultado))
+    return resultado, z
+
+
 def p316_conta_tres_acoes(modelo, fazer, sementes, episodios, mult=2.0):
     """A conta das três ações (aceitar, perguntar, descartar), com tudo medido no próprio agente rodando com o limiar
     atual (2P*): Δd = valor perdido ao descartar uma candidata segura (falta de orçamento) e o fator de calibração
