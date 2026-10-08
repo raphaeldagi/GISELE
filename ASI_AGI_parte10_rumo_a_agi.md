@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 10: rumo à AGI — medir a direção
 
-> Continuação da [Parte 9](ASI_AGI_parte9_a_regua_do_ruido.md). Os números saem de `p157_...` a
+> Continuação da [Parte 9](ASI_AGI_parte9_a_regua_do_ruido.md). **Próxima:** [Parte 11 — tivemos avanço?](ASI_AGI_parte11_tivemos_avanco.md) (P167–P178). Os números saem de `p157_...` a
 > `p163_...`, das classes `PoliticaSimples` e da versão `p10_intuitiva` em [`calculos.py`](calculos.py);
 > a saída completa está em [`resultados.txt`](resultados.txt).
 >

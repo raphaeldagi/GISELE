@@ -1863,7 +1863,7 @@ def p162_intuicao(sementes=tuple(range(320, 330)), episodios=1000):
 # --- Parte 11: tivemos avanço rumo à AGI/ASI? ---
 
 # Placar acumulado ao fim da Parte 11 (atualizado quando os testes da parte terminam)
-ERROS_P176, TESTES_P176 = 24, 43
+ERROS_P176, TESTES_P176 = 26, 47
 
 
 def p168_upsilon_trajetoria(versoes=("p5_gisele", "p7_anima", "p8_x2", "p9_ancorada", "p10_intuitiva", "p11_dosada"),
