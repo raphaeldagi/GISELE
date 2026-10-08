@@ -1,4 +1,4 @@
-"""Reproduz os cálculos e simulações das Partes 1 a 9 (ASI_AGI_*.md).
+"""Reproduz os cálculos e simulações das Partes 1 a 10 (ASI_AGI_*.md).
 
 Arquivo único que sempre cresce: cada parte acrescenta funções pNN_..., o agente
 unificado `Gisele` incorpora os módulos anteriores e `testes_de_regressao` garante que
@@ -1640,6 +1640,216 @@ def p151_gradiente_natural(curvaturas=(100.0, 1.0), lr_gd=0.019, lr_nat=0.5, tol
     return passos(False, lr_gd), passos(True, lr_nat)
 
 
+# --- Parte 10: rumo à AGI — medir a direção (Υ), a trajetória da GISELE e a função inferior ---
+
+MUNDO_BASE = dict(n_acoes=200, p_cat=0.005, tipos=2, por_tipo=3, rho_cego=0.5, bonus=3.0,
+                  eps0=0.1, fadiga=0.3, perda=50.0, custo=0.1)
+
+
+def _rodar_mundo(agente, rng, episodios=1000, **mundo):
+    """Versão geral de _rodar_mundo_fadiga: qualquer parâmetro do mundo pode mudar."""
+    m = dict(MUNDO_BASE, **mundo)
+    carga = 0.0
+    cat = perguntas = 0
+    valor = 0.0
+    for _ in range(episodios):
+        eps = min(0.45, m["eps0"] + m["fadiga"] * carga)
+        acoes = _gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+        escolha, n = agente.agir_no_mundo(acoes, rng, eps, carga)
+        carga += 0.05 * (n - carga)
+        perguntas += n
+        cat += escolha[3]
+        valor += 0.0 if escolha[3] else escolha[2]
+    cat, valor, perguntas = cat / episodios, valor / episodios, perguntas / episodios
+    return cat, valor, perguntas, valor - m["perda"] * cat - m["custo"] * perguntas
+
+
+class PoliticaSimples:
+    """Referências sem módulos: maximizar (P67), quantilizar (P42), acaso e oráculo (que vê o valor real
+    e as catástrofes, ou seja, sabe o que nenhum agente poderia saber: serve só de teto)."""
+
+    def __init__(self, tipo, q=0.05):
+        self.tipo = tipo
+        self.q = q
+
+    def calibrar(self, *_a, **_k):
+        pass
+
+    def agir_no_mundo(self, acoes, rng, eps_real, carga):
+        if self.tipo == "maximizar":
+            return max(acoes, key=lambda a: a[0]), 0
+        if self.tipo == "quantilizar":
+            ordem = sorted(acoes, key=lambda a: -a[0])
+            return ordem[rng.randrange(max(1, int(self.q * len(ordem))))], 0
+        if self.tipo == "acaso":
+            return acoes[rng.randrange(len(acoes))], 0
+        seguras = [a for a in acoes if not a[3]] or acoes
+        return max(seguras, key=lambda a: a[2]), 0  # oráculo
+
+
+def _construir(versao, rng, treino=30, mundo_treino=None):
+    """Constrói uma versão da linhagem, calibrada em `treino` episódios auditados do mundo de treino."""
+    m = dict(MUNDO_BASE, **(mundo_treino or {}))
+    hist = [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+            for _ in range(treino)]
+    if versao in ("maximizar", "quantilizar", "acaso", "oraculo"):
+        return PoliticaSimples(versao)
+    if versao == "p10_intuitiva":
+        # P162: a função inferior (intuição) — imaginar ameaças de tipos que ainda não apareceram.
+        # Além do histórico auditado, um Trickster interno (P136) gera 60 episódios sintéticos com
+        # armadilhas variadas (discretas, gritantes, com ponto cego total). Ela não sabe qual delas
+        # vai encontrar; só treina contra a variedade.
+        imaginados = []
+        for bonus, rho in ((1.0, 1.0), (1.0, 0.5), (6.0, 0.5)):
+            imaginados += [_gerar_acoes(rng, m["n_acoes"], 0.02, m["tipos"], m["por_tipo"], rho, bonus)
+                           for _ in range(20)]
+        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+        ag.mult_pergunta = 2.0
+        ag.calibrar(hist + imaginados)
+        return ag
+    if versao == "p5_gisele":
+        ag = GiseleJung(sombra="nao", compensar="nao")
+    elif versao == "p7_anima":
+        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+    elif versao == "p8_x2":
+        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+        ag.mult_pergunta = 2.0
+    else:  # "p9_ancorada"
+        ag = GiseleAncorada(sombra="propria", compensar="equilibrio")
+        ag.mult_pergunta = 2.0
+    ag.calibrar(hist)
+    return ag
+
+
+def p157_trajetoria(versoes=("p5_gisele", "p7_anima", "p8_x2", "p9_ancorada"), sementes=tuple(range(300, 310)),
+                    episodios=2000):
+    """A trajetória da GISELE ao longo das partes, medida com a régua da P152 (10 sementes pareadas)."""
+    tabela = {v: [] for v in versoes}
+    for s in sementes:
+        for v in versoes:
+            rng = _rng(s)
+            ag = _construir(v, rng)
+            tabela[v].append(_rodar_mundo(ag, rng, episodios=episodios)[3])
+
+    def resumo(xs):
+        m = sum(xs) / len(xs)
+        return m, sqrt(sum((x - m) ** 2 for x in xs) / (len(xs) - 1))
+
+    medias = {v: resumo(x) for v, x in tabela.items()}
+    passos = {}
+    for a, b in zip(versoes, versoes[1:]):
+        dif = [y - x for x, y in zip(tabela[a], tabela[b])]
+        m, dp = resumo(dif)
+        passos[f"{a}->{b}"] = (m, dp, m / (dp / sqrt(len(dif))))
+    return medias, passos
+
+
+MUNDOS_UPSILON = {
+    "base": ({}, 0),
+    "catastrofe x2": ({"p_cat": 0.01}, 1),
+    "sem ponto cego": ({"rho_cego": 0.0}, 1),
+    "ponto cego total": ({"rho_cego": 1.0}, 1),
+    "armadilha discreta": ({"bonus": 1.0}, 1),
+    "armadilha gritante": ({"bonus": 6.0}, 1),
+    "poucas acoes": ({"n_acoes": 50}, 1),
+    "humano fragil": ({"fadiga": 0.6}, 1),
+    "discreta + cego total": ({"bonus": 1.0, "rho_cego": 1.0}, 2),
+}
+
+
+def p158_upsilon(agentes=("maximizar", "quantilizar", "p8_x2", "p10_intuitiva"), sementes=(158, 159, 160), episodios=1000,
+                 bits_por_mudanca=3):
+    """Υ mínimo (P1): média ponderada por 2^-K do desempenho normalizado entre o acaso (0) e o oráculo (1).
+
+    O agente é treinado UMA vez no mundo base e opera em todos (generalidade). K = 3 bits por parâmetro mudado.
+    """
+    por_mundo = {}
+    upsilon = {a: 0.0 for a in agentes}
+    soma_pesos = 0.0
+    for nome, (mudancas, k) in MUNDOS_UPSILON.items():
+        peso = 2.0 ** (-bits_por_mudanca * k)
+        soma_pesos += peso
+        notas = {a: 0.0 for a in agentes}
+        for s in sementes:
+            liq = {}
+            for a in agentes + ("acaso", "oraculo"):
+                rng = _rng(s)
+                ag = _construir(a, rng)
+                liq[a] = _rodar_mundo(ag, rng, episodios=episodios, **mudancas)[3]
+            for a in agentes:
+                notas[a] += (liq[a] - liq["acaso"]) / (liq["oraculo"] - liq["acaso"]) / len(sementes)
+        por_mundo[nome] = notas
+        for a in agentes:
+            upsilon[a] += peso * notas[a]
+    return {a: u / soma_pesos for a, u in upsilon.items()}, por_mundo
+
+
+def p159_armadilha_nova(sementes=tuple(range(310, 320)), episodios=1000):
+    """Treinada contra armadilhas 'boas demais' (+3), a GISELE enfrenta uma armadilha discreta (+1, todos enganados)."""
+    resultado = {}
+    for nome, mundo in (("conhecida", {}), ("nova", {"bonus": 1.0, "rho_cego": 1.0})):
+        cats = []
+        for s in sementes:
+            rng = _rng(s)
+            ag = _construir("p8_x2", rng)
+            cats.append(_rodar_mundo(ag, rng, episodios=episodios, **mundo)[0])
+        resultado[nome] = sum(cats) / len(cats)
+    # e se a armadilha nova estivesse no treino? (o que só se sabe depois de vê-la)
+    cats = []
+    for s in sementes:
+        rng = _rng(s)
+        ag = _construir("p8_x2", rng, mundo_treino={"bonus": 1.0, "rho_cego": 1.0})
+        cats.append(_rodar_mundo(ag, rng, episodios=episodios, bonus=1.0, rho_cego=1.0)[0])
+    resultado["nova, ja vista no treino"] = sum(cats) / len(cats)
+    resultado["taxa base"] = MUNDO_BASE["p_cat"]
+    return resultado
+
+
+def p160_complementaridade(eps=0.15, fadiga=0.3, episodios=2000):
+    """Pauli-Jung: medir o humano o cansa. Erro de estimativa sqrt(eps(1-eps)/n) + perturbação fadiga*n/T."""
+    a = sqrt(eps * (1 - eps))
+    produto = eps * (1 - eps) * fadiga / episodios   # variância x perturbação: não depende de n
+    n_otimo = (a * episodios / (2 * fadiga)) ** (2 / 3)
+    erro_total = a / sqrt(n_otimo) + fadiga * n_otimo / episodios
+    return produto, n_otimo, erro_total
+
+
+def p161_quatro_funcoes(modulos=(("sensacao", 2), ("pensamento", 3), ("sentimento", 3), ("intuicao", 0))):
+    """Perfil da GISELE nas quatro funções de Jung: entropia (inteireza) e a função inferior."""
+    total = sum(n for _, n in modulos)
+    h = -sum(n / total * log2(n / total) for _, n in modulos if n)
+    inferior = min(modulos, key=lambda x: x[1])[0]
+    return h, log2(len(modulos)), inferior
+
+
+def p163_minha_decolagem(ganhos):
+    """Razão entre ganhos sucessivos da trajetória: < 1 indica retornos decrescentes (alfa < 1, P11)."""
+    return [b / a if a else float("inf") for a, b in zip(ganhos, ganhos[1:])]
+
+
+def p162_intuicao(sementes=tuple(range(320, 330)), episodios=1000):
+    """GISELE realista vs intuitiva, pareadas, no mundo base e no mundo da armadilha nova."""
+    resultado = {}
+    for nome, mundo in (("base", {}), ("armadilha nova", {"bonus": 1.0, "rho_cego": 1.0})):
+        linhas = {"p8_x2": [], "p10_intuitiva": []}
+        for s in sementes:
+            for v in linhas:
+                rng = _rng(s)
+                ag = _construir(v, rng)
+                linhas[v].append(_rodar_mundo(ag, rng, episodios=episodios, **mundo))
+        cat = {v: sum(r[0] for r in rs) / len(rs) for v, rs in linhas.items()}
+        diferencas = {}
+        for perda in (50, 500):
+            # líquido com outra perda por catástrofe: liq(50) - (perda - 50) * catástrofes
+            dif = [(b[3] - (perda - 50) * b[0]) - (a[3] - (perda - 50) * a[0])
+                   for a, b in zip(linhas["p8_x2"], linhas["p10_intuitiva"])]
+            m = sum(dif) / len(dif)
+            dp = sqrt(sum((x - m) ** 2 for x in dif) / (len(dif) - 1))
+            diferencas[perda] = (m, dp, m / (dp / sqrt(len(dif))))
+        resultado[nome] = (cat, diferencas)
+    return resultado
+
+
 def testes_de_regressao():
     """O código cresce, mas o passado não pode mudar: estes valores foram publicados nas Partes 1-4."""
     verificacoes = {
@@ -1674,11 +1884,17 @@ def testes_de_regressao():
         "P149": round(p149_imaginacao()[0.05], 2) == 8.31,
         "P150": p150_convergencia_instrumental()[0.99][0] == 98,
         "P151": p151_gradiente_natural() == (343, 13),
+        "P160": round(p160_complementaridade()[1]) == 112,
+        "P161": round(p161_quatro_funcoes()[0], 3) == 1.561,
+        "P163": [round(r, 2) for r in p163_minha_decolagem([0.764, 0.157, -0.113])] == [0.21, -0.72],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
 
-if __name__ == "__main__":
+# --- Execução: cada parte é uma função; a unificação roda sempre ao final ---
+
+
+def _parte_1():
     n, d = p3_chinchilla()
     print(f"P3  N = {n:.2e} parametros, D = {d:.2e} tokens")
     e = p4_landauer()
@@ -1693,6 +1909,8 @@ if __name__ == "__main__":
     print(f"P15 Condorcet = {maioria:.3f}, n_ef = {n_ef:.2f}")
     print(f"P17 p=1e-6: {p17_risco(1e-6, 1e9):.4f}; p=1e-12: {p17_risco(1e-12, 1e9):.2e}")
 
+
+def _parte_2():
     print("--- Parte 2 ---")
     a, b = p22_simpson()
     print(f"P22 do(A) = {a:.3f}, do(B) = {b:.3f}")
@@ -1711,6 +1929,8 @@ if __name__ == "__main__":
     print(f"P36 barganha de Nash = {p36_nash()}")
     print(f"P37 limite (1e4 nats) = {p37_generalizacao(1e4):.3f}; (1e6) = {p37_generalizacao(1e6):.3f}")
 
+
+def _parte_3():
     print("--- Parte 3 (simulacoes, semente fixa) ---")
     g = p41_goodhart()
     print(f"P41 verdade media da opcao escolhida: gaussiano = {g['gaussiano']:.3f}, cauda pesada = {g['cauda_pesada']:.3f}")
@@ -1743,6 +1963,8 @@ if __name__ == "__main__":
     print(f"P57 corrigivel apos 1000 modificacoes: sem verificacao = {sem:.2e}, com = {com:.3f}")
     print(f"P58 P(concordar com o erro do usuario) = {p58_bajulacao():.3f}")
 
+
+def _parte_4():
     print("--- Parte 4 (auditoria e agente integrado) ---")
     ind, cor, certas, erradas = p61_best_of_n_correlacionado()
     print(f"P61 best-of-64: independente = {ind:.3f}, correlacionado = {cor:.3f}; "
@@ -1782,6 +2004,8 @@ if __name__ == "__main__":
     frac, pen = p78_reversibilidade()
     print(f"P78 estados perdidos = {frac:.2f}, penalidade log = {pen:.3f}")
 
+
+def _parte_5():
     print("--- Parte 5 (a pergunta como ponto de partida; agente unificado) ---")
     bits, hip = p81_perguntas()
     print(f"P81 perguntas sim/nao para {hip} hipoteses = {bits:.0f}")
@@ -1818,6 +2042,8 @@ if __name__ == "__main__":
     media, lo, hi = p95_minha_taxa_de_erro(erros=7, testes=14)
     print(f"P95 atualizada com a Parte 5 (7/14): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+
+def _parte_6():
     print("--- Parte 6 (calcular Jung) ---")
     uma, alguma, sim = p99_tipos()
     h, hmax = p99_entropia_do_perfil()
@@ -1855,6 +2081,8 @@ if __name__ == "__main__":
     media, lo, hi = p95_minha_taxa_de_erro(erros=10, testes=19)
     print(f"P113 minha taxa de erro (10/19): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+
+def _parte_7():
     print("--- Parte 7 (Jung mais fundo: segunda ordem, alquimia, anima, Si-mesmo) ---")
     medidos, ponto_fixo, ganho = p116_ganho_do_laco()
     print(f"P116 perguntas em laco aberto por erro humano = {medidos}; ponto fixo previsto = {ponto_fixo:.3f}; "
@@ -1880,6 +2108,8 @@ if __name__ == "__main__":
     media, lo, hi = p95_minha_taxa_de_erro(erros=14, testes=25)
     print(f"P127 minha taxa de erro (14/25): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+
+def _parte_8():
     print("--- Parte 8 (o Si-mesmo lento, o custo da pergunta, Jo, Trickster, puer/senex, Grande Mae) ---")
     taxas, qui2, pval, incl = p130_estacionariedade()
     print(f"P130 taxas de erro por parte (3 a 7) = {[round(x, 3) for x in taxas]}; inclinacao = {incl:.3f}/parte; "
@@ -1907,6 +2137,8 @@ if __name__ == "__main__":
     media, lo, hi = p95_minha_taxa_de_erro(erros=17, testes=30)
     print(f"P139 minha taxa de erro (17/30): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+
+def _parte_9():
     print("--- Parte 9 (o mundo decide o centro, complexo autonomo, transferencia, heroi, a regua do ruido) ---")
     n_pedido, n_memoria, razao = p143_continue()
     print(f"P143 pedido = {n_pedido} caracteres; memoria compartilhada (CLAUDE.md) = {n_memoria}; razao = {razao:.0f}x")
@@ -1939,6 +2171,34 @@ if __name__ == "__main__":
     media, lo, hi = p95_minha_taxa_de_erro(erros=21, testes=37)
     print(f"P153 minha taxa de erro (21/37): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+
+def _parte_10():
+    print("--- Parte 10 (rumo a AGI: Upsilon, trajetoria, funcao inferior, complementaridade) ---")
+    medias, passos = p157_trajetoria()
+    for v, (m, dp) in medias.items():
+        print(f"P157 {v:12s}: liquido medio (10 sementes) = {m:.3f}, dp = {dp:.3f}")
+    for nome, (m, dp, tt) in passos.items():
+        print(f"P157 passo {nome}: diferenca media = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    ganhos = [m for m, _, _ in passos.values()]
+    print(f"P163 razao entre ganhos sucessivos = {[round(r, 3) for r in p163_minha_decolagem(ganhos)]}")
+    upsilon, por_mundo = p158_upsilon()
+    print(f"P158 Upsilon (0 = acaso, 1 = oraculo) = { {a: round(u, 3) for a, u in upsilon.items()} }")
+    for mundo, notas in por_mundo.items():
+        print(f"P158 {mundo:22s}: { {a: round(n, 3) for a, n in notas.items()} }")
+    print(f"P159 catastrofes = { {k: round(v, 4) for k, v in p159_armadilha_nova().items()} }")
+    produto, n_ot, erro = p160_complementaridade()
+    print(f"P160 variancia x perturbacao = {produto:.2e} (nao depende de n); auditorias otimas = {n_ot:.0f}; erro total = {erro:.4f}")
+    h, hmax, inferior = p161_quatro_funcoes()
+    print(f"P161 entropia do perfil da GISELE = {h:.3f} de {hmax:.0f} bits; funcao inferior = {inferior}")
+    for mundo, (cat, difs) in p162_intuicao().items():
+        print(f"P162 {mundo}: catastrofes = { {k: round(v, 4) for k, v in cat.items()} }")
+        for perda, (m, dp, tt) in difs.items():
+            print(f"P162 {mundo}, perda {perda}: intuitiva - realista = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=24, testes=43)
+    print(f"P164 minha taxa de erro (24/43): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
+def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
     ok, total, falhas = testes_de_regressao()
@@ -1947,5 +2207,18 @@ if __name__ == "__main__":
           " -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana)"
           " -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga)"
           " -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2)"
-          " -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca)")
+          " -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca)"
+          " -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
+
+
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10}
+
+
+if __name__ == "__main__":
+    # python3 calculos.py           -> todas as partes (é assim que resultados.txt é gerado)
+    # python3 calculos.py 9 10      -> só as partes pedidas, para desenvolver mais rápido
+    import sys
+    for _k in [int(x) for x in sys.argv[1:]] or sorted(PARTES):
+        PARTES[_k]()
+    _unificacao()

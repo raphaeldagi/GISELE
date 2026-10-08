@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 9: a régua do ruído, o complexo autônomo e a transferência
 
-> Continuação da [Parte 8](ASI_AGI_parte8_si_mesmo_lento.md). Os números saem de `p143_...` a
+> Continuação da [Parte 8](ASI_AGI_parte8_si_mesmo_lento.md). **Próxima:** [Parte 10 — rumo à AGI](ASI_AGI_parte10_rumo_a_agi.md) (P156–P166). Os números saem de `p143_...` a
 > `p152_...` e da classe `GiseleAncorada` em [`calculos.py`](calculos.py); a saída completa está em
 > [`resultados.txt`](resultados.txt).
 >

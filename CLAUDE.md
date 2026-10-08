@@ -37,5 +37,7 @@ anterior, commit e push.
 - Comparações entre versões: no mínimo 10 sementes pareadas, relatar a diferença média, o desvio e o t (Parte 9: a diferença entre duas execuções de uma semente tem desvio ~0,2).
 - Quando um módulo for redesenhado depois de ver o resultado, validar numa semente de controle extra e dizer isso.
 - Simulações usam semente fixa; não trocar a semente nem ajustar parâmetros para obter um resultado mais bonito.
-- Depois de mudar o código: `python3 calculos.py > resultados.txt` e commitar os dois.
+- Cada parte do `__main__` é uma função `_parte_N`; para desenvolver, `python3 calculos.py N` roda só a parte N
+  (mais a unificação). Depois de mudar o código: `python3 calculos.py > resultados.txt` (todas as partes,
+  leva vários minutos: rodar em segundo plano) e commitar os dois.
 - Se a simulação discordar do texto, corrigir o texto e registrar a correção.
