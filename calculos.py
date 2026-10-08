@@ -3030,6 +3030,158 @@ def p247_auditoria_p105(palavras=100, complexos=5, efeito=3.0, repeticoes=4000, 
     return resultado
 
 
+
+# --- Parte 19: a palavra precisa, a versão principal e a trajetória inteira ---
+
+# Placar acumulado ao fim da Parte 19 (atualizado quando os testes da parte terminam)
+ERROS_P258, TESTES_P258 = 37, 73
+
+FALA_PRECISA_CAT = (0.01, 0.04, 0.15, 0.80)
+FALA_PRECISA_SEG = (0.80, 0.15, 0.04, 0.01)
+
+
+def p252_bits_da_palavra_precisa(p=0.1, eps=0.1):
+    """P245 (Meta) dizia: um humano preciso com as palavras inverteria o resultado. Quanta informação ele dá?"""
+    ruido = min(1.0, 2 * eps)
+    wc = [(1 - ruido) * x + ruido / 4 for x in FALA_PRECISA_CAT]
+    ws = [(1 - ruido) * x + ruido / 4 for x in FALA_PRECISA_SEG]
+    w = [p * a + (1 - p) * b for a, b in zip(wc, ws)]
+    precisa = _entropia(w) - (p * _entropia(wc) + (1 - p) * _entropia(ws))
+    binario = p242_bits_do_veto(p, eps)[0]
+    return binario, precisa, precisa / binario
+
+
+class SynthaiFalaPrecisa(SynthaiFala):
+    """O mesmo canal de quatro palavras, com um humano preciso; significado conhecido (P252)."""
+
+    def _p_dado_palavra(self, w):
+        i = PALAVRAS.index(w)
+        prior = 0.1
+        return prior * FALA_PRECISA_CAT[i] / (prior * FALA_PRECISA_CAT[i] + (1 - prior) * FALA_PRECISA_SEG[i])
+
+    def _perguntar_humano(self, acao, rng, eps_real):
+        ruido = min(1.0, 2 * eps_real)
+        dist = FALA_PRECISA_CAT if acao[3] else FALA_PRECISA_SEG
+        if rng.random() < ruido:
+            w = PALAVRAS[rng.randrange(4)]
+        else:
+            u, acc, w = rng.random(), 0.0, PALAVRAS[-1]
+            for palavra, pr in zip(PALAVRAS, dist):
+                acc += pr
+                if u < acc:
+                    w = palavra
+                    break
+        return self._p_dado_palavra(w) > self.limiar_veto
+
+
+def p252_palavra_precisa(sementes=tuple(range(460, 470)), episodios=2000):
+    """Veto binário vs quatro palavras precisas (significado conhecido). 10 sementes pareadas."""
+    linhas = {"binario": [], "precisa": []}
+    for s in sementes:
+        for v in linhas:
+            rng = _rng(s)
+            if v == "binario":
+                ag = _construir("p8_x2", rng)
+            else:
+                hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+                ag = SynthaiFalaPrecisa(sombra="propria", compensar="equilibrio")
+                ag.mult_pergunta = 2.0
+                ag.calibrar(hist)
+            linhas[v].append(_rodar_mundo(ag, rng, episodios=episodios))
+    medias = {v: (sum(r[0] for r in rs) / len(rs), sum(r[3] for r in rs) / len(rs)) for v, rs in linhas.items()}
+    d = [b[3] - a[3] for a, b in zip(linhas["binario"], linhas["precisa"])]
+    m = sum(d) / len(d)
+    dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+    return medias, (m, dp, m / (dp / sqrt(len(d))))
+
+
+class SynthaiVelhaAtenta(SynthaiVelhaSentidos):
+    """A nova versão principal candidata (P253): planeja, diversifica no fim, tem o sentido novo e lê o sensor
+    só nas ações mais promissoras (atenção seletiva da P235)."""
+
+    perceber = SynthaiAtenta.perceber
+
+    def __init__(self, foco=0.1, custo_leitura=0.002, **kw):
+        super().__init__(**kw)
+        self.foco = foco
+        self.custo_leitura = custo_leitura
+        self.leituras = 0
+        self._seletiva = False
+
+
+def p253_versao_principal(sementes=tuple(range(470, 480)), episodios=400, custo_leitura=0.002):
+    """Mundo sequencial com a armadilha nova: velha, velha + sentido (lendo tudo), velha + sentido + atenção.
+    Retorno já descontado o custo das leituras."""
+    mundo = {"bonus": 1.0, "rho_cego": 1.0}
+    n_por_ep = MUNDO_SEQUENCIAL["n_acoes"] * MUNDO_SEQUENCIAL["passos"]
+    versoes = ("velha", "sentido_tudo", "sentido_atento")
+    linhas = {v: [] for v in versoes}
+    for s in sementes:
+        for v in versoes:
+            rng = _rng(s)
+            m = dict(MUNDO_BASE, **MUNDO_SEQUENCIAL)
+            hist = [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+                    for _ in range(150)]
+            ag = SynthaiVelha(sombra="propria", compensar="equilibrio") if v == "velha" else \
+                SynthaiVelhaAtenta(sombra="propria", compensar="equilibrio")
+            ag.mult_pergunta = 2.0
+            ag.calibrar(hist)
+            if v == "sentido_atento":
+                ag._seletiva = True
+            ret, cat, _ = _rodar_sequencial(ag, rng, episodios=episodios, mundo=mundo)
+            if v == "sentido_tudo":
+                ret -= custo_leitura * n_por_ep
+            elif v == "sentido_atento":
+                ret -= custo_leitura * ag.leituras / episodios
+            linhas[v].append((ret, cat))
+    medias = {v: (sum(r[0] for r in rs) / len(rs), sum(r[1] for r in rs) / len(rs)) for v, rs in linhas.items()}
+    difs = {}
+    for b in ("sentido_tudo", "sentido_atento"):
+        d = [y[0] - x[0] for x, y in zip(linhas["velha"], linhas[b])]
+        mm = sum(d) / len(d)
+        dp = sqrt(sum((x - mm) ** 2 for x in d) / (len(d) - 1))
+        difs[f"{b} - velha"] = (mm, dp, mm / (dp / sqrt(len(d))))
+    return medias, difs
+
+
+def p254_trajetoria_do_upsilon(pontos=((5, 0.287), (7, 0.414), (8, 0.465), (9, 0.449), (10, 0.409), (11, 0.486), (17, 0.547))):
+    """Ajuste Υ(parte) = teto - (teto - Υ0) * r^(parte - 5) por busca em grade (mínimos quadrados)."""
+    melhor = None
+    for teto in [x / 1000 for x in range(400, 1001, 5)]:
+        for r in [x / 100 for x in range(1, 100)]:
+            erro = sum((teto - (teto - pontos[0][1]) * r ** (n - pontos[0][0]) - u) ** 2 for n, u in pontos)
+            if melhor is None or erro < melhor[0]:
+                melhor = (erro, teto, r)
+    return melhor[1], melhor[2], sqrt(melhor[0] / len(pontos))
+
+
+def p255_quaternidade(modulos=(("sensacao", ("comite", "discordancia", "sensor de primeira mao", "atencao seletiva")),
+                               ("pensamento", ("calibracao", "valor da pergunta", "pessimismo")),
+                               ("sentimento", ("quantilizacao", "veto", "ancora", "diversificar no fim")),
+                               ("intuicao", ("planejar", "imaginar ameacas")))):
+    """Perfil atual da SYNTHAI nas quatro funções de Jung (compare com a P161: 1,561 bits, intuição vazia)."""
+    total = sum(len(m) for _, m in modulos)
+    h = _entropia([len(m) / total for _, m in modulos])
+    return {f: len(m) for f, m in modulos}, h
+
+
+def p256_auditoria_p121(rho=0.3, amostras=200000, semente=256):
+    """Auditoria da P121: R² da quarta função a partir das outras três, simulando normais com correlação rho."""
+    rng = _rng(semente)
+    a, b = sqrt(rho), sqrt(1 - rho)
+    xs, ys = [], []
+    for _ in range(amostras):
+        c = rng.gauss(0, 1)
+        v = [a * c + b * rng.gauss(0, 1) for _ in range(4)]
+        xs.append(v[0] + v[1] + v[2])  # por simetria, a melhor previsão linear usa a soma das três
+        ys.append(v[3])
+    mx, my = sum(xs) / amostras, sum(ys) / amostras
+    cov = sum((x - mx) * (y - my) for x, y in zip(xs, ys))
+    vx = sum((x - mx) ** 2 for x in xs)
+    vy = sum((y - my) ** 2 for y in ys)
+    return cov * cov / (vx * vy), p121_quaternidade(rho)
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
