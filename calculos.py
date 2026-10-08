@@ -3034,7 +3034,7 @@ def p247_auditoria_p105(palavras=100, complexos=5, efeito=3.0, repeticoes=4000, 
 # --- Parte 19: a palavra precisa, a versão principal e a trajetória inteira ---
 
 # Placar acumulado ao fim da Parte 19 (atualizado quando os testes da parte terminam)
-ERROS_P258, TESTES_P258 = 37, 73
+ERROS_P258, TESTES_P258 = 39, 78
 
 FALA_PRECISA_CAT = (0.01, 0.04, 0.15, 0.80)
 FALA_PRECISA_SEG = (0.80, 0.15, 0.04, 0.01)
@@ -3238,6 +3238,8 @@ def testes_de_regressao():
         "P223": round(p223_sinal_combinado()[2], 3) == 0.835,
         "P234": round(p223_sinal_combinado(d_sensor=2.0)[2], 3) == 0.941,
         "P242": [round(x, 3) for x in p242_bits_do_veto()[:2]] == [0.211, 0.106],
+        "P252": round(p252_bits_da_palavra_precisa()[1], 3) == 0.192,
+        "P255": round(p255_quaternidade()[1], 3) == 1.950,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -3712,6 +3714,31 @@ def _parte_18():
     print(f"P249 minha taxa de erro ({ERROS_P249}/{TESTES_P249}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_19():
+    print("--- Parte 19 (a palavra precisa, a versao principal e a trajetoria inteira) ---")
+    binario, precisa, razao = p252_bits_da_palavra_precisa()
+    print(f"P252 informacao por resposta: veto binario = {binario:.3f} bit; quatro palavras precisas = {precisa:.3f} bit; razao = {razao:.2f}")
+    medias, (m, dp, tt) = p252_palavra_precisa()
+    for v, (cat, liq) in medias.items():
+        print(f"P252 {v:8s}: catastrofes = {cat:.4f}, liquido = {liq:.3f}")
+    print(f"P252 precisa - binario: diferenca media = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    medias, difs = p253_versao_principal()
+    for v, (ret, cat) in medias.items():
+        print(f"P253 {v:14s}: retorno (ja descontadas as leituras) = {ret:.3f}, catastrofes = {cat:.4f}")
+    for nome, (m, dp, tt) in difs.items():
+        print(f"P253 {nome}: diferenca media = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    teto0, r0, erro0 = p254_trajetoria_do_upsilon(pontos=((5, 0.287), (7, 0.414), (8, 0.465), (9, 0.449), (10, 0.409), (11, 0.486)))
+    teto, r, erro = p254_trajetoria_do_upsilon()
+    print(f"P254 teto do Upsilon ajustado nas Partes 5-11 = {teto0:.3f} (r = {r0:.2f}, erro {erro0:.3f}); com a Parte 17 = {teto:.3f} "
+          f"(r = {r:.2f}, erro {erro:.3f}); Upsilon com o sentido novo = 0.547")
+    perfil, h = p255_quaternidade()
+    print(f"P255 modulos por funcao de Jung = {perfil}; entropia = {h:.3f} de 2 bits (P161: 1.561)")
+    sim, teoria = p256_auditoria_p121()
+    print(f"P256 R2 da quarta funcao: simulado = {sim:.4f}, formula da P121 = {teoria:.4f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P258, testes=TESTES_P258)
+    print(f"P258 minha taxa de erro ({ERROS_P258}/{TESTES_P258}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -3729,11 +3756,12 @@ def _unificacao():
           " -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe)"
           " | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada)"
           " -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa)"
-          " | SynthaiFala (P245: o humano responde com palavras)")
+          " | SynthaiFala (P245: o humano responde com palavras)"
+          " -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19}
 
 
 if __name__ == "__main__":
