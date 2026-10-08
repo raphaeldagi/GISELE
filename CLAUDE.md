@@ -70,6 +70,7 @@ anterior, commit e push.
 - Registrar as previsões antes de **qualquer** execução que mostre os números medidos, inclusive um teste de fumaça (Parte 22).
 - Antes de trocar uma heurística por uma solução exata (um teorema), verificar se as premissas da solução valem no agente (Parte 23).
 - Uma conta feita depois de ver o resultado (posterior) só vira evidência quando prevê um mundo ou sementes novas (Parte 25).
+- A conta (decomposição dos termos) vem antes da previsão de comportamento, não depois (Parte 27).
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).
 
@@ -79,7 +80,8 @@ anterior, commit e push.
 - O pacote reusa `calculos.py` (importa, não copia). Só biblioteca padrão.
 - Os módulos do agente nunca leem atributos `_` de outros objetos (o escondido do mundo); `synthai/testes.py` verifica.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
-  synthai.testes_pensamento synthai.testes_limiar`); a suíte
+  synthai.testes_pensamento synthai.testes_limiar
+  synthai.testes_autorregulacao`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versão principal desde a Parte 23: `synthai.SynthaiExploradora` (Thompson no bandido; igual à Synthai fora dele).

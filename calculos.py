@@ -4605,7 +4605,7 @@ def p325_chance(conta=((5.811, 8.0), (0.755, 0.5), (3.134, 2.0), (7.491, 4.0), (
 # --- Parte 27: a autorregulação (a SYNTHAI calcula o próprio limiar) ---
 
 # Placar acumulado ao fim da Parte 27 (atualizado quando os testes da parte terminam)
-ERROS_P339, TESTES_P339 = 70, 155
+ERROS_P339, TESTES_P339 = 76, 164
 
 
 def p332_estimadores_proprios(sementes=tuple(range(700, 710)), episodios=400):
@@ -4731,6 +4731,7 @@ def testes_de_regressao():
         "P307": [round(x, 2) for x in p307_selecao()[0]["caso_controle"][:2]] == [-0.02, 1.48],
         "P314": round(p314_custo_do_descarte()[1], 3) == 0.364,
         "P325": [round(x, 4) for x in p325_chance()[0][1:2] + p325_chance()[1][1:2]] == [0.0041, 0.0207],
+        "P332": [round(x, 3) for x in p332_estimadores_proprios()[:4]] == [67.273, 3.86, 0.662, 0.96],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -5398,6 +5399,21 @@ def _parte_26():
     print(f"P329 minha taxa de erro ({ERROS_P329}/{TESTES_P329}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_27():
+    print("--- Parte 27 (a autorregulacao: a SYNTHAI calcula o proprio limiar) ---")
+    l_ef, f, dd, b, m = p332_estimadores_proprios()
+    print(f"P332 de dentro: L = {l_ef:.2f}, f = {f:.3f}, dd = {dd:.3f}, inclinacao valor~nota = {b:.4f} (conta 1/(1+0,25/6) = "
+          f"{1 / (1 + 0.25 / 6):.4f}), m = {m:.3f}")
+    for tarefa, (medias, cats, ms, difs, contra_fixo) in p333_autorregulada().items():
+        print(f"P333 {tarefa}: { {k: round(v, 3) for k, v in medias.items()} }; catastrofes { {k: round(v, 4) for k, v in cats.items()} }; "
+              f"m final { {k: round(v, 2) for k, v in ms.items()} }")
+        for v, (d, dp, tt) in difs.items():
+            print(f"P333 {tarefa}: {v} - principal = {d:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+        print(f"P333 {tarefa}: auto_newton - newton_m05 = {contra_fixo[0]:.3f}, dp = {contra_fixo[1]:.3f}, t = {contra_fixo[2]:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P339, testes=TESTES_P339)
+    print(f"P339 minha taxa de erro ({ERROS_P339}/{TESTES_P339}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -5422,11 +5438,12 @@ def _unificacao():
           " => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas)"
           " -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha)"
           " | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada)"
-          " | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada)")
+          " | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada)"
+          " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27}
 
 
 if __name__ == "__main__":

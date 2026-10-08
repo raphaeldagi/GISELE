@@ -26,7 +26,7 @@ import tempfile
 FONTES = {}
 
 # ====================================================================================================
-# calculos.py  (5380 linhas)
+# calculos.py  (5455 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -4632,6 +4632,64 @@ def p325_chance(conta=((5.811, 8.0), (0.755, 0.5), (3.134, 2.0), (7.491, 4.0), (
     return avaliar([p for p, _ in conta], otimos), avaliar(list(ingenuo), otimos)
 
 
+# --- Parte 27: a autorregulação (a SYNTHAI calcula o próprio limiar) ---
+
+# Placar acumulado ao fim da Parte 27 (atualizado quando os testes da parte terminam)
+ERROS_P339, TESTES_P339 = 76, 164
+
+
+def p332_estimadores_proprios(sementes=tuple(range(700, 710)), episodios=400):
+    \"\"\"A SYNTHAI com Newton e limiar FIXO em 2P* (autorregulação desligada), nas sementes da P322 (mundo sequencial):
+    os termos que ela estima sozinha (só com o que observa) contra os da régua (P322). Mesmo agente, mesmas sementes:
+    as escolhas são as mesmas da P322.\"\"\"
+    from synthai.autorregulacao import SynthaiAutorregulada
+    from synthai.mundos import MundoSequencial
+    soma = [0.0, 0.0, 0.0, 0.0, 0.0]
+    for s in sementes:
+        mundo = MundoSequencial(s)
+        ag = SynthaiAutorregulada(s, aquecimento=10 ** 9).calibrar(mundo)
+        mundo.rodar(ag, episodios)
+        l_ef, f, dd, b = ag.termos()
+        m = dd / (f * l_ef * ag.p_estrela)
+        for i, x in enumerate((l_ef, f, dd, b, m)):
+            soma[i] += x / len(sementes)
+    return tuple(soma)
+
+
+def p333_autorregulada(sementes=tuple(range(770, 800))):
+    \"\"\"30 sementes NOVAS. Principal (gradiente, 2P* fixo) contra: a autorregulada com o pensamento de gradiente, a
+    autorregulada com Newton, e Newton com o limiar fixo no ótimo das varreduras (0,5P*, a referência 'que já sabia').
+    Três mundos: escolha única, sequencial e sequencial com modelo ruim (σ = 2).\"\"\"
+    from synthai import SynthaiExploradora
+    from synthai.autorregulacao import SynthaiAutorregulada
+    from synthai.limiar import SynthaiAjustada
+    from synthai.mundos import MundoSequencial
+    agentes = {"principal": lambda s: SynthaiExploradora(s),
+               "auto_gradiente": lambda s: SynthaiAutorregulada(s, newton=False),
+               "auto_newton": lambda s: SynthaiAutorregulada(s),
+               "newton_m05": lambda s: SynthaiAjustada(s, mult=0.5)}
+    tarefas = (("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), 1000),
+               ("sequencial", lambda s: MundoSequencial(s), 400),
+               ("modelo ruim", lambda s: MundoSequencial(s, sigma_modelo=2.0), 400))
+    resultado = {}
+    for tarefa, fazer, n in tarefas:
+        ret = {v: [] for v in agentes}
+        cats = {v: 0.0 for v in agentes}
+        ms = {v: 0.0 for v in agentes}
+        for s in sementes:
+            for v, f in agentes.items():
+                mundo = fazer(s)
+                ag = f(s).calibrar(mundo)
+                r = mundo.rodar(ag, n)
+                ret[v].append(r["retorno"])
+                cats[v] += r["catastrofes"] / len(sementes)
+                ms[v] += ag.relacao.limiar / p71_valor_da_pergunta() / len(sementes)  # o multiplicador no fim
+        resultado[tarefa] = ({v: sum(x) / len(x) for v, x in ret.items()}, cats, ms,
+                             {v: _pareado(ret["principal"], ret[v]) for v in agentes if v != "principal"},
+                             _pareado(ret["newton_m05"], ret["auto_newton"]))
+    return resultado
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
@@ -4703,6 +4761,7 @@ def testes_de_regressao():
         "P307": [round(x, 2) for x in p307_selecao()[0]["caso_controle"][:2]] == [-0.02, 1.48],
         "P314": round(p314_custo_do_descarte()[1], 3) == 0.364,
         "P325": [round(x, 4) for x in p325_chance()[0][1:2] + p325_chance()[1][1:2]] == [0.0041, 0.0207],
+        "P332": [round(x, 3) for x in p332_estimadores_proprios()[:4]] == [67.273, 3.86, 0.662, 0.96],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -5370,6 +5429,21 @@ def _parte_26():
     print(f"P329 minha taxa de erro ({ERROS_P329}/{TESTES_P329}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_27():
+    print("--- Parte 27 (a autorregulacao: a SYNTHAI calcula o proprio limiar) ---")
+    l_ef, f, dd, b, m = p332_estimadores_proprios()
+    print(f"P332 de dentro: L = {l_ef:.2f}, f = {f:.3f}, dd = {dd:.3f}, inclinacao valor~nota = {b:.4f} (conta 1/(1+0,25/6) = "
+          f"{1 / (1 + 0.25 / 6):.4f}), m = {m:.3f}")
+    for tarefa, (medias, cats, ms, difs, contra_fixo) in p333_autorregulada().items():
+        print(f"P333 {tarefa}: { {k: round(v, 3) for k, v in medias.items()} }; catastrofes { {k: round(v, 4) for k, v in cats.items()} }; "
+              f"m final { {k: round(v, 2) for k, v in ms.items()} }")
+        for v, (d, dp, tt) in difs.items():
+            print(f"P333 {tarefa}: {v} - principal = {d:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+        print(f"P333 {tarefa}: auto_newton - newton_m05 = {contra_fixo[0]:.3f}, dp = {contra_fixo[1]:.3f}, t = {contra_fixo[2]:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P339, testes=TESTES_P339)
+    print(f"P339 minha taxa de erro ({ERROS_P339}/{TESTES_P339}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -5394,11 +5468,12 @@ def _unificacao():
           " => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas)"
           " -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha)"
           " | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada)"
-          " | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada)")
+          " | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada)"
+          " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27}
 
 
 if __name__ == "__main__":
@@ -5411,7 +5486,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (85 linhas)
+# CLAUDE.md  (87 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -5485,6 +5560,7 @@ anterior, commit e push.
 - Registrar as previsões antes de **qualquer** execução que mostre os números medidos, inclusive um teste de fumaça (Parte 22).
 - Antes de trocar uma heurística por uma solução exata (um teorema), verificar se as premissas da solução valem no agente (Parte 23).
 - Uma conta feita depois de ver o resultado (posterior) só vira evidência quando prevê um mundo ou sementes novas (Parte 25).
+- A conta (decomposição dos termos) vem antes da previsão de comportamento, não depois (Parte 27).
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).
 
@@ -5494,7 +5570,8 @@ anterior, commit e push.
 - O pacote reusa `calculos.py` (importa, não copia). Só biblioteca padrão.
 - Os módulos do agente nunca leem atributos `_` de outros objetos (o escondido do mundo); `synthai/testes.py` verifica.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
-  synthai.testes_pensamento synthai.testes_limiar`); a suíte
+  synthai.testes_pensamento synthai.testes_limiar
+  synthai.testes_autorregulacao`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versão principal desde a Parte 23: `synthai.SynthaiExploradora` (Thompson no bandido; igual à Synthai fora dele).
@@ -5637,6 +5714,146 @@ class Synthai:
         if not explorar and restantes > 0 and not resultado.catastrofe:
             self.intuicao.corrigir(o.estimativa, resultado.nivel_antes, resultado.nivel_depois)
         self._escolha = None
+"""
+
+# ====================================================================================================
+# synthai/autorregulacao.py  (135 linhas)
+# ====================================================================================================
+FONTES['synthai/autorregulacao.py'] = """\"\"\"Autorregulação (Parte 27, P331): a SYNTHAI calcula o próprio limiar de pergunta.
+
+A Parte 26 achou o limiar certo pela conta m = Δd / (f · L · P*), mas mediu os termos com a régua (lendo o escondido).
+Aqui a SYNTHAI estima os três termos só com o que ela observa (a regra da Parte 7):
+
+- L (o custo de uma catástrofe): a perda fixa mais o retorno que os próprios episódios dela ainda davam a partir do
+  passo em que a catástrofe aconteceu (F(t), médio nos episódios completos dela);
+- f (quanto o pensamento subestima o risco do que aceita sem perguntar): catástrofes observadas / soma dos p previstos
+  nessas escolhas, com uma priori f = 1 de peso `peso_priori_f` catástrofes esperadas;
+- Δd (o valor perdido ao descartar): o valor de uma opção descartada nunca é visto. A SYNTHAI o estima pela nota do
+  comitê (que ela vê), convertida em valor por uma regressão valor ~ nota aprendida com as próprias escolhas (o valor
+  recebido menos o nível), mais o plano da intuição (peso × estimativa × passos restantes).
+
+A cada `intervalo` decisões, depois de `aquecimento`, refaz m e o põe no limiar (entre `m_min` e `m_max`). No bandido
+(exploração), o orçamento é por rodada e nada disso se aplica: a relação fica como estava.
+
+Jung: a compensação deixa de ser calculada de fora (Parte 25) e passa a ser uma autorregulação da própria psique.\"\"\"
+
+from calculos import p71_valor_da_pergunta
+
+from .limiar import SynthaiAjustada
+from .relacao import Relacao
+
+
+class RelacaoAutorregulada(Relacao):
+    \"\"\"A Relacao de sempre, que anota o que precisa para a conta: o p das aceitas sem perguntar e as descartadas.\"\"\"
+
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        self.aceita_p = None
+        self.descartadas = []
+
+    def precisa_perguntar(self, p):
+        r = super().precisa_perguntar(p)
+        if not r:
+            self.aceita_p = p  # no laço de decisão, a primeira candidata que não precisa de pergunta é aceita
+        return r
+
+    def pode_perguntar(self, opcao, situacao):
+        r = super().pode_perguntar(opcao, situacao)
+        if not r and not situacao.explorar:
+            self.descartadas.append(opcao)
+        return r
+
+
+class SynthaiAutorregulada(SynthaiAjustada):
+    def __init__(self, semente=0, mult=2.0, local=False, perda=50.0, intervalo=50, aquecimento=200,
+                 peso_priori_f=0.5, m_min=0.25, m_max=16.0, newton=True, **kw):
+        super().__init__(semente, mult=mult, local=local, **kw)
+        if not newton:  # volta ao pensamento de gradiente da Parte 22 (o da versão principal)
+            from .pensamento import Pensamento
+            self.pensamento = Pensamento()
+            self.percepcao.pensamento = self.pensamento
+        self.relacao = RelacaoAutorregulada(mult=mult, carga_alvo=self.relacao.carga_alvo)
+        self.p_estrela = p71_valor_da_pergunta()
+        self.perda, self.intervalo, self.aquecimento = perda, intervalo, aquecimento
+        self.m_min, self.m_max, self.mult = m_min, m_max, mult
+        # f: catástrofes e p previstos nas aceitas sem perguntar (com priori f = 1)
+        self.f_cat, self.f_p = peso_priori_f, peso_priori_f
+        # regressão valor ~ nota nas próprias escolhas
+        self.n_r = self.sx = self.sy = self.sxx = self.sxy = 0.0
+        # Δd: somas das diferenças de nota e de plano (descartada − escolhida)
+        self.n_d = self.d_nota = self.d_plano = 0.0
+        # L: retorno futuro por passo nos episódios completos, e os passos das catástrofes
+        self.futuro_soma, self.futuro_n, self.passos_cat = {}, {}, []
+        self.ganhos = []
+        self.decisoes = 0
+        self._pendente = None
+        self.historico_m = []
+
+    def _plano(self, o, sit):
+        return 0.0 if sit.explorar else self.intuicao.peso * o.estimativa * sit.restantes
+
+    def decidir(self, sit):
+        self.relacao.aceita_p, self.relacao.descartadas = None, []
+        escolha = super().decidir(sit)
+        if not sit.explorar:
+            for o in self.relacao.descartadas:
+                self.n_d += 1
+                self.d_nota += o.comite - escolha.comite
+                self.d_plano += self._plano(o, sit) - self._plano(escolha, sit)
+            self._pendente = (escolha, self.relacao.aceita_p, sit.restantes, sit.horizonte)
+            self.decisoes += 1
+            if self.decisoes >= self.aquecimento and self.decisoes % self.intervalo == 0:
+                self.recalcular()
+        return escolha
+
+    def observar(self, resultado):
+        super().observar(resultado)
+        if self._pendente is None:
+            return
+        escolha, p_aceita, restantes, horizonte = self._pendente
+        self._pendente = None
+        if p_aceita is not None:
+            self.f_p += p_aceita
+            self.f_cat += 1.0 if resultado.catastrofe else 0.0
+        t = horizonte - 1 - restantes
+        if resultado.catastrofe:
+            self.passos_cat.append(t)
+            self.ganhos = []
+            return
+        x, y = escolha.comite, resultado.valor_recebido - resultado.nivel_antes  # o valor do passo
+        self.n_r += 1
+        self.sx += x
+        self.sy += y
+        self.sxx += x * x
+        self.sxy += x * y
+        self.ganhos.append(resultado.valor_recebido)
+        if restantes == 0:
+            for k in range(len(self.ganhos)):
+                self.futuro_soma[k] = self.futuro_soma.get(k, 0.0) + sum(self.ganhos[k:])
+                self.futuro_n[k] = self.futuro_n.get(k, 0) + 1
+            self.ganhos = []
+
+    def termos(self):
+        \"\"\"As estimativas atuais de L, f e Δd (só com o que a SYNTHAI observou).\"\"\"
+        futuro = lambda t: self.futuro_soma.get(t, 0.0) / self.futuro_n[t] if self.futuro_n.get(t) else 0.0
+        if self.passos_cat:
+            l_ef = self.perda + sum(futuro(t) for t in self.passos_cat) / len(self.passos_cat)
+        else:
+            l_ef = self.perda + (sum(futuro(t) for t in self.futuro_n) / len(self.futuro_n) if self.futuro_n else 0.0)
+        f = self.f_cat / self.f_p
+        var = self.sxx - self.sx * self.sx / self.n_r if self.n_r > 1 else 0.0
+        inclinacao = (self.sxy - self.sx * self.sy / self.n_r) / var if var > 1e-12 else 1.0
+        dd = (inclinacao * self.d_nota + self.d_plano) / self.n_d if self.n_d else None
+        return l_ef, f, dd, inclinacao
+
+    def recalcular(self):
+        l_ef, f, dd, _ = self.termos()
+        if dd is None or dd <= 0:
+            return
+        m = min(self.m_max, max(self.m_min, dd / (f * l_ef * self.p_estrela)))
+        self.mult = m
+        self.relacao.limiar = m * self.p_estrela
+        self.historico_m.append(m)
 """
 
 # ====================================================================================================
@@ -6518,6 +6735,81 @@ class TesteInterface(unittest.TestCase):
                          (MundoBandido(11), 1)):
             r = mundo.rodar(Synthai(11).calibrar(mundo, 30), n)
             self.assertEqual(set(r), {"retorno", "bruto", "catastrofes", "perguntas", "leituras"})
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_autorregulacao.py  (70 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_autorregulacao.py'] = """\"\"\"Testes de unidade da `autorregulacao` (Parte 27): `python3 -m unittest synthai.testes_autorregulacao`.\"\"\"
+
+import unittest
+
+from calculos import _rng, p71_valor_da_pergunta
+
+from .autorregulacao import RelacaoAutorregulada, SynthaiAutorregulada
+from .mundos import Humano, MundoSequencial, Opcao, Resultado, Situacao
+from .testes import acessos_escondidos
+
+
+def _sit(opcoes, restantes=0, horizonte=1):
+    return Situacao(opcoes, restantes, 0.0, Humano(_rng(1)), _rng(2), 1.0, horizonte)
+
+
+class TesteAutorregulacao(unittest.TestCase):
+    def test_relacao_anota_aceita_e_descartada(self):
+        r = RelacaoAutorregulada(carga_alvo=-1.0)  # sem orçamento: toda pergunta vira descarte
+        o = Opcao(1.0, 0.0, 0.0, False)
+        self.assertFalse(r.precisa_perguntar(0.0))
+        self.assertEqual(r.aceita_p, 0.0)
+        self.assertFalse(r.pode_perguntar(o, _sit([o])))
+        self.assertEqual(r.descartadas, [o])
+
+    def test_termos_com_dados_feitos_a_mao(self):
+        a = SynthaiAutorregulada(1)
+        a.passos_cat = [0]
+        a.futuro_soma, a.futuro_n = {0: 30.0}, {0: 2}           # F(0) = 15
+        a.f_cat, a.f_p = 4.0, 2.0                               # f = 2
+        a.n_r, a.sx, a.sy, a.sxx, a.sxy = 3.0, 6.0, 12.0, 14.0, 28.0  # y = 2x: inclinação 2
+        a.n_d, a.d_nota, a.d_plano = 2.0, 1.0, 0.4              # Δd = (2 × 1 + 0,4) / 2 = 1,2
+        l_ef, f, dd, b = a.termos()
+        self.assertAlmostEqual(l_ef, 65.0)
+        self.assertAlmostEqual(f, 2.0)
+        self.assertAlmostEqual(b, 2.0)
+        self.assertAlmostEqual(dd, 1.2)
+        a.recalcular()
+        self.assertAlmostEqual(a.mult, 1.2 / (2.0 * 65.0 * p71_valor_da_pergunta()))
+        self.assertAlmostEqual(a.relacao.limiar, a.mult * p71_valor_da_pergunta())
+
+    def test_limites_do_multiplicador(self):
+        a = SynthaiAutorregulada(1)
+        a.passos_cat, a.futuro_soma, a.futuro_n = [0], {0: 0.0}, {0: 1}
+        a.n_r, a.sx, a.sy, a.sxx, a.sxy = 2.0, 0.0, 0.0, 2.0, 2.0
+        a.n_d, a.d_nota, a.d_plano = 1.0, 1000.0, 0.0
+        a.recalcular()
+        self.assertEqual(a.mult, a.m_max)
+
+    def test_observar_aprende_a_regressao_e_o_futuro(self):
+        a = SynthaiAutorregulada(1)
+        o = Opcao(2.0, 0.0, 2.0, False)
+        a._pendente = (o, 0.001, 0, 1)
+        a._escolha = None
+        a.observar(Resultado(o, False, 0.0, 0.0, 2.0))
+        self.assertEqual((a.n_r, a.sx, a.sy), (1.0, 2.0, 2.0))
+        self.assertEqual(a.futuro_n, {0: 1})
+        self.assertAlmostEqual(a.f_p, 0.5 + 0.001)
+
+    def test_roda_e_recalcula(self):
+        m = MundoSequencial(13)
+        a = SynthaiAutorregulada(13, aquecimento=50, intervalo=25).calibrar(m, 30)
+        m.rodar(a, 30)
+        self.assertTrue(a.historico_m)
+
+    def test_nao_le_o_escondido(self):
+        self.assertEqual(acessos_escondidos("autorregulacao"), [])
 
 
 if __name__ == "__main__":

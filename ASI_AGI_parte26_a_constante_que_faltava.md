@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 26: a constante que faltava
 
-> Continuação da [Parte 25](ASI_AGI_parte25_o_limiar_de_cada_pensamento.md). Os números saem de `p322_...` a `p325_...` em
+> Continuação da [Parte 25](ASI_AGI_parte25_o_limiar_de_cada_pensamento.md). **Próxima:** [Parte 27 — a autorregulação](ASI_AGI_parte27_autorregulacao.md) (P331–P340). Os números saem de `p322_...` a `p325_...` em
 > [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
