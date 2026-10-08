@@ -3305,6 +3305,8 @@ def _construir_seq(versao, rng, custo_leitura=0.002):
             for _ in range(150)]
     classes = {"miope": SynthaiAnima, "planejadora": SynthaiPlanejadora, "velha": SynthaiVelha,
                "velha_atenta": SynthaiVelhaAtenta, "atenta_sem_velha": SynthaiVelhaAtenta}
+    if versao == "calibrada":  # P274: definida na Parte 21; resolvida aqui na hora da chamada
+        classes["calibrada"] = SynthaiIntuicaoCalibrada
     if versao == "planejadora":
         ag = SynthaiPlanejadora(integrar=False, sombra="propria", compensar="equilibrio")
     elif versao == "atenta_sem_velha":
@@ -3313,7 +3315,7 @@ def _construir_seq(versao, rng, custo_leitura=0.002):
         ag = classes[versao](sombra="propria", compensar="equilibrio")
     ag.mult_pergunta = 2.0
     ag.calibrar(hist)
-    if versao in ("velha_atenta", "atenta_sem_velha", "atenta_miope"):
+    if versao in ("velha_atenta", "atenta_sem_velha", "atenta_miope", "calibrada"):
         ag._seletiva = True
     return ag
 
@@ -3393,6 +3395,105 @@ def p268_efeito_combinado(estimativas=((0.662, 0.752), (0.990, 0.970), (-0.129, 
     media = sum(w * m for w, (m, _) in zip(pesos, estimativas)) / sum(pesos)
     ep = 1 / sqrt(sum(pesos))
     return media, ep, media / ep
+
+
+
+# --- Parte 21: a intuição corrigida pela sensação ---
+
+# Placar acumulado ao fim da Parte 21 (atualizado quando os testes da parte terminam)
+ERROS_P279, TESTES_P279 = 42, 84
+
+
+def p272_encolhimento(sigmas=(0.5, 2.0), k=50, r=2.0, amostras=6000, semente=272):
+    """Escolher por v + w * ĉ * r, com ĉ = c + N(0, sigma). Qual w é o melhor? Teoria: w* = 1 / (1 + sigma^2)."""
+    resultado = {}
+    pesos = [x / 20 for x in range(0, 21)]
+    for sigma in sigmas:
+        rng = _rng(semente)
+        totais = [0.0] * len(pesos)
+        for _ in range(amostras):
+            v = [rng.gauss(0, 1) for _ in range(k)]
+            c = [rng.gauss(0, 1) for _ in range(k)]
+            ch = [ci + rng.gauss(0, sigma) for ci in c]
+            for j, w in enumerate(pesos):
+                i = max(range(k), key=lambda i: v[i] + w * ch[i] * r)
+                totais[j] += v[i] + c[i] * r
+        medias = [t / amostras for t in totais]
+        j = max(range(len(pesos)), key=lambda j: medias[j])
+        resultado[sigma] = (pesos[j], 1 / (1 + sigma**2), medias[pesos.index(1.0)], medias[j])
+    return resultado
+
+
+class SynthaiIntuicaoCalibrada(SynthaiVelhaAtenta):
+    """P273: a intuição (o modelo de mundo) corrigida pela sensação (o que de fato aconteceu).
+
+    Depois de agir, a SYNTHAI vê o próprio nível mudar: a mudança é a consequência real c da ação escolhida.
+    Com os pares (ĉ, c) ela estima, por regressão pela origem, quanto confiar no modelo: peso = Σ ĉ c / Σ ĉ²
+    (prior: peso 1 com força de 10 pares). O bônus de plano passa a ser peso × ĉ × passos restantes."""
+
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        self.sxy, self.sxx = 10.0, 10.0
+        self.peso = 1.0
+        self._anterior = None
+        self._est = {}
+
+    def preparar_passo(self, estimativas, restantes, nivel, valor_medio_passo):
+        if self._anterior is not None:
+            c_hat, nivel_antes, restantes_antes = self._anterior
+            if restantes == restantes_antes - 1:  # o episódio continuou: a mudança de nível é a consequência real
+                c = nivel - nivel_antes
+                self.sxy += c_hat * c
+                self.sxx += c_hat * c_hat
+                self.peso = self.sxy / self.sxx
+        self._anterior = None
+        self._est, self._nivel, self._restantes = estimativas, nivel, restantes
+        super().preparar_passo(estimativas, restantes, nivel, valor_medio_passo)
+        self.plano = {k: self.peso * b for k, b in self.plano.items()}
+
+    def agir_no_mundo(self, acoes, rng, eps_real, carga):
+        escolha = super().agir_no_mundo(acoes, rng, eps_real, carga)
+        self._anterior = (self._est.get(id(escolha[0]), 0.0), self._nivel, self._restantes)
+        return escolha
+
+
+def p274_intuicao_calibrada(sementes=tuple(range(500, 510)), episodios=400):
+    """Versão principal vs intuição calibrada, no mundo base e com modelo ruim (sigma 2). 10 sementes pareadas."""
+    resultado = {}
+    for nome, mundo in (("base", {}), ("modelo ruim", {"sigma_modelo": 2.0})):
+        a = [_retorno_seq("velha_atenta", s, episodios, mundo) for s in sementes]
+        pesos = []
+        b = []
+        for s in sementes:
+            rng = _rng(s)
+            ag = _construir_seq("calibrada", rng)
+            ret = _rodar_sequencial(ag, rng, episodios=episodios, mundo=mundo)[0]
+            b.append(ret - 0.002 * ag.leituras / episodios)
+            pesos.append(ag.peso)
+        d = [y - x for x, y in zip(a, b)]
+        m = sum(d) / len(d)
+        dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+        sigma = mundo.get("sigma_modelo", MUNDO_SEQUENCIAL["sigma_modelo"])
+        resultado[nome] = ((m, dp, m / (dp / sqrt(len(d)))), sum(pesos) / len(pesos), 1 / (1 + sigma**2))
+    return resultado
+
+
+def p277_auditoria_p149(erros=(0.01, 0.05, 0.1), tolerancia=0.5, rodadas=4000, semente=277):
+    """Auditoria da P149: com erro aleatório de média delta por passo (e não um erro fixo), o horizonte da
+    imaginação, medido como o passo mediano em que o erro composto passa de 50%, bate com ln(1,5)/ln(1+delta)?"""
+    rng = _rng(semente)
+    resultado = {}
+    for d in erros:
+        horizontes = []
+        for _ in range(rodadas):
+            fator, h = 1.0, 0
+            while fator - 1 <= tolerancia and h < 10000:
+                fator *= 1 + rng.expovariate(1 / d)
+                h += 1
+            horizontes.append(h)
+        horizontes.sort()
+        resultado[d] = (horizontes[len(horizontes) // 2], p149_imaginacao((d,), tolerancia)[d])
+    return resultado
 
 
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
