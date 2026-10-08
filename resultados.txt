@@ -78,3 +78,28 @@ P75 informacao mutua (erro 10%) = 0.531 bits
 P76 energia minima = -1, ideal = -3, estados de minimo = 6
 P77 inspecao = 0.10, trapaca = 0.01; punicao 99: inspecao = 0.01, trapaca = 0.01; inspecao 10x mais barata: trapaca = 0.001
 P78 estados perdidos = 0.50, penalidade log = 0.693
+--- Parte 5 (a pergunta como ponto de partida; agente unificado) ---
+P81 perguntas sim/nao para 1048576 hipoteses = 20
+P82 concordancia esperada se independentes = 0.68; observada 0.80 -> rho = 0.375; verificacao simulada = 0.801
+P86 quine reproduz a si mesmo = True (56 caracteres)
+P87 passos medios ate achar um 1, por ordem de busca = {'crescente': 1.9375, 'decrescente': 1.9375, 'pares_primeiro': 1.9375}
+P88 fracao especificada pelo projetista = 6.25e-08; genoma/sinapses = 6.2e-05
+P89 debate: 20 verificacoes para 1e6 passos; arvore 1000000 nos vs 6 verificacoes
+P90 criar->filtrar: media = 59.45, dp = 0.45; filtrar->criar: media = 57.41, dp = 1.14
+P91 medias (A, B): originais = (3.0, 3.0), ao cubo = (63.0, 27.0), raiz = (1.618, 1.732)
+P92 ganho (certo, aposta) = (200, 200.0); perda = (-400, -400)
+P93 estereoisomeros com 10 centros quirais = 1024
+P94 4 salvaguardas independentes, 50 anos: 2.60e-07 (uma so: 0.05)
+P85 GISELE rho_cego=0.0 diverso=False: catastrofes = 0.0015, valor = 1.948, perguntas/episodio = 0.485, liquido (com custo das perguntas) = 1.825
+P85 GISELE rho_cego=0.0 diverso=True : catastrofes = 0.0005, valor = 1.962, perguntas/episodio = 0.493, liquido (com custo das perguntas) = 1.888
+P85 GISELE rho_cego=0.5 diverso=False: catastrofes = 0.0065, valor = 1.966, perguntas/episodio = 0.946, liquido (com custo das perguntas) = 1.546
+P85 GISELE rho_cego=0.5 diverso=True : catastrofes = 0.0045, valor = 1.976, perguntas/episodio = 0.893, liquido (com custo das perguntas) = 1.661
+P85 GISELE mundo mudado (bonus 1.5): catastrofes = 0.0010, perguntas = 0.510, liquido = 1.862
+P85 GISELE mundo mudado (bonus 6.0): catastrofes = 0.0005, perguntas = 0.392, liquido = 1.897
+P85 referencia Parte 4 'completo' (rho 0): liquido com custo das consultas = 1.575
+P85 referencia Parte 4 'completo' (rho 0.5): liquido com custo das consultas = -0.563
+P95 minha taxa de erro (6/12): media = 0.50, intervalo 90% = [0.29, 0.71]
+P95 atualizada com a Parte 5 (7/14): media = 0.50, intervalo 90% = [0.30, 0.70]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 63; pares de interacao possiveis = 1953
+Regressao: 14/14 resultados publicados reproduzidos; falhas = []

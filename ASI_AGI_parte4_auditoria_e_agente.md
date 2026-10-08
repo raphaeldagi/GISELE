@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 4: auditar o passado e montar as peças
 
-> Continuação da [Parte 3](ASI_AGI_parte3_simulacoes.md). Protocolo: **Lógica → Tradução
+> Continuação da [Parte 3](ASI_AGI_parte3_simulacoes.md). **Próxima:** [Parte 5 — a pergunta e a GISELE unificada](ASI_AGI_parte5_a_pergunta_e_gisele.md) (P81–P97). Protocolo: **Lógica → Tradução
 > cruzada → Meta**. Todos os números saem das funções `p61_...` a `p78_...` em
 > [`calculos.py`](calculos.py); a saída está em [`resultados.txt`](resultados.txt).
 >

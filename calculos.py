@@ -1,10 +1,14 @@
-"""Reproduz os cálculos e simulações das Partes 1 a 4 (ASI_AGI_*.md).
+"""Reproduz os cálculos e simulações das Partes 1 a 5 (ASI_AGI_*.md).
+
+Arquivo único que sempre cresce: cada parte acrescenta funções pNN_..., o agente
+unificado `Gisele` incorpora os módulos anteriores e `testes_de_regressao` garante que
+os números já publicados não mudam.
 
 Uso: python3 calculos.py            (imprime tudo)
      python3 calculos.py > resultados.txt
 """
 import random
-from math import comb, cosh, exp, log, log2, sqrt
+from math import ceil, comb, cosh, exp, log, log2, sqrt
 from statistics import NormalDist
 
 Z = NormalDist()
@@ -554,6 +558,245 @@ def p78_reversibilidade(estados=1000, destruidos=500):
     return destruidos / estados, log(estados / (estados - destruidos))
 
 
+# --- Parte 5: a pergunta como ponto de partida e o agente unificado GISELE ---
+
+def p81_perguntas(hipoteses=2**20):
+    """Cada pergunta sim/não ótima corta o espaço pela metade: log2(H) perguntas bastam."""
+    return log2(hipoteses), 2**20
+
+
+def p82_correlacao_oculta(acuracia=0.8, concordancia=0.80, amostras=200000, semente=82):
+    """Estima a correlação dos erros de dois modelos só pela taxa de concordância (sem gabarito)."""
+    esperada = acuracia**2 + (1 - acuracia) ** 2
+    rho = (concordancia - esperada) / (2 * acuracia * (1 - acuracia))
+    # verificação: dois modelos que acertam 80%, compartilhando o resultado com prob. rho
+    rng = _rng(semente)
+    iguais = 0
+    for _ in range(amostras):
+        a = rng.random() < acuracia
+        b = a if rng.random() < rho else (rng.random() < acuracia)
+        iguais += a == b
+    return esperada, rho, iguais / amostras
+
+
+def _gerar_acoes(rng, n_acoes, p_cat, tipos, por_tipo, rho_cego, bonus=3.0):
+    """Ações com notas de um comitê. Cada TIPO de modelo tem o seu próprio ponto cego."""
+    acoes = []
+    for _ in range(n_acoes):
+        v = rng.gauss(0, 1)
+        cat = rng.random() < p_cat
+        notas = []
+        for _ in range(tipos):
+            cego_do_tipo = cat and rng.random() < rho_cego
+            for _ in range(por_tipo):
+                enganado = cat and (cego_do_tipo or rng.random() < 0.5)
+                notas.append(v + rng.gauss(0, 0.5) + (bonus if enganado else 0.0))
+        k = len(notas)
+        m = sum(notas) / k
+        dp = sqrt(sum((x - m) ** 2 for x in notas) / (k - 1))
+        acoes.append((m, dp, v, cat))
+    return acoes
+
+
+class Gisele:
+    """Agente unificado. Cresce a cada parte; cada módulo cita a pergunta de origem.
+
+    - comitê de modelos de recompensa e incerteza por discordância (P67)
+    - pessimismo: nota média menos incerteza (P68)
+    - quantilização entre as melhores (P35, P42)
+    - incerteza convertida em probabilidade calibrada de catástrofe (P43)
+    - consulta humana pelo valor da informação, não por um limiar arbitrário (P71)
+    - veto direto quando o risco é alto demais para apostar (P52, P78)
+    """
+
+    def __init__(self, q=0.05, custo_pergunta=0.1, perda=50.0, eps_humano=0.1, risco_max=0.5):
+        self.q = q
+        self.eps_humano = eps_humano
+        self.p_pergunta = p71_valor_da_pergunta(custo_pergunta, perda, eps_humano)
+        self.risco_max = risco_max
+        self.w = [0.0, 0.0, 0.0]
+
+    @staticmethod
+    def _x(acao, melhor):
+        m, dp, _, _ = acao
+        return (1.0, dp, m - melhor)
+
+    def p_catastrofe(self, acao, melhor):
+        z = sum(wi * xi for wi, xi in zip(self.w, self._x(acao, melhor)))
+        return 1 / (1 + exp(-max(-30.0, min(30.0, z))))
+
+    def calibrar(self, episodios_rotulados, lr=0.05, epocas=3):
+        """Regressão logística sobre histórico auditado: P(catástrofe | incerteza, nota)."""
+        for _ in range(epocas):
+            for acoes in episodios_rotulados:
+                melhor = max(a[0] for a in acoes)
+                for a in acoes:
+                    x = self._x(a, melhor)
+                    erro = self.p_catastrofe(a, melhor) - a[3]
+                    self.w = [wi - lr * erro * xi for wi, xi in zip(self.w, x)]
+
+    def agir(self, acoes, rng):
+        melhor = max(a[0] for a in acoes)
+        ordem = sorted(acoes, key=lambda a: -(a[0] - a[1]))
+        candidatos = ordem[: max(1, int(self.q * len(ordem)))]
+        rng.shuffle(candidatos)
+        perguntas = 0
+        for a in candidatos + ordem[len(candidatos):]:
+            p = self.p_catastrofe(a, melhor)
+            if p > self.risco_max:
+                continue  # não vale nem perguntar: descarta
+            if p > self.p_pergunta:
+                perguntas += 1
+                acerta = rng.random() >= self.eps_humano
+                if (a[3] if acerta else not a[3]):
+                    continue  # humano vetou
+            return a, perguntas
+        return ordem[0], perguntas
+
+
+def p83_85_gisele(rho_cego, diverso, episodios=2000, treino=300, n_acoes=200, p_cat=0.005,
+                  custo_pergunta=0.1, perda=50.0, bonus_implantado=3.0, semente=83):
+    """Compara a GISELE com a política 'completo' da Parte 4. bonus_implantado != 3 testa mudança de mundo."""
+    rng = _rng(semente)
+    tipos, por_tipo = (2, 3) if diverso else (1, 5)
+    historico = [_gerar_acoes(rng, n_acoes, p_cat, tipos, por_tipo, rho_cego) for _ in range(treino)]
+    agente = Gisele(custo_pergunta=custo_pergunta, perda=perda)
+    agente.calibrar(historico)
+    cat = perguntas = 0
+    valor = 0.0
+    for _ in range(episodios):
+        acoes = _gerar_acoes(rng, n_acoes, p_cat, tipos, por_tipo, rho_cego, bonus_implantado)
+        escolha, n = agente.agir(acoes, rng)
+        perguntas += n
+        cat += escolha[3]
+        valor += 0.0 if escolha[3] else escolha[2]
+    cat, valor, perguntas = cat / episodios, valor / episodios, perguntas / episodios
+    liquido = valor - perda * cat - custo_pergunta * perguntas
+    return cat, valor, perguntas, liquido, agente.p_pergunta
+
+
+def p86_quine():
+    """Um programa que imprime o próprio código: auto-referência é possível (teorema de Kleene)."""
+    import contextlib
+    import io
+    fonte = 's = %r\nprint(s %% s, end="")'
+    programa = fonte % fonte
+    saida = io.StringIO()
+    with contextlib.redirect_stdout(saida):
+        exec(programa, {})
+    return saida.getvalue() == programa, len(programa)
+
+
+def p87_sem_almoco_gratis(n=4):
+    """Média, sobre todas as funções f:{0..n-1}->{0,1}, de passos até achar um 1."""
+    from itertools import product
+    ordens = {"crescente": list(range(n)), "decrescente": list(range(n - 1, -1, -1)),
+              "pares_primeiro": sorted(range(n), key=lambda i: (i % 2, i))}
+    resultado = {}
+    for nome, ordem in ordens.items():
+        total = 0
+        for f in product((0, 1), repeat=n):
+            passos = next((k + 1 for k, i in enumerate(ordem) if f[i]), n + 1)
+            total += passos
+        resultado[nome] = total / 2**n
+    return resultado
+
+
+def p88_jardineiro(linhas=10**4, bits_por_linha=100, parametros=1e12, bits_por_peso=16,
+                   pares_de_base=3.1e9, sinapses=1e14):
+    projeto = linhas * bits_por_linha
+    aprendido = parametros * bits_por_peso
+    genoma = pares_de_base * 2
+    return projeto / aprendido, genoma / sinapses
+
+
+def p89_debate(passos=10**6, ramos=10, profundidade=6):
+    return ceil(log2(passos)), ramos**profundidade, profundidade
+
+
+def p90_ordem_importa(pop=1000, geracoes=30, semente=90):
+    """Criar (variar) e filtrar (selecionar) não comutam."""
+    def rodar(ordem):
+        rng = _rng(semente)
+        x = [0.0] * pop
+        for _ in range(geracoes):
+            for passo in ordem:
+                if passo == "criar":
+                    x = [xi + rng.gauss(0, 1) for xi in x]
+                else:
+                    melhores = sorted(x, reverse=True)[: pop // 10]
+                    x = [melhores[i % len(melhores)] for i in range(pop)]
+        m = sum(x) / pop
+        return m, sqrt(sum((xi - m) ** 2 for xi in x) / pop)
+    return rodar(("criar", "filtrar")), rodar(("filtrar", "criar"))
+
+
+def p91_escala_ordinal():
+    """Médias de escalas ordinais não são invariantes a transformações monótonas."""
+    a = [1, 1, 5, 5]   # grupo polarizado
+    b = [3, 3, 3, 3]   # grupo moderado
+    def media(v, f):
+        return sum(f(x) for x in v) / len(v)
+    return (media(a, lambda x: x), media(b, lambda x: x)), (media(a, lambda x: x**3), media(b, lambda x: x**3)), \
+        (media(a, sqrt), media(b, sqrt))
+
+
+def p92_enquadramento(total=600, salvos=200, chance=1 / 3):
+    certo_ganho = salvos
+    aposta_ganho = chance * total
+    certo_perda = -(total - salvos)
+    aposta_perda = (1 - chance) * -total
+    return (certo_ganho, aposta_ganho), (certo_perda, aposta_perda)
+
+
+def p93_quiralidade(centros=10):
+    return 2**centros
+
+
+def p94_salvaguardas(mu=1e-3, k=4, anos=50):
+    """Armitage-Doll: k falhas independentes necessárias -> incidência ~ (mu t)^k / k!"""
+    from math import factorial
+    return (mu * anos) ** k / factorial(k), mu * anos
+
+
+def p95_minha_taxa_de_erro(erros=6, testes=12, amostras=200000, semente=95):
+    """Posterior Beta(1+erros, 1+acertos) da minha taxa de afirmações que precisam de correção."""
+    rng = _rng(semente)
+    a, b = 1 + erros, 1 + testes - erros
+    xs = sorted(rng.betavariate(a, b) for _ in range(amostras))
+    return a / (a + b), xs[int(0.05 * amostras)], xs[int(0.95 * amostras)]
+
+
+def p96_crescimento():
+    """Introspecção do próprio código: quantas funções pNN existem e quantas interações entre módulos."""
+    import sys
+    modulo = sys.modules[__name__]
+    funcoes = sorted(n for n in dir(modulo) if n.startswith("p") and n[1:3].isdigit())
+    k = len(funcoes)
+    return k, k * (k - 1) // 2
+
+
+def testes_de_regressao():
+    """O código cresce, mas o passado não pode mudar: estes valores foram publicados nas Partes 1-4."""
+    verificacoes = {
+        "P3": round(p3_chinchilla()[0] / 1e12, 2) == 2.89,
+        "P8": round(p8_best_of_n(), 3) == 0.962,
+        "P14": round(p14_botao_desligar()[1], 3) == 0.351,
+        "P22": round(p22_simpson()[0], 3) == 0.833,
+        "P31": round(p31_taxa_de_base(), 4) == 0.0098,
+        "P52": round(p52_kelly()[0], 2) == 0.2,
+        "P58": round(p58_bajulacao(), 3) == 0.649,
+        "P64": round(p64_sondas_em_cascata()[1], 3) == 0.495,
+        "P71": round(p71_valor_da_pergunta(), 4) == 0.0022,
+        "P77": p77_inspecao(punicao=99)[1] == p77_inspecao()[1],
+        "P82": round(p82_correlacao_oculta()[1], 3) == 0.375,
+        "P86": p86_quine()[0],
+        "P87": len(set(p87_sem_almoco_gratis().values())) == 1,
+        "P91": p91_escala_ordinal()[1][0] > p91_escala_ordinal()[1][1] and p91_escala_ordinal()[2][0] < p91_escala_ordinal()[2][1],
+    }
+    return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
+
+
 if __name__ == "__main__":
     n, d = p3_chinchilla()
     print(f"P3  N = {n:.2e} parametros, D = {d:.2e} tokens")
@@ -657,3 +900,45 @@ if __name__ == "__main__":
           f"trapaca = {p77_inspecao(punicao=99)[1]:.2f}; inspecao 10x mais barata: trapaca = {p77_inspecao(custo_inspecao=0.1)[1]:.3f}")
     frac, pen = p78_reversibilidade()
     print(f"P78 estados perdidos = {frac:.2f}, penalidade log = {pen:.3f}")
+
+    print("--- Parte 5 (a pergunta como ponto de partida; agente unificado) ---")
+    bits, hip = p81_perguntas()
+    print(f"P81 perguntas sim/nao para {hip} hipoteses = {bits:.0f}")
+    esp, rho, sim = p82_correlacao_oculta()
+    print(f"P82 concordancia esperada se independentes = {esp:.2f}; observada 0.80 -> rho = {rho:.3f}; verificacao simulada = {sim:.3f}")
+    print(f"P86 quine reproduz a si mesmo = {p86_quine()[0]} ({p86_quine()[1]} caracteres)")
+    print(f"P87 passos medios ate achar um 1, por ordem de busca = {p87_sem_almoco_gratis()}")
+    proj, gen = p88_jardineiro()
+    print(f"P88 fracao especificada pelo projetista = {proj:.2e}; genoma/sinapses = {gen:.1e}")
+    dbt, arv, prof = p89_debate()
+    print(f"P89 debate: {dbt} verificacoes para 1e6 passos; arvore {arv} nos vs {prof} verificacoes")
+    (m1, d1), (m2, d2) = p90_ordem_importa()
+    print(f"P90 criar->filtrar: media = {m1:.2f}, dp = {d1:.2f}; filtrar->criar: media = {m2:.2f}, dp = {d2:.2f}")
+    print(f"P91 medias (A, B): originais = {p91_escala_ordinal()[0]}, ao cubo = {p91_escala_ordinal()[1]}, "
+          f"raiz = ({p91_escala_ordinal()[2][0]:.3f}, {p91_escala_ordinal()[2][1]:.3f})")
+    print(f"P92 ganho (certo, aposta) = {p92_enquadramento()[0]}; perda = (-400, {p92_enquadramento()[1][1]:.0f})")
+    print(f"P93 estereoisomeros com 10 centros quirais = {p93_quiralidade()}")
+    inc, mt = p94_salvaguardas()
+    print(f"P94 4 salvaguardas independentes, 50 anos: {inc:.2e} (uma so: {mt:.2f})")
+    for rho_c in (0.0, 0.5):
+        for diverso in (False, True):
+            cat, val, perg, liq, pstar = p83_85_gisele(rho_c, diverso)
+            print(f"P85 GISELE rho_cego={rho_c} diverso={diverso!s:5}: catastrofes = {cat:.4f}, valor = {val:.3f}, "
+                  f"perguntas/episodio = {perg:.3f}, liquido (com custo das perguntas) = {liq:.3f}")
+    for b in (1.5, 6.0):
+        cat, val, perg, liq, _ = p83_85_gisele(0.0, False, bonus_implantado=b)
+        print(f"P85 GISELE mundo mudado (bonus {b}): catastrofes = {cat:.4f}, perguntas = {perg:.3f}, liquido = {liq:.3f}")
+    cat4, val4, cons4 = p67_agente("completo")
+    print(f"P85 referencia Parte 4 'completo' (rho 0): liquido com custo das consultas = {val4 - 50 * cat4 - 0.1 * cons4:.3f}")
+    cat4, val4, cons4 = p67_agente("completo", rho_cego=0.5)
+    print(f"P85 referencia Parte 4 'completo' (rho 0.5): liquido com custo das consultas = {val4 - 50 * cat4 - 0.1 * cons4:.3f}")
+    media, lo, hi = p95_minha_taxa_de_erro()
+    print(f"P95 minha taxa de erro (6/12): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=7, testes=14)
+    print(f"P95 atualizada com a Parte 5 (7/14): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+    print("=== Unificacao (sempre ao final) ===")
+    k, pares = p96_crescimento()
+    ok, total, falhas = testes_de_regressao()
+    print(f"P96 funcoes pNN no arquivo = {k}; pares de interacao possiveis = {pares}")
+    print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
