@@ -1724,6 +1724,24 @@ def _rodar_mundo(agente, rng, episodios=1000, **mundo):
     for _ in range(episodios):
         eps = min(0.45, m["eps0"] + m["fadiga"] * carga)
         acoes = _gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+        escolha, n = agente.agir_no_mundo(acoes, rng, eps, carga)
+        carga += 0.05 * (n - carga)
+        perguntas += n
+        cat += escolha[3]
+        valor += 0.0 if escolha[3] else escolha[2]
+    cat, valor, perguntas = cat / episodios, valor / episodios, perguntas / episodios
+    return cat, valor, perguntas, valor - m["perda"] * cat - m["custo"] * perguntas
+
+
+def _rodar_mundo_sentidos(agente, rng, episodios=1000, **mundo):
+    """_rodar_mundo com o gancho da P225 (um sentido novo, se o agente tiver). Mesmos resultados para os demais."""
+    m = dict(MUNDO_BASE, **mundo)
+    carga = 0.0
+    cat = perguntas = 0
+    valor = 0.0
+    for _ in range(episodios):
+        eps = min(0.45, m["eps0"] + m["fadiga"] * carga)
+        acoes = _gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
         perceber = getattr(agente, "perceber", None)  # P225: um sentido novo, se o agente tiver
         if perceber:
             perceber(acoes)
@@ -1734,6 +1752,11 @@ def _rodar_mundo(agente, rng, episodios=1000, **mundo):
         valor += 0.0 if escolha[3] else escolha[2]
     cat, valor, perguntas = cat / episodios, valor / episodios, perguntas / episodios
     return cat, valor, perguntas, valor - m["perda"] * cat - m["custo"] * perguntas
+
+
+# P225: o código antigo nunca é apagado; a P169 mede a complexidade do mundo no código original.
+_rodar_mundo_original = _rodar_mundo
+_rodar_mundo = _rodar_mundo_sentidos
 
 
 class PoliticaSimples:
@@ -1967,7 +1990,7 @@ def p169_peso_da_familia():
     """Que fração do Υ universal (P1) a família de mundos cobre? K(família) <= bits do código comprimido."""
     import inspect
     import zlib
-    fontes = "".join(inspect.getsource(f) for f in (_gerar_acoes_original, _rodar_mundo)) + repr(MUNDO_BASE) + repr(MUNDOS_UPSILON)
+    fontes = "".join(inspect.getsource(f) for f in (_gerar_acoes_original, _rodar_mundo_original)) + repr(MUNDO_BASE) + repr(MUNDOS_UPSILON)
     bits = 8 * len(zlib.compress(fontes.encode("utf-8"), 9))
     return bits, -bits * log(2) / log(10)  # K em bits e log10 do peso 2^-K
 
