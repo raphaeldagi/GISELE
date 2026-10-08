@@ -3496,6 +3496,130 @@ def p277_auditoria_p149(erros=(0.01, 0.05, 0.1), tolerancia=0.5, rodadas=4000, s
     return resultado
 
 
+# --- Parte 22: o protótipo em módulos (pacote synthai/) ---
+
+# Placar acumulado ao fim da Parte 22 (atualizado quando os testes da parte terminam)
+ERROS_P289, TESTES_P289 = 45, 91
+
+
+def _pareado(a, b):
+    d = [y - x for x, y in zip(a, b)]
+    m = sum(d) / len(d)
+    dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+    return m, dp, m / (dp / sqrt(len(d)))
+
+
+def p283_equivalencia_modular(sementes=tuple(range(520, 530)), episodios=400):
+    """A SYNTHAI montada em módulos (pacote synthai/) contra a versão principal de calculos (P274), mesmas sementes.
+
+    Os geradores de números não são os mesmos, então a comparação é estatística: diferença média, dp e t."""
+    from synthai import Synthai as SynthaiModular
+    from synthai.mundos import MundoSequencial
+    resultado = {}
+    for nome, mundo in (("base", {}), ("modelo ruim", {"sigma_modelo": 2.0})):
+        a, b, pesos, cats_a, cats_b = [], [], [], 0.0, 0.0
+        for s in sementes:
+            rng = _rng(s)
+            ag = _construir_seq("calibrada", rng)
+            ret, cat, _ = _rodar_sequencial(ag, rng, episodios=episodios, mundo=mundo)
+            a.append(ret - 0.002 * ag.leituras / episodios)
+            cats_a += cat
+            w = MundoSequencial(s, **mundo)
+            mod = SynthaiModular(s).calibrar(w)
+            r = w.rodar(mod, episodios)
+            b.append(r["retorno"])
+            cats_b += r["catastrofes"]
+            pesos.append(mod.intuicao.peso)
+        n = len(sementes)
+        resultado[nome] = (sum(a) / n, sum(b) / n, _pareado(a, b), sum(pesos) / n, cats_a / n, cats_b / n)
+    return resultado
+
+
+def p284_generalidade(sementes=tuple(range(530, 540))):
+    """O mesmo objeto Synthai, sem mudar nada, em três tipos de tarefa, contra o acaso, o guloso e o oráculo."""
+    from synthai.__main__ import TAREFAS
+    from synthai import Synthai as SynthaiModular
+    from synthai.referencias import Acaso, Guloso, Oraculo
+    resultado = {}
+    for tarefa, (fazer, n) in TAREFAS.items():
+        linhas = {c.__name__: [] for c in (Acaso, Guloso, Oraculo, SynthaiModular)}
+        cats = {k: 0.0 for k in linhas}
+        for s in sementes:
+            for cls in (Acaso, Guloso, Oraculo, SynthaiModular):
+                mundo = fazer(s)
+                r = mundo.rodar(cls(s).calibrar(mundo), n)
+                linhas[cls.__name__].append(r["retorno"])
+                cats[cls.__name__] += r["catastrofes"] / len(sementes)
+        medias = {k: sum(v) / len(v) for k, v in linhas.items()}
+        normal = [(y - x) / (z - x) for x, y, z in zip(linhas["Acaso"], linhas["Synthai"], linhas["Oraculo"])]
+        resultado[tarefa] = (medias, cats, _pareado(linhas["Acaso"], linhas["Synthai"]),
+                             _pareado(linhas["Guloso"], linhas["Synthai"]), sum(normal) / len(normal))
+    return resultado
+
+
+def p285_acoplamento():
+    """O grafo dos módulos lido do próprio código (ast): arestas entre módulos, a largura da interface
+    (atributos de Situacao/Opcao que o agente lê) e os acessos ao que é escondido (devem ser zero, P7).
+    Para comparar: o comprimento da linhagem de herança da versão principal em calculos."""
+    import ast
+    import os
+    from synthai.testes import MODULOS_DO_AGENTE, acessos_escondidos
+    pasta = os.path.join(os.path.dirname(os.path.abspath(__file__)), "synthai")
+    arestas, interface, linhas = [], set(), 0
+    publicos = {"opcoes", "restantes", "nivel", "horizonte", "explorar", "carga_do_humano", "perguntas", "perguntar",
+                "ler_sensor", "nota", "comite", "discordancia", "estimativa", "catastrofe", "nivel_antes", "nivel_depois"}
+    for nome in MODULOS_DO_AGENTE:
+        fonte = open(os.path.join(pasta, nome + ".py"), encoding="utf-8").read()
+        linhas += len([x for x in fonte.splitlines() if x.strip() and not x.strip().startswith("#")])
+        arvore = ast.parse(fonte)
+        for no in ast.walk(arvore):
+            if isinstance(no, ast.ImportFrom) and no.level == 1:
+                arestas.append((nome, no.module))
+            if isinstance(no, ast.Attribute) and no.attr in publicos and not (isinstance(no.value, ast.Name)
+                                                                               and no.value.id == "self"):
+                interface.add(no.attr)
+    escondidos = sum(len(acessos_escondidos(n)) for n in MODULOS_DO_AGENTE)
+    linhagem = [c.__name__ for c in SynthaiIntuicaoCalibrada.__mro__ if c.__name__.startswith(("Synthai", "_"))]
+    return len(MODULOS_DO_AGENTE), sorted(arestas), sorted(interface), escondidos, linhas, linhagem
+
+
+def p286_testes_de_unidade():
+    """Roda a suíte do pacote (synthai/testes.py) e devolve (testes, falhas + erros)."""
+    import io
+    import unittest
+    from synthai import testes
+    suite = unittest.defaultTestLoader.loadTestsFromModule(testes)
+    r = unittest.TextTestRunner(stream=io.StringIO(), verbosity=0).run(suite)
+    return r.testsRun, len(r.failures) + len(r.errors)
+
+
+def p287_veto_falso(sementes=tuple(range(540, 545)), episodios=1000, custo=0.1, perda=50.0, eps=0.1):
+    """Auditoria da P71: P* = c/((1-ε)L) ignora o custo do veto falso (perder uma opção segura e ir à próxima).
+
+    Com esse custo Δv, o limiar exato é P = (c + εΔv)/((1-ε)L + εΔv). Mede Δv na SYNTHAI modular, no mundo de
+    escolha única: valor da opção perguntada menos o da que ela escolheria se o veto viesse."""
+    from synthai import Synthai as SynthaiModular
+    from synthai.mundos import MundoSequencial
+    difs = []
+    for s in sementes:
+        mundo = MundoSequencial(s, passos=1, n_acoes=200)
+        ag = SynthaiModular(s).calibrar(mundo)
+        decidir = ag.decidir
+
+        def decidir_e_medir(sit, _ag=ag, _decidir=decidir):
+            escolha = _decidir(sit)
+            for vetada in _ag.vetados_agora:  # a régua lê o escondido; o agente, não
+                if not vetada._catastrofe:
+                    difs.append(vetada._valor - escolha._valor)  # veto falso: o que se perdeu
+            return escolha
+        ag.decidir = decidir_e_medir
+        mundo.rodar(ag, episodios)
+    dv = sum(difs) / len(difs) if difs else 0.0
+    formula = p71_valor_da_pergunta(custo, perda, eps)
+    exato = (custo + eps * dv) / ((1 - eps) * perda + eps * dv)
+    return len(difs), dv, formula, exato, exato / formula - 1
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
