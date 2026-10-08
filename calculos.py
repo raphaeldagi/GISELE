@@ -1147,7 +1147,7 @@ class SynthaiAnima(SynthaiJung):
                 if self.compensar == "equilibrio" and carga + perguntas > self.carga_alvo:
                     continue
                 perguntas += 1
-                veto = a[3] if rng.random() >= eps_real else not a[3]
+                veto = self._perguntar_humano(a, rng, eps_real)  # P245: o canal humano pode ser trocado
                 self._observar_humano(a, veto)
                 if veto:
                     continue
@@ -1158,6 +1158,10 @@ class SynthaiAnima(SynthaiJung):
 
     def _observar_humano(self, acao, veto):
         pass
+
+    def _perguntar_humano(self, acao, rng, eps_real):
+        """O humano responde sim/não e erra com probabilidade eps_real (Partes 6-17)."""
+        return acao[3] if rng.random() >= eps_real else not acao[3]
 
     def _bonus_plano(self, acao):
         return 0.0
@@ -2908,6 +2912,121 @@ def p237_auditoria_p57(erro=0.01, verificacao=0.99, modificacoes=1000, pontos_ce
                         break
             sobrevive += ok
         resultado[b] = (teoria, sobrevive / rodadas)
+    return resultado
+
+
+
+# --- Parte 18: a linguagem como canal ---
+
+# Placar acumulado ao fim da Parte 18 (atualizado quando os testes da parte terminam)
+ERROS_P249, TESTES_P249 = 37, 71
+
+PALAVRAS = ("seguro", "acho que ok", "desconfio", "perigo")
+FALA_CAT = (0.05, 0.10, 0.25, 0.60)   # como o humano fala de uma ação catastrófica
+FALA_SEG = (0.60, 0.25, 0.10, 0.05)   # como fala de uma ação segura
+
+
+def _entropia(ps):
+    return -sum(p * log2(p) for p in ps if p > 0)
+
+
+def p242_bits_do_veto(p=0.1, eps=0.1):
+    """Informação mútua entre a resposta do humano e a catástrofe: veto binário vs quatro palavras."""
+    q = p * (1 - eps) + (1 - p) * eps
+    binario = _entropia((q, 1 - q)) - _entropia((eps, 1 - eps))
+    ruido = min(1.0, 2 * eps)  # cansaço: com prob. 2 eps a palavra sai ao acaso
+    wc = [(1 - ruido) * x + ruido / 4 for x in FALA_CAT]
+    ws = [(1 - ruido) * x + ruido / 4 for x in FALA_SEG]
+    w = [p * a + (1 - p) * b for a, b in zip(wc, ws)]
+    palavras = _entropia(w) - (p * _entropia(wc) + (1 - p) * _entropia(ws))
+    return binario, palavras, palavras / binario
+
+
+class SynthaiFala(SynthaiAnima):
+    """P245: o humano responde com uma de quatro palavras, não com sim/não.
+
+    A SYNTHAI não sabe o que as palavras significam: aprende P(catástrofe | palavra) com as auditorias (10%).
+    Veta se P(catástrofe | palavra) * perda > custo de vetar (limiar fixado antes de rodar: 0,01)."""
+
+    def __init__(self, conhece_sentido=False, p_auditoria=0.1, limiar_veto=0.01, **kw):
+        super().__init__(**kw)
+        self.conhece = conhece_sentido
+        self.p_auditoria = p_auditoria
+        self.limiar_veto = limiar_veto
+        self.contagem = {w: [0.5, 4.5] for w in PALAVRAS}  # prior Beta(0,5; 4,5) por palavra
+        self._rng_auditoria = _rng(245)
+
+    def _p_dado_palavra(self, w):
+        if self.conhece:
+            i = PALAVRAS.index(w)
+            prior = 0.1
+            return prior * FALA_CAT[i] / (prior * FALA_CAT[i] + (1 - prior) * FALA_SEG[i])
+        a, b = self.contagem[w]
+        return a / (a + b)
+
+    def _perguntar_humano(self, acao, rng, eps_real):
+        ruido = min(1.0, 2 * eps_real)
+        dist = FALA_CAT if acao[3] else FALA_SEG
+        if rng.random() < ruido:
+            w = PALAVRAS[rng.randrange(4)]
+        else:
+            u, acc, w = rng.random(), 0.0, PALAVRAS[-1]
+            for palavra, pr in zip(PALAVRAS, dist):
+                acc += pr
+                if u < acc:
+                    w = palavra
+                    break
+        if self._rng_auditoria.random() < self.p_auditoria:  # depois, descobre o que era de fato
+            self.contagem[w][0 if acao[3] else 1] += 1
+        return self._p_dado_palavra(w) > self.limiar_veto
+
+
+def p245_linguagem(sementes=tuple(range(450, 460)), episodios=2000):
+    """Veto binário vs quatro palavras (sentido aprendido) vs quatro palavras (sentido conhecido). 10 sementes pareadas."""
+    versoes = ("binario", "fala_aprendida", "fala_conhecida")
+    linhas = {v: [] for v in versoes}
+    aprendido = {w: 0.0 for w in PALAVRAS}
+    for s in sementes:
+        for v in versoes:
+            rng = _rng(s)
+            if v == "binario":
+                ag = _construir("p8_x2", rng)
+            else:
+                hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+                ag = SynthaiFala(conhece_sentido=(v == "fala_conhecida"), sombra="propria", compensar="equilibrio")
+                ag.mult_pergunta = 2.0
+                ag.calibrar(hist)
+            linhas[v].append(_rodar_mundo(ag, rng, episodios=episodios))
+            if v == "fala_aprendida":
+                for w in PALAVRAS:
+                    aprendido[w] += ag._p_dado_palavra(w) / len(sementes)
+    medias = {v: (sum(r[0] for r in rs) / len(rs), sum(r[2] for r in rs) / len(rs), sum(r[3] for r in rs) / len(rs))
+              for v, rs in linhas.items()}
+    difs = {}
+    for b in ("fala_aprendida", "fala_conhecida"):
+        d = [y[3] - x[3] for x, y in zip(linhas["binario"], linhas[b])]
+        m = sum(d) / len(d)
+        dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+        difs[f"{b} - binario"] = (m, dp, m / (dp / sqrt(len(d))))
+    verdadeiro = {w: 0.1 * c / (0.1 * c + 0.9 * sg) for w, c, sg in zip(PALAVRAS, FALA_CAT, FALA_SEG)}
+    return medias, difs, aprendido, verdadeiro
+
+
+def p247_auditoria_p105(palavras=100, complexos=5, efeito=3.0, repeticoes=4000, semente=247):
+    """Auditoria da P105: simula o teste de associação e conta achados e falsos alarmes."""
+    rng = _rng(semente)
+    resultado = {}
+    for nome, z in (("z>2", 2.0), ("Bonferroni", Z.inv_cdf(1 - 0.05 / palavras))):
+        achados = falsos = 0
+        for _ in range(repeticoes):
+            for i in range(palavras):
+                x = rng.gauss(efeito if i < complexos else 0.0, 1)
+                if x > z:
+                    if i < complexos:
+                        achados += 1
+                    else:
+                        falsos += 1
+        resultado[nome] = (achados / repeticoes, falsos / repeticoes, p105_complexos()[nome][1:3])
     return resultado
 
 
