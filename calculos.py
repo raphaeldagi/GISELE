@@ -3555,7 +3555,7 @@ def testes_de_regressao():
         "P252": round(p252_bits_da_palavra_precisa()[1], 3) == 0.192,
         "P255": round(p255_quaternidade()[1], 3) == 1.950,
         "P268": round(p268_efeito_combinado()[0], 3) == 0.552,
-        "P272": [p272_encolhimento(amostras=300)[x][0] for x in (0.5, 2.0)] == [0.8, 0.2],
+        "P272": [p272_encolhimento()[x][0] for x in (0.5, 2.0)] == [0.8, 0.2],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
