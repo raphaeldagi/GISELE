@@ -211,7 +211,7 @@ P137 arrependimento (limiar, exposicao) = {(0.2, 0.0): 1000, (0.5, 0.0): 1000, (
 P138 objetivo inferido errado: humano Boltzmann = 0.178, humano com vies de seguranca = 0.590
 P139 minha taxa de erro (17/30): media = 0.56, intervalo 90% = [0.42, 0.70]
 --- Parte 9 (o mundo decide o centro, complexo autonomo, transferencia, heroi, a regua do ruido) ---
-P143 pedido = 8 caracteres; memoria compartilhada (CLAUDE.md) = 3874; razao = 484x
+P143 pedido = 8 caracteres; memoria compartilhada (CLAUDE.md) = 6118; razao = 765x
 P144 taxa de catastrofe 0.0025: liquido por carga-alvo = {0.1: 1.168, 0.2: 1.446, 0.3: 1.354, 0.5: 1.35, 0.8: 1.323}
 P144 taxa de catastrofe 0.005: liquido por carga-alvo = {0.1: 1.347, 0.2: 1.343, 0.3: 1.181, 0.5: 1.27, 0.8: 1.04}
 P144 taxa de catastrofe 0.01: liquido por carga-alvo = {0.1: 0.829, 0.2: 0.879, 0.3: 1.116, 0.5: 1.0, 0.8: 0.582}
@@ -338,7 +338,7 @@ P206 gerador rapido identico ao original = True
 P207 variancia compensada / equilibrada = 2.747; prevista pela amostra efetiva (P122) = 2.777
 P210 minha taxa de erro (32/58): media = 0.55, intervalo 90% = [0.44, 0.65]
 --- Parte 15 (SYNTHAI: o nome, a memoria que esquece, a sintese dos modulos) ---
-P213 classes renomeadas = 19; nomes antigos continuam como apelidos = True; regressao apos a troca = 49/49
+P213 classes renomeadas = 20; nomes antigos continuam como apelidos = True; regressao apos a troca = 59/59
 P214 armadilha nova, p8_x2     : catastrofes 1a metade = 0.0077, 2a metade = 0.0082
 P214 armadilha nova, memoria_v2: catastrofes 1a metade = 0.0078, 2a metade = 0.0076
 P214 memoria v2 - realista: diferenca media no liquido = -0.140, dp = 0.195, t = -2.26
@@ -420,7 +420,91 @@ P266 sem o sentido novo (sensacao): perda ao tirar = -0.129, dp = 1.016, t = -0.
 P268 ganho do sentido novo no mundo sequencial, tres estimativas combinadas = 0.552 (ep 0.162, t = 3.40)
 P267 crenca compartilhada final com ruido = 0.665 (dp 0.107); formula da P146 = 0.667
 P269 minha taxa de erro (42/84): media = 0.50, intervalo 90% = [0.41, 0.59]
+--- Parte 21 (a intuicao corrigida pela sensacao) ---
+P272 sigma do modelo = 0.5: peso otimo simulado = 0.8, teoria 1/(1+sigma^2) = 0.80; valor com peso 1 = 4.615, com o peso otimo = 4.635
+P272 sigma do modelo = 2.0: peso otimo simulado = 0.2, teoria 1/(1+sigma^2) = 0.20; valor com peso 1 = 2.492, com o peso otimo = 3.054
+P274 base: calibrada - versao principal = 0.234, dp = 0.270, t = 2.73; peso aprendido = 0.801 (teoria 0.800)
+P274 modelo ruim: calibrada - versao principal = 0.684, dp = 0.421, t = 5.14; peso aprendido = 0.201 (teoria 0.200)
+P275 Upsilon sequencial = {'velha_atenta': 0.706, 'calibrada': 0.708}
+P275 base           : {'velha_atenta': 0.741, 'calibrada': 0.74}
+P275 armadilha nova : {'velha_atenta': 0.705, 'calibrada': 0.691}
+P275 catastrofe x2  : {'velha_atenta': 0.711, 'calibrada': 0.737}
+P275 modelo ruim    : {'velha_atenta': 0.414, 'calibrada': 0.44}
+P275 humano fragil  : {'velha_atenta': 0.715, 'calibrada': 0.71}
+P277 erro medio por passo 0.01: horizonte mediano simulado = 42; formula da P149 = 40.75
+P277 erro medio por passo 0.05: horizonte mediano simulado = 9; formula da P149 = 8.31
+P277 erro medio por passo 0.1: horizonte mediano simulado = 5; formula da P149 = 4.25
+P279 minha taxa de erro (45/91): media = 0.49, intervalo 90% = [0.41, 0.58]
+--- Parte 22 (o prototipo em modulos: pacote synthai/) ---
+P283 base: calculos = 19.789, modular = 19.809; diferenca = 0.019, dp = 0.868, t = 0.07; peso da intuicao modular = 0.800; catastrofes 0.0170 vs 0.0163
+P283 modelo ruim: calculos = 11.241, modular = 11.556; diferenca = 0.315, dp = 0.690, t = 1.44; peso da intuicao modular = 0.203; catastrofes 0.0207 vs 0.0185
+P284 escolha única: {'Acaso': -0.27, 'Guloso': -12.91, 'Oraculo': 2.74, 'Synthai': 1.47}; catastrofes {'Acaso': 0.0053, 'Guloso': 0.2966, 'Oraculo': 0.0, 'Synthai': 0.0056}
+P284 escolha única: Synthai - acaso = 1.74 (t = 31.7); Synthai - guloso = 14.38 (t = 65.7); normalizado = 0.578
+P284 sequencial   : {'Acaso': -1.39, 'Guloso': 9.93, 'Oraculo': 26.84, 'Synthai': 20.0}; catastrofes {'Acaso': 0.0282, 'Guloso': 0.2247, 'Oraculo': 0.0, 'Synthai': 0.0138}
+P284 sequencial   : Synthai - acaso = 21.39 (t = 90.2); Synthai - guloso = 10.07 (t = 25.1); normalizado = 0.758
+P284 bandido      : {'Acaso': 61.05, 'Guloso': 8.49, 'Oraculo': 251.84, 'Synthai': 152.71}; catastrofes {'Acaso': 2.18, 'Guloso': 3.7, 'Oraculo': 0.0, 'Synthai': 0.325}
+P284 bandido      : Synthai - acaso = 91.67 (t = 13.4); Synthai - guloso = 144.23 (t = 17.8); normalizado = 0.476
+P285 modulos do agente = 6; arestas = 5 [('agente', 'intuicao'), ('agente', 'pensamento'), ('agente', 'percepcao'), ('agente', 'relacao'), ('agente', 'sentimento')]; interface = 15 atributos ['carga_do_humano', 'catastrofe', 'comite', 'discordancia', 'estimativa', 'explorar', 'horizonte', 'ler_sensor', 'nivel_antes', 'nivel_depois', 'nota', 'opcoes', 'perguntar', 'perguntas', 'restantes']; acessos ao escondido = 0; linhas de codigo = 154; linhagem em calculos = 9 classes
+P286 testes de unidade (testes, falhas) = (10, 0)
+P287 vetos falsos = 274; custo medio dv = 0.458; P* da P71 = 0.00222; limiar exato = 0.00324 (+45.7%)
+P289 minha taxa de erro (46/99): media = 0.47, intervalo 90% = [0.38, 0.55]
+--- Parte 23 (reconhecer o que ja estava resolvido) ---
+P291 Menon: perguntas de sim/nao ate 0,001 = 10 (log2: 10); lado = 2.82861; diagonal 2*sqrt(2) = 2.82843
+P292 peso da leitura = 1.003; prevista/real sem leitura: com 0 = 0.614 (teoria 0.619), com o neutro w/2 = 0.996
+P293 w3 aprendido = 0.729; opcoes sem leitura (2324 catastrofes): prevista/real com 0 = 0.444, com o neutro = 0.548
+P294 sequencial: {'parte22': 19.798, 'neutro': 19.934, 'atencao': 19.834, 'reconhecida': 19.748}; catastrofes {'parte22': 0.0162, 'neutro': 0.0137, 'atencao': 0.0156, 'reconhecida': 0.0172}
+P294 sequencial: neutro - parte22 = 0.1359, dp = 0.7048, t = 1.06
+P294 sequencial: atencao - parte22 = 0.0364, dp = 0.7564, t = 0.26
+P294 sequencial: reconhecida - parte22 = -0.0502, dp = 0.6135, t = -0.45
+P294 escolha única: {'parte22': 1.481, 'neutro': 1.481}; catastrofes {'parte22': 0.0052, 'neutro': 0.0052}
+P294 escolha única: neutro - parte22 = -0.0002, dp = 0.0003, t = -2.51
+P295 normalizado {'parte22': 0.435, 'so_thompson': 0.56, 'reconhecida': 0.5}
+P295 catastrofes por rodada {'parte22': 0.51, 'so_thompson': 0.743, 'reconhecida': 0.958}; arrependimento / Lai-Robbins {'parte22': 0.748, 'so_thompson': 0.425, 'reconhecida': 0.442}
+P295 so_thompson: diferenca = 0.125, dp = 0.136, t = 4.12
+P295 reconhecida: diferenca = 0.065, dp = 0.176, t = 1.65
+P296 (exploratorio) normalizado {'so_thompson': 0.56, 'thompson_neutro': 0.514, 'thompson_atencao': 0.521, 'thompson_memoria': 0.584, 'reconhecida': 0.5}
+P296 (exploratorio) catastrofes por rodada {'so_thompson': 0.743, 'thompson_neutro': 0.922, 'thompson_atencao': 0.843, 'thompson_memoria': 0.64, 'reconhecida': 0.958}; arrependimento / Lai-Robbins {'so_thompson': 0.425, 'thompson_neutro': 0.395, 'thompson_atencao': 0.421, 'thompson_memoria': 0.411, 'reconhecida': 0.442}
+P296 (exploratorio) thompson_neutro: diferenca = -0.046, dp = 0.190, t = -1.07
+P296 (exploratorio) thompson_atencao: diferenca = -0.039, dp = 0.214, t = -0.81
+P296 (exploratorio) thompson_memoria: diferenca = 0.023, dp = 0.153, t = 0.69
+P296 (exploratorio) reconhecida: diferenca = -0.060, dp = 0.217, t = -1.25
+P297 P42 em forma fechada: maximizador = 0.5470 (simulado 0,548), quantilizador = 0.1445 (simulado 0,140)
+P299 minha taxa de erro (53/113): media = 0.47, intervalo 90% = [0.39, 0.55]
+--- Parte 24 (o pensamento diferenciado: ajustar ate convergir) ---
+P302 catastrofes por historico de treino = 37.3
+P302 gradiente_3  : w3 = 0.760; log-perda treino = 0.01671, teste = 0.01830
+P302 gradiente_10 : w3 = 0.752; log-perda treino = 0.01139, teste = 0.01276
+P302 gradiente_30 : w3 = 0.852; log-perda treino = 0.00978, teste = 0.01112
+P302 gradiente_100: w3 = 0.950; log-perda treino = 0.00958, teste = 0.01100
+P302 newton       : w3 = 0.992; log-perda treino = 0.00953, teste = 0.01095
+P302 newton_firth : w3 = 0.964; log-perda treino = 0.00955, teste = 0.01092
+P303 gradiente_3  : w3 = 0.729; sem leitura (2324 catastrofes): prevista/real com 0 = 0.444, com o neutro = 0.548
+P303 newton       : w3 = 0.932; sem leitura (2279 catastrofes): prevista/real com 0 = 0.897, com o neutro = 1.063
+P303 newton_firth : w3 = 0.907; sem leitura (2352 catastrofes): prevista/real com 0 = 0.907, com o neutro = 1.082
+P304 taxas por epoca (eta n lambda) = [0.034, 0.245, 0.607, 2.485]; kappa mediano = 74; epocas pedidas pela teoria = [4, 54, 74, 105, 114, 123, 168, 172, 182, 237]
+P304 gradiente com 118 epocas: |w3 - w3*| medio = 0.0665, maximo = 0.1454
+P304 gradiente com 237 epocas: |w3 - w3*| medio = 0.0675, maximo = 0.1414
+P304 piso com eta = 0,01 e 1000 epocas: |w3 - w3*| medio = 0.0147, maximo = 0.0341
+P304 vies de primeira ordem (Cordeiro-McCullagh) delta3 = -0.0296; Firth - maxima verossimilhanca = -0.0286
+P305 sequencial: {'exploradora': 19.896, 'pensante': 19.875, 'pensante_neutro': 20.142}; catastrofes {'exploradora': 0.0165, 'pensante': 0.0234, 'pensante_neutro': 0.0197}
+P305 sequencial: pensante - exploradora = -0.021, dp = 0.520, t = -0.22
+P305 sequencial: pensante_neutro - exploradora = 0.247, dp = 0.668, t = 2.02
+P305 escolha única: {'exploradora': 1.488, 'pensante': 1.344, 'pensante_neutro': 1.344}; catastrofes {'exploradora': 0.0053, 'pensante': 0.0099, 'pensante_neutro': 0.0099}
+P305 escolha única: pensante - exploradora = -0.144, dp = 0.173, t = -4.56
+P305 escolha única: pensante_neutro - exploradora = -0.144, dp = 0.173, t = -4.56
+P305 bandido: {'exploradora': 0.53, 'pensante': 0.459, 'pensante_neutro': 0.47}; catastrofes {'exploradora': 0.8775, 'pensante': 1.24, 'pensante_neutro': 1.1975}
+P305 bandido: pensante - exploradora = -0.071, dp = 0.189, t = -1.68
+P305 bandido: pensante_neutro - exploradora = -0.060, dp = 0.143, t = -1.88
+P305b (exploratorio) gradiente_3: prevista/real no topo = 0.818, em todas = 0.787; taxa real no topo = 0.0442; perguntas = 0.303; catastrofes = 0.0045; aceitas sem perguntar = 0.386 do topo, P media = 0.0017, taxa real = 0.0050
+P305b (exploratorio) newton_firth: prevista/real no topo = 0.774, em todas = 0.927; taxa real no topo = 0.0449; perguntas = 0.285; catastrofes = 0.0088; aceitas sem perguntar = 0.567 do topo, P media = 0.0013, taxa real = 0.0076
+P306 Newton, erro por iteracao = ['8.9e+00', '7.9e+00', '6.1e+00', '4.4e+00', '3.1e+00', '1.9e+00', '8.4e-01', '1.8e-01', '9.3e-03', '2.6e-05', '2.4e-10']
+P307 tudo         : intercepto = -3.001, inclinacao = 1.501 (n = 400000)
+P307 seleciona_x  : intercepto = -3.005, inclinacao = 1.504 (n = 80000)
+P307 caso_controle: intercepto = -0.016, inclinacao = 1.484 (n = 56969)
+P307 deslocamento do intercepto no caso-controle = 2.985; ln(1/0,05) = 2.996
+P308 bits por opcao: entropia = 0.0472; restam com Newton = 0.0158; com o gradiente de 3 epocas = 0.0264
+P309 minha taxa de erro (59/133): media = 0.44, intervalo 90% = [0.37, 0.51]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 159; pares de interacao possiveis = 12561
-Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde)
-Regressao: 49/49 resultados publicados reproduzidos; falhas = []
+P96 funcoes pNN no arquivo = 185; pares de interacao possiveis = 17020
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada)
+Regressao: 59/59 resultados publicados reproduzidos; falhas = []
