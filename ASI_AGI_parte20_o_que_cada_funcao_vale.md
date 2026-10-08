@@ -159,7 +159,9 @@ Acumulado: **42 de 84** afirmações testadas precisaram de correção. Posterio
 
 - Linhagem: a versão principal continua sendo a `SynthaiVelhaAtenta` (P253), com dois ramos novos: `SynthaiOuvinte` (P262) e o `OraculoSequencial` (P264),
   que não é um agente, é o teto da régua. O laço do mundo sequencial ganhou um gancho (`ver_tudo`) usado só pelo oráculo.
-- Testes de regressão: contagem em `resultados.txt`.
+- Testes de regressão: **49/49**; o arquivo tem **159** funções `pNN`. Execução completa (20 partes): 22 min 41 s. As Partes 1–19 saíram
+  idênticas à execução anterior, exceto duas linhas que medem o próprio código ao vivo: a P143 (tamanho do `CLAUDE.md`) e a P213
+  (número de classes `Synthai`, que cresce a cada parte).
 
 **Metacognição.**
 1. **A ablação reorganizou a série.** Desde a Parte 12, o planejamento é responsável por quase todo o valor da SYNTHAI no mundo sequencial (perda de 14

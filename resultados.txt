@@ -211,7 +211,7 @@ P137 arrependimento (limiar, exposicao) = {(0.2, 0.0): 1000, (0.5, 0.0): 1000, (
 P138 objetivo inferido errado: humano Boltzmann = 0.178, humano com vies de seguranca = 0.590
 P139 minha taxa de erro (17/30): media = 0.56, intervalo 90% = [0.42, 0.70]
 --- Parte 9 (o mundo decide o centro, complexo autonomo, transferencia, heroi, a regua do ruido) ---
-P143 pedido = 8 caracteres; memoria compartilhada (CLAUDE.md) = 3627; razao = 453x
+P143 pedido = 8 caracteres; memoria compartilhada (CLAUDE.md) = 3874; razao = 484x
 P144 taxa de catastrofe 0.0025: liquido por carga-alvo = {0.1: 1.168, 0.2: 1.446, 0.3: 1.354, 0.5: 1.35, 0.8: 1.323}
 P144 taxa de catastrofe 0.005: liquido por carga-alvo = {0.1: 1.347, 0.2: 1.343, 0.3: 1.181, 0.5: 1.27, 0.8: 1.04}
 P144 taxa de catastrofe 0.01: liquido por carga-alvo = {0.1: 0.829, 0.2: 0.879, 0.3: 1.116, 0.5: 1.0, 0.8: 0.582}
@@ -338,7 +338,7 @@ P206 gerador rapido identico ao original = True
 P207 variancia compensada / equilibrada = 2.747; prevista pela amostra efetiva (P122) = 2.777
 P210 minha taxa de erro (32/58): media = 0.55, intervalo 90% = [0.44, 0.65]
 --- Parte 15 (SYNTHAI: o nome, a memoria que esquece, a sintese dos modulos) ---
-P213 classes renomeadas = 18; nomes antigos continuam como apelidos = True; regressao apos a troca = 48/48
+P213 classes renomeadas = 19; nomes antigos continuam como apelidos = True; regressao apos a troca = 49/49
 P214 armadilha nova, p8_x2     : catastrofes 1a metade = 0.0077, 2a metade = 0.0082
 P214 armadilha nova, memoria_v2: catastrofes 1a metade = 0.0078, 2a metade = 0.0076
 P214 memoria v2 - realista: diferenca media no liquido = -0.140, dp = 0.195, t = -2.26
@@ -402,7 +402,25 @@ P254 teto do Upsilon ajustado nas Partes 5-11 = 0.455 (r = 0.43, erro 0.024); co
 P255 modulos por funcao de Jung = {'sensacao': 4, 'pensamento': 3, 'sentimento': 4, 'intuicao': 2}; entropia = 1.950 de 2 bits (P161: 1.561)
 P256 R2 da quarta funcao: simulado = 0.1685, formula da P121 = 0.1688
 P258 minha taxa de erro (39/78): media = 0.50, intervalo 90% = [0.41, 0.59]
+--- Parte 20 (o simbolo com o tempo, o Upsilon sequencial e o que cada funcao vale) ---
+P262 sem_aprender: AUC final = 0.923, liquido = 1.229
+P262 veto        : AUC final = 0.953, liquido = -1.842
+P262 fala        : AUC final = 0.934, liquido = 1.037
+P262 AUC(veto) - AUC(fala): diferenca media = 0.019, dp = 0.050, t = 1.20
+P265 Upsilon sequencial = {'miope': 0.19, 'planejadora': 0.704, 'velha': 0.689, 'velha_atenta': 0.706}
+P265 base           : {'miope': 0.194, 'planejadora': 0.735, 'velha': 0.72, 'velha_atenta': 0.741}
+P265 armadilha nova : {'miope': 0.178, 'planejadora': 0.716, 'velha': 0.679, 'velha_atenta': 0.705}
+P265 catastrofe x2  : {'miope': 0.194, 'planejadora': 0.718, 'velha': 0.719, 'velha_atenta': 0.711}
+P265 modelo ruim    : {'miope': 0.194, 'planejadora': 0.416, 'velha': 0.402, 'velha_atenta': 0.414}
+P265 humano fragil  : {'miope': 0.164, 'planejadora': 0.712, 'velha': 0.707, 'velha_atenta': 0.715}
+P266 versao principal completa (armadilha nova): retorno = 18.665
+P266 sem planejar (intuicao): perda ao tirar = 14.010, dp = 1.031, t = 42.96
+P266 sem diversificar no fim (sentimento): perda ao tirar = -0.436, dp = 0.735, t = -1.88
+P266 sem o sentido novo (sensacao): perda ao tirar = -0.129, dp = 1.016, t = -0.40
+P268 ganho do sentido novo no mundo sequencial, tres estimativas combinadas = 0.552 (ep 0.162, t = 3.40)
+P267 crenca compartilhada final com ruido = 0.665 (dp 0.107); formula da P146 = 0.667
+P269 minha taxa de erro (42/84): media = 0.50, intervalo 90% = [0.41, 0.59]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 154; pares de interacao possiveis = 11781
-Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva)
-Regressao: 48/48 resultados publicados reproduzidos; falhas = []
+P96 funcoes pNN no arquivo = 159; pares de interacao possiveis = 12561
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde)
+Regressao: 49/49 resultados publicados reproduzidos; falhas = []
