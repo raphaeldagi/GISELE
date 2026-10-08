@@ -368,6 +368,12 @@ $$
 desligam **várias** salvaguardas de uma vez (por exemplo, falhas no reparo de DNA), exatamente o
 ponto cego compartilhado. O número de $2{,}6\times10^{-7}$ é um piso otimista.
 
+> **Correção (Parte 16, P224) ❌.** A fórmula $(\mu t)^k/k!$ vale para $k$ estágios que precisam acontecer **em
+> ordem** (como as mutações sucessivas de Armitage–Doll), não para $k$ salvaguardas **independentes** que falham
+> cada uma por conta própria. Para estas, o certo é $(1 - e^{-\mu t})^k$, o que dá $5{,}7\times10^{-6}$, e não
+> $2{,}6\times10^{-7}$: o risco publicado aqui estava **22× subestimado**. O texto original fica como estava, para o
+> registro.
+
 ---
 
 ## Parte XXX — Fechamento e unificação

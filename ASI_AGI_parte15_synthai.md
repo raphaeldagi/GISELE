@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 15: SYNTHAI — o nome, a memória que esquece e a síntese
 
-> Continuação da [Parte 14](ASI_AGI_parte14_ultimo_passo.md). Os números saem de `p213_...` a `p218_...` e das classes
+> Continuação da [Parte 14](ASI_AGI_parte14_ultimo_passo.md). **Próxima:** [Parte 16 — um sentido novo](ASI_AGI_parte16_sentido_novo.md) (P222–P231). Os números saem de `p213_...` a `p218_...` e das classes
 > `SynthaiMemoriaV2` e `SynthaiIntegral` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
