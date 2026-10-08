@@ -3499,7 +3499,7 @@ def p277_auditoria_p149(erros=(0.01, 0.05, 0.1), tolerancia=0.5, rodadas=4000, s
 # --- Parte 22: o protótipo em módulos (pacote synthai/) ---
 
 # Placar acumulado ao fim da Parte 22 (atualizado quando os testes da parte terminam)
-ERROS_P289, TESTES_P289 = 45, 91
+ERROS_P289, TESTES_P289 = 46, 99
 
 
 def _pareado(a, b):
@@ -3680,6 +3680,9 @@ def testes_de_regressao():
         "P255": round(p255_quaternidade()[1], 3) == 1.950,
         "P268": round(p268_efeito_combinado()[0], 3) == 0.552,
         "P272": [p272_encolhimento()[x][0] for x in (0.5, 2.0)] == [0.8, 0.2],
+        "P285": p285_acoplamento()[0:4:3] == (6, 0) and len(p285_acoplamento()[1]) == 5,
+        "P286": p286_testes_de_unidade() == (10, 0),
+        "P287": round(p287_veto_falso()[1], 2) == 0.46,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -4219,6 +4222,25 @@ def _parte_21():
     print(f"P279 minha taxa de erro ({ERROS_P279}/{TESTES_P279}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_22():
+    print("--- Parte 22 (o prototipo em modulos: pacote synthai/) ---")
+    for mundo, (a, b, (m, dp, tt), peso, cat_a, cat_b) in p283_equivalencia_modular().items():
+        print(f"P283 {mundo}: calculos = {a:.3f}, modular = {b:.3f}; diferenca = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}; "
+              f"peso da intuicao modular = {peso:.3f}; catastrofes {cat_a:.4f} vs {cat_b:.4f}")
+    for tarefa, (medias, cats, (ma, da, ta), (mg, dg, tg), norm) in p284_generalidade().items():
+        print(f"P284 {tarefa:13s}: { {k: round(v, 2) for k, v in medias.items()} }; catastrofes { {k: round(v, 4) for k, v in cats.items()} }")
+        print(f"P284 {tarefa:13s}: Synthai - acaso = {ma:.2f} (t = {ta:.1f}); Synthai - guloso = {mg:.2f} (t = {tg:.1f}); "
+              f"normalizado = {norm:.3f}")
+    n, arestas, interface, escondidos, linhas, linhagem = p285_acoplamento()
+    print(f"P285 modulos do agente = {n}; arestas = {len(arestas)} {arestas}; interface = {len(interface)} atributos {interface}; "
+          f"acessos ao escondido = {escondidos}; linhas de codigo = {linhas}; linhagem em calculos = {len(linhagem)} classes")
+    print(f"P286 testes de unidade (testes, falhas) = {p286_testes_de_unidade()}")
+    n, dv, formula, exato, rel = p287_veto_falso()
+    print(f"P287 vetos falsos = {n}; custo medio dv = {dv:.3f}; P* da P71 = {formula:.5f}; limiar exato = {exato:.5f} ({rel:+.1%})")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P289, testes=TESTES_P289)
+    print(f"P289 minha taxa de erro ({ERROS_P289}/{TESTES_P289}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -4239,11 +4261,12 @@ def _unificacao():
           " | SynthaiFala (P245: o humano responde com palavras)"
           " -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva)"
           " | SynthaiOuvinte (P262: aprende com o que o humano responde)"
-          " -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo)")
+          " -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo)"
+          " => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22}
 
 
 if __name__ == "__main__":

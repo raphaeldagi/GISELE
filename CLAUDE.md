@@ -50,3 +50,11 @@ anterior, commit e push.
   (mais a unificação). Depois de mudar o código: `python3 calculos.py > resultados.txt` (todas as partes,
   leva vários minutos: rodar em segundo plano) e commitar os dois.
 - Se a simulação discordar do texto, corrigir o texto e registrar a correção.
+- Registrar as previsões antes de **qualquer** execução que mostre os números medidos, inclusive um teste de fumaça (Parte 22).
+
+## O protótipo em módulos (`synthai/`, desde a Parte 22)
+- A versão principal é `synthai.Synthai`: um módulo por função de Jung (`percepcao`, `pensamento`, `intuicao`, `sentimento`,
+  `relacao`), integrados pelo `agente`. Módulos novos entram no pacote; os experimentos continuam em `calculos.py` (`pNN_...`).
+- O pacote reusa `calculos.py` (importa, não copia). Só biblioteca padrão.
+- Os módulos do agente nunca leem atributos `_` de outros objetos (o escondido do mundo); `synthai/testes.py` verifica.
+  Cada módulo novo ganha testes de unidade em `synthai/testes.py` (`python3 -m unittest synthai.testes`).

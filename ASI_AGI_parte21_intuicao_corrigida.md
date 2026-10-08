@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 21: a intuição corrigida pela sensação
 
-> Continuação da [Parte 20](ASI_AGI_parte20_o_que_cada_funcao_vale.md). Os números saem de `p272_...`, `p274_...`, `p275` (Υ sequencial da P265) e
+> Continuação da [Parte 20](ASI_AGI_parte20_o_que_cada_funcao_vale.md). **Próxima:** [Parte 22 — o protótipo em módulos](ASI_AGI_parte22_prototipo_em_modulos.md) (P281–P290). Os números saem de `p272_...`, `p274_...`, `p275` (Υ sequencial da P265) e
 > `p277_...`, e da classe `SynthaiIntuicaoCalibrada` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
@@ -156,7 +156,8 @@ Acumulado: **45 de 91** afirmações testadas precisaram de correção. Posterio
 
 - **Nova versão principal: `SynthaiIntuicaoCalibrada`** (P274): é melhor que a anterior nos dois mundos testados (+0,23 e +0,68, t > 2,5). Linhagem:
   … → `SynthaiVelhaAtenta` (P253) → **`SynthaiIntuicaoCalibrada`** (P274).
-- Testes de regressão: contagem em `resultados.txt`.
+- Testes de regressão: **50/50** reproduzidos; o arquivo tinha **162** funções `pNN` ao fim da Parte 21. (Conferido na execução completa da
+  Parte 22, que inclui estes 50 testes; a execução das Partes 1–21 foi interrompida quando a Parte 22 mudou o código.)
 
 **Metacognição.**
 1. **O resultado mais limpo da série**: a SYNTHAI descobriu sozinha o peso que a teoria manda, com erro de 0,001, olhando só para o próprio nível. Quando o
