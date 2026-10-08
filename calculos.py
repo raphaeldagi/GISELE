@@ -3934,6 +3934,137 @@ def p307_selecao(n=400000, b=-3.0, w=1.5, frac_x=0.2, frac_negativos=0.05, semen
     return ajustes, log(1 / frac_negativos)
 
 
+def _autovalores_simetrica(m, varreduras=60):
+    """Método de Jacobi: autovalores e autovetores (colunas) de uma matriz simétrica pequena."""
+    n = len(m)
+    a = [list(l) for l in m]
+    v = [[1.0 if i == j else 0.0 for j in range(n)] for i in range(n)]
+    for _ in range(varreduras):
+        fora = sum(a[i][j] ** 2 for i in range(n) for j in range(n) if i != j)
+        if fora < 1e-30:
+            break
+        for p in range(n - 1):
+            for q in range(p + 1, n):
+                if abs(a[p][q]) < 1e-300:
+                    continue
+                theta = (a[q][q] - a[p][p]) / (2 * a[p][q])
+                t = (1.0 if theta >= 0 else -1.0) / (abs(theta) + sqrt(theta * theta + 1))
+                c = 1 / sqrt(t * t + 1)
+                s = t * c
+                for k in range(n):
+                    akp, akq = a[k][p], a[k][q]
+                    a[k][p], a[k][q] = c * akp - s * akq, s * akp + c * akq
+                for k in range(n):
+                    apk, aqk = a[p][k], a[q][k]
+                    a[p][k], a[q][k] = c * apk - s * aqk, s * apk + c * aqk
+                for k in range(n):
+                    vkp, vkq = v[k][p], v[k][q]
+                    v[k][p], v[k][q] = c * vkp - s * vkq, s * vkp + c * vkq
+    return [a[i][i] for i in range(n)], v
+
+
+def p304_teoria_da_convergencia(sementes=tuple(range(620, 630)), treino=150, taxa=0.05, tolerancia=0.01):
+    """Por que 3 épocas não bastam (P302), pela conta. Perto do ótimo w*, uma época de gradiente amostra a amostra
+    (taxa η, n amostras) age como w ← w* + (I − η n H)(w − w*), H = média de p(1−p) x xᵀ (informação de Fisher por
+    amostra). A direção de autovalor λ encolhe por (1 − η n λ) a cada época: as direções lentas mandam.
+
+    Devolve, por semente média: os autovalores de η n H (taxas por época), o número de condição, e as épocas que a
+    teoria pede para o erro do peso da leitura (w3) cair abaixo de `tolerancia` partindo do erro que tem depois de
+    3 épocas (as direções com η n λ > 1 são tratadas como já convergidas: o gradiente amostra a amostra não diverge
+    nelas como o de lote diverge)."""
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento import Pensamento
+    from synthai.pensamento_exato import ajustar_logistica, dados_do_historico
+    taxas_med = None
+    kappas, epocas_teoria, w3_otimo, positivos = [], [], [], []
+    for s in sementes:
+        mundo = MundoSequencial(s)
+        hist = mundo.historico_auditado(treino)
+        xs, ys = dados_do_historico(hist)
+        n = len(xs)
+        positivos.append(sum(ys))
+        w = ajustar_logistica(xs, ys, firth=False)
+        k = len(w)
+        h = [[0.0] * k for _ in range(k)]
+        for x in xs:
+            z = sum(wi * xi for wi, xi in zip(w, x))
+            p = 1 / (1 + exp(-max(-30.0, min(30.0, z))))
+            for i in range(k):
+                for j in range(k):
+                    h[i][j] += p * (1 - p) * x[i] * x[j] / n
+        lam, vet = _autovalores_simetrica(h)
+        taxas = sorted(taxa * n * l for l in lam)
+        taxas_med = taxas if taxas_med is None else [a + b for a, b in zip(taxas_med, taxas)]
+        kappas.append(max(lam) / min(lam))
+        g = Pensamento(taxa)
+        g.calibrar(hist, epocas=3)
+        erro = [gi - wi for gi, wi in zip(g.w, w)]
+        # componentes do erro nos autovetores; as direções rápidas (η n λ > 1) já convergiram
+        comp = [(taxa * n * lam[c], sum(vet[i][c] * erro[i] for i in range(k)), vet[3][c]) for c in range(k)]
+        e = 0
+        while e < 100000:
+            w3_erro = sum(cc * v3 * (1 - r) ** e for r, cc, v3 in comp if r <= 1.0)
+            if abs(w3_erro) < tolerancia:
+                break
+            e += 1
+        epocas_teoria.append(3 + e)
+        w3_otimo.append(w[3])
+    m = len(sementes)
+    return ([t / m for t in taxas_med], sorted(kappas)[m // 2], sorted(epocas_teoria), sum(w3_otimo) / m,
+            sum(positivos) / m)
+
+
+def p304b_conferir_epocas(epocas, sementes=tuple(range(620, 630)), treino=150):
+    """Roda o gradiente com o número de épocas que a teoria pediu e mede |w3 − w3*| médio."""
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento import Pensamento
+    from synthai.pensamento_exato import ajustar_logistica, dados_do_historico
+    erros = []
+    for s in sementes:
+        hist = MundoSequencial(s).historico_auditado(treino)
+        xs, ys = dados_do_historico(hist)
+        w = ajustar_logistica(xs, ys, firth=False)
+        g = Pensamento()
+        g.calibrar(hist, epocas=epocas)
+        erros.append(abs(g.w[3] - w[3]))
+    return sum(erros) / len(erros), max(erros)
+
+
+def p306_newton_quadratico(semente=620, treino=150):
+    """Convergência quadrática de Newton, contada: o tamanho do passo a cada iteração e a razão
+    log(passo_k+1)/log(passo_k), que tende a 2 quando o número de dígitos certos dobra."""
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento_exato import ajustar_logistica, dados_do_historico
+    xs, ys = dados_do_historico(MundoSequencial(semente).historico_auditado(treino))
+    w_final = ajustar_logistica(xs, ys, firth=False, iteracoes=40)
+    erros = []
+    for it in range(1, 12):
+        w = ajustar_logistica(xs, ys, firth=False, iteracoes=it)
+        erros.append(max(abs(a - b) for a, b in zip(w, w_final)))
+    return erros
+
+
+def p308_informacao(sementes=tuple(range(620, 630)), treino=150, teste=300):
+    """A log-perda em bits: entropia da catástrofe (sem olhar nada), o que as variáveis explicam (Newton) e o que o
+    gradiente de 3 épocas deixa na mesa. Tudo no histórico de teste."""
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento import Pensamento
+    from synthai.pensamento_exato import ajustar_logistica, dados_do_historico, perda_logistica
+    h0 = hn = hg = 0.0
+    for s in sementes:
+        mundo = MundoSequencial(s)
+        hist = mundo.historico_auditado(treino)
+        xs, ys = dados_do_historico(hist)
+        xt, yt = dados_do_historico(mundo.historico_auditado(teste))
+        pi = sum(ys) / len(ys)
+        h0 += perda_logistica([log(pi / (1 - pi)), 0, 0, 0], xt, yt) / log(2) / len(sementes)
+        hn += perda_logistica(ajustar_logistica(xs, ys, firth=False), xt, yt) / log(2) / len(sementes)
+        g = Pensamento()
+        g.calibrar(hist)
+        hg += perda_logistica(g.w, xt, yt) / log(2) / len(sementes)
+    return h0, hn, hg
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
