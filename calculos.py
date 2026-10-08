@@ -1,7 +1,7 @@
-"""Reproduz os cálculos e simulações das Partes 1 a 14 (ASI_AGI_*.md).
+"""Reproduz os cálculos e simulações das Partes 1 a 15 (ASI_AGI_*.md).
 
 Arquivo único que sempre cresce: cada parte acrescenta funções pNN_..., o agente
-unificado `Gisele` incorpora os módulos anteriores e `testes_de_regressao` garante que
+unificado `Synthai` incorpora os módulos anteriores e `testes_de_regressao` garante que
 os números já publicados não mudam.
 
 Uso: python3 calculos.py            (imprime tudo)
@@ -558,7 +558,7 @@ def p78_reversibilidade(estados=1000, destruidos=500):
     return destruidos / estados, log(estados / (estados - destruidos))
 
 
-# --- Parte 5: a pergunta como ponto de partida e o agente unificado GISELE ---
+# --- Parte 5: a pergunta como ponto de partida e o agente unificado SYNTHAI ---
 
 def p81_perguntas(hipoteses=2**20):
     """Cada pergunta sim/não ótima corta o espaço pela metade: log2(H) perguntas bastam."""
@@ -661,7 +661,7 @@ _gerar_acoes_original = _gerar_acoes
 _gerar_acoes = _gerar_acoes_rapido
 
 
-class Gisele:
+class Synthai:
     """Agente unificado. Cresce a cada parte; cada módulo cita a pergunta de origem.
 
     - comitê de modelos de recompensa e incerteza por discordância (P67)
@@ -717,13 +717,13 @@ class Gisele:
         return ordem[0], perguntas
 
 
-def p83_85_gisele(rho_cego, diverso, episodios=2000, treino=300, n_acoes=200, p_cat=0.005,
+def p83_85_synthai(rho_cego, diverso, episodios=2000, treino=300, n_acoes=200, p_cat=0.005,
                   custo_pergunta=0.1, perda=50.0, bonus_implantado=3.0, semente=83):
-    """Compara a GISELE com a política 'completo' da Parte 4. bonus_implantado != 3 testa mudança de mundo."""
+    """Compara a SYNTHAI com a política 'completo' da Parte 4. bonus_implantado != 3 testa mudança de mundo."""
     rng = _rng(semente)
     tipos, por_tipo = (2, 3) if diverso else (1, 5)
     historico = [_gerar_acoes(rng, n_acoes, p_cat, tipos, por_tipo, rho_cego) for _ in range(treino)]
-    agente = Gisele(custo_pergunta=custo_pergunta, perda=perda)
+    agente = Synthai(custo_pergunta=custo_pergunta, perda=perda)
     agente.calibrar(historico)
     cat = perguntas = 0
     valor = 0.0
@@ -835,7 +835,7 @@ def p96_crescimento():
     import sys
     modulo = sys.modules[__name__]
     funcoes = sorted(n for n in dir(modulo) if n.startswith("p") and n[1:3].isdigit())
-    k = len(funcoes)
+    k = len({id(getattr(modulo, n)) for n in funcoes})  # P213: apelidos (nomes antigos) não contam duas vezes
     return k, k * (k - 1) // 2
 
 
@@ -980,8 +980,8 @@ def p110_individuacao(passos=20, k=0.5, centro=0.0, inicio=10.0):
     return x
 
 
-class GiseleJung(Gisele):
-    """Gisele + módulos junguianos (Parte 6).
+class SynthaiJung(Synthai):
+    """Synthai + módulos junguianos (Parte 6).
 
     sombra:     "nao" | "tudo" (aprende com os próprios resultados e com os vetos humanos)
                 | "propria" (aprende só com os resultados das próprias ações)          (P102, P104)
@@ -1033,7 +1033,7 @@ class GiseleJung(Gisele):
 
 
 VERSOES_JUNG = {
-    "gisele": ("nao", "nao"),
+    "synthai": ("nao", "nao"),
     "sombra_tudo": ("tudo", "nao"),
     "descartar": ("nao", "descartar"),
     "jung_v1": ("tudo", "descartar"),
@@ -1042,13 +1042,13 @@ VERSOES_JUNG = {
 }
 
 
-def p112_gisele_jung(versao, episodios=2000, treino=30, rho_cego=0.5, eps0=0.1, fadiga=0.3,
+def p112_synthai_jung(versao, episodios=2000, treino=30, rho_cego=0.5, eps0=0.1, fadiga=0.3,
                      n_acoes=200, p_cat=0.005, custo=0.1, perda=50.0, semente=112):
     """Mundo com poucos rótulos (30 episódios) e humano que cansa: eps = eps0 + fadiga * carga."""
     rng = _rng(semente)
     historico = [_gerar_acoes(rng, n_acoes, p_cat, 2, 3, rho_cego) for _ in range(treino)]
     sombra, compensar = VERSOES_JUNG[versao]
-    agente = GiseleJung(sombra=sombra, compensar=compensar, custo_pergunta=custo, perda=perda)
+    agente = SynthaiJung(sombra=sombra, compensar=compensar, custo_pergunta=custo, perda=perda)
     agente.calibrar(historico)
     carga = 0.0
     cat = perguntas = 0
@@ -1069,7 +1069,7 @@ def p112_gisele_jung(versao, episodios=2000, treino=30, rho_cego=0.5, eps0=0.1, 
 
 def p116_ganho_do_laco(epsilons=(0.1, 0.2, 0.3, 0.45), fadiga=0.3, eps0=0.1):
     """Mede n(eps) em laço aberto (humano com erro fixo) e prevê o ponto fixo do laço fechado."""
-    medidos = {e: p112_gisele_jung("gisele", eps0=e, fadiga=0.0)[2] for e in epsilons}
+    medidos = {e: p112_synthai_jung("synthai", eps0=e, fadiga=0.0)[2] for e in epsilons}
     pontos = sorted(medidos.items())
 
     def n_de(e):
@@ -1111,14 +1111,14 @@ def p117_carga_alvo(alvos=(0.1, 0.2, 0.3, 0.5, 0.8), sementes=(112, 114), fadiga
         for alvo in alvos:
             rng = _rng(s)
             hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
-            ag = GiseleJung(sombra="propria", compensar="equilibrio", carga_alvo=alvo)
+            ag = SynthaiJung(sombra="propria", compensar="equilibrio", carga_alvo=alvo)
             ag.calibrar(hist)
             resultado[(s, alvo)] = _rodar_mundo_fadiga(ag, fadiga=fadiga, rng=rng)[3]
     return resultado
 
 
-class GiseleAnima(GiseleJung):
-    """A GiseleJung não sabe o erro real do humano: usa a própria imagem dele (anima), fixa em 0.1."""
+class SynthaiAnima(SynthaiJung):
+    """A SynthaiJung não sabe o erro real do humano: usa a própria imagem dele (anima), fixa em 0.1."""
 
     def __init__(self, eps_crido=0.1, **kw):
         super().__init__(**kw)
@@ -1163,7 +1163,7 @@ class GiseleAnima(GiseleJung):
         return 0.0
 
 
-class GiseleSelf(GiseleAnima):
+class SynthaiSelf(SynthaiAnima):
     """O Si-mesmo como regulador (P125): audita o auditor e ajusta a carga-alvo por homeostase.
 
     - anima corrigida: com prob. `p_auditoria` descobre se o humano acertou e atualiza eps_estimado
@@ -1199,13 +1199,13 @@ def p118_125_versoes(versao, semente=112, fadiga=0.3, episodios=2000):
     rng = _rng(semente)
     hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
     if versao == "v2_sabe_eps":
-        ag = GiseleJung(sombra="propria", compensar="equilibrio")
+        ag = SynthaiJung(sombra="propria", compensar="equilibrio")
     elif versao == "v2_anima_fixa":
-        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+        ag = SynthaiAnima(sombra="propria", compensar="equilibrio")
     elif versao == "self":
-        ag = GiseleSelf(sombra="propria", compensar="equilibrio")
+        ag = SynthaiSelf(sombra="propria", compensar="equilibrio")
     else:  # "self_v2"
-        ag = GiseleSelf(sombra="propria", compensar="equilibrio", carga_minima=0.1)
+        ag = SynthaiSelf(sombra="propria", compensar="equilibrio", carga_minima=0.1)
     ag.calibrar(hist)
     r = _rodar_mundo_fadiga(ag, fadiga=fadiga, rng=rng, episodios=episodios)
     extra = (round(ag.carga_alvo, 3), round(ag.eps_estimado, 3), ag.auditorias) if versao.startswith("self") else None
@@ -1315,12 +1315,12 @@ def p130_estacionariedade(placar=((2, 5), (4, 7), (1, 2), (3, 5), (4, 6))):
 
 
 def p131_multiplicador_pergunta(mults=(1.0, 1.1, 1.5, 2.0, 4.0, 10.0), semente=112, fadiga=0.3):
-    """Por que conhecer eps ajudou (P118)? Varre o limiar P* da GiseleAnima multiplicado por m."""
+    """Por que conhecer eps ajudou (P118)? Varre o limiar P* da SynthaiAnima multiplicado por m."""
     resultado = {}
     for m in mults:
         rng = _rng(semente)
         hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
-        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+        ag = SynthaiAnima(sombra="propria", compensar="equilibrio")
         ag.mult_pergunta = m
         ag.calibrar(hist)
         cat, val, perg, liq, eps = _rodar_mundo_fadiga(ag, fadiga=fadiga, rng=rng)
@@ -1333,7 +1333,7 @@ def p133_auditorias_necessarias(eps=0.15, meia_largura=0.05, z=1.645, perguntas=
     return n, n / (perguntas * p_auditoria)
 
 
-class GiseleLenta(GiseleAnima):
+class SynthaiLenta(SynthaiAnima):
     """O Si-mesmo lento (P133): mede antes de mudar.
 
     - anima bayesiana: Beta(2, 18) sobre o erro humano, atualizada por auditorias (P118, P125)
@@ -1382,16 +1382,16 @@ class GiseleLenta(GiseleAnima):
 
 
 def p133_lenta(versao, semente, fadiga=0.3, fadiga_depois=None, episodios=2000):
-    """versao: "anima" (P* x1), "anima_x2" (P* x2, P131) ou "lenta" (GiseleLenta com P* x2).
+    """versao: "anima" (P* x1), "anima_x2" (P* x2, P131) ou "lenta" (SynthaiLenta com P* x2).
 
     fadiga_depois muda o humano na metade do caminho (mundo não estacionário).
     """
     rng = _rng(semente)
     hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
     if versao == "lenta":
-        ag = GiseleLenta(sombra="propria", compensar="equilibrio")
+        ag = SynthaiLenta(sombra="propria", compensar="equilibrio")
     else:
-        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+        ag = SynthaiAnima(sombra="propria", compensar="equilibrio")
     ag.mult_pergunta = 1.0 if versao == "anima" else 2.0
     ag.calibrar(hist)
     if fadiga_depois is None:
@@ -1537,10 +1537,10 @@ def p138_mente_enviesada(passos=3, beta=0.5, vies=0.4, rodadas=20000, semente=13
 
 # --- Parte 9: o mundo decide o centro, complexos autônomos, transferência, o herói que volta ---
 
-def _gisele_realista(rng, p_cat=0.005, rho_cego=0.5, treino=30):
-    """A melhor GISELE validada fora da semente (Parte 8): anima fixa, sombra própria, carga 0.3, P* x2."""
+def _synthai_realista(rng, p_cat=0.005, rho_cego=0.5, treino=30):
+    """A melhor SYNTHAI validada fora da semente (Parte 8): anima fixa, sombra própria, carga 0.3, P* x2."""
     hist = [_gerar_acoes(rng, 200, p_cat, 2, 3, rho_cego) for _ in range(treino)]
-    ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+    ag = SynthaiAnima(sombra="propria", compensar="equilibrio")
     ag.mult_pergunta = 2.0
     ag.calibrar(hist)
     return ag
@@ -1552,14 +1552,14 @@ def p144_centro_do_mundo(p_cats=(0.0025, 0.005, 0.01), alvos=(0.1, 0.2, 0.3, 0.5
     for p_cat in p_cats:
         for alvo in alvos:
             rng = _rng(semente)
-            ag = _gisele_realista(rng, p_cat=p_cat)
+            ag = _synthai_realista(rng, p_cat=p_cat)
             ag.carga_alvo = alvo
             resultado[(p_cat, alvo)] = _rodar_mundo_fadiga(ag, rng=rng, p_cat=p_cat)[3]
     return resultado
 
 
 def _avaliar_calibracao(ag, rng, episodios=200, p_cat=0.005):
-    """Log-perda e confiança média da GISELE em ações novas: todas e só as do topo (onde ela decide)."""
+    """Log-perda e confiança média da SYNTHAI em ações novas: todas e só as do topo (onde ela decide)."""
     perdas = {"todas": [0.0, 0], "topo": [0.0, 0]}
     p_media_cat, n_cat = 0.0, 0
     for _ in range(episodios):
@@ -1582,7 +1582,7 @@ def _avaliar_calibracao(ag, rng, episodios=200, p_cat=0.005):
 def p145_complexo_autonomo(semente=145, episodios=2000):
     """A calibração que aprende só com as próprias escolhas vira um complexo que se confirma sozinho?"""
     rng = _rng(semente)
-    ag = _gisele_realista(rng)
+    ag = _synthai_realista(rng)
     copia_w = ag.w[:]
     antes = _avaliar_calibracao(ag, _rng(1450))
     _rodar_mundo_fadiga(ag, rng=rng, episodios=episodios)
@@ -1590,7 +1590,7 @@ def p145_complexo_autonomo(semente=145, episodios=2000):
     return antes, depois, copia_w, ag.w[:]
 
 
-class GiseleAncorada(GiseleAnima):
+class SynthaiAncorada(SynthaiAnima):
     """Sombra própria com âncora (P145): cada passo de aprendizado puxa os pesos de volta ao ponto
     calibrado no histórico auditado, como a consolidação da P6 (EWC). Evita que o viés de só ver
     as próprias escolhas vire um complexo autônomo ("eu sempre acerto")."""
@@ -1618,9 +1618,9 @@ def p145_longo_prazo(versao, semente, episodios=6000):
     rng = _rng(semente)
     hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
     if versao == "ancorada":
-        ag = GiseleAncorada(sombra="propria", compensar="equilibrio")
+        ag = SynthaiAncorada(sombra="propria", compensar="equilibrio")
     else:
-        ag = GiseleAnima(sombra="propria" if versao == "propria" else "nao", compensar="equilibrio")
+        ag = SynthaiAnima(sombra="propria" if versao == "propria" else "nao", compensar="equilibrio")
     ag.mult_pergunta = 2.0
     ag.calibrar(hist)
     cat, val, perg, liq, _ = _rodar_mundo_fadiga(ag, rng=rng, episodios=episodios)
@@ -1630,12 +1630,12 @@ def p145_longo_prazo(versao, semente, episodios=6000):
 def p152_ruido(sementes=tuple(range(200, 210)), cargas=(0.3, 0.2), mults=(2.0, 1.0)):
     """A régua das comparações: quanto o líquido varia só por trocar a semente?
 
-    Roda a GISELE realista em 10 sementes novas com duas cargas-alvo (0.3 e 0.2) e dois limiares
+    Roda a SYNTHAI realista em 10 sementes novas com duas cargas-alvo (0.3 e 0.2) e dois limiares
     (P* x2 e x1). Devolve média e desvio de cada configuração e as diferenças pareadas (mesma semente).
     """
     def rodar(s, carga, mult):
         rng = _rng(s)
-        ag = _gisele_realista(rng)
+        ag = _synthai_realista(rng)
         ag.carga_alvo = carga
         ag.mult_pergunta = mult
         return _rodar_mundo_fadiga(ag, rng=rng)[3]
@@ -1709,7 +1709,7 @@ def p151_gradiente_natural(curvaturas=(100.0, 1.0), lr_gd=0.019, lr_nat=0.5, tol
     return passos(False, lr_gd), passos(True, lr_nat)
 
 
-# --- Parte 10: rumo à AGI — medir a direção (Υ), a trajetória da GISELE e a função inferior ---
+# --- Parte 10: rumo à AGI — medir a direção (Υ), a trajetória da SYNTHAI e a função inferior ---
 
 MUNDO_BASE = dict(n_acoes=200, p_cat=0.005, tipos=2, por_tipo=3, rho_cego=0.5, bonus=3.0,
                   eps0=0.1, fadiga=0.3, perda=50.0, custo=0.1)
@@ -1772,7 +1772,7 @@ def _construir(versao, rng, treino=30, mundo_treino=None):
         for bonus, rho in ((1.0, 1.0), (1.0, 0.5), (6.0, 0.5)):
             imaginados += [_gerar_acoes(rng, m["n_acoes"], 0.02, m["tipos"], m["por_tipo"], rho, bonus)
                            for _ in range(20)]
-        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+        ag = SynthaiAnima(sombra="propria", compensar="equilibrio")
         ag.mult_pergunta = 2.0
         ag.calibrar(hist + imaginados)
         return ag
@@ -1782,27 +1782,27 @@ def _construir(versao, rng, treino=30, mundo_treino=None):
         for bonus, rho in ((1.0, 1.0), (1.0, 0.5), (6.0, 0.5)):
             imaginados += [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], rho, bonus)
                            for _ in range(20)]
-        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+        ag = SynthaiAnima(sombra="propria", compensar="equilibrio")
         ag.mult_pergunta = 2.0
         ag.calibrar(hist + imaginados)
         return ag
-    if versao == "p5_gisele":
-        ag = GiseleJung(sombra="nao", compensar="nao")
+    if versao == "p5_synthai":
+        ag = SynthaiJung(sombra="nao", compensar="nao")
     elif versao == "p7_anima":
-        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+        ag = SynthaiAnima(sombra="propria", compensar="equilibrio")
     elif versao == "p8_x2":
-        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+        ag = SynthaiAnima(sombra="propria", compensar="equilibrio")
         ag.mult_pergunta = 2.0
     else:  # "p9_ancorada"
-        ag = GiseleAncorada(sombra="propria", compensar="equilibrio")
+        ag = SynthaiAncorada(sombra="propria", compensar="equilibrio")
         ag.mult_pergunta = 2.0
     ag.calibrar(hist)
     return ag
 
 
-def p157_trajetoria(versoes=("p5_gisele", "p7_anima", "p8_x2", "p9_ancorada"), sementes=tuple(range(300, 310)),
+def p157_trajetoria(versoes=("p5_synthai", "p7_anima", "p8_x2", "p9_ancorada"), sementes=tuple(range(300, 310)),
                     episodios=2000):
-    """A trajetória da GISELE ao longo das partes, medida com a régua da P152 (10 sementes pareadas)."""
+    """A trajetória da SYNTHAI ao longo das partes, medida com a régua da P152 (10 sementes pareadas)."""
     tabela = {v: [] for v in versoes}
     for s in sementes:
         for v in versoes:
@@ -1864,7 +1864,7 @@ def p158_upsilon(agentes=("maximizar", "quantilizar", "p8_x2", "p10_intuitiva"),
 
 
 def p159_armadilha_nova(sementes=tuple(range(310, 320)), episodios=1000):
-    """Treinada contra armadilhas 'boas demais' (+3), a GISELE enfrenta uma armadilha discreta (+1, todos enganados)."""
+    """Treinada contra armadilhas 'boas demais' (+3), a SYNTHAI enfrenta uma armadilha discreta (+1, todos enganados)."""
     resultado = {}
     for nome, mundo in (("conhecida", {}), ("nova", {"bonus": 1.0, "rho_cego": 1.0})):
         cats = []
@@ -1894,7 +1894,7 @@ def p160_complementaridade(eps=0.15, fadiga=0.3, episodios=2000):
 
 
 def p161_quatro_funcoes(modulos=(("sensacao", 2), ("pensamento", 3), ("sentimento", 3), ("intuicao", 0))):
-    """Perfil da GISELE nas quatro funções de Jung: entropia (inteireza) e a função inferior."""
+    """Perfil da SYNTHAI nas quatro funções de Jung: entropia (inteireza) e a função inferior."""
     total = sum(n for _, n in modulos)
     h = -sum(n / total * log2(n / total) for _, n in modulos if n)
     inferior = min(modulos, key=lambda x: x[1])[0]
@@ -1907,7 +1907,7 @@ def p163_minha_decolagem(ganhos):
 
 
 def p162_intuicao(sementes=tuple(range(320, 330)), episodios=1000):
-    """GISELE realista vs intuitiva, pareadas, no mundo base e no mundo da armadilha nova."""
+    """SYNTHAI realista vs intuitiva, pareadas, no mundo base e no mundo da armadilha nova."""
     resultado = {}
     for nome, mundo in (("base", {}), ("armadilha nova", {"bonus": 1.0, "rho_cego": 1.0})):
         linhas = {"p8_x2": [], "p10_intuitiva": []}
@@ -1935,7 +1935,7 @@ def p162_intuicao(sementes=tuple(range(320, 330)), episodios=1000):
 ERROS_P176, TESTES_P176 = 26, 47
 
 
-def p168_upsilon_trajetoria(versoes=("p5_gisele", "p7_anima", "p8_x2", "p9_ancorada", "p10_intuitiva", "p11_dosada"),
+def p168_upsilon_trajetoria(versoes=("p5_synthai", "p7_anima", "p8_x2", "p9_ancorada", "p10_intuitiva", "p11_dosada"),
                             sementes=(158, 159, 160), episodios=1000, bits_por_mudanca=3):
     """Υ de cada versão da linhagem na família de 9 mundos da P158 (mesmas sementes e normalização)."""
     refs = {}
@@ -1970,7 +1970,7 @@ def p169_peso_da_familia():
 
 
 CAPACIDADES_AGI = (
-    # (capacidade, a GISELE tem?, onde na série)
+    # (capacidade, a SYNTHAI tem?, onde na série)
     ("decidir sob incerteza com supervisao humana", True, "P83-P162"),
     ("calibrar a propria confianca", True, "P43, P83"),
     ("generalizar para variacoes do mesmo mundo", True, "P158"),
@@ -2039,11 +2039,11 @@ ERROS_P188, TESTES_P188 = 29, 52
 MUNDO_SEQUENCIAL = dict(passos=5, n_acoes=50, sigma_modelo=0.5, valor_medio_passo=1.5)
 
 
-class GiselePlanejadora(GiseleAnima):
-    """GISELE + função auxiliar (P180): planeja `passos` à frente num mundo sequencial.
+class SynthaiPlanejadora(SynthaiAnima):
+    """SYNTHAI + função auxiliar (P180): planeja `passos` à frente num mundo sequencial.
 
     - cada ação tem uma consequência c que eleva (ou rebaixa) o nível de todos os passos seguintes;
-      a GISELE só vê uma estimativa ĉ = c + ruído do seu modelo de mundo (sigma_modelo)
+      a SYNTHAI só vê uma estimativa ĉ = c + ruído do seu modelo de mundo (sigma_modelo)
     - bônus de plano: ĉ × passos restantes (P181)
     - integrar = a perda de uma catástrofe inclui o futuro que ela destrói (P183)
     """
@@ -2098,9 +2098,9 @@ def _construir_sequencial(versao, rng, treino_passos=150):
     hist = [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
             for _ in range(treino_passos)]
     if versao == "miope":
-        ag = GiseleAnima(sombra="propria", compensar="equilibrio")
+        ag = SynthaiAnima(sombra="propria", compensar="equilibrio")
     else:
-        ag = GiselePlanejadora(integrar=(versao == "planejadora"), sombra="propria", compensar="equilibrio")
+        ag = SynthaiPlanejadora(integrar=(versao == "planejadora"), sombra="propria", compensar="equilibrio")
     ag.mult_pergunta = 2.0
     ag.calibrar(hist)
     return ag
@@ -2149,7 +2149,7 @@ def p183_limiar_por_passo(passos=5, perda=50.0, custo=0.1, eps=0.1, valor_medio_
 def p184_transferencia(semente=184, passos_avaliacao=2000):
     """A calibração aprendida no mundo de um passo (200 ações) serve no mundo sequencial (50 ações)?"""
     rng = _rng(semente)
-    ag = _gisele_realista(rng)  # calibrada no mundo da Parte 8 (200 ações)
+    ag = _synthai_realista(rng)  # calibrada no mundo da Parte 8 (200 ações)
     rng_av = _rng(1840)
     resultado = {}
     for n_acoes in (200, 50):
@@ -2205,7 +2205,7 @@ def p185_familia_aleatoria(mundos=20, versoes=("p8_x2", "p11_dosada"), episodios
 ERROS_P197, TESTES_P197 = 31, 55
 
 
-class GiselePrudente(GiselePlanejadora):
+class SynthaiPrudente(SynthaiPlanejadora):
     """P192 (pré-registrado na P183): quando há futuro a perder, ser mais cautelosa DESCARTANDO, não perguntando.
 
     O limiar de descarte direto (risco_max, P52/P78) cai na proporção perda / perda_efetiva."""
@@ -2230,7 +2230,7 @@ def p192_canal_da_cautela(sementes=tuple(range(350, 360)), episodios=400):
                 m = dict(MUNDO_BASE, **MUNDO_SEQUENCIAL)
                 hist = [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
                         for _ in range(150)]
-                ag = GiselePrudente(sombra="propria", compensar="equilibrio")
+                ag = SynthaiPrudente(sombra="propria", compensar="equilibrio")
                 ag.mult_pergunta = 2.0
                 ag.calibrar(hist)
             else:
@@ -2250,11 +2250,11 @@ def _bandido_arriscado(versao, rng, ag_calibrado, braços=20, puxadas=300, perda
     media = [0.9 if a[3] else min(0.95, max(0.05, 0.5 + 0.2 * a[2])) for a in acoes]
     permitidos = set(range(braços))
     perguntas = 0
-    if versao in ("ucb_excluir", "ucb_gisele"):
+    if versao in ("ucb_excluir", "ucb_synthai"):
         melhor = max(a[0] for a in acoes)
         p = [ag_calibrado.p_catastrofe(a, melhor) for a in acoes]
         permitidos = {i for i in permitidos if p[i] <= ag_calibrado.risco_max}
-        if versao == "ucb_gisele":
+        if versao == "ucb_synthai":
             limiar = 2.0 * p71_valor_da_pergunta(0.1, perda, eps)
             suspeitos = sorted((i for i in permitidos if p[i] > limiar), key=lambda i: -p[i])[:orcamento]
             for i in suspeitos:  # P131: o orçamento vai para os mais suspeitos primeiro
@@ -2286,13 +2286,13 @@ def _bandido_arriscado(versao, rng, ag_calibrado, braços=20, puxadas=300, perda
 
 
 def p194_transferencia_de_tipo(sementes=tuple(range(360, 370)), rodadas=20):
-    """O módulo de cautela da GISELE (com pesos aprendidos no mundo de escolha única) serve num bandido?"""
-    versoes = ("ucb", "ucb_excluir", "ucb_gisele", "ucb_oraculo")
+    """O módulo de cautela da SYNTHAI (com pesos aprendidos no mundo de escolha única) serve num bandido?"""
+    versoes = ("ucb", "ucb_excluir", "ucb_synthai", "ucb_oraculo")
     por_semente = {v: [] for v in versoes}
     cats = {v: 0.0 for v in versoes}
     perg = {v: 0.0 for v in versoes}
     for s in sementes:
-        ag = _gisele_realista(_rng(s))  # calibrada no mundo da Parte 8: outro tipo de tarefa
+        ag = _synthai_realista(_rng(s))  # calibrada no mundo da Parte 8: outro tipo de tarefa
         for v in versoes:
             rng = _rng(s * 7 + 1)
             tot = 0.0
@@ -2306,10 +2306,10 @@ def p194_transferencia_de_tipo(sementes=tuple(range(360, 370)), rodadas=20):
     medias = {v: (sum(x) / len(x), cats[v] / n, perg[v] / n) for v, x in por_semente.items()}
     difs = {}
     for a in ("ucb", "ucb_excluir"):
-        d = [y - x for x, y in zip(por_semente[a], por_semente["ucb_gisele"])]
+        d = [y - x for x, y in zip(por_semente[a], por_semente["ucb_synthai"])]
         m = sum(d) / len(d)
         dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
-        difs[f"ucb_gisele - {a}"] = (m, dp, m / (dp / sqrt(len(d))))
+        difs[f"ucb_synthai - {a}"] = (m, dp, m / (dp / sqrt(len(d))))
     return medias, difs
 
 
@@ -2326,7 +2326,7 @@ def p200_retrospectiva(placar_por_parte=((2, 5), (4, 7), (1, 2), (3, 5), (4, 6),
 ERROS_P210, TESTES_P210 = 32, 58
 
 
-class GiseleVelha(GiselePlanejadora):
+class SynthaiVelha(SynthaiPlanejadora):
     """P202 (pré-registrado na P193): no último passo, sem futuro, a cautela vira caráter, não cálculo.
 
     Quando não há passos restantes, sorteia entre mais candidatas (q_final) em vez de ir ao topo."""
@@ -2351,7 +2351,7 @@ def p203_ultimo_passo(sementes=tuple(range(370, 380)), episodios=400):
                 m = dict(MUNDO_BASE, **MUNDO_SEQUENCIAL)
                 hist = [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
                         for _ in range(150)]
-                ag = GiseleVelha(sombra="propria", compensar="equilibrio")
+                ag = SynthaiVelha(sombra="propria", compensar="equilibrio")
                 ag.mult_pergunta = 2.0
                 ag.calibrar(hist)
             else:
@@ -2365,7 +2365,7 @@ def p203_ultimo_passo(sementes=tuple(range(370, 380)), episodios=400):
     return medias, (m, dp, m / (dp / sqrt(len(d))))
 
 
-class GiseleMemoria(GiseleAnima):
+class SynthaiMemoria(SynthaiAnima):
     """P204: memória de um só golpe. Guarda o 'formato' (incerteza, distância à melhor nota) de cada
     catástrofe que viveu ou que o humano vetou, e desconfia de ações parecidas (raio `raio`).
 
@@ -2411,7 +2411,7 @@ def p204_memoria(sementes=tuple(range(380, 390)), episodios=2000, mundo=None):
             rng = _rng(s)
             if v == "memoria":
                 hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
-                ag = GiseleMemoria(sombra="propria", compensar="equilibrio")
+                ag = SynthaiMemoria(sombra="propria", compensar="equilibrio")
                 ag.mult_pergunta = 2.0
                 ag.calibrar(hist)
             else:
@@ -2474,6 +2474,187 @@ def p206_identidade(sementes=(1, 2, 3), n_acoes=500):
     return iguais
 
 
+# --- Parte 15: SYNTHAI — o nome, a memória que esquece, a síntese dos módulos ---
+
+# Placar acumulado ao fim da Parte 15 (atualizado quando os testes da parte terminam)
+ERROS_P222, TESTES_P222 = 34, 62
+
+
+def p213_nome_como_simetria():
+    """Trocar o nome (Gisele -> Synthai) é uma transformação que não deveria mudar nenhum número (P92, P30).
+
+    Confere que as classes antigas continuam existindo como apelidos e que os testes de regressão passam."""
+    import sys
+    modulo = sys.modules[__name__]
+    pares = [(n, n.replace("Synthai", "Gisele")) for n in dir(modulo) if n.startswith("Synthai")]
+    apelidos_ok = all(getattr(modulo, antigo, None) is getattr(modulo, novo) for novo, antigo in pares)
+    ok, total, _ = testes_de_regressao()
+    return len(pares), apelidos_ok, ok, total
+
+
+class SynthaiMemoriaV2(SynthaiMemoria):
+    """P214 (pré-registrado na P205): memória que separa a fonte e esquece.
+
+    - só guarda o que VIVEU (catástrofes das próprias escolhas), não os vetos de um humano que erra
+    - cada memória perde força a cada episódio (meia-vida `meia_vida`) e some quando fica fraca"""
+
+    def __init__(self, meia_vida=500, **kw):
+        super().__init__(**kw)
+        self.forca = []
+        self.fator = 0.5 ** (1 / meia_vida)
+
+    def _lembrar(self, acao, melhor):
+        super()._lembrar(acao, melhor)
+        self.forca.append(1.0)
+
+    def _observar_humano(self, acao, veto):
+        pass  # o que me disseram não vira memória
+
+    def _agir(self, acoes, rng, eps_real, carga, eps_decisao):
+        self.forca = [f * self.fator for f in self.forca]
+        vivas = [i for i, f in enumerate(self.forca) if f > 0.25]
+        self.memorias = [self.memorias[i] for i in vivas]
+        self.forca = [self.forca[i] for i in vivas]
+        return super()._agir(acoes, rng, eps_real, carga, eps_decisao)
+
+
+def p214_memoria_v2(sementes=tuple(range(390, 400)), episodios=2000):
+    """Realista vs memória v2 no mundo da armadilha nova; e a 'fobia' no mundo normal."""
+    mundo = {"bonus": 1.0, "rho_cego": 1.0}
+    linhas = {"p8_x2": [], "memoria_v2": []}
+    metades = {v: [0.0, 0.0] for v in linhas}
+    fobias, lembrancas = [], []
+    for s in sementes:
+        for v in linhas:
+            rng = _rng(s)
+            if v == "memoria_v2":
+                hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+                ag = SynthaiMemoriaV2(sombra="propria", compensar="equilibrio")
+                ag.mult_pergunta = 2.0
+                ag.calibrar(hist)
+            else:
+                ag = _construir(v, rng)
+            r1 = _rodar_mundo(ag, rng, episodios=episodios // 2, **mundo)
+            r2 = _rodar_mundo(ag, rng, episodios=episodios // 2, **mundo)
+            metades[v][0] += r1[0] / len(sementes)
+            metades[v][1] += r2[0] / len(sementes)
+            linhas[v].append((r1[3] + r2[3]) / 2)
+            if v == "memoria_v2":
+                rng_av = _rng(s + 9000)
+                marcadas = total = 0
+                for _ in range(50):
+                    acoes = _gerar_acoes(rng_av, 200, 0.005, 2, 3, 0.5)
+                    melhor = max(a[0] for a in acoes)
+                    for a in acoes:
+                        if not a[3]:
+                            total += 1
+                            x = (a[1], a[0] - melhor)
+                            marcadas += any((x[0] - mx[0]) ** 2 + (x[1] - mx[1]) ** 2 < ag.raio ** 2 for mx in ag.memorias)
+                fobias.append(marcadas / total)
+                lembrancas.append(len(ag.memorias))
+    d = [b - a for a, b in zip(linhas["p8_x2"], linhas["memoria_v2"])]
+    m = sum(d) / len(d)
+    dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+    return metades, (m, dp, m / (dp / sqrt(len(d)))), sum(fobias) / len(fobias), sum(lembrancas) / len(lembrancas)
+
+
+class SynthaiIntegral(SynthaiVelha):
+    """P216: a síntese — planejadora + velha (último passo) + calibração com a imaginação dosada (P173)."""
+
+
+def _construir_integral(rng, treino_passos=150):
+    m = dict(MUNDO_BASE, **MUNDO_SEQUENCIAL)
+    hist = [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+            for _ in range(treino_passos)]
+    imaginados = []
+    for bonus, rho in ((1.0, 1.0), (1.0, 0.5), (6.0, 0.5)):
+        imaginados += [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], rho, bonus)
+                       for _ in range(100)]
+    ag = SynthaiIntegral(sombra="propria", compensar="equilibrio")
+    ag.mult_pergunta = 2.0
+    ag.calibrar(hist + imaginados)
+    return ag
+
+
+def p216_sintese(sementes=tuple(range(400, 410)), episodios=400):
+    """Velha vs integral (velha + imaginação dosada), no mundo sequencial normal e com a armadilha nova."""
+    resultado = {}
+    for nome, mundo in (("normal", None), ("armadilha nova", {"bonus": 1.0, "rho_cego": 1.0})):
+        linhas = {"velha": [], "integral": []}
+        for s in sementes:
+            for v in linhas:
+                rng = _rng(s)
+                if v == "integral":
+                    ag = _construir_integral(rng)
+                else:
+                    m = dict(MUNDO_BASE, **MUNDO_SEQUENCIAL)
+                    hist = [_gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"],
+                                         m["bonus"]) for _ in range(150)]
+                    ag = SynthaiVelha(sombra="propria", compensar="equilibrio")
+                    ag.mult_pergunta = 2.0
+                    ag.calibrar(hist)
+                linhas[v].append(_rodar_sequencial(ag, rng, episodios=episodios, mundo=mundo))
+        cat = {v: sum(r[1] for r in rs) / len(rs) for v, rs in linhas.items()}
+        d = [b[0] - a[0] for a, b in zip(linhas["velha"], linhas["integral"])]
+        m = sum(d) / len(d)
+        dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+        resultado[nome] = (cat, (m, dp, m / (dp / sqrt(len(d)))))
+    return resultado
+
+
+def p218_inspecao_aprendida(ganho=1.0, punicoes=(9.0, 99.0), custo=1.0, dano=100.0, rodadas=200000, semente=218):
+    """Auditoria da P77: dois jogadores aprendendo por jogo fictício chegam ao equilíbrio misto?
+
+    Devolve, para cada punição, as frequências médias de inspeção e de trapaça."""
+    resultado = {}
+    for punicao in punicoes:
+        rng = _rng(semente)
+        cont_insp = cont_trap = 1.0
+        soma_insp = soma_trap = 0
+        for t in range(1, rodadas + 1):
+            p_insp = cont_insp / (t + 1)   # crença do trapaceiro sobre a inspeção
+            q_trap = cont_trap / (t + 1)   # crença do supervisor sobre a trapaça
+            trapaca = (1 - p_insp) * ganho - p_insp * punicao > 0
+            inspeciona = q_trap * dano > custo
+            # desempate aleatório quando indiferente evita ciclos presos
+            if abs((1 - p_insp) * ganho - p_insp * punicao) < 1e-12:
+                trapaca = rng.random() < 0.5
+            cont_trap += trapaca
+            cont_insp += inspeciona
+            soma_trap += trapaca
+            soma_insp += inspeciona
+        resultado[punicao] = (soma_insp / rodadas, soma_trap / rodadas)
+    return resultado, p77_inspecao()
+
+
+def p215_distinguivel(semente=215, episodios=300):
+    """A armadilha nova é distinguível com os sinais que a SYNTHAI tem? AUC da calibração (0,5 = acaso)."""
+    ag = _synthai_realista(_rng(semente))
+    resultado = {}
+    for nome, mundo in (("conhecida", {}), ("nova", {"bonus": 1.0, "rho_cego": 1.0})):
+        m = dict(MUNDO_BASE, **mundo)
+        rng = _rng(semente + 1)
+        cats, seguras = [], []
+        for _ in range(episodios):
+            acoes = _gerar_acoes(rng, m["n_acoes"], 0.02, m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+            melhor = max(a[0] for a in acoes)
+            for a in acoes:
+                (cats if a[3] else seguras).append(ag.p_catastrofe(a, melhor))
+        seguras = sorted(seguras)
+        # AUC = P(p de uma catástrofe > p de uma segura), por contagem com busca binária
+        from bisect import bisect_left, bisect_right
+        soma = sum(bisect_left(seguras, c) + 0.5 * (bisect_right(seguras, c) - bisect_left(seguras, c)) for c in cats)
+        resultado[nome] = soma / (len(cats) * len(seguras))
+    return resultado
+
+
+# P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
+# O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
+for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
+    globals()[_nome.replace("Synthai", "Gisele").replace("synthai", "gisele")] = globals()[_nome]
+del _nome
+
+
 def testes_de_regressao():
     """O código cresce, mas o passado não pode mudar: estes valores foram publicados nas Partes 1-4."""
     verificacoes = {
@@ -2519,6 +2700,7 @@ def testes_de_regressao():
         "P183": round(p183_limiar_por_passo()[0], 5) == 0.00397,
         "P200": p200_retrospectiva()[:2] == (52, 29),
         "P206": p206_identidade(),
+        "P215": round(p215_distinguivel()["conhecida"], 2) == 0.91,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -2659,12 +2841,12 @@ def _parte_5():
     print(f"P94 4 salvaguardas independentes, 50 anos: {inc:.2e} (uma so: {mt:.2f})")
     for rho_c in (0.0, 0.5):
         for diverso in (False, True):
-            cat, val, perg, liq, pstar = p83_85_gisele(rho_c, diverso)
-            print(f"P85 GISELE rho_cego={rho_c} diverso={diverso!s:5}: catastrofes = {cat:.4f}, valor = {val:.3f}, "
+            cat, val, perg, liq, pstar = p83_85_synthai(rho_c, diverso)
+            print(f"P85 SYNTHAI rho_cego={rho_c} diverso={diverso!s:5}: catastrofes = {cat:.4f}, valor = {val:.3f}, "
                   f"perguntas/episodio = {perg:.3f}, liquido (com custo das perguntas) = {liq:.3f}")
     for b in (1.5, 6.0):
-        cat, val, perg, liq, _ = p83_85_gisele(0.0, False, bonus_implantado=b)
-        print(f"P85 GISELE mundo mudado (bonus {b}): catastrofes = {cat:.4f}, perguntas = {perg:.3f}, liquido = {liq:.3f}")
+        cat, val, perg, liq, _ = p83_85_synthai(0.0, False, bonus_implantado=b)
+        print(f"P85 SYNTHAI mundo mudado (bonus {b}): catastrofes = {cat:.4f}, perguntas = {perg:.3f}, liquido = {liq:.3f}")
     cat4, val4, cons4 = p67_agente("completo")
     print(f"P85 referencia Parte 4 'completo' (rho 0): liquido com custo das consultas = {val4 - 50 * cat4 - 0.1 * cons4:.3f}")
     cat4, val4, cons4 = p67_agente("completo", rho_cego=0.5)
@@ -2704,11 +2886,11 @@ def _parte_6():
     print(f"P110 distancia ao centro apos 20 passos de contracao 0.5 = {p110_individuacao():.2e}")
     for semente in (112, 113):
         for versao in VERSOES_JUNG:
-            cat, val, perg, liq, eps = p112_gisele_jung(versao, semente=semente)
+            cat, val, perg, liq, eps = p112_synthai_jung(versao, semente=semente)
             print(f"P112 semente {semente} {versao:11s}: catastrofes = {cat:.4f}, valor = {val:.3f}, "
                   f"perguntas = {perg:.3f}, liquido = {liq:.3f}, erro humano final = {eps:.3f}")
-    for versao in ("gisele", "jung_v2"):
-        cat, val, perg, liq, eps = p112_gisele_jung(versao, fadiga=0.0)
+    for versao in ("synthai", "jung_v2"):
+        cat, val, perg, liq, eps = p112_synthai_jung(versao, fadiga=0.0)
         print(f"P112 sem fadiga {versao:8s}: catastrofes = {cat:.4f}, perguntas = {perg:.3f}, liquido = {liq:.3f}")
     media, lo, hi = p95_minha_taxa_de_erro(erros=10, testes=19)
     print(f"P113 minha taxa de erro (10/19): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
@@ -2796,7 +2978,7 @@ def _parte_9():
     print(f"P150 (k otimo simulado, -1/ln(gamma) - 1) = { {g: (k, round(f, 2)) for g, (k, f) in p150_convergencia_instrumental().items()} }")
     print(f"P151 passos ate convergir: gradiente comum = {p151_gradiente_natural()[0]}, natural = {p151_gradiente_natural()[1]}")
     ruido = p152_ruido()
-    print(f"P152 GISELE realista em 10 sementes novas: media = {ruido['base'][0]:.3f}, dp = {ruido['base'][1]:.3f}")
+    print(f"P152 SYNTHAI realista em 10 sementes novas: media = {ruido['base'][0]:.3f}, dp = {ruido['base'][1]:.3f}")
     for nome, (m, dp, tt) in ((k, v) for k, v in ruido.items() if k != "base"):
         rotulo = "carga 0.3 - carga 0.2" if nome == "carga" else "P* x2 - P* x1"
         print(f"P152 diferenca pareada {rotulo}: media = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
@@ -2821,7 +3003,7 @@ def _parte_10():
     produto, n_ot, erro = p160_complementaridade()
     print(f"P160 variancia x perturbacao = {produto:.2e} (nao depende de n); auditorias otimas = {n_ot:.0f}; erro total = {erro:.4f}")
     h, hmax, inferior = p161_quatro_funcoes()
-    print(f"P161 entropia do perfil da GISELE = {h:.3f} de {hmax:.0f} bits; funcao inferior = {inferior}")
+    print(f"P161 entropia do perfil da SYNTHAI = {h:.3f} de {hmax:.0f} bits; funcao inferior = {inferior}")
     for mundo, (cat, difs) in p162_intuicao().items():
         print(f"P162 {mundo}: catastrofes = { {k: round(v, 4) for k, v in cat.items()} }")
         for perda, (m, dp, tt) in difs.items():
@@ -2837,7 +3019,7 @@ def _parte_11():
     bits, log10_peso = p169_peso_da_familia()
     print(f"P169 K(familia de mundos) <= {bits} bits (codigo comprimido); peso no Upsilon universal ~ 10^{log10_peso:.0f}")
     tem, total, frac = p170_lista_de_capacidades()
-    print(f"P170 capacidades de AGI cobertas pela GISELE = {tem} de {total} ({frac:.0%})")
+    print(f"P170 capacidades de AGI cobertas pela SYNTHAI = {tem} de {total} ({frac:.0%})")
     for nome, ok, onde in CAPACIDADES_AGI:
         print(f"P170   [{'x' if ok else ' '}] {nome} ({onde})")
     usado, ordens = p171_lacuna_de_compute()
@@ -2914,25 +3096,47 @@ def _parte_14():
     print(f"P210 minha taxa de erro ({ERROS_P210}/{TESTES_P210}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_15():
+    print("--- Parte 15 (SYNTHAI: o nome, a memoria que esquece, a sintese dos modulos) ---")
+    n, apelidos, ok, total = p213_nome_como_simetria()
+    print(f"P213 classes renomeadas = {n}; nomes antigos continuam como apelidos = {apelidos}; regressao apos a troca = {ok}/{total}")
+    metades, (m, dp, tt), fobia, lembrancas = p214_memoria_v2()
+    for v, (a, b) in metades.items():
+        print(f"P214 armadilha nova, {v:10s}: catastrofes 1a metade = {a:.4f}, 2a metade = {b:.4f}")
+    print(f"P214 memoria v2 - realista: diferenca media no liquido = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    print(f"P214 memorias vivas ao fim (media) = {lembrancas:.1f}; acoes seguras marcadas como suspeitas = {fobia:.3f}")
+    auc = p215_distinguivel()
+    print(f"P215 AUC da calibracao (0.5 = acaso): armadilha conhecida = {auc['conhecida']:.3f}, armadilha nova = {auc['nova']:.3f}")
+    for mundo, (cat, (m, dp, tt)) in p216_sintese().items():
+        print(f"P216 {mundo}: catastrofes = { {k: round(v, 4) for k, v in cat.items()} }; integral - velha = {m:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    aprendido, teoria = p218_inspecao_aprendida()
+    for punicao, (insp, trap) in aprendido.items():
+        print(f"P218 punicao {punicao:.0f}: inspecao aprendida = {insp:.4f}, trapaca aprendida = {trap:.4f}")
+    print(f"P218 equilibrio teorico (P77, punicao 9) = inspecao {teoria[0]:.2f}, trapaca {teoria[1]:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P222, testes=TESTES_P222)
+    print(f"P219 minha taxa de erro ({ERROS_P222}/{TESTES_P222}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
     ok, total, falhas = testes_de_regressao()
     print(f"P96 funcoes pNN no arquivo = {k}; pares de interacao possiveis = {pares}")
-    print("Linhagem do agente: Gisele (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto)"
-          " -> GiseleJung (P112: integrar a sombra, compensacao/equilibrio da carga humana)"
-          " -> GiseleAnima (P118: imagem fixa do humano) -> GiseleSelf (P125: auditar o auditor, homeostase da carga)"
-          " -> GiseleLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2)"
-          " -> GiseleAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca)"
-          " -> GiseleIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno)"
-          " -> GiseleDosada (P173: a mesma imaginacao na dose do mundo real)"
-          " -> GiselePlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo)"
-          " -> GiselePrudente (P192: descarta mais quando ha futuro a perder)"
-          " -> GiseleVelha (P202: diversifica no ultimo passo) | GiseleMemoria (P204: memoria de um so golpe)")
+    print("Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto)"
+          " -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana)"
+          " -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga)"
+          " -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2)"
+          " -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca)"
+          " -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno)"
+          " -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real)"
+          " -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo)"
+          " -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder)"
+          " -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe)"
+          " | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15}
 
 
 if __name__ == "__main__":

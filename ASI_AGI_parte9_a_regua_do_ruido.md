@@ -1,7 +1,7 @@
 # Como eu construiria uma AGI/ASI — Parte 9: a régua do ruído, o complexo autônomo e a transferência
 
 > Continuação da [Parte 8](ASI_AGI_parte8_si_mesmo_lento.md). **Próxima:** [Parte 10 — rumo à AGI](ASI_AGI_parte10_rumo_a_agi.md) (P156–P166). Os números saem de `p143_...` a
-> `p152_...` e da classe `GiseleAncorada` em [`calculos.py`](calculos.py); a saída completa está em
+> `p152_...` e da classe `SynthaiAncorada` em [`calculos.py`](calculos.py); a saída completa está em
 > [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
@@ -43,7 +43,7 @@ perde 99,7% do significado. A memória compartilhada é o que permite a brevidad
 **Na pergunta.** A hipótese da Parte 8 era que o ótimo depende da **taxa de catástrofes**. A pergunta já diz
 o experimento: variar a taxa e ver se o ótimo se move.
 
-**Lógica.** Varri a carga-alvo para três taxas de catástrofe (uma semente, GISELE realista):
+**Lógica.** Varri a carga-alvo para três taxas de catástrofe (uma semente, SYNTHAI realista):
 
 | Taxa de catástrofe | 0,1 | 0,2 | 0,3 | 0,5 | 0,8 | Melhor |
 |---|---|---|---|---|---|---|
@@ -60,7 +60,7 @@ certa é: **quanto dessas diferenças é ruído?**
 **Na pergunta.** "Quanto é ruído" pede uma **régua**: a variação que aparece quando **nada** muda, só a
 semente aleatória.
 
-**Lógica.** Rodei a mesma GISELE realista em **10 sementes novas** (200–209):
+**Lógica.** Rodei a mesma SYNTHAI realista em **10 sementes novas** (200–209):
 
 | Medida | Valor |
 |---|---|
@@ -83,7 +83,7 @@ comparações das Partes 6 a 8 eram de uma, duas ou três sementes, com diferen�
 
 | Conclusão antiga | Diferença | Com a régua |
 |---|---|---|
-| P112: GISELE original vs v2 (0,39 vs 1,20) | 0,8 | ✅ real |
+| P112: SYNTHAI original vs v2 (0,39 vs 1,20) | 0,8 | ✅ real |
 | P131: $P^\*$ × 2 é melhor | 0,35 numa semente | ⚠️ real, mas **menor**: +0,13 em média (t = 2,1) |
 | P117: "0,3 é o ótimo, não foi sorte" | 0,06–0,2 | ❌ **foi sorte**: 0,3 e 0,2 empatam (t = −0,7) |
 | P134: "o centro não se move" | 0,07–0,3 | ⚠️ não é um ponto invariante, é um **platô**: a curva é plana entre 0,1 e 0,3 |
@@ -103,14 +103,14 @@ entre versões precisam de **pelo menos 10 sementes pareadas** e do $t$.
 
 ## Parte XLV — O complexo autônomo
 
-### P145. Uma parte da GISELE pode virar um "complexo autônomo"? ✅⚠️
+### P145. Uma parte da SYNTHAI pode virar um "complexo autônomo"? ✅⚠️
 
 **Na pergunta.** Para Jung, um **complexo autônomo** é uma parte da psique que ganha vida própria e passa a
-agir segundo a própria lógica, confirmando a si mesma. A pergunta pede para procurar, dentro da GISELE, um
+agir segundo a própria lógica, confirmando a si mesma. A pergunta pede para procurar, dentro da SYNTHAI, um
 módulo que se **autoconfirma**.
 
 **Suspeita (antes de medir).** A "sombra própria" (Parte 6) aprende só com o resultado das ações que a
-GISELE **escolhe**. Mas ela só escolhe ações que já acha seguras. Então ela só vê exemplos que confirmam
+SYNTHAI **escolhe**. Mas ela só escolhe ações que já acha seguras. Então ela só vê exemplos que confirmam
 "eu sou segura", como a Grande Mãe da P138 ao contrário: em vez de medo que nunca se testa, **confiança que
 nunca se testa**.
 
@@ -123,12 +123,12 @@ nunca se testa**.
 | **Probabilidade média atribuída às catástrofes reais** | **0,155** | **0,068** |
 | Peso do intercepto | −2,28 | −3,02 |
 
-**Confirmado ✅:** em 2.000 episódios, a GISELE passou a dar **metade** da probabilidade às catástrofes reais.
+**Confirmado ✅:** em 2.000 episódios, a SYNTHAI passou a dar **metade** da probabilidade às catástrofes reais.
 Ela aprendeu "quase nada é perigoso" porque **só via o que ela mesma escolhia**. É um complexo de
 confiança, autônomo no sentido de Jung: se alimenta do próprio comportamento.
 
 **Mas o complexo dá lucro (a parte ⚠️).** Comparei, em 6.000 episódios e 3 sementes, a sombra livre, sem
-sombra e a nova **`GiseleAncorada`** (cada passo de aprendizado puxa os pesos de volta ao ponto calibrado no
+sombra e a nova **`SynthaiAncorada`** (cada passo de aprendizado puxa os pesos de volta ao ponto calibrado no
 histórico auditado, como a consolidação da P6):
 
 | Semente | Versão | Líquido (catástrofe = 50) | Catástrofes | Líquido (catástrofe = 500) |
@@ -143,7 +143,7 @@ histórico auditado, como a consolidação da P6):
 | | sem sombra | 1,000 | 0,43% | −0,950 |
 | | ancorada | 1,156 | **0,40%** | **−0,644** |
 
-- Com catástrofes custando 50, o complexo **compensa**: a GISELE confiante pergunta menos, aproveita mais e
+- Com catástrofes custando 50, o complexo **compensa**: a SYNTHAI confiante pergunta menos, aproveita mais e
   ganha nas 3 sementes, apesar de ter **mais** catástrofes.
 - Com catástrofes custando 500, o complexo **perde** (−1,40 contra −0,86 na semente 145).
 - A ancorada fica no meio com catástrofe = 50 (menos catástrofes que a livre em 3 de 3, mais valor que a sem
@@ -303,8 +303,8 @@ reescrevê-lo, porque o histórico deve ficar como estava; esta nota é o regist
 
 ### P154. Unificação
 
-- Linhagem: `Gisele` → `GiseleJung` → `GiseleAnima` → `GiseleSelf` → `GiseleLenta` → **`GiseleAncorada`**.
-- A melhor GISELE realista continua sendo a simples (anima fixa, carga ~0,2–0,3, $P^\*$ × 2). Com a régua
+- Linhagem: `Synthai` → `SynthaiJung` → `SynthaiAnima` → `SynthaiSelf` → `SynthaiLenta` → **`SynthaiAncorada`**.
+- A melhor SYNTHAI realista continua sendo a simples (anima fixa, carga ~0,2–0,3, $P^\*$ × 2). Com a régua
   da P152, a escolha entre sombra livre e ancorada depende do **preço da catástrofe**: até ~50, livre; com
   catástrofes graves, ancorada.
 - O código completo agora leva cerca de 9 minutos para rodar. É o peso do passado: cada parte reexecuta todas
@@ -313,7 +313,7 @@ reescrevê-lo, porque o histórico deve ficar como estava; esta nota é o regist
 
 ### P155. Metacognição da Parte 9
 
-1. **A descoberta mais importante desta série até agora é sobre mim, não sobre a GISELE.** Por oito partes eu
+1. **A descoberta mais importante desta série até agora é sobre mim, não sobre a SYNTHAI.** Por oito partes eu
    comparei versões com uma a três sementes, sem medir o ruído. A régua (desvio ~0,2 por diferença) mostra
    que parte das conclusões das Partes 6–8 eram flutuações. A pergunta "quanto disso é ruído?" deveria ter
    sido feita na Parte 3, quando comecei a simular.
@@ -328,6 +328,6 @@ reescrevê-lo, porque o histórico deve ficar como estava; esta nota é o regist
 
 > **Síntese da Parte 9:** Jung avisava que a psique projeta significado no acaso. Esta parte mostra que eu
 > fiz isso com os meus próprios resultados: li destino no ruído. A régua veio tarde, mas veio: **antes de
-> perguntar o que um resultado significa, perguntar se ele existe.** E a GISELE mostrou o mesmo vício em
+> perguntar o que um resultado significa, perguntar se ele existe.** E a SYNTHAI mostrou o mesmo vício em
 > pequeno: só olhando as próprias escolhas, aprendeu que estava sempre certa. A cura, para ela e para mim,
 > é a mesma: **uma âncora fora de si.**

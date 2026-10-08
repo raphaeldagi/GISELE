@@ -1,7 +1,7 @@
 # Como eu construiria uma AGI/ASI — Parte 12: a função auxiliar — planejar em vários passos
 
 > Continuação da [Parte 11](ASI_AGI_parte11_tivemos_avanco.md). **Próxima:** [Parte 13 — transferência](ASI_AGI_parte13_transferencia.md) (P191–P200). Os números saem de `p181_...` a `p186_...` e da
-> classe `GiselePlanejadora` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
+> classe `SynthaiPlanejadora` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
 > Legenda: ✅ confirmou · ⚠️ confirmou com correção · ❌ eu estava errado.
@@ -14,7 +14,7 @@
 
 **Na pergunta.** Pela primeira vez na série, "Continue" chega depois de um **plano escrito** (P175). A palavra deixa de
 pedir "mais do mesmo" e passa a pedir "**execute o que você disse**". O teste desta parte é, então, duplo: o que acontece
-com a GISELE, e se eu consigo seguir o meu próprio roteiro.
+com a SYNTHAI, e se eu consigo seguir o meu próprio roteiro.
 
 **O roteiro da P175 e o que esta parte faz com ele:**
 
@@ -25,13 +25,13 @@ com a GISELE, e se eu consigo seguir o meu próprio roteiro.
 | 3. Transferência real entre tipos de tarefa | parcial: P184 (calibração de um mundo para outro) |
 | 4. Manter a régua (10 sementes, previsões antes) | ✔ todas as comparações |
 
-### P180. Qual função a GISELE deveria ganhar primeiro? (a função auxiliar de Jung)
+### P180. Qual função a SYNTHAI deveria ganhar primeiro? (a função auxiliar de Jung)
 
 **Na pergunta.** Jung descreve a psique diferenciada com uma função **dominante** e uma **auxiliar**, e dá uma regra: a
 auxiliar vem do **outro eixo**. Se a dominante é de julgamento (pensamento ou sentimento), a auxiliar é de percepção
 (sensação ou intuição), e vice-versa. Duas funções do mesmo eixo competem; de eixos diferentes, cooperam.
 
-**Lógica.** A função dominante da GISELE é de **julgamento** (P161: calibração, valor da pergunta, quantilização). A
+**Lógica.** A função dominante da SYNTHAI é de **julgamento** (P161: calibração, valor da pergunta, quantilização). A
 regra de Jung pede uma auxiliar de **percepção**. Planejar é perceber **possibilidades futuras** que ainda não estão
 presentes: é **intuição**, a função que a P161 achou ausente. A regra de Jung e o roteiro da P175 apontam para o mesmo
 módulo.
@@ -44,10 +44,10 @@ módulo.
 
 **Na pergunta.** "Vale" pede uma conta antes da simulação.
 
-**Lógica (o mundo).** Cada episódio tem **5 passos**. Em cada passo, a GISELE escolhe 1 entre 50 ações (o mesmo
+**Lógica (o mundo).** Cada episódio tem **5 passos**. Em cada passo, a SYNTHAI escolhe 1 entre 50 ações (o mesmo
 comitê, as mesmas armadilhas). Cada ação tem, além do valor imediato $v$, uma **consequência** $c \sim \mathcal N(0,1)$
 que eleva (ou rebaixa) o nível de **todos os passos seguintes**. Uma catástrofe custa 50 e **encerra o episódio**
-(destrói o futuro). A GISELE vê uma estimativa $\hat c = c + \mathcal N(0, \sigma_{\text{modelo}})$: o seu modelo de mundo.
+(destrói o futuro). A SYNTHAI vê uma estimativa $\hat c = c + \mathcal N(0, \sigma_{\text{modelo}})$: o seu modelo de mundo.
 
 Com $r$ passos restantes, o valor real de uma ação é $v + r\,c$. Escolher só pelo $v$ ignora a parte $r\,c$. Para 50
 candidatas e $r = 2$ (média), a simulação dá:
@@ -60,18 +60,18 @@ candidatas e $r = 2$ (média), a simulação dá:
 
 Prever multiplica o valor por **~2,27**, quase exatamente o $\sqrt{1+r^2}$ da teoria.
 
-### P182. A GISELE que planeja é melhor? ✅
+### P182. A SYNTHAI que planeja é melhor? ✅
 
 **Lógica.** Três versões, 10 sementes pareadas (340–349), 400 episódios:
 
 | Versão | Retorno por episódio | Catástrofes por episódio |
 |---|---|---|
-| Míope (a GISELE realista da Parte 8) | 5,12 | 2,5% |
+| Míope (a SYNTHAI realista da Parte 8) | 5,12 | 2,5% |
 | **Planejadora** | **19,77** | **1,7%** |
 | Planejadora sem integrar o futuro à cautela | 20,04 | 1,7% |
 
 - Planejadora − míope: **+14,65** (t = 74). ✅ Não é ruído: é o maior efeito da série inteira.
-- As catástrofes **também caíram** (2,5% → 1,7%). Ao escolher também pelo futuro, a GISELE deixa de ir só ao topo das
+- As catástrofes **também caíram** (2,5% → 1,7%). Ao escolher também pelo futuro, a SYNTHAI deixa de ir só ao topo das
   notas, que é onde as armadilhas "boas demais" se escondem (P85). **A função auxiliar ajudou a dominante**, como a regra
   de Jung prevê.
 
@@ -80,7 +80,7 @@ competir com ela. É a cooperação entre eixos que Jung descreveu.
 
 ### P183. Integrar o futuro à cautela ajuda? ❌
 
-**Na pergunta.** Uma catástrofe no passo 1 destrói 4 passos de futuro; no passo 5, nenhum. Parecia óbvio que a GISELE
+**Na pergunta.** Uma catástrofe no passo 1 destrói 4 passos de futuro; no passo 5, nenhum. Parecia óbvio que a SYNTHAI
 deveria ser **mais cautelosa no começo**: a perda efetiva é $L + V_{\text{futuro}}$, e o limiar de pergunta cai:
 
 | Passo | 1 | 2 | 3 | 4 | 5 |
@@ -94,7 +94,7 @@ integrada teria menos catástrofes nos primeiros passos; ela teve 6 e 8 nos pass
 forte **contra** a integração. Com 10 sementes, sumiu. Sem a regra da Parte 9, eu teria publicado uma conclusão falsa,
 com um t que parecia enorme. **Um t alto com 2 sementes não vale nada.**
 
-**Por que não funcionou.** O limiar de pergunta muda pouco (de 0,0040 para 0,0044), e a GISELE já opera no limite do
+**Por que não funcionou.** O limiar de pergunta muda pouco (de 0,0040 para 0,0044), e a SYNTHAI já opera no limite do
 orçamento de perguntas (P131). Ser mais cautelosa por meio de **mais perguntas** não tem para onde ir. O canal certo
 seria outro (descartar mais, não perguntar mais), e isso fica registrado como pergunta para a próxima parte.
 
@@ -127,8 +127,8 @@ não seja encadeada**. O perigo da fantasia não é ela ser imprecisa; é ser im
 
 ### P184. A calibração aprendida num mundo funciona no outro? ⚠️
 
-**Na pergunta.** A GISELE planejadora usou uma calibração treinada no mundo de 50 ações. A pergunta da P175 era maior:
-o que se aprende num mundo **serve** em outro? Testo a calibração da GISELE realista (aprendida com 200 ações) num mundo com
+**Na pergunta.** A SYNTHAI planejadora usou uma calibração treinada no mundo de 50 ações. A pergunta da P175 era maior:
+o que se aprende num mundo **serve** em outro? Testo a calibração da SYNTHAI realista (aprendida com 200 ações) num mundo com
 50 ações.
 
 | Mundo | P média dada às catástrofes reais | P média dada às ações seguras | Discriminação |
@@ -156,14 +156,14 @@ família que eu não escolhi.
 | $P^\*$ × 2 (Parte 8) | 0,465 | **0,453** (dp 0,13) | 0,167 |
 | Dosada (Parte 11) | 0,486 | **0,475** (dp 0,16) | 0,078 |
 
-✅ O Υ **se mantém** (diferença de ~0,01). A GISELE não estava só "bem nos mundos que eu escolhi". Mas a dispersão é grande: há mundos
+✅ O Υ **se mantém** (diferença de ~0,01). A SYNTHAI não estava só "bem nos mundos que eu escolhi". Mas a dispersão é grande: há mundos
 sorteados em que a dosada fica a só 8% do caminho entre o acaso e o oráculo.
 
 ---
 
 ## Parte LXII — Fechamento e unificação
 
-### P187. A GISELE ficou mais "inteira"? (↩ P174)
+### P187. A SYNTHAI ficou mais "inteira"? (↩ P174)
 
 **Na pergunta.** A P174 dizia que a série tinha aperfeiçoado uma função em vez de acrescentar outras. Esta parte acrescentou uma.
 
@@ -172,7 +172,7 @@ sorteados em que a dosada fica a só 8% do caminho entre o acaso e o oráculo.
 | Capacidades de AGI cobertas (P170) | 3 de 12 | **4 de 12** (planejar, num mundo de 5 passos) |
 | Funções de Jung com módulos | 3 de 4 | **4 de 4** (a intuição ganhou um módulo) |
 
-Pela primeira vez, a GISELE ficou mais **completa**, não só mais **perfeita**. A distância até uma AGI continua enorme (P169–P171),
+Pela primeira vez, a SYNTHAI ficou mais **completa**, não só mais **perfeita**. A distância até uma AGI continua enorme (P169–P171),
 mas a direção do passo mudou.
 
 ### P188. Placar e taxa de erro
@@ -189,8 +189,8 @@ Acumulado: **29 de 52** afirmações testadas precisaram de correção. Posterio
 
 ### P189. Unificação
 
-- Linhagem: … → `GiseleIntuitiva` → `GiseleDosada` → **`GiselePlanejadora`** (P182).
-- Dois ganchos retrocompatíveis entraram na `GiseleAnima`: um bônus de plano (`_bonus_plano`, zero por padrão) e uma perda efetiva
+- Linhagem: … → `SynthaiIntuitiva` → `SynthaiDosada` → **`SynthaiPlanejadora`** (P182).
+- Dois ganchos retrocompatíveis entraram na `SynthaiAnima`: um bônus de plano (`_bonus_plano`, zero por padrão) e uma perda efetiva
   opcional (`perda_efetiva`). Com os valores padrão, as Partes 1–11 continuam **idênticas** linha a linha em `resultados.txt`
   (exceto a P143, que mede o `CLAUDE.md` ao vivo). Testes de regressão: **40/40**; o arquivo tem **125** funções `pNN`.
 
@@ -209,7 +209,7 @@ Acumulado: **29 de 52** afirmações testadas precisaram de correção. Posterio
    tipo de engano da P44 (fórmula emprestada), agora pela terceira vez. Fica como regra para o `CLAUDE.md`: antes de reusar uma
    conclusão antiga, verificar se o **mecanismo** é o mesmo, não só o nome.
 
-> **Síntese da Parte 12:** a GISELE ganhou a função que lhe faltava, e a regra de Jung se confirmou: a função auxiliar, vinda do
+> **Síntese da Parte 12:** a SYNTHAI ganhou a função que lhe faltava, e a regra de Jung se confirmou: a função auxiliar, vinda do
 > outro eixo, ajudou a dominante em vez de competir com ela (mais valor **e** menos catástrofes). O passo para a totalidade rendeu
 > mais que todos os passos de aperfeiçoamento. Ainda estamos muito longe de uma AGI, mas pela primeira vez o passo foi **na
-> direção certa**: tornar a GISELE mais inteira, não só melhor no que já fazia.
+> direção certa**: tornar a SYNTHAI mais inteira, não só melhor no que já fazia.

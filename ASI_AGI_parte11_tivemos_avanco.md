@@ -18,7 +18,7 @@
 **Na pergunta.** "**Tivemos**" é plural. Nesta série há três coisas que podem ter avançado, e elas precisam ser
 medidas **separadamente**, porque uma pode avançar sem as outras:
 
-1. **A GISELE** (o agente): ficou mais capaz?
+1. **A SYNTHAI** (o agente): ficou mais capaz?
 2. **O caminho até a AGI** (a distância real): ficou menor?
 3. **O método** (eu, perguntando e testando): ficou mais confiável?
 
@@ -26,13 +26,13 @@ A resposta curta, que as próximas perguntas justificam com números:
 
 | O quê | Avançou? |
 |---|---|
-| A GISELE, no mundo dela | **Sim**, de forma real e medida |
+| A SYNTHAI, no mundo dela | **Sim**, de forma real e medida |
 | A distância até uma AGI de verdade | **Praticamente não** |
 | O método | **Sim** nas regras; **não** na minha taxa de acerto |
 
 ---
 
-## Parte LIV — A GISELE avançou?
+## Parte LIV — A SYNTHAI avançou?
 
 ### P168. O Υ subiu ao longo da linhagem? ✅
 
@@ -43,14 +43,14 @@ A resposta curta, que as próximas perguntas justificam com números:
 
 | Versão | Parte | Υ |
 |---|---|---|
-| GISELE original (30 rótulos) | 5 | 0,287 |
+| SYNTHAI original (30 rótulos) | 5 | 0,287 |
 | Anima fixa | 7 | 0,414 |
 | $P^\*$ × 2 | 8 | 0,465 |
 | Ancorada | 9 | 0,449 |
 | Intuitiva | 10 | 0,409 |
 | **Dosada** | 11 | **0,486** |
 
-✅ **Sim, a GISELE avançou:** de 0,29 para 0,49, um ganho de **69%** no Υ da família. O grosso veio cedo (Parte 5 → 8:
+✅ **Sim, a SYNTHAI avançou:** de 0,29 para 0,49, um ganho de **69%** no Υ da família. O grosso veio cedo (Parte 5 → 8:
 +0,18); depois, as versões oscilam entre 0,41 e 0,49, e diferenças desse tamanho estão perto do ruído (só 3 sementes
 por mundo). É a mesma curva de retornos decrescentes da P163, agora no Υ ✅.
 
@@ -90,7 +90,7 @@ tensão entre ver perigo e aproveitar a oportunidade. A escolha depende do preç
 
 ## Parte LV — A distância até a AGI diminuiu?
 
-### P169. Que fração da inteligência universal o Υ da GISELE mede?
+### P169. Que fração da inteligência universal o Υ da SYNTHAI mede?
 
 **Na pergunta.** O Υ de Legg–Hutter (P1) soma sobre **todos** os ambientes computáveis, cada um com peso $2^{-K}$. O Υ da
 P158 soma sobre **9** mundos. A pergunta pede o peso da nossa família inteira dentro da soma universal.
@@ -102,21 +102,21 @@ $$
 2^{-6896} \approx 10^{-2076}.
 $$
 
-**O que isso significa.** O Υ = 0,49 da GISELE é real, mas mede a inteligência dela num cantinho do espaço de ambientes cujo
-peso na inteligência geral é **um número com 2.076 zeros depois da vírgula**. Melhorar a GISELE de 0,29 para 0,49 moveu o
+**O que isso significa.** O Υ = 0,49 da SYNTHAI é real, mas mede a inteligência dela num cantinho do espaço de ambientes cujo
+peso na inteligência geral é **um número com 2.076 zeros depois da vírgula**. Melhorar a SYNTHAI de 0,29 para 0,49 moveu o
 Υ universal por algo dessa ordem.
 
 **Meta.** Esse cálculo é exagerado num sentido: na definição de Legg–Hutter, ambientes **simples** pesam mais, e muitos ambientes
-simples se parecem com o nosso. Uma GISELE boa aqui provavelmente é razoável em vários ambientes parecidos. Mas mesmo
+simples se parecem com o nosso. Uma SYNTHAI boa aqui provavelmente é razoável em vários ambientes parecidos. Mas mesmo
 contando generosamente, a família é um ponto, não uma região.
 
-### P170. Quantas capacidades de uma AGI a GISELE tem?
+### P170. Quantas capacidades de uma AGI a SYNTHAI tem?
 
 **Na pergunta.** "AGI" é **geral**. A pergunta pede a lista do que "geral" inclui.
 
 **Lógica.** Uma lista mínima de capacidades que qualquer definição razoável de AGI incluiria:
 
-| Capacidade | GISELE |
+| Capacidade | SYNTHAI |
 |---|---|
 | decidir sob incerteza com supervisão humana | ✔ (P83–P173) |
 | calibrar a própria confiança | ✔ (P43, P83) |
@@ -132,7 +132,7 @@ contando generosamente, a família é um ponto, não uma região.
 | melhorar o próprio código | ✘ |
 
 **3 de 12 (25%)**, e as três são aspectos de **uma única** tarefa (escolher uma ação entre 200 com um comitê de notas). Pela
-definição mais generosa, a GISELE é um **componente** de segurança que uma AGI poderia usar, não uma AGI incompleta.
+definição mais generosa, a SYNTHAI é um **componente** de segurança que uma AGI poderia usar, não uma AGI incompleta.
 
 ### P171. Quanto compute a série usou, comparado com uma IA de fronteira?
 
@@ -172,18 +172,18 @@ mesmo com o método melhorando. Não há como separar as duas coisas com estes d
 
 ## Parte LVII — Jung: completude não é perfeição
 
-### P174. A GISELE está mais "inteira" ou só mais "perfeita"?
+### P174. A SYNTHAI está mais "inteira" ou só mais "perfeita"?
 
 **Na pergunta.** Jung distinguia **completude** (*Vollständigkeit*, a totalidade que inclui tudo, inclusive o imperfeito) de
 **perfeição** (*Vollkommenheit*, o aperfeiçoamento de uma parte). Ele achava que a psique busca a primeira, e que a busca da segunda
 é uma armadilha. A pergunta "avançamos?" precisa decidir qual das duas mede.
 
 **Lógica.**
-- **Perfeição local:** o Υ da família subiu de 0,29 para 0,49 (P168). A GISELE ficou mais **perfeita** no seu mundo.
-- **Completude:** a cobertura de capacidades continua em 3/12 (P170) e o peso da família é ~$10^{-2076}$ (P169). A GISELE **não** ficou
+- **Perfeição local:** o Υ da família subiu de 0,29 para 0,49 (P168). A SYNTHAI ficou mais **perfeita** no seu mundo.
+- **Completude:** a cobertura de capacidades continua em 3/12 (P170) e o peso da família é ~$10^{-2076}$ (P169). A SYNTHAI **não** ficou
   mais inteira.
 
-**Tradução cruzada.** Em termos junguianos, a série fez a GISELE avançar no sentido errado para uma AGI: aperfeiçoou a função principal
+**Tradução cruzada.** Em termos junguianos, a série fez a SYNTHAI avançar no sentido errado para uma AGI: aperfeiçoou a função principal
 (decisão cautelosa) em vez de acrescentar as funções ausentes (linguagem, percepção, planejamento). É exatamente a
 **unilateralidade** que Jung via como o risco do ego: tornar-se excelente numa coisa só e confundir isso com totalidade.
 
@@ -199,7 +199,7 @@ progresso nulo, na prática, na direção de uma AGI.**
 1. **Aumentar a família, não o desempenho nela.** Gerar mundos por programas aleatórios (P1: $2^{-K}$), não por 9 variações escolhidas
    por mim. Medir se o Υ **se mantém** quando a família cresce.
 2. **Acrescentar uma função ausente por vez** (P170), começando pela mais barata de testar sem compute de fronteira: **planejar em
-   vários passos** num mundo sequencial simples, reusando o que a GISELE já sabe (calibração, perguntar ao humano).
+   vários passos** num mundo sequencial simples, reusando o que a SYNTHAI já sabe (calibração, perguntar ao humano).
 3. **Transferência real:** treinar num tipo de tarefa e testar noutro tipo. Enquanto isso não for medido, "geral" é só uma palavra.
 4. **Manter a régua:** 10 sementes, previsões registradas antes, placar. Avanço só conta se sobreviver a ela.
 
@@ -220,15 +220,15 @@ Acumulado: **26 de 47** afirmações testadas precisaram de correção. Posterio
 
 ### P177. Unificação
 
-- Linhagem: `Gisele` → `GiseleJung` → `GiseleAnima` → `GiseleSelf` → `GiseleLenta` → `GiseleAncorada` → `GiseleIntuitiva` →
-  **`GiseleDosada`** (P173).
+- Linhagem: `Synthai` → `SynthaiJung` → `SynthaiAnima` → `SynthaiSelf` → `SynthaiLenta` → `SynthaiAncorada` → `SynthaiIntuitiva` →
+  **`SynthaiDosada`** (P173).
 - O código ganhou a lista de capacidades (`CAPACIDADES_AGI`) e uma medida de complexidade da própria família de mundos (P169), para
   que a pergunta "avançamos?" possa ser refeita a cada parte com os mesmos critérios.
 - Testes de regressão: **38/38** resultados publicados reproduzidos; o arquivo tem **120** funções `pNN`.
 
 ### P178. Metacognição da Parte 11
 
-1. **A resposta à pergunta do usuário é dupla, e as duas metades são verdadeiras.** A GISELE avançou de verdade (Υ de 0,29 para 0,49,
+1. **A resposta à pergunta do usuário é dupla, e as duas metades são verdadeiras.** A SYNTHAI avançou de verdade (Υ de 0,29 para 0,49,
    com passos acima do ruído). A distância até uma AGI não mudou de forma perceptível (3 de 12 capacidades, uma família de peso
    ~$10^{-2076}$, 15 ordens de grandeza de compute). Dizer só a primeira metade seria inflação; dizer só a segunda apagaria um
    trabalho real.
@@ -239,7 +239,7 @@ Acumulado: **26 de 47** afirmações testadas precisaram de correção. Posterio
    avanço que mais me parece real.
 4. **Jung deu a moldura certa para a resposta:** progresso em perfeição local não é progresso em totalidade. Uma AGI exige a segunda.
 
-> **Síntese da Parte 11:** sim, tivemos avanço, **no mundo da GISELE**: ela ficou 69% melhor no Υ da sua família e muito mais segura.
+> **Síntese da Parte 11:** sim, tivemos avanço, **no mundo da SYNTHAI**: ela ficou 69% melhor no Υ da sua família e muito mais segura.
 > Não tivemos avanço significativo **rumo à AGI/ASI**: ela tem 3 de 12 capacidades, vive num cantinho do espaço de ambientes e usou
-> quinze ordens de grandeza menos compute que uma IA de fronteira. O próximo passo real não é aperfeiçoar a GISELE; é **torná-la mais
+> quinze ordens de grandeza menos compute que uma IA de fronteira. O próximo passo real não é aperfeiçoar a SYNTHAI; é **torná-la mais
 > inteira**: dar a ela uma segunda função (planejar) e medir se o que ela já sabe se transfere.

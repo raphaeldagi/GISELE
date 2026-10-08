@@ -1,7 +1,7 @@
 # Como eu construiria uma AGI/ASI — Parte 8: o Si-mesmo lento, o preço da pergunta e os arquétipos que faltavam
 
 > Continuação da [Parte 7](ASI_AGI_parte7_jung_segunda_ordem.md). **Próxima:** [Parte 9 — a régua do ruído](ASI_AGI_parte9_a_regua_do_ruido.md) (P143–P155). Os números saem de `p130_...` a
-> `p138_...` e da classe `GiseleLenta` em [`calculos.py`](calculos.py); a saída completa está em
+> `p138_...` e da classe `SynthaiLenta` em [`calculos.py`](calculos.py); a saída completa está em
 > [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
@@ -10,7 +10,7 @@
 > **De onde parte esta parte.** A Parte 7 deixou três pontas soltas:
 > 1. A lição "**um controle interno não pode ser mais rápido que a precisão da sua medida**"
 >    nunca foi testada na forma positiva: um Si-mesmo **lento** funcionaria?
-> 2. Conhecer o erro do humano ajudou a GISELE em 9 de 9 casos, e eu **não sabia por quê** (P118).
+> 2. Conhecer o erro do humano ajudou a SYNTHAI em 9 de 9 casos, e eu **não sabia por quê** (P118).
 > 3. Eu disse que minha taxa de erro **subiu** porque as hipóteses ficaram mais ambiciosas. Isso
 >    nunca foi testado.
 >
@@ -50,12 +50,12 @@ A estatística responde: talvez se entre, mas **com 5 amostras não dá para sab
 
 ## Parte XXXIX — O preço de uma pergunta
 
-### P131. Por que conhecer o erro do humano ajudava a GISELE? (↩ P118) ⚠️
+### P131. Por que conhecer o erro do humano ajudava a SYNTHAI? (↩ P118) ⚠️
 
 **Na pergunta.** "Por que **ajudava**": conhecer ε só muda uma coisa no código, o limiar $P^\*$ a partir do
-qual a GISELE pergunta. A pergunta já aponta onde olhar: **o limiar estava errado**.
+qual a SYNTHAI pergunta. A pergunta já aponta onde olhar: **o limiar estava errado**.
 
-**Lógica.** Varri o limiar da `GiseleAnima` multiplicando $P^\*$ por $m$ (semente 112, fadiga 0,3):
+**Lógica.** Varri o limiar da `SynthaiAnima` multiplicando $P^\*$ por $m$ (semente 112, fadiga 0,3):
 
 | $m$ | 1,0 | 1,1 | 1,5 | **2,0** | 4,0 | 10 |
 |---|---|---|---|---|---|---|
@@ -67,7 +67,7 @@ Conhecer ε funcionava por acidente: com o humano cansado, ε é maior, o que em
 na direção certa.
 
 **O mecanismo.** A fórmula da P71, $P^\* = c/((1-\varepsilon)L)$, supõe que perguntas são **ilimitadas**: cada uma
-custa só $c$. Mas desde a Parte 6 a GISELE tem um **orçamento** (carga-alvo 0,3 por episódio). Com
+custa só $c$. Mas desde a Parte 6 a SYNTHAI tem um **orçamento** (carga-alvo 0,3 por episódio). Com
 orçamento, cada pergunta gasta em algo pouco suspeito é uma pergunta que **não sobra** para algo muito
 suspeito. O custo real é
 $$
@@ -119,10 +119,10 @@ dez interações é decidir com margem de ±0,18.
 
 ### P133. O Si-mesmo lento funciona? ❌
 
-**Na pergunta.** A Parte 7 concluiu que "o centro regula devagar". A `GiseleLenta` é essa frase
+**Na pergunta.** A Parte 7 concluiu que "o centro regula devagar". A `SynthaiLenta` é essa frase
 transformada em código.
 
-**Lógica (a `GiseleLenta`).**
+**Lógica (a `SynthaiLenta`).**
 1. **Anima bayesiana:** a imagem do humano é uma distribuição Beta(2, 18) (média 0,10), atualizada pelas
    auditorias, com um esquecimento lento (o humano muda).
 2. **Paciência:** só olha a carga-alvo a cada 200 episódios, e só a muda se o **intervalo de 90%** de ε
@@ -318,11 +318,11 @@ Acumulado: **17 de 30** afirmações testadas precisaram de correção. Posterio
 
 ### P141. Unificação
 
-- Linhagem: `Gisele` → `GiseleJung` → `GiseleAnima` → `GiseleSelf` → **`GiseleLenta`**.
-- O código ganhou um único ajuste retroativo, compatível com o passado: `GiseleAnima` agora aceita um
+- Linhagem: `Synthai` → `SynthaiJung` → `SynthaiAnima` → `SynthaiSelf` → **`SynthaiLenta`**.
+- O código ganhou um único ajuste retroativo, compatível com o passado: `SynthaiAnima` agora aceita um
   multiplicador do limiar (`mult_pergunta`), que vale 1,0 por padrão. Os testes de regressão confirmam
   que os resultados publicados continuam iguais: **27/27** reproduzidos; o arquivo tem **95** funções `pNN`.
-- **A melhor GISELE realista agora é a mais simples que já foi testada fora da semente:** anima fixa,
+- **A melhor SYNTHAI realista agora é a mais simples que já foi testada fora da semente:** anima fixa,
   sombra própria, carga fixa 0,3 e $P^\*$ dobrado. Nenhum regulador (rápido ou lento) a superou.
 - Faxina: o diretório `__pycache__` tinha sido commitado por engano; agora está no `.gitignore`.
 
@@ -341,7 +341,7 @@ Acumulado: **17 de 30** afirmações testadas precisaram de correção. Posterio
    Mãe como filtro que nunca se testa. São os quatro casos em que Jung, calculado, deu requisitos de
    projeto concretos.
 
-> **Síntese da Parte 8:** procurei um Si-mesmo que regulasse a GISELE e descobri que o centro não precisa
+> **Síntese da Parte 8:** procurei um Si-mesmo que regulasse a SYNTHAI e descobri que o centro não precisa
 > ser regulado: ele é o ponto que não se move. O que precisava de correção era o **preço da pergunta**: a
 > atenção do outro é finita, e perguntar bem é saber o que não perguntar. A criatura (Jó) mostra a sombra
 > do criador, o Trickster encontra o raro, o individuado explora cedo e aproveita tarde, e a mãe boa deixa

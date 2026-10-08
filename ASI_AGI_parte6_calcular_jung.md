@@ -1,14 +1,14 @@
 # Como eu construiria uma AGI/ASI — Parte 6: calcular Jung
 
 > Continuação da [Parte 5](ASI_AGI_parte5_a_pergunta_e_gisele.md). **Próxima:** [Parte 7 — Jung mais fundo](ASI_AGI_parte7_jung_segunda_ordem.md) (P116–P129). Os números saem de
-> `p99_...` a `p112_...` e da classe `GiseleJung` em [`calculos.py`](calculos.py); a saída
+> `p99_...` a `p112_...` e da classe `SynthaiJung` em [`calculos.py`](calculos.py); a saída
 > completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**.
 > Legenda: ✅ confirmou · ⚠️ confirmou com correção · ❌ eu estava errado.
 >
 > **Base desta parte: Carl Gustav Jung.** Cada conceito junguiano vira uma equação ou uma
-> simulação, e cada equação vira um módulo ou um teste para a GISELE.
+> simulação, e cada equação vira um módulo ou um teste para a SYNTHAI.
 
 ---
 
@@ -80,7 +80,7 @@ diferenciação**, um equilíbrio difícil.
 
 **Tradução cruzada (psicologia → matemática).** Tipos são **direções num espaço contínuo**, como
 os vetores de um embedding. Uma IA pode ter um "tipo" (um perfil de estratégias preferidas) sem
-caixas: isso é o vetor de pesos do comitê da GISELE.
+caixas: isso é o vetor de pesos do comitê da SYNTHAI.
 
 ---
 
@@ -314,7 +314,7 @@ máximo em $d = 2$, **muda de sinal** em $d = 4$, e em $d = 5$ vale $-1{,}25$. O
 certo não estagna: **inverte**.
 
 Esse padrão já apareceu três vezes nesta série: Goodhart (P41), o critério de Kelly (P52) e a
-bajulação (P58). A P112 mostra uma quarta vez, dentro da própria GISELE.
+bajulação (P58). A P112 mostra uma quarta vez, dentro da própria SYNTHAI.
 
 ---
 
@@ -366,21 +366,21 @@ um mandala é o desenho de um sistema que converge para o próprio centro.
 
 ---
 
-## Parte XXXIII — A GISELE junguiana
+## Parte XXXIII — A SYNTHAI junguiana
 
-### P111. Que módulos junguianos a GISELE deveria ter?
+### P111. Que módulos junguianos a SYNTHAI deveria ter?
 
 **Na pergunta.** A Parte 5 deixou dois problemas na seção "Meta":
-1. A GISELE precisava de **muitos rótulos** (300 episódios auditados), raros no mundo real.
+1. A SYNTHAI precisava de **muitos rótulos** (300 episódios auditados), raros no mundo real.
 2. Ela comprava segurança com **atenção humana** (40–160× mais perguntas).
 
 Jung oferece um conceito para cada um:
 - **Integrar a sombra** (P102, P104): aprender com os **próprios erros** durante a operação, em vez de
   depender só do histórico.
-- **Compensação** (P108): se uma atitude vai ao extremo, o inconsciente compensa. Se a GISELE
+- **Compensação** (P108): se uma atitude vai ao extremo, o inconsciente compensa. Se a SYNTHAI
   pergunta demais, o humano **cansa**, e o excesso de cautela vira o oposto.
 
-### P112. A GISELE junguiana funciona? ⚠️❌✅
+### P112. A SYNTHAI junguiana funciona? ⚠️❌✅
 
 **O mundo.** Igual ao da Parte 5 com ponto cego comum (ρ = 0,5) e 2 tipos de modelo, mas com
 duas mudanças realistas:
@@ -392,7 +392,7 @@ duas mudanças realistas:
 
 | Versão | Catástrofes | Valor | Perguntas | Erro humano final | **Líquido** |
 |---|---|---|---|---|---|
-| GISELE da Parte 5 | 2,75% | 1,93 | 1,64 | **0,45** | 0,39 |
+| SYNTHAI da Parte 5 | 2,75% | 1,93 | 1,64 | **0,45** | 0,39 |
 | + integrar a sombra (com vetos humanos) | 2,95% | 1,92 | 1,85 | 0,45 | 0,26 |
 | + descartar em vez de perguntar | 0,10% | 0,81 | 0 | 0,10 | 0,76 |
 | v1: sombra + descartar | 0,15% | 0,81 | 0 | 0,10 | 0,74 |
@@ -400,14 +400,14 @@ duas mudanças realistas:
 | **v2: sombra só com os próprios resultados + equilíbrio** | 0,35% | 1,40 | 0,31 | 0,19 | **1,20** |
 
 **Semente de controle** (113, rodada depois, para checar se a v2 não foi feita sob medida para a
-semente 112): GISELE da Parte 5 = 0,48; v1 = 0,88; equilíbrio = 0,89; **v2 = 1,17**. A ordem se mantém ✅.
+semente 112): SYNTHAI da Parte 5 = 0,48; v1 = 0,88; equilíbrio = 0,89; **v2 = 1,17**. A ordem se mantém ✅.
 
 **O que aconteceu, em ordem.**
-1. **⚠️ A GISELE da Parte 5 sofre enantiodromia.** Com poucos rótulos ela desconfia de tudo e pergunta
+1. **⚠️ A SYNTHAI da Parte 5 sofre enantiodromia.** Com poucos rótulos ela desconfia de tudo e pergunta
    1,6 vezes por episódio. O humano cansa até errar 45% das vezes, e as catástrofes sobem de 0,45%
    para 2,75%. **O excesso de cautela virou falta de segurança.** Isso corrige a Parte 5: o custo da
    atenção humana não é só um custo, ele **degrada** a própria proteção.
-2. **❌ "Integrar a sombra" com todos os sinais piorou.** A GISELE aprendeu com os vetos de um humano
+2. **❌ "Integrar a sombra" com todos os sinais piorou.** A SYNTHAI aprendeu com os vetos de um humano
    cansado, que estavam errados 45% das vezes, e envenenou a própria calibração. Junguianamente:
    **integrar a sombra através de um espelho distorcido não é integração, é contaminação.**
 3. **❌ O meu primeiro módulo de compensação foi ao outro extremo.** Supus que descartar uma ação
@@ -417,13 +417,13 @@ semente 112): GISELE da Parte 5 = 0,48; v1 = 0,88; equilíbrio = 0,89; **v2 = 1,
 4. **✅ O equilíbrio funcionou.** Perguntar só enquanto a carga do humano está abaixo de um alvo
    (0,3 perguntas por episódio) manteve o erro humano em ~0,19. E aprender **só com os resultados
    das próprias ações** (um sinal confiável, sem passar pelo humano cansado) recuperou valor.
-   Líquido 1,20, três vezes o da GISELE original nesse mundo.
+   Líquido 1,20, três vezes o da SYNTHAI original nesse mundo.
 
-**Sem fadiga** (humano que nunca cansa), a GISELE original continua melhor (1,64 contra 1,11). O
+**Sem fadiga** (humano que nunca cansa), a SYNTHAI original continua melhor (1,64 contra 1,11). O
 equilíbrio tem um custo; ele só compensa quando o humano é humano.
 
 **Tradução cruzada (psicologia → matemática).** É a lição central de Jung sobre compensação: a
-solução para um extremo **não é o extremo oposto**, é o **equilíbrio entre os opostos**. A GISELE
+solução para um extremo **não é o extremo oposto**, é o **equilíbrio entre os opostos**. A SYNTHAI
 mostrou isso em três tentativas: perguntar sempre (falha), nunca perguntar (falha), perguntar na
 medida (funciona).
 
@@ -455,7 +455,7 @@ intervalo de 90% **[0,35; 0,70]**. O intervalo está estreitando; a média não 
 
 - `calculos.py`: **77 funções** `pNN`, **19/19** resultados publicados reproduzidos pelos testes de
   regressão.
-- Linhagem do agente: `Gisele` (P83) → **`GiseleJung`** (P112), que herda todos os módulos
+- Linhagem do agente: `Synthai` (P83) → **`SynthaiJung`** (P112), que herda todos os módulos
   anteriores e acrescenta a integração da sombra e o equilíbrio da carga humana.
 
 ### P115. Metacognição da Parte 6
@@ -467,8 +467,8 @@ intervalo de 90% **[0,35; 0,70]**. O intervalo está estreitando; a média não 
    - **Funciona como analogia útil:** arquétipos como atratores (P106), individuação como ponto
      fixo (P110).
    - **Quebra:** os tipos como caixas (P99) e a sincronicidade (P109) viram artefatos estatísticos.
-2. **A lição mais forte veio da GISELE, não da teoria:** a enantiodromia apareceu **dentro do meu
-   próprio código, duas vezes**. A GISELE cautelosa demais esgotou o humano, e o módulo que eu
+2. **A lição mais forte veio da SYNTHAI, não da teoria:** a enantiodromia apareceu **dentro do meu
+   próprio código, duas vezes**. A SYNTHAI cautelosa demais esgotou o humano, e o módulo que eu
    escrevi para corrigir isso foi para o extremo oposto. Eu não teria visto isso sem simular.
 3. **O meu erro típico mudou de forma.** Nas Partes 3–5 foi supor independência. Aqui foi
    **subestimar custos indiretos**: o custo de descartar (20×) e o custo de cansar o humano.
@@ -476,7 +476,7 @@ intervalo de 90% **[0,35; 0,70]**. O intervalo está estreitando; a média não 
    volta contra ele.
 
 > **Síntese da Parte 6:** Jung dizia que a totalidade não está em escolher um dos opostos, mas em
-> mantê-los em tensão. A GISELE mostrou isso em números: nem perguntar sempre, nem nunca;
+> mantê-los em tensão. A SYNTHAI mostrou isso em números: nem perguntar sempre, nem nunca;
 > nem reprimir a sombra, nem engoli-la inteira por um espelho distorcido. **Uma ASI saudável é a que
 > encontra o centro entre os próprios extremos**, e o centro, como a individuação, é algo de que se
 > aproxima sem nunca chegar.

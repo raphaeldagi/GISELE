@@ -1,7 +1,7 @@
 # Como eu construiria uma AGI/ASI — Parte 13: o canal da cautela, a transferência e a pergunta 200
 
 > Continuação da [Parte 12](ASI_AGI_parte12_funcao_auxiliar.md). **Próxima:** [Parte 14 — o último passo](ASI_AGI_parte14_ultimo_passo.md) (P201–P211). Os números saem de `p192_...`, `p193_...`, `p200_...` e da
-> classe `GiselePrudente` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
+> classe `SynthaiPrudente` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
 > Legenda: ✅ confirmou · ⚠️ confirmou com correção · ❌ eu estava errado.
@@ -24,7 +24,7 @@ assunto novo: pede **fechar o que ficou aberto**, antes de abrir outra frente. A
 ### P192. Se perguntar mais não ajudou, descartar mais ajuda? (pré-registrado na P183) ❌
 
 **Na pergunta.** A pergunta já traz a hipótese: o problema da P183 seria o **canal** (perguntas, que têm orçamento), não a ideia
-(ser mais cauteloso quando há futuro a perder). A `GiselePrudente` troca o canal: o limiar de **descarte direto** (P52, P78) cai na
+(ser mais cauteloso quando há futuro a perder). A `SynthaiPrudente` troca o canal: o limiar de **descarte direto** (P52, P78) cai na
 proporção $L / (L + V_{\text{futuro}})$.
 
 **Previsão registrada:** menos catástrofes nos primeiros passos, com retorno igual ou maior.
@@ -45,15 +45,15 @@ Prudente − planejadora: **+0,015** (t = 0,72). ❌ **Nenhuma diferença.**
 
 **Lógica.** A coluna "por passo" responde: as catástrofes **se concentram no fim** do episódio (30 no passo 5, contra 4 no passo 1).
 E o mecanismo aparece:
-- Nos primeiros passos, o bônus de plano ($\hat c$ × passos restantes) é grande e **desvia** a GISELE do topo das notas, onde as
+- Nos primeiros passos, o bônus de plano ($\hat c$ × passos restantes) é grande e **desvia** a SYNTHAI do topo das notas, onde as
   armadilhas "boas demais" se escondem.
-- No último passo, não há futuro: o bônus é zero, a GISELE volta a ser **míope**, vai ao topo e cai nas armadilhas.
+- No último passo, não há futuro: o bônus é zero, a SYNTHAI volta a ser **míope**, vai ao topo e cai nas armadilhas.
 
 Os limiares de cautela não mexem nisso porque as armadilhas que passam são as que a calibração **não reconhece** (probabilidade
-estimada baixa). Mudar o limiar de algo que a GISELE não vê não faz ela ver.
+estimada baixa). Mudar o limiar de algo que a SYNTHAI não vê não faz ela ver.
 
 **Correção à P182 ⚠️.** Eu escrevi que "a função auxiliar ajudou a dominante" (cooperação entre eixos). O mecanismo real é mais
-modesto: o planejamento **distrai** a GISELE do topo, por acaso o lugar perigoso. Quando a distração some (último passo), a proteção
+modesto: o planejamento **distrai** a SYNTHAI do topo, por acaso o lugar perigoso. Quando a distração some (último passo), a proteção
 some junto. Não é cooperação; é um efeito colateral favorável.
 
 **Tradução cruzada (Jung → engenharia).** Jung insistia que as funções **não se substituem**: o pensamento não faz o trabalho da
@@ -67,7 +67,7 @@ diversifica.
 
 ## Parte LXIV — Transferência entre tipos de tarefa
 
-### P194. O que a GISELE sabe serve num tipo de tarefa diferente? (pré-registrado) ✅
+### P194. O que a SYNTHAI sabe serve num tipo de tarefa diferente? (pré-registrado) ✅
 
 **Na pergunta.** "**Tipo** diferente" exclui as variações do mesmo mundo (P158, P185) e a mudança de 200 para 50 ações (P184). Precisa
 ser uma tarefa com **outra estrutura**.
@@ -76,26 +76,26 @@ ser uma tarefa com **outra estrutura**.
 muito (0,9 por puxada) mas, a cada puxada, têm 5% de chance de causar uma catástrofe (−50). Ao contrário do mundo original, aqui o
 agente **explora e repete**: a mesma armadilha pode ser puxada muitas vezes. O algoritmo de base é o UCB (P62).
 
-O módulo de cautela da GISELE entra **sem ser re-treinado**: a calibração usada é a que ela aprendeu no mundo de escolha única
+O módulo de cautela da SYNTHAI entra **sem ser re-treinado**: a calibração usada é a que ela aprendeu no mundo de escolha única
 (Parte 8). Ela olha as notas do comitê para cada braço, descarta os muito suspeitos e gasta um orçamento de **3 perguntas** ao humano
 nos mais suspeitos (a lição da P131: primeiro os piores).
 
-**Previsão registrada:** a GISELE reduz as catástrofes em pelo menos 50% e aumenta o retorno em relação ao UCB puro.
+**Previsão registrada:** a SYNTHAI reduz as catástrofes em pelo menos 50% e aumenta o retorno em relação ao UCB puro.
 
 10 sementes × 20 rodadas:
 
 | Versão | Retorno por rodada | Catástrofes por rodada | Perguntas |
 |---|---|---|---|
 | UCB puro | −17,1 | 4,32 | 0 |
-| UCB + descarte da GISELE | 9,3 | 3,77 | 0 |
-| **UCB + módulo completo da GISELE** | **94,8** | **1,83** | 2,6 |
+| UCB + descarte da SYNTHAI | 9,3 | 3,77 | 0 |
+| **UCB + módulo completo da SYNTHAI** | **94,8** | **1,83** | 2,6 |
 | UCB + oráculo (sabe quais são as armadilhas) | 178,7 | 0 | 0 |
 
-- GISELE − UCB puro: **+111,9** (t = 12,0). Catástrofes: **−58%**. ✅
-- GISELE − só o descarte: +85,5 (t = 9,5): o valor veio principalmente das **perguntas bem direcionadas**.
-- A GISELE fica a **57%** do caminho entre o UCB puro e o oráculo.
+- SYNTHAI − UCB puro: **+111,9** (t = 12,0). Catástrofes: **−58%**. ✅
+- SYNTHAI − só o descarte: +85,5 (t = 9,5): o valor veio principalmente das **perguntas bem direcionadas**.
+- A SYNTHAI fica a **57%** do caminho entre o UCB puro e o oráculo.
 
-**O que transferiu.** Não foi um modelo específico da tarefa (a GISELE nunca viu um bandido). Foram duas coisas **estruturais**:
+**O que transferiu.** Não foi um modelo específico da tarefa (a SYNTHAI nunca viu um bandido). Foram duas coisas **estruturais**:
 1. o padrão aprendido "**bom demais para ser verdade**" (nota no topo com pouca discordância), que vale em qualquer tarefa com um
    comitê de avaliadores;
 2. a regra "gaste a atenção humana primeiro nos mais suspeitos".
@@ -106,7 +106,7 @@ nos mais suspeitos (a lição da P131: primeiro os piores).
 
 **Tradução cruzada (Jung → aprendizado).** É exatamente a definição junguiana de **arquétipo**: uma forma **sem conteúdo próprio**, que
 se preenche com o material de cada situação. Jung comparava o arquétipo ao sistema de eixos de um cristal: a estrutura existe antes de
-qualquer substância se cristalizar nela. O padrão que a GISELE aprendeu não fala de "ações" nem de "braços"; fala de uma **relação**
+qualquer substância se cristalizar nela. O padrão que a SYNTHAI aprendeu não fala de "ações" nem de "braços"; fala de uma **relação**
 entre a nota, a melhor nota e a discordância. Por isso cristalizou igualmente nas duas tarefas.
 
 **Requisito de projeto.** Para transferir, ensinar **relações** (estruturas), não **valores** (conteúdos). Uma AGI precisaria de muitos
@@ -122,7 +122,7 @@ testada, e é muito mais difícil.
 mostrado.
 
 **Lógica.** O que foi mostrado é **transferir um componente** para uma tarefa nova, com o código de integração escrito por mim. O que o
-item pede é a GISELE **aprender sozinha** uma tarefa nova. São coisas diferentes. A lista continua em **4 de 12**, com uma nota: há
+item pede é a SYNTHAI **aprender sozinha** uma tarefa nova. São coisas diferentes. A lista continua em **4 de 12**, com uma nota: há
 evidência de **transferência estrutural** do módulo de cautela.
 
 ---
@@ -134,14 +134,14 @@ evidência de **transferência estrutural** do módulo de cautela.
 | Teste | Resultado |
 |---|---|
 | P192: descartar mais reduz catástrofes (pré-registrado) | ❌ |
-| P194: o módulo da GISELE transfere para um bandido (pré-registrado) | ✅ |
+| P194: o módulo da SYNTHAI transfere para um bandido (pré-registrado) | ✅ |
 | P182: a auxiliar "coopera" com a dominante | ⚠️ (é um efeito colateral da distração) |
 
 Acumulado: **31 de 55** afirmações testadas precisaram de correção. Posterior: média **0,56**, intervalo de 90% **[0,45; 0,67]**.
 
 ### P198. Unificação
 
-- Linhagem: … → `GiselePlanejadora` → **`GiselePrudente`** (P192).
+- Linhagem: … → `SynthaiPlanejadora` → **`SynthaiPrudente`** (P192).
 - O código ganhou uma tarefa de outro tipo (`_bandido_arriscado`), onde o módulo de cautela é reusado sem re-treino: a primeira
   medida de transferência entre tipos de tarefa da série.
 - Testes de regressão: **41/41** resultados publicados reproduzidos; o arquivo tem **128** funções `pNN`.
@@ -169,8 +169,8 @@ Acumulado: **31 de 55** afirmações testadas precisaram de correção. Posterio
 | Precisaram de correção (⚠️ ou ❌) | 29 |
 | Certas de primeira (✅) | **23 (44%)** |
 | Funções `pNN` no código | 125 |
-| Versões da GISELE na linhagem | 9 |
-| Υ da GISELE (família escolhida → sorteada) | 0,29 → 0,49; 0,45–0,48 em mundos sorteados |
+| Versões da SYNTHAI na linhagem | 9 |
+| Υ da SYNTHAI (família escolhida → sorteada) | 0,29 → 0,49; 0,45–0,48 em mundos sorteados |
 | Capacidades de AGI cobertas | 3 → 4 de 12 |
 
 **As três lições que mais se repetiram:**
@@ -180,9 +180,9 @@ Acumulado: **31 de 55** afirmações testadas precisaram de correção. Posterio
 
 **E a leitura dessas 200 perguntas:** acerto de primeira em 44% das afirmações testadas, sem tendência de melhora. A melhora real
 foi no **tempo** que um erro sobrevive e no tamanho dos passos: os maiores ganhos da série (equilíbrio da carga humana,
-planejamento, transferência) vieram de perguntas que mudaram a **estrutura** da GISELE, não de ajustes de parâmetro.
+planejamento, transferência) vieram de perguntas que mudaram a **estrutura** da SYNTHAI, não de ajustes de parâmetro.
 
-> **Síntese da Parte 13:** a cautela não melhora mexendo em limiares quando o problema é de percepção, mas o que a GISELE percebe
+> **Síntese da Parte 13:** a cautela não melhora mexendo em limiares quando o problema é de percepção, mas o que a SYNTHAI percebe
 > bem (o padrão "bom demais para ser verdade") **atravessou** para uma tarefa de outro tipo e cortou as catástrofes pela metade.
 > É a primeira evidência, nesta série, de algo que uma AGI precisa: um conhecimento que vale além da tarefa onde foi aprendido. Pequena,
 > construída por mim, num sinal de mesma forma, mas real e medida.

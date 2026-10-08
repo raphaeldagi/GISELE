@@ -1,7 +1,7 @@
 # Como eu construiria uma AGI/ASI — Parte 7: Jung mais fundo — segunda ordem, alquimia, anima e o Si-mesmo
 
 > Continuação da [Parte 6](ASI_AGI_parte6_calcular_jung.md). **Próxima:** [Parte 8 — o Si-mesmo lento](ASI_AGI_parte8_si_mesmo_lento.md) (P130–P142). Os números saem de `p116_...` a
-> `p124_...` e das classes `GiseleAnima` e `GiseleSelf` em [`calculos.py`](calculos.py); a
+> `p124_...` e das classes `SynthaiAnima` e `SynthaiSelf` em [`calculos.py`](calculos.py); a
 > saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
@@ -9,10 +9,10 @@
 >
 > **De onde parte esta parte.** A Parte 6 terminou com três dívidas na seção "Meta":
 > 1. Meu erro típico passou a ser **subestimar efeitos de segunda ordem**.
-> 2. A carga-alvo 0,3 da GISELE v2 foi escolhida sem justificativa.
+> 2. A carga-alvo 0,3 da SYNTHAI v2 foi escolhida sem justificativa.
 > 3. A v2 foi desenhada depois de ver os resultados e validada em **uma** semente só.
 >
-> E, relendo o código, achei uma quarta: **a GiseleJung sabia o erro real do humano**. Ela recebia
+> E, relendo o código, achei uma quarta: **a SynthaiJung sabia o erro real do humano**. Ela recebia
 > o $\varepsilon$ verdadeiro, coisa que nenhum agente real sabe. A Parte 7 paga essas dívidas.
 
 ---
@@ -21,8 +21,8 @@
 
 ### P116. Dá para prever um efeito de segunda ordem antes de ele acontecer? ✅
 
-**Na pergunta.** "Prever **antes**": um efeito de segunda ordem é um **laço**: a GISELE pergunta, o
-humano cansa, o humano erra mais, a GISELE pergunta mais. A pergunta já aponta o método: abrir o
+**Na pergunta.** "Prever **antes**": um efeito de segunda ordem é um **laço**: a SYNTHAI pergunta, o
+humano cansa, o humano erra mais, a SYNTHAI pergunta mais. A pergunta já aponta o método: abrir o
 laço, medir cada metade separada, e fechar no papel.
 
 **Lógica.** Meço $n(\varepsilon)$, o número de perguntas por episódio com um humano de erro **fixo**
@@ -44,7 +44,7 @@ satisfazer as duas: $n^\* = n(0{,}1 + 0{,}3\,n^\*)$.
 mais ansiedade) é um laço com ganho. Ganho < 1: o círculo amplifica, mas estabiliza num ponto pior.
 Ganho ≥ 1: ele explode. O primeiro diagnóstico de um círculo vicioso é medir o ganho.
 
-**Requisito de projeto.** Todo módulo da GISELE que afeta o ambiente deve ter o laço medido **aberto**
+**Requisito de projeto.** Todo módulo da SYNTHAI que afeta o ambiente deve ter o laço medido **aberto**
 antes de rodar **fechado**. Isso transforma "efeito de segunda ordem" de surpresa em previsão.
 
 ---
@@ -64,13 +64,13 @@ erra ~19%, logo abaixo da região em que a fadiga acelera.
 
 ---
 
-### P118. E se a GISELE não souber o quanto o humano erra? (a anima) ⚠️
+### P118. E se a SYNTHAI não souber o quanto o humano erra? (a anima) ⚠️
 
 **Na pergunta.** Em Jung, a **anima** (ou o animus) é a **imagem interna do outro**, e ela é sempre
-parcialmente uma projeção. A GiseleJung não tinha anima: via o humano como ele realmente era. A
-pergunta pede o realista: a GISELE só tem uma **imagem** do humano.
+parcialmente uma projeção. A SynthaiJung não tinha anima: via o humano como ele realmente era. A
+pergunta pede o realista: a SYNTHAI só tem uma **imagem** do humano.
 
-**Lógica.** `GiseleAnima` usa uma imagem fixa: "o humano erra 10%", não importa o quanto ele esteja
+**Lógica.** `SynthaiAnima` usa uma imagem fixa: "o humano erra 10%", não importa o quanto ele esteja
 cansado. Comparação em 9 condições (3 sementes × 3 níveis de fadiga), líquido:
 
 | Semente / fadiga | 0,15 | 0,3 | 0,6 |
@@ -83,7 +83,7 @@ Saber o ε real foi melhor nas **9 de 9** condições, por 0,03 a 0,22.
 
 **Correção à Parte 6 ⚠️.** O resultado da v2 (líquido 1,20) estava inflado pela "trapaça" de conhecer o
 humano por dentro. O valor realista, com anima fixa, fica entre **0,98 e 1,14** na fadiga 0,3. Ainda
-2,5–3× melhor que a GISELE original, mas menos do que eu publiquei.
+2,5–3× melhor que a SYNTHAI original, mas menos do que eu publiquei.
 
 **Tradução cruzada (psicologia → IA).** Uma imagem do outro que **não envelhece** (sempre "ele está
 descansado, ele erra 10%") é uma anima projetada. Ela custa caro exatamente quando o outro muda.
@@ -239,19 +239,19 @@ saída é a **diferenciação**: a IA tem que ser um outro, não um espelho.
 
 ## Parte XXXVI — O Si-mesmo como regulador
 
-### P125. Pode o Si-mesmo regular a GISELE? (previsão registrada antes de rodar) ❌
+### P125. Pode o Si-mesmo regular a SYNTHAI? (previsão registrada antes de rodar) ❌
 
 **Na pergunta.** Em Jung, o **Si-mesmo** é o centro que regula a psique inteira, mantendo os opostos em
 equilíbrio. A pergunta propõe um regulador central. A P118 mostra o que ele precisa: uma **anima que
 aprende** (a imagem do humano tem que se atualizar).
 
-**Lógica (a `GiseleSelf`).**
-1. **Auditar o auditor:** em 10% das perguntas ao humano, a GISELE descobre depois se ele acertou, e
+**Lógica (a `SynthaiSelf`).**
+1. **Auditar o auditor:** em 10% das perguntas ao humano, a SYNTHAI descobre depois se ele acertou, e
    atualiza a estimativa $\hat\varepsilon$.
 2. **Homeostase:** se $\hat\varepsilon$ está acima de uma meta (0,2), a carga-alvo desce; se está abaixo,
    sobe.
 
-**Previsão registrada antes de rodar:** a `GiseleSelf` seria **mais robusta** que a carga fixa 0,3 quando a
+**Previsão registrada antes de rodar:** a `SynthaiSelf` seria **mais robusta** que a carga fixa 0,3 quando a
 fadiga do humano mudasse (0,15, 0,3 ou 0,6), porque se adapta.
 
 **Resultado (líquido):**
@@ -272,7 +272,7 @@ fadiga do humano mudasse (0,15, 0,3 ou 0,6), porque se adapta.
 **Falha 1: a evitação que se mantém sozinha (Self).** No começo, $\hat\varepsilon$ estava baixo, então a
 carga-alvo **subiu**. O humano cansou, $\hat\varepsilon$ subiu, e a carga-alvo desceu **até zero**. Com zero
 perguntas não há auditorias, a estimativa **congela** alta (0,32–0,40, enquanto o erro real já tinha voltado
-a 0,10), e a GISELE nunca mais pergunta. Em controle, isso é *windup*. Em psicologia, é **a evitação que
+a 0,10), e a SYNTHAI nunca mais pergunta. Em controle, isso é *windup*. Em psicologia, é **a evitação que
 mantém o medo**: quem evita a situação temida nunca descobre que ela já não é perigosa.
 
 **Falha 2: o regulador reage a ruído (Self v2).** Tentei consertar com uma carga mínima (0,1) para nunca
@@ -315,12 +315,12 @@ controladores), e as ambiciosas erram mais.
 
 ### P128. Unificação
 
-- `calculos.py` agora termina com a linhagem completa: `Gisele` (P83) → `GiseleJung` (P112) →
-  `GiseleAnima` (P118) → `GiseleSelf` (P125). Cada classe herda da anterior e reusa as funções antigas
+- `calculos.py` agora termina com a linhagem completa: `Synthai` (P83) → `SynthaiJung` (P112) →
+  `SynthaiAnima` (P118) → `SynthaiSelf` (P125). Cada classe herda da anterior e reusa as funções antigas
   (`p71_valor_da_pergunta`, `_gerar_acoes`, `_rodar_mundo_fadiga`).
 - Testes de regressão: **23/23** resultados publicados nas Partes 1–7 reproduzidos; o arquivo tem
   **86** funções `pNN`.
-- **A melhor GISELE realista hoje** é a v2 com anima fixa (sombra própria + carga fixa 0,3), não a mais
+- **A melhor SYNTHAI realista hoje** é a v2 com anima fixa (sombra própria + carga fixa 0,3), não a mais
   sofisticada. A linhagem guarda as versões que falharam, porque o código, como a psique, cresce sem
   apagar o passado.
 
@@ -328,7 +328,7 @@ controladores), e as ambiciosas erram mais.
 
 1. **Prever a segunda ordem funcionou quando abri o laço** (P116, erro de 0,8%). O erro típico da Parte
    6 tem um remédio concreto: medir cada metade do laço separada antes de fechá-lo.
-2. **Achei uma trapaça no meu próprio código** (P118): a GISELE conhecia o humano por dentro. Reler o
+2. **Achei uma trapaça no meu próprio código** (P118): a SYNTHAI conhecia o humano por dentro. Reler o
    código com a pergunta "o que este agente não poderia saber?" deveria virar rotina.
 3. **O resultado mais importante é negativo.** O Si-mesmo como regulador falhou duas vezes, pela mesma
    razão que o humor falhou na P66: **sinais internos ruidosos dirigindo ações rápidas**. Isso já

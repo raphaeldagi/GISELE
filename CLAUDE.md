@@ -1,16 +1,19 @@
-# GISELE — convenções do projeto
+# SYNTHAI — convenções do projeto
+
+(O agente se chamava GISELE até a Parte 14; foi renomeado para SYNTHAI na Parte 15. O repositório
+continua se chamando GISELE, e os nomes antigos das classes continuam no código como apelidos.)
 
 Série de perguntas e respostas sobre como construir uma AGI/ASI, em português.
 
 ## Quando o usuário disser "Continue"
 Repetir o processo inteiro: nova parte com novas perguntas mais fundas, respostas nas quatro
 camadas, novos cálculos e simulações em `calculos.py`, auditoria de afirmações antigas,
-evolução do agente `Gisele`, seção de unificação, `resultados.txt`, link a partir da parte
+evolução do agente `Synthai`, seção de unificação, `resultados.txt`, link a partir da parte
 anterior, commit e push.
 
 ## Base teórica
 - A partir da Parte 6, Carl Jung é a base psicológica: "calcular Jung" (cada conceito junguiano
-  vira equação, simulação ou módulo da Gisele), dizendo onde a formalização funciona e onde quebra.
+  vira equação, simulação ou módulo da Synthai), dizendo onde a formalização funciona e onde quebra.
 
 ## Formato de cada nova parte
 - Um novo arquivo `ASI_AGI_parteN_<tema>.md`, continuando a numeração das perguntas (Pn).
@@ -28,7 +31,7 @@ anterior, commit e push.
 ## Código (sempre cresce, sempre unificado)
 - `calculos.py` é um arquivo único que só cresce (só biblioteca padrão). Nunca apagar funções antigas.
 - Todo número citado deve sair de uma função `pNN_...` em `calculos.py`.
-- A classe `Gisele` é o agente unificado: cada parte acrescenta módulos a ela reusando as funções
+- A classe `Synthai` é o agente unificado: cada parte acrescenta módulos a ela reusando as funções
   anteriores (sem copiar), citando a pergunta de origem.
 - O bloco `__main__` termina sempre com a seção "Unificação": contagem de funções e
   `testes_de_regressao()`. Acrescentar aos testes os principais números de cada nova parte.

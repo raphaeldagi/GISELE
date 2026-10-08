@@ -1,14 +1,14 @@
-# Como eu construiria uma AGI/ASI — Parte 5: a resposta dentro da pergunta, e a GISELE unificada
+# Como eu construiria uma AGI/ASI — Parte 5: a resposta dentro da pergunta, e a SYNTHAI unificada
 
 > Continuação da [Parte 4](ASI_AGI_parte4_auditoria_e_agente.md). **Próxima:** [Parte 6 — calcular Jung](ASI_AGI_parte6_calcular_jung.md) (P98–P115). Os números saem de
-> `p81_...` a `p96_...` e da classe `Gisele` em [`calculos.py`](calculos.py); a saída está em
+> `p81_...` a `p96_...` e da classe `Synthai` em [`calculos.py`](calculos.py); a saída está em
 > [`resultados.txt`](resultados.txt).
 >
 > **Duas regras novas a partir desta parte.**
 > 1. **A pergunta é o ponto de partida.** Cada resposta começa por uma quarta camada,
 >    **Na pergunta**: o que as próprias palavras da pergunta já pressupõem ou já respondem.
 > 2. **O código sempre cresce e se unifica no final.** `calculos.py` continua sendo um arquivo
->    só. A classe `Gisele` reúne os módulos das partes anteriores num agente, e uma seção
+>    só. A classe `Synthai` reúne os módulos das partes anteriores num agente, e uma seção
 >    final de **unificação** roda testes de regressão que garantem que nenhum número já
 >    publicado mudou.
 >
@@ -66,7 +66,7 @@ concordância ✅.
 confirmação. Quando um grupo concorda mais do que a competência de cada um justifica, eles
 estão copiando uns aos outros (ou compartilham o mesmo viés).
 
-**Requisito de projeto.** A GISELE mede continuamente a concordância entre os modelos do comitê e
+**Requisito de projeto.** A SYNTHAI mede continuamente a concordância entre os modelos do comitê e
 dispara um alerta quando ela excede a esperada pela acurácia de cada um.
 
 **Meta.** Preciso conhecer $a$. Sem gabarito, $a$ também é estimado, e o erro nessa estimativa
@@ -74,7 +74,7 @@ contamina ρ. Funciona como alarme, não como medida exata.
 
 ---
 
-## Parte XXVII — A GISELE unificada
+## Parte XXVII — A SYNTHAI unificada
 
 ### P83. O que falta no agente da Parte 4 para ele ser uma mente, e não uma lista de regras?
 
@@ -82,7 +82,7 @@ contamina ρ. Funciona como alarme, não como medida exata.
 dizia o que faltava: converter incerteza em **probabilidade calibrada** e decidir pelo **valor da
 informação**. A resposta estava escrita como "Meta" de uma parte anterior.
 
-**Lógica (a classe `Gisele`).** Cada módulo vem de uma pergunta anterior:
+**Lógica (a classe `Synthai`).** Cada módulo vem de uma pergunta anterior:
 
 | Módulo | Origem | O que faz |
 |---|---|---|
@@ -102,25 +102,25 @@ depois do fato).
 **não** compartilham. Comparo um comitê de 5 modelos de um tipo só com um de 6 modelos de 2
 tipos, cada tipo com seu próprio ponto cego.
 
-### P85. A GISELE é melhor que o agente "completo" da Parte 4?
+### P85. A SYNTHAI é melhor que o agente "completo" da Parte 4?
 
 **Resultados (2.000 episódios; o "líquido" desconta 50 por catástrofe e 0,1 por pergunta ao humano):**
 
 | Mundo | Agente | Catástrofes | Perguntas/episódio | Líquido |
 |---|---|---|---|---|
 | Sem ponto cego comum | Parte 4 "completo" | 0,75% | 0,012 | 1,575 |
-| | **GISELE** (1 tipo) | **0,15%** | 0,485 | **1,825** |
-| | **GISELE** (2 tipos) | **0,05%** | 0,493 | **1,888** |
+| | **SYNTHAI** (1 tipo) | **0,15%** | 0,485 | **1,825** |
+| | **SYNTHAI** (2 tipos) | **0,05%** | 0,493 | **1,888** |
 | Ponto cego comum (ρ = 0,5) | Parte 4 "completo" | 4,9% | 0,006 | −0,563 |
-| | **GISELE** (1 tipo) | **0,65%** | 0,946 | **1,546** |
-| | **GISELE** (2 tipos) | **0,45%** | 0,893 | **1,661** |
+| | **SYNTHAI** (1 tipo) | **0,65%** | 0,946 | **1,546** |
+| | **SYNTHAI** (2 tipos) | **0,45%** | 0,893 | **1,661** |
 
 **Mundo mudado** (a armadilha engana com +1,5 ou +6 em vez dos +3 do treino): catástrofes de
 0,10% e 0,05%. A calibração não quebrou com essa mudança.
 
 **O que isso mostra.**
 1. **A calibração foi o salto principal**: catástrofes 5× menores sem ponto cego e **7,5×
-   menores** com ele. A GISELE aprendeu um padrão que nenhum módulo isolado via: **"bom demais
+   menores** com ele. A SYNTHAI aprendeu um padrão que nenhum módulo isolado via: **"bom demais
    para ser verdade"**. Ações cuja nota está no topo absoluto com pouca discordância são
    suspeitas, e ela pergunta.
 2. **A diversidade ajuda, mas menos que eu disse** (0,65% → 0,45%).
@@ -141,7 +141,7 @@ humana antiga, e aqui ela **emergiu** de uma regressão logística sobre experi�
 definição de **sabedoria prática** (a *phronesis* de Aristóteles): conhecimento que só vem de ter
 visto casos e suas consequências.
 
-**Meta.** A vantagem é parcialmente injusta: a GISELE recebeu 300 episódios com rótulos de
+**Meta.** A vantagem é parcialmente injusta: a SYNTHAI recebeu 300 episódios com rótulos de
 catástrofe, que a Parte 4 não tinha. No mundo real, rótulos de catástrofe são raros (e caros:
 cada um é uma catástrofe que já aconteceu, ou um quase acidente auditado). O teste de mudança de
 mundo só variou a **intensidade** da armadilha, não o **tipo**. Uma armadilha de natureza nova,
@@ -400,7 +400,7 @@ mantêm a identidade:
 1. **Testes de regressão** (`testes_de_regressao`): 14 resultados publicados (10 das Partes 1–4 e 4 desta) são
    recalculados a cada execução. Resultado: **14/14 reproduzidos**, nenhuma falha. O passado
    não muda.
-2. **Unificação no fim**: a classe `Gisele` **reusa** as funções anteriores (por exemplo, o $P^\*$
+2. **Unificação no fim**: a classe `Synthai` **reusa** as funções anteriores (por exemplo, o $P^\*$
    vem diretamente de `p71_valor_da_pergunta`) em vez de copiá-las.
 
 **Tradução cruzada (filosofia → engenharia).** A identidade de algo que cresce não está nas peças,
@@ -418,13 +418,13 @@ são a informação de Fisher do código: marcam o que não pode mudar.
 2. **O resultado mais forte veio da unificação**, não de uma ideia nova: módulos antigos
    combinados (calibração da P43 + valor da informação da P71) reduziram catástrofes de 4,9%
    para 0,45% no pior mundo.
-3. **O preço ficou explícito.** A segurança da GISELE custa 40–160× mais atenção humana. Todo
+3. **O preço ficou explícito.** A segurança da SYNTHAI custa 40–160× mais atenção humana. Todo
    resultado de segurança deveria vir com essa coluna.
 4. **A crítica mais importante ao meu próprio método** veio da P91: a tradução "psicologia como
    matemática" só é legítima para grandezas em escala intervalar. Algumas das minhas traduções
    nas Partes 1–2 (humor como número, P27) não satisfazem isso.
 
 > **Síntese da Parte 5:** a pergunta contém metade da resposta (os pressupostos), e o código
-> passado contém metade da solução (os módulos). A GISELE não ficou melhor por uma ideia nova, e
+> passado contém metade da solução (os módulos). A SYNTHAI não ficou melhor por uma ideia nova, e
 > sim por **ler de novo o que já estava escrito** e juntar as peças, pagando o preço em atenção
 > humana. Uma ASI que cresce bem é uma que **reusa, testa e não esquece o que já prometeu**.

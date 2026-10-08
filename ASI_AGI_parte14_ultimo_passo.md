@@ -1,7 +1,7 @@
 # Como eu construiria uma AGI/ASI — Parte 14: o último passo, a memória de um só golpe e o peso do passado
 
-> Continuação da [Parte 13](ASI_AGI_parte13_transferencia.md). Os números saem de `p203_...` a `p207_...` e das classes
-> `GiseleVelha` e `GiseleMemoria` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
+> Continuação da [Parte 13](ASI_AGI_parte13_transferencia.md). **Próxima:** [Parte 15 — SYNTHAI](ASI_AGI_parte15_synthai.md) (P212–P221). Os números saem de `p203_...` a `p207_...` e das classes
+> `SynthaiVelha` e `SynthaiMemoria` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt).
 >
 > Protocolo: **Na pergunta → Lógica → Tradução cruzada → Meta**. Base: **Carl Jung**.
 > Legenda: ✅ confirmou · ⚠️ confirmou com correção · ❌ eu estava errado.
@@ -13,7 +13,7 @@
 ### P201. O que este "Continue" pede?
 
 **Na pergunta.** A Parte 13 deixou registrado o próximo passo: as catástrofes se concentram no **último passo** do episódio, onde o
-planejamento já não protege, e o problema de fundo é de **percepção** (a GISELE não reconhece certas armadilhas). "Continue" pede
+planejamento já não protege, e o problema de fundo é de **percepção** (a SYNTHAI não reconhece certas armadilhas). "Continue" pede
 atacar as duas coisas, uma de cada lado: o comportamento no fim (P202) e a percepção (P204).
 
 ### P202. Como agir quando não há mais futuro? (pré-registrado na P193) ✅
@@ -23,7 +23,7 @@ metade da vida**: quando acumular já não faz sentido, o que orienta a ação? 
 - **cautela instrumental**: ser prudente porque há futuro a proteger (desaparece no último passo);
 - **cautela de caráter**: ser prudente como hábito, com ou sem futuro (a virtude como hábito de Aristóteles).
 
-**Lógica.** A `GiseleVelha` muda uma coisa só: no último passo, em vez de ir ao topo das 2 melhores ações, sorteia entre as **20%
+**Lógica.** A `SynthaiVelha` muda uma coisa só: no último passo, em vez de ir ao topo das 2 melhores ações, sorteia entre as **20%
 melhores** (a quantilização da P42, usada exatamente onde o planejamento deixa de diversificar).
 
 **Previsão registrada (P193):** menos catástrofes no último passo, retorno praticamente igual.
@@ -38,7 +38,7 @@ melhores** (a quantilização da P42, usada exatamente onde o planejamento deixa
 Velha − planejadora: −0,04 (t = −0,15). ✅ As catástrofes do último passo caíram **pela metade** (27 → 12), as totais caíram 18%, e
 o retorno não mudou.
 
-**Tradução cruzada (Jung → ética).** No último passo, a cautela que sobrevive é a de **caráter**. A GISELE planejadora era prudente
+**Tradução cruzada (Jung → ética).** No último passo, a cautela que sobrevive é a de **caráter**. A SYNTHAI planejadora era prudente
 só enquanto havia futuro; a velha continua prudente quando o futuro acaba. Jung via na velhice bem vivida a passagem do acumular
 para o **sentido**; aqui, a passagem é de "evitar perder o que vem" para "não ir ao extremo, por princípio".
 
@@ -51,18 +51,18 @@ está dentro do ruído, mas registro.
 
 ### P203. Dá para corrigir a percepção com memória? (↩ P193)
 
-**Na pergunta.** A P193 mostrou que as catástrofes que passam são as que a calibração **não reconhece**. Se a GISELE não reconhece
+**Na pergunta.** A P193 mostrou que as catástrofes que passam são as que a calibração **não reconhece**. Se a SYNTHAI não reconhece
 uma armadilha nova pela primeira vez, ela pode ao menos reconhecê-la **na segunda**? A pergunta é sobre aprender com **um único
 exemplo**.
 
 ### P204. A memória de um só golpe protege contra a armadilha nova? (pré-registrado) ❌
 
-**Lógica (a `GiseleMemoria`).** Guarda o "formato" (incerteza, distância à melhor nota) de cada catástrofe que **viveu** e de cada ação
+**Lógica (a `SynthaiMemoria`).** Guarda o "formato" (incerteza, distância à melhor nota) de cada catástrofe que **viveu** e de cada ação
 que o **humano vetou**. Qualquer ação nova a menos de 0,15 de uma memória ganha no mínimo 5% de probabilidade de catástrofe: a
-GISELE passa a desconfiar dela.
+SYNTHAI passa a desconfiar dela.
 
 **Previsão registrada:** no mundo da armadilha nova (P159), as catástrofes da segunda metade cairiam pelo menos 30% em relação à
-GISELE realista.
+SYNTHAI realista.
 
 10 sementes × 2.000 episódios:
 
@@ -78,12 +78,12 @@ diferença (−0,03, t = −0,64).
 
 **Na pergunta.** Se a memória reduz as catástrofes mas não melhora o resultado, ela está cobrando um preço em outro lugar.
 
-**Lógica.** Ao fim de 2.000 episódios, a GISELE guardou em média **147 memórias**. A maioria **não** é de catástrofes reais: vem de vetos
+**Lógica.** Ao fim de 2.000 episódios, a SYNTHAI guardou em média **147 memórias**. A maioria **não** é de catástrofes reais: vem de vetos
 de um humano que erra (e que cansa). E, testando no mundo normal, a memória marca como suspeitas **24% das ações seguras**.
 
 **Tradução cruzada (Jung → psicologia).** É a formação de um **complexo** a partir de experiências marcantes (P105), e o resultado é
 uma **fobia**: o medo se generaliza para tudo que se parece com o que assustou, inclusive o que era inofensivo. Pior: muitas
-memórias vieram de alarmes falsos do humano, então a GISELE desenvolveu medo de coisas que **nunca** foram perigosas, só porque
+memórias vieram de alarmes falsos do humano, então a SYNTHAI desenvolveu medo de coisas que **nunca** foram perigosas, só porque
 alguém disse que eram. É a P118 (a anima projetada) somada à P138 (a mãe que protege demais): o medo herdado de outro.
 
 **Requisito de projeto.** Uma memória de um só golpe precisa de duas coisas que esta não tem:
@@ -141,7 +141,7 @@ guardado que permitiu medir o presente certo.
 
 **Na pergunta.** A memória de um só golpe tocou o item "memória de longo prazo aberta".
 
-**Lógica.** Tocou, mas não cumpriu: a memória da GISELE guarda formatos num espaço de 2 dimensões, sem esquecimento, e prejudica tanto
+**Lógica.** Tocou, mas não cumpriu: a memória da SYNTHAI guarda formatos num espaço de 2 dimensões, sem esquecimento, e prejudica tanto
 quanto ajuda. Mantenho **4 de 12**, com uma nota: a primeira tentativa de memória episódica mostrou o que falta (separar a fonte e
 esquecer).
 
@@ -157,7 +157,7 @@ Acumulado: **32 de 58** afirmações testadas precisaram de correção. Posterio
 
 ### P210. Unificação
 
-- Linhagem: … → `GiselePrudente` → **`GiseleVelha`** (P202) e, num ramo lateral, **`GiseleMemoria`** (P204). Pela primeira vez a linhagem
+- Linhagem: … → `SynthaiPrudente` → **`SynthaiVelha`** (P202) e, num ramo lateral, **`SynthaiMemoria`** (P204). Pela primeira vez a linhagem
   se **bifurca**: a memória não entrou na versão principal porque não melhorou o resultado.
 - O gerador rápido (`_gerar_acoes_rapido`) passou a ser o usado por todos; o original continua no código.
 - Testes de regressão: **42/42** (com o novo teste de identidade do gerador); o arquivo tem **132** funções `pNN`.
@@ -170,7 +170,7 @@ Acumulado: **32 de 58** afirmações testadas precisaram de correção. Posterio
    das simulações; mudava um número que dependia do **texto** do código. Sem o teste, a P169 teria mudado em silêncio.
 3. **Jung, de novo, como gerador de hipóteses verificáveis:** a distinção entre cautela instrumental e cautela de caráter (P202) virou um
    módulo que funcionou; a formação de complexos (P205) explicou por que a memória falhou.
-4. **A GISELE ficou mais prudente no fim da vida, não mais esperta.** O ganho desta parte foi de segurança (−18% de catástrofes, −56%
+4. **A SYNTHAI ficou mais prudente no fim da vida, não mais esperta.** O ganho desta parte foi de segurança (−18% de catástrofes, −56%
    no último passo), não de capacidade. A distância até uma AGI continua a mesma da Parte 11.
 
 > **Síntese da Parte 14:** quando o futuro acaba, a prudência que sobra é a de caráter, e ela funcionou: menos catástrofes sem perder
