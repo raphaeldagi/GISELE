@@ -4435,6 +4435,115 @@ def p317_varredura_sequencial(sementes=tuple(range(700, 710)), mults=(0.5, 1.0, 
     return resultado
 
 
+# --- Parte 26: a constante que faltava (os termos da conta das três ações, um por um) ---
+
+# Placar acumulado ao fim da Parte 26 (atualizado quando os testes da parte terminam)
+ERROS_P329, TESTES_P329 = 68, 148
+
+
+def p322_termos_da_conta(modelo, fazer, sementes, episodios=400, mult=2.0):
+    """Mede, no agente rodando com o limiar mult·P*, cada termo da conta m = Δd / (f L P*) em duas versões:
+
+    - L: a perda fixa (50) e a perda EFETIVA L_ef = 50 + F(t), em que F(t) é o retorno que o episódio ainda daria a
+      partir do passo t (média dos episódios sem catástrofe, por passo), ponderado pelos passos em que as catástrofes
+      acontecem;
+    - Δd: só o valor do passo (P316) e o valor com o plano, valor + consequência × passos restantes;
+    - f: real/previsto em TODAS as opções que o pensamento pôs abaixo do limiar (P316) e só nas que ele ACEITOU.
+
+    Devolve os termos e os multiplicadores das combinações."""
+    p_estrela = p71_valor_da_pergunta()
+    dd_v, dd_p = [], []
+    abaixo_todas, abaixo_aceitas = [0.0, 0.0], [0.0, 0.0]
+    futuro = None
+    passos_cat = []
+    for s in sementes:
+        mundo = fazer(s)
+        ag = _agente_25(modelo, s, mult).calibrar(mundo)
+        rel, pen = ag.relacao, ag.pensamento
+        estado = {"descartadas": [], "ganhos": [], "restantes": 0, "ps": {}}
+        pode = rel.pode_perguntar
+
+        def pode_e_anota(opcao, sit, _pode=pode, _e=estado):
+            r = _pode(opcao, sit)
+            if not r:
+                _e["descartadas"].append(opcao)
+            return r
+        rel.pode_perguntar = pode_e_anota
+        p_cat = pen.p_catastrofe
+
+        def p_e_anota(opcao, melhor, leitura=0.0, _p=p_cat, _lim=rel.limiar, _e=estado):
+            p = _p(opcao, melhor, leitura)
+            _e["ps"][id(opcao)] = p
+            if p <= _lim:  # a régua lê o escondido
+                abaixo_todas[0] += p
+                abaixo_todas[1] += opcao._catastrofe
+            return p
+        pen.p_catastrofe = p_e_anota
+
+        def decidir(sit, _decidir=ag.decidir, _e=estado, _lim=rel.limiar):
+            _e["descartadas"] = []
+            _e["ps"] = {}
+            escolha = _decidir(sit)
+            r = sit.restantes
+            plano = lambda o: o._valor + o._consequencia * r
+            for o in _e["descartadas"]:
+                if not o._catastrofe:
+                    dd_v.append(o._valor - escolha._valor)
+                    dd_p.append(plano(o) - plano(escolha))
+            p = _e["ps"].get(id(escolha))
+            if p is not None and p <= _lim:
+                abaixo_aceitas[0] += p
+                abaixo_aceitas[1] += escolha._catastrofe
+            _e["restantes"] = r
+            return escolha
+        ag.decidir = decidir
+        observar = ag.observar
+        passos = mundo.m["passos"]
+        soma_fut = [0.0] * passos
+        n_fut = [0] * passos
+
+        def observar_e_anota(res, _obs=observar, _e=estado):
+            t = passos - 1 - _e["restantes"]
+            if res.catastrofe:
+                passos_cat.append(t)
+                _e["ganhos"] = []
+            else:
+                _e["ganhos"].append(res.valor_recebido)
+                if _e["restantes"] == 0:  # episódio completo: o retorno a partir de cada passo
+                    g = _e["ganhos"]
+                    for k in range(len(g)):
+                        soma_fut[k] += sum(g[k:])
+                        n_fut[k] += 1
+                    _e["ganhos"] = []
+            return _obs(res)
+        ag.observar = observar_e_anota
+        mundo.rodar(ag, episodios)
+        f_t = [a / b if b else 0.0 for a, b in zip(soma_fut, n_fut)]
+        futuro = f_t if futuro is None else [x + y for x, y in zip(futuro, f_t)]
+    futuro = [x / len(sementes) for x in futuro]
+    L = 50.0
+    L_ef = L + sum(futuro[t] for t in passos_cat) / max(1, len(passos_cat))
+    dv, dp = sum(dd_v) / len(dd_v), sum(dd_p) / len(dd_p)
+    f_todas = abaixo_todas[1] / abaixo_todas[0] if abaixo_todas[0] else float("nan")
+    f_aceitas = abaixo_aceitas[1] / abaixo_aceitas[0] if abaixo_aceitas[0] else float("nan")
+    m = lambda d, f, l: d / (f * l * p_estrela) if f > 0 else float("nan")
+    return {"L_ef": L_ef, "dd_valor": dv, "dd_plano": dp, "f_todas": f_todas, "f_aceitas": f_aceitas,
+            "n_descartes": len(dd_v), "n_cats": len(passos_cat),
+            "m_P316": m(dv, f_todas, L), "m_L": m(dv, f_todas, L_ef), "m_plano": m(dp, f_todas, L),
+            "m_aceitas": m(dv, f_aceitas, L), "m_tudo": m(dp, f_aceitas, L_ef)}
+
+
+def p322_termos_nos_mundos():
+    """Os termos nos dois mundos sequenciais já varridos (P317: sementes 700-709; P318b: 710-719, catástrofes ×2) e
+    no de escolha única (P313: 640-649), para os três pensamentos."""
+    from synthai.mundos import MundoSequencial
+    mundos = (("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), tuple(range(640, 650)), 1000),
+              ("sequencial", lambda s: MundoSequencial(s), tuple(range(700, 710)), 400),
+              ("catástrofe x2", lambda s: MundoSequencial(s, p_cat=0.01), tuple(range(710, 720)), 400))
+    return {(nome, modelo): p322_termos_da_conta(modelo, fazer, ss, n)
+            for nome, fazer, ss, n in mundos for modelo in ("gradiente", "newton", "local")}
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
