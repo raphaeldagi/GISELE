@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 34 (0x22): as promessas testadas em casos novos
 
-> Continuação da [Parte 33](ASI_AGI_parte33_pos_asi_auditada.md). As Partes 31–33 deixaram contas feitas **depois** de ver os resultados e
+> Continuação da [Parte 33](ASI_AGI_parte33_pos_asi_auditada.md). **Próxima:** [Parte 35 — a renovação dirigida](ASI_AGI_parte35_renovacao_dirigida.md) (P491–P520). As Partes 31–33 deixaram contas feitas **depois** de ver os resultados e
 > promessas para "a próxima parte". Pela regra da Parte 25, uma conta posterior só vira evidência quando prevê um caso **novo**. Esta parte é
 > esse teste. Novidades no código: `ThompsonMorris` em [`synthai/decisao.py`](synthai/decisao.py); `NaiveBayesContagens` e `LogisticaSGD` em
 > [`synthai/dicionario.py`](synthai/dicionario.py); testes em [`synthai/testes_parte34.py`](synthai/testes_parte34.py); números de `p461_...` a

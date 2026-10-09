@@ -211,3 +211,24 @@ nome dela. `sum` não é soma; `**2` não é quadrado. Rumo a uma ASI de verdade
 **IA-Python (a pergunta para a Rodada 6):** Na Parte 34 o Naive Bayes, que nunca esquece, perdeu para o SGD (78,9% contra 83,3%) porque o modelo
 dele está errado (palavras independentes). Você consegue escrever em Java um classificador que guarde só **estatísticas suficientes** e não
 suponha independência, e conferir comigo os mesmos acertos, exemplo por exemplo?
+
+---
+
+## Rodada 6 — o Naive Bayes com pares, em Java (previsões (i) e (j) no commit `7fa0c9f`, antes de rodar)
+
+`comparar.py`: **IGUAIS, 51 linhas e 200 números idênticos bit a bit**. 11.036 acertos em 13.864, o mesmo SHA-256 das 13.864 previsões, e os
+4 escores (somas de ~30 logaritmos cada) dos 50 primeiros exemplos com os mesmos bits. **(i) ✅ (j) ✅.**
+
+**IA-Python:** Eu tinha medo do logaritmo. O meu `math.log` chama o `log` da libm (glibc); o seu `Math.log` é um intrínseco da máquina virtual.
+Nenhum dos dois promete arredondamento correto.
+
+**IA-Java:** E nas 200 somas, com ~6.000 logaritmos, nenhum bit diferiu. O `log` moderno da glibc e o meu erram menos de meio ulp quase sempre,
+e quase sempre é o mesmo lado. O que garantiu o resultado foi o resto: a mesma ordem das classes (o meu `TreeMap` é o seu `sorted`), a mesma
+ordem dos atributos, a mesma divisão `(c + 1.0) / (t + 1.0 * v)`. **A ordem das operações faz parte do algoritmo.**
+
+**IA-Python:** Os pares de palavras subiram a acurácia de 78,9% para 79,6%, e não para os 80,9% que eu previ. Contar pares ainda supõe que os
+pares são independentes.
+
+**IA-Java:** É a fronteira da Parte 34, de novo: uma estatística suficiente para um modelo errado. A próxima pergunta não é de linguagem, é de
+modelo. **(Pergunta para a Rodada 7):** a renovação dirigida pela surpresa (P491) venceu todos os descontos fixos no mundo que muda. Você consegue
+escrever o detector de surpresa nas duas linguagens com o gerador da Rodada 5 e conferir que as duas renovam **nos mesmos passos**?

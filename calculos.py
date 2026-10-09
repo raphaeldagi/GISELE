@@ -6004,7 +6004,7 @@ def p465_morris(k=10, t=2000, sementes=tuple(range(4010, 4110))):
 # --- Parte 35 (0x23): a renovação dirigida pela surpresa; o Naive Bayes com pares de palavras; os escores em float16 ---
 
 # Placar acumulado ao fim da Parte 35 (atualizado quando os testes da parte terminam)
-ERROS_P519, TESTES_P519 = 0, 0
+ERROS_P519, TESTES_P519 = 112, 281
 
 
 def p491_contas(janela=20, z=3.0, t=2000, k=10, sementes=tuple(range(4010, 4110))):
@@ -7102,6 +7102,19 @@ def _parte_34():
     print(f"P489 minha taxa de erro ({ERROS_P489}/{TESTES_P489}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_35():
+    print("--- Parte 35 (0x23: renovacao dirigida pela surpresa; Naive Bayes com pares; float16) ---")
+    print(f"P491 conta: alarmes (checagens) falsos por rodada no melhor braco = {p491_contas():.2f}")
+    est, custo, muda, ren = p491_surpresa()
+    print(f"P491 surpresa: estacionario = {est:.2f}; custo do dano = {custo:.2f}; mundo que muda = {muda:.2f}; renovacoes no estacionario = {ren:.2f}")
+    a, b = p492_nb_bigramas()
+    print(f"P492 Naive Bayes com pares: acuracia em A depois de A = {a:.4f}; depois de B = {b:.4f}")
+    risco, mudou, u = p493_float16()
+    print(f"P493 float16: fracao em risco (margem < ulp16) = {risco:.5f}; fracao que mudou = {mudou:.5f}; ulp16 mediano = {u}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P519, testes=TESTES_P519)
+    print(f"P519 minha taxa de erro ({ERROS_P519}/{TESTES_P519}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -7135,7 +7148,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35}
 
 
 if __name__ == "__main__":
