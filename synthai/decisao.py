@@ -241,6 +241,15 @@ class ThompsonMistura:
         for mod in self.modelos:
             mod.substituir(a, b)
 
+
+class ThompsonMisturaMaximo(ThompsonMistura):
+    """A mesma média de modelos da P541, mas a decisão segue o modelo de MAIOR peso, em vez de sortear um modelo pelo
+    peso (Parte 40, a pergunta da Rodada 9). Os pesos e as perdas são os mesmos; só a escolha muda."""
+
+    def escolher(self):
+        ws = self.pesos()
+        return self.modelos[max(range(len(ws)), key=ws.__getitem__)].escolher()
+
 class QEpsilon:
     """Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso."""
 

@@ -484,3 +484,58 @@ def sentidos_por_lema(d):
             if "_" not in x and x.isalpha():
                 m[x] = m.get(x, 0) + 1
     return m
+
+PALAVRAS_VAZIAS_PT = frozenset("""a à ao aos as às o os de da das do dos em na nas no nos um uma uns umas e ou que se
+por para pelo pela pelos pelas com sem como mais menos muito muita não é são ser ter seu sua seus suas lhe lhes qual
+quais quando onde este esta estes estas esse essa esses essas isso isto aquele aquela algo alguém etc ex""".split())
+
+
+class DicionarioPT:
+    """O português do data lake (Parte 40): a OpenWordNet-PT (dados/ownpt_sinsets.tsv.gz, CC BY 4.0), alinhada ao WordNet
+    3.0 pelo identificador do sinset. `lemas[sid]` são os lemas em português; `glosas[sid]`, a glosa (só ~15% dos sinsets
+    com lema têm uma)."""
+
+    def __init__(self, pasta=PASTA):
+        import gzip
+        self.lemas, self.glosas = {}, {}
+        with gzip.open(os.path.join(pasta, "ownpt_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+            for linha in f:
+                sid, lemas, glosa = linha.rstrip("\n").split("\t")
+                if lemas:
+                    self.lemas[sid] = lemas.split("|")
+                if glosa:
+                    self.glosas[sid] = glosa
+        self.vocabulario = {x.lower() for ls in self.lemas.values() for x in ls if x.isalpha()}
+
+    @staticmethod
+    def fichas(texto):
+        """As palavras de um texto em português: minúsculas, só letras (com acentos)."""
+        import re
+        return [w for w in re.findall(r"[a-záàâãéêíóôõúüç]+", texto.lower()) if w not in PALAVRAS_VAZIAS_PT]
+
+    def lema(self, w, plurais=True):
+        """A palavra, se for um lema; senão, com `plurais`, a forma singular pelas regras regulares do português
+        (-ões/-ães → -ão, -ais → -al, -eis → -el, -óis → -ol, -is → -il, -ns → -m, -res/-zes/-ses → -r/-z/-s, -s → ∅)."""
+        if w in self.vocabulario:
+            return w
+        if not plurais:
+            return None
+        for suf, troca in (("ões", "ão"), ("ães", "ão"), ("ais", "al"), ("eis", "el"), ("óis", "ol"), ("is", "il"),
+                           ("ns", "m"), ("res", "r"), ("zes", "z"), ("ses", "s"), ("s", "")):
+            if w.endswith(suf) and w[: -len(suf)] + troca in self.vocabulario:
+                return w[: -len(suf)] + troca
+        return None
+
+    def grafo_de_definicoes(self, plurais=True):
+        """Para cada lema (de uma palavra só) que pertence a um sinset com glosa: o conjunto dos lemas que aparecem nas glosas
+        dos seus sinsets. Como no inglês (P371), uma palavra não se define por si mesma."""
+        defs = {}
+        for sid, glosa in self.glosas.items():
+            usadas = {self.lema(w, plurais) for w in self.fichas(glosa)} - {None}
+            for x in self.lemas.get(sid, []):
+                x = x.lower()
+                if x.isalpha():
+                    defs.setdefault(x, set()).update(usadas)
+        for x, s in defs.items():
+            s.discard(x)
+        return defs

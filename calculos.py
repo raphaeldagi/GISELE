@@ -6613,6 +6613,104 @@ def p553_bilingue():
                 lp.append(len(p_))
     return spearman(le, lp), sum(lp) / sum(le), len(le), {p_: com.get(p_, 0) / tot[p_] for p_ in sorted(tot)}
 
+
+# --- Parte 40 (0x28): quanto do português se define em português; seguir o modelo de maior peso; o custo dos acentos ---
+
+# Placar acumulado ao fim da Parte 40 (atualizado quando os testes da parte terminam)
+ERROS_P669, TESTES_P669 = 0, 0
+
+
+def p641_portugues():
+    """O português da OpenWordNet-PT como dicionário: quantos lemas de uma palavra só; quantos têm glosa em português
+    (estão no grafo de definições); a fração das palavras de conteúdo das glosas que são lemas, sem e com as regras de
+    plural; o núcleo do grafo (P371) em português e, para comparar, a fração do núcleo no inglês."""
+    from synthai.dicionario import Dicionario, DicionarioPT, nucleo
+    d = DicionarioPT()
+    fichas = [w for g in d.glosas.values() for w in d.fichas(g)]
+    exato = sum(1 for w in fichas if d.lema(w, False)) / len(fichas)
+    plural = sum(1 for w in fichas if d.lema(w, True)) / len(fichas)
+    defs = d.grafo_de_definicoes()
+    ker = nucleo(defs)
+    en = Dicionario().grafo_de_definicoes()
+    ker_en = nucleo(en)
+    return (len(d.vocabulario), len(defs), len(fichas), exato, plural, len(ker), len(ker) / len(defs),
+            len(ker_en) / len(en))
+
+
+def p642_fecho_pt(ks=(100, 300, 1000), thetas=(1.0, 0.6)):
+    """O fecho das definições em português (P381) a partir das k palavras mais usadas nas glosas em português: a fração
+    dos lemas definidos (os que têm glosa) que passa a ser entendida."""
+    from synthai.dicionario import DicionarioPT, fecho_parcial
+    d = DicionarioPT()
+    defs = d.grafo_de_definicoes()
+    freq = {}
+    for s_ in defs.values():
+        for w in s_:
+            freq[w] = freq.get(w, 0) + 1
+    ordem = sorted(freq, key=lambda w: (-freq[w], w))
+    return {(k, th): len(fecho_parcial(set(ordem[:k]), defs, th) & set(defs)) / len(defs) for k in ks for th in thetas}
+
+
+def p643_maximo(k=10):
+    """A média de modelos seguindo o modelo de maior peso (ThompsonMisturaMaximo) nos três mundos da P541."""
+    from synthai.decisao import ThompsonMisturaMaximo, rodar_bandido
+    fab = lambda sm: ThompsonMisturaMaximo(k, _rng(sm + 1))
+    est = [rodar_bandido(fab(sm), _bracos_401(sm, k), 2000, _rng(sm + 2))[-1] for sm in range(4010, 4110)]
+
+    def lixo(ag):
+        r = _rng(ag.lixo)
+        ag.substituir([float(r.randint(1, 20)) for _ in range(k)], [float(r.randint(1, 20)) for _ in range(k)])
+
+    sem, com = [], []
+    for sm in range(4050, 4150):
+        ps = _bracos_401(sm, k)
+        a = rodar_bandido(fab(sm), ps, 2000, _rng(sm + 2))
+        ag = fab(sm)
+        ag.lixo = sm + 3
+        b = rodar_bandido(ag, ps, 2000, _rng(sm + 2), 1000, lixo)
+        sem.append(a[-1] - a[999])
+        com.append(b[-1] - b[999])
+    muda = []
+    for sm in range(4620, 4670):
+        r = _rng(sm)
+        fases = [[r.random() for _ in range(k)] for _ in range(8)]
+        ag = fab(sm)
+        rr = _rng(sm + 2)
+        reg = 0.0
+        for passo in range(4000):
+            ps = fases[passo // 500]
+            i = ag.escolher()
+            ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+            reg += max(ps) - ps[i]
+        muda.append(reg)
+    m = lambda v: sum(v) / len(v)
+    return m(est), m(com) - m(sem), m(muda)
+
+
+def p644_contas():
+    """A CONTA antes da P644 (trilha hexadecimal): em UTF-8, um caractere ASCII ocupa 1 byte e uma letra acentuada do
+    português (U+00C0–U+00FF) ocupa 2. Então bytes por caractere = 1 + (fração de caracteres não ASCII); a fração sai da
+    contagem dos caracteres das glosas (sem codificar)."""
+    from synthai.dicionario import Dicionario, DicionarioPT
+    pt = "".join(DicionarioPT().glosas.values())
+    en = "".join(g for _, _, _, g in Dicionario().sinsets)
+    return {"pt": 1 + sum(1 for c in pt if ord(c) > 127) / len(pt), "en": 1 + sum(1 for c in en if ord(c) > 127) / len(en)}
+
+
+def p644_utf8():
+    """Os bytes por caractere medidos (len(texto.encode('utf-8'))/len(texto)) e os caracteres não ASCII mais comuns no
+    português, com o código em hexadecimal."""
+    from synthai.dicionario import Dicionario, DicionarioPT
+    pt = "".join(DicionarioPT().glosas.values())
+    en = "".join(g for _, _, _, g in Dicionario().sinsets)
+    cont = {}
+    for c in pt:
+        if ord(c) > 127:
+            cont[c] = cont.get(c, 0) + 1
+    top = sorted(cont, key=lambda c: -cont[c])[:5]
+    return (len(pt.encode("utf-8")) / len(pt), len(en.encode("utf-8")) / len(en),
+            [(c, c.encode("utf-8").hex(), cont[c]) for c in top])
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
