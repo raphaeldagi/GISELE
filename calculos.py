@@ -6461,7 +6461,7 @@ def p543_heaps(semente=543, pontos=10):
 #     o português como data lake (OpenWordNet-PT); a compressibilidade dos dicionários ---
 
 # Placar acumulado ao fim da Parte 39 (atualizado quando os testes da parte terminam)
-ERROS_P639, TESTES_P639 = 0, 0
+ERROS_P639, TESTES_P639 = 119, 318
 
 _SUBCLASSES_551 = {"mamifero": "01861778", "ave": "01503061", "peixe": "02512053", "reptil": "01661091",
                    "anfibio": "01627424", "invertebrado": "01905661"}
@@ -6706,6 +6706,7 @@ def testes_de_regressao():
         "P523": round(p523_contas()[1], 4) == 0.0157,
         "P531": round(p531_contas()[0], 1) == 62.7,
         "P542": round(p542_contas()[2]) == 4971,
+        "P551": round(p551_contas()[2], 3) == 0.944,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -7643,6 +7644,21 @@ def _parte_38():
     print(f"P609 minha taxa de erro ({ERROS_P609}/{TESTES_P609}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_39():
+    print("--- Parte 39 (0x27: a arquitetura neuro-simbolica testada; o portugues no data lake; compressao) ---")
+    ntr, nte, cob = p551_contas()
+    print(f"P551 conta: treino = {ntr}, teste = {nte}; animais do teste cobertos pelas 6 subclasses = {cob:.4f}")
+    for logica in ("lukasiewicz", "produto"):
+        for k, (acc, rev, esp) in p551_ltn(logica).items():
+            print(f"P551 {logica} {k}: acuracia = {acc:.4f}; revocacao = {rev:.4f}; especificidade = {esp:.4f}")
+    for k, (n, bpc, h0, rl, rz) in p552_compressao().items():
+        print(f"P552 {k}: {n} bytes; lzma = {bpc:.4f} bits/byte; entropia de ordem 0 = {h0:.4f}; razao lzma = {rl:.4f}; razao zlib = {rz:.4f}")
+    rho, razao, n, cob = p553_bilingue()
+    print(f"P553 Spearman(comprimento pt, comprimento en) = {rho:.4f}; razao pt/en = {razao:.4f}; pares = {n}; cobertura = { {k: round(v, 4) for k, v in cob.items()} }")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P639, testes=TESTES_P639)
+    print(f"P639 minha taxa de erro ({ERROS_P639}/{TESTES_P639}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -7677,7 +7693,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39}
 
 
 if __name__ == "__main__":

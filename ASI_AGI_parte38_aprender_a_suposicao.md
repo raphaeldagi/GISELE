@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 38 (0x26): o agente que aprende a suposição
 
-> Continuação da [Parte 37](ASI_AGI_parte37_mudanca_bayesiana.md). A tabela da P580 mostrou cinco agentes, cada um uma suposição sobre o mundo, e
+> Continuação da [Parte 37](ASI_AGI_parte37_mudanca_bayesiana.md). **Próxima:** [Parte 39 — neuro-simbólico e português](ASI_AGI_parte39_neurossimbolico_e_portugues.md) (P551–P640). A tabela da P580 mostrou cinco agentes, cada um uma suposição sobre o mundo, e
 > nenhum vencendo as três colunas. Esta parte testa o passo bayesiano seguinte: em vez de escolher a suposição, **aprendê-la**, por média de
 > modelos sobre o risco de mudança H. Novidades: `ThompsonMistura` ([`synthai/decisao.py`](synthai/decisao.py)); testes em
 > [`synthai/testes_parte38.py`](synthai/testes_parte38.py); números de `p541_...` a `p543_...` em [`calculos.py`](calculos.py). Diálogo, rodada 9.

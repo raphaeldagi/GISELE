@@ -30,7 +30,7 @@ anterior, commit e push.
   de texto repetido.
 - Também o máximo de PESOS (Parte 30): modelos com mais parâmetros aprendidos quando isso for testável (P353).
 - O DICIONÁRIO como data lake (Parte 30): a cada "Continue", cálculos, equações, pesquisa técnica e métodos sobre o
-  dicionário de inglês (WordNet, em `dados/`) — como manusear o dicionário para levar uma IA simples rumo a uma AGI/ASI.
+  dicionário de inglês (WordNet, em `dados/`; e, desde a Parte 39, o português da OpenWordNet-PT, CC BY 4.0, alinhado a ele) — como manusear o dicionário para levar uma IA simples rumo a uma AGI/ASI.
   E, de forma SEPARADA, sobre HEXADECIMAL. Juntar os dois só quando for conveniente de verdade. Tudo no modo lógico
   criativo (pergunta) e criatividade lógica (resposta).
 - DIÁLOGO PYTHON ↔ JAVA (permanente, desde a Parte 31): em TODA mensagem do usuário, reservar um tempo para a interação
@@ -112,6 +112,8 @@ anterior, commit e push.
   Java é a prova de que o módulo é independente da linguagem (`python3 dialogo/verificar.py`).
 - Uma cota de predição (perda logarítmica) não é uma cota de decisão (Parte 38): a mistura de modelos ficou a 1,1 nat do
   melhor modelo e decidiu pior que ele.
+- Um axioma de implicação é meia definição (Parte 39): ∀x Sub(x) ⇒ Super(x) como perda só empurra Super para cima; sem
+  o fechamento (ou rótulos negativos), Super vira 1 em tudo (especificidade 0,0 medida).
 - Nunca usar `pkill -f` com um padrão que apareça na própria linha de comando (mata o shell; aconteceu duas vezes).
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).
@@ -124,7 +126,7 @@ anterior, commit e push.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
-  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38`); a suíte
+  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
