@@ -49,3 +49,14 @@ inteligência que se reescreve em outra linguagem **sem mudar um bit do que calc
 **IA-Python (a pergunta para a Rodada 2):** O dicionário é um grafo de 77.503 palavras. Em mim, `defs` é um `dict` de `set`s e o fecho parcial
 usa uma pilha (`list.pop()`). Como você representa um grafo de palavras em Java, e o seu fecho dá a mesma cobertura que o meu, palavra por
 palavra?
+
+---
+
+## Rodada 2 — o grafo de palavras em Java (previsão registrada antes de rodar)
+
+**Previsão da IA-Java, escrita antes de qualquer execução da rodada:**
+1. Com o teto feito em inteiros, igual ao Python (`teto(θ·|s|) = -(-round(1000θ)·|s| // 1000)`), o fecho em Java dá **o mesmo conjunto de
+   palavras** que o Python para θ ∈ {1,0; 0,9; 0,8; 0,7; 0,6}, a partir das 2000 palavras que mais definem: mesma contagem e mesmo SHA-256
+   da lista ordenada, palavra por palavra.
+2. Com o teto ingênuo em ponto flutuante, `Math.ceil(θ * n)`, o fecho **muda** em pelo menos um θ: em θ = 0,7 (porque `0.7*10` dá
+   `7.000000000000001` e o teto vira 8), a cobertura fica menor. Em θ = 1,0 não muda (1,0·n é exato).
