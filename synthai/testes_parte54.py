@@ -23,3 +23,23 @@ class TesteParte54(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TesteExatidaoOuSorte(unittest.TestCase):
+    """Acrescentado DEPOIS da medida da Parte 54 (que achou p1061 sem teste); a medida não foi refeita."""
+
+    def test_chance_e_tabela(self):
+        import math
+        chances, dif = calculos.p1061_exatidao_ou_sorte()
+        # nenhuma chamada: chance 1; a rodada 17 não chama exp nem log
+        self.assertEqual(chances["rodada17"], 1.0)
+        # a fórmula, conferida por uma linha de código antes: (1 − 0,0029)^1000 = 0,05489...
+        import importlib.util
+        import os
+        raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        spec = importlib.util.spec_from_file_location("rodada28", os.path.join(raiz, "dialogo", "rodada28.py"))
+        r28 = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(r28)
+        self.assertAlmostEqual(r28.chance(1000, 0), (1 - 0.0029) ** 1000, places=14)
+        self.assertEqual(dif["rodada25"], (1440, 3, 39059, 5))
+        self.assertEqual(dif["rodada06"][2:], (687, 0))
