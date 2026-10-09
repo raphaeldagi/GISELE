@@ -23,6 +23,11 @@ anterior, commit e push.
   os testes de unidade de todo o pacote rodam a cada mudança no código.
 - "KD os cálculos?" (Parte 26): no texto, toda conta aparece com a substituição feita, linha por linha, a partir de
   quantidades medidas; e cada acerto vem com a chance de acertar ao acaso e contra um preditor ingênuo.
+- MÁXIMO (Parte 29): fazer o maior número de cálculos e resolver o maior número de equações, com o maior número de
+  linhas, de tokens, de testes e de simulações. Na prática: cada parte tem uma "bateria" de contas e equações resolvidas
+  (cada uma conferida por simulação ou por outra conta), testes de unidade para cada peça nova, várias simulações
+  pré-registradas (mundos e sementes novos) e cada número com a substituição feita. Volume vem de trabalho real, não
+  de texto repetido.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
