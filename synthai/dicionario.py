@@ -369,3 +369,40 @@ def spearman(x, y):
     mx, my = sum(rx) / len(rx), sum(ry) / len(ry)
     cov = sum((a - mx) * (b - my) for a, b in zip(rx, ry))
     return cov / (sum((a - mx) ** 2 for a in rx) * sum((b - my) ** 2 for b in ry)) ** 0.5
+
+
+def fecho_incremental(ordem, defs, theta=1.0, ate=None):
+    """O fecho parcial (P381) para TODOS os prefixos de um currículo de uma vez (P421): ancora as palavras de `ordem` uma
+    a uma e propaga só o que a nova âncora destrava. Como o fecho é monótono nas âncoras, os contadores nunca voltam: o
+    custo total é O(arestas), contra O(arestas) POR PONTO na bisseção da P385. Devolve a lista cob, com cob[k] = número
+    de palavras entendidas com as k primeiras âncoras (k = 0..ate)."""
+    ate = len(ordem) if ate is None else ate
+    precisa = {x: max(0, -(-int(round(theta * 1000)) * len(s) // 1000)) for x, s in defs.items()}
+    tem = {x: 0 for x in defs}
+    usado_por = {}
+    for x, s in defs.items():
+        for y in s:
+            usado_por.setdefault(y, []).append(x)
+    conhecidas = set()
+
+    def propagar(fila):
+        while fila:
+            y = fila.pop()
+            for x in usado_por.get(y, ()):
+                if x in conhecidas:
+                    continue
+                tem[x] += 1
+                if tem[x] >= precisa[x]:
+                    conhecidas.add(x)
+                    fila.append(x)
+
+    inicio = [x for x in defs if precisa[x] == 0]
+    conhecidas.update(inicio)
+    propagar(list(inicio))
+    cob = [len(conhecidas)]
+    for x in ordem[:ate]:
+        if x not in conhecidas:
+            conhecidas.add(x)
+            propagar([x])
+        cob.append(len(conhecidas))
+    return cob

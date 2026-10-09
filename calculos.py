@@ -5384,6 +5384,235 @@ def p394_ulps_em_degrau(ns=(2000, 3000, 50000, 300000), tentativas=200, semente=
         resultado[n] = (sum(erros) / len(erros), degrau, sqrt(n) / 6 * sqrt(2 / pi))
     return resultado
 
+
+# --- Parte 32 (0x20): trocar o aprendizado por reforço e o aprendizado contínuo pela decisão bayesiana exata;
+#     a autopoiese (só onde serve); a memória em dígitos hex; a avalanche do dicionário ---
+
+# Placar acumulado ao fim da Parte 32 (atualizado quando os testes da parte terminam)
+ERROS_P419, TESTES_P419 = 0, 0
+
+
+def _bracos_401(semente, k=10):
+    rng = _rng(semente)
+    return [rng.random() for _ in range(k)]
+
+
+def p401_contas(k=10, t=2000, sementes=tuple(range(4010, 4110)), eps=0.1):
+    """A CONTA antes da simulação da P401, só com as médias dos braços (sem rodar agente nenhum):
+    - Lai–Robbins: o arrependimento mínimo de qualquer agente consistente, Σ Δ_k ln T / KL(p_k, p*), na média das sementes;
+    - ε-guloso: só a exploração já custa ε·T·(p* − média dos braços) (cota inferior do Q-learning com ε fixo);
+    - as esperanças sob braços U(0, 1): E[p*] = k/(k+1), E[média] = 1/2, então ε·T·(k/(k+1) − 1/2)."""
+    from synthai.decisao import cota_lai_robbins
+    lr, expl = [], []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        lr.append(cota_lai_robbins(ps, t))
+        expl.append(eps * t * (max(ps) - sum(ps) / k))
+    return sum(lr) / len(lr), sum(expl) / len(expl), eps * t * (k / (k + 1) - 0.5)
+
+
+def p401_bandido(k=10, t=2000, sementes=tuple(range(4010, 4110))):
+    """Q-learning ε-guloso (α = 0,1, ε = 0,1; o RL padrão), Q otimista (q0 = 1, ε = 0), UCB1 e Thompson (o posterior
+    exato, Beta) no mesmo bandido de Bernoulli com 10 braços U(0, 1), T = 2000, 100 sementes pareadas: o arrependimento
+    final de cada um, e a diferença pareada de cada um contra Thompson."""
+    from synthai.decisao import QEpsilon, ThompsonBernoulli, UCB1, rodar_bandido
+    fabricas = {"q_eps": lambda r: QEpsilon(k, r), "q_otimista": lambda r: QEpsilon(k, r, eps=0.0, q0=1.0),
+                "ucb1": lambda r: UCB1(k, r), "thompson": lambda r: ThompsonBernoulli(k, r)}
+    finais = {n: [] for n in fabricas}
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        for n, f in fabricas.items():
+            finais[n].append(rodar_bandido(f(_rng(sm + 1)), ps, t, _rng(sm + 2))[-1])
+    medias = {n: sum(v) / len(v) for n, v in finais.items()}
+    difs = {n: _pareado(finais["thompson"], finais[n]) for n in fabricas if n != "thompson"}
+    return medias, difs
+
+
+def p402_contas(n=6, t=5000, eps=0.1):
+    """A CONTA antes da P402 no RiverSwim: o ganho médio ótimo g* (iteração de valor relativa) vezes T; o ganho de ficar
+    sempre à esquerda no estado 0 (5/1000 por passo); e o Q-learning ε-guloso com Q inicial 0, que depois da primeira
+    recompensa 5/1000 fica guloso à esquerda no estado 0: ganha ≈ 0,005·T·(1 − ε/2) enquanto não chegar ao fim."""
+    from synthai.decisao import media_otima, riverswim
+    P, R = riverswim(n)
+    g = media_otima(P, R)
+    return g, g * t, 0.005 * t, 0.005 * t * (1 - eps / 2)
+
+
+def p402_riverswim(n=6, t=5000, sementes=tuple(range(4020, 4040))):
+    """PSRL (posterior Dirichlet + programação dinâmica num MDP sorteado a cada episódio de 20 passos) contra o
+    Q-learning ε-guloso (γ = 0,95, α = 0,1, ε = 0,1) e o Q-learning otimista (Q inicial 20 = 1/(1 − γ), ε = 0,1) no
+    RiverSwim de 6 estados, T = 5000 passos, 20 sementes: a recompensa total de cada um e as diferenças pareadas."""
+    from synthai.decisao import PSRL, QLearningMDP, riverswim, rodar_mdp
+    P, R = riverswim(n)
+    fabricas = {"psrl": lambda r: PSRL(n, r), "q_eps": lambda r: QLearningMDP(n, r),
+                "q_otimista": lambda r: QLearningMDP(n, r, q0=20.0)}
+    tot = {k: [] for k in fabricas}
+    for sm in sementes:
+        for k, f in fabricas.items():
+            tot[k].append(rodar_mdp(f(_rng(sm + 1)), P, R, t, _rng(sm + 2)))
+    medias = {k: sum(v) / len(v) for k, v in tot.items()}
+    return medias, {k: _pareado(tot[k], tot["psrl"]) for k in fabricas if k != "psrl"}
+
+
+def _tarefas_403(semente, d=40, por_tarefa=400, ruido=0.1):
+    """Duas tarefas em sequência sobre a mesma função f(x) = sin(2x) + x/2: A vê x em [−π, 0], B vê x em [0, π].
+    Atributos: d cossenos aleatórios fixos √(2/d)·cos(w x + b), w ~ N(0, 2²), b ~ U(0, 2π) (Rahimi e Recht, 2007)."""
+    rng = _rng(semente)
+    ws = [rng.gauss(0, 2) for _ in range(d)]
+    bs = [rng.uniform(0, 2 * pi) for _ in range(d)]
+    fa = lambda x: [sqrt(2 / d) * cos(w * x + b) for w, b in zip(ws, bs)]
+    f = lambda x: sin(2 * x) + x / 2
+    xa = [rng.uniform(-pi, 0) for _ in range(por_tarefa)]
+    xb = [rng.uniform(0, pi) for _ in range(por_tarefa)]
+    ta = [-pi + pi * (i + 0.5) / 200 for i in range(200)]
+    A = [(fa(x), f(x) + rng.gauss(0, ruido)) for x in xa]
+    B = [(fa(x), f(x) + rng.gauss(0, ruido)) for x in xb]
+    teste_a = [(fa(x), f(x)) for x in ta]
+    return A, B, teste_a
+
+
+def p403_continuo(d=40, sementes=tuple(range(4030, 4040)), passo=0.5, lam=1e-2):
+    """Aprendizado contínuo: tarefa A, depois tarefa B, mesmo modelo. A regressão bayesiana recursiva (estatística
+    suficiente exata) contra a descida de gradiente estocástica (passo constante, uma passada) com os mesmos atributos.
+    Mede o erro quadrático médio no teste de A depois de A e depois de B (o esquecimento), e confere que a recursiva
+    termina IGUAL à ridge em lote com A ∪ B (a maior diferença absoluta entre os pesos)."""
+    from synthai.decisao import RegressaoBayesiana, RegressaoSGD, ridge_em_lote
+    res = {"bayes": ([], []), "sgd": ([], [])}
+    maior_dif = 0.0
+    for sm in sementes:
+        A, B, teste = _tarefas_403(sm, d)
+        mse = lambda m: sum((m.prever(f) - y) ** 2 for f, y in teste) / len(teste)
+        for nome, m in (("bayes", RegressaoBayesiana(d, lam)), ("sgd", RegressaoSGD(d, passo))):
+            for f, y in A:
+                m.atualizar(f, y)
+            res[nome][0].append(mse(m))
+            for f, y in B:
+                m.atualizar(f, y)
+            res[nome][1].append(mse(m))
+            if nome == "bayes":
+                lote = ridge_em_lote([f for f, _ in A + B], [y for _, y in A + B], lam)
+                maior_dif = max(maior_dif, max(abs(a - b) for a, b in zip(m.w, lote)))
+    med = {n: (sum(a) / len(a), sum(b) / len(b)) for n, (a, b) in res.items()}
+    return med, _pareado(res["bayes"][1], res["sgd"][1]), maior_dif
+
+
+def p404_contas(fracoes=(0.1, 0.5, 0.9)):
+    """A CONTA antes da P404 (autopoiese do dicionário): se uma fração q das palavras é esquecida ao acaso, uma esquecida
+    volta já na primeira rodada do fecho exato (θ = 1) se todas as |s| que a definem sobreviveram: chance (1 − q)^|s|.
+    A cota inferior da regeneração em θ = 1 é então (1 − q) + q·E[(1 − q)^|s|] (uma rodada só; as seguintes só somam)."""
+    from synthai.dicionario import Dicionario
+    defs = Dicionario().grafo_de_definicoes()
+    n = len(defs)
+    return {q: (1 - q) + q * sum((1 - q) ** len(s) for s in defs.values()) / n for q in fracoes}
+
+
+def p404_autopoiese(fracoes=(0.1, 0.5, 0.9), thetas=(1.0, 0.8), semente=404):
+    """Autopoiese no dicionário: o núcleo é fechado (toda palavra do núcleo é definida só por palavras do núcleo: a
+    fração de arestas que saem dele), e a regeneração: esquecer uma fração q das 77.503 palavras ao acaso e refazer o
+    fecho parcial a partir das que sobraram. Devolve a fração de fechamento e {(q, θ): fração recuperada}."""
+    from synthai.dicionario import fecho_parcial, nucleo
+    _, defs, _ = _grafo_31()
+    ker = set(nucleo(defs))
+    arestas = sum(len(defs[x]) for x in ker)
+    dentro = sum(len(defs[x] & ker) for x in ker)
+    rng = _rng(semente)
+    palavras = sorted(defs)
+    res = {}
+    for q in fracoes:
+        sobra = set(rng.sample(palavras, round(len(palavras) * (1 - q))))
+        for th in thetas:
+            res[(q, th)] = len(fecho_parcial(sobra, defs, th)) / len(defs)
+    return len(ker), dentro / arestas, res
+
+
+def p405_dano(k=10, t=2000, dano_em=1000, sementes=tuple(range(4050, 4150))):
+    """Regeneração (autopoiese no agente): no passo 1000, a memória é destruída e trocada por lixo: em Thompson, as
+    contagens viram inteiros ao acaso em 1..20; no Q-learning ε-guloso, os Q viram U(0, 1). O arrependimento na segunda
+    metade [1000, 2000) de cada um, o de Thompson na primeira metade, e as diferenças pareadas."""
+    from synthai.decisao import QEpsilon, ThompsonBernoulli, rodar_bandido
+
+    def lixo_ts(ag):
+        r = _rng(ag.lixo)
+        ag.a = [float(r.randint(1, 20)) for _ in ag.a]
+        ag.b = [float(r.randint(1, 20)) for _ in ag.b]
+
+    def lixo_q(ag):
+        r = _rng(ag.lixo)
+        ag.q = [r.random() for _ in ag.q]
+
+    seg_ts, seg_q, pri_ts = [], [], []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        ts = ThompsonBernoulli(k, _rng(sm + 1))
+        ts.lixo = sm + 3
+        a = rodar_bandido(ts, ps, t, _rng(sm + 2), dano_em, lixo_ts)
+        q = QEpsilon(k, _rng(sm + 1))
+        q.lixo = sm + 3
+        b = rodar_bandido(q, ps, t, _rng(sm + 2), dano_em, lixo_q)
+        seg_ts.append(a[-1] - a[dano_em - 1])
+        seg_q.append(b[-1] - b[dano_em - 1])
+        pri_ts.append(a[dano_em - 1])
+    m = lambda v: sum(v) / len(v)
+    return m(pri_ts), m(seg_ts), m(seg_q), _pareado(seg_ts, seg_q)
+
+
+def p411_contas(k=10, tetos=(16, 256), t=2000, sementes=tuple(range(4010, 4110)), sorteios=4000):
+    """A CONTA antes da P411 (a memória de Thompson em dígitos hex: a + b limitado a 16 = 1 dígito, ou 256 = 2 dígitos).
+    No regime estacionário, cada braço puxado com frequência tem a + b entre teto/2 e teto, posterior ≈
+    Beta(1 + p·n, 1 + (1 − p)·n) com n ≈ 3/4 do teto. Então a chance de cada braço ser escolhido é a de a amostra dele ser a
+    maior, e o arrependimento por passo é Σ Δ_k·π_k: arrependimento ≈ T·Σ Δ_k π_k (π_k por sorteio, `sorteios` vezes).
+    É uma cota aproximada: braços ruins, puxados pouco, têm n menor e são puxados MAIS que isso."""
+    res = {}
+    for teto in tetos:
+        n_ef = 0.75 * teto
+        tot = []
+        for sm in sementes:
+            ps = _bracos_401(sm, k)
+            m = max(ps)
+            r = _rng(sm + 9)
+            cont = [0] * k
+            for _ in range(sorteios):
+                am = [r.betavariate(1 + p * n_ef, 1 + (1 - p) * n_ef) for p in ps]
+                cont[max(range(k), key=am.__getitem__)] += 1
+            tot.append(t * sum((m - p) * c / sorteios for p, c in zip(ps, cont)))
+        res[teto] = sum(tot) / len(tot)
+    return res
+
+
+def p411_memoria_hex(k=10, t=2000, tetos=(16, 256), sementes=tuple(range(4010, 4110))):
+    """Thompson com a memória limitada a 1 e 2 dígitos hex por braço (a + b ≤ 16 ou 256, metade quando passa) contra o
+    Thompson completo, mesmos braços e sementes da P401: o arrependimento final e as diferenças pareadas."""
+    from synthai.decisao import ThompsonBernoulli, rodar_bandido
+    fin = {None: []}
+    fin.update({x: [] for x in tetos})
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        for teto in fin:
+            fin[teto].append(rodar_bandido(ThompsonBernoulli(k, _rng(sm + 1), teto), ps, t, _rng(sm + 2))[-1])
+    med = {x: sum(v) / len(v) for x, v in fin.items()}
+    return med, {x: _pareado(fin[None], fin[x]) for x in tetos}
+
+
+def p421_avalanche(thetas=(0.6, 0.7, 0.8, 0.9), semente=421, ate=40000):
+    """A avalanche do dicionário (P385, agora com o fecho incremental): para o currículo por frequência e para um
+    currículo ao acaso, a cobertura depois de cada palavra ancorada; o maior salto causado por UMA palavra, o k dele, a
+    palavra, e o k em que a cobertura passa de 50%."""
+    from synthai.dicionario import fecho_incremental
+    _, defs, freq = _grafo_31()
+    n = len(defs)
+    por_freq = sorted(defs, key=lambda x: (-freq.get(x, 0), x))
+    acaso = sorted(defs)
+    _rng(semente).shuffle(acaso)
+    res = {}
+    for nome, ordem in (("frequencia", por_freq), ("acaso", acaso)):
+        for th in thetas:
+            cob = fecho_incremental(ordem, defs, th, ate)
+            saltos = [cob[i + 1] - cob[i] for i in range(len(cob) - 1)]
+            km = max(range(len(saltos)), key=saltos.__getitem__)
+            meio = next((i for i, c in enumerate(cob) if c >= n / 2), None)
+            res[(nome, th)] = (km + 1, ordem[km], saltos[km] / n, meio)
+    return res
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
