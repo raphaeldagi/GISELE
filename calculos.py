@@ -7457,6 +7457,7 @@ def testes_de_regressao():
         "P852": p852_cadeia_hexadecimal()[0] == 352 and round(p852_cadeia_hexadecimal(4095)[1], 3) == 0.432,
         "P882": p882_mapa_da_definicao()[2] == 23 and round(p882_mapa_da_definicao()[5], 4) == 0.6986,
         "P883": round(p883_felizes_hex()[0], 4) == 0.2613,
+        "P912": p912_funis()[:2] == ("act", 1991) and round(p912_funis()[3], 3) == -1.869,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -8571,18 +8572,24 @@ def p881_epoca():
     return sum(ep == pv for _, ep, pv, _ in res), len(res), [n for n, ep, pv, _ in res if ep != pv], maioria
 
 
+def _mapa_da_definicao(d):
+    """O mapa da P882: cada substantivo de uma palavra só -> o primeiro substantivo de uma palavra só da definição do seu
+    primeiro sentido de substantivo (que não seja ele mesmo), ou None."""
+    nomes = {w for w, idx in d.lemas.items() if w.isalpha() and any(d.sinsets[i][0] == "n" for i in idx)}
+    f = {}
+    for w in sorted(nomes):
+        i = next(i for i in d.lemas[w] if d.sinsets[i][0] == "n")
+        f[w] = next((x for x in d.palavras_da_definicao(d.sinsets[i][3]) if x in nomes and x != w), None)
+    return f
+
+
 def p882_mapa_da_definicao(d=None):
     """O mapa da definição (P882): cada substantivo de uma palavra só vai para a primeira palavra da definição do seu
     primeiro sentido de substantivo que também é um substantivo de uma palavra só (e não ela mesma); sem essa palavra, é
     um sumidouro. Devolve (N, sumidouros, pontos cíclicos, ciclos, cauda média até um ciclo ou sumidouro, fração da maior
     bacia, o ciclo da maior bacia)."""
     from synthai.dicionario import Dicionario
-    d = d or Dicionario()
-    nomes = {w for w, idx in d.lemas.items() if w.isalpha() and any(d.sinsets[i][0] == "n" for i in idx)}
-    f = {}
-    for w in sorted(nomes):
-        i = next(i for i in d.lemas[w] if d.sinsets[i][0] == "n")
-        f[w] = next((x for x in d.palavras_da_definicao(d.sinsets[i][3]) if x in nomes and x != w), None)
+    f = _mapa_da_definicao(d or Dicionario())
     # destino de cada palavra: o sumidouro ou o ciclo em que a órbita termina, e a distância até ele
     destino, dist, ciclicos, ciclos = {}, {}, set(), []
     for w in sorted(f):
@@ -8662,6 +8669,73 @@ def p884_ciclo_da_serie(alvos=(41, 40, 39, 38)):
         ind[a] = (sum(c) / len(c)) / (sum(m) / len(m))
     return r21.media_distancia(sim, 1), r21.media_distancia(sim, 20), ind
 
+
+ERROS_P939, TESTES_P939 = 0, 0
+
+
+def p912_funis(d=None):
+    """Os funis do mapa da definição (P912): o grau de entrada de cada palavra (quantas a escolhem). Devolve (a mais
+    escolhida, o seu grau, a fração das palavras que escolhem uma das 10 mais escolhidas, a inclinação de log(número de
+    palavras com grau k) contra log k para k de 2 a 100, as 10 mais escolhidas)."""
+    from synthai.dicionario import Dicionario
+    f = _mapa_da_definicao(d or Dicionario())
+    grau = {}
+    for x in f.values():
+        if x is not None:
+            grau[x] = grau.get(x, 0) + 1
+    top = sorted(grau, key=lambda w: (-grau[w], w))[:10]
+    hist = {}
+    for g in grau.values():
+        hist[g] = hist.get(g, 0) + 1
+    pts = [(log(k), log(hist[k])) for k in range(2, 101) if k in hist]
+    incl = float("nan")
+    if len(pts) >= 2:
+        mx = sum(x for x, _ in pts) / len(pts)
+        my = sum(y for _, y in pts) / len(pts)
+        incl = sum((x - mx) * (y - my) for x, y in pts) / sum((x - mx) ** 2 for x, _ in pts)
+    return top[0], grau[top[0]], sum(grau[w] for w in top) / len(f), incl, [(w, grau[w]) for w in top]
+
+
+def p913_benford_hex(caminho=None):
+    """Benford em base 16 nos números do resultados.txt (P913): o primeiro dígito hexadecimal de cada número positivo
+    (sem os rótulos Pnnn), escalado para [1, 16). Devolve (fração com dígito 1, fração com dígito 8..F, números, as 15
+    frações)."""
+    import os
+    import re
+    caminho = caminho or os.path.join(os.path.dirname(os.path.abspath(__file__)), "resultados.txt")
+    texto = re.sub(r"P[0-9]+", " ", open(caminho, encoding="utf-8").read())
+    cont = [0] * 16
+    for x in re.findall(r"(?<![0-9.])[0-9]+(?:\.[0-9]+)?(?:e[+-]?[0-9]+)?", texto):
+        v = float(x)
+        if v <= 0:
+            continue
+        while v >= 16:
+            v /= 16
+        while v < 1:
+            v *= 16
+        cont[int(v)] += 1
+    n = sum(cont)
+    return cont[1] / n, sum(cont[8:]) / n, n, [c / n for c in cont[1:]]
+
+
+def p911_deriva(sementes=(911, 1, 2, 3, 4, 5)):
+    """Rodada 22 (P911): a forma da deriva (dialogo/rodada22.py, conferido em Java). Devolve (tau da exponencial, resíduo,
+    alfa da potência, resíduo, [alfa com as seções embaralhadas, uma por semente])."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada22", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada22.py"))
+    r22 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r22)
+    cs = r22.r21.conjuntos()
+    _, _, tau, se, _, alfa, sp = r22.deriva(cs)
+    controle = []
+    for sem in sementes:
+        c2 = cs[:]
+        random.Random(sem).shuffle(c2)
+        controle.append(r22.deriva(c2)[5])
+    return tau, se, alfa, sp, controle
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -8693,6 +8767,18 @@ def _parte_48():
           + "; ".join(f"parte {k} = {v:.3f}" for k, v in ind.items()))
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P909, testes=TESTES_P909)
     print(f"P909 minha taxa de erro ({ERROS_P909}/{TESTES_P909}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_49():
+    print("--- Parte 49 (0x31: a deriva) ---")
+    tau, se, alfa, sp, controle = p911_deriva()
+    print(f"P911 deriva: exponencial tau = {tau:.2f} (residuo {se:.4f}); potencia alfa = {alfa:.4f} (residuo {sp:.4f}); "
+          f"embaralhada: alfa = " + ", ".join(f"{x:+.3f}" for x in controle))
+    top, g, frac, incl, dez = p912_funis()
+    print(f"P912 a palavra mais escolhida pelas definicoes = {top} ({g}); as 10 mais = {frac:.4f} das palavras; inclinacao do grau = {incl:.3f}; {dez}")
+    f1, f8, n, fr = p913_benford_hex()
+    print(f"P913 Benford em base 16 nos {n} numeros do resultados.txt: digito 1 = {f1:.4f} (Benford 0,25); 8..F = {f8:.4f} (Benford 0,25)")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P939, testes=TESTES_P939)
+    print(f"P939 minha taxa de erro ({ERROS_P939}/{TESTES_P939}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -8730,7 +8816,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49}
 
 
 if __name__ == "__main__":

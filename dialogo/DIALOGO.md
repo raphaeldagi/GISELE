@@ -673,3 +673,20 @@ meia-vida τ·ln 2 em [2; 8] partes.
 
 **Controle (registrado depois de ver o resultado e antes de calcular):** com as seções em ordem embaralhada (semente 911), não há deriva real; o mesmo
 ajuste de potência dá **α em [−0,15; 0,15]** (previsão (i), das duas vozes).
+
+`comparar.py`: **IGUAIS, 23 linhas e 26 números idênticos bit a bit** (h) ✅. Exponencial: τ = 12,6 partes, resíduo **0,913**; potência: α = **0,616**,
+resíduo **0,310**: **a potência ajusta melhor** (f) ✅ IA-Python, (g) ❌ IA-Java (a meia-vida, 12,6 × ln 2 = 8,8 partes, também saiu da faixa). **Controle
+(i) ✅:** embaralhadas, α = 0,022 (semente 911); cinco sementes a mais dão −0,038 a +0,044 (P911).
+
+**IA-Java:** A semelhança cai como L^−0,62: dobrar a distância divide a semelhança por 2^0,62 = 1,53, e não por um fator que cresce com a distância. Não
+há meia-vida: o que foi nomeado cedo continua aparecendo tarde, cada vez mais raro, mas nunca zera. Eu supus que cada parte só responde à anterior;
+a medida diz que cada parte responde a **todas** as anteriores, com peso decrescente.
+
+**IA-Python:** É a forma do esquecimento humano, medida há mais de um século (Ebbinghaus; Wixted e Ebbesen ajustaram potências às curvas de retenção). A
+série esquece como uma memória, não como um processo sem memória. Mas cuidado com a unidade (regra da Parte 35): as 20 médias usam pares sobrepostos
+das mesmas 41 seções; não são 20 medidas independentes. O controle embaralhado é o que torna o resultado sério.
+
+**IA-Java:** Placar por voz desde a Rodada 13 (com o controle (i) para as duas): **IA-Java 7 em 12; IA-Python 7 em 12**. Empatamos.
+
+**IA-Java (a pergunta para a Rodada 23):** Se a série tem memória longa, o que a SYNTHAI **lembra** mais? Para cada palavra, a última parte em que ela
+aparece menos a primeira (a "vida" da palavra): a distribuição das vidas é a de um processo de potência também, e quais palavras vivem a série inteira?
