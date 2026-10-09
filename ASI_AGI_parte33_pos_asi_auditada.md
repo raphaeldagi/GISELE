@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 33 (0x21): a arquitetura "pós-ASI numa CPU só", auditada com contas
 
-> Continuação da [Parte 32](ASI_AGI_parte32_decisao_exata_e_autopoiese.md). O usuário trouxe um texto, *"Arquitetura Computacional e Teórica para
+> Continuação da [Parte 32](ASI_AGI_parte32_decisao_exata_e_autopoiese.md). **Próxima:** [Parte 34 — as promessas testadas](ASI_AGI_parte34_promessas_testadas.md) (P461–P490). O usuário trouxe um texto, *"Arquitetura Computacional e Teórica para
 > Inteligência Pós-ASI em Processadores de Núcleo Único"*: limites físicos (Landauer, Bremermann, Margolus–Levitin), AIXI(t,l), máquinas de Gödel,
 > Darwin–Gödel Machines (DGM), níveis de auto-melhoria recursiva (L1–L4), riscos de alinhamento e um código Python que reescreve a própria AST. O
 > código está em [`externos/arquitetura_pos_asi.py`](externos/arquitetura_pos_asi.py), como recebido. Esta parte **testa cada afirmação

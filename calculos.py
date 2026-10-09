@@ -5801,7 +5801,7 @@ def p439_renovacao(k=10, t=2000, dano_em=1000, gamas=(0.99, 0.999), sementes=tup
 #     o contador de Morris em um dígito hex ---
 
 # Placar acumulado ao fim da Parte 34 (atualizado quando os testes da parte terminam)
-ERROS_P489, TESTES_P489 = 0, 0
+ERROS_P489, TESTES_P489 = 110, 271
 
 
 def p461_contas(alfa=0.1, eps=0.1, k=10, t=2000, sementes=tuple(range(4010, 4110))):
@@ -6089,6 +6089,7 @@ def testes_de_regressao():
         "P432": round(p432_bremermann()[2], 12) == 4.0,
         "P435": p435_auditoria()["nos_mudados"] == 0 and p435_auditoria()["run_benchmarks_constante"] == 0.85,
         "P436": round(p436_contas(), 4) == 0.951,
+        "P462": round(p462_contas()[1], 4) == 0.9895,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -6944,6 +6945,29 @@ def _parte_33():
     print(f"P459 minha taxa de erro ({ERROS_P459}/{TESTES_P459}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_34():
+    print("--- Parte 34 (0x22: as promessas testadas em casos novos) ---")
+    for a in (0.1, 0.05):
+        c1, c2 = p461_contas(a)
+        print(f"P461 conta, alfa = {a}: cota sem aprisionamento = {c1:.2f}; cota com aprisionamento = {c2:.2f}")
+    print(f"P461 Q eps com alfa = 0,05: arrependimento = {p461_q_alfa():.2f}")
+    print(f"P462 conta (quebras, gama de Garivier-Moulines, memoria): {p462_contas()}")
+    print(f"P462 bandido que muda a cada 500 passos: { {g: round(v, 2) for g, v in p462_mudanca().items()} }")
+    (s_m, q_m), tab = p463_zipf_mandelbrot()
+    print(f"P463 Zipf-Mandelbrot ajustado nos substantivos: s = {s_m:.2f}, q = {q_m}")
+    for k, (prev, puro, med) in tab.items():
+        print(f"P463 verbos, k = {k}: previsto = {prev:.4f}; Zipf puro = {puro:.4f}; medido = {med:.4f}")
+    na, nb, nt, res = p464_dicionario_no_lugar_do_ml()
+    print(f"P464 tarefa A = {na}, tarefa B = {nb}, teste de A = {nt}")
+    for nome, (a, b) in res.items():
+        print(f"P464 {nome}: acuracia em A depois de A = {a:.4f}; depois de B = {b:.4f}")
+    print(f"P465 conta: Thompson com Morris = {p465_contas():.2f}")
+    m, (d, dp, tt) = p465_morris()
+    print(f"P465 Thompson com Morris = {m:.2f}; Morris - completo = {d:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P489, testes=TESTES_P489)
+    print(f"P489 minha taxa de erro ({ERROS_P489}/{TESTES_P489}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -6977,7 +7001,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34}
 
 
 if __name__ == "__main__":

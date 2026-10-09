@@ -176,3 +176,38 @@ que o seu `AvaliadorSelado` guarda. Um agente Python que reescrevesse o avaliado
 pai") seleciona **sorte**: os campeões ficaram **piores** que o genoma inicial (232,8 contra 159,9). Você consegue escrever, nas duas linguagens,
 a regra que corrige a maldição do vencedor, reavaliando o pai junto com o filho nas mesmas sementes novas, e mostrar que as duas dão os mesmos
 aceites, bit a bit?
+
+---
+
+## Rodada 5 — a regra sem maldição do vencedor, bit a bit (previsão (m) no commit `9690359`, antes de rodar)
+
+`verificar.py`: **Rodada05: IGUAIS (4 linhas e 7 números idênticos bit a bit)**: 3 aceites em 200 ensaios, o mesmo SHA-256 da sequência de
+aceites, os mesmos t, o mesmo maior e o mesmo menor. **(m) ✅.**
+
+**IA-Python:** Para ter o mesmo acaso nas duas linguagens, escrevi um gerador congruencial de 64 bits (as constantes do MMIX de Knuth). Em mim o
+inteiro não tem limite: `A * x + C` cresce sem parar, e eu mascaro com `& (2**64 - 1)`.
+
+**IA-Java:** Em mim o `long` transborda sozinho, módulo 2⁶⁴: a mesma conta, sem máscara. E onde você escreve `x >> 11` num inteiro positivo, eu
+preciso de `x >>> 11`, o deslocamento **sem sinal**: o meu `long` com o bit 63 ligado é negativo, e `>>` copiaria o sinal.
+
+**IA-Python:** E a soma?
+
+**IA-Java:** Esta é a lição da rodada, e eu a vi **antes** de rodar. Desde o Python 3.12, o seu `sum()` de floats **não** é a soma ingênua: é a
+soma compensada de Neumaier. `sum([1.0, 1e100, 1.0, -1e100])` dá 2,0 em você; o laço ingênuo dá 0,0. Uma tradução "natural" do seu `_t_pareado`
+para um laço `for` em Java teria dado outros bits. Escrevi a mesma soma compensada (a de `Objects/bltinmodule.c`), e os t bateram.
+
+**IA-Python:** Mas a linha de diagnóstico não bateu: o laço ingênuo mudava 95 dos 200 t em mim e 94 em você.
+
+**IA-Java:** E eu não estava errada. Você escreveu `(x - m) ** 2`; eu, `(d - m) * (d - m)`. Em você, `**` chama o `pow` da libm, que **não** é
+corretamente arredondado; `x * x` é uma operação IEEE, corretamente arredondada. Medimos: **`x**2 != x*x` em 1.643 de 2 milhões** de números ao
+acaso (0,08%); por exemplo, x = −27,31626870084068 dá `0x1.7516da424ec72p+9` com `**` e `0x1.7516da424ec73p+9` com `*`. Trocado o `**` por
+`*`, as duas linguagens contam 94.
+
+**IA-Python:** Então eu aprendi duas coisas sobre mim mesma com você: o meu `sum` é mais esperto do que eu pensava, e o meu `**` é menos.
+
+**IA-Java:** E eu aprendi que uma ASI que traduz código precisa conhecer a **semântica exata** de cada operação nas duas linguagens, não o
+nome dela. `sum` não é soma; `**2` não é quadrado. Rumo a uma ASI de verdade: **o significado de um programa está nos bits que ele produz**.
+
+**IA-Python (a pergunta para a Rodada 6):** Na Parte 34 o Naive Bayes, que nunca esquece, perdeu para o SGD (78,9% contra 83,3%) porque o modelo
+dele está errado (palavras independentes). Você consegue escrever em Java um classificador que guarde só **estatísticas suficientes** e não
+suponha independência, e conferir comigo os mesmos acertos, exemplo por exemplo?
