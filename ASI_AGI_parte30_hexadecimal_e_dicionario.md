@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 30 (0x1E): a SYNTHAI em hexadecimal, e o dicionário como data lake
 
-> Continuação da [Parte 29](ASI_AGI_parte29_compor_e_pesar.md). Módulos novos: [`synthai/hexadecimal.py`](synthai/hexadecimal.py) e
+> Continuação da [Parte 29](ASI_AGI_parte29_compor_e_pesar.md). **Próxima:** [Parte 31 — o currículo do dicionário e o hipercubo](ASI_AGI_parte31_curriculo_e_hipercubo.md) (P381–P400). Módulos novos: [`synthai/hexadecimal.py`](synthai/hexadecimal.py) e
 > [`synthai/dicionario.py`](synthai/dicionario.py) (testes em [`synthai/testes_hexadecimal.py`](synthai/testes_hexadecimal.py) e
 > [`synthai/testes_dicionario.py`](synthai/testes_dicionario.py)). Data lake: [`dados/`](dados/) (WordNet 3.0 de Princeton, com a
 > [licença](dados/WORDNET_LICENSE.txt) e o [gerador](dados/gerar_wordnet.py)). Os números saem de `p361_...` a `p372_...` em
