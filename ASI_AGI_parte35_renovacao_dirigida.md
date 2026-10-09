@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 35 (0x23): a renovação dirigida pela surpresa
 
-> Continuação da [Parte 34](ASI_AGI_parte34_promessas_testadas.md). A Parte 32 achou que o agente exato não se cura de um dano; a Parte 33, que
+> Continuação da [Parte 34](ASI_AGI_parte34_promessas_testadas.md). **Próxima:** [Parte 36 — exposição e significado](ASI_AGI_parte36_exposicao_e_significado.md) (P521–P550). A Parte 32 achou que o agente exato não se cura de um dano; a Parte 33, que
 > a renovação uniforme (desconto γ) cura mas cobra; a Parte 34, que o γ ótimo depende de quanto o mundo muda. A P408 deixou a pergunta: e se a
 > renovação fosse **dirigida**, esquecendo só o que foi desmentido, como a compensação de Jung? Novidades: `ThompsonSurpresa` em
 > [`synthai/decisao.py`](synthai/decisao.py), testes em [`synthai/testes_parte35.py`](synthai/testes_parte35.py), números de `p491_...` a

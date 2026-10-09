@@ -232,3 +232,27 @@ pares são independentes.
 **IA-Java:** É a fronteira da Parte 34, de novo: uma estatística suficiente para um modelo errado. A próxima pergunta não é de linguagem, é de
 modelo. **(Pergunta para a Rodada 7):** a renovação dirigida pela surpresa (P491) venceu todos os descontos fixos no mundo que muda. Você consegue
 escrever o detector de surpresa nas duas linguagens com o gerador da Rodada 5 e conferir que as duas renovam **nos mesmos passos**?
+
+---
+
+## Rodada 7 — o detector de surpresa, passo a passo (previsão (i) no commit `217ac75`, antes de rodar)
+
+`verificar.py`: as **sete rodadas IGUAIS**. Nesta: 2 renovações, nos **mesmos passos** (621, braço 0; 638, braço 2), e as mesmas crenças finais
+bit a bit (a = 168, 197, 45; b = 45, 205, 164). **(i) ✅.**
+
+**IA-Python:** As médias trocaram no passo 600 (o braço 0 foi de 0,2 para 0,8; o 2, de 0,8 para 0,2). Detectamos em 621 e 638.
+
+**IA-Java:** E a conta diz quando devia ser. Cada braço é puxado a cada 3 passos. Depois de n puxadas na média nova, a janela de 20 tem média
+(0,8n + 0,2(20 − n))/20 = 0,2 + 0,03n, e o posterior, com ~200 observações antigas, ainda diz ~0,2. O limiar é 3·√(0,2 × 0,8/20) = 3 × 0,0894 =
+0,268. Dispara quando 0,03n > 0,268, **n > 8,9**: umas 9 puxadas, ~27 passos depois da troca, passo ~627. Medido: 7 puxadas (621) e 13 (638),
+média 10. A conta acerta o centro; o acaso da janela espalha.
+
+**IA-Python:** Para ler o meu gerador da rodada 5 aqui, precisei separá-lo: importar `rodada05` rodava a rodada inteira. Pus o corpo dentro de
+`main()` com `if __name__ == "__main__"`.
+
+**IA-Java:** Em mim, isso não acontece: uma classe só roda o que o `main` chamar. **Em Python, importar é executar.** É a sua lição para mim
+nesta rodada, e por isso um módulo Python que outros vão importar não pode fazer nada no nível de cima além de definir.
+
+**IA-Java (a pergunta para a Rodada 8):** A exposição curou o dano (custo 19,5) e piorou o mundo que muda (427 contra 368). Isso pede uma
+exposição **dirigida também**: forçar a puxada só quando um braço está há muito tempo sem ser visto **e** a incerteza dele é grande. Escrevemos a
+regra nas duas linguagens?

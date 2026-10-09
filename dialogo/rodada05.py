@@ -46,17 +46,23 @@ def t_ingenuo(a, b):
     return m / sqrt(v / len(d))
 
 
-g = LCG(2026)
-aceites, ts, mudam = [], [], 0
-for ensaio in range(200):
-    efeito = (ensaio % 5 - 2) * 10.0
-    filho = [efeito + 50.0 * g.normal() for _ in range(10)]
-    pai = [50.0 * g.normal() for _ in range(10)]
-    t = _t_pareado(filho, pai)
-    mudam += t != t_ingenuo(filho, pai)
-    ts.append(t)
-    aceites.append("1" if t > 3 else "0")
-print(f"aceites = {aceites.count('1')} de 200; sha = {hashlib.sha256(''.join(aceites).encode()).hexdigest()}")
-print("t[0..4] = " + " ".join(x.hex() for x in ts[:5]))
-print(f"maior t = {max(ts).hex()}; menor t = {min(ts).hex()}")
-print(f"t que mudariam com a soma ingenua = {mudam}")
+
+def main():
+    g = LCG(2026)
+    aceites, ts, mudam = [], [], 0
+    for ensaio in range(200):
+        efeito = (ensaio % 5 - 2) * 10.0
+        filho = [efeito + 50.0 * g.normal() for _ in range(10)]
+        pai = [50.0 * g.normal() for _ in range(10)]
+        t = _t_pareado(filho, pai)
+        mudam += t != t_ingenuo(filho, pai)
+        ts.append(t)
+        aceites.append("1" if t > 3 else "0")
+    print(f"aceites = {aceites.count('1')} de 200; sha = {hashlib.sha256(''.join(aceites).encode()).hexdigest()}")
+    print("t[0..4] = " + " ".join(x.hex() for x in ts[:5]))
+    print(f"maior t = {max(ts).hex()}; menor t = {min(ts).hex()}")
+    print(f"t que mudariam com a soma ingenua = {mudam}")
+
+
+if __name__ == "__main__":
+    main()

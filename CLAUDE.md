@@ -106,6 +106,8 @@ anterior, commit e push.
   libm) difere de `x*x` em ~0,08% dos casos; em código de comparação bit a bit, usar `x*x`.
 - Bayes exato só é exato para o seu modelo (Parte 34): o Naive Bayes não esquece, mas perdeu para o SGD (78,9% contra 83,3%)
   porque supõe palavras independentes. Esquecimento catastrófico só aparece quando as tarefas conflitam.
+- Em Python, importar é executar (Parte 36, rodada 7): scripts que outros importam guardam o corpo em main().
+- Contar a unidade certa (Parte 35): checagens de janelas sobrepostas não são episódios independentes.
 - Nunca usar `pkill -f` com um padrão que apareça na própria linha de comando (mata o shell; aconteceu duas vezes).
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).
@@ -118,7 +120,7 @@ anterior, commit e push.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
-  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35`); a suíte
+  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
