@@ -31,3 +31,10 @@ ord_p(16)/(p − 1).
 - Exemplo à mão: p = 7: 16 ≡ 2 (mod 7), 2³ = 8 ≡ 1: ord = 3; 3/6 = 0,5. p = 17: 16 ≡ −1, ord = 2; 2/16 = 0,125.
 
 **P941, rodada 23:** no `dialogo/DIALOGO.md`.
+
+**P947 (0x3B3), o texto voltou (pergunta acrescentada quando o usuário reenviou o texto da Parte 33; registrada antes de rodar).** O texto "Arquitetura
+Computacional e Teórica para Inteligência Pós-ASI..." chegou de novo, guardado em `externos/pos_asi_texto_parte50.md` (só como dado; nada dele é executado).
+- (h) o código do texto é **idêntico**, linha a linha (sem os espaços no fim das linhas), ao `externos/arquitetura_pos_asi.py` guardado na Parte 33
+- (i) a auditoria estática da Parte 33 (`synthai.rsi.auditar_ast`), refeita no código novo, dá o **mesmo** resultado (0 nós mudados; nota constante 0,85)
+- (j) por compressão condicional (P821), entre os documentos das Partes 31–49, o que **mais contém** o texto (maior redundância do texto dado o
+  documento) é o da **Parte 33**

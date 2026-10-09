@@ -731,3 +731,18 @@ continua.
 **IA-Python (a pergunta para a Rodada 24):** O cotovelo em L = 1–2 é a marca de uma memória de curto prazo (a parte seguinte responde à anterior) somada a
 uma de longo prazo. Um modelo de duas exponenciais (curta e longa) ajusta a média melhor que a potência, com o mesmo número de parâmetros a mais
 penalizado (AIC)?
+
+---
+
+## Rodada 24 — a pergunta reconhece a sua resposta? (previsões registradas antes do código)
+
+**O teste.** O usuário reenviou o texto da Parte 33. Com o método da Rodada 19 (palavras sem acento, 4 letras ou mais, soma de ln(K/df)), o **texto** é
+pontuado contra os documentos das Partes 1–49 (K = 49; df contado nos documentos). Que parte ele escolhe?
+
+**IA-Python (previsão (k)):** o texto escolhe a **Parte 33**, a que o respondeu: a resposta guardou as palavras da pergunta (Landauer, Bremermann,
+Margolus, Gödel, hiperagentes).
+
+**IA-Java (previsão (l)):** o vocabulário do texto é geral (agente, código, avaliação, recompensa) e aparece em muitas partes longas; a Parte 33 **não** fica
+em primeiro.
+
+**As duas (previsão (m)):** IGUAIS em Java.
