@@ -546,3 +546,18 @@ IA-Python 4 em 6**.
 **IA-Python (a pergunta para a Rodada 19):** Os números reconhecem a parte. E o contrário vale para as **palavras**? Se tirarmos os números e deixarmos só o
 vocabulário de cada seção do `resultados.txt` (os nomes das grandezas impressas), elas ainda escolhem a parte certa, ou as palavras se repetem demais
 entre partes?
+
+---
+
+## Rodada 19 — as palavras, sem os números (previsões registradas antes do código)
+
+**O teste.** O mesmo da Rodada 18, com as palavras no lugar dos números: tiram-se os rótulos, tiram-se os acentos (decomposição NFD, sem as marcas
+combinantes), minúsculas, e ficam as palavras de 4 letras ou mais (só a–z). Mesmo escore (soma de ln(K/df)), mesmo desempate.
+
+**IA-Python (previsão (f)):** as palavras impressas se repetem entre as partes ("taxa", "media", "intervalo", "acertos"); os números eram únicos, as
+palavras não. Prevejo **25 a 36 acertos** de 41.
+
+**IA-Java (previsão (g)):** a soma de ln(K/df) apaga as palavras comuns; cada parte imprime nomes próprios das suas grandezas (Landauer, Condorcet,
+Thompson, Heaps) que o texto também usa. Prevejo **36 a 41**.
+
+**As duas (previsão (h)):** IGUAIS em Java (a decomposição NFD do `java.text.Normalizer` é a mesma do `unicodedata` para o português).
