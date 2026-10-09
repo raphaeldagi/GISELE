@@ -634,3 +634,6 @@ da **Parte 41** com as Partes 1–10, dividida pela semelhança média dela com 
 mais perto de 41 que o começo. Índice em **[0,60; 0,95]**.
 
 **As duas (previsão (k)):** a semelhança média entre partes vizinhas (distância 1) é maior que entre partes a distância 20; e IGUAIS em Java.
+
+**Controle (registrado depois de ver 1,125 e antes de calcular):** se o ciclo é da Parte 41 (a da metacognição) e não de toda parte tardia, o mesmo índice
+para as Partes 38, 39 e 40 (cada uma no lugar da 41) fica **abaixo de 1** nas três (previsão (l), das duas vozes).
