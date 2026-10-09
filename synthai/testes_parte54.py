@@ -33,7 +33,7 @@ class TesteExatidaoOuSorte(unittest.TestCase):
         chances, dif = calculos.p1061_exatidao_ou_sorte()
         # nenhuma chamada: chance 1; a rodada 17 não chama exp nem log
         self.assertEqual(chances["rodada17"], 1.0)
-        # a fórmula, conferida por uma linha de código antes: (1 − 0,0029)^1000 = 0,05489...
+        # a fórmula, conferida por uma linha de código antes: (1 − 0,0029)^1000 = 0,05479...
         import importlib.util
         import os
         raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
