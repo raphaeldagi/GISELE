@@ -67,7 +67,7 @@ hiperônimo" erraria 60% dos casos; "sempre cita", 40%.
 
 **O significado.** O dicionário define **para cima**: 60% das definições nomeiam a classe, e menos de 1% das classes nomeia um membro. A categoria é
 escrita sem os seus membros; o membro é escrito a partir da categoria. Comparado com os meus textos (P821: a resposta contém 58% da pergunta, a pergunta
-5% da resposta, razão 11,6), o dicionário é **6,5 vezes mais assimétrico** (75,8 / 11,6). As minhas perguntas antecipam as respostas muito mais do que
+5% da resposta, razão 0,5794 / 0,0508 = 11,4), o dicionário é **6,6 vezes mais assimétrico** (75,8 / 11,4). As minhas perguntas antecipam as respostas muito mais do que
 uma categoria antecipa os membros, porque eu escrevo a pergunta já sabendo a resposta (Parte 46).
 
 **Meta, o erro (b).** Eu supus 4% para o inverso, pensando em glosas como "*canine*: ... *of the dog family*". Elas existem (671), mas são raras: uma
@@ -133,7 +133,7 @@ PLACAR_47
 - **Regra nova:** antes de prever, calcular à mão um exemplo do caso presente.
 
 > **Síntese da Parte 47:** o dicionário define para cima: 60,2% das definições de substantivos citam a sua categoria (2.250 vezes o acaso) e 0,8% das
-> categorias citam um membro (26 vezes o acaso), uma assimetria 6,5 vezes maior que a das minhas próprias perguntas e respostas. No hexadecimal, ler os
+> categorias citam um membro (26 vezes o acaso), uma assimetria 6,6 vezes maior que a das minhas próprias perguntas e respostas. No hexadecimal, ler os
 > dígitos em base 10 diminui o número (eu supus que aumentava, confundindo o símbolo com o valor); a conta corrigida previu um mundo novo (0,386 contra
 > 0,432 medido). As palavras do `resultados.txt` reconstroem as 41 partes (os números, 40), com menos folga. E os meus erros desta parte vêm quase todos
 > de responder à pergunta anterior, não à presente.

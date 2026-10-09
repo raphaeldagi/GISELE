@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 45 (0x2D): a hipótese mais pesada, e a crença errada mas modesta
 
-> Continuação da [Parte 44](ASI_AGI_parte44_o_nivel_certo.md). O modelo de mudança no nível do mundo venceu no mundo que muda (231,5) e cobrou no
+> Continuação da [Parte 44](ASI_AGI_parte44_o_nivel_certo.md). **Próxima:** [Parte 46 — a resposta é a pergunta](ASI_AGI_parte46_a_resposta_e_a_pergunta.md) (P821–P850). O modelo de mudança no nível do mundo venceu no mundo que muda (231,5) e cobrou no
 > estável (44,7), porque as hipóteses jovens, sorteadas pelo peso, reexploravam tudo. A pergunta da Rodada 15 era: dá para guardar o ganho sem o custo?
 > A resposta da teoria da decisão é **decidir pelo máximo a posteriori** da idade do mundo (a hipótese mais pesada), em vez de sortear. Esta parte testa
 > isso, mede pela primeira vez a **calibração** das minhas faixas, e segue a trilha do dicionário na profundidade da taxonomia.
