@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 31 (0x1F): o currículo do dicionário e a avalanche; o hipercubo, Gray e os ULPs
 
-> Continuação da [Parte 30](ASI_AGI_parte30_hexadecimal_e_dicionario.md). Métodos novos em [`synthai/dicionario.py`](synthai/dicionario.py)
+> Continuação da [Parte 30](ASI_AGI_parte30_hexadecimal_e_dicionario.md). **Próxima:** [Parte 32 — decisão exata e autopoiese](ASI_AGI_parte32_decisao_exata_e_autopoiese.md) (P401–P430). Métodos novos em [`synthai/dicionario.py`](synthai/dicionario.py)
 > (`fecho_parcial`, `minset_reduzido`, `profundidades`, `wu_palmer`, `lesk`, `spearman`) e [`synthai/hexadecimal.py`](synthai/hexadecimal.py)
 > (`hamming`, `gray`, `subida_de_encosta`, `ulps_entre`); testes em [`synthai/testes_parte31.py`](synthai/testes_parte31.py). Os números saem de
 > `p381_...` a `p394_...` em [`calculos.py`](calculos.py); a saída está em [`resultados.txt`](resultados.txt). O diálogo Python ↔ Java, novo
