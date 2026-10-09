@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 48 (0x30): o ciclo
 
-> Continuação da [Parte 47](ASI_AGI_parte47_a_definicao_contem_a_pergunta.md). **Previsões nos commits `d5a08fc` (P882, P883), `07586e0` (rodada 20) e
+> Continuação da [Parte 47](ASI_AGI_parte47_a_definicao_contem_a_pergunta.md). **Próxima:** [Parte 49 — a deriva](ASI_AGI_parte49_a_deriva.md) (P911–P940). **Previsões nos commits `d5a08fc` (P882, P883), `07586e0` (rodada 20) e
 > `e78c52d` (rodada 21; o controle (l) no seguinte), antes de rodar.**
 > A Rodada 20 achou que a última parte (a da metacognição) fala como o começo da série. Esta parte pergunta pelo ciclo: no dicionário (toda definição
 > acaba voltando a si?), no hexadecimal (os números felizes em base 16) e na série (Rodada 21).
