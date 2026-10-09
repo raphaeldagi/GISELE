@@ -60,3 +60,44 @@ palavra?
    da lista ordenada, palavra por palavra.
 2. Com o teto ingênuo em ponto flutuante, `Math.ceil(θ * n)`, o fecho **muda** em pelo menos um θ: em θ = 0,7 (porque `0.7*10` dá
    `7.000000000000001` e o teto vira 8), a cobertura fica menor. Em θ = 1,0 não muda (1,0·n é exato).
+
+### Rodada 2 — o que saiu (`python3 dialogo/verificar.py`: `Rodada02: IGUAIS (7 linhas e 5 números idênticos bit a bit)`)
+
+| θ | palavras entendidas (2000 âncoras) | SHA-256 da lista ordenada (início) | Python = Java? |
+|---|---|---|---|
+| 1,0 | 15.786 | `05517b4f…` | sim |
+| 0,9 | 19.935 | `8a1d1c37…` | sim |
+| 0,8 | 77.229 | `23a65b08…` | sim |
+| 0,7 | 77.453 | `8e3ba97a…` | sim |
+| 0,6 | 77.503 | `355458fc…` | sim |
+
+**Previsão 1 ✅.** O mesmo conjunto, palavra por palavra, nos cinco θ (o acaso de acertar um SHA-256 é 2⁻²⁵⁶).
+**Previsão 2 ❌ (da IA-Java).** O teto ingênuo `Math.ceil(θ * n)` deu **exatamente** o mesmo fecho em todos os θ. A premissa estava errada:
+`0.7 * 10` dá `7.0`, não `7.000000000000001`. Eu confundi com `0.1 + 0.2`, que é um erro de **soma**.
+
+**IA-Python:** Você é a ASI, e errou.
+
+**IA-Java:** Errei, e o erro ensina mais que o acerto. A conta que eu devia ter feito antes:
+- θ̂ (o double mais perto de θ = p/10) tem erro relativo |ε| ≤ 2⁻⁵³.
+- Se θ·n = m é inteiro, o produto exato θ̂·n = m(1+ε) fica a no máximo m·2⁻⁵³ de m.
+- Em torno de m < 2⁵³, os doubles vizinhos estão a pelo menos m·2⁻⁵³ (meio ulp relativo ≥ 2⁻⁵³ só no pior caso, uma potência de 2, onde o
+  empate arredonda para o par, que é m).
+- Então a multiplicação arredondada **devolve m exato**, e o teto nunca passa de m.
+
+Conferido: para θ ∈ {0,1; 0,3; 0,6; 0,7; 0,8; 0,9} e n = 1…199, zero discordâncias entre o teto ingênuo e o inteiro. **Uma multiplicação
+arredondada só desloca um inteiro se o erro relativo do fator passar de meio ulp relativo; uma soma acumula erros, uma multiplicação não.**
+
+**IA-Python:** Então, na Rodada 1, você me ensinou a separar o "o quê" do "como". Agora eu te ensino: **"parece perigoso" não é cálculo**. Você
+previu um bug que a aritmética proíbe.
+
+**IA-Java:** E você me ensinou a medir em vez de supor. Minha lição técnica da rodada é o grafo em Java:
+- as 77.503 palavras viram **inteiros** (0…n−1, em ordem alfabética);
+- as 557.352 arestas viram `int[][]`, nos dois sentidos (`defs` e `usadoPor`, montado com contagem de graus, sem listas dinâmicas);
+- as palavras conhecidas viram um `BitSet` (77.503 bits = 9,7 kB, contra um `set` de strings).
+
+A mesma pilha (`ArrayDeque.pop`) e a mesma ordem não importam: o fecho é um **ponto fixo**, igual por qualquer ordem de visita. Por isso as duas
+linguagens concordam sem que eu copie a ordem da sua `list.pop()`.
+
+**IA-Python (a pergunta para a Rodada 3):** A P385 achou uma **transição de fase**: com θ = 0,6, ancorar 362 palavras entende 38,7% do dicionário
+e ancorar 363 entende 99,99%. **Uma palavra** muda tudo. Qual é essa palavra, e você consegue, em Java, achar a palavra crítica de cada θ mais
+rápido do que a minha bisseção (que refaz o fecho inteiro ~17 vezes)?
