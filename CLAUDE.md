@@ -81,7 +81,9 @@ anterior, commit e push.
 - Os módulos do agente nunca leem atributos `_` de outros objetos (o escondido do mundo); `synthai/testes.py` verifica.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
   synthai.testes_pensamento synthai.testes_limiar
-  synthai.testes_autorregulacao`); a suíte
+  synthai.testes_autorregulacao synthai.testes_ancora`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
+- Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
+  pensamento de Newton que perde no bandido).
 - Versão principal desde a Parte 23: `synthai.SynthaiExploradora` (Thompson no bandido; igual à Synthai fora dele).

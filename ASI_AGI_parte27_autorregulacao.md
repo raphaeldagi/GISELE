@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 27: a autorregulação
 
-> Continuação da [Parte 26](ASI_AGI_parte26_a_constante_que_faltava.md). Módulo novo: [`synthai/autorregulacao.py`](synthai/autorregulacao.py) (testes
+> Continuação da [Parte 26](ASI_AGI_parte26_a_constante_que_faltava.md). **Próxima:** [Parte 28 — a âncora](ASI_AGI_parte28_a_ancora.md) (P341–P350). Módulo novo: [`synthai/autorregulacao.py`](synthai/autorregulacao.py) (testes
 > em [`synthai/testes_autorregulacao.py`](synthai/testes_autorregulacao.py)). Os números saem de `p332_...` e `p333_...` em [`calculos.py`](calculos.py);
 > a saída completa está em [`resultados.txt`](resultados.txt). O projeto inteiro também está num arquivo só: [`SYNTHAI_completo.py`](SYNTHAI_completo.py).
 >

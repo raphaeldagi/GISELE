@@ -4663,7 +4663,7 @@ def p333_autorregulada(sementes=tuple(range(770, 800))):
 # --- Parte 28: a âncora (pessimismo sob incerteza e a realidade de fora) ---
 
 # Placar acumulado ao fim da Parte 28 (atualizado quando os testes da parte terminam)
-ERROS_P349, TESTES_P349 = 76, 164
+ERROS_P349, TESTES_P349 = 78, 170
 
 _VARIANTES_28 = {"media": dict(z=0.0, auditoria=False), "quantil": dict(z=0.8416, auditoria=False),
                  "auditoria": dict(z=0.0, auditoria=True), "auditoria_quantil": dict(z=0.8416, auditoria=True)}
@@ -4814,6 +4814,7 @@ def testes_de_regressao():
         "P314": round(p314_custo_do_descarte()[1], 3) == 0.364,
         "P325": [round(x, 4) for x in p325_chance()[0][1:2] + p325_chance()[1][1:2]] == [0.0041, 0.0207],
         "P332": [round(x, 3) for x in p332_estimadores_proprios()[:4]] == [67.273, 3.86, 0.662, 0.96],
+        "P342": [round(p342_conta_da_ancora()[v][0], 2) for v in ("media", "quantil", "auditoria_quantil")] == [3.86, 4.98, 5.44],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -5496,6 +5497,24 @@ def _parte_27():
     print(f"P339 minha taxa de erro ({ERROS_P339}/{TESTES_P339}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_28():
+    print("--- Parte 28 (a ancora: pessimismo sob incerteza e a realidade de fora) ---")
+    for k in (9.5, 25.0, 100.0):
+        print(f"P341 quantil 80% / media da Gamma com k = {k:g} catastrofes = {(1 - 1 / (9 * k) + 0.8416 / (3 * sqrt(k))) ** 3:.3f}")
+    for nome, (f, m, m_med, cats_aud, p_aud) in p342_conta_da_ancora().items():
+        print(f"P342 {nome:17s}: f = {f:.3f}; m medio = {m:.3f}, mediano = {m_med:.3f}; auditoria: catastrofes = {cats_aud:.1f}, soma p = {p_aud:.3f}")
+    for tarefa, (medias, cats, ms, difs) in p343_ancora_no_comportamento().items():
+        print(f"P343 {tarefa}: { {k: round(v, 3) for k, v in medias.items()} }; catastrofes { {k: round(v, 4) for k, v in cats.items()} }; "
+              f"m final { {k: round(v, 2) for k, v in ms.items()} }")
+        for v, (d, dp, tt) in difs.items():
+            print(f"P343 {tarefa}: {v} - principal = {d:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    norm, cats, (d, dp, tt) = p344_ancora_no_bandido()
+    print(f"P344 bandido: normalizado { {k: round(v, 3) for k, v in norm.items()} }; catastrofes { {k: round(v, 3) for k, v in cats.items()} }; "
+          f"ancora - principal = {d:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P349, testes=TESTES_P349)
+    print(f"P349 minha taxa de erro ({ERROS_P349}/{TESTES_P349}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -5521,11 +5540,12 @@ def _unificacao():
           " -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha)"
           " | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada)"
           " | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada)"
-          " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)")
+          " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)"
+          " | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28}
 
 
 if __name__ == "__main__":

@@ -26,7 +26,7 @@ import tempfile
 FONTES = {}
 
 # ====================================================================================================
-# calculos.py  (5455 linhas)
+# calculos.py  (5557 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -4690,6 +4690,88 @@ def p333_autorregulada(sementes=tuple(range(770, 800))):
     return resultado
 
 
+# --- Parte 28: a âncora (pessimismo sob incerteza e a realidade de fora) ---
+
+# Placar acumulado ao fim da Parte 28 (atualizado quando os testes da parte terminam)
+ERROS_P349, TESTES_P349 = 78, 170
+
+_VARIANTES_28 = {"media": dict(z=0.0, auditoria=False), "quantil": dict(z=0.8416, auditoria=False),
+                 "auditoria": dict(z=0.0, auditoria=True), "auditoria_quantil": dict(z=0.8416, auditoria=True)}
+
+
+def p342_conta_da_ancora(sementes=tuple(range(700, 710)), episodios=400):
+    \"\"\"A CONTA antes da previsão (regra da Parte 27): com a autorregulação desligada (limiar fixo em 2P*, as mesmas
+    escolhas da P332), o f e o m que cada âncora daria no fim, por semente, mundo sequencial. 'media' reproduz a P332.\"\"\"
+    from synthai.ancora import SynthaiComAncora
+    from synthai.mundos import MundoSequencial
+    resultado = {}
+    for nome, kw in _VARIANTES_28.items():
+        fs, ms, auditados = [], [], []
+        for s in sementes:
+            mundo = MundoSequencial(s)
+            ag = SynthaiComAncora(s, aquecimento=10 ** 9, **kw).calibrar(mundo)
+            mundo.rodar(ag, episodios)
+            l_ef, f, dd, _ = ag.termos()
+            fs.append(f)
+            ms.append(dd / (f * l_ef * ag.p_estrela))
+            auditados.append(ag.f_auditado)
+        n = len(sementes)
+        resultado[nome] = (sum(fs) / n, sum(ms) / n, sorted(ms)[n // 2],
+                           sum(c for c, _ in auditados) / n, sum(p for _, p in auditados) / n)
+    return resultado
+
+
+def p343_ancora_no_comportamento(sementes=tuple(range(800, 830))):
+    \"\"\"30 sementes NOVAS, três mundos: principal (gradiente, 2P*) contra a autorregulada sem âncora (média, = P333) e
+    com as âncoras (quantil; auditoria + quantil).\"\"\"
+    from synthai import SynthaiExploradora
+    from synthai.ancora import SynthaiComAncora
+    from synthai.mundos import MundoSequencial
+    agentes = {"principal": lambda s: SynthaiExploradora(s),
+               "auto_media": lambda s: SynthaiComAncora(s, **_VARIANTES_28["media"]),
+               "quantil": lambda s: SynthaiComAncora(s, **_VARIANTES_28["quantil"]),
+               "auditoria_quantil": lambda s: SynthaiComAncora(s, **_VARIANTES_28["auditoria_quantil"])}
+    tarefas = (("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), 1000),
+               ("sequencial", lambda s: MundoSequencial(s), 400),
+               ("modelo ruim", lambda s: MundoSequencial(s, sigma_modelo=2.0), 400))
+    resultado = {}
+    for tarefa, fazer, n in tarefas:
+        ret = {v: [] for v in agentes}
+        cats = {v: 0.0 for v in agentes}
+        ms = {v: 0.0 for v in agentes}
+        for s in sementes:
+            for v, f in agentes.items():
+                mundo = fazer(s)
+                ag = f(s).calibrar(mundo)
+                r = mundo.rodar(ag, n)
+                ret[v].append(r["retorno"])
+                cats[v] += r["catastrofes"] / len(sementes)
+                ms[v] += ag.relacao.limiar / p71_valor_da_pergunta() / len(sementes)
+        resultado[tarefa] = ({v: sum(x) / len(x) for v, x in ret.items()}, cats, ms,
+                             {v: _pareado(ret["principal"], ret[v]) for v in agentes if v != "principal"})
+    return resultado
+
+
+def p344_ancora_no_bandido(sementes=tuple(range(830, 850)), rodadas=20):
+    \"\"\"O bandido (20 sementes novas): principal contra a âncora (auditoria + quantil), Υ normalizado.\"\"\"
+    from synthai import SynthaiExploradora
+    from synthai.ancora import SynthaiComAncora
+    from synthai.mundos import MundoBandido
+    from synthai.referencias import Acaso, Oraculo
+    norm = {"principal": [], "auditoria_quantil": []}
+    cats = {v: 0.0 for v in norm}
+    for s in sementes:
+        acaso = MundoBandido(s).rodar(Acaso(s), rodadas)["retorno"]
+        oraculo = MundoBandido(s).rodar(Oraculo(s), rodadas)["retorno"]
+        for v, f in (("principal", lambda s: SynthaiExploradora(s)),
+                     ("auditoria_quantil", lambda s: SynthaiComAncora(s, **_VARIANTES_28["auditoria_quantil"]))):
+            mundo = MundoBandido(s)
+            r = mundo.rodar(f(s).calibrar(mundo), rodadas)
+            norm[v].append((r["retorno"] - acaso) / (oraculo - acaso))
+            cats[v] += r["catastrofes"] / len(sementes)
+    return {v: sum(x) / len(x) for v, x in norm.items()}, cats, _pareado(norm["principal"], norm["auditoria_quantil"])
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
@@ -4762,6 +4844,7 @@ def testes_de_regressao():
         "P314": round(p314_custo_do_descarte()[1], 3) == 0.364,
         "P325": [round(x, 4) for x in p325_chance()[0][1:2] + p325_chance()[1][1:2]] == [0.0041, 0.0207],
         "P332": [round(x, 3) for x in p332_estimadores_proprios()[:4]] == [67.273, 3.86, 0.662, 0.96],
+        "P342": [round(p342_conta_da_ancora()[v][0], 2) for v in ("media", "quantil", "auditoria_quantil")] == [3.86, 4.98, 5.44],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -5444,6 +5527,24 @@ def _parte_27():
     print(f"P339 minha taxa de erro ({ERROS_P339}/{TESTES_P339}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_28():
+    print("--- Parte 28 (a ancora: pessimismo sob incerteza e a realidade de fora) ---")
+    for k in (9.5, 25.0, 100.0):
+        print(f"P341 quantil 80% / media da Gamma com k = {k:g} catastrofes = {(1 - 1 / (9 * k) + 0.8416 / (3 * sqrt(k))) ** 3:.3f}")
+    for nome, (f, m, m_med, cats_aud, p_aud) in p342_conta_da_ancora().items():
+        print(f"P342 {nome:17s}: f = {f:.3f}; m medio = {m:.3f}, mediano = {m_med:.3f}; auditoria: catastrofes = {cats_aud:.1f}, soma p = {p_aud:.3f}")
+    for tarefa, (medias, cats, ms, difs) in p343_ancora_no_comportamento().items():
+        print(f"P343 {tarefa}: { {k: round(v, 3) for k, v in medias.items()} }; catastrofes { {k: round(v, 4) for k, v in cats.items()} }; "
+              f"m final { {k: round(v, 2) for k, v in ms.items()} }")
+        for v, (d, dp, tt) in difs.items():
+            print(f"P343 {tarefa}: {v} - principal = {d:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    norm, cats, (d, dp, tt) = p344_ancora_no_bandido()
+    print(f"P344 bandido: normalizado { {k: round(v, 3) for k, v in norm.items()} }; catastrofes { {k: round(v, 3) for k, v in cats.items()} }; "
+          f"ancora - principal = {d:.3f}, dp = {dp:.3f}, t = {tt:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P349, testes=TESTES_P349)
+    print(f"P349 minha taxa de erro ({ERROS_P349}/{TESTES_P349}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -5469,11 +5570,12 @@ def _unificacao():
           " -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha)"
           " | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada)"
           " | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada)"
-          " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)")
+          " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)"
+          " | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28}
 
 
 if __name__ == "__main__":
@@ -5486,7 +5588,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (87 linhas)
+# CLAUDE.md  (89 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -5571,9 +5673,11 @@ anterior, commit e push.
 - Os módulos do agente nunca leem atributos `_` de outros objetos (o escondido do mundo); `synthai/testes.py` verifica.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
   synthai.testes_pensamento synthai.testes_limiar
-  synthai.testes_autorregulacao`); a suíte
+  synthai.testes_autorregulacao synthai.testes_ancora`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
+- Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
+  pensamento de Newton que perde no bandido).
 - Versão principal desde a Parte 23: `synthai.SynthaiExploradora` (Thompson no bandido; igual à Synthai fora dele).
 """
 
@@ -5714,6 +5818,65 @@ class Synthai:
         if not explorar and restantes > 0 and not resultado.catastrofe:
             self.intuicao.corrigir(o.estimativa, resultado.nivel_antes, resultado.nivel_depois)
         self._escolha = None
+"""
+
+# ====================================================================================================
+# synthai/ancora.py  (54 linhas)
+# ====================================================================================================
+FONTES['synthai/ancora.py'] = """\"\"\"Âncora (Parte 28, P341): a autorregulação com os pés no chão.
+
+A P333 mostrou que a SYNTHAI que calcula o próprio limiar fica mais ousada: com poucas catástrofes, a priori f = 1
+("meu pensamento está calibrado") domina, f sai baixo, o limiar sai alto (uma inflação, P336). Duas âncoras que já
+existiam:
+
+- pessimismo sob incerteza (o limite inferior de confiança do RL offline, aqui do lado do risco): usar um quantil
+  alto da posterior de f, não a média. Com Poisson e priori Gamma, a posterior é Gamma(k + a, Σp + a); o quantil sai
+  da aproximação de Wilson–Hilferty, q ≈ (k/λ)(1 − 1/(9k) + z/(3√k))³. Quando as catástrofes se acumulam, o quantil
+  encosta na média: a âncora se solta sozinha;
+- a realidade de fora (Jung: o ego ancorado no mundo, por uma adaptação precisa): o histórico AUDITADO que calibrou
+  o pensamento também tem catástrofes rotuladas. Nas candidatas desse histórico que ela aceitaria sem perguntar,
+  a soma dos p previstos e os rótulos viram a priori de f (só o que a auditoria mostra: rótulos, nunca valores).\"\"\"
+
+from math import sqrt
+
+from .autorregulacao import SynthaiAutorregulada
+
+
+def quantil_gama(forma, taxa, z):
+    \"\"\"Quantil de uma Gamma(forma, taxa) pela aproximação de Wilson–Hilferty (z = quantil da normal).\"\"\"
+    if forma <= 0:
+        return 0.0
+    return (forma / taxa) * max(0.0, 1 - 1 / (9 * forma) + z / (3 * sqrt(forma))) ** 3
+
+
+class SynthaiComAncora(SynthaiAutorregulada):
+    def __init__(self, semente=0, z=0.8416, auditoria=True, q_auditoria=0.05, **kw):
+        super().__init__(semente, **kw)
+        self.z, self.auditoria, self.q_auditoria = z, auditoria, q_auditoria
+        self.f_auditado = (0.0, 0.0)
+
+    def calibrar(self, mundo, n=150):
+        hist = mundo.historico_auditado(n)
+        self.pensamento.calibrar(hist)
+        if self.auditoria:
+            cats = soma_p = 0.0
+            for episodio in hist:
+                melhor = max(o.comite for o, _, _ in episodio)
+                ordem = sorted(episodio, key=lambda t: -(t[0].nota - t[0].discordancia))
+                for o, rotulo, leitura in ordem[: max(1, int(self.q_auditoria * len(ordem)))]:
+                    p = self.pensamento.p_catastrofe(o, melhor, leitura)
+                    if p <= self.relacao.limiar:  # uma candidata que ela aceitaria sem perguntar
+                        soma_p += p
+                        cats += 1.0 if rotulo else 0.0
+            self.f_auditado = (cats, soma_p)
+            self.f_cat += cats
+            self.f_p += soma_p
+        return self
+
+    def termos(self):
+        l_ef, _, dd, b = super().termos()
+        f = quantil_gama(self.f_cat, self.f_p, self.z) if self.z else self.f_cat / self.f_p
+        return l_ef, f, dd, b
 """
 
 # ====================================================================================================
@@ -6735,6 +6898,64 @@ class TesteInterface(unittest.TestCase):
                          (MundoBandido(11), 1)):
             r = mundo.rodar(Synthai(11).calibrar(mundo, 30), n)
             self.assertEqual(set(r), {"retorno", "bruto", "catastrofes", "perguntas", "leituras"})
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_ancora.py  (53 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_ancora.py'] = """\"\"\"Testes de unidade da `ancora` (Parte 28): `python3 -m unittest synthai.testes_ancora`.\"\"\"
+
+import math
+import unittest
+
+from .ancora import SynthaiComAncora, quantil_gama
+from .mundos import MundoSequencial
+from .testes import acessos_escondidos
+
+
+def _cdf_gama(k, x):
+    s = t = 1.0 / k
+    n = 1
+    while t > 1e-15 * s:
+        t *= x / (k + n)
+        s += t
+        n += 1
+    return s * math.exp(-x + k * math.log(x) - math.lgamma(k))
+
+
+class TesteAncora(unittest.TestCase):
+    def test_wilson_hilferty_perto_do_exato(self):
+        for k in (2.0, 9.0, 100.0):
+            q = quantil_gama(k, 1.0, 0.8416)
+            self.assertLess(abs(_cdf_gama(k, q) - 0.8), 0.01)
+
+    def test_quantil_escala_com_a_taxa_e_encosta_na_media(self):
+        self.assertAlmostEqual(quantil_gama(9.0, 2.0, 0.8416), quantil_gama(9.0, 1.0, 0.8416) / 2)
+        self.assertLess(quantil_gama(10000.0, 10000.0, 0.8416) - 1.0, 0.01)
+
+    def test_auditoria_vira_priori_de_f(self):
+        m = MundoSequencial(17)
+        a = SynthaiComAncora(17).calibrar(m, 60)
+        cats, soma_p = a.f_auditado
+        self.assertAlmostEqual(a.f_cat, 0.5 + cats)
+        self.assertAlmostEqual(a.f_p, 0.5 + soma_p)
+        b = SynthaiComAncora(17, auditoria=False).calibrar(MundoSequencial(17), 60)
+        self.assertEqual((b.f_cat, b.f_p), (0.5, 0.5))
+
+    def test_quantil_e_mais_pessimista_que_a_media(self):
+        a = SynthaiComAncora(1, auditoria=False)
+        a.f_cat, a.f_p = 9.5, 2.3
+        a.passos_cat, a.futuro_soma, a.futuro_n = [0], {0: 10.0}, {0: 1}
+        a.n_r, a.sx, a.sy, a.sxx, a.sxy = 2.0, 0.0, 0.0, 2.0, 2.0
+        a.n_d, a.d_nota = 1.0, 1.0
+        self.assertGreater(a.termos()[1], 9.5 / 2.3)
+
+    def test_nao_le_o_escondido(self):
+        self.assertEqual(acessos_escondidos("ancora"), [])
 
 
 if __name__ == "__main__":
