@@ -10,7 +10,8 @@ import os
 
 RAIZ = os.path.dirname(os.path.abspath(__file__))
 FONTES = ["calculos.py", "CLAUDE.md"] + sorted(
-    os.path.join("synthai", f) for f in os.listdir(os.path.join(RAIZ, "synthai")) if f.endswith(".py"))
+    os.path.join("synthai", f) for f in os.listdir(os.path.join(RAIZ, "synthai")) if f.endswith(".py")) + sorted(
+    os.path.join("externos", f) for f in os.listdir(os.path.join(RAIZ, "externos")) if f.endswith(".py"))  # Parte 33
 DADOS = sorted(os.path.join("dados", f) for f in os.listdir(os.path.join(RAIZ, "dados"))
                if f.endswith((".gz", ".txt", ".py")))  # o dicionário (Parte 30): binários em base64
 

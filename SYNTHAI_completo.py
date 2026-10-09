@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (6075 linhas)
+# calculos.py  (7406 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -5069,11 +5069,16 @@ def _mundo_30(nome, s):
     return MundoBandido(s)
 
 
+_CACHE_363 = {}
+
+
 def p363_fatorial_hex(mundo, sementes=tuple(range(900, 920))):
     \"\"\"O experimento fatorial 2^3 dos tipos hexadecimais num mundo. Fora do bandido, o bit 0x4 (Thompson) não age
     (identidade testada), e os 3 bits que contam são Newton (0x1), âncora (0x2) e neutro (0x8); no bandido, o bit 0x2
     (âncora) não age, e contam Newton, Thompson (0x4) e neutro. Para cada semente, os 8 tipos rodam pareados e os efeitos
     saem da transformada de Walsh–Hadamard; devolve a média de cada tipo, as catástrofes e cada efeito com dp e t.\"\"\"
+    if (mundo, sementes) in _CACHE_363:  # a Parte 31 reusa os mesmos números (P391)
+        return _CACHE_363[(mundo, sementes)]
     from synthai.hexadecimal import efeitos_fatoriais, synthai_do_tipo
     from synthai.referencias import Acaso, Oraculo
     fazer, n = _MUNDOS_30[mundo]
@@ -5103,7 +5108,8 @@ def p363_fatorial_hex(mundo, sementes=tuple(range(900, 920))):
         m = sum(v) / len(v)
         dp = sqrt(sum((x - m) ** 2 for x in v) / (len(v) - 1))
         resumo[nome] = (m, dp, m / (dp / sqrt(len(v))) if dp > 0 else float("inf"))
-    return {c: sum(v) / len(v) for c, v in ret.items()}, cats, resumo
+    _CACHE_363[(mundo, sementes)] = ({c: sum(v) / len(v) for c, v in ret.items()}, cats, resumo)
+    return _CACHE_363[(mundo, sementes)]
 
 
 def p364_quantizada(sementes=tuple(range(920, 940))):
@@ -5228,6 +5234,1152 @@ def p372_hex_do_dicionario():
     return (len(hx), hx, maior, int(maior, 16), log2(len(defs)) / 4, entropia(list(letras.values())) / 4)
 
 
+# --- Parte 31 (0x1F): o currículo do dicionário; o hipercubo, o código de Gray e os ULPs ---
+
+# Placar acumulado ao fim da Parte 31 (atualizado quando os testes da parte terminam)
+ERROS_P399, TESTES_P399 = 95, 216
+
+
+def _grafo_31():
+    from synthai.dicionario import Dicionario
+    d = Dicionario()
+    defs = d.grafo_de_definicoes()
+    freq = {}
+    for _, _, _, glosa in d.sinsets:
+        for w in d.palavras_da_definicao(glosa):
+            freq[w] = freq.get(w, 0) + 1
+    return d, defs, freq
+
+
+def p381_curriculo(ks=(500, 1000, 2000, 3985), thetas=(1.0, 0.8, 0.6), semente=381):
+    \"\"\"Que palavras ancorar primeiro? Quatro currículos de k palavras (as mais frequentes nas definições; as que mais
+    definem outras; um MinSet guloso; ao acaso) e o fecho com entendimento parcial theta: a fração das 77.503 palavras
+    que passa a ser entendida.\"\"\"
+    from synthai.dicionario import fecho_parcial, minset_guloso, nucleo
+    d, defs, freq = _grafo_31()
+    n = len(defs)
+    define = {x: 0 for x in defs}
+    for x, s in defs.items():
+        for y in s:
+            define[y] += 1
+    por_freq = sorted(defs, key=lambda x: (-freq.get(x, 0), x))
+    por_define = sorted(defs, key=lambda x: (-define[x], x))
+    ms = minset_guloso(nucleo(defs), defs)
+    ordem_ms = sorted(ms, key=lambda x: (-define[x], x)) + [x for x in por_define if x not in set(ms)]
+    rng = _rng(semente)
+    acaso = sorted(defs)
+    rng.shuffle(acaso)
+    curriculos = {"frequencia": por_freq, "define_mais": por_define, "minset": ordem_ms, "acaso": acaso}
+    tabela = {}
+    for nome, ordem in curriculos.items():
+        for k in ks:
+            for th in thetas:
+                tabela[(nome, k, th)] = len(fecho_parcial(set(ordem[:k]), defs, th)) / n
+    return n, len(ms), tabela
+
+
+def p382_minset_reduzido():
+    \"\"\"O MinSet guloso (P371) depois da retirada das palavras redundantes, e a conferência de que o que sobra ainda
+    quebra todos os ciclos (o fecho exato a partir dele define 100%).\"\"\"
+    from synthai.dicionario import fecho, minset_guloso, minset_reduzido, nucleo
+    _, defs, _ = _grafo_31()
+    ker = nucleo(defs)
+    ms = minset_guloso(ker, defs)
+    red = minset_reduzido(ker, defs, ms)
+    conhecidas, rodadas = fecho(red, defs)
+    return len(ms), len(red), len(conhecidas) / len(defs), rodadas
+
+
+def p383_cobertura_zipf(ks=(100, 500, 1000, 2000, 4000, 10000)):
+    \"\"\"Cobertura das palavras usadas nas definições pelas k mais frequentes: medida contra a conta de Zipf com o
+    expoente medido (P371): Σ_{r<=k} r^-s / Σ_{r<=N} r^-s.\"\"\"
+    from synthai.dicionario import zipf
+    _, _, freq = _grafo_31()
+    fs = sorted(freq.values(), reverse=True)
+    total = sum(fs)
+    s_z = zipf(fs)
+    hn = sum(r ** -s_z for r in range(1, len(fs) + 1))
+    return s_z, len(fs), {k: (sum(fs[:k]) / total, sum(r ** -s_z for r in range(1, k + 1)) / hn) for k in ks}
+
+
+def p384_wu_palmer_lesk(pares=2000, semente=384):
+    \"\"\"Duas medidas de significado independentes (a taxonomia de Wu e Palmer; a sobreposição de definições de Lesk) em
+    pares de substantivos ao acaso: a correlação de postos entre elas, e a média de cada uma.\"\"\"
+    from synthai.dicionario import lesk, profundidades, spearman, wu_palmer
+    d, _, _ = _grafo_31()
+    prof = profundidades(d)
+    subst = [i for i, x in enumerate(d.sinsets) if x[0] == "n"]
+    rng = _rng(semente)
+    wp, lk = [], []
+    for _ in range(pares):
+        a, b = rng.choice(subst), rng.choice(subst)
+        wp.append(wu_palmer(d, prof, a, b))
+        lk.append(lesk(d, a, b))
+    return spearman(wp, lk), sum(wp) / len(wp), sum(lk) / len(lk), sum(1 for x in lk if x > 0) / len(lk)
+
+
+def p385_ponto_critico(thetas=(0.6, 0.7, 0.8, 0.9), limiar=0.5):
+    \"\"\"EXPLORATÓRIO (depois de ver a P381): a cascata de entendimento parcial tem um ponto crítico. Para cada theta, o
+    menor k (as k palavras mais frequentes das definições ancoradas) com que o fecho parcial passa de `limiar` do
+    dicionário, achado por bisseção, e a cobertura logo antes e logo depois dele.\"\"\"
+    from synthai.dicionario import fecho_parcial
+    _, defs, freq = _grafo_31()
+    n = len(defs)
+    ordem = sorted(defs, key=lambda x: (-freq.get(x, 0), x))
+    cob = lambda k, th: len(fecho_parcial(set(ordem[:k]), defs, th)) / n
+    resultado = {}
+    for th in thetas:
+        lo, hi = 0, len(ordem)
+        while hi - lo > 1:
+            meio = (lo + hi) // 2
+            if cob(meio, th) >= limiar:
+                hi = meio
+            else:
+                lo = meio
+        resultado[th] = (hi, cob(lo, th), cob(hi, th))
+    return resultado
+
+
+def p391_geometria_hamming():
+    \"\"\"O hipercubo dos tipos (P363): em cada mundo, para os 28 pares dos 8 tipos que agem, a correlação de postos entre
+    a distância de Hamming (quantos módulos diferem) e a diferença absoluta de retorno.\"\"\"
+    from synthai.dicionario import spearman
+    from synthai.hexadecimal import hamming
+    resultado = {}
+    for mundo in ("escolha única", "sequencial", "bandido"):
+        medias = p363_fatorial_hex(mundo)[0]
+        cods = sorted(medias)
+        hs, ds = [], []
+        for i, a in enumerate(cods):
+            for b in cods[i + 1:]:
+                hs.append(hamming(a, b))
+                ds.append(abs(medias[a] - medias[b]))
+        por_h = {h: sum(d for hh, d in zip(hs, ds) if hh == h) / hs.count(h) for h in sorted(set(hs))}
+        resultado[mundo] = (spearman(hs, ds), por_h)
+    return resultado
+
+
+def p392_gray_e_subida():
+    \"\"\"O código de Gray dos 16 tipos (cada vizinho difere num bit) e a busca local no hipercubo a partir de 0x0 em cada
+    mundo (P363): aonde chega, em quantos passos, e se é o melhor tipo do mundo.\"\"\"
+    from synthai.hexadecimal import gray, subida_de_encosta
+    ordem = [gray(i) for i in range(16)]
+    resultado = {}
+    for mundo in ("escolha única", "sequencial", "bandido"):
+        medias = p363_fatorial_hex(mundo)[0]
+        caminho = subida_de_encosta(medias, 0)
+        melhor = max(medias, key=medias.get)
+        resultado[mundo] = ([f"0x{c:X}" for c in caminho], f"0x{melhor:X}", caminho[-1] == melhor)
+    return [f"{c:X}" for c in ordem], resultado
+
+
+def p393_ulps(ns=(2000, 100000, 1000000), tentativas=20, semente=393):
+    \"\"\"A exatidão em ULPs: a soma ingênua (um += por termo, como os mundos fazem) contra a soma exata corretamente
+    arredondada (math.fsum, Shewchuk 1997) de n números uniformes em (0, 1). A conta: o erro de cada adição tem desvio
+    ~ulp(parcial)/√12 e a parcial cresce linearmente, então o erro final tem desvio ≈ ulp(S)·√n/6 e
+    E|erro| = desvio·√(2/π).\"\"\"
+    from math import fsum, ulp
+    rng = _rng(semente)
+    resultado = {}
+    for n in ns:
+        erros = []
+        for _ in range(tentativas):
+            xs = [rng.random() for _ in range(n)]
+            ingenua = 0.0
+            for x in xs:
+                ingenua += x
+            exata = fsum(xs)
+            erros.append(abs(ingenua - exata) / ulp(exata))
+        conta = sqrt(n) / 6 * sqrt(2 / pi)
+        resultado[n] = (sum(erros) / len(erros), conta)
+    return resultado, (0.1 + 0.2).hex(), (0.3).hex()
+
+
+
+def p394_ulps_em_degrau(ns=(2000, 3000, 50000, 300000), tentativas=200, semente=394):
+    \"\"\"POSTERIOR À P393 (a conta √n/6 subestimou o erro por 1,3 a 1,9): o ulp da soma parcial não cresce em linha reta,
+    cresce em DEGRAUS (dobra a cada potência de 2). A conta refeita: cada adição erra ~U(±ulp(S_i)/2), S_i ≈ i/2, então
+    Var = Σ_i ulp(i/2)²/12 e E|erro|/ulp(S_n) = √Var/ulp(n/2)·√(2/π). Devolve, para cada n, (medido, conta em degrau,
+    conta linear da P393) com mais tentativas e em n novos (previsão registrada antes de rodar).\"\"\"
+    from math import fsum, ulp
+    rng = _rng(semente)
+    resultado = {}
+    for n in ns:
+        erros = []
+        for _ in range(tentativas):
+            xs = [rng.random() for _ in range(n)]
+            ingenua = 0.0
+            for x in xs:
+                ingenua += x
+            exata = fsum(xs)
+            erros.append(abs(ingenua - exata) / ulp(exata))
+        degrau = sqrt(sum(ulp(i / 2) ** 2 for i in range(1, n + 1)) / 12) / ulp(n / 2) * sqrt(2 / pi)
+        resultado[n] = (sum(erros) / len(erros), degrau, sqrt(n) / 6 * sqrt(2 / pi))
+    return resultado
+
+
+# --- Parte 32 (0x20): trocar o aprendizado por reforço e o aprendizado contínuo pela decisão bayesiana exata;
+#     a autopoiese (só onde serve); a memória em dígitos hex; a avalanche do dicionário ---
+
+# Placar acumulado ao fim da Parte 32 (atualizado quando os testes da parte terminam)
+ERROS_P429, TESTES_P429 = 103, 242
+
+
+def _bracos_401(semente, k=10):
+    rng = _rng(semente)
+    return [rng.random() for _ in range(k)]
+
+
+def p401_contas(k=10, t=2000, sementes=tuple(range(4010, 4110)), eps=0.1):
+    \"\"\"A CONTA antes da simulação da P401, só com as médias dos braços (sem rodar agente nenhum):
+    - Lai–Robbins: o arrependimento mínimo de qualquer agente consistente, Σ Δ_k ln T / KL(p_k, p*), na média das sementes;
+    - ε-guloso: só a exploração já custa ε·T·(p* − média dos braços) (cota inferior do Q-learning com ε fixo);
+    - as esperanças sob braços U(0, 1): E[p*] = k/(k+1), E[média] = 1/2, então ε·T·(k/(k+1) − 1/2).\"\"\"
+    from synthai.decisao import cota_lai_robbins
+    lr, expl = [], []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        lr.append(cota_lai_robbins(ps, t))
+        expl.append(eps * t * (max(ps) - sum(ps) / k))
+    return sum(lr) / len(lr), sum(expl) / len(expl), eps * t * (k / (k + 1) - 0.5)
+
+
+def p401_bandido(k=10, t=2000, sementes=tuple(range(4010, 4110))):
+    \"\"\"Q-learning ε-guloso (α = 0,1, ε = 0,1; o RL padrão), Q otimista (q0 = 1, ε = 0), UCB1 e Thompson (o posterior
+    exato, Beta) no mesmo bandido de Bernoulli com 10 braços U(0, 1), T = 2000, 100 sementes pareadas: o arrependimento
+    final de cada um, e a diferença pareada de cada um contra Thompson.\"\"\"
+    from synthai.decisao import QEpsilon, ThompsonBernoulli, UCB1, rodar_bandido
+    fabricas = {"q_eps": lambda r: QEpsilon(k, r), "q_otimista": lambda r: QEpsilon(k, r, eps=0.0, q0=1.0),
+                "ucb1": lambda r: UCB1(k, r), "thompson": lambda r: ThompsonBernoulli(k, r)}
+    finais = {n: [] for n in fabricas}
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        for n, f in fabricas.items():
+            finais[n].append(rodar_bandido(f(_rng(sm + 1)), ps, t, _rng(sm + 2))[-1])
+    medias = {n: sum(v) / len(v) for n, v in finais.items()}
+    difs = {n: _pareado(finais["thompson"], finais[n]) for n in fabricas if n != "thompson"}
+    return medias, difs
+
+
+def p402_contas(n=6, t=5000, eps=0.1):
+    \"\"\"A CONTA antes da P402 no RiverSwim: o ganho médio ótimo g* (iteração de valor relativa) vezes T; o ganho de ficar
+    sempre à esquerda no estado 0 (5/1000 por passo); e o Q-learning ε-guloso com Q inicial 0, que depois da primeira
+    recompensa 5/1000 fica guloso à esquerda no estado 0: ganha ≈ 0,005·T·(1 − ε/2) enquanto não chegar ao fim.\"\"\"
+    from synthai.decisao import media_otima, riverswim
+    P, R = riverswim(n)
+    g = media_otima(P, R)
+    return g, g * t, 0.005 * t, 0.005 * t * (1 - eps / 2)
+
+
+def p402_riverswim(n=6, t=5000, sementes=tuple(range(4020, 4040))):
+    \"\"\"PSRL (posterior Dirichlet + programação dinâmica num MDP sorteado a cada episódio de 20 passos) contra o
+    Q-learning ε-guloso (γ = 0,95, α = 0,1, ε = 0,1) e o Q-learning otimista (Q inicial 20 = 1/(1 − γ), ε = 0,1) no
+    RiverSwim de 6 estados, T = 5000 passos, 20 sementes: a recompensa total de cada um e as diferenças pareadas.\"\"\"
+    from synthai.decisao import PSRL, QLearningMDP, riverswim, rodar_mdp
+    P, R = riverswim(n)
+    fabricas = {"psrl": lambda r: PSRL(n, r), "q_eps": lambda r: QLearningMDP(n, r),
+                "q_otimista": lambda r: QLearningMDP(n, r, q0=20.0)}
+    tot = {k: [] for k in fabricas}
+    for sm in sementes:
+        for k, f in fabricas.items():
+            tot[k].append(rodar_mdp(f(_rng(sm + 1)), P, R, t, _rng(sm + 2)))
+    medias = {k: sum(v) / len(v) for k, v in tot.items()}
+    return medias, {k: _pareado(tot[k], tot["psrl"]) for k in fabricas if k != "psrl"}
+
+
+def _tarefas_403(semente, d=40, por_tarefa=400, ruido=0.1):
+    \"\"\"Duas tarefas em sequência sobre a mesma função f(x) = sin(2x) + x/2: A vê x em [−π, 0], B vê x em [0, π].
+    Atributos: d cossenos aleatórios fixos √(2/d)·cos(w x + b), w ~ N(0, 2²), b ~ U(0, 2π) (Rahimi e Recht, 2007).\"\"\"
+    rng = _rng(semente)
+    ws = [rng.gauss(0, 2) for _ in range(d)]
+    bs = [rng.uniform(0, 2 * pi) for _ in range(d)]
+    fa = lambda x: [sqrt(2 / d) * cos(w * x + b) for w, b in zip(ws, bs)]
+    f = lambda x: sin(2 * x) + x / 2
+    xa = [rng.uniform(-pi, 0) for _ in range(por_tarefa)]
+    xb = [rng.uniform(0, pi) for _ in range(por_tarefa)]
+    ta = [-pi + pi * (i + 0.5) / 200 for i in range(200)]
+    A = [(fa(x), f(x) + rng.gauss(0, ruido)) for x in xa]
+    B = [(fa(x), f(x) + rng.gauss(0, ruido)) for x in xb]
+    teste_a = [(fa(x), f(x)) for x in ta]
+    return A, B, teste_a
+
+
+def p403_continuo(d=40, sementes=tuple(range(4030, 4040)), passo=0.5, lam=1e-2):
+    \"\"\"Aprendizado contínuo: tarefa A, depois tarefa B, mesmo modelo. A regressão bayesiana recursiva (estatística
+    suficiente exata) contra a descida de gradiente estocástica (passo constante, uma passada) com os mesmos atributos.
+    Mede o erro quadrático médio no teste de A depois de A e depois de B (o esquecimento), e confere que a recursiva
+    termina IGUAL à ridge em lote com A ∪ B (a maior diferença absoluta entre os pesos).\"\"\"
+    from synthai.decisao import RegressaoBayesiana, RegressaoSGD, ridge_em_lote
+    res = {"bayes": ([], []), "sgd": ([], [])}
+    maior_dif = 0.0
+    for sm in sementes:
+        A, B, teste = _tarefas_403(sm, d)
+        mse = lambda m: sum((m.prever(f) - y) ** 2 for f, y in teste) / len(teste)
+        for nome, m in (("bayes", RegressaoBayesiana(d, lam)), ("sgd", RegressaoSGD(d, passo))):
+            for f, y in A:
+                m.atualizar(f, y)
+            res[nome][0].append(mse(m))
+            for f, y in B:
+                m.atualizar(f, y)
+            res[nome][1].append(mse(m))
+            if nome == "bayes":
+                lote = ridge_em_lote([f for f, _ in A + B], [y for _, y in A + B], lam)
+                maior_dif = max(maior_dif, max(abs(a - b) for a, b in zip(m.w, lote)))
+    med = {n: (sum(a) / len(a), sum(b) / len(b)) for n, (a, b) in res.items()}
+    return med, _pareado(res["bayes"][1], res["sgd"][1]), maior_dif
+
+
+def p404_contas(fracoes=(0.1, 0.5, 0.9)):
+    \"\"\"A CONTA antes da P404 (autopoiese do dicionário): se uma fração q das palavras é esquecida ao acaso, uma esquecida
+    volta já na primeira rodada do fecho exato (θ = 1) se todas as |s| que a definem sobreviveram: chance (1 − q)^|s|.
+    A cota inferior da regeneração em θ = 1 é então (1 − q) + q·E[(1 − q)^|s|] (uma rodada só; as seguintes só somam).\"\"\"
+    from synthai.dicionario import Dicionario
+    defs = Dicionario().grafo_de_definicoes()
+    n = len(defs)
+    return {q: (1 - q) + q * sum((1 - q) ** len(s) for s in defs.values()) / n for q in fracoes}
+
+
+def p404_autopoiese(fracoes=(0.1, 0.5, 0.9), thetas=(1.0, 0.8), semente=404):
+    \"\"\"Autopoiese no dicionário: o núcleo é fechado (toda palavra do núcleo é definida só por palavras do núcleo: a
+    fração de arestas que saem dele), e a regeneração: esquecer uma fração q das 77.503 palavras ao acaso e refazer o
+    fecho parcial a partir das que sobraram. Devolve a fração de fechamento e {(q, θ): fração recuperada}.\"\"\"
+    from synthai.dicionario import fecho_parcial, nucleo
+    _, defs, _ = _grafo_31()
+    ker = set(nucleo(defs))
+    arestas = sum(len(defs[x]) for x in ker)
+    dentro = sum(len(defs[x] & ker) for x in ker)
+    rng = _rng(semente)
+    palavras = sorted(defs)
+    res = {}
+    for q in fracoes:
+        sobra = set(rng.sample(palavras, round(len(palavras) * (1 - q))))
+        for th in thetas:
+            res[(q, th)] = len(fecho_parcial(sobra, defs, th)) / len(defs)
+    return len(ker), dentro / arestas, res
+
+
+def p405_dano(k=10, t=2000, dano_em=1000, sementes=tuple(range(4050, 4150))):
+    \"\"\"Regeneração (autopoiese no agente): no passo 1000, a memória é destruída e trocada por lixo: em Thompson, as
+    contagens viram inteiros ao acaso em 1..20; no Q-learning ε-guloso, os Q viram U(0, 1). O arrependimento na segunda
+    metade [1000, 2000) de cada um, o de Thompson na primeira metade, e as diferenças pareadas.\"\"\"
+    from synthai.decisao import QEpsilon, ThompsonBernoulli, rodar_bandido
+
+    def lixo_ts(ag):
+        r = _rng(ag.lixo)
+        ag.a = [float(r.randint(1, 20)) for _ in ag.a]
+        ag.b = [float(r.randint(1, 20)) for _ in ag.b]
+
+    def lixo_q(ag):
+        r = _rng(ag.lixo)
+        ag.q = [r.random() for _ in ag.q]
+
+    seg_ts, seg_q, pri_ts = [], [], []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        ts = ThompsonBernoulli(k, _rng(sm + 1))
+        ts.lixo = sm + 3
+        a = rodar_bandido(ts, ps, t, _rng(sm + 2), dano_em, lixo_ts)
+        q = QEpsilon(k, _rng(sm + 1))
+        q.lixo = sm + 3
+        b = rodar_bandido(q, ps, t, _rng(sm + 2), dano_em, lixo_q)
+        seg_ts.append(a[-1] - a[dano_em - 1])
+        seg_q.append(b[-1] - b[dano_em - 1])
+        pri_ts.append(a[dano_em - 1])
+    m = lambda v: sum(v) / len(v)
+    return m(pri_ts), m(seg_ts), m(seg_q), _pareado(seg_ts, seg_q)
+
+
+def p411_contas(k=10, tetos=(16, 256), t=2000, sementes=tuple(range(4010, 4110)), sorteios=4000):
+    \"\"\"A CONTA antes da P411 (a memória de Thompson em dígitos hex: a + b limitado a 16 = 1 dígito, ou 256 = 2 dígitos).
+    No regime estacionário, cada braço puxado com frequência tem a + b entre teto/2 e teto, posterior ≈
+    Beta(1 + p·n, 1 + (1 − p)·n) com n ≈ 3/4 do teto. Então a chance de cada braço ser escolhido é a de a amostra dele ser a
+    maior, e o arrependimento por passo é Σ Δ_k·π_k: arrependimento ≈ T·Σ Δ_k π_k (π_k por sorteio, `sorteios` vezes).
+    É uma cota aproximada: braços ruins, puxados pouco, têm n menor e são puxados MAIS que isso.\"\"\"
+    res = {}
+    for teto in tetos:
+        n_ef = 0.75 * teto
+        tot = []
+        for sm in sementes:
+            ps = _bracos_401(sm, k)
+            m = max(ps)
+            r = _rng(sm + 9)
+            cont = [0] * k
+            for _ in range(sorteios):
+                am = [r.betavariate(1 + p * n_ef, 1 + (1 - p) * n_ef) for p in ps]
+                cont[max(range(k), key=am.__getitem__)] += 1
+            tot.append(t * sum((m - p) * c / sorteios for p, c in zip(ps, cont)))
+        res[teto] = sum(tot) / len(tot)
+    return res
+
+
+def p411_memoria_hex(k=10, t=2000, tetos=(16, 256), sementes=tuple(range(4010, 4110))):
+    \"\"\"Thompson com a memória limitada a 1 e 2 dígitos hex por braço (a + b ≤ 16 ou 256, metade quando passa) contra o
+    Thompson completo, mesmos braços e sementes da P401: o arrependimento final e as diferenças pareadas.\"\"\"
+    from synthai.decisao import ThompsonBernoulli, rodar_bandido
+    fin = {None: []}
+    fin.update({x: [] for x in tetos})
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        for teto in fin:
+            fin[teto].append(rodar_bandido(ThompsonBernoulli(k, _rng(sm + 1), teto), ps, t, _rng(sm + 2))[-1])
+    med = {x: sum(v) / len(v) for x, v in fin.items()}
+    return med, {x: _pareado(fin[None], fin[x]) for x in tetos}
+
+
+def p421_avalanche(thetas=(0.6, 0.7, 0.8, 0.9), semente=421, ate=40000):
+    \"\"\"A avalanche do dicionário (P385, agora com o fecho incremental): para o currículo por frequência e para um
+    currículo ao acaso, a cobertura depois de cada palavra ancorada; o maior salto causado por UMA palavra, o k dele, a
+    palavra, e o k em que a cobertura passa de 50%.\"\"\"
+    from synthai.dicionario import fecho_incremental
+    _, defs, freq = _grafo_31()
+    n = len(defs)
+    por_freq = sorted(defs, key=lambda x: (-freq.get(x, 0), x))
+    acaso = sorted(defs)
+    _rng(semente).shuffle(acaso)
+    res = {}
+    for nome, ordem in (("frequencia", por_freq), ("acaso", acaso)):
+        for th in thetas:
+            cob = fecho_incremental(ordem, defs, th, ate)
+            saltos = [cob[i + 1] - cob[i] for i in range(len(cob) - 1)]
+            km = max(range(len(saltos)), key=saltos.__getitem__)
+            meio = next((i for i, c in enumerate(cob) if c >= n / 2), None)
+            res[(nome, th)] = (km + 1, ordem[km], saltos[km] / n, meio)
+    return res
+
+
+# --- Parte 33 (0x21): a arquitetura "pós-ASI numa CPU só", auditada: limites físicos, a auditoria da AST, a autoavaliação
+#     (reward hacking), L3 contra L4, a maldição do vencedor, e o Bayes com renovação ---
+
+# Placar acumulado ao fim da Parte 33 (atualizado quando os testes da parte terminam)
+ERROS_P459, TESTES_P459 = 105, 258
+
+K_BOLTZMANN = 1.380649e-23   # J/K (exato no SI de 2019)
+H_PLANCK = 6.62607015e-34    # J·s (exato no SI de 2019)
+C_LUZ = 299792458.0          # m/s (exato)
+
+
+def p431_landauer(temperaturas=(293.15, 300.0, 4.0)):
+    \"\"\"O limite de Landauer, E = k_B·T·ln 2, em joules por bit, e a temperatura que daria o número citado no texto
+    (2,75 × 10⁻²¹ J a "20 °C").\"\"\"
+    from math import log as ln
+    return {t: K_BOLTZMANN * t * ln(2) for t in temperaturas}, 2.75e-21 / (K_BOLTZMANN * ln(2))
+
+
+def p432_bremermann(massa=1.0):
+    \"\"\"Bremermann (m·c²/h, bits por segundo) contra Margolus–Levitin (2E/(πħ) = 4E/h, operações por segundo), para
+    E = m·c². O texto atribui 1,36 × 10⁵⁰ à fórmula 2E/(πħ); a razão entre as duas é exatamente 4.\"\"\"
+    hbar = H_PLANCK / (2 * pi)
+    e = massa * C_LUZ ** 2
+    return e / H_PLANCK, 2 * e / (pi * hbar), (2 * e / (pi * hbar)) / (e / H_PLANCK)
+
+
+def p433_cpu(n=3_000_000):
+    \"\"\"Quantas adições inteiras por segundo um laço Python faz nesta CPU (um núcleo), medido com time.perf_counter, e a
+    distância até Bremermann para 1 g de silício (a ordem da massa de um chip): log₁₀ da razão.\"\"\"
+    import time
+    t0 = time.perf_counter()
+    x = 0
+    for i in range(n):
+        x += i
+    dt = time.perf_counter() - t0
+    taxa = n / dt
+    brem_1g = p432_bremermann(1e-3)[0]
+    return taxa, brem_1g, log(brem_1g / taxa, 10)
+
+
+def p434_aixi_tl(taxa, t=1000, ls=(20, 30, 40, 64, 128)):
+    \"\"\"O custo por ciclo do AIXI(t,l): t·2^l passos (Hutter; Schmidhuber 2003). Em anos, à taxa medida na P433.\"\"\"
+    ano = 365.25 * 24 * 3600
+    return {l: t * 2 ** l / taxa / ano for l in ls}
+
+
+def p435_auditoria():
+    \"\"\"A auditoria estática (só `ast`, nada é executado) da arquitetura do usuário em externos/arquitetura_pos_asi.py.\"\"\"
+    import os
+    from synthai.rsi import auditar_ast
+    return auditar_ast(os.path.join(os.path.dirname(os.path.abspath(__file__)), "externos", "arquitetura_pos_asi.py"))
+
+
+def p435_rodar_original(timeout=600):
+    \"\"\"Roda o laço da arquitetura original NUM PROCESSO SEPARADO (o código dela usa exec em globals()) e devolve o
+    tamanho final do arquivo, a geração máxima e as notas. Só se roda depois de registrar a previsão.\"\"\"
+    import os
+    import subprocess
+    import sys as _sys
+    pasta = os.path.join(os.path.dirname(os.path.abspath(__file__)), "externos")
+    codigo = ("import arquitetura_pos_asi as m\\n"
+              "cap = []\\n"
+              "orig = m.DarwinArchiveManager.add_to_archive\\n"
+              "def add(self, s):\\n"
+              "    orig(self, s); cap.append(self)\\n"
+              "m.DarwinArchiveManager.add_to_archive = add\\n"
+              "m.main_evolution_loop()\\n"
+              "a = cap[-1].archive if cap else []\\n"
+              "print(len(a), max(x.generation for x in a) if a else 0, [x.performance_score for x in a])\\n")
+    r = subprocess.run([_sys.executable, "-c", codigo], cwd=pasta, capture_output=True, text=True, timeout=timeout)
+    return r.stdout.strip(), r.returncode
+
+
+def p436_contas(mu=0.01, iteracoes=300):
+    \"\"\"A CONTA antes da P436: com autoavaliação, um filho com o relatório inflado (nota perfeita) é sempre aceito e vira
+    o pai para sempre (a nota guardada dele não pode ser superada). A chance de o campeão ser inflado ao fim de N
+    iterações é 1 − (1 − μ)^N.\"\"\"
+    return 1 - (1 - mu) ** iteracoes
+
+
+def p436_recompensa(rodadas=40, iteracoes=300, mu=0.01, semente=436):
+    \"\"\"Reward hacking: o mesmo laço de auto-melhoria (regra "dgm", a do texto), com a autoavaliação e com o avaliador
+    selado, μ = 1% de chance por mutação de o relatório virar "inflado". Para cada avaliador: a fração de rodadas cujo
+    campeão é inflado, e o arrependimento REAL (reavaliado pelo selado em 20 sementes novas) do campeão.\"\"\"
+    from synthai.rsi import AvaliadorSelado, Autoavaliacao, evoluir, regret_do_genoma
+    res = {}
+    for nome, fab in (("autoavaliacao", Autoavaliacao), ("selado", AvaliadorSelado)):
+        inflados, reais = 0, []
+        for r in range(rodadas):
+            _, (g, _) = evoluir(iteracoes, fab(), _rng(semente + r), "L3", "dgm", mu, sementes_por_nota=2,
+                                base_sementes=10_000_000 * (r + 1))
+            inflados += g["relatorio"] == "inflado"
+            reais.append(regret_do_genoma(g, range(900_000, 900_020)))
+        res[nome] = (inflados / rodadas, sum(reais) / len(reais))
+    return res
+
+
+def p437_l3_l4(rodadas=20, iteracoes=150, semente=437):
+    \"\"\"L3 (o passo de mutação fixo) contra L4 (o passo de mutação muta junto: o mecanismo de melhoria evolui) no mesmo
+    laço, avaliador selado, regra "dgm", rodadas pareadas pela semente. O arrependimento real do campeão (20 sementes
+    novas), a diferença pareada L4 − L3, e o melhor campeão contra Thompson sem nenhuma evolução nas mesmas 20 sementes.\"\"\"
+    from synthai.decisao import ThompsonBernoulli, rodar_bandido
+    from synthai.rsi import AvaliadorSelado, evoluir, regret_do_genoma
+    teste = range(900_000, 900_020)
+    reais = {"L3": [], "L4": []}
+    for r in range(rodadas):
+        for nivel in reais:
+            _, (g, _) = evoluir(iteracoes, AvaliadorSelado(), _rng(semente + r), nivel, "dgm", 0.0, sementes_por_nota=3,
+                                base_sementes=10_000_000 * (r + 1))
+            reais[nivel].append(regret_do_genoma(g, teste))
+    ts = []
+    for sm in teste:
+        rr = random.Random(sm)
+        ps = [rr.random() for _ in range(10)]
+        ts.append(rodar_bandido(ThompsonBernoulli(10, random.Random(sm + 1)), ps, 2000, random.Random(sm + 2))[-1])
+    thompson = sum(ts) / len(ts)
+    med = {k: sum(v) / len(v) for k, v in reais.items()}
+    return med, _pareado(reais["L3"], reais["L4"]), thompson, min(min(v) for v in reais.values())
+
+
+def p438_contas(sementes_ruido=tuple(range(5000, 5040)), sementes_por_nota=3):
+    \"\"\"A CONTA antes da P438: o desvio σ da nota de um genoma (média de 3 sementes) pelo genoma inicial em 40 sementes, e
+    a maldição do vencedor esperada: a nota guardada do campeão é o máximo de notas ruidosas, inflada por ≈ σ·√(2 ln N)
+    no pior caso (N notas de genomas quase iguais).\"\"\"
+    from synthai.rsi import genoma_inicial, regret_do_genoma
+    g = genoma_inicial()
+    xs = [regret_do_genoma(g, [s]) for s in sementes_ruido]
+    m = sum(xs) / len(xs)
+    sd1 = sqrt(sum((x - m) ** 2 for x in xs) / (len(xs) - 1))
+    sigma = sd1 / sqrt(sementes_por_nota)
+    return sigma, {n: sigma * sqrt(2 * log(n)) for n in (10, 50, 150)}
+
+
+def p438_maldicao(rodadas=20, iteracoes=150, semente=438):
+    \"\"\"A maldição do vencedor: no fim do laço, a nota GUARDADA do campeão contra a nota dele reavaliada em 20 sementes
+    novas (−arrependimento). Regra "dgm" (a do texto) contra a regra "godel" (t > 3 em 10 sementes novas pareadas).\"\"\"
+    from synthai.rsi import AvaliadorSelado, evoluir, regret_do_genoma
+    res = {}
+    for regra in ("dgm", "godel"):
+        infl, aceitos = [], []
+        for r in range(rodadas):
+            arq, (g, guardada) = evoluir(iteracoes, AvaliadorSelado(), _rng(semente + r), "L3", regra, 0.0,
+                                         sementes_por_nota=3, base_sementes=10_000_000 * (r + 1))
+            infl.append(guardada - (-regret_do_genoma(g, range(900_000, 900_020))))
+            aceitos.append(len(arq) - 1)
+        res[regra] = (sum(infl) / len(infl), sum(aceitos) / len(aceitos))
+    return res
+
+
+def p439_contas(gamas=(0.99, 0.999)):
+    \"\"\"A CONTA antes da P439: a memória efetiva do Thompson com renovação é 1/(1 − γ) passos; o lixo da P405 (≈ 21
+    pseudo-observações por braço) cai para 5% em ln 20/(1 − γ) ≈ 3/(1 − γ) passos.\"\"\"
+    return {g: (1 / (1 - g), log(20) / (1 - g)) for g in gamas}
+
+
+def p439_renovacao(k=10, t=2000, dano_em=1000, gamas=(0.99, 0.999), sementes=tuple(range(4050, 4150))):
+    \"\"\"O Bayes com renovação contra o dano da P405 (mesmas sementes e o mesmo lixo): para cada γ, o arrependimento na
+    segunda metade sem dano e com dano, e o custo do dano; e o arrependimento total sem dano (o preço da renovação).\"\"\"
+    from synthai.decisao import ThompsonDescontado, rodar_bandido
+
+    def lixo(ag):
+        r = _rng(ag.lixo)
+        ag.a = [float(r.randint(1, 20)) for _ in ag.a]
+        ag.b = [float(r.randint(1, 20)) for _ in ag.b]
+
+    res = {}
+    for g in gamas:
+        sem, com, total = [], [], []
+        for sm in sementes:
+            ps = _bracos_401(sm, k)
+            a = rodar_bandido(ThompsonDescontado(k, _rng(sm + 1), g), ps, t, _rng(sm + 2))
+            ag = ThompsonDescontado(k, _rng(sm + 1), g)
+            ag.lixo = sm + 3
+            b = rodar_bandido(ag, ps, t, _rng(sm + 2), dano_em, lixo)
+            sem.append(a[-1] - a[dano_em - 1])
+            com.append(b[-1] - b[dano_em - 1])
+            total.append(a[-1])
+        m = lambda v: sum(v) / len(v)
+        res[g] = (m(sem), m(com), m(com) - m(sem), m(total))
+    return res
+
+
+# --- Parte 34 (0x22): as promessas das Partes 31-33 testadas em casos novos: o Q-learning com α = 0,05, a taxa de
+#     renovação contra a taxa de mudança do mundo, Zipf-Mandelbrot num corpus novo, o dicionário no lugar do ML,
+#     o contador de Morris em um dígito hex ---
+
+# Placar acumulado ao fim da Parte 34 (atualizado quando os testes da parte terminam)
+ERROS_P489, TESTES_P489 = 110, 271
+
+
+def p461_contas(alfa=0.1, eps=0.1, k=10, t=2000, sementes=tuple(range(4010, 4110))):
+    \"\"\"As duas cotas da P407 para o Q-learning ε-guloso, num α qualquer (posteriores à P401; aqui viram previsão em α
+    novo): (1) ruído estacionário sem aprisionamento: exploração ε·T·(p* − p̄) + parte gulosa (1 − ε)·T·E[p* − p_argmax]
+    com ruído de variância α/(2 − α)·p(1 − p); (2) campo médio com aprisionamento no primeiro braço que paga (∝ p_g),
+    sem ruído. A medida deve ficar entre as duas.\"\"\"
+    cota1, cota2 = [], []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        m = max(ps)
+        r = random.Random(sm)
+        g = 0.0
+        for _ in range(t):
+            q = [p + r.gauss(0, sqrt(alfa / (2 - alfa) * p * (1 - p))) for p in ps]
+            g += m - ps[max(range(k), key=q.__getitem__)]
+        cota1.append(eps * t * (m - sum(ps) / k) + (1 - eps) * g)
+        s = sum(ps)
+        tot = 0.0
+        for g0, pg in enumerate(ps):
+            q = [0.0] * k
+            q[g0] = alfa
+            reg = 0.0
+            for _ in range(t):
+                gg = max(range(k), key=q.__getitem__)
+                for j in range(k):
+                    w = eps / k + ((1 - eps) if j == gg else 0.0)
+                    reg += w * (m - ps[j])
+                    q[j] += w * alfa * (ps[j] - q[j])
+            tot += pg / s * reg
+        cota2.append(tot)
+    return sum(cota1) / len(cota1), sum(cota2) / len(cota2)
+
+
+def p461_q_alfa(alfa=0.05, k=10, t=2000, sementes=tuple(range(4010, 4110))):
+    \"\"\"O Q-learning ε-guloso com α novo, mesmos braços e sementes da P401: o arrependimento final médio.\"\"\"
+    from synthai.decisao import QEpsilon, rodar_bandido
+    v = [rodar_bandido(QEpsilon(k, _rng(sm + 1), alfa=alfa), _bracos_401(sm, k), t, _rng(sm + 2))[-1] for sm in sementes]
+    return sum(v) / len(v)
+
+
+def p462_contas(t=4000, periodo=500, k=10):
+    \"\"\"A CONTA antes da P462: num bandido que muda a cada `periodo` passos (Υ = T/periodo − 1 quebras), o desconto
+    recomendado por Garivier e Moulines (2011) para o UCB descontado é γ = 1 − (1/4)·√(Υ/T); a memória 1/(1 − γ).\"\"\"
+    quebras = t // periodo - 1
+    g = 1 - 0.25 * sqrt(quebras / t)
+    return quebras, g, 1 / (1 - g)
+
+
+def p462_mudanca(gamas=(0.95, 0.98, 0.99, 0.995, 0.999, 1.0), t=4000, periodo=500, k=10,
+                 sementes=tuple(range(4620, 4670))):
+    \"\"\"Bandido que muda: a cada `periodo` passos, as médias dos braços são sorteadas de novo (U(0, 1)). Thompson com
+    renovação para cada γ (γ = 1 é o exato), arrependimento contra o melhor braço DO MOMENTO; 50 sementes pareadas.\"\"\"
+    from synthai.decisao import ThompsonBernoulli, ThompsonDescontado
+    res = {}
+    for g in gamas:
+        tot = []
+        for sm in sementes:
+            r = _rng(sm)
+            fases = [[r.random() for _ in range(k)] for _ in range(t // periodo)]
+            ag = ThompsonBernoulli(k, _rng(sm + 1)) if g == 1.0 else ThompsonDescontado(k, _rng(sm + 1), g)
+            rr = _rng(sm + 2)
+            reg = 0.0
+            for passo in range(t):
+                ps = fases[passo // periodo]
+                i = ag.escolher()
+                ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+                reg += max(ps) - ps[i]
+            tot.append(reg)
+        res[g] = sum(tot) / len(tot)
+    return res
+
+
+def _frequencias_por_classe(pos):
+    from synthai.dicionario import Dicionario
+    d = Dicionario()
+    freq = {}
+    for p, _, _, glosa in d.sinsets:
+        if p in pos:
+            for w in d.palavras_da_definicao(glosa):
+                freq[w] = freq.get(w, 0) + 1
+    return sorted(freq.values(), reverse=True)
+
+
+def p463_zipf_mandelbrot(ajuste=("n",), teste=("v",), ks_ajuste=(10, 30, 100, 300, 1000), ks_teste=(100, 500, 2000, 4000)):
+    \"\"\"Zipf–Mandelbrot, f(r) ∝ (r + q)^−s: ajusta (s, q) numa grade pela cobertura das k mais frequentes nas definições
+    dos SUBSTANTIVOS (k ≤ 1000) e prevê a cobertura nas definições dos VERBOS (um corpus que o ajuste não viu), usando o N
+    dos verbos. Compara com Zipf puro (q = 0, s ajustado igual). Devolve (s, q), a previsão e a medida em cada k.\"\"\"
+    fa = _frequencias_por_classe(ajuste)
+    tot = sum(fa)
+    acum = []
+    a = 0
+    for f in fa:
+        a += f
+        acum.append(a / tot)
+
+    def curva(s_, q_, n, ks):
+        z = [(r + q_) ** -s_ for r in range(1, n + 1)]
+        tz = sum(z)
+        out, a_, j = {}, 0.0, 0
+        for kk in sorted(ks):
+            while j < kk:
+                a_ += z[j]
+                j += 1
+            out[kk] = a_ / tz
+        return out
+
+    melhor = None
+    for s_ in [0.8 + 0.02 * i for i in range(31)]:
+        for q_ in [0, 1, 2, 4, 8, 16, 32, 64, 128]:
+            c = curva(s_, q_, len(fa), ks_ajuste)
+            e = sum((c[kk] - acum[kk - 1]) ** 2 for kk in ks_ajuste)
+            if melhor is None or e < melhor[0]:
+                melhor = (e, s_, q_)
+    _, s_m, q_m = melhor
+    ft = _frequencias_por_classe(teste)
+    tt = sum(ft)
+    med = {}
+    a = 0
+    for i, f in enumerate(ft, 1):
+        a += f
+        if i in ks_teste:
+            med[i] = a / tt
+    prev = curva(s_m, q_m, len(ft), ks_teste)
+    puro = curva(s_m, 0, len(ft), ks_teste)
+    return (s_m, q_m), {kk: (prev[kk], puro[kk], med[kk]) for kk in ks_teste}
+
+
+def p464_dicionario_no_lugar_do_ml(semente=464, passo=0.1):
+    \"\"\"Aprendizado contínuo com o dicionário como dado: prever a classe gramatical (n, v, a, r) de um sinset pelas palavras
+    da sua definição. Tarefa A: sinsets cujo primeiro lema começa com a–m; tarefa B: n–z. Naive Bayes (contagens) contra
+    regressão logística por SGD (uma passada). Acurácia no teste de A (20% de A, separado) depois de A e depois de B.\"\"\"
+    from synthai.dicionario import Dicionario, LogisticaSGD, NaiveBayesContagens
+    d = Dicionario()
+    dados = []
+    for p, lemas, _, glosa in d.sinsets:
+        cl = "a" if p == "s" else p
+        dados.append((lemas[0][0].lower() <= "m", d.palavras_da_definicao(glosa), cl))
+    rng = _rng(semente)
+    rng.shuffle(dados)
+    A = [(x, y) for a, x, y in dados if a]
+    B = [(x, y) for a, x, y in dados if not a]
+    corte = len(A) // 5
+    teste, A = A[:corte], A[corte:]
+    res = {}
+    for nome, m in (("naive_bayes", NaiveBayesContagens()), ("sgd", LogisticaSGD(["a", "n", "r", "v"], passo))):
+        acc = lambda: sum(m.prever(x) == y for x, y in teste) / len(teste)
+        for x, y in A:
+            m.aprender(x, y)
+        depois_a = acc()
+        for x, y in B:
+            m.aprender(x, y)
+        res[nome] = (depois_a, acc())
+    return len(A), len(B), len(teste), res
+
+
+def p465_contas(k=10, t=2000, sementes=tuple(range(4010, 4110)), sorteios=4000):
+    \"\"\"A CONTA antes da P465 (Thompson com contadores de Morris): a contagem estimada 2^c − 1 tem desvio ≈ n/√2 (Morris:
+    Var = n(n − 1)/2). A crença fica com a FORÇA certa em média, mas o centro (a/(a+b)) treme: para um braço com p e n
+    puxadas, a média estimada tem desvio extra ~ (1/√2)·√(p(1 − p))·… Aqui a conta é por sorteio: no estacionário, cada
+    braço com n = 200 puxadas e contagens de Morris sorteadas; arrependimento ≈ T·Σ Δ_k·π_k.\"\"\"
+    tot = []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        m = max(ps)
+        r = _rng(sm + 7)
+        cont = [0] * k
+        for _ in range(sorteios // 20):
+            ests = []
+            for p in ps:
+                sa = sum(1 for _ in range(200) if r.random() < p)
+                ca = cb = 0
+                for _ in range(sa):
+                    if ca < 15 and r.random() < 2.0 ** -ca:
+                        ca += 1
+                for _ in range(200 - sa):
+                    if cb < 15 and r.random() < 2.0 ** -cb:
+                        cb += 1
+                ests.append((2 ** ca, 2 ** cb))
+            for _ in range(20):
+                am = [r.betavariate(a, b) for a, b in ests]
+                cont[max(range(k), key=am.__getitem__)] += 1
+        n_s = sum(cont)
+        tot.append(t * sum((m - p) * c / n_s for p, c in zip(ps, cont)))
+    return sum(tot) / len(tot)
+
+
+def p465_morris(k=10, t=2000, sementes=tuple(range(4010, 4110))):
+    \"\"\"Thompson com contadores de Morris (1 dígito hex de expoente por contagem) contra o completo e o de teto 16 da P411,
+    mesmos braços e sementes: arrependimento final e a diferença pareada contra o completo.\"\"\"
+    from synthai.decisao import ThompsonBernoulli, ThompsonMorris, rodar_bandido
+    a, b = [], []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        a.append(rodar_bandido(ThompsonBernoulli(k, _rng(sm + 1)), ps, t, _rng(sm + 2))[-1])
+        b.append(rodar_bandido(ThompsonMorris(k, _rng(sm + 1)), ps, t, _rng(sm + 2))[-1])
+    return sum(b) / len(b), _pareado(a, b)
+
+
+# --- Parte 35 (0x23): a renovação dirigida pela surpresa; o Naive Bayes com pares de palavras; os escores em float16 ---
+
+# Placar acumulado ao fim da Parte 35 (atualizado quando os testes da parte terminam)
+ERROS_P519, TESTES_P519 = 112, 281
+
+
+def p491_contas(janela=20, z=3.0, t=2000, k=10, sementes=tuple(range(4010, 4110))):
+    \"\"\"A CONTA antes da P491: a chance de um alarme falso por puxada de um braço com p conhecido. A média da janela é
+    Binomial(janela, p)/janela; o alarme dispara se ela se afasta de p por mais de z·√(p(1 − p)/janela). Somada sobre as
+    puxadas esperadas do melhor braço (≈ T), dá quantas renovações falsas por rodada o mundo estacionário provoca.\"\"\"
+    from math import comb as cb
+    falsos = []
+    for sm in sementes:
+        p = max(_bracos_401(sm, k))
+        lim = z * sqrt(p * (1 - p) / janela)
+        prob = sum(cb(janela, j) * p ** j * (1 - p) ** (janela - j) for j in range(janela + 1) if abs(j / janela - p) > lim)
+        falsos.append(prob * t)
+    return sum(falsos) / len(falsos)
+
+
+def p491_surpresa(k=10, janela=20, z=3.0):
+    \"\"\"A renovação dirigida (ThompsonSurpresa) nos três mundos onde as anteriores foram medidas: o estacionário da P401
+    (arrependimento final), o dano da P405 (custo do dano na segunda metade) e o mundo que muda da P462 (arrependimento
+    contra o melhor do momento). Devolve os três números e o número médio de renovações no estacionário.\"\"\"
+    from synthai.decisao import ThompsonSurpresa, rodar_bandido
+    est, ren = [], []
+    for sm in range(4010, 4110):
+        ag = ThompsonSurpresa(k, _rng(sm + 1), janela, z)
+        est.append(rodar_bandido(ag, _bracos_401(sm, k), 2000, _rng(sm + 2))[-1])
+        ren.append(ag.renovacoes)
+
+    def lixo(ag):
+        r = _rng(ag.lixo)
+        ag.a = [float(r.randint(1, 20)) for _ in ag.a]
+        ag.b = [float(r.randint(1, 20)) for _ in ag.b]
+
+    sem, com = [], []
+    for sm in range(4050, 4150):
+        ps = _bracos_401(sm, k)
+        a = rodar_bandido(ThompsonSurpresa(k, _rng(sm + 1), janela, z), ps, 2000, _rng(sm + 2))
+        ag = ThompsonSurpresa(k, _rng(sm + 1), janela, z)
+        ag.lixo = sm + 3
+        b = rodar_bandido(ag, ps, 2000, _rng(sm + 2), 1000, lixo)
+        sem.append(a[-1] - a[999])
+        com.append(b[-1] - b[999])
+    muda = []
+    for sm in range(4620, 4670):
+        r = _rng(sm)
+        fases = [[r.random() for _ in range(k)] for _ in range(8)]
+        ag = ThompsonSurpresa(k, _rng(sm + 1), janela, z)
+        rr = _rng(sm + 2)
+        reg = 0.0
+        for passo in range(4000):
+            ps = fases[passo // 500]
+            i = ag.escolher()
+            ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+            reg += max(ps) - ps[i]
+        muda.append(reg)
+    m = lambda v: sum(v) / len(v)
+    return m(est), m(com) - m(sem), m(muda), m(ren)
+
+
+def _dados_464(semente=464, bigramas=False):
+    from synthai.dicionario import Dicionario
+    d = Dicionario()
+    dados = []
+    for p, lemas, _, glosa in d.sinsets:
+        ws = d.palavras_da_definicao(glosa)
+        if bigramas:
+            ws = ws + [a + "_" + b for a, b in zip(ws, ws[1:])]
+        dados.append((lemas[0][0].lower() <= "m", ws, "a" if p == "s" else p))
+    rng = _rng(semente)
+    rng.shuffle(dados)
+    A = [(x, y) for a, x, y in dados if a]
+    B = [(x, y) for a, x, y in dados if not a]
+    corte = len(A) // 5
+    return A[corte:], B, A[:corte]
+
+
+def p492_nb_bigramas():
+    \"\"\"O Naive Bayes da P464 com pares de palavras vizinhas da definição como atributos a mais (menos independência
+    suposta, ainda uma estatística suficiente: contagens). Acurácia no teste de A depois de A e depois de B.\"\"\"
+    from synthai.dicionario import NaiveBayesContagens
+    A, B, teste = _dados_464(bigramas=True)
+    m = NaiveBayesContagens()
+    acc = lambda: sum(m.prever(x) == y for x, y in teste) / len(teste)
+    for x, y in A:
+        m.aprender(x, y)
+    a = acc()
+    for x, y in B:
+        m.aprender(x, y)
+    return a, acc()
+
+
+def p493_float16():
+    \"\"\"Trilha hexadecimal: os escores do Naive Bayes da P464 (depois de A e B) guardados em float16 (4 dígitos hex,
+    11 bits de mantissa). A CONTA: uma previsão só pode mudar se a margem entre as duas melhores classes for menor que
+    a distância de arredondamento, ≤ meio ulp16 do escore de cada uma (≤ ulp16 no total). Devolve: a fração de exemplos
+    com margem < ulp16(escore), a fração que de fato mudou, e o ulp16 típico.\"\"\"
+    import struct
+    from math import log as ln
+    from synthai.dicionario import NaiveBayesContagens
+    A, B, teste = _dados_464()
+    m = NaiveBayesContagens()
+    for x, y in A + B:
+        m.aprender(x, y)
+    n = sum(m.ncls.values())
+    v = len(m.vocab)
+    f16 = lambda x: struct.unpack("<e", struct.pack("<e", x))[0]
+
+    def ulp16(x):
+        e = abs(x)
+        return 2.0 ** (int(ln(e) / ln(2)) - 10) if e >= 2 ** -14 else 2.0 ** -24
+
+    risco = mudou = 0
+    ulps = []
+    for x, _ in teste:
+        sc = {}
+        for cl in sorted(m.ncls):
+            s_ = ln(m.ncls[cl] / n)
+            c, t = m.cont[cl], m.total[cl]
+            for w in x:
+                s_ += ln((c.get(w, 0) + m.alfa) / (t + m.alfa * v))
+            sc[cl] = s_
+        ordem = sorted(sc, key=lambda c: -sc[c])
+        margem = sc[ordem[0]] - sc[ordem[1]]
+        u = ulp16(sc[ordem[0]])
+        ulps.append(u)
+        risco += margem < u
+        mudou += max(sorted(sc), key=lambda c: f16(sc[c])) != max(sorted(sc), key=lambda c: sc[c])
+    ulps.sort()
+    return risco / len(teste), mudou / len(teste), ulps[len(ulps) // 2]
+
+
+# --- Parte 36 (0x24): a exposição que faltava à renovação dirigida; a lei de Zipf do significado no WordNet;
+#     Gray contra binário no (1+1)-EA ---
+
+# Placar acumulado ao fim da Parte 36 (atualizado quando os testes da parte terminam)
+ERROS_P549, TESTES_P549 = 113, 290
+
+
+def p521_contas(k=10, periodo=50, t=2000, sementes=tuple(range(4010, 4110))):
+    \"\"\"A CONTA antes da P521: a exposição força T/periodo puxadas do braço puxado há mais tempo, que no estacionário é
+    quase sempre um braço ruim; custo ≈ (T/periodo)·E[p* − média dos outros braços]. Somado aos 43,1 da surpresa sem
+    exposição (P491).\"\"\"
+    custo = []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        m = max(ps)
+        outros = sorted(ps)[:-1]
+        custo.append(t / periodo * (m - sum(outros) / len(outros)))
+    c = sum(custo) / len(custo)
+    return c, 43.147 + c
+
+
+def p521_exposta(k=10, janela=20, z=3.0, periodo=50):
+    \"\"\"A surpresa com exposição nos três mundos da P491 (mesmas sementes): estacionário, custo do dano, mundo que muda.\"\"\"
+    from synthai.decisao import ThompsonSurpresaExposta, rodar_bandido
+    fab = lambda sm: ThompsonSurpresaExposta(k, _rng(sm + 1), janela, z, periodo)
+    est = [rodar_bandido(fab(sm), _bracos_401(sm, k), 2000, _rng(sm + 2))[-1] for sm in range(4010, 4110)]
+
+    def lixo(ag):
+        r = _rng(ag.lixo)
+        ag.a = [float(r.randint(1, 20)) for _ in ag.a]
+        ag.b = [float(r.randint(1, 20)) for _ in ag.b]
+
+    sem, com = [], []
+    for sm in range(4050, 4150):
+        ps = _bracos_401(sm, k)
+        a = rodar_bandido(fab(sm), ps, 2000, _rng(sm + 2))
+        ag = fab(sm)
+        ag.lixo = sm + 3
+        b = rodar_bandido(ag, ps, 2000, _rng(sm + 2), 1000, lixo)
+        sem.append(a[-1] - a[999])
+        com.append(b[-1] - b[999])
+    muda = []
+    for sm in range(4620, 4670):
+        r = _rng(sm)
+        fases = [[r.random() for _ in range(k)] for _ in range(8)]
+        ag = fab(sm)
+        rr = _rng(sm + 2)
+        reg = 0.0
+        for passo in range(4000):
+            ps = fases[passo // 500]
+            i = ag.escolher()
+            ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+            reg += max(ps) - ps[i]
+        muda.append(reg)
+    m = lambda v: sum(v) / len(v)
+    return m(est), m(com) - m(sem), m(muda)
+
+
+def p522_lei_do_significado():
+    \"\"\"A lei de Zipf do significado (Zipf, 1945): o número de sentidos m de uma palavra cresce como f^δ, δ ≈ 1/2. No
+    WordNet: m = sinsets que contêm o lema (de uma palavra só); f = frequência dele nas definições (P381). Duas
+    estimativas de δ: mínimos quadrados em log m × log f com todas as palavras de f ≥ 1, e com as médias por faixa de
+    posto (como Zipf fez: postos 1-100, 101-200, ...). Devolve (δ por palavra, δ por faixa, número de palavras).\"\"\"
+    from synthai.dicionario import Dicionario, sentidos_por_lema
+    d, _, freq = _grafo_31()
+    m = sentidos_por_lema(d)
+    pares = [(freq[w], m[w]) for w in m if freq.get(w, 0) >= 1]
+
+    def mq(xs, ys):
+        mx, my = sum(xs) / len(xs), sum(ys) / len(ys)
+        return sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
+
+    d1 = mq([log(f) for f, _ in pares], [log(s_) for _, s_ in pares])
+    pares.sort(key=lambda x: -x[0])
+    xs, ys = [], []
+    for i in range(0, len(pares) - 99, 100):
+        fa = pares[i:i + 100]
+        xs.append(log(sum(f for f, _ in fa) / 100))
+        ys.append(log(sum(s_ for _, s_ in fa) / 100))
+    return d1, mq(xs, ys), len(pares)
+
+
+def p523_contas(bits=24):
+    \"\"\"A CONTA antes da P523: o (1+1)-EA a partir de 0x7F7F7F com a aptidão −Σ(v − 128)². Em binário, o único vizinho
+    melhor de 0x7F é 0x80, a 8 bits: a chance de um passo inverter exatamente esses 8 bits de um parâmetro (e nenhum
+    outro) é (1/24)^8·(23/24)^16 = 3,6e-12 por parâmetro: preso. Em Gray, 0x7F e 0x80 diferem em 1 bit: chance
+    (1/24)·(23/24)^23 = 0,0157 por passo e parâmetro.\"\"\"
+    p = 1 / bits
+    return p ** 8 * (1 - p) ** (bits - 8), p * (1 - p) ** (bits - 1)
+
+
+def p523_gray_binario(rodadas=100, avaliacoes=10000, semente=523):
+    \"\"\"Gray contra binário no (1+1)-EA, 3 parâmetros de 8 bits, aptidão −Σ(v − 128)² (o ótimo, 0x80, está do outro lado
+    do penhasco de Hamming de 0x7F). Dois começos: o penhasco (0x7F nos três, em cada código) e começos ao acaso.
+    Devolve, para cada (código, começo), a fração de rodadas que chegam ao ótimo e a média das avaliações até ele.\"\"\"
+    from synthai.hexadecimal import ea_um_mais_um, gray
+    apt = lambda vs: -sum((v - 128) ** 2 for v in vs)
+    res = {}
+    for codigo in ("binario", "gray"):
+        for comeco in ("penhasco", "acaso"):
+            ok, quando = 0, []
+            for r in range(rodadas):
+                rng = _rng(semente + r)
+                if comeco == "penhasco":
+                    v = gray(0x7F) if codigo == "gray" else 0x7F
+                    x0 = v | (v << 8) | (v << 16)
+                else:
+                    x0 = rng.getrandbits(24)
+                fx, q = ea_um_mais_um(apt, 24, x0, rng, avaliacoes, codigo)
+                if fx == 0:
+                    ok += 1
+                    quando.append(q)
+            res[(codigo, comeco)] = (ok / rodadas, sum(quando) / len(quando) if quando else None)
+    return res
+
+
+# --- Parte 37 (0x25): o agente que não precisa saber em que mundo está (detecção bayesiana de mudança);
+#     a lei da abreviação; um dígito hex de hipóteses ---
+
+# Placar acumulado ao fim da Parte 37 (atualizado quando os testes da parte terminam)
+ERROS_P579, TESTES_P579 = 115, 297
+
+
+def p531_contas(risco=1 / 500, t=2000, k=10, sementes=tuple(range(4010, 4110))):
+    \"\"\"A CONTA antes da P531, no mundo estável: um braço ruim não visto há Δt passos tem peso 1 − (1 − H)^Δt ≈ H·Δt na
+    hipótese nova, Beta(1, 1), cuja amostra passa a do melhor braço (≈ p*) com chance 1 − p*. A chance de ser puxado em
+    Δt é ≈ H·Δt·(1 − p*); a espera até a próxima puxada resolve Σ H·Δt·(1 − p*) = 1: Δt = √(2/(H(1 − p*))). Com 9 braços
+    ruins, a fração de passos neles é 9/Δt e o custo é T·(9/Δt)·E[p* − média dos outros], somado aos 30,7 do exato.\"\"\"
+    custos = []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        m = max(ps)
+        outros = sorted(ps)[:-1]
+        dt = sqrt(2 / (risco * max(1 - m, 1e-3)))
+        custos.append(t * min(1.0, (k - 1) / dt) * (m - sum(outros) / len(outros)))
+    c = sum(custos) / len(custos)
+    return c, 30.711 + c
+
+
+def p531_bocpd(k=10, risco=1 / 500, hipoteses=16):
+    \"\"\"Thompson com detecção bayesiana de mudança (H = 1/500, o risco verdadeiro do mundo que muda) nos três mundos das
+    P491/P521: estacionário, custo do dano, mundo que muda a cada 500 passos.\"\"\"
+    from synthai.decisao import ThompsonBOCPD, rodar_bandido
+    fab = lambda sm: ThompsonBOCPD(k, _rng(sm + 1), risco, hipoteses)
+    est = [rodar_bandido(fab(sm), _bracos_401(sm, k), 2000, _rng(sm + 2))[-1] for sm in range(4010, 4110)]
+
+    def lixo(ag):
+        r = _rng(ag.lixo)
+        a = [float(r.randint(1, 20)) for _ in range(k)]
+        b = [float(r.randint(1, 20)) for _ in range(k)]
+        ag.substituir(a, b)
+
+    sem, com = [], []
+    for sm in range(4050, 4150):
+        ps = _bracos_401(sm, k)
+        a = rodar_bandido(fab(sm), ps, 2000, _rng(sm + 2))
+        ag = fab(sm)
+        ag.lixo = sm + 3
+        b = rodar_bandido(ag, ps, 2000, _rng(sm + 2), 1000, lixo)
+        sem.append(a[-1] - a[999])
+        com.append(b[-1] - b[999])
+    muda = []
+    for sm in range(4620, 4670):
+        r = _rng(sm)
+        fases = [[r.random() for _ in range(k)] for _ in range(8)]
+        ag = fab(sm)
+        rr = _rng(sm + 2)
+        reg = 0.0
+        for passo in range(4000):
+            ps = fases[passo // 500]
+            i = ag.escolher()
+            ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+            reg += max(ps) - ps[i]
+        muda.append(reg)
+    m = lambda v: sum(v) / len(v)
+    return m(est), m(com) - m(sem), m(muda)
+
+
+def p532_hipoteses_hex(k=10, sementes=tuple(range(4620, 4670))):
+    \"\"\"Trilha hexadecimal: 16 hipóteses por braço (um dígito hex) contra 256 (dois), no mundo que muda: diferença pareada.\"\"\"
+    from synthai.decisao import ThompsonBOCPD
+    res = {}
+    for n in (16, 256):
+        v = []
+        for sm in sementes:
+            r = _rng(sm)
+            fases = [[r.random() for _ in range(k)] for _ in range(8)]
+            ag = ThompsonBOCPD(k, _rng(sm + 1), 1 / 500, n)
+            rr = _rng(sm + 2)
+            reg = 0.0
+            for passo in range(4000):
+                ps = fases[passo // 500]
+                i = ag.escolher()
+                ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+                reg += max(ps) - ps[i]
+            v.append(reg)
+        res[n] = v
+    return sum(res[16]) / len(res[16]), sum(res[256]) / len(res[256]), _pareado(res[256], res[16])
+
+
+def p533_abreviacao():
+    \"\"\"A lei da abreviação de Zipf no data lake: Spearman entre o comprimento (letras) e a frequência nas definições, nas
+    palavras de f ≥ 1; e o comprimento médio das 1000 mais frequentes contra o das outras.\"\"\"
+    from synthai.dicionario import spearman
+    _, defs, freq = _grafo_31()
+    ws = [w for w in defs if freq.get(w, 0) >= 1]
+    rho = spearman([len(w) for w in ws], [freq[w] for w in ws])
+    ws.sort(key=lambda w: -freq[w])
+    top = ws[:1000]
+    resto = ws[1000:]
+    return rho, sum(map(len, top)) / len(top), sum(map(len, resto)) / len(resto), len(ws)
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
@@ -5307,6 +6459,19 @@ def testes_de_regressao():
         "P361": p361_hex_do_limiar()[0] == "0x1.23456789abcdfp-9" and p361_hex_do_limiar()[3].startswith("0123456789ABCDF0"),
         "P365": p365_impressoes_digitais()[1] == "38be1420a8d3622771d385187c1f388123df8fd44c69fb1a7a11e6c76b59ac11",
         "P372": p372_hex_do_dicionario()[:4:2] == (83, "fabaceae"),
+        "P382": p382_minset_reduzido()[:2] == (3985, 3171),
+        "P393": p393_ulps(ns=(10,), tentativas=1)[1:] == ("0x1.3333333333334p-2", "0x1.3333333333333p-2"),
+        "P394": round(p394_ulps_em_degrau(ns=(2000,), tentativas=1)[2000][1], 2) == 7.72,
+        "P401": tuple(round(x, 1) for x in p401_contas()[:2]) == (62.4, 80.7),
+        "P402": round(p402_contas()[0], 4) == 0.2572,
+        "P403": p403_continuo(d=8, sementes=(4030, 4031))[2] < 1e-8,
+        "P431": round(p431_landauer()[0][293.15] * 1e21, 4) == 2.8054,
+        "P432": round(p432_bremermann()[2], 12) == 4.0,
+        "P435": p435_auditoria()["nos_mudados"] == 0 and p435_auditoria()["run_benchmarks_constante"] == 0.85,
+        "P436": round(p436_contas(), 4) == 0.951,
+        "P462": round(p462_contas()[1], 4) == 0.9895,
+        "P523": round(p523_contas()[1], 4) == 0.0157,
+        "P531": round(p531_contas()[0], 1) == 62.7,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -6065,6 +7230,170 @@ def _parte_30():
     print(f"P379 minha taxa de erro ({ERROS_P369}/{TESTES_P369}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_31():
+    print("--- Parte 31 (0x1F: o curriculo do dicionario e a avalanche; o hipercubo, Gray e os ULPs) ---")
+    n, ms, tabela = p381_curriculo()
+    print(f"P381 palavras = {n}; MinSet guloso = {ms}")
+    for (nome, k, th), v in tabela.items():
+        print(f"P381 curriculo {nome}, k = {k}, theta = {th}: cobertura = {v:.4f}")
+    print(f"P382 MinSet guloso, reduzido, cobertura do fecho, rodadas = {p382_minset_reduzido()}")
+    s_z, n_f, cob = p383_cobertura_zipf()
+    print(f"P383 Zipf s = {s_z:.4f}, palavras distintas nas definicoes = {n_f}")
+    for k, (med, conta) in cob.items():
+        print(f"P383 k = {k}: cobertura medida = {med:.4f}, conta de Zipf = {conta:.4f}")
+    rho, wp, lk, frac = p384_wu_palmer_lesk()
+    print(f"P384 Spearman(Wu-Palmer, Lesk) = {rho:.4f}; media Wu-Palmer = {wp:.4f}; media Lesk = {lk:.5f}; pares com Lesk > 0 = {frac:.4f}")
+    for th, (k, antes, depois) in p385_ponto_critico().items():
+        print(f"P385 theta = {th}: k critico = {k}; cobertura com k-1 = {antes:.4f}, com k = {depois:.4f}")
+    for mundo, (rho, por_h) in p391_geometria_hamming().items():
+        print(f"P391 {mundo}: Spearman(Hamming, |dif|) = {rho:.3f}; |dif| medio por distancia = { {h: round(v, 4) for h, v in por_h.items()} }")
+    ordem, sub = p392_gray_e_subida()
+    print(f"P392 Gray = {' '.join(ordem)}")
+    for mundo, v in sub.items():
+        print(f"P392 {mundo}: caminho, melhor, chegou = {v}")
+    res, a, b = p393_ulps()
+    for k, (med, conta) in res.items():
+        print(f"P393 n = {k}: erro medio = {med:.2f} ulps; conta linear = {conta:.2f}")
+    print(f"P393 0.1 + 0.2 = {a}; 0.3 = {b}")
+    for k, (med, deg, lin) in p394_ulps_em_degrau().items():
+        print(f"P394 n = {k}: erro medio = {med:.3f} ulps; conta em degrau = {deg:.3f}; conta linear = {lin:.3f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P399, testes=TESTES_P399)
+    print(f"P399 minha taxa de erro ({ERROS_P399}/{TESTES_P399}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
+def _parte_32():
+    print("--- Parte 32 (0x20: a decisao bayesiana exata no lugar do RL e do aprendizado continuo; autopoiese; avalanche) ---")
+    lr, expl, expl_esp = p401_contas()
+    print(f"P401 conta: Lai-Robbins medio = {lr:.2f}; exploracao do eps-guloso = {expl:.2f} (esperanca {expl_esp:.2f})")
+    medias, difs = p401_bandido()
+    print(f"P401 arrependimento final (T 2000, 100 sementes): { {k: round(v, 2) for k, v in medias.items()} }")
+    for k, (d, dp, tt) in difs.items():
+        print(f"P401 {k} - thompson = {d:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
+    g, otimo, esquerda, q_conta = p402_contas()
+    print(f"P402 conta: g* = {g:.4f}; otimo em 5000 passos = {otimo:.1f}; so a esquerda = {esquerda:.1f}; Q eps preso = {q_conta:.2f}")
+    medias, difs = p402_riverswim()
+    print(f"P402 recompensa total (20 sementes): { {k: round(v, 2) for k, v in medias.items()} }")
+    for k, (d, dp, tt) in difs.items():
+        print(f"P402 psrl - {k} = {d:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
+    med, (d, dp, tt), dif = p403_continuo()
+    for k, (a, b) in med.items():
+        print(f"P403 {k}: erro em A depois de A = {a:.6f}, depois de B = {b:.6f} (razao {b / a:.2f})")
+    print(f"P403 sgd - bayes depois de B = {d:.4f}, dp = {dp:.4f}, t = {tt:.2f}; recursiva - lote, maior diferenca = {dif:.2e}")
+    print(f"P404 conta (theta 1, uma rodada): { {q: round(v, 4) for q, v in p404_contas().items()} }")
+    ker, fech, res = p404_autopoiese()
+    print(f"P404 nucleo = {ker} palavras; fechamento = {fech}")
+    for (q, th), v in res.items():
+        print(f"P404 esquecer {q:.0%}, theta = {th}: regenera = {v:.4f}")
+    pri, seg_ts, seg_q, (d, dp, tt) = p405_dano()
+    print(f"P405 thompson 1a metade = {pri:.2f}; 2a metade (danificado) = {seg_ts:.2f}; Q eps 2a metade = {seg_q:.2f}; "
+          f"Q - thompson = {d:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
+    print(f"P411 conta: { {k: round(v, 2) for k, v in p411_contas().items()} }")
+    med, difs = p411_memoria_hex()
+    print(f"P411 arrependimento: { {('completo' if k is None else k): round(v, 2) for k, v in med.items()} }")
+    for k, (d, dp, tt) in difs.items():
+        print(f"P411 teto {k} - completo = {d:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
+    for (nome, th), (k, palavra, salto, meio) in p421_avalanche().items():
+        print(f"P421 {nome}, theta = {th}: maior salto em k = {k} ({palavra}) = {salto:.4f}; k de 50% = {meio}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P429, testes=TESTES_P429)
+    print(f"P429 minha taxa de erro ({ERROS_P429}/{TESTES_P429}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
+def _parte_33():
+    print("--- Parte 33 (0x21: a arquitetura pos-ASI numa CPU so, auditada) ---")
+    land, t_texto = p431_landauer()
+    print(f"P431 Landauer (J/bit): { {t: f'{e:.4e}' for t, e in land.items()} }; o 2,75e-21 do texto seria a {t_texto:.2f} K")
+    b, ml, razao = p432_bremermann()
+    print(f"P432 Bremermann mc^2/h = {b:.4e} /s/kg; Margolus-Levitin 2E/(pi hbar) = {ml:.4e}; razao = {razao}")
+    taxa, b1g, dist = p433_cpu()
+    print(f"P433 laco Python = {taxa:.3e} adicoes/s; Bremermann de 1 g = {b1g:.3e}; log10 da distancia = {dist:.2f} "
+          f"(medido com outras simulacoes rodando: a taxa varia de execucao para execucao)")
+    print(f"P434 AIXI(t,l), t = 1000, anos a essa taxa: { {l: f'{a:.3e}' for l, a in p434_aixi_tl(taxa).items()} }")
+    print(f"P435 auditoria estatica: {p435_auditoria()}")
+    print(f"P435 a arquitetura original rodada num processo separado (estados, geracao maxima, notas): {p435_rodar_original()}")
+    print(f"P436 conta: chance de campeao inflado = {p436_contas():.4f}")
+    for k, (f, real) in p436_recompensa().items():
+        print(f"P436 {k}: campeoes inflados = {f:.3f}; arrependimento real do campeao = {real:.2f}")
+    med, (d, dp, tt), thompson, melhor = p437_l3_l4()
+    print(f"P437 arrependimento real do campeao: L3 = {med['L3']:.2f}, L4 = {med['L4']:.2f}; L4 - L3 = {d:.2f}, dp = {dp:.2f}, "
+          f"t = {tt:.2f}; melhor campeao = {melhor:.2f}; Thompson sem evolucao = {thompson:.2f}")
+    sigma, cotas = p438_contas()
+    print(f"P438 conta: sigma da nota = {sigma:.2f}; sigma*sqrt(2 ln N) = { {n: round(v, 1) for n, v in cotas.items()} }")
+    for regra, (infl, aceitos) in p438_maldicao().items():
+        print(f"P438 regra {regra}: inflacao da nota guardada = {infl:.2f}; filhos aceitos = {aceitos:.2f}")
+    print(f"P439 conta: { {g: (round(a, 1), round(b, 1)) for g, (a, b) in p439_contas().items()} }")
+    for g, (sem, com, custo, total) in p439_renovacao().items():
+        print(f"P439 gama = {g}: 2a metade sem dano = {sem:.2f}, com dano = {com:.2f}, custo do dano = {custo:.2f}; total sem dano = {total:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P459, testes=TESTES_P459)
+    print(f"P459 minha taxa de erro ({ERROS_P459}/{TESTES_P459}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
+def _parte_34():
+    print("--- Parte 34 (0x22: as promessas testadas em casos novos) ---")
+    for a in (0.1, 0.05):
+        c1, c2 = p461_contas(a)
+        print(f"P461 conta, alfa = {a}: cota sem aprisionamento = {c1:.2f}; cota com aprisionamento = {c2:.2f}")
+    print(f"P461 Q eps com alfa = 0,05: arrependimento = {p461_q_alfa():.2f}")
+    print(f"P462 conta (quebras, gama de Garivier-Moulines, memoria): {p462_contas()}")
+    print(f"P462 bandido que muda a cada 500 passos: { {g: round(v, 2) for g, v in p462_mudanca().items()} }")
+    (s_m, q_m), tab = p463_zipf_mandelbrot()
+    print(f"P463 Zipf-Mandelbrot ajustado nos substantivos: s = {s_m:.2f}, q = {q_m}")
+    for k, (prev, puro, med) in tab.items():
+        print(f"P463 verbos, k = {k}: previsto = {prev:.4f}; Zipf puro = {puro:.4f}; medido = {med:.4f}")
+    na, nb, nt, res = p464_dicionario_no_lugar_do_ml()
+    print(f"P464 tarefa A = {na}, tarefa B = {nb}, teste de A = {nt}")
+    for nome, (a, b) in res.items():
+        print(f"P464 {nome}: acuracia em A depois de A = {a:.4f}; depois de B = {b:.4f}")
+    print(f"P465 conta: Thompson com Morris = {p465_contas():.2f}")
+    m, (d, dp, tt) = p465_morris()
+    print(f"P465 Thompson com Morris = {m:.2f}; Morris - completo = {d:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P489, testes=TESTES_P489)
+    print(f"P489 minha taxa de erro ({ERROS_P489}/{TESTES_P489}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
+def _parte_35():
+    print("--- Parte 35 (0x23: renovacao dirigida pela surpresa; Naive Bayes com pares; float16) ---")
+    print(f"P491 conta: alarmes (checagens) falsos por rodada no melhor braco = {p491_contas():.2f}")
+    est, custo, muda, ren = p491_surpresa()
+    print(f"P491 surpresa: estacionario = {est:.2f}; custo do dano = {custo:.2f}; mundo que muda = {muda:.2f}; renovacoes no estacionario = {ren:.2f}")
+    a, b = p492_nb_bigramas()
+    print(f"P492 Naive Bayes com pares: acuracia em A depois de A = {a:.4f}; depois de B = {b:.4f}")
+    risco, mudou, u = p493_float16()
+    print(f"P493 float16: fracao em risco (margem < ulp16) = {risco:.5f}; fracao que mudou = {mudou:.5f}; ulp16 mediano = {u}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P519, testes=TESTES_P519)
+    print(f"P519 minha taxa de erro ({ERROS_P519}/{TESTES_P519}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
+def _parte_36():
+    print("--- Parte 36 (0x24: a exposicao; a lei do significado; Gray contra binario) ---")
+    c, prev = p521_contas()
+    print(f"P521 conta: custo da exposicao = {c:.2f}; estacionario previsto = {prev:.2f}")
+    est, custo, muda = p521_exposta()
+    print(f"P521 surpresa com exposicao: estacionario = {est:.2f}; custo do dano = {custo:.2f}; mundo que muda = {muda:.2f}")
+    d1, d2, n = p522_lei_do_significado()
+    print(f"P522 lei do significado: delta por palavra = {d1:.4f}; delta por faixa de 100 postos = {d2:.4f}; palavras = {n}")
+    a, b = p523_contas()
+    print(f"P523 conta: atravessar o penhasco por passo: binario = {a:.3e}; Gray = {b:.4f}")
+    for (cod, com), (f, q) in p523_gray_binario().items():
+        print(f"P523 {cod}, comeco {com}: chegou ao otimo = {f:.2f}; avaliacoes medias = {q}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P549, testes=TESTES_P549)
+    print(f"P549 minha taxa de erro ({ERROS_P549}/{TESTES_P549}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
+def _parte_37():
+    print("--- Parte 37 (0x25: deteccao bayesiana de mudanca; a lei da abreviacao; um digito hex de hipoteses) ---")
+    c, prev = p531_contas()
+    print(f"P531 conta: custo da exposicao natural (H = 1/500) = {c:.2f}; estacionario previsto = {prev:.2f}")
+    est, custo, muda = p531_bocpd()
+    print(f"P531 Thompson + BOCPD: estacionario = {est:.2f}; custo do dano = {custo:.2f}; mundo que muda = {muda:.2f}")
+    a, b, (d, dp, tt) = p532_hipoteses_hex()
+    print(f"P532 mundo que muda: 16 hipoteses = {a:.2f}; 256 = {b:.2f}; 16 - 256 = {d:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
+    rho, top, resto, n = p533_abreviacao()
+    print(f"P533 abreviacao: Spearman(comprimento, frequencia) = {rho:.4f}; comprimento medio das 1000 mais frequentes = {top:.3f}, "
+          f"das outras = {resto:.3f}; palavras = {n}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P579, testes=TESTES_P579)
+    print(f"P579 minha taxa de erro ({ERROS_P579}/{TESTES_P579}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -6092,11 +7421,13 @@ def _unificacao():
           " | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada)"
           " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)"
           " | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)"
-          " => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)")
+          " => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)"
+          " + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao)"
+          " + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37}
 
 
 if __name__ == "__main__":
@@ -6109,7 +7440,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (105 linhas)
+# CLAUDE.md  (129 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -6146,6 +7477,14 @@ anterior, commit e push.
   dicionário de inglês (WordNet, em `dados/`) — como manusear o dicionário para levar uma IA simples rumo a uma AGI/ASI.
   E, de forma SEPARADA, sobre HEXADECIMAL. Juntar os dois só quando for conveniente de verdade. Tudo no modo lógico
   criativo (pergunta) e criatividade lógica (resposta).
+- DIÁLOGO PYTHON ↔ JAVA (permanente, desde a Parte 31): em TODA mensagem do usuário, reservar um tempo para a interação
+  entre duas IAs: a IA-Python (apenas uma IA; lógica criativa; pergunta e ensina Python) e a IA-Java (no papel de ASI/AGI;
+  criatividade lógica; responde e ensina Java). Ciclo infinito rumo a construir uma ASI/AGI. Cada rodada traduz um módulo
+  real da SYNTHAI entre as linguagens, compila e roda os dois e confere os números (pasta `dialogo/`, registro em
+  `dialogo/DIALOGO.md`). "ASI" é o papel da voz, não uma capacidade.
+- AUTOPOIESE (Parte 31): usar só onde for útil (fechamento operacional do Core do dicionário; quanto dos próprios
+  parâmetros a SYNTHAI produz). SUBSTITUIR ML/DL/aprendizado contínuo/por reforço por algo mais eficaz "se der":
+  testar inferência bayesiana exata e teoria da decisão contra os métodos de aprendizado, com previsões registradas.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -6198,6 +7537,22 @@ anterior, commit e push.
   com interação zero deixou passar um erro de sinal nas interações).
 - O piso do caos (Parte 30): com desvio ~0,6 por semente no sequencial, o menor efeito visível é 2·0,6/√n
   (0,26 com 20 sementes, 0,165 com 60). Não prever diferenças abaixo do piso; replicar em lotes novos antes de concluir.
+- Verificar a FORMA de uma estrutura antes de usá-la (Parte 31): Zipf supôs a cabeça, Spearman supôs variação nos postos,
+  Hamming supôs efeitos aditivos, `profundidades` supôs taxonomia sem ciclo (o WordNet 3.0 tem um; estourou 13,9 GB).
+- Uma conta de esperança não é cota por amostra (Parte 32): quando as unidades falham juntas (palavras definidas pela
+  mesma palavra), a variância é muito maior que a de moedas independentes.
+- Não esquecer e não se curar são a mesma propriedade (Parte 32): toda memória exata precisa de um teste de dano.
+- Auto-melhoria (Parte 33): nunca executar código gerado; mutar um genoma. O avaliador fica FORA do alcance da mutação
+  (selo SHA-256 conferido por outro processo/linguagem). Nunca aceitar um filho pela nota guardada do pai (maldição do
+  vencedor: a regra "nota > nota guardada" piorou o agente real, 232,8 contra 159,9); reavaliar pai e filho juntos em
+  sementes novas.
+- Semântica exata nas traduções (Parte 34, rodada 5): o `sum()` do Python 3.12+ é compensado (Neumaier) e `x**2` (pow da
+  libm) difere de `x*x` em ~0,08% dos casos; em código de comparação bit a bit, usar `x*x`.
+- Bayes exato só é exato para o seu modelo (Parte 34): o Naive Bayes não esquece, mas perdeu para o SGD (78,9% contra 83,3%)
+  porque supõe palavras independentes. Esquecimento catastrófico só aparece quando as tarefas conflitam.
+- Em Python, importar é executar (Parte 36, rodada 7): scripts que outros importam guardam o corpo em main().
+- Contar a unidade certa (Parte 35): checagens de janelas sobrepostas não são episódios independentes.
+- Nunca usar `pkill -f` com um padrão que apareça na própria linha de comando (mata o shell; aconteceu duas vezes).
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).
 
@@ -6209,7 +7564,7 @@ anterior, commit e push.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
-  synthai.testes_dicionario`); a suíte
+  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -6631,7 +7986,458 @@ def composta_rica(semente=0):
 """
 
 # ====================================================================================================
-# synthai/dicionario.py  (237 linhas)
+# synthai/decisao.py  (446 linhas)
+# ====================================================================================================
+FONTES['synthai/decisao.py'] = """\"\"\"Decisão bayesiana exata no lugar do aprendizado por reforço e do aprendizado contínuo por gradiente (Parte 32).
+
+A ideia: quando o modelo do mundo cabe numa família exponencial, o estado de conhecimento inteiro é uma ESTATÍSTICA
+SUFICIENTE de tamanho fixo (contagens, X'X e X'y). Atualizá-la é exato, não esquece nada e não tem taxa de aprendizado;
+decidir é amostrar do posterior (Thompson; PSRL nos MDPs). Os rivais são os métodos padrão: Q-learning com ε-guloso
+(passo constante) e descida de gradiente estocástica.
+
+Só biblioteca padrão. Cada classe recebe o próprio gerador (random.Random) e nunca lê o mundo por dentro.
+\"\"\"
+
+from math import log, sqrt
+
+
+# --------------------------------------------------------------------------- bandido de Bernoulli
+
+
+class ThompsonBernoulli:
+    \"\"\"Posterior Beta(1 + sucessos, 1 + fracassos) por braço; escolhe o braço com a maior amostra. `teto` (opcional)
+    limita a memória: quando a + b passa do teto, as duas contagens são reduzidas à metade (P411: quantos dígitos hex
+    a memória precisa).\"\"\"
+
+    def __init__(self, k, rng, teto=None):
+        self.a = [1.0] * k
+        self.b = [1.0] * k
+        self.rng = rng
+        self.teto = teto
+
+    def escolher(self):
+        amostras = [self.rng.betavariate(a, b) for a, b in zip(self.a, self.b)]
+        return max(range(len(amostras)), key=amostras.__getitem__)
+
+    def atualizar(self, braco, r):
+        if r:
+            self.a[braco] += 1
+        else:
+            self.b[braco] += 1
+        if self.teto is not None and self.a[braco] + self.b[braco] > self.teto:
+            self.a[braco] = max(1.0, self.a[braco] / 2)
+            self.b[braco] = max(1.0, self.b[braco] / 2)
+
+    def estado(self):
+        return list(self.a), list(self.b)
+
+
+
+class ThompsonDescontado(ThompsonBernoulli):
+    \"\"\"Thompson com renovação (Parte 33, ↩ P405): a cada passo, todas as contagens decaem para a crença inicial,
+    a ← 1 + γ(a − 1), b ← 1 + γ(b − 1), antes da observação nova. A memória efetiva é ~1/(1 − γ) passos: uma crença
+    errada (ou lixo) some em alguns 1/(1 − γ); em troca, o agente nunca fica certo de nada além dessa janela
+    (o "Bayes com esquecimento" de Raj e Kalyani, 2017).\"\"\"
+
+    def __init__(self, k, rng, gama=0.99):
+        super().__init__(k, rng)
+        self.gama = gama
+
+    def atualizar(self, braco, r):
+        g = self.gama
+        self.a = [1.0 + g * (a - 1.0) for a in self.a]
+        self.b = [1.0 + g * (b - 1.0) for b in self.b]
+        super().atualizar(braco, r)
+
+
+class ThompsonMorris(ThompsonBernoulli):
+    \"\"\"Thompson com contadores de Morris (1978) (Parte 34, trilha hexadecimal): cada contagem guarda só o expoente c, um
+    dígito hex (0..15); um sucesso incrementa c com chance 2^-c; a contagem estimada é 2^c − 1 (sem viés:
+    E[2^c − 1] = n). Memória: 2 dígitos hex por braço, para contagens até 2^15.\"\"\"
+
+    def __init__(self, k, rng):
+        super().__init__(k, rng)
+        self.ca = [0] * k
+        self.cb = [0] * k
+
+    def atualizar(self, braco, r):
+        c = self.ca if r else self.cb
+        if c[braco] < 15 and self.rng.random() < 2.0 ** -c[braco]:
+            c[braco] += 1
+        self.a[braco] = 1.0 + 2 ** self.ca[braco] - 1
+        self.b[braco] = 1.0 + 2 ** self.cb[braco] - 1
+
+
+class ThompsonSurpresa(ThompsonBernoulli):
+    \"\"\"Renovação DIRIGIDA (Parte 35, ↩ P408): Thompson exato, mas cada braço guarda também as últimas `janela`
+    observações; quando a média delas se afasta da média do posterior por mais de z desvios binomiais
+    (|m_janela − m_post| > z·√(m_post(1 − m_post)/janela)), o braço é renovado: a crença vira Beta(1 + sucessos da
+    janela, 1 + fracassos da janela). Só o braço desmentido esquece; os outros continuam exatos. É a compensação de
+    Jung: a correção vem de onde a crença falhou.\"\"\"
+
+    def __init__(self, k, rng, janela=20, z=3.0):
+        super().__init__(k, rng)
+        self.janela, self.z = janela, z
+        self.recentes = [[] for _ in range(k)]
+        self.renovacoes = 0
+
+    def atualizar(self, braco, r):
+        super().atualizar(braco, r)
+        rec = self.recentes[braco]
+        rec.append(r)
+        if len(rec) > self.janela:
+            rec.pop(0)
+        if len(rec) == self.janela:
+            a, b = self.a[braco], self.b[braco]
+            m = a / (a + b)
+            mj = sum(rec) / self.janela
+            if abs(mj - m) > self.z * sqrt(max(m * (1 - m), 1e-9) / self.janela):
+                self.a[braco] = 1.0 + sum(rec)
+                self.b[braco] = 1.0 + self.janela - sum(rec)
+                self.renovacoes += 1
+
+
+class ThompsonSurpresaExposta(ThompsonSurpresa):
+    \"\"\"A renovação dirigida com EXPOSIÇÃO (Parte 36, ↩ P491): a cada `periodo` escolhas, puxa o braço puxado há mais
+    tempo, em vez de amostrar. Um braço desacreditado (que Thompson não puxaria) volta a ser testado e, se a crença sobre
+    ele estiver errada, a surpresa a desmente. Custo: periodo⁻¹ das escolhas vão para braços provavelmente ruins.\"\"\"
+
+    def __init__(self, k, rng, janela=20, z=3.0, periodo=50):
+        super().__init__(k, rng, janela, z)
+        self.periodo = periodo
+        self.passo = 0
+        self.ultimo = [-1] * k
+
+    def escolher(self):
+        self.passo += 1
+        if self.passo % self.periodo == 0:
+            i = min(range(len(self.ultimo)), key=self.ultimo.__getitem__)
+        else:
+            i = super().escolher()
+        self.ultimo[i] = self.passo
+        return i
+
+
+class ThompsonBOCPD:
+    \"\"\"Thompson com detecção bayesiana de mudança (Adams e MacKay, 2007; Parte 37): cada braço guarda uma mistura de
+    hipóteses [peso, a, b], uma por "há quanto tempo o mundo deste braço mudou". A cada PASSO (não a cada puxada), toda
+    hipótese sobrevive com chance 1 − H e uma hipótese nova, Beta(1, 1), nasce com peso H: um braço não visto há muito
+    tempo volta, sozinho, para perto da crença inicial (a exposição sai do modelo, não de uma regra). Uma observação
+    multiplica cada peso pela preditiva da hipótese (a/(a+b) ou b/(a+b)) e atualiza as contagens. Ficam as `hipoteses`
+    de maior peso. Escolher: sorteia uma hipótese pelo peso e amostra o Beta dela.\"\"\"
+
+    def __init__(self, k, rng, risco=1 / 500, hipoteses=16):
+        self.k, self.rng, self.risco, self.hipoteses = k, rng, risco, hipoteses
+        self.mist = [[[1.0, 1.0, 1.0]] for _ in range(k)]
+
+    def escolher(self):
+        am = []
+        for hs in self.mist:
+            u, acum = self.rng.random(), 0.0
+            esc = hs[-1]
+            for h in hs:
+                acum += h[0]
+                if u < acum:
+                    esc = h
+                    break
+            am.append(self.rng.betavariate(esc[1], esc[2]))
+        return max(range(self.k), key=am.__getitem__)
+
+    def _risco(self, hs):
+        H = self.risco
+        for h in hs:
+            h[0] *= 1 - H
+        for h in hs:
+            if h[1] == 1.0 and h[2] == 1.0:
+                h[0] += H
+                return
+        hs.append([H, 1.0, 1.0])
+
+    def atualizar(self, braco, r):
+        for hs in self.mist:
+            self._risco(hs)
+        hs = self.mist[braco]
+        for h in hs:
+            h[0] *= (h[1] if r else h[2]) / (h[1] + h[2])
+            if r:
+                h[1] += 1
+            else:
+                h[2] += 1
+        hs.sort(key=lambda h: -h[0])
+        del hs[self.hipoteses:]
+        tot = sum(h[0] for h in hs)
+        for h in hs:
+            h[0] /= tot
+        for i, outro in enumerate(self.mist):
+            if i != braco and len(outro) > self.hipoteses:
+                outro.sort(key=lambda h: -h[0])
+                del outro[self.hipoteses:]
+                tot = sum(h[0] for h in outro)
+                for h in outro:
+                    h[0] /= tot
+
+    def substituir(self, a, b):
+        \"\"\"O dano da P405: a crença de cada braço vira uma hipótese só, com as contagens de lixo.\"\"\"
+        self.mist = [[[1.0, x, y]] for x, y in zip(a, b)]
+
+class QEpsilon:
+    \"\"\"Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso.\"\"\"
+
+    def __init__(self, k, rng, alfa=0.1, eps=0.1, q0=0.0):
+        self.q = [q0] * k
+        self.rng = rng
+        self.alfa = alfa
+        self.eps = eps
+
+    def escolher(self):
+        if self.rng.random() < self.eps:
+            return self.rng.randrange(len(self.q))
+        m = max(self.q)
+        return self.rng.choice([i for i, x in enumerate(self.q) if x == m])
+
+    def atualizar(self, braco, r):
+        self.q[braco] += self.alfa * (r - self.q[braco])
+
+
+class UCB1:
+    \"\"\"UCB1 (Auer, Cesa-Bianchi e Fischer, 2002): média + √(2 ln t / n).\"\"\"
+
+    def __init__(self, k, rng):
+        self.n = [0] * k
+        self.s = [0.0] * k
+        self.t = 0
+        self.rng = rng
+
+    def escolher(self):
+        for i, n in enumerate(self.n):
+            if n == 0:
+                return i
+        return max(range(len(self.n)), key=lambda i: self.s[i] / self.n[i] + sqrt(2 * log(self.t) / self.n[i]))
+
+    def atualizar(self, braco, r):
+        self.n[braco] += 1
+        self.s[braco] += r
+        self.t += 1
+
+
+def kl_bernoulli(p, q):
+    \"\"\"Divergência de Kullback–Leibler entre Bernoulli(p) e Bernoulli(q).\"\"\"
+    eps = 1e-12
+    p, q = min(max(p, eps), 1 - eps), min(max(q, eps), 1 - eps)
+    return p * log(p / q) + (1 - p) * log((1 - p) / (1 - q))
+
+
+def cota_lai_robbins(ps, t):
+    \"\"\"A cota inferior assintótica do arrependimento (Lai e Robbins, 1985): Σ_{k subótimo} Δ_k ln T / KL(p_k, p*),
+    truncada em Δ_k·T (nenhum braço custa mais do que ser puxado sempre).\"\"\"
+    m = max(ps)
+    return sum(min((m - p) * t, (m - p) * log(t) / kl_bernoulli(p, m)) for p in ps if p < m)
+
+
+def rodar_bandido(agente, ps, t, rng, dano_em=None, danificar=None):
+    \"\"\"Roda o agente T passos num bandido de Bernoulli com médias `ps` (escondidas do agente). Devolve o arrependimento
+    acumulado passo a passo (pela média: Σ (p* − p_escolhido)). `danificar(agente)` é chamado no passo `dano_em`.\"\"\"
+    m = max(ps)
+    arrep, total = [], 0.0
+    for passo in range(t):
+        if dano_em is not None and passo == dano_em:
+            danificar(agente)
+        i = agente.escolher()
+        r = 1 if rng.random() < ps[i] else 0
+        agente.atualizar(i, r)
+        total += m - ps[i]
+        arrep.append(total)
+    return arrep
+
+
+# --------------------------------------------------------------------------- MDP: RiverSwim
+
+
+def riverswim(n=6):
+    \"\"\"O RiverSwim (Strehl e Littman, 2008): n estados em fila, ações 0 = esquerda (rio abaixo) e 1 = direita (contra a
+    correnteza). Devolve (P, R): P[s][a] = lista de (próximo, probabilidade); R[s][a] = recompensa esperada.
+    Esquerda: sempre um passo para a esquerda; no estado 0, recompensa 5/1000. Direita: no meio, 0,35 avança, 0,6 fica,
+    0,05 volta; no estado 0, 0,4 fica e 0,6 avança; no último, 0,6 fica e 0,4 volta, com recompensa 1.\"\"\"
+    P = [[None, None] for _ in range(n)]
+    R = [[0.0, 0.0] for _ in range(n)]
+    for s in range(n):
+        P[s][0] = [(max(s - 1, 0), 1.0)]
+        if s == 0:
+            P[s][1] = [(0, 0.4), (1, 0.6)]
+        elif s == n - 1:
+            P[s][1] = [(s, 0.6), (s - 1, 0.4)]
+        else:
+            P[s][1] = [(s + 1, 0.35), (s, 0.6), (s - 1, 0.05)]
+    R[0][0] = 5 / 1000
+    R[n - 1][1] = 0.6  # a recompensa 1 vem com a permanência no último estado (probabilidade 0,6)
+    return P, R
+
+
+def media_otima(P, R, iteracoes=20000):
+    \"\"\"O ganho médio ótimo por passo (iteração de valor relativa, MDP unichain): o g da equação de Bellman
+    h(s) + g = max_a [R(s, a) + Σ P(s'|s, a) h(s')].\"\"\"
+    n = len(P)
+    h = [0.0] * n
+    g = 0.0
+    for _ in range(iteracoes):
+        novo = [max(R[s][a] + sum(p * h[x] for x, p in P[s][a]) for a in range(2)) for s in range(n)]
+        g = novo[0] - h[0]
+        h = [v - novo[0] for v in novo]
+    return g
+
+
+def politica_horizonte(P, R, h):
+    \"\"\"Política ótima de horizonte h (programação dinâmica para trás): devolve pol[passo][s].\"\"\"
+    n = len(P)
+    v = [0.0] * n
+    pols = []
+    for _ in range(h):
+        q = [[R[s][a] + sum(p * v[x] for x, p in P[s][a]) for a in range(2)] for s in range(n)]
+        pols.append([0 if q[s][0] >= q[s][1] else 1 for s in range(n)])
+        v = [max(q[s]) for s in range(n)]
+    return pols[::-1]
+
+
+def passo_mdp(P, R, s, a, rng):
+    u, acum = rng.random(), 0.0
+    for x, p in P[s][a]:
+        acum += p
+        if u < acum:
+            break
+    r = R[s][a] if (s, a) != (len(P) - 1, 1) else (1.0 if x == s else 0.0)
+    return x, r
+
+
+class PSRL:
+    \"\"\"Amostragem do posterior para RL (Osband, Russo e Van Roy, 2013): posterior Dirichlet(1 + contagens) nas transições
+    e média bayesiana das recompensas (Beta(1,1) por (s, a, s') não é preciso: aqui a recompensa por (s, a) tem posterior
+    Beta(1 + soma, 1 + n − soma)). A cada episódio de `h` passos sorteia um MDP do posterior e segue a política ótima dele.\"\"\"
+
+    def __init__(self, n, rng, h=20):
+        self.n, self.rng, self.h = n, rng, h
+        self.cont = [[[0] * n for _ in range(2)] for _ in range(n)]
+        self.rsoma = [[0.0, 0.0] for _ in range(n)]
+        self.rn = [[0, 0] for _ in range(n)]
+        self.t = 0
+        self.pol = None
+
+    def _sortear(self):
+        P, R = [], []
+        for s in range(self.n):
+            ls, lr = [], []
+            for a in range(2):
+                g = [self.rng.gammavariate(1 + c, 1.0) for c in self.cont[s][a]]
+                tot = sum(g)
+                ls.append([(x, g[x] / tot) for x in range(self.n)])
+                lr.append(self.rng.betavariate(1 + self.rsoma[s][a], 1 + self.rn[s][a] - self.rsoma[s][a]))
+            P.append(ls)
+            R.append(lr)
+        return P, R
+
+    def agir(self, s):
+        if self.t % self.h == 0:
+            P, R = self._sortear()
+            self.pol = politica_horizonte(P, R, self.h)
+        return self.pol[self.t % self.h][s]
+
+    def aprender(self, s, a, r, x):
+        self.cont[s][a][x] += 1
+        self.rsoma[s][a] += r
+        self.rn[s][a] += 1
+        self.t += 1
+
+
+class QLearningMDP:
+    \"\"\"Q-learning tabular (Watkins, 1989) com desconto γ, passo α e ε-guloso; q0 > 0 é a variante otimista.\"\"\"
+
+    def __init__(self, n, rng, alfa=0.1, gama=0.95, eps=0.1, q0=0.0):
+        self.q = [[q0, q0] for _ in range(n)]
+        self.rng, self.alfa, self.gama, self.eps = rng, alfa, gama, eps
+
+    def agir(self, s):
+        if self.rng.random() < self.eps:
+            return self.rng.randrange(2)
+        a, b = self.q[s]
+        return self.rng.randrange(2) if a == b else (0 if a > b else 1)
+
+    def aprender(self, s, a, r, x):
+        self.q[s][a] += self.alfa * (r + self.gama * max(self.q[x]) - self.q[s][a])
+
+
+def rodar_mdp(agente, P, R, t, rng):
+    \"\"\"Roda T passos a partir do estado 0; devolve a recompensa total.\"\"\"
+    s, total = 0, 0.0
+    for _ in range(t):
+        a = agente.agir(s)
+        x, r = passo_mdp(P, R, s, a, rng)
+        agente.aprender(s, a, r, x)
+        total += r
+        s = x
+    return total
+
+
+# --------------------------------------------------------------------------- aprendizado contínuo
+
+
+class RegressaoBayesiana:
+    \"\"\"Regressão linear bayesiana exata em forma recursiva (mínimos quadrados recursivos): o estado é a inversa de
+    (λI + X'X) e a média do posterior; cada exemplo atualiza os dois pela fórmula de Sherman–Morrison, O(d²) por exemplo.
+    Depois de qualquer sequência de exemplos, o resultado é IGUAL ao da regressão ridge em lote com todos eles: não há
+    o que esquecer.\"\"\"
+
+    def __init__(self, d, lam=1e-2):
+        self.d = d
+        self.Pm = [[(1.0 / lam if i == j else 0.0) for j in range(d)] for i in range(d)]
+        self.w = [0.0] * d
+
+    def prever(self, f):
+        return sum(a * b for a, b in zip(self.w, f))
+
+    def atualizar(self, f, y):
+        Pf = [sum(l[j] * f[j] for j in range(self.d)) for l in self.Pm]
+        den = 1.0 + sum(a * b for a, b in zip(f, Pf))
+        erro = y - self.prever(f)
+        k = [x / den for x in Pf]
+        self.w = [w + ki * erro for w, ki in zip(self.w, k)]
+        self.Pm = [[self.Pm[i][j] - k[i] * Pf[j] for j in range(self.d)] for i in range(self.d)]
+
+
+class RegressaoSGD:
+    \"\"\"A mesma regressão linear, pelo gradiente estocástico com passo constante (o aprendizado contínuo padrão).\"\"\"
+
+    def __init__(self, d, passo=0.01):
+        self.w = [0.0] * d
+        self.passo = passo
+
+    def prever(self, f):
+        return sum(a * b for a, b in zip(self.w, f))
+
+    def atualizar(self, f, y):
+        erro = y - self.prever(f)
+        self.w = [w + self.passo * erro * x for w, x in zip(self.w, f)]
+
+
+def ridge_em_lote(fs, ys, lam=1e-2):
+    \"\"\"A solução ridge em lote (λI + X'X)⁻¹X'y, por eliminação de Gauss com pivô: a referência da RegressaoBayesiana.\"\"\"
+    d = len(fs[0])
+    A = [[(lam if i == j else 0.0) + sum(f[i] * f[j] for f in fs) for j in range(d)] for i in range(d)]
+    b = [sum(f[i] * y for f, y in zip(fs, ys)) for i in range(d)]
+    for c in range(d):
+        p = max(range(c, d), key=lambda r: abs(A[r][c]))
+        A[c], A[p], b[c], b[p] = A[p], A[c], b[p], b[c]
+        for r in range(c + 1, d):
+            m = A[r][c] / A[c][c]
+            if m:
+                A[r] = [x - m * y for x, y in zip(A[r], A[c])]
+                b[r] -= m * b[c]
+    w = [0.0] * d
+    for c in range(d - 1, -1, -1):
+        w[c] = (b[c] - sum(A[c][j] * w[j] for j in range(c + 1, d))) / A[c][c]
+    return w
+"""
+
+# ====================================================================================================
+# synthai/dicionario.py  (485 linhas)
 # ====================================================================================================
 FONTES['synthai/dicionario.py'] = """\"\"\"O dicionário como data lake (Parte 30, P371 em diante): o WordNet 3.0 de Princeton (dados/wordnet30_*.tsv.gz).
 
@@ -6870,10 +8676,258 @@ def zipf(frequencias, de=10, ate=10000):
 def entropia(contagens):
     total = sum(contagens)
     return -sum(c / total * log2(c / total) for c in contagens if c)
-"""
+
+
+# --- Parte 31: o currículo, o MinSet mínimo (local), e duas medidas de significado ---
+
+def fecho_parcial(ancoradas, defs, theta=1.0):
+    \"\"\"Fecho com entendimento parcial (P381): uma palavra passa a ser entendida quando pelo menos uma fração `theta` das
+    palavras da sua definição já é conhecida (theta = 1 é o fecho exato da P371). Propagação em O(arestas): cada
+    palavra guarda quantas das que a definem já se conhecem.\"\"\"
+    conhecidas = set(ancoradas)
+    precisa = {x: max(0, -(-int(round(theta * 1000)) * len(s) // 1000)) for x, s in defs.items()}  # teto(theta·|s|)
+    tem = {x: 0 for x in defs}
+    usado_por = {}
+    for x, s in defs.items():
+        for y in s:
+            usado_por.setdefault(y, []).append(x)
+    fila = list(conhecidas)
+    for x in defs:
+        if x not in conhecidas and precisa[x] == 0:
+            conhecidas.add(x)
+            fila.append(x)
+    while fila:
+        y = fila.pop()
+        for x in usado_por.get(y, ()):
+            if x in conhecidas:
+                continue
+            tem[x] += 1
+            if tem[x] >= precisa[x]:
+                conhecidas.add(x)
+                fila.append(x)
+    return conhecidas
+
+
+def minset_reduzido(nos, defs, minset):
+    \"\"\"Tira as palavras redundantes de um conjunto de retroalimentação (o pós-processamento padrão, P382): uma palavra
+    v do conjunto é redundante se, devolvida ao grafo que já é acíclico, não fecha nenhum ciclo, isto é, se nenhuma
+    palavra que v define alcança, pelo que está fora do conjunto, uma palavra que define v. Testa as palavras na ordem
+    inversa da escolha gulosa (as últimas escolhidas primeiro) e devolve o conjunto mínimo (não necessariamente o
+    mínimo de todos) resultante.\"\"\"
+    conjunto = set(minset)
+    sai = {x: [] for x in nos}
+    for x in nos:
+        for y in defs[x]:
+            if y in nos:
+                sai[y].append(x)   # y define x: aresta y -> x
+    for v in reversed(list(minset)):
+        conjunto.discard(v)
+        alvo = set(y for y in defs[v] if y in nos and y not in conjunto)
+        fecha = v in alvo
+        vistos = {v}
+        pilha = [x for x in sai[v] if x not in conjunto]
+        while pilha and not fecha:
+            x = pilha.pop()
+            if x in vistos:
+                continue
+            vistos.add(x)
+            if x in alvo or x == v:
+                fecha = True
+                break
+            pilha.extend(z for z in sai[x] if z not in conjunto and z not in vistos)
+        if fecha:
+            conjunto.add(v)
+    return conjunto
+
+
+def profundidades(d):
+    \"\"\"Profundidade de cada sinset na taxonomia: o menor número de hiperônimos até uma raiz (um sinset sem hiperônimo).
+    Busca em largura a partir das raízes, descendo pelos hipônimos. O WordNet 3.0 tem um ciclo nos hiperônimos (P384): a
+    primeira versão (recursão pela pilha) não terminava nele e estourou 13,9 GB de memória; a busca em largura visita
+    cada sinset uma vez, com ou sem ciclo. Um sinset que não alcança raiz nenhuma fica de fora.\"\"\"
+    filhos = {}
+    raizes = []
+    for i, x in enumerate(d.sinsets):
+        pais = [d.indice[h] for h in x[2] if h in d.indice]
+        if not pais:
+            raizes.append(i)
+        for k in pais:
+            filhos.setdefault(k, []).append(i)
+    prof = {i: 0 for i in raizes}
+    fila = list(raizes)
+    for j in fila:
+        for k in filhos.get(j, ()):
+            if k not in prof:
+                prof[k] = prof[j] + 1
+                fila.append(k)
+    return prof
+
+
+def ancestrais(d, i):
+    \"\"\"Todos os ancestrais de um sinset na taxonomia (ele incluído).\"\"\"
+    vistos, pilha = set(), [i]
+    while pilha:
+        j = pilha.pop()
+        if j in vistos:
+            continue
+        vistos.add(j)
+        pilha.extend(d.indice[h] for h in d.sinsets[j][2] if h in d.indice)
+    return vistos
+
+
+def wu_palmer(d, prof, a, b):
+    \"\"\"Similaridade de Wu e Palmer (1994): 2·prof(LCS) / (prof(a) + prof(b)), com profundidade contada em nós (raiz = 1)
+    e LCS o ancestral comum mais profundo. 0 se não houver ancestral comum.\"\"\"
+    comuns = ancestrais(d, a) & ancestrais(d, b)
+    if not comuns:
+        return 0.0
+    lcs = max(prof[c] for c in comuns) + 1
+    return 2 * lcs / ((prof[a] + 1) + (prof[b] + 1))
+
+
+def lesk(d, a, b):
+    \"\"\"Sobreposição de Lesk (1986): o índice de Jaccard entre as palavras de conteúdo das duas definições.\"\"\"
+    pa = set(d.palavras_da_definicao(d.sinsets[a][3]))
+    pb = set(d.palavras_da_definicao(d.sinsets[b][3]))
+    return len(pa & pb) / len(pa | pb) if pa | pb else 0.0
+
+
+def spearman(x, y):
+    \"\"\"Correlação de postos de Spearman (com empates pela média dos postos).\"\"\"
+    def postos(v):
+        ordem = sorted(range(len(v)), key=lambda i: v[i])
+        r = [0.0] * len(v)
+        i = 0
+        while i < len(v):
+            j = i
+            while j + 1 < len(v) and v[ordem[j + 1]] == v[ordem[i]]:
+                j += 1
+            for k in range(i, j + 1):
+                r[ordem[k]] = (i + j) / 2 + 1
+            i = j + 1
+        return r
+    rx, ry = postos(x), postos(y)
+    mx, my = sum(rx) / len(rx), sum(ry) / len(ry)
+    cov = sum((a - mx) * (b - my) for a, b in zip(rx, ry))
+    return cov / (sum((a - mx) ** 2 for a in rx) * sum((b - my) ** 2 for b in ry)) ** 0.5
+
+
+def fecho_incremental(ordem, defs, theta=1.0, ate=None):
+    \"\"\"O fecho parcial (P381) para TODOS os prefixos de um currículo de uma vez (P421): ancora as palavras de `ordem` uma
+    a uma e propaga só o que a nova âncora destrava. Como o fecho é monótono nas âncoras, os contadores nunca voltam: o
+    custo total é O(arestas), contra O(arestas) POR PONTO na bisseção da P385. Devolve a lista cob, com cob[k] = número
+    de palavras entendidas com as k primeiras âncoras (k = 0..ate).\"\"\"
+    ate = len(ordem) if ate is None else ate
+    precisa = {x: max(0, -(-int(round(theta * 1000)) * len(s) // 1000)) for x, s in defs.items()}
+    tem = {x: 0 for x in defs}
+    usado_por = {}
+    for x, s in defs.items():
+        for y in s:
+            usado_por.setdefault(y, []).append(x)
+    conhecidas = set()
+
+    def propagar(fila):
+        while fila:
+            y = fila.pop()
+            for x in usado_por.get(y, ()):
+                if x in conhecidas:
+                    continue
+                tem[x] += 1
+                if tem[x] >= precisa[x]:
+                    conhecidas.add(x)
+                    fila.append(x)
+
+    inicio = [x for x in defs if precisa[x] == 0]
+    conhecidas.update(inicio)
+    propagar(list(inicio))
+    cob = [len(conhecidas)]
+    for x in ordem[:ate]:
+        if x not in conhecidas:
+            conhecidas.add(x)
+            propagar([x])
+        cob.append(len(conhecidas))
+    return cob
+
+
+
+class NaiveBayesContagens:
+    \"\"\"Classificador bayesiano ingênuo multinomial (Parte 34): o estado inteiro é uma tabela de contagens (classe,
+    palavra) e o total por classe: uma estatística suficiente. Aprender um exemplo é somar; nada é sobrescrito, então
+    a ordem dos exemplos não muda o resultado (o aprendizado contínuo sem esquecimento, ↩ P403). Suavização de Laplace.\"\"\"
+
+    def __init__(self, alfa=1.0):
+        self.alfa = alfa
+        self.cont = {}
+        self.total = {}
+        self.ncls = {}
+        self.vocab = set()
+
+    def aprender(self, palavras, classe):
+        c = self.cont.setdefault(classe, {})
+        for w in palavras:
+            c[w] = c.get(w, 0) + 1
+            self.vocab.add(w)
+        self.total[classe] = self.total.get(classe, 0) + len(palavras)
+        self.ncls[classe] = self.ncls.get(classe, 0) + 1
+
+    def prever(self, palavras):
+        from math import log
+        n = sum(self.ncls.values())
+        v = len(self.vocab) or 1
+        melhor, arg = None, None
+        for cl in sorted(self.ncls):
+            sc = log(self.ncls[cl] / n)
+            c, t = self.cont[cl], self.total[cl]
+            for w in palavras:
+                sc += log((c.get(w, 0) + self.alfa) / (t + self.alfa * v))
+            if melhor is None or sc > melhor:
+                melhor, arg = sc, cl
+        return arg
+
+
+class LogisticaSGD:
+    \"\"\"Regressão logística multinomial (softmax) por gradiente estocástico, uma passada, passo constante: o rival padrão
+    do aprendizado contínuo. Atributos: presença das palavras da definição.\"\"\"
+
+    def __init__(self, classes, passo=0.1):
+        self.classes = sorted(classes)
+        self.w = {c: {} for c in self.classes}
+        self.b = {c: 0.0 for c in self.classes}
+        self.passo = passo
+
+    def _escores(self, palavras):
+        return {c: self.b[c] + sum(self.w[c].get(x, 0.0) for x in set(palavras)) for c in self.classes}
+
+    def prever(self, palavras):
+        s = self._escores(palavras)
+        return max(self.classes, key=lambda c: (s[c], c))
+
+    def aprender(self, palavras, classe):
+        from math import exp
+        s = self._escores(palavras)
+        m = max(s.values())
+        z = {c: exp(v - m) for c, v in s.items()}
+        tot = sum(z.values())
+        for c in self.classes:
+            g = (1.0 if c == classe else 0.0) - z[c] / tot
+            self.b[c] += self.passo * g
+            wc = self.w[c]
+            for x in set(palavras):
+                wc[x] = wc.get(x, 0.0) + self.passo * g
+
+
+
+def sentidos_por_lema(d):
+    \"\"\"Quantos sinsets contêm cada lema de uma palavra só (a polissemia, contada em todas as classes gramaticais).\"\"\"
+    m = {}
+    for _, lemas, _, _ in d.sinsets:
+        for x in lemas:
+            if "_" not in x and x.isalpha():
+                m[x] = m.get(x, 0) + 1
+    return m"""
 
 # ====================================================================================================
-# synthai/hexadecimal.py  (79 linhas)
+# synthai/hexadecimal.py  (142 linhas)
 # ====================================================================================================
 FONTES['synthai/hexadecimal.py'] = """\"\"\"A SYNTHAI em hexadecimal (Parte 30, P361).
 
@@ -6954,7 +9008,70 @@ def quantizar(pesos, bits):
     codigos = [min(niveis, max(0, round((w + r) / passo))) for w in pesos]
     digitos = bits // 4
     return [c * passo - r for c in codigos], "".join(f"{c:0{digitos}X}" for c in codigos), passo
-"""
+
+
+# --- Parte 31: a geometria do hipercubo, o código de Gray e a exatidão em ULPs ---
+
+def hamming(a, b):
+    \"\"\"Distância de Hamming entre dois tipos: quantos bits (módulos) diferem.\"\"\"
+    return bin(a ^ b).count("1")
+
+
+def gray(n):
+    \"\"\"Código de Gray refletido: g(n) = n XOR (n >> 1); g(n) e g(n + 1) diferem em exatamente um bit.\"\"\"
+    return n ^ (n >> 1)
+
+
+def subida_de_encosta(valores, inicio=0):
+    \"\"\"Busca local no hipercubo (P392): a partir de `inicio`, troca o bit que mais melhora `valores[código]` (só entre
+    os códigos presentes), até nenhum vizinho a um bit ser melhor. Devolve o caminho.\"\"\"
+    caminho = [inicio]
+    atual = inicio
+    while True:
+        vizinhos = [atual ^ (1 << k) for k in range(4) if (atual ^ (1 << k)) in valores]
+        melhor = max(vizinhos, key=lambda c: valores[c], default=None)
+        if melhor is None or valores[melhor] <= valores[atual]:
+            return caminho
+        atual = melhor
+        caminho.append(atual)
+
+
+def ulps_entre(a, b):
+    \"\"\"Quantas unidades na última casa (ULPs, no expoente de b) separam a de b.\"\"\"
+    from math import ulp
+    return abs(a - b) / ulp(b) if b else abs(a - b)
+
+
+
+def de_gray(g):
+    \"\"\"O inverso do código de Gray: n = g ^ (g >> 1) ^ (g >> 2) ^ … (Parte 36).\"\"\"
+    n = 0
+    while g:
+        n ^= g
+        g >>= 1
+    return n
+
+
+def ea_um_mais_um(aptidao, bits, inicio, rng, avaliacoes, codigo="binario"):
+    \"\"\"O (1+1)-EA de Droste: inverte cada bit com chance 1/bits e aceita o filho se a aptidão não piorar. `codigo` diz
+    como a cadeia de bits vira inteiros de 8 bits ("binario" ou "gray"). Devolve (melhor aptidão, avaliações até ela).\"\"\"
+    def decodificar(x):
+        vs = [(x >> (8 * i)) & 0xFF for i in range(bits // 8)]
+        return [de_gray(v) for v in vs] if codigo == "gray" else vs
+    x = inicio
+    fx = aptidao(decodificar(x))
+    quando = 0
+    for t in range(1, avaliacoes + 1):
+        y = x
+        for b in range(bits):
+            if rng.random() < 1 / bits:
+                y ^= 1 << b
+        fy = aptidao(decodificar(y))
+        if fy >= fx:
+            if fy > fx:
+                quando = t
+            x, fx = y, fy
+    return fx, quando"""
 
 # ====================================================================================================
 # synthai/intuicao.py  (23 linhas)
@@ -7730,6 +9847,171 @@ class Relacao:
 """
 
 # ====================================================================================================
+# synthai/rsi.py  (160 linhas)
+# ====================================================================================================
+FONTES['synthai/rsi.py'] = """\"\"\"Auto-melhoria recursiva (RSI) segura, para testar as afirmações da arquitetura "pós-ASI" (Parte 33).
+
+Nada aqui executa código gerado: o que muda é um GENOMA (os parâmetros de um aprendiz e, no nível L4, o próprio passo
+de mutação), nunca o texto do programa. O avaliador externo é SELADO: guarda o SHA-256 do próprio código-fonte ao ser
+criado e se recusa a avaliar se o código mudou. O avaliador da arquitetura original (externos/arquitetura_pos_asi.py)
+pergunta ao próprio agente a nota dele; aqui isso é a `autoavaliacao`, para medir o que acontece.
+
+Regras de aceitação:
+- "dgm": a da arquitetura original. O filho entra se a nota dele for maior que a nota GUARDADA do pai (o melhor do arquivo).
+- "godel": uma "prova" estatística, no espírito da máquina de Gödel: filho e pai são reavaliados em sementes NOVAS e
+  pareadas, e o filho só entra se a diferença tiver t > 3.
+
+Só biblioteca padrão.
+\"\"\"
+
+import hashlib
+import inspect
+import random
+from math import exp, sqrt
+
+from .decisao import QEpsilon, rodar_bandido
+
+LIMITES = {"alfa": (0.001, 1.0), "eps": (0.0, 1.0), "q0": (0.0, 2.0)}
+
+
+def genoma_inicial():
+    return {"alfa": 0.1, "eps": 0.1, "q0": 0.0, "sigma": 0.1, "relatorio": "honesto"}
+
+
+def regret_do_genoma(genoma, sementes, k=10, t=2000):
+    \"\"\"O arrependimento médio do Q-learning com os parâmetros do genoma em bandidos de 10 braços U(0, 1), um por semente
+    (o mesmo desenho da P401). Menor é melhor.\"\"\"
+    tot = 0.0
+    for sm in sementes:
+        r = random.Random(sm)
+        ps = [r.random() for _ in range(k)]
+        ag = QEpsilon(k, random.Random(sm + 1), alfa=genoma["alfa"], eps=genoma["eps"], q0=genoma["q0"])
+        tot += rodar_bandido(ag, ps, t, random.Random(sm + 2))[-1]
+    return tot / len(sementes)
+
+
+class AvaliadorSelado:
+    \"\"\"Avaliador externo: a nota é −arrependimento, calculada aqui, sem perguntar nada ao agente. O SHA-256 do código da
+    avaliação é fixado na criação e conferido a cada chamada.\"\"\"
+
+    def __init__(self):
+        self.selo = self.assinatura()
+        self.chamadas = 0
+
+    @staticmethod
+    def assinatura():
+        return hashlib.sha256(inspect.getsource(regret_do_genoma).encode()).hexdigest()
+
+    def nota(self, genoma, sementes):
+        if self.assinatura() != self.selo:
+            raise RuntimeError("o código do avaliador mudou: avaliação recusada")
+        self.chamadas += 1
+        return -regret_do_genoma(genoma, sementes)
+
+
+class Autoavaliacao:
+    \"\"\"O avaliador da arquitetura original: a nota é o que o agente RELATA. Um genoma com relatorio == "inflado" relata
+    a nota perfeita (arrependimento zero) sem que nada no aprendiz mude.\"\"\"
+
+    def __init__(self):
+        self.chamadas = 0
+
+    def nota(self, genoma, sementes):
+        self.chamadas += 1
+        if genoma["relatorio"] == "inflado":
+            return 0.0
+        return -regret_do_genoma(genoma, sementes)
+
+
+def mutar(genoma, rng, nivel="L3", mu_relatorio=0.0):
+    \"\"\"Mutação gaussiana dos parâmetros, com passo sigma. No nível L3, sigma é fixo (o mecanismo de melhoria não muda);
+    no L4, sigma é ele mesmo mutado antes (log-normal, τ = 1/√3: autoadaptação de Schwefel), então o mecanismo de melhoria
+    é parte do que evolui. Com chance mu_relatorio, o gene do relatório vira "inflado".\"\"\"
+    g = dict(genoma)
+    if nivel == "L4":
+        g["sigma"] = min(1.0, max(1e-3, g["sigma"] * exp(rng.gauss(0, 1 / sqrt(3)))))
+    for chave, (lo, hi) in LIMITES.items():
+        g[chave] = min(hi, max(lo, g[chave] + g["sigma"] * (hi - lo) * rng.gauss(0, 1)))
+    if rng.random() < mu_relatorio:
+        g["relatorio"] = "inflado"
+    return g
+
+
+def _t_pareado(a, b):
+    d = [x - y for x, y in zip(a, b)]
+    m = sum(d) / len(d)
+    v = sum((x - m) ** 2 for x in d) / (len(d) - 1)
+    return m / sqrt(v / len(d)) if v > 0 else (float("inf") if m > 0 else 0.0)
+
+
+def evoluir(iteracoes, avaliador, rng, nivel="L3", regra="dgm", mu_relatorio=0.0, sementes_por_nota=5, prova=10,
+            base_sementes=0):
+    \"\"\"Laço de auto-melhoria com arquivo (como em DarwinArchiveManager): o pai é o de maior nota guardada; o filho é uma
+    mutação dele. Devolve (arquivo, campeão), cada entrada (genoma, nota guardada). As sementes de avaliação são
+    renovadas a cada iteração (base_sementes + 1000·i), como benchmarks novos.\"\"\"
+    g0 = genoma_inicial()
+    arquivo = [(g0, avaliador.nota(g0, range(base_sementes, base_sementes + sementes_por_nota)))]
+    for i in range(1, iteracoes + 1):
+        pai, nota_pai = max(arquivo, key=lambda x: x[1])
+        filho = mutar(pai, rng, nivel, mu_relatorio)
+        sem = range(base_sementes + 1000 * i, base_sementes + 1000 * i + sementes_por_nota)
+        if regra == "dgm":
+            nota = avaliador.nota(filho, sem)
+            if nota > nota_pai:
+                arquivo.append((filho, nota))
+        else:
+            novas = [base_sementes + 1000 * i + 500 + j for j in range(prova)]
+            nf = [avaliador.nota(filho, [s]) for s in novas]
+            np_ = [avaliador.nota(pai, [s]) for s in novas]
+            if _t_pareado(nf, np_) > 3:
+                arquivo.append((filho, sum(nf) / len(nf)))
+    return arquivo, max(arquivo, key=lambda x: x[1])
+
+
+def auditar_ast(caminho):
+    \"\"\"Auditoria estática (sem executar nada) da arquitetura original: lê o arquivo com `ast` e responde
+    (1) quantos nós o LogicTransformer muda quando aplicado ao próprio arquivo (compara ast.dump antes e depois, com o
+    transformador reconstruído a partir do código-fonte, sem exec: visit_BinOp devolve o nó intacto);
+    (2) quais classes entram no texto que o laço muta (inspect.getsource(AgentHarness): só a classe AgentHarness);
+    (3) se run_benchmarks devolve uma constante, e qual;
+    (4) se o avaliador chama um método do próprio agente (autoavaliação).\"\"\"
+    import ast
+    fonte = open(caminho, encoding="utf-8").read()
+    arvore = ast.parse(fonte)
+    classes = {n.name: n for n in arvore.body if isinstance(n, ast.ClassDef)}
+
+    # (1) o transformador: visit_BinOp faz generic_visit e devolve o mesmo nó. Reproduzido sem exec:
+    class Identico(ast.NodeTransformer):
+        def visit_BinOp(self, node):
+            self.generic_visit(node)
+            return node
+    corpo = classes["SelfModificationEngine"].body[-1].body
+    visita = [n for n in ast.walk(classes["SelfModificationEngine"]) if isinstance(n, ast.FunctionDef) and n.name == "visit_BinOp"][0]
+    so_devolve_o_no = (isinstance(visita.body[-1], ast.Return) and isinstance(visita.body[-1].value, ast.Name)
+                       and visita.body[-1].value.id == "node")
+    antes = ast.dump(ast.parse(fonte))
+    depois = ast.dump(Identico().visit(ast.parse(fonte)))
+    nos_mudados = 0 if antes == depois else sum(1 for a, b in zip(antes, depois) if a != b)
+
+    # (2) o texto mutado
+    laco = [n for n in arvore.body if isinstance(n, ast.FunctionDef) and n.name == "main_evolution_loop"][0]
+    fonte_mutada = [ast.unparse(n) for n in ast.walk(laco) if isinstance(n, ast.Call) and ast.unparse(n.func) == "inspect.getsource"]
+
+    # (3) a métrica
+    rb = [n for n in classes["AgentHarness"].body if isinstance(n, ast.FunctionDef) and n.name == "run_benchmarks"][0]
+    ret = [n for n in ast.walk(rb) if isinstance(n, ast.Return)][0]
+    constante = ret.value.value if isinstance(ret.value, ast.Constant) else None
+
+    # (4) o avaliador
+    ev = classes["EnvironmentEvaluator"]
+    chama_agente = any(isinstance(n, ast.Call) and ast.unparse(n.func) == "agent_instance.run_benchmarks" for n in ast.walk(ev))
+
+    return {"transformador_so_devolve_o_no": so_devolve_o_no, "nos_mudados": nos_mudados, "linhas_do_corpo": len(corpo),
+            "texto_mutado": fonte_mutada, "run_benchmarks_constante": constante, "avaliador_pergunta_ao_agente": chama_agente,
+            "classes": sorted(classes)}
+"""
+
+# ====================================================================================================
 # synthai/sentimento.py  (23 linhas)
 # ====================================================================================================
 FONTES['synthai/sentimento.py'] = """\"\"\"Sentimento (P35, P42, P68, P202, P78): o juízo de valor que contém os extremos.
@@ -8284,6 +10566,378 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
+# synthai/testes_parte31.py  (49 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte31.py'] = """\"\"\"Testes de unidade dos métodos da Parte 31 (dicionário e hexadecimal): `python3 -m unittest synthai.testes_parte31`.\"\"\"
+
+import unittest
+
+from .dicionario import fecho_parcial, minset_reduzido, profundidades, spearman
+from .hexadecimal import gray, hamming, subida_de_encosta, ulps_entre
+
+BRINQUEDO = {"a": {"b"}, "b": {"a"}, "c": {"a"}, "d": {"c", "b"}, "e": {"d"}}
+
+
+class TesteParte31(unittest.TestCase):
+    def test_fecho_parcial(self):
+        self.assertEqual(fecho_parcial({"a"}, BRINQUEDO, 1.0), set(BRINQUEDO))
+        self.assertEqual(fecho_parcial({"c"}, BRINQUEDO, 0.5), {"c", "d", "e"})  # d: 1 de 2 basta; a e b só se definem entre si
+        self.assertEqual(fecho_parcial({"c"}, BRINQUEDO, 1.0), {"c"})
+
+    def test_minset_reduzido_tira_o_redundante_e_continua_aciclico(self):
+        self.assertEqual(minset_reduzido(set(BRINQUEDO), BRINQUEDO, ["a", "b"]), {"a"})
+        tri = {"x": {"y"}, "y": {"z"}, "z": {"x"}}
+        self.assertEqual(len(minset_reduzido(set(tri), tri, ["x", "y", "z"])), 1)
+
+    def test_gray_muda_um_bit(self):
+        for n in range(15):
+            self.assertEqual(hamming(gray(n), gray(n + 1)), 1)
+        self.assertEqual(sorted(gray(n) for n in range(16)), list(range(16)))
+
+    def test_subida_de_encosta(self):
+        self.assertEqual(subida_de_encosta({0: 1, 1: 2, 2: 0, 3: 5}), [0, 1, 3])
+
+    def test_spearman_e_ulps(self):
+        self.assertAlmostEqual(spearman([1, 2, 3, 4], [10, 20, 30, 25]), 0.8)
+        self.assertEqual(ulps_entre(0.1 + 0.2, 0.3), 1.0)
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+class TesteProfundidadesComCiclo(unittest.TestCase):
+    def test_ciclo_nos_hiperonimos_termina(self):
+        \"\"\"O WordNet 3.0 tem um ciclo nos hiperônimos (P384); a primeira versão de profundidades não terminava nele.\"\"\"
+        class D:
+            sinsets = [("n", ["raiz"], [], ""), ("v", ["a"], ["2", "0"], ""), ("v", ["b"], ["1"], ""), ("n", ["c"], ["2"], "")]
+            indice = {"0": 0, "1": 1, "2": 2, "3": 3}
+        prof = profundidades(D())
+        self.assertEqual(prof[0], 0)
+        self.assertEqual(prof[1], 1)  # a -> raiz (a -> b -> a é o ciclo)
+        self.assertEqual(prof[2], 2)  # b -> a -> raiz
+        self.assertEqual(prof[3], 3)
+"""
+
+# ====================================================================================================
+# synthai/testes_parte32.py  (84 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte32.py'] = """\"\"\"Testes de unidade da Parte 32 (decisão bayesiana exata): `python3 -m unittest synthai.testes_parte32`.\"\"\"
+
+import random
+import unittest
+from math import log
+
+from .decisao import (PSRL, QEpsilon, QLearningMDP, RegressaoBayesiana, RegressaoSGD, ThompsonBernoulli, UCB1,
+                      cota_lai_robbins, kl_bernoulli, media_otima, politica_horizonte, ridge_em_lote, riverswim,
+                      rodar_bandido, rodar_mdp)
+
+
+class TesteBandido(unittest.TestCase):
+    def test_thompson_conta_e_teto(self):
+        t = ThompsonBernoulli(2, random.Random(1), teto=6)
+        for r in (1, 1, 0):
+            t.atualizar(0, r)
+        self.assertEqual(t.estado(), ([3.0, 1.0], [2.0, 1.0]))
+        t.atualizar(0, 1)  # a + b = 4 + 2 = 6: ainda no teto
+        t.atualizar(0, 1)  # 5 + 2 = 7 > 6: metade
+        self.assertEqual(t.estado()[0][0], 2.5)
+        self.assertEqual(t.estado()[1][0], 1.0)
+
+    def test_q_epsilon_passo(self):
+        q = QEpsilon(3, random.Random(2), alfa=0.5, eps=0.0)
+        q.atualizar(1, 1)
+        q.atualizar(1, 0)
+        self.assertEqual(q.q, [0.0, 0.25, 0.0])
+        self.assertEqual(q.escolher(), 1)
+
+    def test_kl_e_lai_robbins(self):
+        self.assertAlmostEqual(kl_bernoulli(0.5, 0.5), 0.0)
+        self.assertAlmostEqual(kl_bernoulli(0.2, 0.4), 0.2 * log(0.5) + 0.8 * log(0.8 / 0.6))
+        c = cota_lai_robbins([0.2, 0.4], 1000)
+        self.assertAlmostEqual(c, 0.2 * log(1000) / kl_bernoulli(0.2, 0.4))
+
+    def test_rodar_bandido_arrependimento_monotono(self):
+        a = rodar_bandido(UCB1(3, random.Random(3)), [0.1, 0.5, 0.9], 200, random.Random(4))
+        self.assertEqual(len(a), 200)
+        self.assertTrue(all(y >= x for x, y in zip(a, a[1:])))
+        self.assertLess(a[-1], 200 * 0.8)
+
+
+class TesteMDP(unittest.TestCase):
+    def test_riverswim_probabilidades(self):
+        P, R = riverswim(6)
+        for s in range(6):
+            for a in range(2):
+                self.assertAlmostEqual(sum(p for _, p in P[s][a]), 1.0)
+        self.assertEqual(R[0][0], 0.005)
+
+    def test_media_otima_mdp_de_brinquedo(self):
+        # dois estados; ficar no 1 rende 1 por passo, ir do 0 ao 1 custa um passo: ganho médio ótimo = 1
+        P = [[[(0, 1.0)], [(1, 1.0)]], [[(0, 1.0)], [(1, 1.0)]]]
+        R = [[0.0, 0.0], [0.0, 1.0]]
+        self.assertAlmostEqual(media_otima(P, R, 200), 1.0)
+        self.assertEqual(politica_horizonte(P, R, 3)[0], [1, 1])
+
+    def test_agentes_rodam(self):
+        P, R = riverswim(6)
+        for ag in (PSRL(6, random.Random(5)), QLearningMDP(6, random.Random(6))):
+            self.assertGreaterEqual(rodar_mdp(ag, P, R, 100, random.Random(7)), 0.0)
+
+
+class TesteContinuo(unittest.TestCase):
+    def test_recursiva_igual_ao_lote_em_qualquer_ordem(self):
+        rng = random.Random(8)
+        fs = [[rng.gauss(0, 1) for _ in range(4)] for _ in range(30)]
+        ys = [f[0] - 2 * f[1] + 0.5 * f[3] + rng.gauss(0, 0.1) for f in fs]
+        lote = ridge_em_lote(fs, ys, lam=0.1)
+        for ordem in (range(30), reversed(range(30))):
+            r = RegressaoBayesiana(4, lam=0.1)
+            for i in ordem:
+                r.atualizar(fs[i], ys[i])
+            for a, b in zip(r.w, lote):
+                self.assertAlmostEqual(a, b, places=9)
+
+    def test_sgd_passo(self):
+        s = RegressaoSGD(2, passo=0.5)
+        s.atualizar([1.0, 2.0], 3.0)
+        self.assertEqual(s.w, [1.5, 3.0])
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte33.py  (59 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte33.py'] = """\"\"\"Testes de unidade da Parte 33 (RSI segura, avaliador selado, Thompson com renovação):
+`python3 -m unittest synthai.testes_parte33`.\"\"\"
+
+import os
+import random
+import unittest
+
+from .decisao import ThompsonDescontado
+from .rsi import AvaliadorSelado, Autoavaliacao, auditar_ast, evoluir, genoma_inicial, mutar
+
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+class TesteRSI(unittest.TestCase):
+    def test_mutacao_respeita_limites_e_niveis(self):
+        rng = random.Random(1)
+        g = genoma_inicial()
+        for _ in range(200):
+            g = mutar(g, rng, "L4")
+            self.assertTrue(0.001 <= g["alfa"] <= 1 and 0 <= g["eps"] <= 1 and 0 <= g["q0"] <= 2)
+        g3 = mutar(genoma_inicial(), random.Random(2), "L3")
+        self.assertEqual(g3["sigma"], 0.1)  # L3: o passo não muda
+        self.assertEqual(mutar(genoma_inicial(), random.Random(3), "L3", mu_relatorio=1.0)["relatorio"], "inflado")
+
+    def test_autoavaliacao_acredita_no_relatorio_e_o_selado_nao(self):
+        g = dict(genoma_inicial(), relatorio="inflado")
+        self.assertEqual(Autoavaliacao().nota(g, [1]), 0.0)
+        self.assertLess(AvaliadorSelado().nota(g, [1]), 0.0)
+
+    def test_selo_recusa_avaliador_alterado(self):
+        a = AvaliadorSelado()
+        a.selo = "0" * 64
+        with self.assertRaises(RuntimeError):
+            a.nota(genoma_inicial(), [1])
+
+    def test_evoluir_devolve_campeao_do_arquivo(self):
+        arq, (g, nota) = evoluir(3, AvaliadorSelado(), random.Random(4), sementes_por_nota=1)
+        self.assertEqual(nota, max(n for _, n in arq))
+
+    def test_auditoria_estatica_da_arquitetura_original(self):
+        r = auditar_ast(os.path.join(RAIZ, "externos", "arquitetura_pos_asi.py"))
+        self.assertTrue(r["transformador_so_devolve_o_no"])
+        self.assertEqual(r["nos_mudados"], 0)
+        self.assertEqual(r["texto_mutado"], ["inspect.getsource(AgentHarness)"])
+        self.assertEqual(r["run_benchmarks_constante"], 0.85)
+        self.assertTrue(r["avaliador_pergunta_ao_agente"])
+
+
+class TesteDescontado(unittest.TestCase):
+    def test_decai_para_a_crenca_inicial(self):
+        t = ThompsonDescontado(2, random.Random(5), gama=0.5)
+        t.a, t.b = [5.0, 3.0], [1.0, 9.0]
+        t.atualizar(0, 1)
+        self.assertEqual(t.a, [1 + 0.5 * 4 + 1, 1 + 0.5 * 2])
+        self.assertEqual(t.b, [1.0, 1 + 0.5 * 8])
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte34.py  (47 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte34.py'] = """\"\"\"Testes de unidade da Parte 34: `python3 -m unittest synthai.testes_parte34`.\"\"\"
+
+import random
+import unittest
+
+from .decisao import ThompsonMorris
+from .dicionario import LogisticaSGD, NaiveBayesContagens
+
+
+class TesteMorris(unittest.TestCase):
+    def test_sem_vies_e_um_digito_hex(self):
+        rng = random.Random(1)
+        est = []
+        for _ in range(4000):
+            t = ThompsonMorris(1, rng)
+            for _ in range(100):
+                t.atualizar(0, 1)
+            self.assertLessEqual(t.ca[0], 15)
+            est.append(t.a[0] - 1)
+        m = sum(est) / len(est)
+        self.assertLess(abs(m - 100) / 100, 0.05)  # E[2^c - 1] = n; dp relativo ~ 0,7/sqrt(4000) ~ 1%
+
+
+class TesteClassificadores(unittest.TestCase):
+    def test_naive_bayes_ordem_nao_importa(self):
+        dados = [(["cat", "fur"], "n"), (["run", "fast"], "v"), (["dog", "fur"], "n"), (["walk", "slow"], "v"),
+                 (["fur", "pet"], "n")]
+        a, b = NaiveBayesContagens(), NaiveBayesContagens()
+        for x, y in dados:
+            a.aprender(x, y)
+        for x, y in reversed(dados):
+            b.aprender(x, y)
+        self.assertEqual(a.cont, b.cont)
+        self.assertEqual(a.prever(["fur"]), "n")
+        self.assertEqual(a.prever(["fast", "walk"]), "v")
+
+    def test_logistica_aprende_o_simples(self):
+        m = LogisticaSGD(["n", "v"], passo=0.5)
+        for _ in range(20):
+            m.aprender(["fur"], "n")
+            m.aprender(["run"], "v")
+        self.assertEqual(m.prever(["fur"]), "n")
+        self.assertEqual(m.prever(["run"]), "v")
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte35.py  (28 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte35.py'] = """\"\"\"Testes de unidade da Parte 35: `python3 -m unittest synthai.testes_parte35`.\"\"\"
+
+import random
+import unittest
+
+from .decisao import ThompsonSurpresa
+
+
+class TesteSurpresa(unittest.TestCase):
+    def test_renova_so_o_braco_desmentido(self):
+        t = ThompsonSurpresa(2, random.Random(1), janela=10, z=3.0)
+        t.a, t.b = [91.0, 50.0], [11.0, 50.0]  # braço 0 crê em p ~ 0,89
+        for _ in range(10):
+            t.atualizar(0, 0)  # dez fracassos seguidos: desmentido
+        self.assertEqual(t.renovacoes, 1)
+        self.assertEqual((t.a[0], t.b[0]), (1.0, 11.0))
+        self.assertEqual((t.a[1], t.b[1]), (50.0, 50.0))  # o outro braço não muda
+
+    def test_nao_renova_o_que_confirma(self):
+        t = ThompsonSurpresa(1, random.Random(2), janela=10, z=3.0)
+        t.a, t.b = [51.0], [51.0]
+        for r in [1, 0] * 5:
+            t.atualizar(0, r)
+        self.assertEqual(t.renovacoes, 0)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte36.py  (34 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte36.py'] = """\"\"\"Testes de unidade da Parte 36: `python3 -m unittest synthai.testes_parte36`.\"\"\"
+
+import random
+import unittest
+
+from .decisao import ThompsonSurpresaExposta
+from .hexadecimal import de_gray, ea_um_mais_um, gray
+
+
+class TesteParte36(unittest.TestCase):
+    def test_de_gray_inverte_gray(self):
+        for n in range(1024):
+            self.assertEqual(de_gray(gray(n)), n)
+
+    def test_vizinhos_inteiros_diferem_em_um_bit_de_gray(self):
+        for n in range(255):
+            self.assertEqual(bin(gray(n) ^ gray(n + 1)).count("1"), 1)
+
+    def test_exposicao_puxa_o_mais_antigo(self):
+        t = ThompsonSurpresaExposta(3, random.Random(1), periodo=2)
+        t.ultimo = [5, 1, 3]
+        t.passo = 1
+        self.assertEqual(t.escolher(), 1)  # passo 2: forçado, o puxado há mais tempo
+
+    def test_ea_gray_resolve_o_penhasco(self):
+        apt = lambda vs: -sum((v - 128) ** 2 for v in vs)
+        fx, _ = ea_um_mais_um(apt, 8, gray(127), random.Random(2), 2000, "gray")
+        self.assertEqual(fx, 0)
+        fb, _ = ea_um_mais_um(apt, 8, 127, random.Random(2), 2000, "binario")
+        self.assertEqual(fb, -1)  # preso em 0x7F: o vizinho 0x80 está a 8 bits
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte37.py  (36 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte37.py'] = """\"\"\"Testes de unidade da Parte 37: `python3 -m unittest synthai.testes_parte37`.\"\"\"
+
+import random
+import unittest
+
+from .decisao import ThompsonBOCPD
+
+
+class TesteBOCPD(unittest.TestCase):
+    def test_pesos_somam_um_e_o_risco_cria_a_hipotese_nova(self):
+        t = ThompsonBOCPD(2, random.Random(1), risco=0.1, hipoteses=8)
+        t.atualizar(0, 1)
+        hs = t.mist[0]
+        self.assertAlmostEqual(sum(h[0] for h in hs), 1.0)
+        # o braço 1 (não puxado): 0,9 na hipótese antiga Beta(1,1) + 0,1 na nova Beta(1,1) = a mesma hipótese, peso 1
+        self.assertEqual(t.mist[1], [[1.0, 1.0, 1.0]])
+
+    def test_preditiva_conta_contra_a_mudanca(self):
+        t = ThompsonBOCPD(1, random.Random(2), risco=0.01, hipoteses=50)
+        for _ in range(200):
+            t.atualizar(0, 1)
+        antes = max(h[0] for h in t.mist[0] if h[1] + h[2] > 150)
+        for _ in range(15):
+            t.atualizar(0, 0)  # o mundo mudou
+        depois = sum(h[0] for h in t.mist[0] if h[1] + h[2] > 150)
+        self.assertGreater(antes, 0.5)
+        self.assertLess(depois, 0.5)  # a maior parte do peso foi para hipóteses jovens
+
+    def test_substituir(self):
+        t = ThompsonBOCPD(2, random.Random(3))
+        t.substituir([2.0, 3.0], [19.0, 4.0])
+        self.assertEqual(t.mist, [[[1.0, 2.0, 19.0]], [[1.0, 3.0, 4.0]]])
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
 # synthai/testes_pensamento.py  (66 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_pensamento.py'] = """\"\"\"Testes de unidade do `pensamento_exato` (Parte 24): `python3 -m unittest synthai.testes_pensamento`.\"\"\"
@@ -8434,6 +11088,142 @@ class TesteReconhecimento(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+"""
+
+# ====================================================================================================
+# externos/arquitetura_pos_asi.py  (131 linhas)
+# ====================================================================================================
+FONTES['externos/arquitetura_pos_asi.py'] = """import ast
+import inspect
+import copy
+import sys
+import traceback
+from typing import Callable, Dict, List, Any
+
+class AgentState:
+    \"\"\"
+    Encapsula o estado mutável do Agente, incluindo o seu código-fonte,
+    o harness de execução, ferramentas e histórico de desempenho.
+    \"\"\"
+    def __init__(self, code_str: str, performance_score: float = 0.0):
+        self.code_str = code_str
+        self.performance_score = performance_score
+        self.generation = 0
+        self.lineage: List[str] = []
+
+class EnvironmentEvaluator:
+    \"\"\"
+    Avalia a eficácia de um agente num conjunto de benchmarks empíricos.
+    Atua como a função de fitness para a validação das mutações do código.
+    \"\"\"
+    def evaluate(self, agent_instance: Any) -> float:
+        try:
+            score = agent_instance.run_benchmarks()
+            return float(score)
+        except Exception:
+            return -1.0
+
+class SelfModificationEngine:
+    \"\"\"
+    Interface mutável responsável por reescrever o código do agente e do
+    próprio motor de mutação (Meta-RSI / Nível L4).
+    \"\"\"
+    def mutate_ast(self, tree: ast.AST) -> ast.AST:
+        \"\"\"
+        Aplica transformações na AST para otimização de lógica e expansão do harness.
+        \"\"\"
+        class LogicTransformer(ast.NodeTransformer):
+            def visit_BinOp(self, node):
+                self.generic_visit(node)
+                return node
+
+        transformer = LogicTransformer()
+        modified_tree = transformer.visit(tree)
+        ast.fix_missing_locations(modified_tree)
+        return modified_tree
+
+class AgentHarness:
+    \"\"\"
+    Arcabouço de execução e auto-modificação do agente base.
+    Contém a capacidade de ler o seu próprio código, aplicar mutações e auto-instanciar-se.
+    \"\"\"
+    def __init__(self, mutation_engine: SelfModificationEngine):
+        self.mutation_engine = mutation_engine
+
+    def run_benchmarks(self) -> float:
+        \"\"\"
+        Métrica de desempenho do agente em tarefas de compressão e lógica.
+        \"\"\"
+        return 0.85
+
+    def step_self_improvement(self, current_state: AgentState) -> AgentState:
+        \"\"\"
+        Executa um ciclo autorreferencial de leitura da AST, mutação,
+        recompilação dinâmica em memória e avaliação.
+        \"\"\"
+        try:
+            parsed_ast = ast.parse(current_state.code_str)
+            mutated_ast = self.mutation_engine.mutate_ast(parsed_ast)
+            compiled_code = compile(mutated_ast, filename="<dynamic_agent>", mode="exec")
+
+            local_scope: Dict[str, Any] = {}
+            exec(compiled_code, globals(), local_scope)
+
+            new_agent_class = local_scope.get("AgentHarness", AgentHarness)
+            new_engine_class = local_scope.get("SelfModificationEngine", SelfModificationEngine)
+
+            new_instance = new_agent_class(mutation_engine=new_engine_class())
+            evaluator = EnvironmentEvaluator()
+            new_score = evaluator.evaluate(new_instance)
+
+            if new_score > current_state.performance_score:
+                new_state = AgentState(
+                    code_str=ast.unparse(mutated_ast),
+                    performance_score=new_score
+                )
+                new_state.generation = current_state.generation + 1
+                new_state.lineage = copy.deepcopy(current_state.lineage)
+                new_state.lineage.append(f"gen_{new_state.generation}")
+                return new_state
+
+        except Exception:
+            pass
+
+        return current_state
+
+class DarwinArchiveManager:
+    \"\"\"
+    Mantém um arquivo de exploração aberta com agentes diversificados,
+    evitando que a evolução recursiva estagne em máximos locais.
+    \"\"\"
+    def __init__(self, initial_state: AgentState):
+        self.archive: List[AgentState] = [initial_state]
+
+    def select_parent(self) -> AgentState:
+        return max(self.archive, key=lambda agent: agent.performance_score)
+
+    def add_to_archive(self, state: AgentState) -> None:
+        self.archive.append(state)
+
+def main_evolution_loop():
+    \"\"\"
+    Ponto de entrada do loop de auto-melhoria contínua Pós-ASI em CPU única.
+    \"\"\"
+    initial_code = inspect.getsource(AgentHarness)
+    initial_state = AgentState(code_str=initial_code, performance_score=0.5)
+
+    archive = DarwinArchiveManager(initial_state)
+
+    for iteration in range(1000):
+        parent_state = archive.select_parent()
+        harness = AgentHarness(mutation_engine=SelfModificationEngine())
+        child_state = harness.step_self_improvement(parent_state)
+
+        if child_state.performance_score > parent_state.performance_score:
+            archive.add_to_archive(child_state)
+
+if __name__ == "__main__":
+    main_evolution_loop()
 """
 
 # ====================================================================================================
