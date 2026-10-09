@@ -122,6 +122,8 @@ anterior, commit e push.
   o fechamento (ou rótulos negativos), Super vira 1 em tudo (especificidade 0,0 medida).
 - Um arquivo de saída por execução, e conferir com `ps` depois de matar (Parte 40): duas execuções escrevendo no mesmo
   arquivo corromperam a Parte 35 do `resultados.txt`.
+- Antes de criar um arquivo, conferir se o nome já existe (Parte 41: o módulo novo foi escrito por cima de
+  `synthai/metacognicao.py`, da Parte 22); depois de qualquer mudança no pacote, rodar a suíte INTEIRA.
 - Nunca usar `pkill -f` com um padrão que apareça na própria linha de comando (mata o shell; aconteceu duas vezes).
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).

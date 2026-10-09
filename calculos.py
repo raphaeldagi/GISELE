@@ -6716,7 +6716,7 @@ def p644_utf8():
 # --- Parte 41 (0x29): engenharia reversa de mim mesma: os padrões que se repetem nos meus textos e nas minhas previsões ---
 
 # Placar acumulado ao fim da Parte 41 (atualizado quando os testes da parte terminam)
-ERROS_P699, TESTES_P699 = 123, 337
+ERROS_P699, TESTES_P699 = 124, 338
 
 # As 128 previsões registradas das Partes 31-40, uma letra por previsão, classificadas por tipo (classificação feita por
 # mim, DEPOIS dos resultados, lendo os placares de cada parte):
@@ -6772,7 +6772,7 @@ def p672_meus_padroes(n=4, topo=12):
     entre cada parte e a seguinte (com a correlação de postos entre o número da parte e essa semelhança)."""
     import lzma
     from synthai.dicionario import spearman
-    from synthai.metacognicao import aberturas, cosseno, padroes_repetidos
+    from synthai.engenharia_reversa import aberturas, cosseno, padroes_repetidos
     docs, _ = _meus_textos()
     tudo = "\n".join(docs).encode("utf-8")
     razao = len(tudo) / len(lzma.compress(tudo, preset=9))
@@ -6786,7 +6786,7 @@ def p673_minhas_leis():
     """As leis do dicionário (P383, P543) aplicadas ao meu próprio texto: o expoente de Zipf das minhas palavras (postos
     10-1000) e o β de Heaps (vocabulário contra palavras lidas, na ordem em que escrevi)."""
     from synthai.dicionario import zipf
-    from synthai.metacognicao import palavras
+    from synthai.engenharia_reversa import palavras
     docs, _ = _meus_textos()
     ps = [w for d in docs for w in palavras(d)]
     cont = {}
@@ -6808,7 +6808,7 @@ def p673_minhas_leis():
 def p674_as_duas_vozes():
     """As duas vozes do diálogo (dialogo/DIALOGO.md): quantas falas, palavras por fala, e as palavras que cada voz usa
     muito mais que a outra (razão das frequências relativas, com suavização +1, entre as palavras com ≥ 5 usos)."""
-    from synthai.metacognicao import falas_do_dialogo, palavras
+    from synthai.engenharia_reversa import falas_do_dialogo, palavras
     _, dialogo = _meus_textos()
     falas = falas_do_dialogo(dialogo)
     res, conts = {}, {}

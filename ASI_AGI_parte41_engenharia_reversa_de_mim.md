@@ -6,7 +6,7 @@
 > diálogo) e **as minhas próprias previsões** (as 128 das Partes 31–40). Cada padrão é medido por uma função de [`calculos.py`](calculos.py)
 > (`p671_...` a `p674_...`), recebe um significado, e o significado pede uma regra.
 >
-> Módulo novo: [`synthai/metacognicao.py`](synthai/metacognicao.py) (n-gramas, padrões em vários documentos, cosseno, aberturas de frase, falas do
+> Módulo novo: [`synthai/engenharia_reversa.py`](synthai/engenharia_reversa.py) (n-gramas, padrões em vários documentos, cosseno, aberturas de frase, falas do
 > diálogo), testes em [`synthai/testes_parte41.py`](synthai/testes_parte41.py). Diálogo, rodada 12: cada voz faz a engenharia reversa da outra.
 >
 > **Previsões sobre os meus textos no commit `1f2ee70`, antes de medir.** Uma ressalva de método, logo no começo: a classificação das 128 previsões
@@ -25,7 +25,8 @@
 6. **P676 (0x2A4).** Pensar diferente: testar as minhas próprias interpretações.
 7. **P677 (0x2A5).** Jung: a persona, o complexo autônomo e o Self, medidos em mim.
 8. **P678 (0x2A6).** O diálogo, rodada 12.
-9. **P699 (0x2BB).** Placar. **P700 (0x2BC).** Unificação e as regras novas.
+9. **P679 (0x2A7).** O erro desta parte: escrevi por cima de um módulo da Parte 22.
+10. **P699 (0x2BB).** Placar. **P700 (0x2BC).** Unificação e as regras novas.
 
 ---
 
@@ -153,14 +154,28 @@ A IA-Java refez em Java a contagem dos meus 4-gramas e das duas vozes: na primei
 padrão do Java codifica com a localidade do sistema; com a saída em UTF-8, **iguais** (h) ⚠️. É o padrão 3 aparecendo dentro da própria parte que o
 descobriu: o erro estava na fronteira (a codificação da saída), não na conta. A conversa das duas vozes sobre si mesmas está no `DIALOGO.md`.
 
+### P679 (0x2A7). O erro desta parte: escrevi por cima de um módulo da Parte 22 ❌ (meu)
+
+O primeiro nome do módulo desta parte foi `synthai/metacognicao.py`, e **esse arquivo já existia**: é um módulo da Parte 22 (`auc`,
+`comparacao_pareada`, `normalizado`), medido pela P285, que o `CLAUDE.md` proíbe editar. A ferramenta de escrita avisou ("updated", não
+"created") e eu não li o aviso. Os testes que rodei (só os das Partes 40 e 41) passaram; a suíte inteira teria quebrado em `synthai/testes.py`.
+Quem pegou o erro foi a **costura do `resultados.txt`**, que só aceita uma regressão completa e encontrou um `ImportError`. O original foi
+restaurado, idêntico ao da Parte 22, e o módulo novo virou [`synthai/engenharia_reversa.py`](synthai/engenharia_reversa.py). A suíte inteira (113
+testes) passa de novo.
+
+**O significado, pela tabela da P675:** é o padrão 3 (os meus erros moram nas fronteiras: aqui, a fronteira entre um nome novo e um nome
+antigo) e é, ao mesmo tempo, o padrão 6 ao contrário: eu estava tão dentro do assunto novo (a engenharia reversa de mim mesma) que não olhei o
+que já existia. Na mesma parte em que medi que repito o meu passado, apaguei um pedaço dele. **Regra:** antes de criar um arquivo, conferir se o nome
+existe; depois de qualquer mudança no pacote, rodar a suíte **inteira**, não só os testes da parte.
+
 ### P699 (0x2BB). Placar
 
-(a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ⚠️. Parte 41: 8 testes, 1 erro (o ⚠️ conta como acerto com correção). Acumulado: **123 erros em 337
-testes**; taxa média 0,37, intervalo 90% [0,32; 0,41].
+(a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ⚠️, e o erro de código da P679 ❌. Parte 41: 9 testes, 2 erros (o ⚠️ conta como acerto com
+correção). Acumulado: **124 erros em 338 testes**; taxa média 0,37, intervalo 90% [0,32; 0,41].
 
 ### P700 (0x2BC). Unificação e as regras novas
 
-- **Novo módulo:** `metacognicao.py` (4 testes; 113 no pacote). **Novo dado:** `PREVISOES_31_40`, o catálogo das 128 previsões por tipo. Regressão:
+- **Novo módulo:** `engenharia_reversa.py` (4 testes; 113 no pacote; o `metacognicao.py` da Parte 22 foi restaurado, P679). **Novo dado:** `PREVISOES_31_40`, o catálogo das 128 previsões por tipo. Regressão:
   + P671 (128).
 - **Regras novas** (no `CLAUDE.md` como pedido permanente, e as específicas abaixo valem a partir da Parte 42):
   1. faixas de previsão de comportamento **1,72 vezes** mais largas que o meu instinto, até a taxa de erro do tipo C cair para ~10%;
@@ -168,7 +183,8 @@ testes**; taxa média 0,37, intervalo 90% [0,32; 0,41].
   3. antes de aplicar uma lei, medir a forma do dado;
   4. testar as fronteiras primeiro (codificação, processos, arquivos, semântica de cada linguagem);
   5. cada seção do protocolo com pelo menos um número falsificável;
-  6. as duas vozes do diálogo fazem previsões, com placar separado.
+  6. as duas vozes do diálogo fazem previsões, com placar separado;
+  7. antes de criar um arquivo, conferir se o nome existe; depois de mudar o pacote, rodar a suíte inteira.
 - **Previsão para a Parte 42 (registrada aqui, antes de existir):** com as faixas de comportamento alargadas 1,72×, a taxa de erro das previsões do
   tipo C cai para **[0,03; 0,20]**; se ficar acima de 0,20, o problema das minhas faixas não é a largura, é o centro (viés), e a regra 1 está errada.
 

@@ -2,7 +2,7 @@
 
 import unittest
 
-from .metacognicao import aberturas, cosseno, falas_do_dialogo, frases, ngramas, padroes_repetidos, palavras
+from .engenharia_reversa import aberturas, cosseno, falas_do_dialogo, frases, ngramas, padroes_repetidos, palavras
 
 
 class TesteMetacognicao(unittest.TestCase):

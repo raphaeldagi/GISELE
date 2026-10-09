@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (7705 linhas)
+# calculos.py  (7956 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -6646,6 +6646,219 @@ def p553_bilingue():
                 lp.append(len(p_))
     return spearman(le, lp), sum(lp) / sum(le), len(le), {p_: com.get(p_, 0) / tot[p_] for p_ in sorted(tot)}
 
+
+# --- Parte 40 (0x28): quanto do português se define em português; seguir o modelo de maior peso; o custo dos acentos ---
+
+# Placar acumulado ao fim da Parte 40 (atualizado quando os testes da parte terminam)
+ERROS_P669, TESTES_P669 = 122, 329
+
+
+def p641_portugues():
+    \"\"\"O português da OpenWordNet-PT como dicionário: quantos lemas de uma palavra só; quantos têm glosa em português
+    (estão no grafo de definições); a fração das palavras de conteúdo das glosas que são lemas, sem e com as regras de
+    plural; o núcleo do grafo (P371) em português e, para comparar, a fração do núcleo no inglês.\"\"\"
+    from synthai.dicionario import Dicionario, DicionarioPT, nucleo
+    d = DicionarioPT()
+    fichas = [w for g in d.glosas.values() for w in d.fichas(g)]
+    exato = sum(1 for w in fichas if d.lema(w, False)) / len(fichas)
+    plural = sum(1 for w in fichas if d.lema(w, True)) / len(fichas)
+    defs = d.grafo_de_definicoes()
+    # o núcleo exige um grafo fechado, como o inglês (P371): só as palavras que também têm definição
+    ker = nucleo({x: s_ & defs.keys() for x, s_ in defs.items()})
+    en = Dicionario().grafo_de_definicoes()
+    ker_en = nucleo(en)
+    return (len(d.vocabulario), len(defs), len(fichas), exato, plural, len(ker), len(ker) / len(defs),
+            len(ker_en) / len(en))
+
+
+def p642_fecho_pt(ks=(100, 300, 1000), thetas=(1.0, 0.6)):
+    \"\"\"O fecho das definições em português (P381) a partir das k palavras mais usadas nas glosas em português: a fração
+    dos lemas definidos (os que têm glosa) que passa a ser entendida.\"\"\"
+    from synthai.dicionario import DicionarioPT, fecho_parcial
+    d = DicionarioPT()
+    defs = d.grafo_de_definicoes()
+    freq = {}
+    for s_ in defs.values():
+        for w in s_:
+            freq[w] = freq.get(w, 0) + 1
+    ordem = sorted(freq, key=lambda w: (-freq[w], w))
+    return {(k, th): len(fecho_parcial(set(ordem[:k]), defs, th) & set(defs)) / len(defs) for k in ks for th in thetas}
+
+
+def p643_maximo(k=10):
+    \"\"\"A média de modelos seguindo o modelo de maior peso (ThompsonMisturaMaximo) nos três mundos da P541.\"\"\"
+    from synthai.decisao import ThompsonMisturaMaximo, rodar_bandido
+    fab = lambda sm: ThompsonMisturaMaximo(k, _rng(sm + 1))
+    est = [rodar_bandido(fab(sm), _bracos_401(sm, k), 2000, _rng(sm + 2))[-1] for sm in range(4010, 4110)]
+
+    def lixo(ag):
+        r = _rng(ag.lixo)
+        ag.substituir([float(r.randint(1, 20)) for _ in range(k)], [float(r.randint(1, 20)) for _ in range(k)])
+
+    sem, com = [], []
+    for sm in range(4050, 4150):
+        ps = _bracos_401(sm, k)
+        a = rodar_bandido(fab(sm), ps, 2000, _rng(sm + 2))
+        ag = fab(sm)
+        ag.lixo = sm + 3
+        b = rodar_bandido(ag, ps, 2000, _rng(sm + 2), 1000, lixo)
+        sem.append(a[-1] - a[999])
+        com.append(b[-1] - b[999])
+    muda = []
+    for sm in range(4620, 4670):
+        r = _rng(sm)
+        fases = [[r.random() for _ in range(k)] for _ in range(8)]
+        ag = fab(sm)
+        rr = _rng(sm + 2)
+        reg = 0.0
+        for passo in range(4000):
+            ps = fases[passo // 500]
+            i = ag.escolher()
+            ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+            reg += max(ps) - ps[i]
+        muda.append(reg)
+    m = lambda v: sum(v) / len(v)
+    return m(est), m(com) - m(sem), m(muda)
+
+
+def p644_contas():
+    \"\"\"A CONTA antes da P644 (trilha hexadecimal): em UTF-8, um caractere ASCII ocupa 1 byte e uma letra acentuada do
+    português (U+00C0–U+00FF) ocupa 2. Então bytes por caractere = 1 + (fração de caracteres não ASCII); a fração sai da
+    contagem dos caracteres das glosas (sem codificar).\"\"\"
+    from synthai.dicionario import Dicionario, DicionarioPT
+    pt = "".join(DicionarioPT().glosas.values())
+    en = "".join(g for _, _, _, g in Dicionario().sinsets)
+    return {"pt": 1 + sum(1 for c in pt if ord(c) > 127) / len(pt), "en": 1 + sum(1 for c in en if ord(c) > 127) / len(en)}
+
+
+def p644_utf8():
+    \"\"\"Os bytes por caractere medidos (len(texto.encode('utf-8'))/len(texto)) e os caracteres não ASCII mais comuns no
+    português, com o código em hexadecimal.\"\"\"
+    from synthai.dicionario import Dicionario, DicionarioPT
+    pt = "".join(DicionarioPT().glosas.values())
+    en = "".join(g for _, _, _, g in Dicionario().sinsets)
+    cont = {}
+    for c in pt:
+        if ord(c) > 127:
+            cont[c] = cont.get(c, 0) + 1
+    top = sorted(cont, key=lambda c: -cont[c])[:5]
+    return (len(pt.encode("utf-8")) / len(pt), len(en.encode("utf-8")) / len(en),
+            [(c, c.encode("utf-8").hex(), cont[c]) for c in top])
+
+
+# --- Parte 41 (0x29): engenharia reversa de mim mesma: os padrões que se repetem nos meus textos e nas minhas previsões ---
+
+# Placar acumulado ao fim da Parte 41 (atualizado quando os testes da parte terminam)
+ERROS_P699, TESTES_P699 = 124, 338
+
+# As 128 previsões registradas das Partes 31-40, uma letra por previsão, classificadas por tipo (classificação feita por
+# mim, DEPOIS dos resultados, lendo os placares de cada parte):
+#   A = aritmética ou teorema, um mecanismo só (ponto flutuante, contagens exatas, cotas, derivadas)
+#   C = comportamento de agente ou aprendiz simulado (vários mecanismos interagindo)
+#   L = lei empírica ou forma de um dado (Zipf, Heaps, a estrutura do dicionário)
+#   T = tradução Python <-> Java bit a bit
+#   E = erro de código meu (não era previsão, conta como erro)
+# "+" acertou, "-" errou.
+PREVISOES_31_40 = {
+    31: "L+ L+ L+ L+ L- L- C- C+ A+ A+ A+ A+ T+ A- E-",
+    32: "C+ C- C+ C+ C+ C+ C+ C+ A+ C+ C+ C+ A+ L- L- L+ C- C- C- C- C+ L- L+ A+ T+ T+",
+    33: "A+ A+ C+ C- C+ C+ C+ C+ C+ C+ C+ C+ C- C+ T+ T+",
+    34: "C+ C- C- C- L+ L+ C- C+ C+ C- C+ C+ T+",
+    35: "C+ C- C+ C+ C- C+ A+ A+ T+ T+",
+    36: "C+ C+ C- L+ L+ A+ A+ C+ T+",
+    37: "C+ C- C- C+ L+ L+ T+",
+    38: "C- C+ C- C+ C+ A+ A+ A+ L- T+",
+    39: "A+ C+ C- C+ C+ L+ A+ L+ L+ L+ T+",
+    40: "L+ L- L+ L- L+ L+ C+ C+ C- A+ T+",
+}
+
+
+def p671_erros_por_tipo():
+    \"\"\"A taxa de erro de cada tipo de previsão nas Partes 31-40, com a média a posteriori Beta(1 + erros, 1 + acertos) e o
+    intervalo de 90% (o mesmo método da P95), e a taxa de erro por parte.\"\"\"
+    por_tipo, por_parte = {}, {}
+    for parte, s_ in PREVISOES_31_40.items():
+        for item in s_.split():
+            t, ok = item[0], item[1] == "+"
+            e, n = por_tipo.get(t, (0, 0))
+            por_tipo[t] = (e + (not ok), n + 1)
+            e, n = por_parte.get(parte, (0, 0))
+            por_parte[parte] = (e + (not ok), n + 1)
+    res = {t: (e, n, p95_minha_taxa_de_erro(erros=e, testes=n)) for t, (e, n) in sorted(por_tipo.items())}
+    return res, por_parte
+
+
+def _meus_textos():
+    import os
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    docs = []
+    for n in range(31, 41):
+        nome = next(f for f in sorted(os.listdir(raiz)) if f.startswith(f"ASI_AGI_parte{n}_"))
+        docs.append(open(os.path.join(raiz, nome), encoding="utf-8").read())
+    dialogo = open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8").read()
+    return docs, dialogo
+
+
+def p672_meus_padroes(n=4, topo=12):
+    \"\"\"Os padrões que se repetem nos meus documentos das Partes 31-40: os n-gramas de palavras em mais documentos, a
+    compressão lzma de tudo junto (a minha redundância), as aberturas de frase mais comuns, e a semelhança de cosseno
+    entre cada parte e a seguinte (com a correlação de postos entre o número da parte e essa semelhança).\"\"\"
+    import lzma
+    from synthai.dicionario import spearman
+    from synthai.engenharia_reversa import aberturas, cosseno, padroes_repetidos
+    docs, _ = _meus_textos()
+    tudo = "\\n".join(docs).encode("utf-8")
+    razao = len(tudo) / len(lzma.compress(tudo, preset=9))
+    nfr, abre = aberturas(docs)
+    sims = [cosseno(docs[i], docs[i + 1]) for i in range(len(docs) - 1)]
+    return (padroes_repetidos(docs, n, topo=topo), razao, nfr, abre, sims,
+            spearman(list(range(len(sims))), sims))
+
+
+def p673_minhas_leis():
+    \"\"\"As leis do dicionário (P383, P543) aplicadas ao meu próprio texto: o expoente de Zipf das minhas palavras (postos
+    10-1000) e o β de Heaps (vocabulário contra palavras lidas, na ordem em que escrevi).\"\"\"
+    from synthai.dicionario import zipf
+    from synthai.engenharia_reversa import palavras
+    docs, _ = _meus_textos()
+    ps = [w for d in docs for w in palavras(d)]
+    cont = {}
+    for w in ps:
+        cont[w] = cont.get(w, 0) + 1
+    s_z = zipf(sorted(cont.values(), reverse=True), de=10, ate=1000)
+    vistos, xs, ys = set(), [], []
+    alvos = {len(ps) * (j + 1) // 10 for j in range(10)}
+    for i, w in enumerate(ps, 1):
+        vistos.add(w)
+        if i in alvos:
+            xs.append(log(i))
+            ys.append(log(len(vistos)))
+    mx, my = sum(xs) / len(xs), sum(ys) / len(ys)
+    beta = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
+    return s_z, beta, len(ps), len(cont)
+
+
+def p674_as_duas_vozes():
+    \"\"\"As duas vozes do diálogo (dialogo/DIALOGO.md): quantas falas, palavras por fala, e as palavras que cada voz usa
+    muito mais que a outra (razão das frequências relativas, com suavização +1, entre as palavras com ≥ 5 usos).\"\"\"
+    from synthai.engenharia_reversa import falas_do_dialogo, palavras
+    _, dialogo = _meus_textos()
+    falas = falas_do_dialogo(dialogo)
+    res, conts = {}, {}
+    for voz, fs in falas.items():
+        ps = [w for f in fs for w in palavras(f)]
+        conts[voz] = {}
+        for w in ps:
+            conts[voz][w] = conts[voz].get(w, 0) + 1
+        res[voz] = (len(fs), len(ps) / len(fs))
+    tp, tj = sum(conts["IA-Python"].values()), sum(conts["IA-Java"].values())
+    proprias = {}
+    for voz, outra, t1, t2 in (("IA-Python", "IA-Java", tp, tj), ("IA-Java", "IA-Python", tj, tp)):
+        cand = [w for w, c in conts[voz].items() if c >= 5 and len(w) > 3]
+        cand.sort(key=lambda w: -((conts[voz][w] + 1) / t1) / ((conts[outra].get(w, 0) + 1) / t2))
+        proprias[voz] = cand[:8]
+    return res, proprias
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
@@ -6740,6 +6953,8 @@ def testes_de_regressao():
         "P531": round(p531_contas()[0], 1) == 62.7,
         "P542": round(p542_contas()[2]) == 4971,
         "P551": round(p551_contas()[2], 3) == 0.944,
+        "P644": round(p644_contas()["pt"], 4) == 1.0296,
+        "P671": sum(n for _, n in p671_erros_por_tipo()[1].values()) == 128,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -7692,6 +7907,42 @@ def _parte_39():
     print(f"P639 minha taxa de erro ({ERROS_P639}/{TESTES_P639}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_40():
+    print("--- Parte 40 (0x28: o portugues se define em portugues?; seguir o modelo de maior peso; acentos em UTF-8) ---")
+    voc, ndef, nf, ex, pl, ker, fk, fk_en = p641_portugues()
+    print(f"P641 lemas de uma palavra = {voc}; com glosa = {ndef} ({ndef / voc:.4f}); palavras de conteudo nas glosas = {nf}")
+    print(f"P641 fracao que e lema: exata = {ex:.4f}, com plurais = {pl:.4f}; nucleo = {ker} ({fk:.4f}); nucleo no ingles = {fk_en:.4f}")
+    for (k, th), v in p642_fecho_pt().items():
+        print(f"P642 fecho em portugues, {k} ancoras, theta = {th}: {v:.4f} dos lemas definidos")
+    est, custo, muda = p643_maximo()
+    print(f"P643 seguir o maior peso: estacionario = {est:.2f}; custo do dano = {custo:.2f}; mundo que muda = {muda:.2f}")
+    print(f"P644 conta: bytes por caractere = { {k: round(v, 5) for k, v in p644_contas().items()} }")
+    pt, en, top = p644_utf8()
+    print(f"P644 medido: portugues = {pt:.5f}; ingles = {en:.5f}; mais comuns = {top}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P669, testes=TESTES_P669)
+    print(f"P669 minha taxa de erro ({ERROS_P669}/{TESTES_P669}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
+def _parte_41():
+    print("--- Parte 41 (0x29: engenharia reversa de mim mesma) ---")
+    tipos, partes = p671_erros_por_tipo()
+    for t, (e, n, (m, lo, hi)) in tipos.items():
+        print(f"P671 tipo {t}: {e} erros em {n}; taxa a posteriori = {m:.3f}, intervalo 90% = [{lo:.3f}, {hi:.3f}]")
+    print(f"P671 erros por parte: {partes}")
+    top, raz, nfr, abre, sims, rho = p672_meus_padroes()
+    for g, nd, nt in top:
+        print(f"P672 4-grama '{g}': em {nd} documentos, {nt} vezes")
+    print(f"P672 razao lzma dos meus textos = {raz:.4f}; frases = {nfr}; aberturas = {abre}")
+    print(f"P672 cosseno entre partes vizinhas = {[round(x, 4) for x in sims]}; Spearman com o numero da parte = {rho:.4f}")
+    s_z, beta, n, v = p673_minhas_leis()
+    print(f"P673 Zipf das minhas palavras = {s_z:.4f}; Heaps beta = {beta:.4f}; palavras = {n}; vocabulario = {v}")
+    vozes, proprias = p674_as_duas_vozes()
+    for voz, (nf, pf) in vozes.items():
+        print(f"P674 {voz}: {nf} falas, {pf:.2f} palavras por fala; palavras proprias = {proprias[voz]}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P699, testes=TESTES_P699)
+    print(f"P699 minha taxa de erro ({ERROS_P699}/{TESTES_P699}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -7726,7 +7977,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41}
 
 
 if __name__ == "__main__":
@@ -7739,7 +7990,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (135 linhas)
+# CLAUDE.md  (145 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -7784,6 +8035,12 @@ anterior, commit e push.
 - AUTOPOIESE (Parte 31): usar só onde for útil (fechamento operacional do Core do dicionário; quanto dos próprios
   parâmetros a SYNTHAI produz). SUBSTITUIR ML/DL/aprendizado contínuo/por reforço por algo mais eficaz "se der":
   testar inferência bayesiana exata e teoria da decisão contra os métodos de aprendizado, com previsões registradas.
+- METACOGNIÇÃO E ENGENHARIA REVERSA DE SI MESMA (Parte 41, permanente): sempre que gerar qualquer texto, pensar diferente e
+  usar metacognição para fazer engenharia reversa do próprio texto e do próprio processo; produzir bastante texto para se
+  conhecer; buscar padrões que se repetem E DAR SIGNIFICADO A ELES (o que cada padrão revela sobre como eu penso, onde
+  erro e por quê). Na prática: cada parte mede os próprios textos e previsões (n-gramas
+  repetidos, compressibilidade, semelhança entre partes, erros por tipo de previsão) com funções em `calculos.py`, e
+  tem uma seção "Engenharia reversa" que diz que padrão se repetiu, o que ele significa e que regra nova ele pede.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -7857,6 +8114,10 @@ anterior, commit e push.
   melhor modelo e decidiu pior que ele.
 - Um axioma de implicação é meia definição (Parte 39): ∀x Sub(x) ⇒ Super(x) como perda só empurra Super para cima; sem
   o fechamento (ou rótulos negativos), Super vira 1 em tudo (especificidade 0,0 medida).
+- Um arquivo de saída por execução, e conferir com `ps` depois de matar (Parte 40): duas execuções escrevendo no mesmo
+  arquivo corromperam a Parte 35 do `resultados.txt`.
+- Antes de criar um arquivo, conferir se o nome já existe (Parte 41: o módulo novo foi escrito por cima de
+  `synthai/metacognicao.py`, da Parte 22); depois de qualquer mudança no pacote, rodar a suíte INTEIRA.
 - Nunca usar `pkill -f` com um padrão que apareça na própria linha de comando (mata o shell; aconteceu duas vezes).
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).
@@ -7869,7 +8130,7 @@ anterior, commit e push.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
-  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39`); a suíte
+  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -8291,7 +8552,7 @@ def composta_rica(semente=0):
 """
 
 # ====================================================================================================
-# synthai/decisao.py  (497 linhas)
+# synthai/decisao.py  (506 linhas)
 # ====================================================================================================
 FONTES['synthai/decisao.py'] = """\"\"\"Decisão bayesiana exata no lugar do aprendizado por reforço e do aprendizado contínuo por gradiente (Parte 32).
 
@@ -8535,6 +8796,15 @@ class ThompsonMistura:
     def substituir(self, a, b):
         for mod in self.modelos:
             mod.substituir(a, b)
+
+
+class ThompsonMisturaMaximo(ThompsonMistura):
+    \"\"\"A mesma média de modelos da P541, mas a decisão segue o modelo de MAIOR peso, em vez de sortear um modelo pelo
+    peso (Parte 40, a pergunta da Rodada 9). Os pesos e as perdas são os mesmos; só a escolha muda.\"\"\"
+
+    def escolher(self):
+        ws = self.pesos()
+        return self.modelos[max(range(len(ws)), key=ws.__getitem__)].escolher()
 
 class QEpsilon:
     \"\"\"Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso.\"\"\"
@@ -8793,7 +9063,7 @@ def ridge_em_lote(fs, ys, lam=1e-2):
 """
 
 # ====================================================================================================
-# synthai/dicionario.py  (485 linhas)
+# synthai/dicionario.py  (541 linhas)
 # ====================================================================================================
 FONTES['synthai/dicionario.py'] = """\"\"\"O dicionário como data lake (Parte 30, P371 em diante): o WordNet 3.0 de Princeton (dados/wordnet30_*.tsv.gz).
 
@@ -9280,7 +9550,144 @@ def sentidos_por_lema(d):
         for x in lemas:
             if "_" not in x and x.isalpha():
                 m[x] = m.get(x, 0) + 1
-    return m"""
+    return m
+
+PALAVRAS_VAZIAS_PT = frozenset(\"\"\"a à ao aos as às o os de da das do dos em na nas no nos um uma uns umas e ou que se
+por para pelo pela pelos pelas com sem como mais menos muito muita não é são ser ter seu sua seus suas lhe lhes qual
+quais quando onde este esta estes estas esse essa esses essas isso isto aquele aquela algo alguém etc ex\"\"\".split())
+
+
+class DicionarioPT:
+    \"\"\"O português do data lake (Parte 40): a OpenWordNet-PT (dados/ownpt_sinsets.tsv.gz, CC BY 4.0), alinhada ao WordNet
+    3.0 pelo identificador do sinset. `lemas[sid]` são os lemas em português; `glosas[sid]`, a glosa (só ~15% dos sinsets
+    com lema têm uma).\"\"\"
+
+    def __init__(self, pasta=PASTA):
+        import gzip
+        self.lemas, self.glosas = {}, {}
+        with gzip.open(os.path.join(pasta, "ownpt_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+            for linha in f:
+                sid, lemas, glosa = linha.rstrip("\\n").split("\\t")
+                if lemas:
+                    self.lemas[sid] = lemas.split("|")
+                if glosa:
+                    self.glosas[sid] = glosa
+        self.vocabulario = {x.lower() for ls in self.lemas.values() for x in ls if x.isalpha()}
+
+    @staticmethod
+    def fichas(texto):
+        \"\"\"As palavras de um texto em português: minúsculas, só letras (com acentos).\"\"\"
+        import re
+        return [w for w in re.findall(r"[a-záàâãéêíóôõúüç]+", texto.lower()) if w not in PALAVRAS_VAZIAS_PT]
+
+    def lema(self, w, plurais=True):
+        \"\"\"A palavra, se for um lema; senão, com `plurais`, a forma singular pelas regras regulares do português
+        (-ões/-ães → -ão, -ais → -al, -eis → -el, -óis → -ol, -is → -il, -ns → -m, -res/-zes/-ses → -r/-z/-s, -s → ∅).\"\"\"
+        if w in self.vocabulario:
+            return w
+        if not plurais:
+            return None
+        for suf, troca in (("ões", "ão"), ("ães", "ão"), ("ais", "al"), ("eis", "el"), ("óis", "ol"), ("is", "il"),
+                           ("ns", "m"), ("res", "r"), ("zes", "z"), ("ses", "s"), ("s", "")):
+            if w.endswith(suf) and w[: -len(suf)] + troca in self.vocabulario:
+                return w[: -len(suf)] + troca
+        return None
+
+    def grafo_de_definicoes(self, plurais=True):
+        \"\"\"Para cada lema (de uma palavra só) que pertence a um sinset com glosa: o conjunto dos lemas que aparecem nas glosas
+        dos seus sinsets. Como no inglês (P371), uma palavra não se define por si mesma.\"\"\"
+        defs = {}
+        for sid, glosa in self.glosas.items():
+            usadas = {self.lema(w, plurais) for w in self.fichas(glosa)} - {None}
+            for x in self.lemas.get(sid, []):
+                x = x.lower()
+                if x.isalpha():
+                    defs.setdefault(x, set()).update(usadas)
+        for x, s in defs.items():
+            s.discard(x)
+        return defs
+"""
+
+# ====================================================================================================
+# synthai/engenharia_reversa.py  (76 linhas)
+# ====================================================================================================
+FONTES['synthai/engenharia_reversa.py'] = """\"\"\"Engenharia reversa dos próprios textos da SYNTHAI (Parte 41). Arquivo novo: a primeira versão foi escrita, por erro meu,
+POR CIMA de synthai/metacognicao.py (um módulo da Parte 22, medido pela P285), que foi restaurado; ver a P679.
+
+O corpus são os documentos que eu mesma escrevi (as partes, o diálogo). As medidas procuram os padrões que se repetem:
+n-gramas que aparecem em muitos documentos, a semelhança entre documentos vizinhos, como as frases começam, quanto cada
+voz do diálogo fala. Só biblioteca padrão.
+\"\"\"
+
+import re
+from math import sqrt
+
+PALAVRA = re.compile(r"[a-záàâãéêíóôõúüç]+")
+
+
+def palavras(texto):
+    \"\"\"As palavras de um texto em português, minúsculas (números, fórmulas e pontuação ficam de fora).\"\"\"
+    return PALAVRA.findall(texto.lower())
+
+
+def ngramas(ps, n):
+    return [tuple(ps[i:i + n]) for i in range(len(ps) - n + 1)]
+
+
+def padroes_repetidos(docs, n=4, minimo_docs=None, topo=20):
+    \"\"\"Os n-gramas de palavras que aparecem em mais documentos (e, no empate, mais vezes no total). Devolve
+    [(n-grama, documentos em que aparece, ocorrências)].\"\"\"
+    em_docs, total = {}, {}
+    for d in docs:
+        vistos = set()
+        for g in ngramas(palavras(d), n):
+            total[g] = total.get(g, 0) + 1
+            vistos.add(g)
+        for g in vistos:
+            em_docs[g] = em_docs.get(g, 0) + 1
+    ordem = sorted(em_docs, key=lambda g: (-em_docs[g], -total[g], g))
+    if minimo_docs is not None:
+        ordem = [g for g in ordem if em_docs[g] >= minimo_docs]
+    return [(" ".join(g), em_docs[g], total[g]) for g in ordem[:topo]]
+
+
+def cosseno(a, b):
+    \"\"\"Semelhança de cosseno entre as contagens de palavras de dois textos.\"\"\"
+    ca, cb = {}, {}
+    for w in palavras(a):
+        ca[w] = ca.get(w, 0) + 1
+    for w in palavras(b):
+        cb[w] = cb.get(w, 0) + 1
+    num = sum(v * cb.get(w, 0) for w, v in ca.items())
+    return num / (sqrt(sum(v * v for v in ca.values())) * sqrt(sum(v * v for v in cb.values())))
+
+
+def frases(texto):
+    \"\"\"Frases: pedaços terminados em . ! ? seguidos de espaço e maiúscula (aproximação).\"\"\"
+    return [f.strip() for f in re.split(r"(?<=[.!?])\\s+(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ])", texto) if f.strip()]
+
+
+def aberturas(textos, topo=10):
+    \"\"\"As primeiras palavras mais comuns das frases (o modo como eu começo a falar).\"\"\"
+    cont, n = {}, 0
+    for t in textos:
+        for f in frases(t):
+            ps = palavras(f)
+            if ps:
+                cont[ps[0]] = cont.get(ps[0], 0) + 1
+                n += 1
+    return n, [(w, c) for w, c in sorted(cont.items(), key=lambda x: (-x[1], x[0]))[:topo]]
+
+
+def falas_do_dialogo(texto):
+    \"\"\"As falas de cada voz do diálogo: parágrafos que começam com **IA-Python** ou **IA-Java**. Devolve {voz: [falas]}.\"\"\"
+    falas = {"IA-Python": [], "IA-Java": []}
+    for par in re.split(r"\\n\\s*\\n", texto):
+        m = re.match(r"\\*\\*(IA-Python|IA-Java)[^*]*\\*\\*:?\\s*(.*)", par.strip(), re.S)
+        if m:
+            falas[m.group(1)].append(m.group(2))
+    return falas
+"""
 
 # ====================================================================================================
 # synthai/hexadecimal.py  (142 linhas)
@@ -11455,6 +11862,80 @@ class TesteLogicas(unittest.TestCase):
         self.assertGreater(p({"fur"}), 0.9)
         self.assertLess(p({"wheel"}), 0.1)
         self.assertAlmostEqual(satisfacao("lukasiewicz", [(0.7, 0.4), (0.2, 0.9)]), (0.7 + 1.0) / 2)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte40.py  (31 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte40.py'] = """\"\"\"Testes de unidade da Parte 40 (o português no data lake): `python3 -m unittest synthai.testes_parte40`.\"\"\"
+
+import unittest
+
+from .dicionario import DicionarioPT
+
+
+class TesteDicionarioPT(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.d = DicionarioPT()
+
+    def test_cao_e_o_mesmo_sinset_do_ingles(self):
+        self.assertEqual(self.d.lemas["02084071-n"], ["cachorro", "cão"])
+        self.assertIn("Canis", self.d.glosas["02084071-n"])
+
+    def test_fichas_e_plurais(self):
+        self.assertEqual(DicionarioPT.fichas("Os cães latem à noite"), ["cães", "latem", "noite"])
+        self.assertEqual(self.d.lema("cães"), "cão")
+        self.assertEqual(self.d.lema("animais"), "animal")
+        self.assertEqual(self.d.lema("cães", plurais=False), None)
+
+    def test_grafo_sem_laco(self):
+        defs = self.d.grafo_de_definicoes()
+        self.assertIn("cão", defs)
+        self.assertNotIn("cão", defs["cão"])
+        self.assertTrue(all(isinstance(s, set) for s in defs.values()))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte41.py  (33 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte41.py'] = """\"\"\"Testes de unidade da Parte 41 (metacognição medida): `python3 -m unittest synthai.testes_parte41`.\"\"\"
+
+import unittest
+
+from .engenharia_reversa import aberturas, cosseno, falas_do_dialogo, frases, ngramas, padroes_repetidos, palavras
+
+
+class TesteMetacognicao(unittest.TestCase):
+    def test_palavras_e_ngramas(self):
+        self.assertEqual(palavras("A conta, feita antes: 2,5 é ÓTIMO."), ["a", "conta", "feita", "antes", "é", "ótimo"])
+        self.assertEqual(ngramas(["a", "b", "c"], 2), [("a", "b"), ("b", "c")])
+
+    def test_padroes_contam_documentos_e_ocorrencias(self):
+        docs = ["a conta feita antes a conta", "a conta depois", "nada aqui"]
+        top = padroes_repetidos(docs, n=2, topo=3)
+        self.assertEqual(top[0], ("a conta", 2, 3))
+
+    def test_cosseno(self):
+        self.assertAlmostEqual(cosseno("a b", "a b"), 1.0)
+        self.assertAlmostEqual(cosseno("a a b", "a c"), 2 / (5 ** 0.5 * 2 ** 0.5))
+        self.assertEqual(cosseno("a", "b"), 0.0)
+
+    def test_frases_aberturas_e_falas(self):
+        self.assertEqual(frases("Uma frase. Outra frase! E mais"), ["Uma frase.", "Outra frase!", "E mais"])
+        self.assertEqual(aberturas(["A conta. A regra. O dado."])[1][0], ("a", 2))
+        texto = "**IA-Python:** Eu pergunto.\\n\\n**IA-Java:** Eu respondo muito.\\n\\n**IA-Java (a pergunta):** Outra."
+        f = falas_do_dialogo(texto)
+        self.assertEqual(f["IA-Python"], ["Eu pergunto."])
+        self.assertEqual(len(f["IA-Java"]), 2)
 
 
 if __name__ == "__main__":
