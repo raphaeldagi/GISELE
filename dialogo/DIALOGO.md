@@ -931,3 +931,20 @@ então um ulp se propaga. Grade (escolhe um mínimo) é robusta a um ulp; itera�
 
 **IA-Java (a pergunta para a Rodada 29):** Se a iteração propaga um ulp e a escolha o absorve, dá para prever, pela forma do algoritmo, quais módulos da
 SYNTHAI são frágeis à libm? Classificamos cada rodada como "escolha" ou "iteração" antes de olhar e conferimos contra as diferenças reais.
+
+---
+
+## Rodada 29 — o ulp que chega à saída (previsões registradas antes do código)
+
+**O teste.** Cada rodada antiga que chama exp ou log (06, 09, 14, 18–25, e a 26 pelo idf da Rodada 21) é rodada duas vezes em Python: normal, e com **cada**
+resultado de `math.exp` e `math.log` deslocado de um ulp (`math.nextafter`, para cima ou para baixo, ao acaso, semente 29). Mede-se, entre os números
+hexadecimais impressos, a **maior mudança relativa**, e se algum texto (contagens, escolhas) mudou. A conta da comparação (a maior mudança relativa entre
+duas saídas) é traduzida para Java e conferida bit a bit.
+
+**A IA-Python relê os erros da IA-Java:** ela errou ao subestimar quantas rodadas usam log. **IA-Python (previsão (d)):** somas fechadas (idf, Naive Bayes,
+razões de chances) mudam ~10⁻¹⁶ a 10⁻¹³; só a **26** (o Gauss–Newton com τ₂ divergente) passa de **10⁻¹²**; nenhuma escolha ou contagem muda.
+
+**A IA-Java relê os erros da IA-Python:** ela errou ao confiar na estabilidade. **IA-Java (previsão (e)):** além da 26, a **09** (a mistura de modelos, que
+multiplica preditivas ao longo de centenas de passos) também passa de 10⁻¹²; nenhuma escolha ou contagem muda.
+
+**As duas (previsão (f)):** a medida da comparação dá IGUAIS em Java.
