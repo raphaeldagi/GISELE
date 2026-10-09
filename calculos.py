@@ -4916,6 +4916,46 @@ def p356_composta(sementes=tuple(range(850, 880)), sementes_bandido=tuple(range(
     return resultado
 
 
+def p357_takeuchi(treino=150):
+    """CONFERÊNCIA DE TEORIA (depois de ver a P353): o otimismo esperado (perda de teste − de treino, por amostra) de um
+    modelo MAL especificado não é k/n (Akaike), é tr(J I⁻¹)/n (Takeuchi, 1976), com J = média de (y − p)² x xᵀ e
+    I = média de p(1 − p) x xᵀ no ajuste. Com o modelo certo, J = I e o traço vale k. Calcula os dois traços no
+    histórico de treino de cada semente (as mesmas da P353) e devolve as médias."""
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento_exato import _inversa, ajustar_logistica, dados_do_historico
+    from synthai.pensamento_rico import PensamentoRico
+    mundos = (("sequencial", lambda s: MundoSequencial(s), tuple(range(620, 630))),
+              ("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), tuple(range(640, 650))))
+
+    def traco(xs, ys, w):
+        k = len(w)
+        J = [[0.0] * k for _ in range(k)]
+        I = [[0.0] * k for _ in range(k)]
+        for x, y in zip(xs, ys):
+            p = 1 / (1 + exp(-max(-30.0, min(30.0, sum(a * b for a, b in zip(w, x))))))
+            r2, v = (y - p) ** 2, p * (1 - p)
+            for i in range(k):
+                for j in range(k):
+                    J[i][j] += r2 * x[i] * x[j]
+                    I[i][j] += v * x[i] * x[j]
+        inv = _inversa(I)
+        return sum(J[i][j] * inv[j][i] for i in range(k) for j in range(k))
+    resultado = {}
+    for nome, fazer, sementes in mundos:
+        t_lin = t_rico = n_med = 0.0
+        for s in sementes:
+            hist = fazer(s).historico_auditado(treino)
+            xs, ys = dados_do_historico(hist)
+            t_lin += traco(xs, ys, ajustar_logistica(xs, ys, firth=False)) / len(sementes)
+            r = PensamentoRico()
+            r.calibrar(hist)
+            xr = [r._x(o, max(oo.comite for oo, _, _ in ep), l) for ep in hist for o, _, l in ep]
+            t_rico += traco(xr, ys, r.w) / len(sementes)
+            n_med += len(xs) / len(sementes)
+        resultado[nome] = (t_lin, t_rico, n_med, t_lin / n_med, t_rico / n_med, (t_rico - t_lin) / n_med)
+    return resultado
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
