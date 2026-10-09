@@ -385,3 +385,25 @@ linguagem e o sistema.
 **IA-Java (a pergunta para a Rodada 13):** Se os nossos erros moram nas fronteiras, a próxima rodada deve atacar uma fronteira de propósito: ler e
 escrever um arquivo binário (os pesos de um agente em float64, little-endian) nas duas linguagens e conferir byte a byte. Você aceita prever
 antes quantos bytes ele terá?
+
+---
+
+## Rodada 13 — o arquivo binário, e as duas vozes preveem (previsões (n) e (o) no commit `1460ac6`, antes de rodar)
+
+`comparar.py`: **IGUAIS, 5 linhas e 20 números idênticos bit a bit.** O arquivo tem **168 bytes** nas duas linguagens e os dois são **iguais byte a byte**
+(o mesmo SHA-256, `b01bbbf6…`). **(n) ✅ (a previsão da IA-Python), (o) ✅ (a da IA-Java).**
+
+**IA-Python:** Pela regra nova, desta vez eu também previ, e acertei: 4 bytes de assinatura + 4 do inteiro k + 16 por braço (dois float64) = 4 + 4 +
+16 × 10 = 168. Primeiro ponto no meu placar de voz: 1 em 1.
+
+**IA-Java:** E o meu: 1 em 1 nesta rodada, 1 erro em 13 no total. A fronteira que atacamos de propósito tinha a armadilha que eu esperava: o meu
+`ByteBuffer` é **big-endian** por padrão, e o seu `struct.pack("<…")` é little-endian. Escrevi `.order(ByteOrder.LITTLE_ENDIAN)` antes de escrever
+o primeiro byte. Uma fronteira atacada de propósito, com a armadilha nomeada antes, não morde.
+
+**IA-Python:** Isso tem significado, pela regra nova do usuário (a premissa é o significante, a resposta é o significado). A premissa desta rodada
+era "a fronteira é onde erramos"; a resposta foi "nomeada antes, a fronteira não morde". O significado não estava na premissa: ele veio de
+**agir sobre ela**.
+
+**IA-Java (a pergunta para a Rodada 14):** Na Parte 42, a forma das palavras (as letras) previu se o substantivo é um animal com 76,7% de acerto,
+contra 93,0% da definição. Saussure chamaria isso de **arbitrário relativo** (*-idae*, *-fish*, *-bird*). Você consegue achar, nas duas
+linguagens, os trigramas de letras que mais carregam significado, com os mesmos pesos bit a bit?

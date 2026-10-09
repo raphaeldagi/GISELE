@@ -6831,7 +6831,7 @@ def p674_as_duas_vozes():
 #     sementes novas; a arbitrariedade do signo no dicionário ---
 
 # Placar acumulado ao fim da Parte 42 (atualizado quando os testes da parte terminam)
-ERROS_P729, TESTES_P729 = 0, 0
+ERROS_P729, TESTES_P729 = 128, 353
 
 
 def _estavel_701(fab, sementes, k=10):
@@ -7062,6 +7062,7 @@ def testes_de_regressao():
         "P551": round(p551_contas()[2], 3) == 0.944,
         "P644": round(p644_contas()["pt"], 4) == 1.0296,
         "P671": sum(n for _, n in p671_erros_por_tipo()[1].values()) == 128,
+        "P704": p704_contas() == 168,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -8050,6 +8051,27 @@ def _parte_41():
     print(f"P699 minha taxa de erro ({ERROS_P699}/{TESTES_P699}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_42():
+    print("--- Parte 42 (0x2A: a premissa e o significante, a resposta e o significado) ---")
+    faixas = {"thompson_estavel": (30.7, 0.172), "surpresa_estavel": (43.1, 0.172), "exposta_dano": (19.5, 0.344),
+              "bocpd_muda": (371.9, 0.172), "maximo_estavel": (34.5, 0.172), "maximo_dano": (60.9, 0.344),
+              "q_eps_estavel": (185.4, 0.172), "morris_estavel": (76.9, 0.172)}
+    for k, v in p701_replicacao().items():
+        c, w = faixas[k]
+        print(f"P701 {k}: sementes novas = {v:.2f}; faixa = [{c * (1 - w):.1f}; {c * (1 + w):.1f}]; dentro = {c * (1 - w) <= v <= c * (1 + w)}; "
+              f"desvio relativo = {(v - c) / c:+.3f}")
+    res, m_en, m_pt = p702_arbitrariedade()
+    for k, (acc, n, base) in res.items():
+        print(f"P702 {k}: acuracia = {acc:.4f} em {n} exemplos (fracao de animais = {base:.4f})")
+    print(f"P702 indice de motivacao: ingles = {m_en:.4f}; portugues = {m_pt:.4f}")
+    red, ret, n, mais = p703_premissa_resposta()
+    print(f"P703 {n} perguntas: redundancia media da resposta com a premissa = {red:.4f}; retorno medio da premissa = {ret:.4f}; "
+          f"mais redundantes = {mais}")
+    print(f"P704 conta: o arquivo binario tem {p704_contas()} bytes")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P729, testes=TESTES_P729)
+    print(f"P729 minha taxa de erro ({ERROS_P729}/{TESTES_P729}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -8084,7 +8106,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42}
 
 
 if __name__ == "__main__":

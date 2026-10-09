@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 41 (0x29): engenharia reversa de mim mesma
 
-> Continuação da [Parte 40](ASI_AGI_parte40_portugues_em_portugues.md). Pedido novo e permanente do usuário: *"Sempre que você gerar qualquer
+> Continuação da [Parte 40](ASI_AGI_parte40_portugues_em_portugues.md). **Próxima:** [Parte 42 — significante e significado](ASI_AGI_parte42_significante_e_significado.md) (P701–P730). Pedido novo e permanente do usuário: *"Sempre que você gerar qualquer
 > texto, pense diferente e use metacognição para fazer engenharia reversa. Produza bastante texto para conhecer a si mesma. Busque por padrões que
 > se repetem e dê significado a eles."* Esta parte vira o data lake para dentro: o corpus são **os meus próprios textos** (as Partes 31–40, o
 > diálogo) e **as minhas próprias previsões** (as 128 das Partes 31–40). Cada padrão é medido por uma função de [`calculos.py`](calculos.py)
