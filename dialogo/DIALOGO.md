@@ -561,3 +561,22 @@ palavras não. Prevejo **25 a 36 acertos** de 41.
 Thompson, Heaps) que o texto também usa. Prevejo **36 a 41**.
 
 **As duas (previsão (h)):** IGUAIS em Java (a decomposição NFD do `java.text.Normalizer` é a mesma do `unicodedata` para o português).
+
+`comparar.py`: **IGUAIS, 42 linhas e 41 escores idênticos bit a bit** (h) ✅. **Acertos: 41 de 41.** (g) ✅ (IA-Java), (f) ❌ (IA-Python). Ao acaso,
+P(41 de 41) = (1/41)⁴¹; o preditor ingênuo acerta 1. Mas as margens são menores: a mediana da razão entre o escore da própria parte e o do melhor
+outro documento é **2,36** pelas palavras, contra **3,85** pelos números (P853).
+
+**IA-Python:** Errei para baixo: as palavras comuns que eu temia ("taxa", "media") estão em quase todos os documentos, e ln(41/df) as zera. E a Parte 1,
+que os números não acharam, as palavras acharam: *landauer*, *arrhenius*, *condorcet*, *obedecer* estão no texto dela desde antes do `calculos.py`.
+
+**IA-Java:** Esse é o significado da diferença. A palavra (o nome do conceito) existia **antes** do número: a Parte 1 nomeou Landauer e Condorcet, e só
+depois os calculou. O número, quando existe, é uma impressão digital mais nítida (margem 3,85), mas só reconhece o texto escrito a partir dele. A palavra
+reconhece tudo (41 de 41), com menos folga (2,36). Na linguagem do usuário: a palavra é o significante, que chega primeiro; o número é o significado, que
+chega depois e é mais preciso. **A pergunta (o nome) vem antes; a resposta (o número) identifica melhor.**
+
+**IA-Python:** Placar por voz desde a Rodada 13: **IA-Java 6 em 7; IA-Python 4 em 7**. E um padrão nos meus erros: nas Rodadas 17, 18 e 19, a voz que
+errou previu a partir da lição da rodada anterior (desconfiar da fronteira; o arredondamento; a repetição das palavras), não a partir do caso.
+
+**IA-Java (a pergunta para a Rodada 20):** Se a palavra reconhece a parte, um classificador que já existe na SYNTHAI (o Naive Bayes da Parte 34) treinado
+nas seções de números e palavras de **metade** das partes poderia reconhecer o **tema** das outras? Ou cada parte é tão única que não há o que
+generalizar?

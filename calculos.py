@@ -7273,6 +7273,85 @@ def p825_cauda_binomial(n, p, k):
     """P(X >= k) para X ~ Binomial(n, p): a chance de acertar k ou mais ao acaso."""
     return sum(comb(n, i) * p ** i * (1 - p) ** (n - i) for i in range(k, n + 1))
 
+
+ERROS_P879, TESTES_P879 = 0, 0
+
+
+def p851_genero_e_diferenca(d=None):
+    """A definição contém a pergunta? (P851, gênero e diferença). Para cada substantivo do WordNet com hiperônimo direto:
+    direto = a definição contém, como palavra inteira, um lema do hiperônimo (ou + s/es); inverso, por par
+    hipônimo-hiperônimo = a definição do hiperônimo contém um lema do hipônimo. Devolve (fração direta, fração inversa,
+    pares, sinsets)."""
+    import re
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+
+    def contem(definicao, lemas):
+        for x in lemas:
+            x = re.escape(x.replace("_", " ").lower())
+            if re.search(r"(?<![a-z])" + x + r"(?:e?s)?(?![a-z])", definicao):
+                return True
+        return False
+
+    direto = inverso = pares = n = 0
+    for pos, lemas, hiper, glosa in d.sinsets:
+        if pos != "n":
+            continue
+        hs = [d.indice[h] for h in hiper if h in d.indice]
+        if not hs:
+            continue
+        n += 1
+        definicao = d.definicao(glosa).lower()
+        direto += any(contem(definicao, d.sinsets[k][1]) for k in hs)
+        for k in hs:
+            pares += 1
+            inverso += contem(d.definicao(d.sinsets[k][3]).lower(), lemas)
+    return direto / n, inverso / pares, pares, n
+
+
+def p852_cadeia_hexadecimal(ate=850):
+    """f(n) = o hexadecimal de n lido como decimal, enquanto não houver letra. Devolve (quantos de 1 a `ate` não têm
+    letra no hexadecimal, a média de aplicações de f para n de 10 a `ate`, a conta da P852 com independência)."""
+    sem_letra = sum(1 for n in range(1, ate + 1) if format(n, "x").isdigit())
+    passos = []
+    for n in range(10, ate + 1):
+        k = 0
+        while format(n, "x").isdigit():
+            n = int(format(n, "x"))
+            k += 1
+        passos.append(k)
+    p1 = (sem_letra - 9) / (ate - 9)
+    p2, p3 = 9 / 15 * (10 / 16) ** 3, 9 / 15 * (10 / 16) ** 4
+    return sem_letra, sum(passos) / len(passos), p1 + p1 * p2 + p1 * p2 * p3
+
+
+def p853_reconstrucao(rodada="rodada19"):
+    """Rodada 19 (P853): a mesma reconstrução da P824, pelas palavras (rodada19) ou pelos números (rodada18). Devolve
+    (acertos, partes, erradas, a mediana da razão entre o escore da própria parte e o do melhor outro documento)."""
+    import importlib.util
+    import os
+    import statistics
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    spec = importlib.util.spec_from_file_location(rodada, os.path.join(raiz, "dialogo", rodada + ".py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    docs, sec = r.documentos(), r.secoes()
+    partes = sorted(k for k in docs if k in sec)
+    dn = {k: r.numeros(open(os.path.join(raiz, docs[k]), encoding="utf-8").read()) for k in partes}
+    df = {}
+    for k in partes:
+        for t in dn[k]:
+            df[t] = df.get(t, 0) + 1
+    razoes, erradas = [], []
+    for n in partes:
+        rr = r.numeros(sec[n])
+        esc = {k: sum(log(len(partes) / df[t]) for t in sorted(rr & dn[k])) for k in partes}
+        outro = max(v for k, v in esc.items() if k != n)
+        razoes.append(esc[n] / outro)
+        if esc[n] <= outro:
+            erradas.append(n)
+    return len(partes) - len(erradas), len(partes), erradas, statistics.median(razoes)
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
@@ -7374,6 +7453,8 @@ def testes_de_regressao():
         "P761": round(p761_contas()["global_muda"], 2) == 263.85,
         "P792": round(p792_calibracao()[1], 2) == 1.07,
         "P821": round(p821_inversao(range(31, 46))[1], 3) == 0.579,
+        "P851": round(p851_genero_e_diferenca()[0], 3) == 0.602,
+        "P852": p852_cadeia_hexadecimal()[0] == 352 and round(p852_cadeia_hexadecimal(4095)[1], 3) == 0.432,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -8443,6 +8524,20 @@ def _parte_46():
     print(f"P849 minha taxa de erro ({ERROS_P849}/{TESTES_P849}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_47():
+    print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
+    direto, inverso, pares, n = p851_genero_e_diferenca()
+    print(f"P851 {n} substantivos com hiperonimo: a definicao cita o hiperonimo em {direto:.4f}; a do hiperonimo cita o hiponimo em "
+          f"{inverso:.4f} ({pares} pares); razao = {direto / inverso:.1f}")
+    for ate in (850, 4095):
+        sem, media, conta = p852_cadeia_hexadecimal(ate)
+        print(f"P852 ate {ate}: {sem} sem letra no hexadecimal; passos medios da cadeia = {media:.4f} (conta com independencia: {conta:.4f})")
+    for rodada in ("rodada18", "rodada19"):
+        ac, k, erradas, med = p853_reconstrucao(rodada)
+        print(f"P853 {rodada}: {ac} de {k} partes reconstruidas (erradas: {erradas}); mediana da razao propria/melhor outra = {med:.3f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P879, testes=TESTES_P879)
+    print(f"P879 minha taxa de erro ({ERROS_P879}/{TESTES_P879}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -8479,7 +8574,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47}
 
 
 if __name__ == "__main__":
