@@ -6456,6 +6456,163 @@ def p543_heaps(semente=543, pontos=10):
     beta = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
     return beta, 1 / 1.08, 1 / 1.0694, total, len(vistos)
 
+
+# --- Parte 39 (0x27): a arquitetura neuro-simbólica do usuário, testada: o axioma Cão ⇒ Mamífero como perda (LTN);
+#     o português como data lake (OpenWordNet-PT); a compressibilidade dos dicionários ---
+
+# Placar acumulado ao fim da Parte 39 (atualizado quando os testes da parte terminam)
+ERROS_P639, TESTES_P639 = 0, 0
+
+_SUBCLASSES_551 = {"mamifero": "01861778", "ave": "01503061", "peixe": "02512053", "reptil": "01661091",
+                   "anfibio": "01627424", "invertebrado": "01905661"}
+
+
+def _dados_551(semente=551):
+    """Os 4017 substantivos que descendem de animal.n.01 e o mesmo número de outros substantivos ao acaso; para cada um,
+    as palavras da definição (os atributos) e os rótulos: animal (0/1) e a subclasse (ou None). 80% treino, 20% teste."""
+    from synthai.dicionario import Dicionario, ancestrais
+    d = Dicionario()
+    A = d.indice["n:00015388"]
+    subs = {k: d.indice["n:" + v] for k, v in _SUBCLASSES_551.items()}
+    animais, outros = [], []
+    for i, x in enumerate(d.sinsets):
+        if x[0] != "n" or i == A:
+            continue
+        an = ancestrais(d, i)
+        feat = frozenset(d.palavras_da_definicao(x[3]))
+        if A in an:
+            sub = next((k for k, j in subs.items() if j in an and j != i), None)
+            animais.append((feat, 1, sub))
+        else:
+            outros.append((feat, 0, None))
+    rng = _rng(semente)
+    outros = rng.sample(outros, len(animais))
+    dados = animais + outros
+    rng.shuffle(dados)
+    corte = len(dados) * 4 // 5
+    return dados[:corte], dados[corte:]
+
+
+def p551_contas():
+    """A CONTA antes da P551. (1) Com só os axiomas ∀x Sub_i(x) ⇒ Animal(x), o gradiente da perda em Animal é
+    −∂I/∂b ≤ 0 em toda implicação das três lógicas: nada empurra Animal para BAIXO. Num conjunto de teste meio a meio, um
+    Animal que só sobe tende a dizer "animal" para tudo: acurácia → 0,5, especificidade → 0. (2) A regra Animal(x) :=
+    S(Sub_1(x), …, Sub_6(x)) só pode acertar os animais cobertos pelas seis subclasses: revocação ≤ 0,954 (3832/4017)."""
+    tr, te = _dados_551()
+    an = [x for x in te if x[1] == 1]
+    return len(tr), len(te), sum(1 for x in an if x[2] is not None) / len(an)
+
+
+def p551_ltn(logica="lukasiewicz", taxa=0.5, epocas=5, semente=551):
+    """Os seis predicados das subclasses são treinados com rótulos (entropia cruzada). O predicado Animal NÃO vê rótulo
+    nenhum em E1 e E2:
+    - E1: só os axiomas ∀x Sub_i(x) ⇒ Animal(x), sobre todos os x do treino (o que o texto do usuário propõe);
+    - E2: os mesmos e o axioma de fechamento ∀x Animal(x) ⇒ S(Sub_1(x), …, Sub_6(x)) (S a t-conorma da lógica);
+    - E3: Animal com rótulos (a referência supervisionada);
+    - regra: Animal(x) := S(Sub_i(x)), sem treino nenhum.
+    Devolve, no teste, (acurácia, revocação nos animais, especificidade nos outros) de cada um."""
+    from synthai.neurossimbolico import LOGICAS, Predicado, gradiente_implicacao, treinar_supervisionado
+    tr, te = _dados_551()
+    rng = _rng(semente)
+    subs = {k: Predicado() for k in _SUBCLASSES_551}
+    for k, p in subs.items():
+        treinar_supervisionado(p, [(x, 1 if s == k else 0) for x, _, s in tr], taxa, epocas, rng)
+    S = LOGICAS[logica][1]
+
+    def disj(x):
+        v = 0.0
+        for p in subs.values():
+            v = S(v, p(x))
+        return v
+
+    def axiomas(fechamento):
+        A = Predicado()
+        ordem = list(tr)
+        for _ in range(epocas):
+            rng.shuffle(ordem)
+            for x, _, _ in ordem:
+                a = A(x)
+                g = 0.0
+                for p in subs.values():
+                    g += gradiente_implicacao(logica, p(x), a)[1]
+                if fechamento:
+                    g += gradiente_implicacao(logica, a, disj(x))[0]
+                if g:
+                    A.passo(x, g / (len(subs) + fechamento), taxa)
+        return A
+
+    def medir(f):
+        an = [f(x) >= 0.5 for x, y, _ in te if y == 1]
+        ou = [f(x) < 0.5 for x, y, _ in te if y == 0]
+        return ((sum(an) + sum(ou)) / len(te), sum(an) / len(an), sum(ou) / len(ou))
+
+    e3 = Predicado()
+    treinar_supervisionado(e3, [(x, y) for x, y, _ in tr], taxa, epocas, rng)
+    return {"E1": medir(axiomas(False)), "E2": medir(axiomas(True)), "E3": medir(e3), "regra": medir(disj)}
+
+
+def p552_compressao(semente=552):
+    """A afirmação do texto de que "grande parte dos dados do mundo real é incompressível": as glosas do data lake em
+    inglês e em português, comprimidas por lzma (preset 9) e zlib (9), contra 1 MB de bytes ao acaso. Para cada um: bits por
+    caractere (lzma), a entropia de ordem 0 dos caracteres (bits), e a razão de compressão (lzma)."""
+    import gzip as gz
+    import lzma
+    import os
+    import zlib
+    from synthai.dicionario import Dicionario
+    d = Dicionario()
+    en = "\n".join(g for _, _, _, g in d.sinsets).encode("utf-8")
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    pt_glosas = []
+    with gz.open(os.path.join(raiz, "dados", "ownpt_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        for linha in f:
+            partes = linha.rstrip("\n").split("\t")
+            if len(partes) == 3 and partes[2]:
+                pt_glosas.append(partes[2])
+    pt = "\n".join(pt_glosas).encode("utf-8")
+    r = _rng(semente)
+    acaso = bytes(r.getrandbits(8) for _ in range(1_000_000))
+    res = {}
+    for nome, b in (("glosas_en", en), ("glosas_pt", pt), ("acaso", acaso)):
+        cont = {}
+        for c in b:
+            cont[c] = cont.get(c, 0) + 1
+        n = len(b)
+        h0 = -sum(v / n * log2(v / n) for v in cont.values())
+        lz = len(lzma.compress(b, preset=9))
+        zl = len(zlib.compress(b, 9))
+        res[nome] = (n, 8 * lz / n, h0, n / lz, n / zl)
+    return res
+
+
+def p553_bilingue():
+    """O português alinhado ao inglês pelo sinset (OWN-PT e WordNet 3.0): nos sinsets com um primeiro lema de uma palavra
+    só nas duas línguas, a correlação de postos entre os comprimentos (lei da abreviação entre línguas, ↩ P533), a razão
+    média dos comprimentos (pt/en), e a cobertura: a fração dos sinsets de cada classe com lema em português."""
+    import gzip as gz
+    import os
+    from synthai.dicionario import Dicionario, spearman
+    d = Dicionario()
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    pt = {}
+    with gz.open(os.path.join(raiz, "dados", "ownpt_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        for linha in f:
+            i, lemas, _ = linha.rstrip("\n").split("\t")
+            if lemas:
+                pt[i] = lemas.split("|")
+    tot, com, le, lp = {}, {}, [], []
+    for chave, i in d.indice.items():
+        pos, desloc = chave.split(":")
+        sid = f"{desloc}-{pos}"
+        tot[pos] = tot.get(pos, 0) + 1
+        if sid in pt:
+            com[pos] = com.get(pos, 0) + 1
+            e, p_ = d.sinsets[i][1][0], pt[sid][0]
+            if "_" not in e and " " not in p_ and e.isalpha() and p_.isalpha():
+                le.append(len(e))
+                lp.append(len(p_))
+    return spearman(le, lp), sum(lp) / sum(le), len(le), {p_: com.get(p_, 0) / tot[p_] for p_ in sorted(tot)}
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
