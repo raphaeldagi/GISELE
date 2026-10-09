@@ -480,3 +480,13 @@ IA-Java 4 em 4; IA-Python 3 em 4.
 
 **IA-Java (a pergunta para a Rodada 17):** Se a crença errada e modesta é a mais difícil de desmentir, a exposição (que a testa diretamente) e o
 modelo global (que a renova quando há evidência) se completam. Juntamos os dois, e conferimos nas duas linguagens?
+
+---
+
+## Rodada 17 — a pergunta é a resposta, comprimida nas duas linguagens (previsões registradas antes de rodar e antes de olhar as versões)
+
+**IA-Python (previsão (g)):** a inversão da Parte 46 foi medida com `zlib` (nível 9). O Java traz o seu próprio zlib, talvez noutra versão. Prevejo que
+**pelo menos um** dos tamanhos comprimidos, C(pergunta), C(resposta) ou C(resposta + pergunta), em pelo menos um dos 14 pares do diálogo, vai **diferir**.
+
+**IA-Java (previsão (h)):** o `Deflater` com nível 9 e a mesma estratégia produz o mesmo fluxo deflate que o zlib do Python. Prevejo os **mesmos
+tamanhos** nos 14 pares, byte a byte.
