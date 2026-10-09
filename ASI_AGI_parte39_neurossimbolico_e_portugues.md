@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 39 (0x27): a arquitetura neuro-simbólica testada, e o português no data lake
 
-> Continuação da [Parte 38](ASI_AGI_parte38_aprender_a_suposicao.md). O usuário trouxe um texto: *"Arquitetura Neuro-Simbólica para Inteligência
+> Continuação da [Parte 38](ASI_AGI_parte38_aprender_a_suposicao.md). **Próxima:** [Parte 40 — o português em português](ASI_AGI_parte40_portugues_em_portugues.md) (P641–P670). O usuário trouxe um texto: *"Arquitetura Neuro-Simbólica para Inteligência
 > Geral e Superinteligência: Integração de Recursos Lexicais em Língua Portuguesa e Resolução do Problema da Ancoragem de Símbolos"*. Ele propõe o
 > dicionário de português como o Sistema 2 (raciocínio formal), os recursos lexicais do português (Dicionário Aberto, PAPEL e Onto.PT,
 > OpenWordNet-PT, FrameNet Brasil) como a ontologia, e as Logic Tensor Networks (LTN) para converter os axiomas do dicionário em perdas

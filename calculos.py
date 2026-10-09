@@ -6617,7 +6617,7 @@ def p553_bilingue():
 # --- Parte 40 (0x28): quanto do português se define em português; seguir o modelo de maior peso; o custo dos acentos ---
 
 # Placar acumulado ao fim da Parte 40 (atualizado quando os testes da parte terminam)
-ERROS_P669, TESTES_P669 = 0, 0
+ERROS_P669, TESTES_P669 = 122, 329
 
 
 def p641_portugues():
@@ -6630,7 +6630,8 @@ def p641_portugues():
     exato = sum(1 for w in fichas if d.lema(w, False)) / len(fichas)
     plural = sum(1 for w in fichas if d.lema(w, True)) / len(fichas)
     defs = d.grafo_de_definicoes()
-    ker = nucleo(defs)
+    # o núcleo exige um grafo fechado, como o inglês (P371): só as palavras que também têm definição
+    ker = nucleo({x: s_ & defs.keys() for x, s_ in defs.items()})
     en = Dicionario().grafo_de_definicoes()
     ker_en = nucleo(en)
     return (len(d.vocabulario), len(defs), len(fichas), exato, plural, len(ker), len(ker) / len(defs),
@@ -6805,6 +6806,7 @@ def testes_de_regressao():
         "P531": round(p531_contas()[0], 1) == 62.7,
         "P542": round(p542_contas()[2]) == 4971,
         "P551": round(p551_contas()[2], 3) == 0.944,
+        "P644": round(p644_contas()["pt"], 4) == 1.0296,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -7757,6 +7759,22 @@ def _parte_39():
     print(f"P639 minha taxa de erro ({ERROS_P639}/{TESTES_P639}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_40():
+    print("--- Parte 40 (0x28: o portugues se define em portugues?; seguir o modelo de maior peso; acentos em UTF-8) ---")
+    voc, ndef, nf, ex, pl, ker, fk, fk_en = p641_portugues()
+    print(f"P641 lemas de uma palavra = {voc}; com glosa = {ndef} ({ndef / voc:.4f}); palavras de conteudo nas glosas = {nf}")
+    print(f"P641 fracao que e lema: exata = {ex:.4f}, com plurais = {pl:.4f}; nucleo = {ker} ({fk:.4f}); nucleo no ingles = {fk_en:.4f}")
+    for (k, th), v in p642_fecho_pt().items():
+        print(f"P642 fecho em portugues, {k} ancoras, theta = {th}: {v:.4f} dos lemas definidos")
+    est, custo, muda = p643_maximo()
+    print(f"P643 seguir o maior peso: estacionario = {est:.2f}; custo do dano = {custo:.2f}; mundo que muda = {muda:.2f}")
+    print(f"P644 conta: bytes por caractere = { {k: round(v, 5) for k, v in p644_contas().items()} }")
+    pt, en, top = p644_utf8()
+    print(f"P644 medido: portugues = {pt:.5f}; ingles = {en:.5f}; mais comuns = {top}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P669, testes=TESTES_P669)
+    print(f"P669 minha taxa de erro ({ERROS_P669}/{TESTES_P669}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -7791,7 +7809,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40}
 
 
 if __name__ == "__main__":
