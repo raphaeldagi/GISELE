@@ -93,6 +93,16 @@ anterior, commit e push.
   com interação zero deixou passar um erro de sinal nas interações).
 - O piso do caos (Parte 30): com desvio ~0,6 por semente no sequencial, o menor efeito visível é 2·0,6/√n
   (0,26 com 20 sementes, 0,165 com 60). Não prever diferenças abaixo do piso; replicar em lotes novos antes de concluir.
+- Verificar a FORMA de uma estrutura antes de usá-la (Parte 31): Zipf supôs a cabeça, Spearman supôs variação nos postos,
+  Hamming supôs efeitos aditivos, `profundidades` supôs taxonomia sem ciclo (o WordNet 3.0 tem um; estourou 13,9 GB).
+- Uma conta de esperança não é cota por amostra (Parte 32): quando as unidades falham juntas (palavras definidas pela
+  mesma palavra), a variância é muito maior que a de moedas independentes.
+- Não esquecer e não se curar são a mesma propriedade (Parte 32): toda memória exata precisa de um teste de dano.
+- Auto-melhoria (Parte 33): nunca executar código gerado; mutar um genoma. O avaliador fica FORA do alcance da mutação
+  (selo SHA-256 conferido por outro processo/linguagem). Nunca aceitar um filho pela nota guardada do pai (maldição do
+  vencedor: a regra "nota > nota guardada" piorou o agente real, 232,8 contra 159,9); reavaliar pai e filho juntos em
+  sementes novas.
+- Nunca usar `pkill -f` com um padrão que apareça na própria linha de comando (mata o shell; aconteceu duas vezes).
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).
 
@@ -104,7 +114,7 @@ anterior, commit e push.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
-  synthai.testes_dicionario`); a suíte
+  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o

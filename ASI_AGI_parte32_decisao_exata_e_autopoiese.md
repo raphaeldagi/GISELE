@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 32 (0x20): trocar o reforço pela decisão bayesiana exata; autopoiese; a avalanche
 
-> Continuação da [Parte 31](ASI_AGI_parte31_curriculo_e_hipercubo.md). Módulo novo: [`synthai/decisao.py`](synthai/decisao.py) (Thompson, UCB1,
+> Continuação da [Parte 31](ASI_AGI_parte31_curriculo_e_hipercubo.md). **Próxima:** [Parte 33 — a arquitetura pós-ASI auditada](ASI_AGI_parte33_pos_asi_auditada.md) (P431–P460). Módulo novo: [`synthai/decisao.py`](synthai/decisao.py) (Thompson, UCB1,
 > Q-learning, PSRL, RiverSwim, regressão bayesiana recursiva, SGD, ridge em lote), com testes em
 > [`synthai/testes_parte32.py`](synthai/testes_parte32.py); `fecho_incremental` em [`synthai/dicionario.py`](synthai/dicionario.py). Os números
 > saem de `p401_...` a `p421_...` em [`calculos.py`](calculos.py); a saída está em [`resultados.txt`](resultados.txt). Diálogo, rodada 3:

@@ -5618,7 +5618,7 @@ def p421_avalanche(thetas=(0.6, 0.7, 0.8, 0.9), semente=421, ate=40000):
 #     (reward hacking), L3 contra L4, a maldição do vencedor, e o Bayes com renovação ---
 
 # Placar acumulado ao fim da Parte 33 (atualizado quando os testes da parte terminam)
-ERROS_P459, TESTES_P459 = 0, 0
+ERROS_P459, TESTES_P459 = 105, 258
 
 K_BOLTZMANN = 1.380649e-23   # J/K (exato no SI de 2019)
 H_PLANCK = 6.62607015e-34    # J·s (exato no SI de 2019)
@@ -5880,6 +5880,10 @@ def testes_de_regressao():
         "P401": tuple(round(x, 1) for x in p401_contas()[:2]) == (62.4, 80.7),
         "P402": round(p402_contas()[0], 4) == 0.2572,
         "P403": p403_continuo(d=8, sementes=(4030, 4031))[2] < 1e-8,
+        "P431": round(p431_landauer()[0][293.15] * 1e21, 4) == 2.8054,
+        "P432": round(p432_bremermann()[2], 12) == 4.0,
+        "P435": p435_auditoria()["nos_mudados"] == 0 and p435_auditoria()["run_benchmarks_constante"] == 0.85,
+        "P436": round(p436_contas(), 4) == 0.951,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -6706,6 +6710,35 @@ def _parte_32():
     print(f"P429 minha taxa de erro ({ERROS_P429}/{TESTES_P429}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_33():
+    print("--- Parte 33 (0x21: a arquitetura pos-ASI numa CPU so, auditada) ---")
+    land, t_texto = p431_landauer()
+    print(f"P431 Landauer (J/bit): { {t: f'{e:.4e}' for t, e in land.items()} }; o 2,75e-21 do texto seria a {t_texto:.2f} K")
+    b, ml, razao = p432_bremermann()
+    print(f"P432 Bremermann mc^2/h = {b:.4e} /s/kg; Margolus-Levitin 2E/(pi hbar) = {ml:.4e}; razao = {razao}")
+    taxa, b1g, dist = p433_cpu()
+    print(f"P433 laco Python = {taxa:.3e} adicoes/s; Bremermann de 1 g = {b1g:.3e}; log10 da distancia = {dist:.2f} "
+          f"(medido com outras simulacoes rodando: a taxa varia de execucao para execucao)")
+    print(f"P434 AIXI(t,l), t = 1000, anos a essa taxa: { {l: f'{a:.3e}' for l, a in p434_aixi_tl(taxa).items()} }")
+    print(f"P435 auditoria estatica: {p435_auditoria()}")
+    print(f"P435 a arquitetura original rodada num processo separado (estados, geracao maxima, notas): {p435_rodar_original()}")
+    print(f"P436 conta: chance de campeao inflado = {p436_contas():.4f}")
+    for k, (f, real) in p436_recompensa().items():
+        print(f"P436 {k}: campeoes inflados = {f:.3f}; arrependimento real do campeao = {real:.2f}")
+    med, (d, dp, tt), thompson, melhor = p437_l3_l4()
+    print(f"P437 arrependimento real do campeao: L3 = {med['L3']:.2f}, L4 = {med['L4']:.2f}; L4 - L3 = {d:.2f}, dp = {dp:.2f}, "
+          f"t = {tt:.2f}; melhor campeao = {melhor:.2f}; Thompson sem evolucao = {thompson:.2f}")
+    sigma, cotas = p438_contas()
+    print(f"P438 conta: sigma da nota = {sigma:.2f}; sigma*sqrt(2 ln N) = { {n: round(v, 1) for n, v in cotas.items()} }")
+    for regra, (infl, aceitos) in p438_maldicao().items():
+        print(f"P438 regra {regra}: inflacao da nota guardada = {infl:.2f}; filhos aceitos = {aceitos:.2f}")
+    print(f"P439 conta: { {g: (round(a, 1), round(b, 1)) for g, (a, b) in p439_contas().items()} }")
+    for g, (sem, com, custo, total) in p439_renovacao().items():
+        print(f"P439 gama = {g}: 2a metade sem dano = {sem:.2f}, com dano = {com:.2f}, custo do dano = {custo:.2f}; total sem dano = {total:.2f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P459, testes=TESTES_P459)
+    print(f"P459 minha taxa de erro ({ERROS_P459}/{TESTES_P459}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -6734,11 +6767,12 @@ def _unificacao():
           " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)"
           " | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)"
           " => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)"
+          " + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao)"
           " + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33}
 
 
 if __name__ == "__main__":

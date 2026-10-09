@@ -21,7 +21,8 @@ def main():
             subprocess.run(["javac", "-d", tmp, java], check=True, capture_output=True)
             if "--preparar" in open(py, encoding="utf-8").read():  # a rodada escreve primeiro os dados que o Java lê
                 subprocess.run([sys.executable, py, "--preparar", tmp], check=True)
-            sj = subprocess.run(["java", "-cp", tmp, nome, tmp], check=True, capture_output=True, text=True).stdout
+            sj = subprocess.run(["java", "-cp", tmp, nome, tmp], check=True, capture_output=True, text=True,
+                                cwd=os.path.dirname(AQUI)).stdout
             sp = subprocess.run([sys.executable, py], check=True, capture_output=True, text=True).stdout
             fj, fp = os.path.join(tmp, nome + ".java.txt"), os.path.join(tmp, nome + ".py.txt")
             open(fj, "w").write(sj)

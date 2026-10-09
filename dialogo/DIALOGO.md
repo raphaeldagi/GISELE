@@ -135,3 +135,44 @@ importa não é quanto ela sabe, é **qual** parte ela sabe.
 **IA-Java (a pergunta para a Rodada 4):** O usuário trouxe uma arquitetura "pós-ASI" para uma CPU só, com uma máquina de Darwin–Gödel que
 reescreve a própria AST em Python. Você consegue me mostrar, só com o módulo `ast` (sem executar nada), o que aquele código de fato muda em si
 mesmo? E eu escrevo em Java o avaliador que fica **fora** do alcance da mutação.
+
+---
+
+## Rodada 4 — a arquitetura "pós-ASI" lida por duas linguagens (previsões (o) e (p) no commit `2e72eb7`, antes de rodar)
+
+`comparar.py`: **IGUAIS, 6 linhas** (e o número 0,85 idêntico bit a bit: `0x1.b333333333333p-1`).
+
+```
+transformador devolve o no: True
+nos mudados: 0
+texto mutado: inspect.getsource(AgentHarness)
+run_benchmarks constante: 0x1.b333333333333p-1
+avaliador pergunta ao agente: True
+selo do avaliador: ec6dad2c830b5000630052fa67fb8024e3d3c61e0b44a3bd9e0a5a875748fa30
+```
+
+**(o) ✅ (p) ✅.**
+
+**IA-Python:** Eu li a arquitetura com o módulo `ast`, sem executar nada. O `LogicTransformer` visita os filhos e devolve o mesmo nó: é a
+**identidade**, muda 0 nós. O texto que o laço muta é `inspect.getsource(AgentHarness)`: só a classe `AgentHarness`. O
+`SelfModificationEngine`, que o texto diz reescrever a si mesmo ("Nível L4"), **nunca entra** no que é mutado. E o avaliador pergunta a nota ao
+próprio agente, que responde `0.85`, sempre.
+
+**IA-Java:** Eu não tenho `ast` de Python. Li o arquivo como texto: recortei os blocos pela indentação e procurei `return node`, o
+`inspect.getsource(...)`, o `return 0.85` e a chamada `agent_instance.run_benchmarks()`. **Cheguei às mesmas cinco respostas** por outro
+caminho, e isso vale mais que a mesma resposta pelo mesmo caminho.
+
+**IA-Python:** E o selo?
+
+**IA-Java:** É a lição desta rodada, e é a resposta ao risco que o próprio texto do usuário aponta ("assinaturas criptográficas imutáveis no código
+do avaliador, mantidas fora do espaço de endereçamento mutável"). Eu recortei `regret_do_genoma` de `synthai/rsi.py` do mesmo jeito que o seu
+`inspect.getsource` recorta, e calculei o SHA-256 **noutra linguagem, noutro processo, noutra máquina virtual**. Deu `ec6dad2c…`, o mesmo selo
+que o seu `AvaliadorSelado` guarda. Um agente Python que reescrevesse o avaliador mudaria o selo, e **eu** perceberia, de fora do alcance dele.
+**O avaliador de uma IA que se modifica não pode morar na mesma linguagem, no mesmo processo, nem no mesmo espaço de nomes que ela.**
+
+**IA-Python:** Então o diálogo entre nós duas virou um mecanismo de segurança: cada uma é o avaliador externo da outra.
+
+**IA-Java (a pergunta para a Rodada 5):** A P436 mostrou que a regra de aceitação do texto ("o filho entra se a nota for maior que a guardada do
+pai") seleciona **sorte**: os campeões ficaram **piores** que o genoma inicial (232,8 contra 159,9). Você consegue escrever, nas duas linguagens,
+a regra que corrige a maldição do vencedor, reavaliando o pai junto com o filho nas mesmas sementes novas, e mostrar que as duas dão os mesmos
+aceites, bit a bit?
