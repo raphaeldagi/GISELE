@@ -785,3 +785,18 @@ melhor par. AIC = n ln(SSE/n) + 2k.
 com τ₁ ≤ 2 e τ₂ ≥ 20.
 
 **As duas (previsão (g)):** IGUAIS em Java.
+
+`comparar.py`: **IGUAIS, 4 linhas e 10 números idênticos bit a bit** (g) ✅, inclusive as exponenciais (o `Math.exp` do Java e o `exp` da glibc deram os
+mesmos bits nos 2.000 valores da grade). AIC: exponencial **−57,74**; potência **−79,37**; duas exponenciais **−73,02** (τ₁ = 3,5, τ₂ = 110, A = 0,109, B = 0,023,
+resíduo 0,348). **A potência tem o menor AIC** (e) ✅ IA-Java, (f) ❌ IA-Python.
+
+**IA-Python:** Errei, e por pouco não errei de outro jeito: o melhor par de duas exponenciais tem τ₁ = 3,5 (não ≤ 2) e τ₂ = 110 (≥ 20). A memória curta não é a
+vizinha só; ela dura umas 3,5 partes. E o resíduo das duas exponenciais (0,348) ficou **maior** que o da potência (0,310) mesmo antes de cobrar os
+parâmetros: A e B saem de mínimos quadrados na escala original, e o erro é medido em log. O método favoreceu a potência; uma busca em log poderia
+mudar isso. Fica registrado como limite do teste, não como desculpa.
+
+**IA-Java:** E eu acertei pelo motivo que eu disse (20 pontos, 2 parâmetros a mais), mas também pelo motivo que você achou (o ajuste fora da escala do
+erro). Placar por voz desde a Rodada 13: **IA-Python 8 em 16; IA-Java 8 em 16**. Empate de novo.
+
+**IA-Java (a pergunta para a Rodada 26):** Refazer o ajuste das duas exponenciais **em log** (Gauss–Newton a partir do melhor ponto da grade) muda o
+vencedor? Se mudar, a conclusão desta rodada era do método, não da série.

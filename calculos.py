@@ -7460,6 +7460,7 @@ def testes_de_regressao():
         "P912": p912_funis()[:2] == ("act", 1991) and round(p912_funis()[3], 3) == -1.869,
         "P943": round(p943_periodo_hex()[0], 4) == 0.2793,
         "P947": p947_o_texto_voltou()[0] and p947_o_texto_voltou()[1]["nos_mudados"] == 0,
+        "P973": len(p973_kaprekar_hex()[0]) == 4 and p973_kaprekar_hex(4, 10)[0] == [(6174,)],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -8853,6 +8854,118 @@ def p948_pergunta_reconhece_resposta():
     ds, texto = r24.dados()
     return sorted(r24.pontuar(ds, texto), key=lambda x: (-x[1], x[0]))
 
+
+ERROS_P999, TESTES_P999 = 0, 0
+
+
+def p972_portugues_por_profundidade(d=None, pt=None):
+    """A cobertura da OpenWordNet-PT por profundidade (P972): para os substantivos do WordNet com profundidade (P793), a
+    fração que tem lema em português. Devolve (cobertura geral, cobertura na profundidade <= 4, na >= 12, {profundidade:
+    (sinsets, cobertura)})."""
+    from synthai.dicionario import Dicionario, DicionarioPT, profundidades
+    d = d or Dicionario()
+    pt = pt or DicionarioPT()
+    prof = profundidades(d)
+    por = {}
+    inv = {i: k for k, i in d.indice.items()}
+    for i, p in prof.items():
+        pos, desloc = inv[i].split(":")
+        if pos != "n":
+            continue
+        tem = f"{desloc}-n" in pt.lemas
+        n, c = por.get(p, (0, 0))
+        por[p] = (n + 1, c + tem)
+    def cob(ps):
+        n = sum(por[p][0] for p in ps)
+        return sum(por[p][1] for p in ps) / n
+    return (cob(list(por)), cob([p for p in por if p <= 4]), cob([p for p in por if p >= 12]),
+            {p: (por[p][0], por[p][1] / por[p][0]) for p in sorted(por)})
+
+
+def p973_kaprekar_hex(digitos=4, base=16):
+    """A rotina de Kaprekar (P973): K(n) = (dígitos decrescentes) − (crescentes), com `digitos` dígitos na `base`, para todo
+    n que não tem todos os dígitos iguais. Devolve (ciclos terminais, cada um começando pelo menor, {ciclo: quantos números
+    ele atrai}, números)."""
+    def k(n):
+        ds = []
+        for _ in range(digitos):
+            n, r = divmod(n, base)
+            ds.append(r)
+        a = d_ = 0
+        for x in sorted(ds, reverse=True):
+            a = a * base + x
+        for x in sorted(ds):
+            d_ = d_ * base + x
+        return a - d_
+    bacia = {}
+    total = 0
+    for n in range(1, base ** digitos):
+        x, ds = n, set()
+        y = n
+        for _ in range(digitos):
+            y, r = divmod(y, base)
+            ds.add(r)
+        if len(ds) == 1:
+            continue
+        total += 1
+        vistos = []
+        while x not in vistos:
+            vistos.append(x)
+            x = k(x)
+        ciclo = vistos[vistos.index(x):]
+        j = ciclo.index(min(ciclo))
+        c = tuple(ciclo[j:] + ciclo[:j])
+        bacia[c] = bacia.get(c, 0) + 1
+    return sorted(bacia), bacia, total
+
+
+def p971_duas_memorias():
+    """Rodada 25 (P971): exponencial, potência e duas exponenciais na curva média, pelo AIC (dialogo/rodada25.py,
+    conferido em Java). Devolve (aic exponencial, aic potência, aic duas exponenciais, (A, B, t1, t2, sse))."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada25", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada25.py"))
+    r25 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r25)
+    sim = r25.r21.semelhancas(r25.r21.conjuntos())
+    ys = [r25.r21.media_distancia(sim, L) for L in range(1, 21)]
+    lys = [log(y) for y in ys]
+    _, _, se = r25.r22.reta([float(L) for L in range(1, 21)], lys)
+    _, _, sp = r25.r22.reta([log(L) for L in range(1, 21)], lys)
+    s2, A, B, t1, t2 = r25.duas_exponenciais(ys)
+    return r25.aic(se, 20, 2), r25.aic(sp, 20, 2), r25.aic(s2, 20, 4), (A, B, t1, t2, s2)
+
+
+def p974_previsoes_sem_largura(partes=range(46, 52)):
+    """A regra das faixas como passo verificável (P974): nas linhas de previsão "- (x) ..." do bloco "Previsões
+    pré-registradas" de cada documento, conta as unilaterais (com ≥, ≤, >, <, "pelo menos", "no máximo", "ou mais",
+    "ou menos" e sem um intervalo [a; b]). Devolve {parte: (previsões, unilaterais, [as letras das unilaterais])}."""
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    res = {}
+    for n in partes:
+        nome = next((f for f in sorted(os.listdir(raiz)) if f.startswith(f"ASI_AGI_parte{n}_")), None)
+        if nome is None:
+            continue
+        texto = open(os.path.join(raiz, nome), encoding="utf-8").read()
+        i = texto.find("## Previsões pré-registradas")
+        if i < 0:
+            continue
+        bloco = texto[i:texto.find("\n---", i) if texto.find("\n---", i) > 0 else len(texto)]
+        prev, uni = 0, []
+        for linha in bloco.split("\n"):
+            m = re.match(r"- \(([a-z])\)", linha.strip())
+            if not m:
+                continue
+            prev += 1
+            um_lado = re.search(r"≥|≤|(?<![-=])>|<|pelo menos|no máximo|ou mais|ou menos", linha)
+            if um_lado and not re.search(r"\[[^\]]*;[^\]]*\]", linha):
+                uni.append(m.group(1))
+        res[n] = (prev, len(uni), uni)
+    return res
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -8918,6 +9031,22 @@ def _parte_50():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P969, testes=TESTES_P969)
     print(f"P969 minha taxa de erro ({ERROS_P969}/{TESTES_P969}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_51():
+    print("--- Parte 51 (0x33: a memoria curta e a longa) ---")
+    ae, ap, a2, (A, B, t1, t2, s2) = p971_duas_memorias()
+    print(f"P971 AIC: exponencial = {ae:.2f}; potencia = {ap:.2f}; duas exponenciais = {a2:.2f} (A = {A:.4f}, B = {B:.4f}, t1 = {t1}, t2 = {t2}, "
+          f"sse = {s2:.4f})")
+    g, a, b, por = p972_portugues_por_profundidade()
+    print(f"P972 cobertura do portugues nos substantivos = {g:.4f}; profundidade <= 4: {a:.4f}; >= 12: {b:.4f}; diferenca = {a - b:.4f}")
+    cs, bacia, total = p973_kaprekar_hex()
+    print(f"P973 Kaprekar em base 16 (4 digitos, {total} numeros): {len(cs)} ciclos; " + "; ".join(
+        f"{[format(x, 'X') for x in c]}: {bacia[c] / total:.3f}" for c in sorted(bacia, key=lambda c: -bacia[c]))
+        + f"; base 10: {p973_kaprekar_hex(4, 10)[0]}")
+    uni = p974_previsoes_sem_largura()
+    print("P974 previsoes unilaterais (sem faixa) por parte: " + "; ".join(f"{k}: {u} de {p} {ls}" for k, (p, u, ls) in uni.items()))
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P999, testes=TESTES_P999)
+    print(f"P999 minha taxa de erro ({ERROS_P999}/{TESTES_P999}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -8954,7 +9083,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51}
 
 
 if __name__ == "__main__":

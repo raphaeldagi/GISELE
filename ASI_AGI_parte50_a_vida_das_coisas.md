@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 50 (0x32): a vida das coisas
 
-> Continuação da [Parte 49](ASI_AGI_parte49_a_deriva.md). **Previsões nos commits `a1976ac` e `c167fda` (o texto que voltou), a (g) da Rodada 23 no
+> Continuação da [Parte 49](ASI_AGI_parte49_a_deriva.md). **Próxima:** [Parte 51 — a memória curta e a longa](ASI_AGI_parte51_curta_e_longa.md) (P971–P1000). **Previsões nos commits `a1976ac` e `c167fda` (o texto que voltou), a (g) da Rodada 23 no
 > commit do resultado dela, antes de rodar.** A Parte 49 achou que a
 > série esquece como uma potência (α = 0,616), e deixou aberta a crítica de Anderson e Tweney: uma média de exponenciais parece uma potência. Esta
 > parte testa as curvas **individuais**, as definições que se definem uma pela outra, e o tempo de vida de uma fração em hexadecimal.
