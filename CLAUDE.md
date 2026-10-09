@@ -59,6 +59,10 @@ anterior, commit e push.
   o tamanho do texto, quantos testes vou escrever, quanto a resposta vai conter da pergunta, qual voz vai acertar, quantas previsões unilaterais), com
   faixa e centro deduzido do meu histórico (`p1031_historico_de_mim`), registrado antes de escrever a parte; no fim, pontuar contra o preditor
   ingênuo "igual à parte anterior" e manter o placar das previsões sobre mim separado do placar das previsões sobre o mundo.
+  Medido (Parte 53): o preditor estatístico (média das últimas 8 partes ± 1,645 desvios) ficou em 4 de 6; eu, em 6 de 7. Partir do estatístico e só
+  deslocar o centro por um mecanismo de sinal conferido (o meu "tabelas comprimem pior" tinha o sinal trocado). Uma previsão que mora dentro do objeto
+  previsto muda o objeto (a tabela de autoavaliação tornou o texto mais compressível; a frase sobre o tamanho mudou o tamanho): medir também o
+  documento sem a seção que o pontua, e nunca cortar texto para acertar. Conta à mão de um teste é conferida por uma linha de código antes.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -174,7 +178,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o

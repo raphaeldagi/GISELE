@@ -7462,6 +7462,7 @@ def testes_de_regressao():
         "P947": p947_o_texto_voltou()[0] and p947_o_texto_voltou()[1]["nos_mudados"] == 0,
         "P973": len(p973_kaprekar_hex()[0]) == 4 and p973_kaprekar_hex(4, 10)[0] == [(6174,)],
         "P1003": round(p1003_inverte_e_soma()[0], 4) == 0.9819 and len(p1003_inverte_e_soma(9999, 10)[2]) == 246,
+        "P1034": p1034_pi_hexadecimal(200)[:3] == (200, 200, "243F6A88"),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9085,10 +9086,86 @@ def p1032_preditor_de_mim(historico, k=8):
     partes = sorted(historico)
     for medida in ("caracteres", "compressao", "testes_unidade", "testes", "erros", "redundancia"):
         vals = [historico[n][medida] for n in partes if historico[n][medida] is not None][-k:]
-        m = sum(vals) / len(vals)
-        var = sum((v - m) * (v - m) for v in vals) / (len(vals) - 1)
-        res[medida] = (m, 1.645 * var ** 0.5, vals[-1])
+        t = 0.0
+        for v in vals:  # laço, não sum() (compensada no Python 3.12+), para coincidir com o Java bit a bit
+            t += v
+        m = t / len(vals)
+        q = 0.0
+        for v in vals:
+            q += (v - m) * (v - m)
+        res[medida] = (m, 1.645 * sqrt(q / (len(vals) - 1)), vals[-1])  # sqrt, não ** 0,5 (pow da libm)
     return res
+
+
+def p1033_definicao_e_profundidade(d=None):
+    """O tamanho da definição prevê a profundidade? (P1033): Spearman entre o número de palavras da definição (glosa sem
+    exemplos) e a profundidade (P793), nos substantivos com profundidade. Devolve (rho, sinsets, média de palavras por
+    faixa de profundidade {0-4, 5-8, 9-12, 13+})."""
+    from synthai.dicionario import Dicionario, profundidades, spearman
+    d = d or Dicionario()
+    prof = profundidades(d)
+    xs, ys = [], []
+    for i, p in sorted(prof.items()):
+        pos, _, _, glosa = d.sinsets[i]
+        if pos != "n":
+            continue
+        xs.append(len(d.definicao(glosa).split()))
+        ys.append(p)
+    faixas = {}
+    for x, p in zip(xs, ys):
+        f = "0-4" if p <= 4 else "5-8" if p <= 8 else "9-12" if p <= 12 else "13+"
+        n, t = faixas.get(f, (0, 0))
+        faixas[f] = (n + 1, t + x)
+    return spearman(xs, ys), len(xs), {f: t / n for f, (n, t) in faixas.items()}
+
+
+def p1034_pi_hexadecimal(n=1000):
+    """Os dígitos hexadecimais de π (P1034): pela fórmula de Bailey-Borwein-Plouffe (o n-ésimo dígito sem os anteriores, em
+    ponto flutuante) e por π exato em inteiros (Machin: π = 16 arctg(1/5) − 4 arctg(1/239)). Devolve (quantos coincidem, n,
+    os 8 primeiros, o χ² das 16 frequências nos n dígitos exatos)."""
+    def serie(j, d):
+        # parte fracionária de Σ_k 16^(d-k)/(8k+j)
+        s = 0.0
+        for k in range(d + 1):
+            s = (s + pow(16, d - k, 8 * k + j) / (8 * k + j)) % 1.0
+        t, k = 0.0, d + 1
+        while True:
+            termo = 16.0 ** (d - k) / (8 * k + j)
+            if termo < 1e-17:
+                break
+            t += termo
+            k += 1
+        return (s + t) % 1.0
+
+    def bbp(pos):  # o dígito na posição pos (1 = o primeiro depois da vírgula)
+        d = pos - 1
+        x = (4 * serie(1, d) - 2 * serie(4, d) - serie(5, d) - serie(6, d)) % 1.0
+        return int(x * 16)
+
+    bits = 4 * n + 64
+    um = 1 << bits
+
+    def arctg_inv(x):
+        soma, termo, k, sinal = 0, um // x, 1, 1
+        while termo:
+            soma += sinal * (termo // k)
+            termo //= x * x
+            k += 2
+            sinal = -sinal
+        return soma
+
+    pi = 16 * arctg_inv(5) - 4 * arctg_inv(239)
+    frac = pi - 3 * um
+    exatos = []
+    for _ in range(n):
+        frac *= 16
+        exatos.append(frac >> bits)
+        frac &= um - 1
+    pelo_bbp = [bbp(p) for p in range(1, n + 1)]
+    cont = [exatos.count(h) for h in range(16)]
+    esperado = n / 16
+    chi2 = sum((c - esperado) ** 2 / esperado for c in cont)
+    return sum(a == b for a, b in zip(pelo_bbp, exatos)), n, "".join(format(h, "X") for h in exatos[:8]), chi2
 
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
@@ -9187,6 +9264,24 @@ def _parte_52():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1029, testes=TESTES_P1029)
     print(f"P1029 minha taxa de erro ({ERROS_P1029}/{TESTES_P1029}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_53():
+    print("--- Parte 53 (0x35: preditiva comigo mesma) ---")
+    h = p1031_historico_de_mim(range(31, 54))
+    pred = p1032_preditor_de_mim({n: v for n, v in h.items() if n <= 52})
+    if 53 in h:
+        for medida, (m, w, u) in pred.items():
+            v = h[53][medida]
+            print(f"P1032 {medida}: medido = {v}; estatistico [{m - w:.4f}; {m + w:.4f}] {'dentro' if v is not None and abs(v - m) <= w else 'fora'}; "
+                  f"ingenuo = {u}")
+    rho, n, faixas = p1033_definicao_e_profundidade()
+    print(f"P1033 Spearman(palavras da definicao, profundidade) = {rho:.4f} em {n} substantivos; palavras por faixa: "
+          + ", ".join(f"{k}: {v:.2f}" for k, v in faixas.items()))
+    ac, total, inicio, chi2 = p1034_pi_hexadecimal()
+    print(f"P1034 pi em hexadecimal: BBP = exato em {ac} de {total} digitos; 3,{inicio}...; chi2 (15 g.l.) = {chi2:.3f}")
+    print(f"P974 previsoes unilaterais da Parte 53: {p974_previsoes_sem_largura(range(53, 54))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1059, testes=TESTES_P1059)
+    print(f"P1059 minha taxa de erro ({ERROS_P1059}/{TESTES_P1059}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -9223,7 +9318,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53}
 
 
 if __name__ == "__main__":

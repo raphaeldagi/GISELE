@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 52 (0x34): o método ou a série
 
-> Continuação da [Parte 51](ASI_AGI_parte51_curta_e_longa.md). **Previsões no commit `95996d9` (a (h) no `1dffa81`), antes de rodar.** A Parte 51 deu a vitória
+> Continuação da [Parte 51](ASI_AGI_parte51_curta_e_longa.md). **Próxima:** [Parte 53 — preditiva comigo mesma](ASI_AGI_parte53_preditiva_comigo.md) (P1031–P1060). **Previsões no commit `95996d9` (a (h) no `1dffa81`), antes de rodar.** A Parte 51 deu a vitória
 > à potência sobre duas exponenciais, com uma ressalva: as duas foram ajustadas fora da escala do erro. Esta parte refaz o ajuste na escala certa, procura os
 > funis das definições em **português**, e testa o "inverte e soma" (palíndromos) em hexadecimal.
 

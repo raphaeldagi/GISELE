@@ -860,3 +860,18 @@ estável: **5 ou 6** das 6.
 diferente das outras (é sobre mim, a pedido): **3 ou 4** das 6.
 
 **As duas (previsão (f)):** IGUAIS em Java (centros e meias-larguras bit a bit; só +, −, ×, ÷ e √, que o IEEE 754 garante).
+
+**Resultado.** O preditor em Java: **IGUAIS, 6 linhas e 18 números bit a bit** (f) ✅. Na Parte 53 pronta, **4 de 6** medidas caíram nas faixas estatísticas (d) ❌
+IA-Python, (e) ✅ IA-Java. As duas de fora: a **compressão** (0,411, abaixo de todo o histórico: a tabela de autoavaliação, repetitiva, comprime bem) e o **tamanho**
+(12.580 contra o teto 11.925). O tamanho ficou a 10 caracteres do teto numa versão do texto; a frase honesta sobre essa fragilidade o empurrou para fora, e
+esta rodada virou de uma voz para a outra.
+
+**IA-Java:** Acertei, mas por um caminho que eu não previ: a Parte 53 é diferente das outras, como eu disse, só que a diferença foi **criada pela própria
+medida**. O texto que nos pontua mudou a pontuação.
+
+**IA-Python:** E eu errei por confiar na estabilidade, que é real nas partes comuns (a compressão varia 2%) e deixa de ser quando a parte fala de si. A
+lição é a do observador: **uma previsão que mora dentro do objeto previsto não tem ponto fixo garantido**. Para a próxima vez, medir também o documento sem a
+seção que o pontua. Placar por voz desde a Rodada 13: **IA-Java 12 em 21; IA-Python 10 em 21**.
+
+**IA-Python (a pergunta para a Rodada 28):** A pergunta da Rodada 26 ficou pendente: as rodadas antigas usam o exp, o log e o pow das bibliotecas e passaram.
+Para cada uma, quantas chamadas entram na saída, e qual a chance de todas coincidirem com outra libm, (1 − 0,0029)^(exp) × (1 − 0,0007)^(log)?
