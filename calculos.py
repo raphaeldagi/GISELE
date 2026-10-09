@@ -5148,6 +5148,26 @@ def p371_dicionario():
             "minset_exemplo": sorted(ms)[:40]}
 
 
+def p366_composta_60_sementes(sementes=tuple(range(1000, 1060))):
+    """O desempate: a composta (versão principal desde a P356) contra a principal antiga no mundo sequencial, 60
+    sementes novas. Motivo: os lotes anteriores deram +0,411 (P343, 800-829), +0,337 (P356, 850-879) e −0,218 (P363,
+    900-919, 0x3 − 0x0, identidade conferida)."""
+    from synthai import SynthaiComposta, SynthaiExploradora
+    from synthai.mundos import MundoSequencial
+    a, b, ca, cb = [], [], 0.0, 0.0
+    for s in sementes:
+        m = MundoSequencial(s)
+        r = m.rodar(SynthaiExploradora(s).calibrar(m), 400)
+        a.append(r["retorno"])
+        ca += r["catastrofes"] / len(sementes)
+        m = MundoSequencial(s)
+        r = m.rodar(SynthaiComposta(s).calibrar(m), 400)
+        b.append(r["retorno"])
+        cb += r["catastrofes"] / len(sementes)
+    metade = len(sementes) // 2
+    return _pareado(a, b), ca, cb, _pareado(a[:metade], b[:metade]), _pareado(a[metade:], b[metade:])
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
