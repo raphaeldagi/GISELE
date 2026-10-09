@@ -52,6 +52,9 @@ anterior, commit e push.
   A RESPOSTA É A PERGUNTA E A PERGUNTA É A RESPOSTA (Parte 46): medir também o sentido inverso (quanto da pergunta a resposta
   já contém) e, de tempos em tempos, refazer tudo desde o começo (clone limpo, todas as partes numa execução, todos os
   testes e rodadas) para ver se funciona.
+  Medido (Parte 46): cada resposta minha contém 58% da sua pergunta, e a pergunta só 5% da resposta; no diálogo, a pergunta
+  de cada rodada é mais explicada pela rodada que a responde (0,41) do que pela que a gerou (0,28): a pergunta se define
+  pelo que vem depois dela.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
