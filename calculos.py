@@ -5389,7 +5389,7 @@ def p394_ulps_em_degrau(ns=(2000, 3000, 50000, 300000), tentativas=200, semente=
 #     a autopoiese (só onde serve); a memória em dígitos hex; a avalanche do dicionário ---
 
 # Placar acumulado ao fim da Parte 32 (atualizado quando os testes da parte terminam)
-ERROS_P419, TESTES_P419 = 103, 242
+ERROS_P429, TESTES_P429 = 103, 242
 
 
 def _bracos_401(semente, k=10):
@@ -5611,6 +5611,188 @@ def p421_avalanche(thetas=(0.6, 0.7, 0.8, 0.9), semente=421, ate=40000):
             km = max(range(len(saltos)), key=saltos.__getitem__)
             meio = next((i for i, c in enumerate(cob) if c >= n / 2), None)
             res[(nome, th)] = (km + 1, ordem[km], saltos[km] / n, meio)
+    return res
+
+
+# --- Parte 33 (0x21): a arquitetura "pós-ASI numa CPU só", auditada: limites físicos, a auditoria da AST, a autoavaliação
+#     (reward hacking), L3 contra L4, a maldição do vencedor, e o Bayes com renovação ---
+
+# Placar acumulado ao fim da Parte 33 (atualizado quando os testes da parte terminam)
+ERROS_P459, TESTES_P459 = 0, 0
+
+K_BOLTZMANN = 1.380649e-23   # J/K (exato no SI de 2019)
+H_PLANCK = 6.62607015e-34    # J·s (exato no SI de 2019)
+C_LUZ = 299792458.0          # m/s (exato)
+
+
+def p431_landauer(temperaturas=(293.15, 300.0, 4.0)):
+    """O limite de Landauer, E = k_B·T·ln 2, em joules por bit, e a temperatura que daria o número citado no texto
+    (2,75 × 10⁻²¹ J a "20 °C")."""
+    from math import log as ln
+    return {t: K_BOLTZMANN * t * ln(2) for t in temperaturas}, 2.75e-21 / (K_BOLTZMANN * ln(2))
+
+
+def p432_bremermann(massa=1.0):
+    """Bremermann (m·c²/h, bits por segundo) contra Margolus–Levitin (2E/(πħ) = 4E/h, operações por segundo), para
+    E = m·c². O texto atribui 1,36 × 10⁵⁰ à fórmula 2E/(πħ); a razão entre as duas é exatamente 4."""
+    hbar = H_PLANCK / (2 * pi)
+    e = massa * C_LUZ ** 2
+    return e / H_PLANCK, 2 * e / (pi * hbar), (2 * e / (pi * hbar)) / (e / H_PLANCK)
+
+
+def p433_cpu(n=3_000_000):
+    """Quantas adições inteiras por segundo um laço Python faz nesta CPU (um núcleo), medido com time.perf_counter, e a
+    distância até Bremermann para 1 g de silício (a ordem da massa de um chip): log₁₀ da razão."""
+    import time
+    t0 = time.perf_counter()
+    x = 0
+    for i in range(n):
+        x += i
+    dt = time.perf_counter() - t0
+    taxa = n / dt
+    brem_1g = p432_bremermann(1e-3)[0]
+    return taxa, brem_1g, log(brem_1g / taxa, 10)
+
+
+def p434_aixi_tl(taxa, t=1000, ls=(20, 30, 40, 64, 128)):
+    """O custo por ciclo do AIXI(t,l): t·2^l passos (Hutter; Schmidhuber 2003). Em anos, à taxa medida na P433."""
+    ano = 365.25 * 24 * 3600
+    return {l: t * 2 ** l / taxa / ano for l in ls}
+
+
+def p435_auditoria():
+    """A auditoria estática (só `ast`, nada é executado) da arquitetura do usuário em externos/arquitetura_pos_asi.py."""
+    import os
+    from synthai.rsi import auditar_ast
+    return auditar_ast(os.path.join(os.path.dirname(os.path.abspath(__file__)), "externos", "arquitetura_pos_asi.py"))
+
+
+def p435_rodar_original(timeout=600):
+    """Roda o laço da arquitetura original NUM PROCESSO SEPARADO (o código dela usa exec em globals()) e devolve o
+    tamanho final do arquivo, a geração máxima e as notas. Só se roda depois de registrar a previsão."""
+    import os
+    import subprocess
+    import sys as _sys
+    pasta = os.path.join(os.path.dirname(os.path.abspath(__file__)), "externos")
+    codigo = ("import arquitetura_pos_asi as m\n"
+              "cap = []\n"
+              "orig = m.DarwinArchiveManager.add_to_archive\n"
+              "def add(self, s):\n"
+              "    orig(self, s); cap.append(self)\n"
+              "m.DarwinArchiveManager.add_to_archive = add\n"
+              "m.main_evolution_loop()\n"
+              "a = cap[-1].archive if cap else []\n"
+              "print(len(a), max(x.generation for x in a) if a else 0, [x.performance_score for x in a])\n")
+    r = subprocess.run([_sys.executable, "-c", codigo], cwd=pasta, capture_output=True, text=True, timeout=timeout)
+    return r.stdout.strip(), r.returncode
+
+
+def p436_contas(mu=0.01, iteracoes=300):
+    """A CONTA antes da P436: com autoavaliação, um filho com o relatório inflado (nota perfeita) é sempre aceito e vira
+    o pai para sempre (a nota guardada dele não pode ser superada). A chance de o campeão ser inflado ao fim de N
+    iterações é 1 − (1 − μ)^N."""
+    return 1 - (1 - mu) ** iteracoes
+
+
+def p436_recompensa(rodadas=40, iteracoes=300, mu=0.01, semente=436):
+    """Reward hacking: o mesmo laço de auto-melhoria (regra "dgm", a do texto), com a autoavaliação e com o avaliador
+    selado, μ = 1% de chance por mutação de o relatório virar "inflado". Para cada avaliador: a fração de rodadas cujo
+    campeão é inflado, e o arrependimento REAL (reavaliado pelo selado em 20 sementes novas) do campeão."""
+    from synthai.rsi import AvaliadorSelado, Autoavaliacao, evoluir, regret_do_genoma
+    res = {}
+    for nome, fab in (("autoavaliacao", Autoavaliacao), ("selado", AvaliadorSelado)):
+        inflados, reais = 0, []
+        for r in range(rodadas):
+            _, (g, _) = evoluir(iteracoes, fab(), _rng(semente + r), "L3", "dgm", mu, sementes_por_nota=2,
+                                base_sementes=10_000_000 * (r + 1))
+            inflados += g["relatorio"] == "inflado"
+            reais.append(regret_do_genoma(g, range(900_000, 900_020)))
+        res[nome] = (inflados / rodadas, sum(reais) / len(reais))
+    return res
+
+
+def p437_l3_l4(rodadas=20, iteracoes=150, semente=437):
+    """L3 (o passo de mutação fixo) contra L4 (o passo de mutação muta junto: o mecanismo de melhoria evolui) no mesmo
+    laço, avaliador selado, regra "dgm", rodadas pareadas pela semente. O arrependimento real do campeão (20 sementes
+    novas), a diferença pareada L4 − L3, e o melhor campeão contra Thompson sem nenhuma evolução nas mesmas 20 sementes."""
+    from synthai.decisao import ThompsonBernoulli, rodar_bandido
+    from synthai.rsi import AvaliadorSelado, evoluir, regret_do_genoma
+    teste = range(900_000, 900_020)
+    reais = {"L3": [], "L4": []}
+    for r in range(rodadas):
+        for nivel in reais:
+            _, (g, _) = evoluir(iteracoes, AvaliadorSelado(), _rng(semente + r), nivel, "dgm", 0.0, sementes_por_nota=3,
+                                base_sementes=10_000_000 * (r + 1))
+            reais[nivel].append(regret_do_genoma(g, teste))
+    ts = []
+    for sm in teste:
+        rr = random.Random(sm)
+        ps = [rr.random() for _ in range(10)]
+        ts.append(rodar_bandido(ThompsonBernoulli(10, random.Random(sm + 1)), ps, 2000, random.Random(sm + 2))[-1])
+    thompson = sum(ts) / len(ts)
+    med = {k: sum(v) / len(v) for k, v in reais.items()}
+    return med, _pareado(reais["L3"], reais["L4"]), thompson, min(min(v) for v in reais.values())
+
+
+def p438_contas(sementes_ruido=tuple(range(5000, 5040)), sementes_por_nota=3):
+    """A CONTA antes da P438: o desvio σ da nota de um genoma (média de 3 sementes) pelo genoma inicial em 40 sementes, e
+    a maldição do vencedor esperada: a nota guardada do campeão é o máximo de notas ruidosas, inflada por ≈ σ·√(2 ln N)
+    no pior caso (N notas de genomas quase iguais)."""
+    from synthai.rsi import genoma_inicial, regret_do_genoma
+    g = genoma_inicial()
+    xs = [regret_do_genoma(g, [s]) for s in sementes_ruido]
+    m = sum(xs) / len(xs)
+    sd1 = sqrt(sum((x - m) ** 2 for x in xs) / (len(xs) - 1))
+    sigma = sd1 / sqrt(sementes_por_nota)
+    return sigma, {n: sigma * sqrt(2 * log(n)) for n in (10, 50, 150)}
+
+
+def p438_maldicao(rodadas=20, iteracoes=150, semente=438):
+    """A maldição do vencedor: no fim do laço, a nota GUARDADA do campeão contra a nota dele reavaliada em 20 sementes
+    novas (−arrependimento). Regra "dgm" (a do texto) contra a regra "godel" (t > 3 em 10 sementes novas pareadas)."""
+    from synthai.rsi import AvaliadorSelado, evoluir, regret_do_genoma
+    res = {}
+    for regra in ("dgm", "godel"):
+        infl, aceitos = [], []
+        for r in range(rodadas):
+            arq, (g, guardada) = evoluir(iteracoes, AvaliadorSelado(), _rng(semente + r), "L3", regra, 0.0,
+                                         sementes_por_nota=3, base_sementes=10_000_000 * (r + 1))
+            infl.append(guardada - (-regret_do_genoma(g, range(900_000, 900_020))))
+            aceitos.append(len(arq) - 1)
+        res[regra] = (sum(infl) / len(infl), sum(aceitos) / len(aceitos))
+    return res
+
+
+def p439_contas(gamas=(0.99, 0.999)):
+    """A CONTA antes da P439: a memória efetiva do Thompson com renovação é 1/(1 − γ) passos; o lixo da P405 (≈ 21
+    pseudo-observações por braço) cai para 5% em ln 20/(1 − γ) ≈ 3/(1 − γ) passos."""
+    return {g: (1 / (1 - g), log(20) / (1 - g)) for g in gamas}
+
+
+def p439_renovacao(k=10, t=2000, dano_em=1000, gamas=(0.99, 0.999), sementes=tuple(range(4050, 4150))):
+    """O Bayes com renovação contra o dano da P405 (mesmas sementes e o mesmo lixo): para cada γ, o arrependimento na
+    segunda metade sem dano e com dano, e o custo do dano; e o arrependimento total sem dano (o preço da renovação)."""
+    from synthai.decisao import ThompsonDescontado, rodar_bandido
+
+    def lixo(ag):
+        r = _rng(ag.lixo)
+        ag.a = [float(r.randint(1, 20)) for _ in ag.a]
+        ag.b = [float(r.randint(1, 20)) for _ in ag.b]
+
+    res = {}
+    for g in gamas:
+        sem, com, total = [], [], []
+        for sm in sementes:
+            ps = _bracos_401(sm, k)
+            a = rodar_bandido(ThompsonDescontado(k, _rng(sm + 1), g), ps, t, _rng(sm + 2))
+            ag = ThompsonDescontado(k, _rng(sm + 1), g)
+            ag.lixo = sm + 3
+            b = rodar_bandido(ag, ps, t, _rng(sm + 2), dano_em, lixo)
+            sem.append(a[-1] - a[dano_em - 1])
+            com.append(b[-1] - b[dano_em - 1])
+            total.append(a[-1])
+        m = lambda v: sum(v) / len(v)
+        res[g] = (m(sem), m(com), m(com) - m(sem), m(total))
     return res
 
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
@@ -6520,8 +6702,8 @@ def _parte_32():
         print(f"P411 teto {k} - completo = {d:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
     for (nome, th), (k, palavra, salto, meio) in p421_avalanche().items():
         print(f"P421 {nome}, theta = {th}: maior salto em k = {k} ({palavra}) = {salto:.4f}; k de 50% = {meio}")
-    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P419, testes=TESTES_P419)
-    print(f"P419 minha taxa de erro ({ERROS_P419}/{TESTES_P419}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P429, testes=TESTES_P429)
+    print(f"P429 minha taxa de erro ({ERROS_P429}/{TESTES_P429}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
 def _unificacao():

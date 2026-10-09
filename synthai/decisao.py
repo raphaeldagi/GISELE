@@ -42,6 +42,23 @@ class ThompsonBernoulli:
         return list(self.a), list(self.b)
 
 
+
+class ThompsonDescontado(ThompsonBernoulli):
+    """Thompson com renovação (Parte 33, ↩ P405): a cada passo, todas as contagens decaem para a crença inicial,
+    a ← 1 + γ(a − 1), b ← 1 + γ(b − 1), antes da observação nova. A memória efetiva é ~1/(1 − γ) passos: uma crença
+    errada (ou lixo) some em alguns 1/(1 − γ); em troca, o agente nunca fica certo de nada além dessa janela
+    (o "Bayes com esquecimento" de Raj e Kalyani, 2017)."""
+
+    def __init__(self, k, rng, gama=0.99):
+        super().__init__(k, rng)
+        self.gama = gama
+
+    def atualizar(self, braco, r):
+        g = self.gama
+        self.a = [1.0 + g * (a - 1.0) for a in self.a]
+        self.b = [1.0 + g * (b - 1.0) for b in self.b]
+        super().atualizar(braco, r)
+
 class QEpsilon:
     """Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso."""
 
