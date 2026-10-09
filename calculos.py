@@ -9230,6 +9230,72 @@ def p1061_exatidao_ou_sorte():
             dif[c[0]] = tuple(int(x) for x in c[1:])
     return chances, dif
 
+
+ERROS_P1119, TESTES_P1119 = 0, 0
+
+
+def p1092_pnn_sem_teste(desde=821, ate=1090):
+    """A auditoria pedida pela Parte 54 (P1092): das funções pNN com desde <= NN <= ate, quais não aparecem (pelo nome) em
+    nenhum synthai/testes_parte*.py. Devolve (total, [sem teste])."""
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    nomes = [m.group(1) for m in re.finditer(r"^def (p(\d+)_\w+)\(", open(os.path.join(raiz, "calculos.py"), encoding="utf-8").read(), re.M)
+             if desde <= int(m.group(2)) <= ate]
+    testes = "".join(open(f, encoding="utf-8").read() for f in glob.glob(os.path.join(raiz, "synthai", "testes_parte*.py")))
+    return len(nomes), [n for n in nomes if n not in testes]
+
+
+def _destino_final(f, w):
+    """O destino de uma órbita no mapa f: o ciclo (pelo menor elemento) ou o sumidouro onde ela termina."""
+    vistos = {}
+    x = w
+    while x is not None and x not in vistos:
+        vistos[x] = len(vistos)
+        if f.get(x) is None:
+            return ("sumidouro", x)
+        x = f[x]
+    ciclo = [y for y, i in vistos.items() if i >= vistos[x]]
+    return ("ciclo", min(ciclo))
+
+
+def p1093_sem_o_funil(funil="act", d=None):
+    """A fragilidade do mapa da definição (P1093): as palavras cujo primeiro substantivo da definição é `funil` passam ao
+    segundo substantivo (ou viram sumidouro). Devolve (fração das palavras que mudam de destino final, palavras que iam
+    direto ao funil, palavras)."""
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    f = _mapa_da_definicao(d)
+    nomes = set(f)
+    g = dict(f)
+    diretas = 0
+    for w in sorted(f):
+        if f[w] == funil:
+            diretas += 1
+            i = next(i for i in d.lemas[w] if d.sinsets[i][0] == "n")
+            cand = [x for x in d.palavras_da_definicao(d.sinsets[i][3]) if x in nomes and x != w]
+            resto = [x for x in cand if x != funil]
+            g[w] = resto[0] if resto else None
+    muda = sum(1 for w in f if _destino_final(f, w) != _destino_final(g, w))
+    return muda / len(f), diretas, len(f)
+
+
+def p1094_ulp_em_hexadecimal(n=100000, semente=1094):
+    """Quantos dos 13 dígitos hexadecimais da mantissa mudam ao somar um ulp (P1094), para doubles sorteados em [1, 2).
+    Devolve (média medida, a conta 16/15)."""
+    import math
+    rng = random.Random(semente)
+    total = 0
+    for _ in range(n):
+        x = 1.0 + rng.random()
+        y = math.nextafter(x, 2.0)
+        a, b = x.hex()[4:17], y.hex()[4:17]
+        if y >= 2.0:
+            continue
+        total += sum(1 for p, q in zip(a, b) if p != q)
+    return total / n, 16 / 15
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()

@@ -43,3 +43,7 @@ definição (ou viram sumidouro). Quantas palavras mudam de destino final (o cic
 **P1094, o ulp em hexadecimal.** Para doubles sorteados em [1, 2) (semente 1094), quantos dos 13 dígitos hexadecimais da mantissa mudam ao somar um ulp?
 - A conta: o último dígito muda sempre; o vai-um passa ao dígito anterior se o último era F (chance 1/16), e assim por diante: E = Σ_{k≥0} 16⁻ᵏ = 16/15 = **1,0667**.
 - (c) média medida em 100.000 sorteios em **[1,05; 1,09]**
+
+**Previsão nova (c2), registrada depois de ver (c) e antes de calcular:** com a mantissa sorteada **uniforme** (`getrandbits(52)`, sem o arredondamento par de
+`1 + random()`), a conta original vale: média em **[1,060; 1,074]** (16/15 = 1,0667); e, com `1 + random()`, a conta posterior 1 + (1/32)(16/15) = **1,0333**
+já explica o medido.
