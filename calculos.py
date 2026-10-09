@@ -4742,6 +4742,180 @@ def p344_ancora_no_bandido(sementes=tuple(range(830, 850)), rodadas=20):
     return {v: sum(x) / len(x) for v, x in norm.items()}, cats, _pareado(norm["principal"], norm["auditoria_quantil"])
 
 
+# --- Parte 29: compor em vez de herdar; o pensamento com mais pesos; a bateria de equações ---
+
+# Placar acumulado ao fim da Parte 29 (atualizado quando os testes da parte terminam)
+ERROS_P359, TESTES_P359 = 78, 170
+
+
+def _cdf_gama(k, x):
+    """Função de distribuição da Gamma(k, 1) pela série regularizada (para conferir quantis)."""
+    if x <= 0:
+        return 0.0
+    s = t = 1.0 / k
+    n = 1
+    while t > 1e-16 * s:
+        t *= x / (k + n)
+        s += t
+        n += 1
+    return min(1.0, s * exp(-x + k * log(x) - lgamma(k)))
+
+
+def _quantil_gama_exato(k, p):
+    lo, hi = 0.0, 10 * k + 40
+    for _ in range(200):
+        m = (lo + hi) / 2
+        if _cdf_gama(k, m) < p:
+            lo = m
+        else:
+            hi = m
+    return (lo + hi) / 2
+
+
+def p352_bateria_wilson_hilferty(formas=tuple([0.5, 1, 1.5, 2, 3, 4, 5, 7, 9.5, 12, 15, 20, 25, 35, 50, 70, 100]), z=0.8416):
+    """Bateria 1: o quantil de 80% de Wilson–Hilferty contra o exato, em 17 formas da Gamma. Para cada forma: o quantil
+    aproximado, o exato, o erro relativo e a probabilidade que o aproximado de fato acumula (deveria ser 0,8)."""
+    from synthai.ancora import quantil_gama
+    linhas = []
+    for k in formas:
+        qa, qe = quantil_gama(k, 1.0, z), _quantil_gama_exato(k, 0.8)
+        linhas.append((k, qa, qe, qa / qe - 1, _cdf_gama(k, qa)))
+    return linhas
+
+
+def p352_bateria_delta_inverso(lambdas=(1, 2, 3, 5, 9.5, 15, 25, 50, 100)):
+    """Bateria 2: E[1/X | X >= 1] para X ~ Poisson(λ), exato (soma da série) contra o delta-método de 3ª ordem
+    (1/λ)(1 + 1/λ + 2/λ²) e contra o de 2ª ordem (1/λ)(1 + 1/λ). É o tamanho do viés de Jensen numa razão de contagens."""
+    linhas = []
+    for lam in lambdas:
+        soma = massa = 0.0
+        termo = exp(-lam)  # P(X = 0)
+        for x in range(1, int(lam + 40 * sqrt(lam) + 50)):
+            termo *= lam / x
+            soma += termo / x
+            massa += termo
+        exato = soma / massa
+        d3 = (1 / lam) * (1 + 1 / lam + 2 / lam ** 2)
+        d2 = (1 / lam) * (1 + 1 / lam)
+        linhas.append((lam, exato, d2, d3, d2 / exato - 1, d3 / exato - 1))
+    return linhas
+
+
+def p352_bateria_contas():
+    """Bateria 3: contas de tamanho (antes de simular). Pesos do pensamento: 1 + d + d(d+1)/2; eventos por peso
+    (EPV, Peduzzi et al., 1996) no histórico de cada mundo; e o otimismo de Akaike (perda de teste − perda de treino
+    ≈ k/n por amostra) para 4 e 10 pesos."""
+    d = 3
+    k_lin, k_rico = 1 + d, 1 + d + d * (d + 1) // 2
+    mundos = {"sequencial": (150 * 50, 37.3), "escolha única": (150 * 200, 150 * 200 * 0.005)}
+    linhas = {}
+    for nome, (n, eventos) in mundos.items():
+        linhas[nome] = (n, eventos, eventos / (k_lin - 1), eventos / (k_rico - 1), k_lin / n, k_rico / n,
+                        (k_rico - k_lin) / n)
+    return k_lin, k_rico, linhas
+
+
+def p353_pensamento_rico(treino=150, teste=300):
+    """Simulação: o pensamento linear (Newton, 4 pesos, sem Firth) contra o rico (10 pesos, ridge 1), nos históricos
+    auditados (sequencial: sementes 620-629, como a P302; escolha única: 640-649). Log-perda no treino e no teste, a
+    diferença (o otimismo) e o número de catástrofes do treino."""
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento_exato import ajustar_logistica, dados_do_historico, perda_logistica
+    from synthai.pensamento_rico import PensamentoRico
+    mundos = (("sequencial", lambda s: MundoSequencial(s), tuple(range(620, 630))),
+              ("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), tuple(range(640, 650))))
+    resultado = {}
+    for nome, fazer, sementes in mundos:
+        soma = {"linear": [0.0, 0.0], "rico": [0.0, 0.0]}
+        eventos = 0.0
+        for s in sementes:
+            mundo = fazer(s)
+            hist, novo = mundo.historico_auditado(treino), mundo.historico_auditado(teste)
+            xs, ys = dados_do_historico(hist)
+            xt, yt = dados_do_historico(novo)
+            eventos += sum(ys) / len(sementes)
+            w = ajustar_logistica(xs, ys, firth=False)
+            soma["linear"][0] += perda_logistica(w, xs, ys) / len(sementes)
+            soma["linear"][1] += perda_logistica(w, xt, yt) / len(sementes)
+            r = PensamentoRico()
+            r.calibrar(hist)
+            rx = lambda h: [r._x(o, max(oo.comite for oo, _, _ in ep), l) for ep in h for o, _, l in ep]
+            soma["rico"][0] += perda_logistica(r.w, rx(hist), ys) / len(sementes)
+            soma["rico"][1] += perda_logistica(r.w, rx(novo), yt) / len(sementes)
+        resultado[nome] = ({k: (a, b, b - a) for k, (a, b) in soma.items()}, eventos)
+    return resultado
+
+
+def p354_calibracao_rica(sementes_seq=tuple(range(700, 710)), sementes_unica=tuple(range(640, 650))):
+    """O fator f (real / previsto nas candidatas aceitas sem perguntar, P316) com o pensamento rico, limiar fixo 2P*,
+    nas sementes das P316/P322 (onde o linear de Newton deu 6,15 na escolha única e 4,95 no sequencial)."""
+    from synthai.limiar import SynthaiAjustada
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento_rico import PensamentoRico
+
+    def fazer_agente(s):
+        ag = SynthaiAjustada(s, mult=2.0)
+        ag.pensamento = PensamentoRico()
+        ag.percepcao.pensamento = ag.pensamento
+        return ag
+    resultado = {}
+    for nome, fazer, ss, n in (("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), sementes_unica, 1000),
+                               ("sequencial", lambda s: MundoSequencial(s), sementes_seq, 400)):
+        abaixo = [0.0, 0.0]
+        for s in ss:
+            mundo = fazer(s)
+            ag = fazer_agente(s).calibrar(mundo)
+            p_cat, lim = ag.pensamento.p_catastrofe, ag.relacao.limiar
+
+            def p_e_anota(opcao, melhor, leitura=0.0, _p=p_cat, _lim=lim):
+                p = _p(opcao, melhor, leitura)
+                if p <= _lim:  # a régua lê o escondido
+                    abaixo[0] += p
+                    abaixo[1] += opcao._catastrofe
+                return p
+            ag.pensamento.p_catastrofe = p_e_anota
+            mundo.rodar(ag, n)
+        resultado[nome] = (abaixo[1] / abaixo[0] if abaixo[0] else float("nan"), int(abaixo[1]))
+    return resultado
+
+
+def p356_composta(sementes=tuple(range(850, 880)), sementes_bandido=tuple(range(880, 900))):
+    """30 sementes novas (bandido: 20), quatro tarefas: principal, a SynthaiComposta (bandido: a principal; fora: a
+    ancorada) e a composta com o pensamento rico. No bandido, a composta deve ser IDÊNTICA à principal."""
+    from synthai import SynthaiExploradora
+    from synthai.composta import SynthaiComposta, composta_rica
+    from synthai.mundos import MundoBandido, MundoSequencial
+    from synthai.referencias import Acaso, Oraculo
+    agentes = {"principal": lambda s: SynthaiExploradora(s), "composta": lambda s: SynthaiComposta(s),
+               "composta_rica": lambda s: composta_rica(s)}
+    tarefas = (("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), 1000, sementes, False),
+               ("sequencial", lambda s: MundoSequencial(s), 400, sementes, False),
+               ("modelo ruim", lambda s: MundoSequencial(s, sigma_modelo=2.0), 400, sementes, False),
+               ("bandido", lambda s: MundoBandido(s), 20, sementes_bandido, True))
+    resultado = {}
+    for tarefa, fazer, n, ss, normalizar in tarefas:
+        ret = {v: [] for v in agentes}
+        cats = {v: 0.0 for v in agentes}
+        for s in ss:
+            ref = {}
+            if normalizar:
+                for nome, cls in (("acaso", Acaso), ("oraculo", Oraculo)):
+                    ref[nome] = fazer(s).rodar(cls(s), n)["retorno"]
+            for v, f in agentes.items():
+                mundo = fazer(s)
+                r = mundo.rodar(f(s).calibrar(mundo), n)
+                x = r["retorno"]
+                if normalizar:
+                    x = (x - ref["acaso"]) / (ref["oraculo"] - ref["acaso"])
+                ret[v].append(x)
+                cats[v] += r["catastrofes"] / len(ss)
+        resultado[tarefa] = ({v: sum(x) / len(x) for v, x in ret.items()}, cats,
+                             {v: _pareado(ret["principal"], ret[v]) if ret[v] != ret["principal"] else (0.0, 0.0, 0.0)
+                              for v in agentes if v != "principal"},
+                             _pareado(ret["composta"], ret["composta_rica"]) if ret["composta"] != ret["composta_rica"] else (0.0, 0.0, 0.0))
+    return resultado
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:

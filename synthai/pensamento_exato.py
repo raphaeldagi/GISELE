@@ -32,8 +32,11 @@ def _sigmoide(z):
     return 1 / (1 + exp(-max(-30.0, min(30.0, z))))
 
 
-def ajustar_logistica(xs, ys, firth=True, iteracoes=30, passo_max=5.0, cresta=1e-6):
-    """Newton–Raphson para a logística (com o escore modificado de Firth, se pedido). Devolve os pesos."""
+def ajustar_logistica(xs, ys, firth=True, iteracoes=30, passo_max=5.0, cresta=1e-6, ridge=0.0):
+    """Newton–Raphson para a logística (com o escore modificado de Firth, se pedido). Devolve os pesos.
+
+    `ridge` (Parte 29) é a penalidade λ‖w‖²/2 nos pesos que não são o intercepto (priori normal de variância 1/λ);
+    com 0, o comportamento é o das Partes 24–28."""
     k = len(xs[0])
     w = [0.0] * k
     for _ in range(iteracoes):
@@ -48,6 +51,8 @@ def ajustar_logistica(xs, ys, firth=True, iteracoes=30, passo_max=5.0, cresta=1e
         for i in range(k):
             for j in range(i):
                 info[i][j] = info[j][i]
+        for i in range(1, k):
+            info[i][i] += ridge
         inv = _inversa(info)
         escore = [0.0] * k
         for x, p, y in zip(xs, ps, ys):
@@ -58,6 +63,8 @@ def ajustar_logistica(xs, ys, firth=True, iteracoes=30, passo_max=5.0, cresta=1e
                 r += h * (0.5 - p)
             for i in range(k):
                 escore[i] += r * x[i]
+        for i in range(1, k):
+            escore[i] -= ridge * w[i]
         passo = [sum(inv[i][j] * escore[j] for j in range(k)) for i in range(k)]
         tamanho = max(abs(s) for s in passo)
         if tamanho > passo_max:
