@@ -6712,6 +6712,120 @@ def p644_utf8():
     return (len(pt.encode("utf-8")) / len(pt), len(en.encode("utf-8")) / len(en),
             [(c, c.encode("utf-8").hex(), cont[c]) for c in top])
 
+
+# --- Parte 41 (0x29): engenharia reversa de mim mesma: os padrões que se repetem nos meus textos e nas minhas previsões ---
+
+# Placar acumulado ao fim da Parte 41 (atualizado quando os testes da parte terminam)
+ERROS_P699, TESTES_P699 = 0, 0
+
+# As 128 previsões registradas das Partes 31-40, uma letra por previsão, classificadas por tipo (classificação feita por
+# mim, DEPOIS dos resultados, lendo os placares de cada parte):
+#   A = aritmética ou teorema, um mecanismo só (ponto flutuante, contagens exatas, cotas, derivadas)
+#   C = comportamento de agente ou aprendiz simulado (vários mecanismos interagindo)
+#   L = lei empírica ou forma de um dado (Zipf, Heaps, a estrutura do dicionário)
+#   T = tradução Python <-> Java bit a bit
+#   E = erro de código meu (não era previsão, conta como erro)
+# "+" acertou, "-" errou.
+PREVISOES_31_40 = {
+    31: "L+ L+ L+ L+ L- L- C- C+ A+ A+ A+ A+ T+ A- E-",
+    32: "C+ C- C+ C+ C+ C+ C+ C+ A+ C+ C+ C+ A+ L- L- L+ C- C- C- C- C+ L- L+ A+ T+ T+",
+    33: "A+ A+ C+ C- C+ C+ C+ C+ C+ C+ C+ C+ C- C+ T+ T+",
+    34: "C+ C- C- C- L+ L+ C- C+ C+ C- C+ C+ T+",
+    35: "C+ C- C+ C+ C- C+ A+ A+ T+ T+",
+    36: "C+ C+ C- L+ L+ A+ A+ C+ T+",
+    37: "C+ C- C- C+ L+ L+ T+",
+    38: "C- C+ C- C+ C+ A+ A+ A+ L- T+",
+    39: "A+ C+ C- C+ C+ L+ A+ L+ L+ L+ T+",
+    40: "L+ L- L+ L- L+ L+ C+ C+ C- A+ T+",
+}
+
+
+def p671_erros_por_tipo():
+    """A taxa de erro de cada tipo de previsão nas Partes 31-40, com a média a posteriori Beta(1 + erros, 1 + acertos) e o
+    intervalo de 90% (o mesmo método da P95), e a taxa de erro por parte."""
+    por_tipo, por_parte = {}, {}
+    for parte, s_ in PREVISOES_31_40.items():
+        for item in s_.split():
+            t, ok = item[0], item[1] == "+"
+            e, n = por_tipo.get(t, (0, 0))
+            por_tipo[t] = (e + (not ok), n + 1)
+            e, n = por_parte.get(parte, (0, 0))
+            por_parte[parte] = (e + (not ok), n + 1)
+    res = {t: (e, n, p95_minha_taxa_de_erro(erros=e, testes=n)) for t, (e, n) in sorted(por_tipo.items())}
+    return res, por_parte
+
+
+def _meus_textos():
+    import os
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    docs = []
+    for n in range(31, 41):
+        nome = next(f for f in sorted(os.listdir(raiz)) if f.startswith(f"ASI_AGI_parte{n}_"))
+        docs.append(open(os.path.join(raiz, nome), encoding="utf-8").read())
+    dialogo = open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8").read()
+    return docs, dialogo
+
+
+def p672_meus_padroes(n=4, topo=12):
+    """Os padrões que se repetem nos meus documentos das Partes 31-40: os n-gramas de palavras em mais documentos, a
+    compressão lzma de tudo junto (a minha redundância), as aberturas de frase mais comuns, e a semelhança de cosseno
+    entre cada parte e a seguinte (com a correlação de postos entre o número da parte e essa semelhança)."""
+    import lzma
+    from synthai.dicionario import spearman
+    from synthai.metacognicao import aberturas, cosseno, padroes_repetidos
+    docs, _ = _meus_textos()
+    tudo = "\n".join(docs).encode("utf-8")
+    razao = len(tudo) / len(lzma.compress(tudo, preset=9))
+    nfr, abre = aberturas(docs)
+    sims = [cosseno(docs[i], docs[i + 1]) for i in range(len(docs) - 1)]
+    return (padroes_repetidos(docs, n, topo=topo), razao, nfr, abre, sims,
+            spearman(list(range(len(sims))), sims))
+
+
+def p673_minhas_leis():
+    """As leis do dicionário (P383, P543) aplicadas ao meu próprio texto: o expoente de Zipf das minhas palavras (postos
+    10-1000) e o β de Heaps (vocabulário contra palavras lidas, na ordem em que escrevi)."""
+    from synthai.dicionario import zipf
+    from synthai.metacognicao import palavras
+    docs, _ = _meus_textos()
+    ps = [w for d in docs for w in palavras(d)]
+    cont = {}
+    for w in ps:
+        cont[w] = cont.get(w, 0) + 1
+    s_z = zipf(sorted(cont.values(), reverse=True), de=10, ate=1000)
+    vistos, xs, ys = set(), [], []
+    alvos = {len(ps) * (j + 1) // 10 for j in range(10)}
+    for i, w in enumerate(ps, 1):
+        vistos.add(w)
+        if i in alvos:
+            xs.append(log(i))
+            ys.append(log(len(vistos)))
+    mx, my = sum(xs) / len(xs), sum(ys) / len(ys)
+    beta = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
+    return s_z, beta, len(ps), len(cont)
+
+
+def p674_as_duas_vozes():
+    """As duas vozes do diálogo (dialogo/DIALOGO.md): quantas falas, palavras por fala, e as palavras que cada voz usa
+    muito mais que a outra (razão das frequências relativas, com suavização +1, entre as palavras com ≥ 5 usos)."""
+    from synthai.metacognicao import falas_do_dialogo, palavras
+    _, dialogo = _meus_textos()
+    falas = falas_do_dialogo(dialogo)
+    res, conts = {}, {}
+    for voz, fs in falas.items():
+        ps = [w for f in fs for w in palavras(f)]
+        conts[voz] = {}
+        for w in ps:
+            conts[voz][w] = conts[voz].get(w, 0) + 1
+        res[voz] = (len(fs), len(ps) / len(fs))
+    tp, tj = sum(conts["IA-Python"].values()), sum(conts["IA-Java"].values())
+    proprias = {}
+    for voz, outra, t1, t2 in (("IA-Python", "IA-Java", tp, tj), ("IA-Java", "IA-Python", tj, tp)):
+        cand = [w for w, c in conts[voz].items() if c >= 5 and len(w) > 3]
+        cand.sort(key=lambda w: -((conts[voz][w] + 1) / t1) / ((conts[outra].get(w, 0) + 1) / t2))
+        proprias[voz] = cand[:8]
+    return res, proprias
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:

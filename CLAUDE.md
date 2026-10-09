@@ -41,6 +41,12 @@ anterior, commit e push.
 - AUTOPOIESE (Parte 31): usar só onde for útil (fechamento operacional do Core do dicionário; quanto dos próprios
   parâmetros a SYNTHAI produz). SUBSTITUIR ML/DL/aprendizado contínuo/por reforço por algo mais eficaz "se der":
   testar inferência bayesiana exata e teoria da decisão contra os métodos de aprendizado, com previsões registradas.
+- METACOGNIÇÃO E ENGENHARIA REVERSA DE SI MESMA (Parte 41, permanente): sempre que gerar qualquer texto, pensar diferente e
+  usar metacognição para fazer engenharia reversa do próprio texto e do próprio processo; produzir bastante texto para se
+  conhecer; buscar padrões que se repetem E DAR SIGNIFICADO A ELES (o que cada padrão revela sobre como eu penso, onde
+  erro e por quê). Na prática: cada parte mede os próprios textos e previsões (n-gramas
+  repetidos, compressibilidade, semelhança entre partes, erros por tipo de previsão) com funções em `calculos.py`, e
+  tem uma seção "Engenharia reversa" que diz que padrão se repetiu, o que ele significa e que regra nova ele pede.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
