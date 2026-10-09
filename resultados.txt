@@ -660,7 +660,73 @@ P356 bandido: composta_rica - composta = 0.0000, dp = 0.0000, t = 0.00
 P357 sequencial: tr(J I^-1) linear = 4.229, rico = 7.819; por amostra 0.00056, 0.00104; diferenca = 0.00048
 P357 escolha única: tr(J I^-1) linear = 4.691, rico = 8.789; por amostra 0.00016, 0.00029; diferenca = 0.00014
 P359 minha taxa de erro (83/181): media = 0.46, intervalo 90% = [0.40, 0.52]
+--- Parte 30 (0x1E: a SYNTHAI em hexadecimal; o dicionario como data lake) ---
+P361 P* = 0x1.23456789abcdfp-9; 2P* = 0x1.23456789abcdfp-8; exato = True; 1/225 = 0x0.0123456789ABCDF0123456789ABCDF01; 1/450 = 2^-9 x 256/225: True
+P361 regra 1/(b-1)^2 (periodo b-1, sem o digito b-2) nas bases 3-16: True
+P362 escolha única, 4 bits por peso: erro no logit previsto (Delta^2/12) = 0.5858, real = 0.6853; pesos em hex = 0F99, passo = 1.0262
+P362 escolha única, 8 bits por peso: erro no logit previsto (Delta^2/12) = 0.0345, real = 0.0314; pesos em hex = 04FF9D91, passo = 0.0604
+P362 sequencial, 4 bits por peso: erro no logit previsto (Delta^2/12) = 0.5425, real = 0.4758; pesos em hex = 0FA9, passo = 1.0171
+P362 sequencial, 8 bits por peso: erro no logit previsto (Delta^2/12) = 0.0319, real = 0.0232; pesos em hex = 00F9A698, passo = 0.0598
+P363 escolha única: {'0x0': 1.4306, '0x1': 1.4167, '0x2': 1.4076, '0x3': 1.478, '0x8': 1.4304, '0x9': 1.4167, '0xA': 1.3967, '0xB': 1.4781}
+P363 escolha única catastrofes: {'0x0': 0.006, '0x1': 0.0087, '0x2': 0.0063, '0x3': 0.0061, '0x8': 0.006, '0x9': 0.0087, '0xA': 0.0065, '0xB': 0.0061}
+P363 escolha única efeito media: 1.4319, dp = 0.0872, t = 73.43
+P363 escolha única efeito 0x1: 0.0311, dp = 0.1295, t = 1.07
+P363 escolha única efeito 0x2: 0.0165, dp = 0.0707, t = 1.04
+P363 escolha única efeito 0x1x0x2: 0.0449, dp = 0.1262, t = 1.59
+P363 escolha única efeito 0x8: -0.0028, dp = 0.0126, t = -0.97
+P363 escolha única efeito 0x1x0x8: 0.0028, dp = 0.0126, t = 0.99
+P363 escolha única efeito 0x2x0x8: -0.0027, dp = 0.0126, t = -0.95
+P363 escolha única efeito 0x1x0x2x0x8: 0.0027, dp = 0.0126, t = 0.97
+P363 sequencial: {'0x0': 20.1394, '0x1': 19.9314, '0x2': 19.8561, '0x3': 19.9216, '0x8': 19.7418, '0x9': 19.7654, '0xA': 19.9547, '0xB': 20.0057}
+P363 sequencial catastrofes: {'0x0': 0.012, '0x1': 0.0235, '0x2': 0.0208, '0x3': 0.0224, '0x8': 0.0155, '0x9': 0.0256, '0xA': 0.0196, '0xB': 0.02}
+P363 sequencial efeito media: 19.9145, dp = 0.2606, t = 341.69
+P363 sequencial efeito 0x1: -0.0170, dp = 0.6941, t = -0.11
+P363 sequencial efeito 0x2: 0.0400, dp = 0.3478, t = 0.51
+P363 sequencial efeito 0x1x0x2: 0.0752, dp = 0.3191, t = 1.05
+P363 sequencial efeito 0x8: -0.0952, dp = 0.3469, t = -1.23
+P363 sequencial efeito 0x1x0x8: 0.0543, dp = 0.3905, t = 0.62
+P363 sequencial efeito 0x2x0x8: 0.1866, dp = 0.3864, t = 2.16
+P363 sequencial efeito 0x1x0x2x0x8: -0.0615, dp = 0.3281, t = -0.84
+P363 bandido: {'0x0': 0.4715, '0x1': 0.4318, '0x4': 0.5637, '0x5': 0.5219, '0x8': 0.4638, '0x9': 0.414, '0xC': 0.5766, '0xD': 0.4435}
+P363 bandido catastrofes: {'0x0': 0.415, '0x1': 0.6375, '0x4': 0.7375, '0x5': 0.97, '0x8': 0.4475, '0x9': 0.685, '0xC': 0.7275, '0xD': 1.2775}
+P363 bandido efeito media: 0.4859, dp = 0.0873, t = 24.90
+P363 bandido efeito 0x1: -0.0661, dp = 0.0847, t = -3.49
+P363 bandido efeito 0x4: 0.0811, dp = 0.1048, t = 3.46
+P363 bandido efeito 0x1x0x4: -0.0213, dp = 0.0751, t = -1.27
+P363 bandido efeito 0x8: -0.0227, dp = 0.0547, t = -1.86
+P363 bandido efeito 0x1x0x8: -0.0254, dp = 0.0609, t = -1.87
+P363 bandido efeito 0x4x0x8: -0.0100, dp = 0.0514, t = -0.87
+P363 bandido efeito 0x1x0x4x0x8: -0.0203, dp = 0.0512, t = -1.77
+P364 escolha única: {'64 bits': 1.4957, '8 bits': 1.4799, '4 bits': 1.4734}; catastrofes {64: 0.0057, 8: 0.006, 4: 0.0057}
+P364 escolha única: 8 bits - completo = -0.0158, dp = 0.1358, t = -0.52
+P364 escolha única: 4 bits - completo = -0.0223, dp = 0.1657, t = -0.60
+P364 sequencial: {'64 bits': 20.1148, '8 bits': 20.0328, '4 bits': 19.9776}; catastrofes {64: 0.0191, 8: 0.0203, 4: 0.0201}
+P364 sequencial: 8 bits - completo = -0.0820, dp = 0.5778, t = -0.63
+P364 sequencial: 4 bits - completo = -0.1372, dp = 0.6056, t = -1.01
+P365 exatos = {'P*': '0x1.23456789abcdfp-9', 'E[1/X|X>=1], lambda 9,5': '0x1.eb429c5594dc2p-4', 'Wilson-Hilferty, forma 9,5': '0x1.7e3b12136eaabp+3'}; SHA-256 da bateria = 38be1420a8d3622771d385187c1f388123df8fd44c69fb1a7a11e6c76b59ac11
+P366 composta - principal (sequencial, 60 sementes) = 0.2305, dp = 0.6420, t = 2.78; catastrofes 0.0153 / 0.0197; metades: 0.2475 (t 2.04), 0.2134 (t 1.85)
+P371 sinsets = 117659
+P371 lemas = 147306
+P371 nos = 77503
+P371 arestas = 557352
+P371 nucleo = 16795
+P371 core = 15142
+P371 satelites = 1653
+P371 componentes = 1113
+P371 minset = 3985
+P371 minset_no_core = 3502
+P371 fecho = 77503
+P371 rodadas = 53
+P371 zipf = 1.0694265759608046
+P371 vocabulario_definidor = 32927
+P371 entropia_letras = 4.21316469480689
+P371 prof_media = 7.955148267673385
+P371 prof_max = 18
+P371 hexspeak = ['aaa', 'aba', 'abaca', 'abb', 'abbe', 'abc', 'abed', 'acc', 'accede', 'ace', 'ada', 'adad', 'add', 'ade', 'aec', 'baa', 'baba', 'babe', 'bacca', 'bad', 'bade', 'baeda', 'bce', 'bead', 'beaded', 'bed', 'beda', 'bedded', 'bede', 'bee', 'beef', 'caaba', 'cab', 'cad', 'cafe', 'caff', 'cbc', 'ccc', 'cdc', 'cede', 'cfc', 'dab', 'daba', 'dacca', 'dace', 'dad', 'dada', 'dba', 'ddc', 'dea', 'dead', 'deaf', 'deb', 'dec', 'decade', 'decaf', 'ded', 'deed', 'deface', 'ebb', 'ecc', 'ecf', 'edd', 'edda', 'eec', 'eff', 'efface', 'faa', 'fab', 'fabaceae', 'facade', 'face', 'faced', 'fad', 'fade', 'faded', 'fae', 'fcc', 'fda', 'feb', 'fed', 'fee', 'feed']
+P371 minset_exemplo = ['abbot', 'abdomen', 'ability', 'able', 'abode', 'abrupt', 'absence', 'absolute', 'absorb', 'abstract', 'academic', 'accept', 'acceptable', 'acceptance', 'accepted', 'access', 'accessory', 'accommodation', 'accompanied', 'accompany', 'accord', 'according', 'account', 'accounting', 'accumulation', 'ace', 'acid', 'acknowledge', 'acknowledgment', 'acquire', 'across', 'act', 'action', 'active', 'activity', 'actor', 'acts', 'actually', 'acute', 'adapt']
+P372 hexspeak = 83 palavras; maior = fabaceae = 0xFABACEAE = 4206546606; uma palavra = 4.0605 digitos hex; uma letra = 1.0533 digito hex
+P379 minha taxa de erro (90/201): media = 0.45, intervalo 90% = [0.39, 0.51]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 213; pares de interacao possiveis = 22578
+P96 funcoes pNN no arquivo = 221; pares de interacao possiveis = 24310
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)
-Regressao: 65/65 resultados publicados reproduzidos; falhas = []
+Regressao: 68/68 resultados publicados reproduzidos; falhas = []
