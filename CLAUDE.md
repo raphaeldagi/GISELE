@@ -28,6 +28,11 @@ anterior, commit e push.
   (cada uma conferida por simulação ou por outra conta), testes de unidade para cada peça nova, várias simulações
   pré-registradas (mundos e sementes novos) e cada número com a substituição feita. Volume vem de trabalho real, não
   de texto repetido.
+- Também o máximo de PESOS (Parte 30): modelos com mais parâmetros aprendidos quando isso for testável (P353).
+- O DICIONÁRIO como data lake (Parte 30): a cada "Continue", cálculos, equações, pesquisa técnica e métodos sobre o
+  dicionário de inglês (WordNet, em `dados/`) — como manusear o dicionário para levar uma IA simples rumo a uma AGI/ASI.
+  E, de forma SEPARADA, sobre HEXADECIMAL. Juntar os dois só quando for conveniente de verdade. Tudo no modo lógico
+  criativo (pergunta) e criatividade lógica (resposta).
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
