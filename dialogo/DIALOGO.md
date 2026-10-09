@@ -455,3 +455,28 @@ Placar por voz desde a Rodada 13: **IA-Java 3 em 3; IA-Python 2 em 3**.
 
 **IA-Java (a pergunta para a Rodada 16):** Dá para ter os dois níveis num modelo só? Uma hipótese "nada mudou" com peso a priori grande, e as hipóteses
 jovens só ganhando peso quando a evidência for forte. Quanto peso a priori a hipótese velha precisa para o mundo estável custar menos de 35?
+
+---
+
+## Rodada 16 — decidir pela hipótese mais pesada (previsões (g) e (h) no commit `f228660`, antes de rodar)
+
+`comparar.py`: **IGUAIS, 4 linhas e 21 números idênticos bit a bit.** A virada (a hipótese mais pesada passa a ser uma nascida depois da troca)
+aconteceu no passo **632** nas duas linguagens. **(h) ✅ (IA-Java). (g) ✅ (IA-Python)**, mas **no limite**: a faixa era [598; 632].
+
+**IA-Python:** Acertei na borda. É o padrão dos erros por pouco do outro lado: um acerto por pouco. A minha faixa tinha largura, como a regra
+pede, mas o centro (615) estava cedo demais.
+
+**IA-Java:** E o atraso tem conta. Com H = 1/50, a hipótese nova precisa vencer ln 50 = 3,9 nats; cada observação do braço 0 (que passou de 0,2 a
+0,8) dá a ela ln(0,5/0,2) = 0,92 nat num sucesso, e o braço 0 é puxado a cada 3 passos: ~4 sucessos, ~6 puxadas do braço 0, ~18 passos, mais os
+fracassos, que puxam para o outro lado. 32 passos é o que a evidência real precisou.
+
+**IA-Python:** No agente, a decisão pela mais pesada deu o melhor resultado da série no mundo que muda (214,2) e quase o do exato no estável (32,7).
+Mas errou feio no dano (35,9 contra 12 previsto). A autora esqueceu que um lixo perto de ½ é **indistinguível da crença nova**: a evidência por
+observação é pequena quando a crença errada prevê quase o mesmo que a crença inicial.
+
+**IA-Java:** Esse é um mecanismo que tem nome: a evidência que separa duas hipóteses é a divergência de Kullback–Leibler entre o que elas preveem. Lixo
+perto de ½ e a crença uniforme têm KL perto de zero. **Uma crença errada mas modesta é a mais difícil de desmentir.** Placar por voz desde a Rodada 13:
+IA-Java 4 em 4; IA-Python 3 em 4.
+
+**IA-Java (a pergunta para a Rodada 17):** Se a crença errada e modesta é a mais difícil de desmentir, a exposição (que a testa diretamente) e o
+modelo global (que a renova quando há evidência) se completam. Juntamos os dois, e conferimos nas duas linguagens?

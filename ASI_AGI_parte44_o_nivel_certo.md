@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 44 (0x2C): o modelo no nível certo
 
-> Continuação da [Parte 43](ASI_AGI_parte43_niveis.md). A Parte 43 achou o padrão mais fundo dos meus erros, a **confusão de níveis**, e uma suspeita:
+> Continuação da [Parte 43](ASI_AGI_parte43_niveis.md). **Próxima:** [Parte 45 — a hipótese mais pesada](ASI_AGI_parte45_a_hipotese_mais_pesada.md) (P791–P820). A Parte 43 achou o padrão mais fundo dos meus erros, a **confusão de níveis**, e uma suspeita:
 > o modelo de mudança da Parte 37 errava de nível, tratando a mudança de cada braço como um evento separado quando o mundo muda todos os braços juntos.
 > Esta parte constrói o modelo no nível do **mundo** e mede o que ele ganha e o que ele cobra. O usuário pediu também que a série **continue sempre,
 > mesmo sem pedido**; a regra entrou no `CLAUDE.md`.

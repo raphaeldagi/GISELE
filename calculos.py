@@ -7131,7 +7131,7 @@ def p763_grupos():
 #     profundidade da taxonomia ---
 
 # Placar acumulado ao fim da Parte 45 (atualizado quando os testes da parte terminam)
-ERROS_P819, TESTES_P819 = 0, 0
+ERROS_P819, TESTES_P819 = 134, 379
 
 # As 17 previsões de comportamento feitas com a regra das faixas (Partes 42-44): (centro, meia-largura relativa, medido).
 # Os medidos são os de resultados.txt / dos documentos das partes (P701, P731, P761).
@@ -7295,6 +7295,7 @@ def testes_de_regressao():
         "P704": p704_contas() == 168,
         "P731": round(p731_contas()["exposta100_dano"], 1) == 27.1,
         "P761": round(p761_contas()["global_muda"], 2) == 263.85,
+        "P792": round(p792_calibracao()[1], 2) == 1.07,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -8336,6 +8337,21 @@ def _parte_44():
     print(f"P789 minha taxa de erro ({ERROS_P789}/{TESTES_P789}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_45():
+    print("--- Parte 45 (0x2D: decidir pela hipotese mais pesada; a calibracao das minhas faixas; a profundidade) ---")
+    media, dp, t, fora, n = p792_calibracao()
+    print(f"P792 calibracao das {n} faixas de comportamento: media de z = {media:+.3f} (t = {t:.2f}); desvio de z = {dp:.3f}; fora de 1,645 = {fora}")
+    centros = p791_contas()
+    larg = {"map_estavel": 0.172, "map_muda": 0.258, "map_dano": 0.344}
+    for k, v in p791_map().items():
+        c = centros[k]
+        print(f"P791 {k}: centro = {c:.2f}; medido = {v:.2f}; desvio = {(v - c) / c:+.3f}; dentro = {c * (1 - larg[k]) <= v <= c * (1 + larg[k])}")
+    for k, (m, n) in p793_profundidade().items():
+        print(f"P793 profundidade media de {k} = {m:.3f} ({n} substantivos)")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P819, testes=TESTES_P819)
+    print(f"P819 minha taxa de erro ({ERROS_P819}/{TESTES_P819}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -8364,6 +8380,7 @@ def _unificacao():
           " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)"
           " | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)"
           " => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)"
+          " + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda)"
           " + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5)"
           " + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos)"
           " + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao)"
@@ -8371,7 +8388,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45}
 
 
 if __name__ == "__main__":
