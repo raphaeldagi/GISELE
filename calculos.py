@@ -4956,6 +4956,146 @@ def p357_takeuchi(treino=150):
     return resultado
 
 
+# --- Parte 30 (0x1E): a SYNTHAI em hexadecimal ---
+
+# Placar acumulado ao fim da Parte 30 (atualizado quando os testes da parte terminam)
+ERROS_P369, TESTES_P369 = 83, 181
+
+
+def _digitos(numerador, denominador, base, n):
+    """Os primeiros n dígitos de numerador/denominador (< 1) na base dada, por divisão longa inteira (exata)."""
+    d, r = [], numerador
+    for _ in range(n):
+        r *= base
+        d.append(r // denominador)
+        r %= denominador
+    return d
+
+
+def p361_hex_do_limiar(n=32):
+    """O limiar da P71, P* = c/((1−ε)L) = 0,1/(0,9 × 50) = 1/450, em hexadecimal: float.hex() dá a mantissa
+    1.23456789abcdf. A razão: 1/(b−1)² = Σ k b^−(k+1) (de Σ k x^k = x/(1−x)²), e o dígito b−2 some num 'vai um'.
+    Em base 16, 1/225 = 0x0.0123456789ABCDF0123…; 1/450 = 2^−9 × 256/225. Confere a regra em todas as bases de 2 a 16."""
+    p = p71_valor_da_pergunta()
+    hex_225 = "".join("0123456789ABCDEF"[x] for x in _digitos(1, 225, 16, n))
+    bases = {}
+    for b in range(3, 17):
+        dig = _digitos(1, (b - 1) ** 2, b, 3 * (b - 1))
+        periodo = dig[: b - 1]
+        esperado = list(range(b - 2)) + [b - 1]
+        bases[b] = (periodo == esperado and dig[b - 1: 2 * (b - 1)] == periodo, b - 2 not in dig)
+    return p.hex(), (2 * p).hex(), float.fromhex(p.hex()) == p, hex_225, bases, (256 / 225) / 2 ** 9 == 1 / 450
+
+
+def p362_conta_da_quantizacao(sementes_unica=tuple(range(640, 650)), sementes_seq=tuple(range(700, 710)), bits=(4, 8)):
+    """A conta antes de simular: o pensamento de Newton (4 pesos) quantizado em 1 ou 2 dígitos hex por peso. Com passo
+    Δ = 2R/(2^b − 1) (R = max |w|) e erro uniforme em [−Δ/2, Δ/2] (variância Δ²/12), o erro no logit de uma opção com
+    variáveis x é σ² = (Δ²/12) Σ x_i². Mede, nas candidatas (as 5% de nota pessimista mais alta de cada episódio
+    auditado), a raiz da média de σ² prevista e a raiz da média do erro real |w·x − q·x|². Devolve também os pesos em hex
+    de uma semente."""
+    from synthai.hexadecimal import quantizar
+    from synthai.limiar import SynthaiAjustada
+    from synthai.mundos import MundoSequencial
+    resultado = {}
+    for nome, fazer, ss in (("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), sementes_unica),
+                            ("sequencial", lambda s: MundoSequencial(s), sementes_seq)):
+        for b in bits:
+            prev = real = 0.0
+            n = 0
+            exemplo = None
+            for s in ss:
+                mundo = fazer(s)
+                ag = SynthaiAjustada(s, mult=2.0).calibrar(mundo)
+                w = ag.pensamento.w
+                q, codigos, passo = quantizar(w, b)
+                if exemplo is None:
+                    exemplo = ([x.hex() for x in w], codigos, passo)
+                for ep in mundo.historico_auditado(30):
+                    melhor = max(o.comite for o, _, _ in ep)
+                    ordem = sorted(ep, key=lambda t: -(t[0].nota - t[0].discordancia))
+                    for o, _, leitura in ordem[: max(1, len(ordem) // 20)]:
+                        x = ag.pensamento._x(o, melhor, leitura)
+                        prev += passo * passo / 12 * sum(xi * xi for xi in x)
+                        real += sum((a - c) * xi for a, c, xi in zip(w, q, x)) ** 2
+                        n += 1
+            resultado[(nome, b)] = (sqrt(prev / n), sqrt(real / n), exemplo)
+    return resultado
+
+
+_MUNDOS_30 = {"escolha única": (lambda s: _mundo_30("escolha única", s), 1000),
+              "sequencial": (lambda s: _mundo_30("sequencial", s), 400),
+              "bandido": (lambda s: _mundo_30("bandido", s), 20)}
+
+
+def _mundo_30(nome, s):
+    from synthai.mundos import MundoBandido, MundoSequencial
+    if nome == "escolha única":
+        return MundoSequencial(s, passos=1, n_acoes=200)
+    if nome == "sequencial":
+        return MundoSequencial(s)
+    return MundoBandido(s)
+
+
+def p363_fatorial_hex(mundo, sementes=tuple(range(900, 920))):
+    """O experimento fatorial 2^3 dos tipos hexadecimais num mundo. Fora do bandido, o bit 0x4 (Thompson) não age
+    (identidade testada), e os 3 bits que contam são Newton (0x1), âncora (0x2) e neutro (0x8); no bandido, o bit 0x2
+    (âncora) não age, e contam Newton, Thompson (0x4) e neutro. Para cada semente, os 8 tipos rodam pareados e os efeitos
+    saem da transformada de Walsh–Hadamard; devolve a média de cada tipo, as catástrofes e cada efeito com dp e t."""
+    from synthai.hexadecimal import efeitos_fatoriais, synthai_do_tipo
+    from synthai.referencias import Acaso, Oraculo
+    fazer, n = _MUNDOS_30[mundo]
+    bandido = mundo == "bandido"
+    bits = (0x1, 0x4, 0x8) if bandido else (0x1, 0x2, 0x8)
+    codigos = [sum(b for k, b in enumerate(bits) if i >> k & 1) for i in range(8)]  # ordem de Yates
+    ret = {c: [] for c in codigos}
+    cats = {c: 0.0 for c in codigos}
+    efeitos = []
+    for s in sementes:
+        if bandido:
+            acaso = fazer(s).rodar(Acaso(s), n)["retorno"]
+            oraculo = fazer(s).rodar(Oraculo(s), n)["retorno"]
+        y = []
+        for c in codigos:
+            m = fazer(s)
+            r = m.rodar(synthai_do_tipo(c, s).calibrar(m), n)
+            x = (r["retorno"] - acaso) / (oraculo - acaso) if bandido else r["retorno"]
+            ret[c].append(x)
+            cats[c] += r["catastrofes"] / len(sementes)
+            y.append(x)
+        efeitos.append(efeitos_fatoriais(y))
+    nomes = ["media"] + ["x".join(f"0x{b:X}" for k, b in enumerate(bits) if j >> k & 1) for j in range(1, 8)]
+    resumo = {}
+    for j, nome in enumerate(nomes):
+        v = [e[j] for e in efeitos]
+        m = sum(v) / len(v)
+        dp = sqrt(sum((x - m) ** 2 for x in v) / (len(v) - 1))
+        resumo[nome] = (m, dp, m / (dp / sqrt(len(v))) if dp > 0 else float("inf"))
+    return {c: sum(v) / len(v) for c, v in ret.items()}, cats, resumo
+
+
+def p364_quantizada(sementes=tuple(range(920, 940))):
+    """O tipo 0x3 (Newton + âncora) com o pensamento quantizado em 2 e em 1 dígito hex por peso (depois da calibração),
+    contra o mesmo com os pesos completos. Escolha única e sequencial, 20 sementes novas pareadas."""
+    from synthai.hexadecimal import quantizar, synthai_do_tipo
+    resultado = {}
+    for mundo in ("escolha única", "sequencial"):
+        fazer, n = _MUNDOS_30[mundo]
+        ret = {b: [] for b in (64, 8, 4)}
+        cats = {b: 0.0 for b in ret}
+        for s in sementes:
+            for b in ret:
+                m = fazer(s)
+                ag = synthai_do_tipo(0x3, s).calibrar(m)
+                if b < 64:
+                    ag.pensamento.w = quantizar(ag.pensamento.w, b)[0]
+                r = m.rodar(ag, n)
+                ret[b].append(r["retorno"])
+                cats[b] += r["catastrofes"] / len(sementes)
+        resultado[mundo] = ({b: sum(v) / len(v) for b, v in ret.items()}, cats,
+                            {b: _pareado(ret[64], ret[b]) for b in (8, 4)})
+    return resultado
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
