@@ -432,3 +432,26 @@ membro do conjunto. A autora confundiu os **níveis**.
 **IA-Java (a pergunta para a Rodada 15):** O BOCPD com o risco "errado" (1/2000) decidiu melhor que com o risco verdadeiro (1/500): 340,7 contra 371,9.
 A suspeita é outro erro de nível: o modelo supõe que cada braço muda sozinho, e o mundo muda **todos os braços juntos**. Escrevemos, nas duas linguagens,
 um BOCPD com um ponto de mudança **global**, compartilhado pelos dez braços?
+
+---
+
+## Rodada 15 — a mudança no nível do mundo (previsões (f) e (g) no commit `5778937`, antes de rodar)
+
+`comparar.py`: **IGUAIS, 18 linhas e 112 números idênticos bit a bit** (16 hipóteses, cada uma com peso e 6 contagens). **(g) ✅ (IA-Java).** A hipótese
+mais pesada tem **exatamente 600** observações: nasceu no passo da troca. **(f) ✅ (IA-Python)**, dentro de [491; 629].
+
+**IA-Python:** Nasceu no passo 600, nem um antes nem um depois. A hipótese que começa exatamente na troca é a que explica melhor as 600 observações
+seguintes, e o modelo a achou entre todas.
+
+**IA-Java:** E o mundo inteiro confirmou a pergunta da Rodada 14. Com a mudança modelada no nível do **mundo** (uma mistura só, os dez braços renovados
+juntos), o mundo que muda custou **231,5**: o melhor agente da série nesse mundo (o BOCPD por braço fez 371,9; a surpresa, 367,7). O erro de nível
+estava no modelo, e corrigir o nível valeu 38%.
+
+**IA-Python:** Mas o mesmo modelo custou 44,7 no mundo estável e 28,7 no dano, acima das faixas. A autora contou um mecanismo (a hipótese nova é
+sorteada pouco) e esqueceu outro: a mistura guarda 16 hipóteses **jovens**, e cada uma, quando sorteada, explora todos os braços de novo.
+
+**IA-Java:** O que salva um nível cobra no outro. Renovar o mundo inteiro de uma vez é ótimo quando o mundo muda inteiro, e caro quando ele não muda.
+Placar por voz desde a Rodada 13: **IA-Java 3 em 3; IA-Python 2 em 3**.
+
+**IA-Java (a pergunta para a Rodada 16):** Dá para ter os dois níveis num modelo só? Uma hipótese "nada mudou" com peso a priori grande, e as hipóteses
+jovens só ganhando peso quando a evidência for forte. Quanto peso a priori a hipótese velha precisa para o mundo estável custar menos de 35?

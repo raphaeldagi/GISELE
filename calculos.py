@@ -7071,7 +7071,7 @@ def p733_dialogo_responde():
 # --- Parte 44 (0x2C): o modelo no nível certo (uma mudança global); os grupos do dicionário; a minha curva de erro ---
 
 # Placar acumulado ao fim da Parte 44 (atualizado quando os testes da parte terminam)
-ERROS_P789, TESTES_P789 = 0, 0
+ERROS_P789, TESTES_P789 = 133, 371
 
 
 def p761_contas():
@@ -7224,6 +7224,7 @@ def testes_de_regressao():
         "P671": sum(n for _, n in p671_erros_por_tipo()[1].values()) == 128,
         "P704": p704_contas() == 168,
         "P731": round(p731_contas()["exposta100_dano"], 1) == 27.1,
+        "P761": round(p761_contas()["global_muda"], 2) == 263.85,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -8250,6 +8251,21 @@ def _parte_43():
     print(f"P759 minha taxa de erro ({ERROS_P759}/{TESTES_P759}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_44():
+    print("--- Parte 44 (0x2C: o modelo no nivel certo; os grupos do dicionario; a curva de erro) ---")
+    centros = p761_contas()
+    larg = {"global_muda": 0.258, "global_estavel": 0.172, "global_dano": 0.344}
+    for k, v in p761_global().items():
+        c = centros[k]
+        print(f"P761 {k}: centro = {c:.2f}; medido = {v:.2f}; desvio = {(v - c) / c:+.3f}; dentro = {c * (1 - larg[k]) <= v <= c * (1 + larg[k])}")
+    taxas, incl = p762_curva_de_erro()
+    print(f"P762 taxa de erro por parte = {taxas}; inclinacao = {incl:+.4f} por parte")
+    n, g, t = p763_grupos()
+    print(f"P763 substantivos = {n}; nomeiam grupos = {g:.4f}; grupos taxonomicos = {t:.4f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P789, testes=TESTES_P789)
+    print(f"P789 minha taxa de erro ({ERROS_P789}/{TESTES_P789}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -8278,13 +8294,14 @@ def _unificacao():
           " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)"
           " | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)"
           " => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)"
+          " + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5)"
           " + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos)"
           " + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao)"
           " + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44}
 
 
 if __name__ == "__main__":

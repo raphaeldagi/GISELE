@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 43 (0x2B): o centro deduzido, e a confusão de níveis
 
-> Continuação da [Parte 42](ASI_AGI_parte42_significante_e_significado.md). A Parte 42 confirmou a regra das faixas (instinto ×1,72) num teste fácil:
+> Continuação da [Parte 42](ASI_AGI_parte42_significante_e_significado.md). **Próxima:** [Parte 44 — o modelo no nível certo](ASI_AGI_parte44_o_nivel_certo.md) (P761–P790). A Parte 42 confirmou a regra das faixas (instinto ×1,72) num teste fácil:
 > réplicas, em que o centro de cada faixa era uma medida antiga. O teste difícil é uma previsão de **mecanismo novo**, em que o centro também é deduzido.
 > Esta parte faz esse teste, acha os trigramas de letras que carregam significado (Rodada 14) e mede se o diálogo responde às perguntas que ele mesmo
 > deixa. A engenharia reversa achou um padrão novo, que liga erros de partes distantes: **a confusão de níveis**.

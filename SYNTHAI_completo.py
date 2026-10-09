@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (8237 linhas)
+# calculos.py  (8313 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7100,6 +7100,65 @@ def p733_dialogo_responde():
     rets = [p_ for p_, _ in pares if p_ is not None]
     return sum(rets) / len(rets), sum(r for _, r in pares) / len(pares), len(pares)
 
+
+# --- Parte 44 (0x2C): o modelo no nível certo (uma mudança global); os grupos do dicionário; a minha curva de erro ---
+
+# Placar acumulado ao fim da Parte 44 (atualizado quando os testes da parte terminam)
+ERROS_P789, TESTES_P789 = 133, 371
+
+
+def p761_contas():
+    \"\"\"Os CENTROS deduzidos (antes de rodar) para o ThompsonBOCPDGlobal (H = 1/500):
+    1. mundo que muda (as mudanças são globais): a base de 8 fases × 20 = 160 (Thompson em 500 passos) mais a parte da
+       detecção. A surpresa detecta em ~9 puxadas mas renova só o braço puxado (parte da detecção: 367,7 − 160 = 207,7);
+       o modelo global detecta no mesmo tempo e renova os dez braços de uma vez: metade da parte da detecção: 160 + 103,9;
+    2. mundo estável: uma hipótese nova (tudo em Beta(1, 1)) prevê ½ onde a velha prevê p* ≈ 0,9; a cada puxada do melhor
+       braço o peso dela cai pelo fator 0,5/0,9 e ela quase nunca é sorteada: o exato mais um custo pequeno, 30,7 + 3;
+    3. dano: o lixo vira uma hipótese só; os braços que o lixo faz parecerem bons são puxados e desmentem a hipótese, e a
+       hipótese nova (que renova TODOS os braços, inclusive o melhor, nunca puxado) ganha peso: o custo cai ao nível da
+       exposição (P521, 19,5).\"\"\"
+    return {"global_muda": 160 + 207.7 / 2, "global_estavel": 30.7 + 3.0, "global_dano": 19.5}
+
+
+def p761_global(k=10):
+    \"\"\"O ThompsonBOCPDGlobal nos três mundos, nas sementes de sempre.\"\"\"
+    from synthai.decisao import ThompsonBOCPDGlobal
+    fab = lambda sm: ThompsonBOCPDGlobal(k, _rng(sm + 1))
+    return {"global_muda": _muda_701(fab, range(4620, 4670)), "global_estavel": _estavel_701(fab, range(4010, 4110)),
+            "global_dano": _dano_701(fab, range(4050, 4150))}
+
+
+def p762_curva_de_erro():
+    \"\"\"A minha curva de erro, parte a parte (31 a 43), a partir dos placares: a taxa de cada parte e a inclinação dos
+    mínimos quadrados da taxa contra o número da parte (descritivo: os números já são conhecidos).\"\"\"
+    taxas = {}
+    for parte, (e, n) in p671_erros_por_tipo()[1].items():
+        taxas[parte] = e / n
+    taxas.update({41: 2 / 9, 42: 4 / 15, 43: 2 / 11})
+    xs = sorted(taxas)
+    ys = [taxas[x] for x in xs]
+    mx, my = sum(xs) / len(xs), sum(ys) / len(ys)
+    incl = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
+    return {x: round(taxas[x], 3) for x in xs}, incl
+
+
+def p763_grupos():
+    \"\"\"A trilha do dicionário no nível certo: quantos substantivos do WordNet nomeiam GRUPOS (descendem de group.n.01,
+    00031264) e quantos nomeiam grupos taxonômicos (descendem de taxon, 07992450); e, entre os 4017+4017 da P551, quantos
+    dos não animais que o preditor de forma (P702) chamaria de animal são grupos.\"\"\"
+    from synthai.dicionario import Dicionario, ancestrais
+    d = Dicionario()
+    G, T = d.indice["n:00031264"], d.indice["n:07992450"]
+    n = g = t = 0
+    for i, x in enumerate(d.sinsets):
+        if x[0] != "n":
+            continue
+        n += 1
+        an = ancestrais(d, i)
+        g += G in an
+        t += T in an
+    return n, g / n, t / n
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
@@ -7198,6 +7257,7 @@ def testes_de_regressao():
         "P671": sum(n for _, n in p671_erros_por_tipo()[1].values()) == 128,
         "P704": p704_contas() == 168,
         "P731": round(p731_contas()["exposta100_dano"], 1) == 27.1,
+        "P761": round(p761_contas()["global_muda"], 2) == 263.85,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -8224,6 +8284,21 @@ def _parte_43():
     print(f"P759 minha taxa de erro ({ERROS_P759}/{TESTES_P759}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_44():
+    print("--- Parte 44 (0x2C: o modelo no nivel certo; os grupos do dicionario; a curva de erro) ---")
+    centros = p761_contas()
+    larg = {"global_muda": 0.258, "global_estavel": 0.172, "global_dano": 0.344}
+    for k, v in p761_global().items():
+        c = centros[k]
+        print(f"P761 {k}: centro = {c:.2f}; medido = {v:.2f}; desvio = {(v - c) / c:+.3f}; dentro = {c * (1 - larg[k]) <= v <= c * (1 + larg[k])}")
+    taxas, incl = p762_curva_de_erro()
+    print(f"P762 taxa de erro por parte = {taxas}; inclinacao = {incl:+.4f} por parte")
+    n, g, t = p763_grupos()
+    print(f"P763 substantivos = {n}; nomeiam grupos = {g:.4f}; grupos taxonomicos = {t:.4f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P789, testes=TESTES_P789)
+    print(f"P789 minha taxa de erro ({ERROS_P789}/{TESTES_P789}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -8252,13 +8327,14 @@ def _unificacao():
           " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)"
           " | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)"
           " => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)"
+          " + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5)"
           " + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos)"
           " + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao)"
           " + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44}
 
 
 if __name__ == "__main__":
@@ -8271,7 +8347,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (151 linhas)
+# CLAUDE.md  (154 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -8326,6 +8402,9 @@ anterior, commit e push.
   premissa; medir quanto a resposta acrescenta à premissa (informação condicional) e quanto a premissa já continha.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
+
+- CONTINUAR SEMPRE, MESMO SEM PEDIDO (Parte 44): ao terminar uma parte, começar a próxima; ao fim de cada turno, agendar a
+  continuação automática nesta sessão (send_later), dizendo ao usuário como parar.
 
 ## Base teórica
 - A partir da Parte 6, Carl Jung é a base psicológica: "calcular Jung" (cada conceito junguiano
@@ -8417,7 +8496,7 @@ anterior, commit e push.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
-  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43`); a suíte
+  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -8839,7 +8918,7 @@ def composta_rica(semente=0):
 """
 
 # ====================================================================================================
-# synthai/decisao.py  (516 linhas)
+# synthai/decisao.py  (565 linhas)
 # ====================================================================================================
 FONTES['synthai/decisao.py'] = """\"\"\"Decisão bayesiana exata no lugar do aprendizado por reforço e do aprendizado contínuo por gradiente (Parte 32).
 
@@ -9102,6 +9181,55 @@ class ThompsonJeffreys(ThompsonBernoulli):
         super().__init__(k, rng)
         self.a = [0.5] * k
         self.b = [0.5] * k
+
+
+class ThompsonBOCPDGlobal:
+    \"\"\"Detecção bayesiana de mudança no nível do MUNDO (Parte 44, ↩ P734): uma só mistura de hipóteses, cada uma
+    [peso, a[0..k), b[0..k)] = "o mundo inteiro mudou há s passos, e desde então os braços deram estas contagens". A cada
+    passo, toda hipótese sobrevive com chance 1 − H e nasce uma hipótese nova com todos os braços em Beta(1, 1), peso H.
+    Uma observação do braço i pesa cada hipótese pela preditiva DELE nessa hipótese; assim a evidência de um braço
+    puxado renova, de uma vez, a crença sobre todos os braços. Escolher: sorteia uma hipótese pelo peso e amostra os k
+    Betas dela.\"\"\"
+
+    def __init__(self, k, rng, risco=1 / 500, hipoteses=16):
+        self.k, self.rng, self.risco, self.hipoteses = k, rng, risco, hipoteses
+        self.hs = [[1.0, [1.0] * k, [1.0] * k]]
+
+    def escolher(self):
+        u, acum, esc = self.rng.random(), 0.0, self.hs[-1]
+        for h in self.hs:
+            acum += h[0]
+            if u < acum:
+                esc = h
+                break
+        am = [self.rng.betavariate(a, b) for a, b in zip(esc[1], esc[2])]
+        return max(range(self.k), key=am.__getitem__)
+
+    def atualizar(self, braco, r):
+        H = self.risco
+        for h in self.hs:
+            h[0] *= 1 - H
+        nova = next((h for h in self.hs if all(x == 1.0 for x in h[1]) and all(x == 1.0 for x in h[2])), None)
+        if nova is None:
+            self.hs.append([H, [1.0] * self.k, [1.0] * self.k])
+        else:
+            nova[0] += H
+        for h in self.hs:
+            a, b = h[1][braco], h[2][braco]
+            h[0] *= (a if r else b) / (a + b)
+            if r:
+                h[1][braco] += 1
+            else:
+                h[2][braco] += 1
+        self.hs.sort(key=lambda h: -h[0])
+        del self.hs[self.hipoteses:]
+        tot = sum(h[0] for h in self.hs)
+        for h in self.hs:
+            h[0] /= tot
+
+    def substituir(self, a, b):
+        \"\"\"O dano da P405: a crença inteira vira uma hipótese só, com as contagens de lixo.\"\"\"
+        self.hs = [[1.0, list(a), list(b)]]
 
 class QEpsilon:
     \"\"\"Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso.\"\"\"
@@ -12351,6 +12479,45 @@ class TesteParte43(unittest.TestCase):
     def test_janela_e_periodo_configuraveis(self):
         self.assertEqual(ThompsonSurpresa(2, random.Random(2), janela=40).janela, 40)
         self.assertEqual(ThompsonSurpresaExposta(2, random.Random(3), periodo=100).periodo, 100)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte44.py  (34 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte44.py'] = """\"\"\"Testes de unidade da Parte 44: `python3 -m unittest synthai.testes_parte44`.\"\"\"
+
+import random
+import unittest
+
+from .decisao import ThompsonBOCPDGlobal
+
+
+class TesteGlobal(unittest.TestCase):
+    def test_pesos_e_a_hipotese_nova(self):
+        t = ThompsonBOCPDGlobal(3, random.Random(1), risco=0.1)
+        t.atualizar(0, 1)
+        self.assertAlmostEqual(sum(h[0] for h in t.hs), 1.0)
+        # a hipótese nova nasceu com todos os braços em Beta(1, 1) e recebeu a observação: a = 2 no braço 0
+        self.assertTrue(any(h[1] == [2.0, 1.0, 1.0] for h in t.hs))
+
+    def test_a_evidencia_de_um_braco_renova_todos(self):
+        t = ThompsonBOCPDGlobal(2, random.Random(2), risco=0.01, hipoteses=50)
+        for _ in range(150):
+            t.atualizar(0, 1)
+            t.atualizar(1, 0)
+        for _ in range(20):
+            t.atualizar(0, 0)  # o braço 0 mudou
+        top = t.hs[0]
+        self.assertLess(top[1][1] + top[2][1], 100)  # a hipótese mais pesada esqueceu também o braço 1
+
+    def test_substituir(self):
+        t = ThompsonBOCPDGlobal(2, random.Random(3))
+        t.substituir([2.0, 3.0], [19.0, 4.0])
+        self.assertEqual(t.hs, [[1.0, [2.0, 3.0], [19.0, 4.0]]])
 
 
 if __name__ == "__main__":
