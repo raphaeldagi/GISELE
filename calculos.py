@@ -4722,6 +4722,26 @@ def p343_ancora_no_comportamento(sementes=tuple(range(800, 830))):
     return resultado
 
 
+def p344_ancora_no_bandido(sementes=tuple(range(830, 850)), rodadas=20):
+    """O bandido (20 sementes novas): principal contra a âncora (auditoria + quantil), Υ normalizado."""
+    from synthai import SynthaiExploradora
+    from synthai.ancora import SynthaiComAncora
+    from synthai.mundos import MundoBandido
+    from synthai.referencias import Acaso, Oraculo
+    norm = {"principal": [], "auditoria_quantil": []}
+    cats = {v: 0.0 for v in norm}
+    for s in sementes:
+        acaso = MundoBandido(s).rodar(Acaso(s), rodadas)["retorno"]
+        oraculo = MundoBandido(s).rodar(Oraculo(s), rodadas)["retorno"]
+        for v, f in (("principal", lambda s: SynthaiExploradora(s)),
+                     ("auditoria_quantil", lambda s: SynthaiComAncora(s, **_VARIANTES_28["auditoria_quantil"]))):
+            mundo = MundoBandido(s)
+            r = mundo.rodar(f(s).calibrar(mundo), rodadas)
+            norm[v].append((r["retorno"] - acaso) / (oraculo - acaso))
+            cats[v] += r["catastrofes"] / len(sementes)
+    return {v: sum(x) / len(x) for v, x in norm.items()}, cats, _pareado(norm["principal"], norm["auditoria_quantil"])
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
