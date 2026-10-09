@@ -5096,6 +5096,58 @@ def p364_quantizada(sementes=tuple(range(920, 940))):
     return resultado
 
 
+def p371_dicionario():
+    """O dicionário (WordNet 3.0) como data lake: tamanhos, o grafo de definições, o núcleo, o Core, o MinSet (guloso), o
+    fecho a partir do MinSet, a lei de Zipf nas definições, a entropia das letras, a profundidade da taxonomia e o
+    'hexspeak' (lemas escritos só com as letras hexadecimais a-f)."""
+    from synthai.dicionario import Dicionario, componentes_fortes, entropia, fecho, minset_guloso, nucleo, zipf
+    d = Dicionario()
+    defs = d.grafo_de_definicoes()
+    nos = len(defs)
+    arestas = sum(len(v) for v in defs.values())
+    ker = nucleo(defs)
+    comps = componentes_fortes(ker, defs)
+    core = max(comps, key=len)
+    ms = minset_guloso(ker, defs)
+    conhecidas, rodadas = fecho(ms, defs)
+    freq = {}
+    for _, _, _, glosa in d.sinsets:
+        for w in d.palavras_da_definicao(glosa):
+            freq[w] = freq.get(w, 0) + 1
+    s_zipf = zipf(list(freq.values()))
+    letras = {}
+    for x in defs:
+        for ch in x:
+            letras[ch] = letras.get(ch, 0) + 1
+    h_letras = entropia(list(letras.values()))
+    # profundidade de cada substantivo na taxonomia (caminho mais curto de hiperônimos até uma raiz)
+    prof = {}
+    def profundidade(i):
+        pilha = [i]
+        while pilha:
+            j = pilha[-1]
+            if j in prof:
+                pilha.pop()
+                continue
+            pais = [d.indice[h] for h in d.sinsets[j][2] if h in d.indice]
+            faltam = [k for k in pais if k not in prof]
+            if faltam:
+                pilha.extend(faltam)
+                continue
+            prof[j] = 0 if not pais else 1 + min(prof[k] for k in pais)
+            pilha.pop()
+        return prof[i]
+    subst = [i for i, x in enumerate(d.sinsets) if x[0] == "n"]
+    profs = [profundidade(i) for i in subst]
+    hexspeak = sorted(x for x in defs if len(x) >= 3 and set(x) <= set("abcdef"))
+    return {"sinsets": len(d.sinsets), "lemas": len(d.lemas), "nos": nos, "arestas": arestas,
+            "nucleo": len(ker), "core": len(core), "satelites": len(ker) - len(core), "componentes": len(comps),
+            "minset": len(ms), "minset_no_core": sum(1 for x in ms if x in core), "fecho": len(conhecidas),
+            "rodadas": rodadas, "zipf": s_zipf, "vocabulario_definidor": len(freq), "entropia_letras": h_letras,
+            "prof_media": sum(profs) / len(profs), "prof_max": max(profs), "hexspeak": hexspeak,
+            "minset_exemplo": sorted(ms)[:40]}
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
