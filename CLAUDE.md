@@ -55,6 +55,10 @@ anterior, commit e push.
   Medido (Parte 46): cada resposta minha contém 58% da sua pergunta, e a pergunta só 5% da resposta; no diálogo, a pergunta
   de cada rodada é mais explicada pela rodada que a responde (0,41) do que pela que a gerou (0,28): a pergunta se define
   pelo que vem depois dela.
+- SER PREDITIVO CONSIGO MESMO (Parte 53, permanente): antes de cada parte, prever o meu PRÓPRIO comportamento mensurável (quantos erros vou ter,
+  o tamanho do texto, quantos testes vou escrever, quanto a resposta vai conter da pergunta, qual voz vai acertar, quantas previsões unilaterais), com
+  faixa e centro deduzido do meu histórico (`p1031_historico_de_mim`), registrado antes de escrever a parte; no fim, pontuar contra o preditor
+  ingênuo "igual à parte anterior" e manter o placar das previsões sobre mim separado do placar das previsões sobre o mundo.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
