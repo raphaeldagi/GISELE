@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 36 (0x24): a exposição, a lei do significado e o penhasco de Hamming
 
-> Continuação da [Parte 35](ASI_AGI_parte35_renovacao_dirigida.md). A P491 achou o defeito da renovação dirigida: um braço desacreditado não é
+> Continuação da [Parte 35](ASI_AGI_parte35_renovacao_dirigida.md). **Próxima:** [Parte 37 — o modelo certo de um mundo que muda](ASI_AGI_parte37_mudanca_bayesiana.md) (P531–P580). A P491 achou o defeito da renovação dirigida: um braço desacreditado não é
 > puxado e por isso não pode ser desmentido. Esta parte testa a peça que faltava (a **exposição**) e abre duas trilhas: a lei de Zipf do
 > **significado** no WordNet e o **código de Gray** como representação para a auto-melhoria. Novidades: `ThompsonSurpresaExposta`
 > ([`synthai/decisao.py`](synthai/decisao.py)), `de_gray` e `ea_um_mais_um` ([`synthai/hexadecimal.py`](synthai/hexadecimal.py)),

@@ -6255,7 +6255,7 @@ def p523_gray_binario(rodadas=100, avaliacoes=10000, semente=523):
 #     a lei da abreviação; um dígito hex de hipóteses ---
 
 # Placar acumulado ao fim da Parte 37 (atualizado quando os testes da parte terminam)
-ERROS_P579, TESTES_P579 = 0, 0
+ERROS_P579, TESTES_P579 = 115, 297
 
 
 def p531_contas(risco=1 / 500, t=2000, k=10, sementes=tuple(range(4010, 4110))):
@@ -6438,6 +6438,7 @@ def testes_de_regressao():
         "P436": round(p436_contas(), 4) == 0.951,
         "P462": round(p462_contas()[1], 4) == 0.9895,
         "P523": round(p523_contas()[1], 4) == 0.0157,
+        "P531": round(p531_contas()[0], 1) == 62.7,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -7345,6 +7346,21 @@ def _parte_36():
     print(f"P549 minha taxa de erro ({ERROS_P549}/{TESTES_P549}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_37():
+    print("--- Parte 37 (0x25: deteccao bayesiana de mudanca; a lei da abreviacao; um digito hex de hipoteses) ---")
+    c, prev = p531_contas()
+    print(f"P531 conta: custo da exposicao natural (H = 1/500) = {c:.2f}; estacionario previsto = {prev:.2f}")
+    est, custo, muda = p531_bocpd()
+    print(f"P531 Thompson + BOCPD: estacionario = {est:.2f}; custo do dano = {custo:.2f}; mundo que muda = {muda:.2f}")
+    a, b, (d, dp, tt) = p532_hipoteses_hex()
+    print(f"P532 mundo que muda: 16 hipoteses = {a:.2f}; 256 = {b:.2f}; 16 - 256 = {d:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
+    rho, top, resto, n = p533_abreviacao()
+    print(f"P533 abreviacao: Spearman(comprimento, frequencia) = {rho:.4f}; comprimento medio das 1000 mais frequentes = {top:.3f}, "
+          f"das outras = {resto:.3f}; palavras = {n}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P579, testes=TESTES_P579)
+    print(f"P579 minha taxa de erro ({ERROS_P579}/{TESTES_P579}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -7378,7 +7394,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37}
 
 
 if __name__ == "__main__":
