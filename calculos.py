@@ -5285,6 +5285,28 @@ def p384_wu_palmer_lesk(pares=2000, semente=384):
     return spearman(wp, lk), sum(wp) / len(wp), sum(lk) / len(lk), sum(1 for x in lk if x > 0) / len(lk)
 
 
+def p385_ponto_critico(thetas=(0.6, 0.7, 0.8, 0.9), limiar=0.5):
+    """EXPLORATÓRIO (depois de ver a P381): a cascata de entendimento parcial tem um ponto crítico. Para cada theta, o
+    menor k (as k palavras mais frequentes das definições ancoradas) com que o fecho parcial passa de `limiar` do
+    dicionário, achado por bisseção, e a cobertura logo antes e logo depois dele."""
+    from synthai.dicionario import fecho_parcial
+    _, defs, freq = _grafo_31()
+    n = len(defs)
+    ordem = sorted(defs, key=lambda x: (-freq.get(x, 0), x))
+    cob = lambda k, th: len(fecho_parcial(set(ordem[:k]), defs, th)) / n
+    resultado = {}
+    for th in thetas:
+        lo, hi = 0, len(ordem)
+        while hi - lo > 1:
+            meio = (lo + hi) // 2
+            if cob(meio, th) >= limiar:
+                hi = meio
+            else:
+                lo = meio
+        resultado[th] = (hi, cob(lo, th), cob(hi, th))
+    return resultado
+
+
 def p391_geometria_hamming():
     """O hipercubo dos tipos (P363): em cada mundo, para os 28 pares dos 8 tipos que agem, a correlação de postos entre
     a distância de Hamming (quantos módulos diferem) e a diferença absoluta de retorno."""
@@ -5339,6 +5361,28 @@ def p393_ulps(ns=(2000, 100000, 1000000), tentativas=20, semente=393):
         resultado[n] = (sum(erros) / len(erros), conta)
     return resultado, (0.1 + 0.2).hex(), (0.3).hex()
 
+
+
+def p394_ulps_em_degrau(ns=(2000, 3000, 50000, 300000), tentativas=200, semente=394):
+    """POSTERIOR À P393 (a conta √n/6 subestimou o erro por 1,3 a 1,9): o ulp da soma parcial não cresce em linha reta,
+    cresce em DEGRAUS (dobra a cada potência de 2). A conta refeita: cada adição erra ~U(±ulp(S_i)/2), S_i ≈ i/2, então
+    Var = Σ_i ulp(i/2)²/12 e E|erro|/ulp(S_n) = √Var/ulp(n/2)·√(2/π). Devolve, para cada n, (medido, conta em degrau,
+    conta linear da P393) com mais tentativas e em n novos (previsão registrada antes de rodar)."""
+    from math import fsum, ulp
+    rng = _rng(semente)
+    resultado = {}
+    for n in ns:
+        erros = []
+        for _ in range(tentativas):
+            xs = [rng.random() for _ in range(n)]
+            ingenua = 0.0
+            for x in xs:
+                ingenua += x
+            exata = fsum(xs)
+            erros.append(abs(ingenua - exata) / ulp(exata))
+        degrau = sqrt(sum(ulp(i / 2) ** 2 for i in range(1, n + 1)) / 12) / ulp(n / 2) * sqrt(2 / pi)
+        resultado[n] = (sum(erros) / len(erros), degrau, sqrt(n) / 6 * sqrt(2 / pi))
+    return resultado
 
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
