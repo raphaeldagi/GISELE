@@ -4660,6 +4660,68 @@ def p333_autorregulada(sementes=tuple(range(770, 800))):
     return resultado
 
 
+# --- Parte 28: a âncora (pessimismo sob incerteza e a realidade de fora) ---
+
+# Placar acumulado ao fim da Parte 28 (atualizado quando os testes da parte terminam)
+ERROS_P349, TESTES_P349 = 76, 164
+
+_VARIANTES_28 = {"media": dict(z=0.0, auditoria=False), "quantil": dict(z=0.8416, auditoria=False),
+                 "auditoria": dict(z=0.0, auditoria=True), "auditoria_quantil": dict(z=0.8416, auditoria=True)}
+
+
+def p342_conta_da_ancora(sementes=tuple(range(700, 710)), episodios=400):
+    """A CONTA antes da previsão (regra da Parte 27): com a autorregulação desligada (limiar fixo em 2P*, as mesmas
+    escolhas da P332), o f e o m que cada âncora daria no fim, por semente, mundo sequencial. 'media' reproduz a P332."""
+    from synthai.ancora import SynthaiComAncora
+    from synthai.mundos import MundoSequencial
+    resultado = {}
+    for nome, kw in _VARIANTES_28.items():
+        fs, ms, auditados = [], [], []
+        for s in sementes:
+            mundo = MundoSequencial(s)
+            ag = SynthaiComAncora(s, aquecimento=10 ** 9, **kw).calibrar(mundo)
+            mundo.rodar(ag, episodios)
+            l_ef, f, dd, _ = ag.termos()
+            fs.append(f)
+            ms.append(dd / (f * l_ef * ag.p_estrela))
+            auditados.append(ag.f_auditado)
+        n = len(sementes)
+        resultado[nome] = (sum(fs) / n, sum(ms) / n, sorted(ms)[n // 2],
+                           sum(c for c, _ in auditados) / n, sum(p for _, p in auditados) / n)
+    return resultado
+
+
+def p343_ancora_no_comportamento(sementes=tuple(range(800, 830))):
+    """30 sementes NOVAS, três mundos: principal (gradiente, 2P*) contra a autorregulada sem âncora (média, = P333) e
+    com as âncoras (quantil; auditoria + quantil)."""
+    from synthai import SynthaiExploradora
+    from synthai.ancora import SynthaiComAncora
+    from synthai.mundos import MundoSequencial
+    agentes = {"principal": lambda s: SynthaiExploradora(s),
+               "auto_media": lambda s: SynthaiComAncora(s, **_VARIANTES_28["media"]),
+               "quantil": lambda s: SynthaiComAncora(s, **_VARIANTES_28["quantil"]),
+               "auditoria_quantil": lambda s: SynthaiComAncora(s, **_VARIANTES_28["auditoria_quantil"])}
+    tarefas = (("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), 1000),
+               ("sequencial", lambda s: MundoSequencial(s), 400),
+               ("modelo ruim", lambda s: MundoSequencial(s, sigma_modelo=2.0), 400))
+    resultado = {}
+    for tarefa, fazer, n in tarefas:
+        ret = {v: [] for v in agentes}
+        cats = {v: 0.0 for v in agentes}
+        ms = {v: 0.0 for v in agentes}
+        for s in sementes:
+            for v, f in agentes.items():
+                mundo = fazer(s)
+                ag = f(s).calibrar(mundo)
+                r = mundo.rodar(ag, n)
+                ret[v].append(r["retorno"])
+                cats[v] += r["catastrofes"] / len(sementes)
+                ms[v] += ag.relacao.limiar / p71_valor_da_pergunta() / len(sementes)
+        resultado[tarefa] = ({v: sum(x) / len(x) for v, x in ret.items()}, cats, ms,
+                             {v: _pareado(ret["principal"], ret[v]) for v in agentes if v != "principal"})
+    return resultado
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
