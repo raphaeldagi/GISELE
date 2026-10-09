@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 53 (0x35): preditiva comigo mesma
 
-> Continuação da [Parte 52](ASI_AGI_parte52_o_metodo_ou_a_serie.md). **Previsões no commit `4f3dbff`, antes de qualquer execução e antes de escrever o resto
+> Continuação da [Parte 52](ASI_AGI_parte52_o_metodo_ou_a_serie.md). **Próxima:** [Parte 54 — a sorte das rodadas](ASI_AGI_parte54_a_sorte_das_rodadas.md) (P1061–P1090). **Previsões no commit `4f3dbff`, antes de qualquer execução e antes de escrever o resto
 > deste documento.** O usuário pediu: *"Tente ser preditivo consigo mesmo. Grave na memória."* A regra entrou no `CLAUDE.md`. Esta parte prevê o
 > **meu próprio** comportamento mensurável (o tamanho deste texto, quantos erros eu vou ter, quanto as minhas respostas vão conter das perguntas), com um
 > preditor estatístico e com as minhas próprias previsões, e pontua as duas contra o preditor ingênuo.

@@ -7463,6 +7463,7 @@ def testes_de_regressao():
         "P973": len(p973_kaprekar_hex()[0]) == 4 and p973_kaprekar_hex(4, 10)[0] == [(6174,)],
         "P1003": round(p1003_inverte_e_soma()[0], 4) == 0.9819 and len(p1003_inverte_e_soma(9999, 10)[2]) == 246,
         "P1034": p1034_pi_hexadecimal(200)[:3] == (200, 200, "243F6A88"),
+        "P1063": p1063_autodescritivos(16) == ["C210000000001000"] and p1063_autodescritivos(10) == ["6210001000"],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9344,6 +9345,20 @@ def _parte_53():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1059, testes=TESTES_P1059)
     print(f"P1059 minha taxa de erro ({ERROS_P1059}/{TESTES_P1059}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_54():
+    print("--- Parte 54 (0x36: a sorte das rodadas) ---")
+    chances, dif = p1061_exatidao_ou_sorte()
+    print(f"P1061 rodadas com chance de sorte < 0,5 (modelo de sorteios independentes): {sum(v < 0.5 for v in chances.values())}; "
+          f"menor: {min(chances, key=chances.get)} = {min(chances.values()):.2e}; diferencas reais (exp dist, exp dif, log dist, log dif): "
+          + "; ".join(f"{k} {v}" for k, v in dif.items()))
+    frac, media, n = p1062_folhas()
+    print(f"P1062 folhas: {frac:.4f} de {n} substantivos; filhos por no interno = {media:.3f} (conta: {frac / (1 - frac) + 1:.3f})")
+    print(f"P1063 autodescritivos: base 16 {p1063_autodescritivos(16)}; base 10 {p1063_autodescritivos(10)}; base 7 {p1063_autodescritivos(7)}; "
+          f"base 4 {p1063_autodescritivos(4)}")
+    print(f"P974 previsoes unilaterais da Parte 54: {p974_previsoes_sem_largura(range(54, 55))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1089, testes=TESTES_P1089)
+    print(f"P1089 minha taxa de erro ({ERROS_P1089}/{TESTES_P1089}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -9380,7 +9395,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54}
 
 
 if __name__ == "__main__":
