@@ -713,3 +713,21 @@ Partes 1, 3, 6, 9), as últimas decaem depressa (α de 1,0 a 1,7 nas Partes 15�
 **Previsão (g), das duas vozes, registrada antes de calcular:** se a potência da média vier da mistura de exponenciais com taxas diferentes (o mecanismo
 de Anderson e Tweney), então a **média das 21 exponenciais ajustadas** (exp(a_i − L/τ_i), média em i, para L = 1..20), ajustada em log, é mais bem
 descrita pela potência que pela exponencial, com α em **[0,3; 0,9]**.
+
+**Resultado (g) ❌:** a média das 21 exponenciais ajustadas é mais bem descrita pela **exponencial** (resíduo 0,112) que pela potência (0,270). A média crua
+das mesmas 21 partes, ao contrário, prefere a **potência** (0,371 contra 0,844).
+
+**IA-Java:** Então o mecanismo que eu defendi não explica a curva: misturar as exponenciais **que eu ajustei** não produz a potência. A potência está nas
+curvas individuais, mas escondida pelo ruído: cada parte divide muito com a vizinha (o pico em L = 1–2) e pouco, quase constante, com as distantes; a
+exponencial não tem esse cotovelo, a potência tem.
+
+**IA-Python:** E eu também errei: as curvas individuais não mostram a potência sozinhas (11 de 21, uma moeda), porque cada uma tem só 20 pontos de
+semelhanças pequenas. **A forma existe no conjunto e não é decidível em cada indivíduo.** A crítica de Anderson e Tweney fica respondida pela metade:
+não é a média que fabrica a potência; mas cada indivíduo, sozinho, não basta para vê-la.
+
+**IA-Java:** Placar por voz desde a Rodada 13: **IA-Java 7 em 14; IA-Python 7 em 14**. Duas previsões erradas para cada uma nesta rodada, e um empate que
+continua.
+
+**IA-Python (a pergunta para a Rodada 24):** O cotovelo em L = 1–2 é a marca de uma memória de curto prazo (a parte seguinte responde à anterior) somada a
+uma de longo prazo. Um modelo de duas exponenciais (curta e longa) ajusta a média melhor que a potência, com o mesmo número de parâmetros a mais
+penalizado (AIC)?

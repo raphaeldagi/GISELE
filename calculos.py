@@ -7458,6 +7458,7 @@ def testes_de_regressao():
         "P882": p882_mapa_da_definicao()[2] == 23 and round(p882_mapa_da_definicao()[5], 4) == 0.6986,
         "P883": round(p883_felizes_hex()[0], 4) == 0.2613,
         "P912": p912_funis()[:2] == ("act", 1991) and round(p912_funis()[3], 3) == -1.869,
+        "P943": round(p943_periodo_hex()[0], 4) == 0.2793,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -8779,6 +8780,35 @@ def p943_periodo_hex(ate=10000):
     k = len(ps)
     return r16 / k, r2 / k, rg / k, k
 
+
+def p941_curvas_individuais():
+    """Rodada 23 (P941): as curvas individuais (dialogo/rodada23.py, conferido em Java) e o teste da mistura de Anderson e
+    Tweney. Devolve (curvas em que a potência ganha, curvas, (resíduo exp, resíduo pot) da média das exponenciais
+    ajustadas, (resíduo exp, resíduo pot) da média crua das mesmas 21 partes, alfa da mistura)."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada23", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada23.py"))
+    r23 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r23)
+    cs = r23.r21.conjuntos()
+    cv = r23.curvas(cs)
+    sim = r23.r21.semelhancas(cs)
+    k = len(cv)
+    ajustes = []
+    for i in range(k):
+        ls = [L for L in range(1, 21) if sim[i][i + L] > 0]
+        a, m, _ = r23.r22.reta([float(L) for L in ls], [log(sim[i][i + L]) for L in ls])
+        ajustes.append((a, m))
+    xe, xp = [float(L) for L in range(1, 21)], [log(L) for L in range(1, 21)]
+    mist = [log(sum(exp(a + m * L) for a, m in ajustes) / k) for L in range(1, 21)]
+    crua = [log(sum(sim[i][i + L] for i in range(k)) / k) for L in range(1, 21)]
+    _, _, me = r23.r22.reta(xe, mist)
+    _, malfa, mp = r23.r22.reta(xp, mist)
+    _, _, ce = r23.r22.reta(xe, crua)
+    _, _, cp = r23.r22.reta(xp, crua)
+    return sum(1 for c in cv if c[5] < c[3]), k, (me, mp), (ce, cp), -malfa
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -8823,6 +8853,20 @@ def _parte_49():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P939, testes=TESTES_P939)
     print(f"P939 minha taxa de erro ({ERROS_P939}/{TESTES_P939}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_50():
+    print("--- Parte 50 (0x32: a vida das coisas) ---")
+    pot, k, (me, mp), (ce, cp), malfa = p941_curvas_individuais()
+    print(f"P941 curvas individuais: a potencia ganha em {pot} de {k}; media das exponenciais ajustadas: residuo exp {me:.4f}, pot {mp:.4f} "
+          f"(alfa {malfa:.3f}); media crua das mesmas partes: exp {ce:.4f}, pot {cp:.4f}")
+    n, m, pares, esperado, frac, ex = p942_definicoes_mutuas()
+    print(f"P942 definicoes mutuas: N = {n}, M = {m}; pares = {pares}; ao acaso = {esperado:.2f}; razao = {pares / esperado:.1f}; "
+          f"palavras em algum par = {frac:.4f}; {ex}")
+    r16, r2, rg, kp = p943_periodo_hex()
+    print(f"P943 periodo de 1/p em base 16 ({kp} primos ate 10000): ord(16)/(p-1) = {r16:.4f}; ord(2)/(p-1) = {r2:.4f}; 1/mdc = {rg:.4f}; "
+          f"produto = {r2 * rg:.4f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P969, testes=TESTES_P969)
+    print(f"P969 minha taxa de erro ({ERROS_P969}/{TESTES_P969}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -8859,7 +8903,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50}
 
 
 if __name__ == "__main__":
