@@ -670,3 +670,6 @@ melhor**, com α em [0,4; 1,2].
 meia-vida τ·ln 2 em [2; 8] partes.
 
 **As duas (previsão (h)):** IGUAIS em Java.
+
+**Controle (registrado depois de ver o resultado e antes de calcular):** com as seções em ordem embaralhada (semente 911), não há deriva real; o mesmo
+ajuste de potência dá **α em [−0,15; 0,15]** (previsão (i), das duas vozes).
