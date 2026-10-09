@@ -309,6 +309,17 @@ class ThompsonBOCPDGlobal:
         """O dano da P405: a crença inteira vira uma hipótese só, com as contagens de lixo."""
         self.hs = [[1.0, list(a), list(b)]]
 
+
+class ThompsonBOCPDGlobalMAP(ThompsonBOCPDGlobal):
+    """A mudança no nível do mundo, decidindo pela hipótese MAIS PESADA (o máximo a posteriori da idade do mundo), em vez
+    de sortear uma hipótese pelo peso (Parte 45, a pergunta da Rodada 15). As hipóteses jovens continuam sendo pesadas
+    e podem virar a mais pesada quando a evidência mandar; enquanto não viram, não são sorteadas e não reexploram."""
+
+    def escolher(self):
+        esc = max(self.hs, key=lambda h: h[0])
+        am = [self.rng.betavariate(a, b) for a, b in zip(esc[1], esc[2])]
+        return max(range(self.k), key=am.__getitem__)
+
 class QEpsilon:
     """Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso."""
 

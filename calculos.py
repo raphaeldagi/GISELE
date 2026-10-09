@@ -7126,6 +7126,76 @@ def p763_grupos():
         t += T in an
     return n, g / n, t / n
 
+
+# --- Parte 45 (0x2D): decidir pela hipótese mais pesada no nível do mundo; a calibração das minhas faixas; a
+#     profundidade da taxonomia ---
+
+# Placar acumulado ao fim da Parte 45 (atualizado quando os testes da parte terminam)
+ERROS_P819, TESTES_P819 = 0, 0
+
+# As 17 previsões de comportamento feitas com a regra das faixas (Partes 42-44): (centro, meia-largura relativa, medido).
+# Os medidos são os de resultados.txt / dos documentos das partes (P701, P731, P761).
+FAIXAS_42_44 = [
+    (30.7, 0.172, 31.634), (43.1, 0.172, 43.531), (19.5, 0.344, 24.926), (371.9, 0.172, 384.574), (34.5, 0.172, 36.292),
+    (60.9, 0.344, 64.564), (185.4, 0.172, 183.990), (76.9, 0.172, 80.870),
+    (52.109, 0.172, 53.027), (27.1, 0.344, 26.671), (36.9, 0.172, 34.837), (453.73, 0.258, 412.644),
+    (419.17, 0.258, 340.685), (31.0, 0.172, 33.813),
+    (263.85, 0.258, 231.471), (33.7, 0.172, 44.687), (19.5, 0.344, 28.663),
+]
+
+
+def p791_contas():
+    """Os CENTROS deduzidos (antes de rodar) para o ThompsonBOCPDGlobalMAP (H = 1/500):
+    1. estável: a hipótese velha é sempre a mais pesada; é o Thompson exato com um começo um pouco mais lento: 30,7 + 1;
+    2. mundo que muda: a hipótese nascida na troca passa a velha quando a evidência vence ln(1/H) = ln 500 = 6,2 nats; depois
+       da troca, cada fracasso do braço que era bom (a velha prevê ~0,1 de fracasso, a nova ½) dá ln 5 = 1,6 nat: ~4
+       fracassos, ~6 puxadas, menos que as ~9 da surpresa. Sem as jovens sorteadas no meio das fases, o global sorteado
+       (231,5) perde o excesso do estável: (44,7 − 30,7) por 2000 passos, 28 em 4000: 231,5 − 28;
+    3. dano: os braços que o lixo faz parecerem bons são puxados e desmentem a hipótese do lixo em poucos passos (o mesmo
+       ln(1/H)/1,6 ≈ 4 fracassos), e a hipótese nova renova todos os braços: um custo menor que o da exposição, ~12."""
+    return {"map_estavel": 30.7 + 1.0, "map_muda": 231.47 - 2 * (44.69 - 30.71), "map_dano": 12.0}
+
+
+def p791_map(k=10):
+    """O ThompsonBOCPDGlobalMAP nos três mundos, nas sementes de sempre."""
+    from synthai.decisao import ThompsonBOCPDGlobalMAP
+    fab = lambda sm: ThompsonBOCPDGlobalMAP(k, _rng(sm + 1))
+    return {"map_estavel": _estavel_701(fab, range(4010, 4110)), "map_muda": _muda_701(fab, range(4620, 4670)),
+            "map_dano": _dano_701(fab, range(4050, 4150))}
+
+
+def p792_calibracao():
+    """A calibração das minhas faixas de comportamento (descritivo: os 17 medidos já são conhecidos). Se a faixa
+    centro·(1 ± w) é de 90%, a meia-largura é 1,645σ e z = (medido − centro)/(centro·w/1,645) é ~N(0, 1). A média de z mede
+    o viés do centro; o desvio de z, a escala (> 1: faixas estreitas; < 1: largas); e a fração com |z| > 1,645, a cobertura."""
+    zs = [(m - c) / (c * w / 1.645) for c, w, m in FAIXAS_42_44]
+    n = len(zs)
+    media = sum(zs) / n
+    dp = sqrt(sum((z - media) ** 2 for z in zs) / (n - 1))
+    fora = sum(1 for z in zs if abs(z) > 1.645)
+    return media, dp, media / (dp / sqrt(n)), fora, n
+
+
+def p793_profundidade():
+    """A trilha do dicionário: a profundidade média (hiperônimos até a raiz) dos substantivos que são animais, artefatos
+    (artifact, 00021939) e grupos taxonômicos (taxon, 07992450), e a dos substantivos em geral."""
+    from synthai.dicionario import Dicionario, ancestrais, profundidades
+    d = Dicionario()
+    prof = profundidades(d)
+    alvos = {"animal": d.indice["n:00015388"], "artefato": d.indice["n:00021939"], "taxon": d.indice["n:07992450"]}
+    soma = {k: [0, 0] for k in list(alvos) + ["todos"]}
+    for i, x in enumerate(d.sinsets):
+        if x[0] != "n" or i not in prof:
+            continue
+        an = ancestrais(d, i)
+        soma["todos"][0] += prof[i]
+        soma["todos"][1] += 1
+        for k, j in alvos.items():
+            if j in an and j != i:
+                soma[k][0] += prof[i]
+                soma[k][1] += 1
+    return {k: (s_ / n, n) for k, (s_, n) in soma.items()}
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
