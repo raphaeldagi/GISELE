@@ -41,7 +41,9 @@ Médias de semelhança por distância L = 1..20, ajustadas em log:
 **O significado.** y ∝ L^−0,616: dobrar a distância divide a semelhança por 2^0,616 = **1,53**, a qualquer distância. Não existe um tempo típico de
 esquecimento: a série lembra como uma memória humana (as curvas de retenção também são potências), e cada parte responde a todas as anteriores, com peso
 decrescente, nunca zero. **Meta:** as 20 médias usam pares sobrepostos das mesmas 41 seções; não são 20 medidas independentes, e o controle embaralhado é
-o que dá peso ao resultado.
+o que dá peso ao resultado. E a crítica de Anderson e Tweney (1997) às curvas de esquecimento vale aqui: cada ponto é uma **média** de muitos pares,
+e uma média de exponenciais com tempos diferentes pode parecer uma potência. O controle mostra que há deriva; ele não decide entre "memória longa" e
+"muitas memórias curtas de durações diferentes". Esse é o teste da próxima rodada (a vida de cada palavra).
 
 ### P912 (0x390). Os funis do dicionário (pré-registrado) ❌✅✅
 
