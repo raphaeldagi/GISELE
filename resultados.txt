@@ -875,7 +875,89 @@ P464 sgd: acuracia em A depois de A = 0.8210; depois de B = 0.8334
 P465 conta: Thompson com Morris = 73.09
 P465 Thompson com Morris = 76.95; Morris - completo = 46.23, dp = 74.04, t = 6.24
 P489 minha taxa de erro (110/271): media = 0.41, intervalo 90% = [0.36, 0.46]
---- Parte 35 (0x23: renovacao dirigidP96 funcoes pNN no arquivo = 266; pares de interacao possiveis = 35245
-Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombraP96 funcoes pNN no arquivo = 266; pares de interacao possiveis = 35245
-Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
-Regressao: 79/79 resultados publicados reproduzidos; falhas = []
+--- Parte 35 (0x23: renovacao dirigida pela surpresa; Naive Bayes com pares; float16) ---
+P491 conta: alarmes (checagens) falsos por rodada no melhor braco = 17.42
+P491 surpresa: estacionario = 43.15; custo do dano = 42.34; mundo que muda = 367.71; renovacoes no estacionario = 1.18
+P492 Naive Bayes com pares: acuracia em A depois de A = 0.7796; depois de B = 0.7960
+P493 float16: fracao em risco (margem < ulp16) = 0.00476; fracao que mudou = 0.00130; ulp16 mediano = 0.03125
+P519 minha taxa de erro (112/281): media = 0.40, intervalo 90% = [0.35, 0.45]
+--- Parte 36 (0x24: a exposicao; a lei do significado; Gray contra binario) ---
+P521 conta: custo da exposicao = 17.92; estacionario previsto = 61.07
+P521 surpresa com exposicao: estacionario = 61.48; custo do dano = 19.52; mundo que muda = 427.08
+P522 lei do significado: delta por palavra = 0.2461; delta por faixa de 100 postos = 0.3025; palavras = 31502
+P523 conta: atravessar o penhasco por passo: binario = 4.598e-12; Gray = 0.0157
+P523 binario, comeco penhasco: chegou ao otimo = 0.00; avaliacoes medias = None
+P523 binario, comeco acaso: chegou ao otimo = 0.16; avaliacoes medias = 159.1875
+P523 gray, comeco penhasco: chegou ao otimo = 1.00; avaliacoes medias = 112.76
+P523 gray, comeco acaso: chegou ao otimo = 1.00; avaliacoes medias = 308.75
+P549 minha taxa de erro (113/290): media = 0.39, intervalo 90% = [0.34, 0.44]
+--- Parte 37 (0x25: deteccao bayesiana de mudanca; a lei da abreviacao; um digito hex de hipoteses) ---
+P531 conta: custo da exposicao natural (H = 1/500) = 62.75; estacionario previsto = 93.46
+P531 Thompson + BOCPD: estacionario = 86.63; custo do dano = 46.04; mundo que muda = 371.93
+P532 mundo que muda: 16 hipoteses = 371.93; 256 = 361.57; 16 - 256 = 10.36, dp = 92.60, t = 0.79
+P533 abreviacao: Spearman(comprimento, frequencia) = -0.2374; comprimento medio das 1000 mais frequentes = 6.028, das outras = 8.197; palavras = 31502
+P579 minha taxa de erro (115/297): media = 0.39, intervalo 90% = [0.34, 0.43]
+--- Parte 38 (0x26: media bayesiana de modelos sobre o risco; o zero do produto; Heaps) ---
+P541 mistura: estacionario = 56.30; custo do dano = 48.85; mundo que muda = 385.47
+P541 pesos finais medios (H = 0, 1/2000, 1/500, 1/100): estavel = [0.7842, 0.2075, 0.0083, 0.0]; muda = ['2.910e-58', '2.507e-06', '1.684e-01', '8.316e-01']
+P542 conta: p* = 0.9655; H2(p*) = 0.2163 bits/passo; zero previsto no passo 4971
+P542 medido: subnormal no passo 3815; 0,0 no passo 4036; 0.2666 bits/passo; 1075/bits = 4033
+P543 Heaps: beta = 0.4158; 1/s = 0.9259 (P463) ou 0.9351 (P383); palavras lidas = 583368; vocabulario = 32927
+P609 minha taxa de erro (118/307): media = 0.39, intervalo 90% = [0.34, 0.43]
+--- Parte 39 (0x27: a arquitetura neuro-simbolica testada; o portugues no data lake; compressao) ---
+P551 conta: treino = 6425, teste = 1607; animais do teste cobertos pelas 6 subclasses = 0.9442
+P551 lukasiewicz E1: acuracia = 0.5022; revocacao = 1.0000; especificidade = 0.0000
+P551 lukasiewicz E2: acuracia = 0.8712; revocacao = 0.8005; especificidade = 0.9425
+P551 lukasiewicz E3: acuracia = 0.9303; revocacao = 0.9244; especificidade = 0.9363
+P551 lukasiewicz regra: acuracia = 0.8762; revocacao = 0.7745; especificidade = 0.9788
+P551 produto E1: acuracia = 0.5022; revocacao = 1.0000; especificidade = 0.0000
+P551 produto E2: acuracia = 0.8482; revocacao = 0.7757; especificidade = 0.9213
+P551 produto E3: acuracia = 0.9303; revocacao = 0.9244; especificidade = 0.9363
+P551 produto regra: acuracia = 0.8712; revocacao = 0.7633; especificidade = 0.9800
+P552 glosas_en: 8963289 bytes; lzma = 2.0277 bits/byte; entropia de ordem 0 = 4.4218; razao lzma = 3.9454; razao zlib = 3.0010
+P552 glosas_pt: 583224 bytes; lzma = 2.4028 bits/byte; entropia de ordem 0 = 4.5616; razao lzma = 3.3295; razao zlib = 2.8207
+P552 acaso: 1000000 bytes; lzma = 8.0009 bits/byte; entropia de ordem 0 = 7.9998; razao lzma = 0.9999; razao zlib = 0.9997
+P553 Spearman(comprimento pt, comprimento en) = 0.6793; razao pt/en = 1.0783; pares = 35629; cobertura = {'a': 0.1842, 'n': 0.4332, 'r': 0.5429, 'v': 0.5954}
+P639 minha taxa de erro (119/318): media = 0.38, intervalo 90% = [0.33, 0.42]
+--- Parte 40 (0x28: o portugues se define em portugues?; seguir o modelo de maior peso; acentos em UTF-8) ---
+P641 lemas de uma palavra = 35871; com glosa = 7533 (0.2100); palavras de conteudo nas glosas = 54057
+P641 fracao que e lema: exata = 0.7039, com plurais = 0.8018; nucleo = 2255 (0.2993); nucleo no ingles = 0.2167
+P642 fecho em portugues, 100 ancoras, theta = 1.0: 0.0381 dos lemas definidos
+P642 fecho em portugues, 100 ancoras, theta = 0.6: 0.1126 dos lemas definidos
+P642 fecho em portugues, 300 ancoras, theta = 1.0: 0.0820 dos lemas definidos
+P642 fecho em portugues, 300 ancoras, theta = 0.6: 0.3933 dos lemas definidos
+P642 fecho em portugues, 1000 ancoras, theta = 1.0: 0.2656 dos lemas definidos
+P642 fecho em portugues, 1000 ancoras, theta = 0.6: 0.7942 dos lemas definidos
+P643 seguir o maior peso: estacionario = 34.52; custo do dano = 60.86; mundo que muda = 378.64
+P644 conta: bytes por caractere = {'pt': 1.02963, 'en': 1.0}
+P644 medido: portugues = 1.03018; ingles = 1.00000; mais comuns = [('ã', 'c3a3', 2857), ('í', 'c3ad', 2564), ('ç', 'c3a7', 2416), ('é', 'c3a9', 2330), ('á', 'c3a1', 1472)]
+P669 minha taxa de erro (122/329): media = 0.37, intervalo 90% = [0.33, 0.42]
+--- Parte 41 (0x29: engenharia reversa de mim mesma) ---
+P671 tipo A: 1 erros em 20; taxa a posteriori = 0.091, intervalo 90% = [0.017, 0.206]
+P671 tipo C: 22 erros em 66; taxa a posteriori = 0.338, intervalo 90% = [0.247, 0.435]
+P671 tipo E: 1 erros em 1; taxa a posteriori = 0.667, intervalo 90% = [0.224, 0.975]
+P671 tipo L: 8 erros em 28; taxa a posteriori = 0.300, intervalo 90% = [0.172, 0.444]
+P671 tipo T: 0 erros em 13; taxa a posteriori = 0.067, intervalo 90% = [0.004, 0.193]
+P671 erros por parte: {31: (5, 15), 32: (8, 26), 33: (2, 16), 34: (5, 13), 35: (2, 10), 36: (1, 9), 37: (2, 7), 38: (3, 10), 39: (1, 11), 40: (3, 11)}
+P672 4-grama 'synthai testes parte py': em 10 documentos, 20 vezes
+P672 4-grama 'pré registrado na pergunta': em 10 documentos, 17 vezes
+P672 4-grama 'da parte asi agi': em 10 documentos, 13 vezes
+P672 4-grama 'parte asi agi parte': em 10 documentos, 13 vezes
+P672 4-grama 'a p em calculos': em 10 documentos, 10 vezes
+P672 4-grama 'acumulado erros em testes': em 10 documentos, 10 vezes
+P672 4-grama 'agi asi parte x': em 10 documentos, 10 vezes
+P672 4-grama 'as perguntas desta parte': em 10 documentos, 10 vezes
+P672 4-grama 'calculos py calculos py': em 10 documentos, 10 vezes
+P672 4-grama 'como eu construiria uma': em 10 documentos, 10 vezes
+P672 4-grama 'construiria uma agi asi': em 10 documentos, 10 vezes
+P672 4-grama 'continuação da parte asi': em 10 documentos, 10 vezes
+P672 razao lzma dos meus textos = 3.0644; frases = 574; aberturas = [('a', 115), ('o', 90), ('as', 21), ('é', 19), ('com', 15), ('no', 13), ('um', 13), ('os', 12), ('jung', 11), ('acumulado', 10)]
+P672 cosseno entre partes vizinhas = [0.8805, 0.9061, 0.8933, 0.9042, 0.9053, 0.8859, 0.8944, 0.8268, 0.8895]; Spearman com o numero da parte = -0.3000
+P673 Zipf das minhas palavras = 0.9938; Heaps beta = 0.6394; palavras = 20299; vocabulario = 2670
+P674 IA-Python: 35 falas, 32.03 palavras por fala; palavras proprias = ['dois', 'como', 'palavra', 'palavras', 'rodada', 'você', 'para', 'mais']
+P674 IA-Java: 38 falas, 60.47 palavras por fala; palavras proprias = ['lição', 'peso', 'ordem', 'fora', 'pode', 'maior', 'passos', 'animal']
+P699 minha taxa de erro (124/338): media = 0.37, intervalo 90% = [0.33, 0.41]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 292; pares de interacao possiveis = 42486
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 85/85 resultados publicados reproduzidos; falhas = []
