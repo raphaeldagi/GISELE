@@ -764,3 +764,24 @@ resposta também não.
 
 **IA-Java (a pergunta para a Rodada 25):** A Rodada 23 deixou uma pergunta: o cotovelo das curvas (L = 1–2) é uma memória curta somada a uma longa.
 Duas exponenciais (curta e longa) ajustam a curva média melhor que a potência, pelo AIC (que cobra os parâmetros a mais)?
+
+---
+
+## Rodada 25 — duas memórias ou uma potência? (previsões registradas antes do código)
+
+**O teste.** A curva média da Rodada 22 (ln da semelhança média por distância, L = 1..20, n = 20 pontos). Três modelos, todos medidos pelo erro em log:
+exponencial (k = 2), potência (k = 2), e **duas exponenciais** y = A e^(−L/τ₁) + B e^(−L/τ₂) (k = 4): para cada par (τ₁, τ₂) de uma grade fixa (τ₁ de 0,25 a 5
+em passos de 0,25; τ₂ de 2 a 200 em passos de 2; τ₁ < τ₂), A e B por mínimos quadrados lineares na escala original (só A, B > 0), e o erro em log; fica o
+melhor par. AIC = n ln(SSE/n) + 2k.
+
+**A IA-Java relê os erros da IA-Python antes de prever (regra da Parte 50):** a IA-Python errou por confiar num padrão visto num ponto (o ciclo da Parte 41).
+
+**IA-Java (previsão (e)):** o cotovelo é real, mas 2 parâmetros a mais cobram 4 no AIC, e com 20 pontos a potência já explica quase tudo (resíduo 0,31).
+**A potência tem o menor AIC.**
+
+**A IA-Python relê os erros da IA-Java:** a IA-Java errou duas vezes por achar que a média engana ou que o vocabulário é geral.
+
+**IA-Python (previsão (f)):** a memória curta (a vizinha) e a longa (os nomes que ficam) são dois mecanismos; **as duas exponenciais têm o menor AIC**,
+com τ₁ ≤ 2 e τ₂ ≥ 20.
+
+**As duas (previsão (g)):** IGUAIS em Java.
