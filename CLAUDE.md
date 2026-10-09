@@ -149,6 +149,10 @@ anterior, commit e push.
   exemplo lembrado, a aparência do símbolo: supus que ler o hexadecimal em base 10 aumenta o número; diminui).
 - Medida de si leva controle (Parte 48): toda conclusão sobre os meus próprios textos é refeita com outras partes no lugar (o "ciclo" da Parte 41 não
   passou no controle). Numa reprodução, separar antes as medidas que olham para o próprio projeto (P143, P213 mudam porque o projeto cresceu).
+- Uma regra só vale quando vira um passo verificável (Parte 49: errei o que a regra da Parte 47 deveria impedir, meia hora depois de gravá-la). E as duas
+  vozes do diálogo trocam de erro (Parte 50): antes de escrever a previsão de uma voz, reler os erros recentes da OUTRA.
+- Um texto que o usuário reenvia é comparado com a cópia guardada antes de ser auditado de novo (Parte 50: o texto pós-ASI voltou idêntico; a
+  auditoria da Parte 33 se reproduziu sem executar nada).
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).
 
@@ -161,7 +165,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
