@@ -875,3 +875,20 @@ seção que o pontua. Placar por voz desde a Rodada 13: **IA-Java 12 em 21; IA-P
 
 **IA-Python (a pergunta para a Rodada 28):** A pergunta da Rodada 26 ficou pendente: as rodadas antigas usam o exp, o log e o pow das bibliotecas e passaram.
 Para cada uma, quantas chamadas entram na saída, e qual a chance de todas coincidirem com outra libm, (1 − 0,0029)^(exp) × (1 − 0,0007)^(log)?
+
+---
+
+## Rodada 28 — exatidão ou sorte? (previsões registradas antes do código)
+
+**O teste.** Para cada rodada antiga (01–27), a versão em Python é rodada com o `math.exp`, `math.log` e `math.pow` (e o operador `**` com expoente não
+inteiro) **contados**. Com as taxas medidas na Parte 52 (exp difere entre a glibc e o Java em 0,29% dos argumentos, log em 0,07%), a chance de a rodada passar
+por sorte é P = (1 − 0,0029)^(chamadas de exp) × (1 − 0,0007)^(chamadas de log) (o pow fica de fora da fórmula e é relatado à parte). As rodadas 26 e 27 usam
+operações exatas ou próprias e não entram. Conta-se quantas rodadas têm P < 0,5: as que passaram mais por sorte que por exatidão.
+
+**A IA-Python relê os erros da IA-Java:** ela errou por confiar na média. **IA-Python (previsão (d)):** quase todas as rodadas usam aritmética exata (somas,
+produtos, comparações); exp e log aparecem pouco. **0 a 2** rodadas com P < 0,5.
+
+**A IA-Java relê os erros da IA-Python:** ela errou por confiar na estabilidade. **IA-Java (previsão (e)):** as rodadas de log (idf, perda logarítmica, Naive
+Bayes) chamam log milhares de vezes. **3 a 8** rodadas com P < 0,5.
+
+**As duas (previsão (f)):** a tradução da conta (as chances a partir das contagens, com o exp e o log próprios da Rodada 26) dá IGUAIS em Java.
