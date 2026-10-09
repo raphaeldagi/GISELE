@@ -607,7 +607,60 @@ P343 modelo ruim: quantil - principal = 0.347, dp = 0.717, t = 2.65
 P343 modelo ruim: auditoria_quantil - principal = 0.340, dp = 0.920, t = 2.03
 P344 bandido: normalizado {'principal': 0.524, 'auditoria_quantil': 0.483}; catastrofes {'principal': 1.002, 'auditoria_quantil': 1.277}; ancora - principal = -0.041, dp = 0.176, t = -1.04
 P349 minha taxa de erro (78/170): media = 0.46, intervalo 90% = [0.40, 0.52]
+--- Parte 29 (compor em vez de herdar; o pensamento com mais pesos; a bateria de equacoes) ---
+P352 B1 Wilson-Hilferty forma   0.5: aproximado = 0.8101, exato = 0.8212, erro = -1.3493%, acumula = 0.7969
+P352 B1 Wilson-Hilferty forma     1: aproximado = 1.5992, exato = 1.6094, erro = -0.6335%, acumula = 0.7980
+P352 B1 Wilson-Hilferty forma   1.5: aproximado = 2.3111, exato = 2.3208, erro = -0.4194%, acumula = 0.7984
+P352 B1 Wilson-Hilferty forma     2: aproximado = 2.9851, exato = 2.9943, erro = -0.3087%, acumula = 0.7986
+P352 B1 Wilson-Hilferty forma     3: aproximado = 4.2707, exato = 4.2790, erro = -0.1952%, acumula = 0.7989
+P352 B1 Wilson-Hilferty forma     4: aproximado = 5.5074, exato = 5.5150, erro = -0.1385%, acumula = 0.7991
+P352 B1 Wilson-Hilferty forma     5: aproximado = 6.7139, exato = 6.7210, erro = -0.1052%, acumula = 0.7993
+P352 B1 Wilson-Hilferty forma     7: aproximado = 9.0692, exato = 9.0754, erro = -0.0686%, acumula = 0.7994
+P352 B1 Wilson-Hilferty forma   9.5: aproximado = 11.9447, exato = 11.9502, erro = -0.0460%, acumula = 0.7996
+P352 B1 Wilson-Hilferty forma    12: aproximado = 14.7717, exato = 14.7767, erro = -0.0337%, acumula = 0.7996
+P352 B1 Wilson-Hilferty forma    15: aproximado = 18.1206, exato = 18.1251, erro = -0.0250%, acumula = 0.7997
+P352 B1 Wilson-Hilferty forma    20: aproximado = 23.6303, exato = 23.6343, erro = -0.0169%, acumula = 0.7998
+P352 B1 Wilson-Hilferty forma    25: aproximado = 29.0783, exato = 29.0819, erro = -0.0124%, acumula = 0.7998
+P352 B1 Wilson-Hilferty forma    35: aproximado = 39.8542, exato = 39.8573, erro = -0.0078%, acumula = 0.7999
+P352 B1 Wilson-Hilferty forma    50: aproximado = 55.8307, exato = 55.8334, erro = -0.0048%, acumula = 0.7999
+P352 B1 Wilson-Hilferty forma    70: aproximado = 76.9246, exato = 76.9269, erro = -0.0030%, acumula = 0.7999
+P352 B1 Wilson-Hilferty forma   100: aproximado = 108.3024, exato = 108.3044, erro = -0.0019%, acumula = 0.7999
+P352 B2 E[1/X|X>=1] lambda     1: exato = 0.76699; 2a ordem = 2.00000 (+160.76%); 3a ordem = 4.00000 (+421.52%)
+P352 B2 E[1/X|X>=1] lambda     2: exato = 0.57659; 2a ordem = 0.75000 (+30.07%); 3a ordem = 1.00000 (+73.43%)
+P352 B2 E[1/X|X>=1] lambda     3: exato = 0.43268; 2a ordem = 0.44444 (+2.72%); 3a ordem = 0.51852 (+19.84%)
+P352 B2 E[1/X|X>=1] lambda     5: exato = 0.25777; 2a ordem = 0.24000 (-6.89%); 3a ordem = 0.25600 (-0.69%)
+P352 B2 E[1/X|X>=1] lambda   9.5: exato = 0.11994; 2a ordem = 0.11634 (-3.00%); 3a ordem = 0.11868 (-1.05%)
+P352 B2 E[1/X|X>=1] lambda    15: exato = 0.07187; 2a ordem = 0.07111 (-1.06%); 3a ordem = 0.07170 (-0.23%)
+P352 B2 E[1/X|X>=1] lambda    25: exato = 0.04175; 2a ordem = 0.04160 (-0.35%); 3a ordem = 0.04173 (-0.04%)
+P352 B2 E[1/X|X>=1] lambda    50: exato = 0.02042; 2a ordem = 0.02040 (-0.08%); 3a ordem = 0.02042 (-0.01%)
+P352 B2 E[1/X|X>=1] lambda   100: exato = 0.01010; 2a ordem = 0.01010 (-0.02%); 3a ordem = 0.01010 (-0.00%)
+P355 pesos: linear = 4, rico = 10
+P355 sequencial: n = 7500, eventos = 37.3, EPV linear = 12.4, rico = 4.1; Akaike k/n: 0.00053, 0.00133, diferenca 0.00080
+P355 escolha única: n = 30000, eventos = 150, EPV linear = 50.0, rico = 16.7; Akaike k/n: 0.00013, 0.00033, diferenca 0.00020
+P353 sequencial (eventos 37.3): linear: treino 0.00953, teste 0.01095, otimismo 0.00142; rico: treino 0.00851, teste 0.01015, otimismo 0.00164
+P353 escolha única (eventos 147.1): linear: treino 0.01000, teste 0.00927, otimismo -0.00073; rico: treino 0.00833, teste 0.00782, otimismo -0.00050
+P354 escolha única: f do pensamento rico na decisao = 3.050 (82 catastrofes)
+P354 sequencial: f do pensamento rico na decisao = 1.710 (54 catastrofes)
+P356 escolha única: {'principal': 1.495, 'composta': 1.5005, 'composta_rica': 1.4671}; catastrofes {'principal': 0.0049, 'composta': 0.0057, 'composta_rica': 0.0059}
+P356 escolha única: composta - principal = 0.0055, dp = 0.1516, t = 0.20
+P356 escolha única: composta_rica - principal = -0.0280, dp = 0.2213, t = -0.69
+P356 escolha única: composta_rica - composta = -0.0334, dp = 0.1569, t = -1.17
+P356 sequencial: {'principal': 19.9134, 'composta': 20.2504, 'composta_rica': 20.2765}; catastrofes {'principal': 0.0156, 'composta': 0.0167, 'composta_rica': 0.0169}
+P356 sequencial: composta - principal = 0.3371, dp = 0.5454, t = 3.39
+P356 sequencial: composta_rica - principal = 0.3631, dp = 0.6207, t = 3.20
+P356 sequencial: composta_rica - composta = 0.0260, dp = 0.6196, t = 0.23
+P356 modelo ruim: {'principal': 11.3568, 'composta': 11.8259, 'composta_rica': 11.8567}; catastrofes {'principal': 0.0199, 'composta': 0.0239, 'composta_rica': 0.0227}
+P356 modelo ruim: composta - principal = 0.4690, dp = 0.7354, t = 3.49
+P356 modelo ruim: composta_rica - principal = 0.4999, dp = 0.8031, t = 3.41
+P356 modelo ruim: composta_rica - composta = 0.0309, dp = 0.6426, t = 0.26
+P356 bandido: {'principal': 0.6031, 'composta': 0.6031, 'composta_rica': 0.6031}; catastrofes {'principal': 0.6775, 'composta': 0.6775, 'composta_rica': 0.6775}
+P356 bandido: composta - principal = 0.0000, dp = 0.0000, t = 0.00
+P356 bandido: composta_rica - principal = 0.0000, dp = 0.0000, t = 0.00
+P356 bandido: composta_rica - composta = 0.0000, dp = 0.0000, t = 0.00
+P357 sequencial: tr(J I^-1) linear = 4.229, rico = 7.819; por amostra 0.00056, 0.00104; diferenca = 0.00048
+P357 escolha única: tr(J I^-1) linear = 4.691, rico = 8.789; por amostra 0.00016, 0.00029; diferenca = 0.00014
+P359 minha taxa de erro (83/181): media = 0.46, intervalo 90% = [0.40, 0.52]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 206; pares de interacao possiveis = 21115
-Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)
-Regressao: 63/63 resultados publicados reproduzidos; falhas = []
+P96 funcoes pNN no arquivo = 213; pares de interacao possiveis = 22578
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)
+Regressao: 65/65 resultados publicados reproduzidos; falhas = []
