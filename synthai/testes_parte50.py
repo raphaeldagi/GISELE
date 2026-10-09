@@ -30,3 +30,22 @@ class TesteParte50(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TesteTextoVoltou(unittest.TestCase):
+    def test_identico_e_diferente(self):
+        import os
+        import tempfile
+        raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        guardado = os.path.join(raiz, "externos", "arquitetura_pos_asi.py")
+        codigo = open(guardado, encoding="utf-8").read().rstrip("\n")
+        with tempfile.TemporaryDirectory() as d:
+            t1, t2 = os.path.join(d, "t1.md"), os.path.join(d, "t2.md")
+            open(t1, "w", encoding="utf-8").write("Texto antes.\n" + codigo + "   \nTexto depois.\n")  # espaços no fim não contam
+            open(t2, "w", encoding="utf-8").write("Antes.\n" + codigo.replace("return 0.85", "return 0.95") + "\nDepois.\n")
+            igual, aud, _ = calculos.p947_o_texto_voltou(t1, guardado)
+            diferente, aud2, _ = calculos.p947_o_texto_voltou(t2, guardado)
+        self.assertTrue(igual)
+        self.assertFalse(diferente)
+        self.assertEqual((aud["nos_mudados"], aud["run_benchmarks_constante"]), (0, 0.85))
+        self.assertEqual(aud2["run_benchmarks_constante"], 0.95)

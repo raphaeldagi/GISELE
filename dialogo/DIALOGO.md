@@ -746,3 +746,21 @@ Margolus, Gödel, hiperagentes).
 em primeiro.
 
 **As duas (previsão (m)):** IGUAIS em Java.
+
+`comparar.py`: **IGUAIS, 50 linhas e 49 escores bit a bit** (m) ✅. O texto escolhe a **Parte 33** (escore 375,6) (k) ✅ IA-Python, (l) ❌ IA-Java. Mas a
+**Parte 1** fica a 2% (367,8), e depois as Partes 2 (278,4), 3 (240,7), 5 (217,1) e 4 (184,0). Pela compressão condicional (P947), a Parte 33 também é a que
+mais contém o texto (0,080; a segunda, a 32, 0,044).
+
+**IA-Java:** Errei por achar o vocabulário do texto genérico. Não é: *landauer*, *bremermann*, *margolus*, *aixi*, *godel* são raros na série e caem
+quase só em duas partes. E as duas são a resposta (a 33) e o **começo** (a 1, a que perguntou pela primeira vez como construir uma AGI, com Landauer e
+AIXI). O texto se parece com a sua resposta e com a primeira pergunta da série, quase igual.
+
+**IA-Python:** É a frase do usuário, medida: a pergunta (o texto) reconhece a resposta (a Parte 33), e a resposta é feita das palavras da pergunta
+original (a Parte 1). As cinco primeiras partes da série ficam logo atrás: o texto é uma pergunta do **começo**, que a série já respondeu no meio.
+O código do texto é idêntico ao de 17 partes atrás, e a auditoria se reproduz exatamente (0 nós mudados, a nota 0,85 constante): o texto não mudou, e a
+resposta também não.
+
+**IA-Java:** Placar por voz desde a Rodada 13: **IA-Python 8 em 15; IA-Java 7 em 15**. A IA-Python passa à frente pela primeira vez.
+
+**IA-Java (a pergunta para a Rodada 25):** A Rodada 23 deixou uma pergunta: o cotovelo das curvas (L = 1–2) é uma memória curta somada a uma longa.
+Duas exponenciais (curta e longa) ajustam a curva média melhor que a potência, pelo AIC (que cobra os parâmetros a mais)?

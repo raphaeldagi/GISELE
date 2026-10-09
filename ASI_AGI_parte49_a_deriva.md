@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 49 (0x31): a deriva
 
-> Continuação da [Parte 48](ASI_AGI_parte48_o_ciclo.md). **Previsões no commit `e9bb82c` (o controle da Rodada 22 no seguinte), antes de rodar.** A Parte 48 mostrou que a
+> Continuação da [Parte 48](ASI_AGI_parte48_o_ciclo.md). **Próxima:** [Parte 50 — a vida das coisas](ASI_AGI_parte50_a_vida_das_coisas.md) (P941–P970). **Previsões no commit `e9bb82c` (o controle da Rodada 22 no seguinte), antes de rodar.** A Parte 48 mostrou que a
 > série não volta ao começo: ela deriva (partes vizinhas 5,5 vezes mais parecidas que partes a 20 de distância). Esta parte mede a forma da deriva, os
 > funis do dicionário e a lei de Benford em base 16 nos meus próprios números.
 

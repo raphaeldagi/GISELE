@@ -7459,6 +7459,7 @@ def testes_de_regressao():
         "P883": round(p883_felizes_hex()[0], 4) == 0.2613,
         "P912": p912_funis()[:2] == ("act", 1991) and round(p912_funis()[3], 3) == -1.869,
         "P943": round(p943_periodo_hex()[0], 4) == 0.2793,
+        "P947": p947_o_texto_voltou()[0] and p947_o_texto_voltou()[1]["nos_mudados"] == 0,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -8809,6 +8810,49 @@ def p941_curvas_individuais():
     _, _, cp = r23.r22.reta(xp, crua)
     return sum(1 for c in cv if c[5] < c[3]), k, (me, mp), (ce, cp), -malfa
 
+
+def p947_o_texto_voltou(texto="externos/pos_asi_texto_parte50.md", guardado="externos/arquitetura_pos_asi.py"):
+    """O texto da Parte 33 voltou (P947). Nada do texto é executado. Devolve (o código do texto é idêntico ao guardado,
+    linha a linha sem espaços no fim; a auditoria estática da Parte 33 refeita no código novo; {parte: redundância do
+    texto dado o documento da parte} para as Partes 31-49)."""
+    import os
+    import tempfile
+    from synthai.rsi import auditar_ast
+    from synthai.semiotica import comprimido
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    linhas = open(os.path.join(raiz, texto), encoding="utf-8").read().split("\n")
+    ini = linhas.index("import ast")
+    fim = next(i for i, x in enumerate(linhas) if x.strip() == "main_evolution_loop()" and i > ini)
+    codigo = [x.rstrip() for x in linhas[ini:fim + 1]]
+    velho = [x.rstrip() for x in open(os.path.join(raiz, guardado), encoding="utf-8").read().split("\n")]
+    while velho and velho[-1] == "":
+        velho.pop()
+    with tempfile.TemporaryDirectory() as d:
+        caminho = os.path.join(d, "codigo.py")
+        open(caminho, "w", encoding="utf-8").write("\n".join(codigo) + "\n")
+        auditoria = auditar_ast(caminho)
+    t = "\n".join(linhas)
+    ct = comprimido(t)
+    red = {}
+    for n in range(31, 50):
+        nome = next(f for f in sorted(os.listdir(raiz)) if f.startswith(f"ASI_AGI_parte{n}_"))
+        doc = open(os.path.join(raiz, nome), encoding="utf-8").read()
+        red[n] = 1 - (comprimido(doc + "\n" + t) - comprimido(doc)) / ct
+    return codigo == velho, auditoria, red
+
+
+def p948_pergunta_reconhece_resposta():
+    """Rodada 24 (P948): o texto pós-ASI reenviado, pontuado pelas palavras contra os documentos das Partes 1-49
+    (dialogo/rodada24.py, conferido em Java). Devolve [(parte, escore)] em ordem decrescente."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada24", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada24.py"))
+    r24 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r24)
+    ds, texto = r24.dados()
+    return sorted(r24.pontuar(ds, texto), key=lambda x: (-x[1], x[0]))
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -8861,6 +8905,13 @@ def _parte_50():
     n, m, pares, esperado, frac, ex = p942_definicoes_mutuas()
     print(f"P942 definicoes mutuas: N = {n}, M = {m}; pares = {pares}; ao acaso = {esperado:.2f}; razao = {pares / esperado:.1f}; "
           f"palavras em algum par = {frac:.4f}; {ex}")
+    igual, aud, red = p947_o_texto_voltou()
+    top = sorted(red.items(), key=lambda x: -x[1])[:3]
+    print(f"P947 o texto voltou: codigo identico ao da Parte 33 = {igual}; auditoria: nos mudados = {aud['nos_mudados']}, nota constante = "
+          f"{aud['run_benchmarks_constante']}, avaliador pergunta ao agente = {aud['avaliador_pergunta_ao_agente']}; quem mais o contem: "
+          + ", ".join(f"parte {k} = {v:.4f}" for k, v in top))
+    esc = p948_pergunta_reconhece_resposta()
+    print("P948 o texto escolhe, pelas palavras: " + ", ".join(f"parte {k} = {v:.1f}" for k, v in esc[:5]))
     r16, r2, rg, kp = p943_periodo_hex()
     print(f"P943 periodo de 1/p em base 16 ({kp} primos ate 10000): ord(16)/(p-1) = {r16:.4f}; ord(2)/(p-1) = {r2:.4f}; 1/mdc = {rg:.4f}; "
           f"produto = {r2 * rg:.4f}")
