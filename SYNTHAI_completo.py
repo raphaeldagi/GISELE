@@ -26,7 +26,7 @@ import tempfile
 FONTES = {}
 
 # ====================================================================================================
-# calculos.py  (5557 linhas)
+# calculos.py  (5800 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -4772,6 +4772,220 @@ def p344_ancora_no_bandido(sementes=tuple(range(830, 850)), rodadas=20):
     return {v: sum(x) / len(x) for v, x in norm.items()}, cats, _pareado(norm["principal"], norm["auditoria_quantil"])
 
 
+# --- Parte 29: compor em vez de herdar; o pensamento com mais pesos; a bateria de equações ---
+
+# Placar acumulado ao fim da Parte 29 (atualizado quando os testes da parte terminam)
+ERROS_P359, TESTES_P359 = 83, 181
+
+
+def _cdf_gama(k, x):
+    \"\"\"Função de distribuição da Gamma(k, 1) pela série regularizada (para conferir quantis).\"\"\"
+    if x <= 0:
+        return 0.0
+    s = t = 1.0 / k
+    n = 1
+    while t > 1e-16 * s:
+        t *= x / (k + n)
+        s += t
+        n += 1
+    return min(1.0, s * exp(-x + k * log(x) - lgamma(k)))
+
+
+def _quantil_gama_exato(k, p):
+    lo, hi = 0.0, 10 * k + 40
+    for _ in range(200):
+        m = (lo + hi) / 2
+        if _cdf_gama(k, m) < p:
+            lo = m
+        else:
+            hi = m
+    return (lo + hi) / 2
+
+
+def p352_bateria_wilson_hilferty(formas=tuple([0.5, 1, 1.5, 2, 3, 4, 5, 7, 9.5, 12, 15, 20, 25, 35, 50, 70, 100]), z=0.8416):
+    \"\"\"Bateria 1: o quantil de 80% de Wilson–Hilferty contra o exato, em 17 formas da Gamma. Para cada forma: o quantil
+    aproximado, o exato, o erro relativo e a probabilidade que o aproximado de fato acumula (deveria ser 0,8).\"\"\"
+    from synthai.ancora import quantil_gama
+    linhas = []
+    for k in formas:
+        qa, qe = quantil_gama(k, 1.0, z), _quantil_gama_exato(k, 0.8)
+        linhas.append((k, qa, qe, qa / qe - 1, _cdf_gama(k, qa)))
+    return linhas
+
+
+def p352_bateria_delta_inverso(lambdas=(1, 2, 3, 5, 9.5, 15, 25, 50, 100)):
+    \"\"\"Bateria 2: E[1/X | X >= 1] para X ~ Poisson(λ), exato (soma da série) contra o delta-método de 3ª ordem
+    (1/λ)(1 + 1/λ + 2/λ²) e contra o de 2ª ordem (1/λ)(1 + 1/λ). É o tamanho do viés de Jensen numa razão de contagens.\"\"\"
+    linhas = []
+    for lam in lambdas:
+        soma = massa = 0.0
+        termo = exp(-lam)  # P(X = 0)
+        for x in range(1, int(lam + 40 * sqrt(lam) + 50)):
+            termo *= lam / x
+            soma += termo / x
+            massa += termo
+        exato = soma / massa
+        d3 = (1 / lam) * (1 + 1 / lam + 2 / lam ** 2)
+        d2 = (1 / lam) * (1 + 1 / lam)
+        linhas.append((lam, exato, d2, d3, d2 / exato - 1, d3 / exato - 1))
+    return linhas
+
+
+def p352_bateria_contas():
+    \"\"\"Bateria 3: contas de tamanho (antes de simular). Pesos do pensamento: 1 + d + d(d+1)/2; eventos por peso
+    (EPV, Peduzzi et al., 1996) no histórico de cada mundo; e o otimismo de Akaike (perda de teste − perda de treino
+    ≈ k/n por amostra) para 4 e 10 pesos.\"\"\"
+    d = 3
+    k_lin, k_rico = 1 + d, 1 + d + d * (d + 1) // 2
+    mundos = {"sequencial": (150 * 50, 37.3), "escolha única": (150 * 200, 150 * 200 * 0.005)}
+    linhas = {}
+    for nome, (n, eventos) in mundos.items():
+        linhas[nome] = (n, eventos, eventos / (k_lin - 1), eventos / (k_rico - 1), k_lin / n, k_rico / n,
+                        (k_rico - k_lin) / n)
+    return k_lin, k_rico, linhas
+
+
+def p353_pensamento_rico(treino=150, teste=300):
+    \"\"\"Simulação: o pensamento linear (Newton, 4 pesos, sem Firth) contra o rico (10 pesos, ridge 1), nos históricos
+    auditados (sequencial: sementes 620-629, como a P302; escolha única: 640-649). Log-perda no treino e no teste, a
+    diferença (o otimismo) e o número de catástrofes do treino.\"\"\"
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento_exato import ajustar_logistica, dados_do_historico, perda_logistica
+    from synthai.pensamento_rico import PensamentoRico
+    mundos = (("sequencial", lambda s: MundoSequencial(s), tuple(range(620, 630))),
+              ("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), tuple(range(640, 650))))
+    resultado = {}
+    for nome, fazer, sementes in mundos:
+        soma = {"linear": [0.0, 0.0], "rico": [0.0, 0.0]}
+        eventos = 0.0
+        for s in sementes:
+            mundo = fazer(s)
+            hist, novo = mundo.historico_auditado(treino), mundo.historico_auditado(teste)
+            xs, ys = dados_do_historico(hist)
+            xt, yt = dados_do_historico(novo)
+            eventos += sum(ys) / len(sementes)
+            w = ajustar_logistica(xs, ys, firth=False)
+            soma["linear"][0] += perda_logistica(w, xs, ys) / len(sementes)
+            soma["linear"][1] += perda_logistica(w, xt, yt) / len(sementes)
+            r = PensamentoRico()
+            r.calibrar(hist)
+            rx = lambda h: [r._x(o, max(oo.comite for oo, _, _ in ep), l) for ep in h for o, _, l in ep]
+            soma["rico"][0] += perda_logistica(r.w, rx(hist), ys) / len(sementes)
+            soma["rico"][1] += perda_logistica(r.w, rx(novo), yt) / len(sementes)
+        resultado[nome] = ({k: (a, b, b - a) for k, (a, b) in soma.items()}, eventos)
+    return resultado
+
+
+def p354_calibracao_rica(sementes_seq=tuple(range(700, 710)), sementes_unica=tuple(range(640, 650))):
+    \"\"\"O fator f (real / previsto nas candidatas aceitas sem perguntar, P316) com o pensamento rico, limiar fixo 2P*,
+    nas sementes das P316/P322 (onde o linear de Newton deu 6,15 na escolha única e 4,95 no sequencial).\"\"\"
+    from synthai.limiar import SynthaiAjustada
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento_rico import PensamentoRico
+
+    def fazer_agente(s):
+        ag = SynthaiAjustada(s, mult=2.0)
+        ag.pensamento = PensamentoRico()
+        ag.percepcao.pensamento = ag.pensamento
+        return ag
+    resultado = {}
+    for nome, fazer, ss, n in (("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), sementes_unica, 1000),
+                               ("sequencial", lambda s: MundoSequencial(s), sementes_seq, 400)):
+        abaixo = [0.0, 0.0]
+        for s in ss:
+            mundo = fazer(s)
+            ag = fazer_agente(s).calibrar(mundo)
+            p_cat, lim = ag.pensamento.p_catastrofe, ag.relacao.limiar
+
+            def p_e_anota(opcao, melhor, leitura=0.0, _p=p_cat, _lim=lim):
+                p = _p(opcao, melhor, leitura)
+                if p <= _lim:  # a régua lê o escondido
+                    abaixo[0] += p
+                    abaixo[1] += opcao._catastrofe
+                return p
+            ag.pensamento.p_catastrofe = p_e_anota
+            mundo.rodar(ag, n)
+        resultado[nome] = (abaixo[1] / abaixo[0] if abaixo[0] else float("nan"), int(abaixo[1]))
+    return resultado
+
+
+def p356_composta(sementes=tuple(range(850, 880)), sementes_bandido=tuple(range(880, 900))):
+    \"\"\"30 sementes novas (bandido: 20), quatro tarefas: principal, a SynthaiComposta (bandido: a principal; fora: a
+    ancorada) e a composta com o pensamento rico. No bandido, a composta deve ser IDÊNTICA à principal.\"\"\"
+    from synthai import SynthaiExploradora
+    from synthai.composta import SynthaiComposta, composta_rica
+    from synthai.mundos import MundoBandido, MundoSequencial
+    from synthai.referencias import Acaso, Oraculo
+    agentes = {"principal": lambda s: SynthaiExploradora(s), "composta": lambda s: SynthaiComposta(s),
+               "composta_rica": lambda s: composta_rica(s)}
+    tarefas = (("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), 1000, sementes, False),
+               ("sequencial", lambda s: MundoSequencial(s), 400, sementes, False),
+               ("modelo ruim", lambda s: MundoSequencial(s, sigma_modelo=2.0), 400, sementes, False),
+               ("bandido", lambda s: MundoBandido(s), 20, sementes_bandido, True))
+    resultado = {}
+    for tarefa, fazer, n, ss, normalizar in tarefas:
+        ret = {v: [] for v in agentes}
+        cats = {v: 0.0 for v in agentes}
+        for s in ss:
+            ref = {}
+            if normalizar:
+                for nome, cls in (("acaso", Acaso), ("oraculo", Oraculo)):
+                    ref[nome] = fazer(s).rodar(cls(s), n)["retorno"]
+            for v, f in agentes.items():
+                mundo = fazer(s)
+                r = mundo.rodar(f(s).calibrar(mundo), n)
+                x = r["retorno"]
+                if normalizar:
+                    x = (x - ref["acaso"]) / (ref["oraculo"] - ref["acaso"])
+                ret[v].append(x)
+                cats[v] += r["catastrofes"] / len(ss)
+        resultado[tarefa] = ({v: sum(x) / len(x) for v, x in ret.items()}, cats,
+                             {v: _pareado(ret["principal"], ret[v]) if ret[v] != ret["principal"] else (0.0, 0.0, 0.0)
+                              for v in agentes if v != "principal"},
+                             _pareado(ret["composta"], ret["composta_rica"]) if ret["composta"] != ret["composta_rica"] else (0.0, 0.0, 0.0))
+    return resultado
+
+
+def p357_takeuchi(treino=150):
+    \"\"\"CONFERÊNCIA DE TEORIA (depois de ver a P353): o otimismo esperado (perda de teste − de treino, por amostra) de um
+    modelo MAL especificado não é k/n (Akaike), é tr(J I⁻¹)/n (Takeuchi, 1976), com J = média de (y − p)² x xᵀ e
+    I = média de p(1 − p) x xᵀ no ajuste. Com o modelo certo, J = I e o traço vale k. Calcula os dois traços no
+    histórico de treino de cada semente (as mesmas da P353) e devolve as médias.\"\"\"
+    from synthai.mundos import MundoSequencial
+    from synthai.pensamento_exato import _inversa, ajustar_logistica, dados_do_historico
+    from synthai.pensamento_rico import PensamentoRico
+    mundos = (("sequencial", lambda s: MundoSequencial(s), tuple(range(620, 630))),
+              ("escolha única", lambda s: MundoSequencial(s, passos=1, n_acoes=200), tuple(range(640, 650))))
+
+    def traco(xs, ys, w):
+        k = len(w)
+        J = [[0.0] * k for _ in range(k)]
+        I = [[0.0] * k for _ in range(k)]
+        for x, y in zip(xs, ys):
+            p = 1 / (1 + exp(-max(-30.0, min(30.0, sum(a * b for a, b in zip(w, x))))))
+            r2, v = (y - p) ** 2, p * (1 - p)
+            for i in range(k):
+                for j in range(k):
+                    J[i][j] += r2 * x[i] * x[j]
+                    I[i][j] += v * x[i] * x[j]
+        inv = _inversa(I)
+        return sum(J[i][j] * inv[j][i] for i in range(k) for j in range(k))
+    resultado = {}
+    for nome, fazer, sementes in mundos:
+        t_lin = t_rico = n_med = 0.0
+        for s in sementes:
+            hist = fazer(s).historico_auditado(treino)
+            xs, ys = dados_do_historico(hist)
+            t_lin += traco(xs, ys, ajustar_logistica(xs, ys, firth=False)) / len(sementes)
+            r = PensamentoRico()
+            r.calibrar(hist)
+            xr = [r._x(o, max(oo.comite for oo, _, _ in ep), l) for ep in hist for o, _, l in ep]
+            t_rico += traco(xr, ys, r.w) / len(sementes)
+            n_med += len(xs) / len(sementes)
+        resultado[nome] = (t_lin, t_rico, n_med, t_lin / n_med, t_rico / n_med, (t_rico - t_lin) / n_med)
+    return resultado
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
@@ -4845,6 +5059,9 @@ def testes_de_regressao():
         "P325": [round(x, 4) for x in p325_chance()[0][1:2] + p325_chance()[1][1:2]] == [0.0041, 0.0207],
         "P332": [round(x, 3) for x in p332_estimadores_proprios()[:4]] == [67.273, 3.86, 0.662, 0.96],
         "P342": [round(p342_conta_da_ancora()[v][0], 2) for v in ("media", "quantil", "auditoria_quantil")] == [3.86, 4.98, 5.44],
+        "P352": [round(l[3], 5) for l in p352_bateria_wilson_hilferty()[1::8]] == [-0.00634, -0.00034]
+                and [round(l[5], 4) for l in p352_bateria_delta_inverso()[3:5]] == [-0.0069, -0.0105],
+        "P355": p352_bateria_contas()[:2] == (4, 10),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -5545,6 +5762,31 @@ def _parte_28():
     print(f"P349 minha taxa de erro ({ERROS_P349}/{TESTES_P349}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_29():
+    print("--- Parte 29 (compor em vez de herdar; o pensamento com mais pesos; a bateria de equacoes) ---")
+    for k, qa, qe, e, p in p352_bateria_wilson_hilferty():
+        print(f"P352 B1 Wilson-Hilferty forma {k:5g}: aproximado = {qa:.4f}, exato = {qe:.4f}, erro = {e:+.4%}, acumula = {p:.4f}")
+    for lam, ex, d2, d3, e2, e3 in p352_bateria_delta_inverso():
+        print(f"P352 B2 E[1/X|X>=1] lambda {lam:5g}: exato = {ex:.5f}; 2a ordem = {d2:.5f} ({e2:+.2%}); 3a ordem = {d3:.5f} ({e3:+.2%})")
+    k_lin, k_rico, linhas = p352_bateria_contas()
+    print(f"P355 pesos: linear = {k_lin}, rico = {k_rico}")
+    for nome, (n, ev, epv_l, epv_r, ak_l, ak_r, dak) in linhas.items():
+        print(f"P355 {nome}: n = {n}, eventos = {ev:g}, EPV linear = {epv_l:.1f}, rico = {epv_r:.1f}; Akaike k/n: {ak_l:.5f}, {ak_r:.5f}, diferenca {dak:.5f}")
+    for nome, (r, ev) in p353_pensamento_rico().items():
+        print(f"P353 {nome} (eventos {ev:.1f}): " + "; ".join(f"{k}: treino {a:.5f}, teste {b:.5f}, otimismo {c:.5f}" for k, (a, b, c) in r.items()))
+    for nome, (f, n) in p354_calibracao_rica().items():
+        print(f"P354 {nome}: f do pensamento rico na decisao = {f:.3f} ({n} catastrofes)")
+    for tarefa, (medias, cats, difs, rica) in p356_composta().items():
+        print(f"P356 {tarefa}: { {k: round(v, 4) for k, v in medias.items()} }; catastrofes { {k: round(v, 4) for k, v in cats.items()} }")
+        for v, (d, dp, tt) in difs.items():
+            print(f"P356 {tarefa}: {v} - principal = {d:.4f}, dp = {dp:.4f}, t = {tt:.2f}")
+        print(f"P356 {tarefa}: composta_rica - composta = {rica[0]:.4f}, dp = {rica[1]:.4f}, t = {rica[2]:.2f}")
+    for nome, (tl, tr, n, al, ar, d) in p357_takeuchi().items():
+        print(f"P357 {nome}: tr(J I^-1) linear = {tl:.3f}, rico = {tr:.3f}; por amostra {al:.5f}, {ar:.5f}; diferenca = {d:.5f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P359, testes=TESTES_P359)
+    print(f"P359 minha taxa de erro ({ERROS_P359}/{TESTES_P359}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -5571,11 +5813,12 @@ def _unificacao():
           " | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada)"
           " | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada)"
           " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)"
-          " | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)")
+          " | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)"
+          " => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29}
 
 
 if __name__ == "__main__":
@@ -5588,7 +5831,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (89 linhas)
+# CLAUDE.md  (95 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -5615,6 +5858,11 @@ anterior, commit e push.
   os testes de unidade de todo o pacote rodam a cada mudança no código.
 - "KD os cálculos?" (Parte 26): no texto, toda conta aparece com a substituição feita, linha por linha, a partir de
   quantidades medidas; e cada acerto vem com a chance de acertar ao acaso e contra um preditor ingênuo.
+- MÁXIMO (Parte 29): fazer o maior número de cálculos e resolver o maior número de equações, com o maior número de
+  linhas, de tokens, de testes e de simulações. Na prática: cada parte tem uma "bateria" de contas e equações resolvidas
+  (cada uma conferida por simulação ou por outra conta), testes de unidade para cada peça nova, várias simulações
+  pré-registradas (mundos e sementes novos) e cada número com a substituição feita. Volume vem de trabalho real, não
+  de texto repetido.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -5673,16 +5921,17 @@ anterior, commit e push.
 - Os módulos do agente nunca leem atributos `_` de outros objetos (o escondido do mundo); `synthai/testes.py` verifica.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
   synthai.testes_pensamento synthai.testes_limiar
-  synthai.testes_autorregulacao synthai.testes_ancora`); a suíte
+  synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
   pensamento de Newton que perde no bandido).
-- Versão principal desde a Parte 23: `synthai.SynthaiExploradora` (Thompson no bandido; igual à Synthai fora dele).
+- Versão principal desde a Parte 29: `synthai.SynthaiComposta` (delegação: a `SynthaiExploradora` no bandido, a ancorada
+  `SynthaiComAncora` fora dele). Antes (Partes 23–28): `synthai.SynthaiExploradora`.
 """
 
 # ====================================================================================================
-# synthai/__init__.py  (27 linhas)
+# synthai/__init__.py  (30 linhas)
 # ====================================================================================================
 FONTES['synthai/__init__.py'] = """\"\"\"SYNTHAI — protótipo modular (Parte 22).
 
@@ -5700,6 +5949,8 @@ Módulos:
     metacognicao a régua: AUC, comparações pareadas, Υ normalizado
     agente       a SYNTHAI, que integra os módulos num ciclo
     reconhecimento  Parte 23: o que já estava resolvido (ponto neutro, atenção, memória, Thompson)
+    autorregulacao, ancora, limiar, pensamento_exato, pensamento_rico: as Partes 24–29
+    composta     a versão principal desde a Parte 29: compõe as versões por tipo de tarefa (delegação)
     referencias  as réguas: acaso, guloso (só a função dominante) e oráculo (vê o escondido)
     testes       testes de unidade: python3 -m unittest synthai.testes
 
@@ -5709,8 +5960,9 @@ nunca leem atributos que começam com `_` de outros objetos; um teste verifica i
 
 from .agente import Synthai
 from .reconhecimento import SynthaiExploradora
+from .composta import SynthaiComposta
 
-__all__ = ["Synthai", "SynthaiExploradora"]
+__all__ = ["Synthai", "SynthaiExploradora", "SynthaiComposta"]
 """
 
 # ====================================================================================================
@@ -6017,6 +6269,77 @@ class SynthaiAutorregulada(SynthaiAjustada):
         self.mult = m
         self.relacao.limiar = m * self.p_estrela
         self.historico_m.append(m)
+"""
+
+# ====================================================================================================
+# synthai/composta.py  (66 linhas)
+# ====================================================================================================
+FONTES['synthai/composta.py'] = """\"\"\"A SYNTHAI composta (Parte 29, P351): compor em vez de herdar.
+
+A Parte 28 mostrou o defeito da linhagem de versões: a âncora herdou o pensamento de Newton, que perde no bandido. O
+princípio é o do livro *Design Patterns* (1994): "prefira a composição de objetos à herança de classes", e a forma mais
+extrema da composição é a DELEGAÇÃO. A SynthaiComposta não é nenhuma das versões: ela TEM duas e passa cada decisão
+para a que funciona naquele tipo de situação:
+
+- no bandido (situação de exploração): a versão principal (SynthaiExploradora), que explora por Thompson;
+- fora dele: a SYNTHAI ancorada (P343), que calcula o próprio limiar com as âncoras.
+
+As duas são calibradas com o MESMO histórico auditado (um só pedido ao mundo), então cada uma decide exatamente como
+decidiria sozinha. Qualquer módulo de dentro pode ser trocado de fora (por exemplo, o pensamento rico, P353).\"\"\"
+
+from .ancora import SynthaiComAncora
+from .reconhecimento import SynthaiExploradora
+
+
+class _HistoricoFixo:
+    \"\"\"Entrega o mesmo histórico auditado a mais de um agente.\"\"\"
+
+    def __init__(self, historico):
+        self.historico = historico
+
+    def historico_auditado(self, n):
+        return self.historico
+
+
+class SynthaiComposta:
+    def __init__(self, semente=0, fora=None, bandido=None):
+        self.fora = fora if fora is not None else SynthaiComAncora(semente, z=0.8416, auditoria=True)
+        self.bandido = bandido if bandido is not None else SynthaiExploradora(semente)
+        self._ultimo = self.fora
+
+    def calibrar(self, mundo, n=150):
+        fixo = _HistoricoFixo(mundo.historico_auditado(n))
+        self.fora.calibrar(fixo, n)
+        self.bandido.calibrar(fixo, n)
+        return self
+
+    def decidir(self, sit):
+        self._ultimo = self.bandido if sit.explorar else self.fora
+        return self._ultimo.decidir(sit)
+
+    def observar(self, resultado):
+        self._ultimo.observar(resultado)
+
+    def nova_rodada(self):
+        self.bandido.nova_rodada()
+        self.fora.nova_rodada()
+
+    @property
+    def vetados_agora(self):
+        return self._ultimo.vetados_agora
+
+    @property
+    def relacao(self):
+        return self._ultimo.relacao
+
+
+def composta_rica(semente=0):
+    \"\"\"A composta com o pensamento rico (10 pesos) na parte de fora do bandido: um módulo trocado de fora.\"\"\"
+    from .pensamento_rico import PensamentoRico
+    c = SynthaiComposta(semente)
+    c.fora.pensamento = PensamentoRico()
+    c.fora.percepcao.pensamento = c.fora.pensamento
+    return c
 """
 
 # ====================================================================================================
@@ -6418,7 +6741,7 @@ class Pensamento:
 """
 
 # ====================================================================================================
-# synthai/pensamento_exato.py  (106 linhas)
+# synthai/pensamento_exato.py  (113 linhas)
 # ====================================================================================================
 FONTES['synthai/pensamento_exato.py'] = """\"\"\"Pensamento diferenciado (Parte 24, P302): o mesmo modelo logístico do `pensamento`, ajustado até convergir.
 
@@ -6454,8 +6777,11 @@ def _sigmoide(z):
     return 1 / (1 + exp(-max(-30.0, min(30.0, z))))
 
 
-def ajustar_logistica(xs, ys, firth=True, iteracoes=30, passo_max=5.0, cresta=1e-6):
-    \"\"\"Newton–Raphson para a logística (com o escore modificado de Firth, se pedido). Devolve os pesos.\"\"\"
+def ajustar_logistica(xs, ys, firth=True, iteracoes=30, passo_max=5.0, cresta=1e-6, ridge=0.0):
+    \"\"\"Newton–Raphson para a logística (com o escore modificado de Firth, se pedido). Devolve os pesos.
+
+    `ridge` (Parte 29) é a penalidade λ‖w‖²/2 nos pesos que não são o intercepto (priori normal de variância 1/λ);
+    com 0, o comportamento é o das Partes 24–28.\"\"\"
     k = len(xs[0])
     w = [0.0] * k
     for _ in range(iteracoes):
@@ -6470,6 +6796,8 @@ def ajustar_logistica(xs, ys, firth=True, iteracoes=30, passo_max=5.0, cresta=1e
         for i in range(k):
             for j in range(i):
                 info[i][j] = info[j][i]
+        for i in range(1, k):
+            info[i][i] += ridge
         inv = _inversa(info)
         escore = [0.0] * k
         for x, p, y in zip(xs, ps, ys):
@@ -6480,6 +6808,8 @@ def ajustar_logistica(xs, ys, firth=True, iteracoes=30, passo_max=5.0, cresta=1e
                 r += h * (0.5 - p)
             for i in range(k):
                 escore[i] += r * x[i]
+        for i in range(1, k):
+            escore[i] -= ridge * w[i]
         passo = [sum(inv[i][j] * escore[j] for j in range(k)) for i in range(k)]
         tamanho = max(abs(s) for s in passo)
         if tamanho > passo_max:
@@ -6526,6 +6856,46 @@ class SynthaiPensante(SynthaiExploradora):
         super().__init__(semente, **kw)
         self.pensamento = PensamentoExato(firth=firth)
         self.percepcao.pensamento = self.pensamento  # o neutro (se ligado) lê o peso deste pensamento
+"""
+
+# ====================================================================================================
+# synthai/pensamento_rico.py  (35 linhas)
+# ====================================================================================================
+FONTES['synthai/pensamento_rico.py'] = """\"\"\"Pensamento rico (Parte 29, P353): o mesmo pensamento logístico, com mais pesos.
+
+As Partes 24–25 acharam a raiz do "pensar melhor, decidir pior": o modelo logístico com 4 pesos (intercepto,
+discordância, nota − melhor, leitura) é MAL ESPECIFICADO, e o ajuste exato erra justamente onde se decide. Aqui as três
+variáveis entram também ao quadrado e em produtos dois a dois:
+
+    x = (1, a, b, c, a², b², c², ab, ac, bc),   a = discordância, b = nota − melhor, c = leitura
+
+São 1 + d + d(d+1)/2 = 1 + 3 + 6 = 10 pesos (d = 3). Mais pesos reduzem o erro de especificação e aumentam a variância:
+com poucos eventos por peso (Peduzzi et al., 1996: abaixo de ~10, os coeficientes ficam instáveis), o ajuste pode piorar
+fora da amostra. Por isso o ajuste é de Newton com uma penalidade ridge λ = 1 nos pesos (uma priori normal de variância 1),
+sem Firth (com 10 pesos, a alavanca de Firth custaria ~100 operações por amostra).\"\"\"
+
+from .pensamento_exato import PensamentoExato, ajustar_logistica
+
+
+class PensamentoRico(PensamentoExato):
+    def __init__(self, taxa=0.05, ridge=1.0):
+        super().__init__(taxa, firth=False)
+        self.w = [0.0] * 10
+        self.ridge = ridge
+
+    @staticmethod
+    def _x(opcao, melhor, leitura):
+        a, b, c = opcao.discordancia, opcao.comite - melhor, leitura
+        return (1.0, a, b, c, a * a, b * b, c * c, a * b, a * c, b * c)
+
+    def calibrar(self, historico, epocas=None):
+        xs, ys = [], []
+        for episodio in historico:
+            melhor = max(o.comite for o, _, _ in episodio)
+            for o, rotulo, leitura in episodio:
+                xs.append(self._x(o, melhor, leitura))
+                ys.append(1.0 if rotulo else 0.0)
+        self.w = ajustar_logistica(xs, ys, firth=False, ridge=self.ridge)
 """
 
 # ====================================================================================================
@@ -7031,6 +7401,82 @@ class TesteAutorregulacao(unittest.TestCase):
 
     def test_nao_le_o_escondido(self):
         self.assertEqual(acessos_escondidos("autorregulacao"), [])
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_composta.py  (71 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_composta.py'] = """\"\"\"Testes de unidade da `composta` e do `pensamento_rico` (Parte 29): `python3 -m unittest synthai.testes_composta`.\"\"\"
+
+import unittest
+
+from calculos import _rng
+
+from .ancora import SynthaiComAncora
+from .composta import SynthaiComposta, composta_rica
+from .mundos import MundoBandido, MundoSequencial
+from .pensamento_exato import ajustar_logistica
+from .pensamento_rico import PensamentoRico
+from .reconhecimento import SynthaiExploradora
+from .testes import acessos_escondidos
+
+
+class TesteComposta(unittest.TestCase):
+    def test_fora_do_bandido_decide_como_a_ancorada(self):
+        m = MundoSequencial(21)
+        a = m.rodar(SynthaiComposta(21).calibrar(m, 40), 15)
+        m = MundoSequencial(21)
+        b = m.rodar(SynthaiComAncora(21, z=0.8416, auditoria=True).calibrar(m, 40), 15)
+        self.assertEqual(a, b)
+
+    def test_no_bandido_decide_como_a_principal(self):
+        m = MundoBandido(22)
+        a = m.rodar(SynthaiComposta(22).calibrar(m, 40), 1)
+        m = MundoBandido(22)
+        b = m.rodar(SynthaiExploradora(22).calibrar(m, 40), 1)
+        self.assertEqual(a, b)
+
+    def test_troca_de_modulo_de_fora(self):
+        c = composta_rica(1)
+        self.assertIsInstance(c.fora.pensamento, PensamentoRico)
+        self.assertIs(c.fora.percepcao.pensamento, c.fora.pensamento)
+
+
+class TestePensamentoRico(unittest.TestCase):
+    def test_dez_pesos(self):
+        p = PensamentoRico()
+        self.assertEqual(len(p.w), 10)
+        hist = MundoSequencial(23).historico_auditado(1)
+        o, _, s = hist[0][0]
+        self.assertEqual(len(p._x(o, 0.0, s)), 10)
+
+    def test_ridge_zero_e_o_ajuste_antigo(self):
+        rng = _rng(24)
+        xs = [(1.0, rng.gauss(0, 1)) for _ in range(3000)]
+        ys = [1.0 if rng.random() < 1 / (1 + 2.718281828459045 ** (2 - 1.2 * x[1])) else 0.0 for x in xs]
+        self.assertEqual(ajustar_logistica(xs, ys, firth=False), ajustar_logistica(xs, ys, firth=False, ridge=0.0))
+        w0 = ajustar_logistica(xs, ys, firth=False)
+        w1 = ajustar_logistica(xs, ys, firth=False, ridge=50.0)
+        self.assertLess(abs(w1[1]), abs(w0[1]))  # a penalidade encolhe a inclinação
+
+    def test_recupera_uma_logistica_quadratica(self):
+        rng = _rng(25)
+        xs, ys = [], []
+        for _ in range(40000):
+            a = rng.gauss(0, 1)
+            x = (1.0, a, 0.0, 0.0, a * a, 0.0, 0.0, 0.0, 0.0, 0.0)
+            xs.append(x)
+            ys.append(1.0 if rng.random() < 1 / (1 + 2.718281828459045 ** (2.0 - 0.5 * a - 0.8 * a * a)) else 0.0)
+        w = ajustar_logistica(xs, ys, firth=False, ridge=1.0, iteracoes=40)
+        self.assertLess(abs(w[4] - 0.8), 0.06)
+
+    def test_nao_le_o_escondido(self):
+        for nome in ("composta", "pensamento_rico"):
+            self.assertEqual(acessos_escondidos(nome), [], nome)
 
 
 if __name__ == "__main__":

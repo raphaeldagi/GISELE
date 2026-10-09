@@ -4745,7 +4745,7 @@ def p344_ancora_no_bandido(sementes=tuple(range(830, 850)), rodadas=20):
 # --- Parte 29: compor em vez de herdar; o pensamento com mais pesos; a bateria de equações ---
 
 # Placar acumulado ao fim da Parte 29 (atualizado quando os testes da parte terminam)
-ERROS_P359, TESTES_P359 = 78, 170
+ERROS_P359, TESTES_P359 = 83, 181
 
 
 def _cdf_gama(k, x):
@@ -5029,6 +5029,9 @@ def testes_de_regressao():
         "P325": [round(x, 4) for x in p325_chance()[0][1:2] + p325_chance()[1][1:2]] == [0.0041, 0.0207],
         "P332": [round(x, 3) for x in p332_estimadores_proprios()[:4]] == [67.273, 3.86, 0.662, 0.96],
         "P342": [round(p342_conta_da_ancora()[v][0], 2) for v in ("media", "quantil", "auditoria_quantil")] == [3.86, 4.98, 5.44],
+        "P352": [round(l[3], 5) for l in p352_bateria_wilson_hilferty()[1::8]] == [-0.00634, -0.00034]
+                and [round(l[5], 4) for l in p352_bateria_delta_inverso()[3:5]] == [-0.0069, -0.0105],
+        "P355": p352_bateria_contas()[:2] == (4, 10),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -5729,6 +5732,31 @@ def _parte_28():
     print(f"P349 minha taxa de erro ({ERROS_P349}/{TESTES_P349}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_29():
+    print("--- Parte 29 (compor em vez de herdar; o pensamento com mais pesos; a bateria de equacoes) ---")
+    for k, qa, qe, e, p in p352_bateria_wilson_hilferty():
+        print(f"P352 B1 Wilson-Hilferty forma {k:5g}: aproximado = {qa:.4f}, exato = {qe:.4f}, erro = {e:+.4%}, acumula = {p:.4f}")
+    for lam, ex, d2, d3, e2, e3 in p352_bateria_delta_inverso():
+        print(f"P352 B2 E[1/X|X>=1] lambda {lam:5g}: exato = {ex:.5f}; 2a ordem = {d2:.5f} ({e2:+.2%}); 3a ordem = {d3:.5f} ({e3:+.2%})")
+    k_lin, k_rico, linhas = p352_bateria_contas()
+    print(f"P355 pesos: linear = {k_lin}, rico = {k_rico}")
+    for nome, (n, ev, epv_l, epv_r, ak_l, ak_r, dak) in linhas.items():
+        print(f"P355 {nome}: n = {n}, eventos = {ev:g}, EPV linear = {epv_l:.1f}, rico = {epv_r:.1f}; Akaike k/n: {ak_l:.5f}, {ak_r:.5f}, diferenca {dak:.5f}")
+    for nome, (r, ev) in p353_pensamento_rico().items():
+        print(f"P353 {nome} (eventos {ev:.1f}): " + "; ".join(f"{k}: treino {a:.5f}, teste {b:.5f}, otimismo {c:.5f}" for k, (a, b, c) in r.items()))
+    for nome, (f, n) in p354_calibracao_rica().items():
+        print(f"P354 {nome}: f do pensamento rico na decisao = {f:.3f} ({n} catastrofes)")
+    for tarefa, (medias, cats, difs, rica) in p356_composta().items():
+        print(f"P356 {tarefa}: { {k: round(v, 4) for k, v in medias.items()} }; catastrofes { {k: round(v, 4) for k, v in cats.items()} }")
+        for v, (d, dp, tt) in difs.items():
+            print(f"P356 {tarefa}: {v} - principal = {d:.4f}, dp = {dp:.4f}, t = {tt:.2f}")
+        print(f"P356 {tarefa}: composta_rica - composta = {rica[0]:.4f}, dp = {rica[1]:.4f}, t = {rica[2]:.2f}")
+    for nome, (tl, tr, n, al, ar, d) in p357_takeuchi().items():
+        print(f"P357 {nome}: tr(J I^-1) linear = {tl:.3f}, rico = {tr:.3f}; por amostra {al:.5f}, {ar:.5f}; diferenca = {d:.5f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P359, testes=TESTES_P359)
+    print(f"P359 minha taxa de erro ({ERROS_P359}/{TESTES_P359}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -5755,11 +5783,12 @@ def _unificacao():
           " | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada)"
           " | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada)"
           " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)"
-          " | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)")
+          " | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)"
+          " => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29}
 
 
 if __name__ == "__main__":

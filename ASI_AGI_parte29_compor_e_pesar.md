@@ -162,4 +162,98 @@ falhou num deles: ❌. Mas a direção é a da tese das Partes 24–25: **o defe
 
 ### P356. A composta, em sementes novas, nas quatro tarefas (pré-registrado)
 
-*(resultados abaixo)*
+**Previsões registradas:** (a) no bandido, a composta (e a composta rica) é **idêntica** à principal, diferença exatamente 0; (b) Stouffer ≥ 2 nos três
+mundos sem bandido; (c) catástrofes ≤ 1,4 × as da principal em cada um; (d) o pensamento rico ganha da composta na escolha única e perde no
+sequencial; (e) o rico tem menos catástrofes na escolha única.
+
+30 sementes novas (850–879; bandido: 20, 880–899):
+
+| Tarefa | Principal | **Composta** | − principal (t) | Composta rica | rica − composta (t) |
+|---|---|---|---|---|---|
+| Escolha única | 1,4950 (0,49%) | 1,5005 (0,57%) | +0,005 (0,20) | 1,4671 (0,59%) | −0,033 (−1,17) |
+| Sequencial | 19,913 (1,56%) | **20,250** (1,67%) | **+0,337 (3,39)** | 20,276 (1,69%) | +0,026 (0,23) |
+| Modelo ruim | 11,357 (1,99%) | **11,826** (2,39%) | **+0,469 (3,49)** | 11,857 (2,28%) | +0,031 (0,26) |
+| Bandido (Υ) | 0,60307 (0,68) | **0,60307** (0,68) | **0 exato** | 0,60307 | 0 exato |
+
+- (a) ✅ No bandido, as três dão o **mesmo número até a última casa**: a composição é exata.
+- (b) ✅ Stouffer $= (0{,}20 + 3{,}39 + 3{,}49)/\sqrt3 = 7{,}08/1{,}732 = 4{,}08$. Ao acaso, $P(Z \ge 4{,}08) \approx 2 \times 10^{-5}$. Contra um preditor
+  ingênuo ("a composta é a ancorada fora do bandido, e a ancorada já ganhou na P343"), o acerto é esperado: a novidade não é o ganho, é o ganho
+  **sem perda** no bandido.
+- (c) ✅ Catástrofes: $0{,}57/0{,}49 = 1{,}15$; $1{,}67/1{,}56 = 1{,}07$; $2{,}39/1{,}99 = 1{,}20$, todas ≤ 1,4.
+- (d) ❌ O pensamento rico não mudou o comportamento (−0,033 e +0,026, t < 1,2).
+- (e) ❌ Nem as catástrofes (0,59% contra 0,57%).
+
+**A composta vira a versão principal.** Ela foi desenhada depois da P343/P344 e validada em sementes de controle novas (850–899), como a regra
+pede. Ganha onde a ancorada ganha e é exatamente a principal antiga no bandido: é uma melhoria **de Pareto** nas quatro tarefas, em retorno.
+
+**O pensamento rico, de novo.** Ele previu melhor (−7% e −16% de perda no teste, P353) e ficou mais bem calibrado onde decide (P354), e mesmo assim
+não decidiu melhor. É o padrão das Partes 23–25 pela terceira vez: medir melhor uma peça não basta. Aqui a explicação mais provável é que a
+autorregulação (P331) ajusta o limiar ao pensamento que tiver: um pensamento mais bem calibrado leva a um limiar diferente, e o resultado final
+fica parecido. A âncora **compensa** o pensamento, que é o que ela foi feita para fazer.
+
+---
+
+## Parte CXLI — Jung, placar e unificação
+
+### P358. Jung: a função transcendente como composição
+
+**Tradução cruzada.** Jung chamava de **função transcendente** o que nasce do encontro de dois opostos sem que nenhum vença: um terceiro que contém
+os dois. A herança de classes é o contrário: a versão nova **substitui** a antiga, e o que a antiga sabia fazer melhor se perde (a Parte 28 perdeu o
+bandido). A composição mantém as duas e as **põe em relação**: a exploradora onde explorar importa, a ancorada onde a cautela calculada importa. É a
+quaternidade de Jung num grão menor: funções diferenciadas (P301), cada uma no seu domínio, sob um centro que não é nenhuma delas.
+
+**Onde a formalização quebra.** A composta escolhe a peça por um sinal **dado pelo mundo** (a situação diz se é de exploração). Na psique, a
+escolha de qual função usar é ela mesma um problema, e Jung dizia que é aí que mora a unilateralidade. Uma SYNTHAI que **aprendesse** qual peça usar
+em cada situação seria o próximo passo.
+
+### P359. Placar e taxa de erro
+
+| Teste | Resultado |
+|---|---|
+| B1: Wilson–Hilferty em 17 formas (pré-registrado) | ✅ |
+| B2: delta-método, 9 valores de λ (pré-registrado) | ✅ |
+| P353 (a): otimismo a um fator 2 de 6/n nos dois mundos (pré-registrado) | ❌ |
+| P353 (b): o rico ganha no teste na escolha única (pré-registrado) | ✅ (−16%) |
+| P353 (c): o rico perde no teste no sequencial (pré-registrado) | ❌ (ganha 7%) |
+| P354: f do rico nas duas faixas (pré-registrado) | ❌ (3,05 fora; 1,71 dentro) |
+| P356 (a): bandido idêntico (pré-registrado) | ✅ |
+| P356 (b): Stouffer ≥ 2 (pré-registrado) | ✅ (4,08) |
+| P356 (c): catástrofes ≤ 1,4× (pré-registrado) | ✅ |
+| P356 (d): o rico ganha na única e perde no sequencial (pré-registrado) | ❌ |
+| P356 (e): o rico com menos catástrofes (pré-registrado) | ❌ |
+
+Esta parte: **11** testes, **5** errados. Acumulado: **83 de 181**. Posterior: média **0,46**, intervalo de 90% **[0,40; 0,52]**.
+
+### P360. Unificação e metacognição
+
+- **Nova versão principal: `synthai.SynthaiComposta`** (P356), exportada pelo pacote. Linhagem: … → `SynthaiExploradora` (P295) ⇒
+  **`SynthaiComposta`** (P356): a exploradora no bandido, a ancorada (P343) fora dele.
+- **Novos módulos:** `composta.py` (composição por delegação) e `pensamento_rico.py` (10 pesos, Newton com ridge); `ajustar_logistica` ganhou a
+  opção `ridge` (com 0, igual ao antigo, testado). 7 testes de unidade novos: **47 no pacote, todos passam**.
+- `calculos.py`: a bateria (`p352_...`), o pensamento rico (`p353`, `p354`), a composta (`p356`) e Takeuchi (`p357`). Testes de regressão **65/65**
+  (mais P352 e P355); **213** funções `pNN`. `SYNTHAI_completo.py` regenerado.
+
+**Metacognição.**
+1. **O máximo de cálculos mudou o tipo de acerto.** A bateria (B1, B2) acertou tudo e mostrou **onde** as fórmulas das Partes 27–28 deixam de valer
+   (Wilson–Hilferty abaixo de forma 1; o delta-método abaixo de λ ≈ 5). Antes eu só tinha conferido as fórmulas nos pontos em que as usava.
+2. **As contas de tamanho erraram, e por um bom motivo.** A regra dos 10 eventos por peso e a conta de Akaike supõem coisas (coeficientes,
+   modelo certo) que não valiam. Takeuchi, que não supõe o modelo certo, chegou mais perto. É a regra da Parte 23 de novo: antes de usar uma
+   resposta pronta, verificar as premissas dela.
+3. **A melhor decisão da parte foi de arquitetura, não de estatística.** O pensamento com mais pesos foi o maior ganho de **medida** (−16% de perda,
+   f de 6,15 para 3,05) e o menor de **comportamento** (zero). A composição foi o menor esforço de código (60 linhas) e o maior ganho de
+   comportamento (Stouffer 4,08, empate exato no bandido).
+
+> **Síntese da Parte 29:** a SYNTHAI deixou de herdar e passou a compor: uma versão nova que tem as duas melhores antigas e passa cada decisão para a
+> que funciona naquele tipo de tarefa. Em sementes novas, ela ganhou da principal fora do bandido (Stouffer 4,08) e foi idêntica a ela no bandido,
+> até a última casa: virou a versão principal. A bateria de equações conferiu Wilson–Hilferty em 17 formas e o delta-método em 9 valores, e mostrou
+> onde cada um deixa de valer. O pensamento com 10 pesos previu 7% a 16% melhor e ficou mais bem calibrado onde decide, mas não decidiu melhor: a
+> âncora compensa o pensamento que tiver. Jung chamaria a composta de função transcendente em miniatura: um terceiro que contém os dois.
+
+---
+
+**Fontes pesquisadas nesta parte**
+- Composição em vez de herança, e delegação: [Wikipedia, *Design Patterns*](https://en.wikipedia.org/wiki/Design_Patterns), [notas de curso (Freiburg)](https://proglang.informatik.uni-freiburg.de/teaching/swt/2012/design-patterns.pdf), [KSU, Gang of Four](https://textbooks.cs.ksu.edu/cc410/i-oop/09-design-patterns/02-gang-of-four/)
+- Eventos por variável (Peduzzi et al., 1996) e o debate posterior: [BMC Med Res Methodol (2016)](https://link.springer.com/article/10.1186/s12874-016-0267-3), [PMC5045274](https://pmc.ncbi.nlm.nih.gov/articles/PMC5045274), [CASRAI](https://casrai.org/guides/events-per-variable-and-the-minimum-sample-size-for-regression)
+- Otimismo de Akaike e Takeuchi: [Lin, AIC](https://web.stanford.edu/~linkewei/blog/aic), [arXiv 1911.10191](https://arxiv.org/pdf/1911.10191), [MetricGate, AIC e KL](https://metricgate.com/blogs/aic-and-kl-divergence-link/)
+- Delta-método e momentos inversos: [Wikipedia, Delta method](https://en.wikipedia.org/wiki/Delta_method), [Cichoń, Delta Method](https://cs.pwr.edu.pl/cichon/prace/DeltaMethod.pdf)
+- Wilson–Hilferty e o quantil da Gamma: [código-fonte do R (qgamma.c)](https://svn.r-project.org/R/trunk/src/nmath/qgamma.c), [EnvStats::eqgamma](https://search.r-project.org/CRAN/refmans/EnvStats/html/eqgamma.html)

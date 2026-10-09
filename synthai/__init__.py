@@ -14,6 +14,8 @@ Módulos:
     metacognicao a régua: AUC, comparações pareadas, Υ normalizado
     agente       a SYNTHAI, que integra os módulos num ciclo
     reconhecimento  Parte 23: o que já estava resolvido (ponto neutro, atenção, memória, Thompson)
+    autorregulacao, ancora, limiar, pensamento_exato, pensamento_rico: as Partes 24–29
+    composta     a versão principal desde a Parte 29: compõe as versões por tipo de tarefa (delegação)
     referencias  as réguas: acaso, guloso (só a função dominante) e oráculo (vê o escondido)
     testes       testes de unidade: python3 -m unittest synthai.testes
 
@@ -23,5 +25,6 @@ nunca leem atributos que começam com `_` de outros objetos; um teste verifica i
 
 from .agente import Synthai
 from .reconhecimento import SynthaiExploradora
+from .composta import SynthaiComposta
 
-__all__ = ["Synthai", "SynthaiExploradora"]
+__all__ = ["Synthai", "SynthaiExploradora", "SynthaiComposta"]

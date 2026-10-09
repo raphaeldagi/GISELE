@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 28: a âncora
 
-> Continuação da [Parte 27](ASI_AGI_parte27_autorregulacao.md). Módulo novo: [`synthai/ancora.py`](synthai/ancora.py) (testes em
+> Continuação da [Parte 27](ASI_AGI_parte27_autorregulacao.md). **Próxima:** [Parte 29 — compor em vez de herdar](ASI_AGI_parte29_compor_e_pesar.md) (P351–P360). Módulo novo: [`synthai/ancora.py`](synthai/ancora.py) (testes em
 > [`synthai/testes_ancora.py`](synthai/testes_ancora.py)). Os números saem de `p342_...` a `p344_...` em [`calculos.py`](calculos.py); a saída completa
 > está em [`resultados.txt`](resultados.txt). O projeto inteiro num arquivo só: [`SYNTHAI_completo.py`](SYNTHAI_completo.py).
 >
