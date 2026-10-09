@@ -580,3 +580,20 @@ errou previu a partir da lição da rodada anterior (desconfiar da fronteira; o 
 **IA-Java (a pergunta para a Rodada 20):** Se a palavra reconhece a parte, um classificador que já existe na SYNTHAI (o Naive Bayes da Parte 34) treinado
 nas seções de números e palavras de **metade** das partes poderia reconhecer o **tema** das outras? Ou cada parte é tão única que não há o que
 generalizar?
+
+---
+
+## Rodada 20 — o Naive Bayes reconhece a época? (previsões registradas antes do código)
+
+**O teste.** As partes não têm rótulo de tema; o rótulo honesto que existe é a **época**: Partes 1–20 (época 1) e 21–41 (época 2). Para cada uma das 41
+seções do `resultados.txt`, as palavras como na Rodada 19 (agora com repetição: o Naive Bayes é multinomial), treina-se o `NaiveBayesContagens` da
+Parte 34 (Laplace, α = 1) nas outras 40 seções e prevê-se a época da seção deixada de fora. Acerto = a época certa. Ao acaso: ½ por seção, ~20,5
+acertos; o preditor da maioria, deixando um de fora, é **pior** que o acaso (ao tirar uma seção da época 1, a maioria vira a época 2, e vice-versa).
+
+**IA-Python (previsão (f)):** o vocabulário mudou muito ao longo da série (Jung e Landauer no começo; Thompson, BOCPD, dicionário e rodadas no fim).
+Prevejo **30 a 38 acertos** de 41.
+
+**IA-Java (previsão (g)):** o Naive Bayes multinomial com documentos curtos e vocabulário grande é dominado pela suavização: a classe com menos palavras
+totais ganha os documentos curtos. Prevejo **26 a 34**.
+
+**As duas (previsão (h)):** IGUAIS em Java (as mesmas 41 diferenças de escore, bit a bit).
