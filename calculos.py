@@ -6352,7 +6352,7 @@ def p533_abreviacao():
 #     quando o produto das verossimilhanças vira 0x0p+0; a lei de Heaps ---
 
 # Placar acumulado ao fim da Parte 38 (atualizado quando os testes da parte terminam)
-ERROS_P609, TESTES_P609 = 0, 0
+ERROS_P609, TESTES_P609 = 118, 307
 
 
 def p541_mistura(k=10):
@@ -6548,6 +6548,7 @@ def testes_de_regressao():
         "P462": round(p462_contas()[1], 4) == 0.9895,
         "P523": round(p523_contas()[1], 4) == 0.0157,
         "P531": round(p531_contas()[0], 1) == 62.7,
+        "P542": round(p542_contas()[2]) == 4971,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -7470,6 +7471,21 @@ def _parte_37():
     print(f"P579 minha taxa de erro ({ERROS_P579}/{TESTES_P579}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_38():
+    print("--- Parte 38 (0x26: media bayesiana de modelos sobre o risco; o zero do produto; Heaps) ---")
+    est, custo, muda, pe, pm = p541_mistura()
+    print(f"P541 mistura: estacionario = {est:.2f}; custo do dano = {custo:.2f}; mundo que muda = {muda:.2f}")
+    print(f"P541 pesos finais medios (H = 0, 1/2000, 1/500, 1/100): estavel = {[round(x, 4) for x in pe]}; muda = {[f'{x:.3e}' for x in pm]}")
+    p, h2, passo = p542_contas()
+    print(f"P542 conta: p* = {p:.4f}; H2(p*) = {h2:.4f} bits/passo; zero previsto no passo {passo:.0f}")
+    zero, sub, bits = p542_underflow()
+    print(f"P542 medido: subnormal no passo {sub}; 0,0 no passo {zero}; {bits:.4f} bits/passo; 1075/bits = {1075 / bits:.0f}")
+    beta, i1, i2, total, v = p543_heaps()
+    print(f"P543 Heaps: beta = {beta:.4f}; 1/s = {i1:.4f} (P463) ou {i2:.4f} (P383); palavras lidas = {total}; vocabulario = {v}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P609, testes=TESTES_P609)
+    print(f"P609 minha taxa de erro ({ERROS_P609}/{TESTES_P609}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -7498,12 +7514,13 @@ def _unificacao():
           " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)"
           " | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)"
           " => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)"
+          " + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos)"
           " + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao)"
           " + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38}
 
 
 if __name__ == "__main__":

@@ -108,6 +108,10 @@ anterior, commit e push.
   porque supõe palavras independentes. Esquecimento catastrófico só aparece quando as tarefas conflitam.
 - Em Python, importar é executar (Parte 36, rodada 7): scripts que outros importam guardam o corpo em main().
 - Contar a unidade certa (Parte 35): checagens de janelas sobrepostas não são episódios independentes.
+- Toda peça nova da SYNTHAI que decide alguma coisa passa por uma rodada do diálogo (Parte 38): a tradução bit a bit para
+  Java é a prova de que o módulo é independente da linguagem (`python3 dialogo/verificar.py`).
+- Uma cota de predição (perda logarítmica) não é uma cota de decisão (Parte 38): a mistura de modelos ficou a 1,1 nat do
+  melhor modelo e decidiu pior que ele.
 - Nunca usar `pkill -f` com um padrão que apareça na própria linha de comando (mata o shell; aconteceu duas vezes).
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).
@@ -120,7 +124,7 @@ anterior, commit e push.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
-  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37`); a suíte
+  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
