@@ -160,7 +160,7 @@ O primeiro nome do módulo desta parte foi `synthai/metacognicao.py`, e **esse a
 `comparacao_pareada`, `normalizado`), medido pela P285, que o `CLAUDE.md` proíbe editar. A ferramenta de escrita avisou ("updated", não
 "created") e eu não li o aviso. Os testes que rodei (só os das Partes 40 e 41) passaram; a suíte inteira teria quebrado em `synthai/testes.py`.
 Quem pegou o erro foi a **costura do `resultados.txt`**, que só aceita uma regressão completa e encontrou um `ImportError`. O original foi
-restaurado, idêntico ao da Parte 22, e o módulo novo virou [`synthai/engenharia_reversa.py`](synthai/engenharia_reversa.py). A suíte inteira (113
+restaurado, idêntico ao da Parte 22, e o módulo novo virou [`synthai/engenharia_reversa.py`](synthai/engenharia_reversa.py). A suíte inteira (110
 testes) passa de novo.
 
 **O significado, pela tabela da P675:** é o padrão 3 (os meus erros moram nas fronteiras: aqui, a fronteira entre um nome novo e um nome
@@ -175,7 +175,7 @@ correção). Acumulado: **124 erros em 338 testes**; taxa média 0,37, intervalo
 
 ### P700 (0x2BC). Unificação e as regras novas
 
-- **Novo módulo:** `engenharia_reversa.py` (4 testes; 113 no pacote; o `metacognicao.py` da Parte 22 foi restaurado, P679). **Novo dado:** `PREVISOES_31_40`, o catálogo das 128 previsões por tipo. Regressão:
+- **Novo módulo:** `engenharia_reversa.py` (4 testes; 110 no pacote; o `metacognicao.py` da Parte 22 foi restaurado, P679). **Novo dado:** `PREVISOES_31_40`, o catálogo das 128 previsões por tipo. Regressão:
   + P671 (128).
 - **Regras novas** (no `CLAUDE.md` como pedido permanente, e as específicas abaixo valem a partir da Parte 42):
   1. faixas de previsão de comportamento **1,72 vezes** mais largas que o meu instinto, até a taxa de erro do tipo C cair para ~10%;
