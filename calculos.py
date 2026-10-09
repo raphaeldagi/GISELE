@@ -5795,6 +5795,211 @@ def p439_renovacao(k=10, t=2000, dano_em=1000, gamas=(0.99, 0.999), sementes=tup
         res[g] = (m(sem), m(com), m(com) - m(sem), m(total))
     return res
 
+
+# --- Parte 34 (0x22): as promessas das Partes 31-33 testadas em casos novos: o Q-learning com α = 0,05, a taxa de
+#     renovação contra a taxa de mudança do mundo, Zipf-Mandelbrot num corpus novo, o dicionário no lugar do ML,
+#     o contador de Morris em um dígito hex ---
+
+# Placar acumulado ao fim da Parte 34 (atualizado quando os testes da parte terminam)
+ERROS_P489, TESTES_P489 = 0, 0
+
+
+def p461_contas(alfa=0.1, eps=0.1, k=10, t=2000, sementes=tuple(range(4010, 4110))):
+    """As duas cotas da P407 para o Q-learning ε-guloso, num α qualquer (posteriores à P401; aqui viram previsão em α
+    novo): (1) ruído estacionário sem aprisionamento: exploração ε·T·(p* − p̄) + parte gulosa (1 − ε)·T·E[p* − p_argmax]
+    com ruído de variância α/(2 − α)·p(1 − p); (2) campo médio com aprisionamento no primeiro braço que paga (∝ p_g),
+    sem ruído. A medida deve ficar entre as duas."""
+    cota1, cota2 = [], []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        m = max(ps)
+        r = random.Random(sm)
+        g = 0.0
+        for _ in range(t):
+            q = [p + r.gauss(0, sqrt(alfa / (2 - alfa) * p * (1 - p))) for p in ps]
+            g += m - ps[max(range(k), key=q.__getitem__)]
+        cota1.append(eps * t * (m - sum(ps) / k) + (1 - eps) * g)
+        s = sum(ps)
+        tot = 0.0
+        for g0, pg in enumerate(ps):
+            q = [0.0] * k
+            q[g0] = alfa
+            reg = 0.0
+            for _ in range(t):
+                gg = max(range(k), key=q.__getitem__)
+                for j in range(k):
+                    w = eps / k + ((1 - eps) if j == gg else 0.0)
+                    reg += w * (m - ps[j])
+                    q[j] += w * alfa * (ps[j] - q[j])
+            tot += pg / s * reg
+        cota2.append(tot)
+    return sum(cota1) / len(cota1), sum(cota2) / len(cota2)
+
+
+def p461_q_alfa(alfa=0.05, k=10, t=2000, sementes=tuple(range(4010, 4110))):
+    """O Q-learning ε-guloso com α novo, mesmos braços e sementes da P401: o arrependimento final médio."""
+    from synthai.decisao import QEpsilon, rodar_bandido
+    v = [rodar_bandido(QEpsilon(k, _rng(sm + 1), alfa=alfa), _bracos_401(sm, k), t, _rng(sm + 2))[-1] for sm in sementes]
+    return sum(v) / len(v)
+
+
+def p462_contas(t=4000, periodo=500, k=10):
+    """A CONTA antes da P462: num bandido que muda a cada `periodo` passos (Υ = T/periodo − 1 quebras), o desconto
+    recomendado por Garivier e Moulines (2011) para o UCB descontado é γ = 1 − (1/4)·√(Υ/T); a memória 1/(1 − γ)."""
+    quebras = t // periodo - 1
+    g = 1 - 0.25 * sqrt(quebras / t)
+    return quebras, g, 1 / (1 - g)
+
+
+def p462_mudanca(gamas=(0.95, 0.98, 0.99, 0.995, 0.999, 1.0), t=4000, periodo=500, k=10,
+                 sementes=tuple(range(4620, 4670))):
+    """Bandido que muda: a cada `periodo` passos, as médias dos braços são sorteadas de novo (U(0, 1)). Thompson com
+    renovação para cada γ (γ = 1 é o exato), arrependimento contra o melhor braço DO MOMENTO; 50 sementes pareadas."""
+    from synthai.decisao import ThompsonBernoulli, ThompsonDescontado
+    res = {}
+    for g in gamas:
+        tot = []
+        for sm in sementes:
+            r = _rng(sm)
+            fases = [[r.random() for _ in range(k)] for _ in range(t // periodo)]
+            ag = ThompsonBernoulli(k, _rng(sm + 1)) if g == 1.0 else ThompsonDescontado(k, _rng(sm + 1), g)
+            rr = _rng(sm + 2)
+            reg = 0.0
+            for passo in range(t):
+                ps = fases[passo // periodo]
+                i = ag.escolher()
+                ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+                reg += max(ps) - ps[i]
+            tot.append(reg)
+        res[g] = sum(tot) / len(tot)
+    return res
+
+
+def _frequencias_por_classe(pos):
+    from synthai.dicionario import Dicionario
+    d = Dicionario()
+    freq = {}
+    for p, _, _, glosa in d.sinsets:
+        if p in pos:
+            for w in d.palavras_da_definicao(glosa):
+                freq[w] = freq.get(w, 0) + 1
+    return sorted(freq.values(), reverse=True)
+
+
+def p463_zipf_mandelbrot(ajuste=("n",), teste=("v",), ks_ajuste=(10, 30, 100, 300, 1000), ks_teste=(100, 500, 2000, 4000)):
+    """Zipf–Mandelbrot, f(r) ∝ (r + q)^−s: ajusta (s, q) numa grade pela cobertura das k mais frequentes nas definições
+    dos SUBSTANTIVOS (k ≤ 1000) e prevê a cobertura nas definições dos VERBOS (um corpus que o ajuste não viu), usando o N
+    dos verbos. Compara com Zipf puro (q = 0, s ajustado igual). Devolve (s, q), a previsão e a medida em cada k."""
+    fa = _frequencias_por_classe(ajuste)
+    tot = sum(fa)
+    acum = []
+    a = 0
+    for f in fa:
+        a += f
+        acum.append(a / tot)
+
+    def curva(s_, q_, n, ks):
+        z = [(r + q_) ** -s_ for r in range(1, n + 1)]
+        tz = sum(z)
+        out, a_, j = {}, 0.0, 0
+        for kk in sorted(ks):
+            while j < kk:
+                a_ += z[j]
+                j += 1
+            out[kk] = a_ / tz
+        return out
+
+    melhor = None
+    for s_ in [0.8 + 0.02 * i for i in range(31)]:
+        for q_ in [0, 1, 2, 4, 8, 16, 32, 64, 128]:
+            c = curva(s_, q_, len(fa), ks_ajuste)
+            e = sum((c[kk] - acum[kk - 1]) ** 2 for kk in ks_ajuste)
+            if melhor is None or e < melhor[0]:
+                melhor = (e, s_, q_)
+    _, s_m, q_m = melhor
+    ft = _frequencias_por_classe(teste)
+    tt = sum(ft)
+    med = {}
+    a = 0
+    for i, f in enumerate(ft, 1):
+        a += f
+        if i in ks_teste:
+            med[i] = a / tt
+    prev = curva(s_m, q_m, len(ft), ks_teste)
+    puro = curva(s_m, 0, len(ft), ks_teste)
+    return (s_m, q_m), {kk: (prev[kk], puro[kk], med[kk]) for kk in ks_teste}
+
+
+def p464_dicionario_no_lugar_do_ml(semente=464, passo=0.1):
+    """Aprendizado contínuo com o dicionário como dado: prever a classe gramatical (n, v, a, r) de um sinset pelas palavras
+    da sua definição. Tarefa A: sinsets cujo primeiro lema começa com a–m; tarefa B: n–z. Naive Bayes (contagens) contra
+    regressão logística por SGD (uma passada). Acurácia no teste de A (20% de A, separado) depois de A e depois de B."""
+    from synthai.dicionario import Dicionario, LogisticaSGD, NaiveBayesContagens
+    d = Dicionario()
+    dados = []
+    for p, lemas, _, glosa in d.sinsets:
+        cl = "a" if p == "s" else p
+        dados.append((lemas[0][0].lower() <= "m", d.palavras_da_definicao(glosa), cl))
+    rng = _rng(semente)
+    rng.shuffle(dados)
+    A = [(x, y) for a, x, y in dados if a]
+    B = [(x, y) for a, x, y in dados if not a]
+    corte = len(A) // 5
+    teste, A = A[:corte], A[corte:]
+    res = {}
+    for nome, m in (("naive_bayes", NaiveBayesContagens()), ("sgd", LogisticaSGD(["a", "n", "r", "v"], passo))):
+        acc = lambda: sum(m.prever(x) == y for x, y in teste) / len(teste)
+        for x, y in A:
+            m.aprender(x, y)
+        depois_a = acc()
+        for x, y in B:
+            m.aprender(x, y)
+        res[nome] = (depois_a, acc())
+    return len(A), len(B), len(teste), res
+
+
+def p465_contas(k=10, t=2000, sementes=tuple(range(4010, 4110)), sorteios=4000):
+    """A CONTA antes da P465 (Thompson com contadores de Morris): a contagem estimada 2^c − 1 tem desvio ≈ n/√2 (Morris:
+    Var = n(n − 1)/2). A crença fica com a FORÇA certa em média, mas o centro (a/(a+b)) treme: para um braço com p e n
+    puxadas, a média estimada tem desvio extra ~ (1/√2)·√(p(1 − p))·… Aqui a conta é por sorteio: no estacionário, cada
+    braço com n = 200 puxadas e contagens de Morris sorteadas; arrependimento ≈ T·Σ Δ_k·π_k."""
+    tot = []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        m = max(ps)
+        r = _rng(sm + 7)
+        cont = [0] * k
+        for _ in range(sorteios // 20):
+            ests = []
+            for p in ps:
+                sa = sum(1 for _ in range(200) if r.random() < p)
+                ca = cb = 0
+                for _ in range(sa):
+                    if ca < 15 and r.random() < 2.0 ** -ca:
+                        ca += 1
+                for _ in range(200 - sa):
+                    if cb < 15 and r.random() < 2.0 ** -cb:
+                        cb += 1
+                ests.append((2 ** ca, 2 ** cb))
+            for _ in range(20):
+                am = [r.betavariate(a, b) for a, b in ests]
+                cont[max(range(k), key=am.__getitem__)] += 1
+        n_s = sum(cont)
+        tot.append(t * sum((m - p) * c / n_s for p, c in zip(ps, cont)))
+    return sum(tot) / len(tot)
+
+
+def p465_morris(k=10, t=2000, sementes=tuple(range(4010, 4110))):
+    """Thompson com contadores de Morris (1 dígito hex de expoente por contagem) contra o completo e o de teto 16 da P411,
+    mesmos braços e sementes: arrependimento final e a diferença pareada contra o completo."""
+    from synthai.decisao import ThompsonBernoulli, ThompsonMorris, rodar_bandido
+    a, b = [], []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        a.append(rodar_bandido(ThompsonBernoulli(k, _rng(sm + 1)), ps, t, _rng(sm + 2))[-1])
+        b.append(rodar_bandido(ThompsonMorris(k, _rng(sm + 1)), ps, t, _rng(sm + 2))[-1])
+    return sum(b) / len(b), _pareado(a, b)
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:

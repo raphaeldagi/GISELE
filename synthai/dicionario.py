@@ -406,3 +406,70 @@ def fecho_incremental(ordem, defs, theta=1.0, ate=None):
             propagar([x])
         cob.append(len(conhecidas))
     return cob
+
+
+
+class NaiveBayesContagens:
+    """Classificador bayesiano ingênuo multinomial (Parte 34): o estado inteiro é uma tabela de contagens (classe,
+    palavra) e o total por classe: uma estatística suficiente. Aprender um exemplo é somar; nada é sobrescrito, então
+    a ordem dos exemplos não muda o resultado (o aprendizado contínuo sem esquecimento, ↩ P403). Suavização de Laplace."""
+
+    def __init__(self, alfa=1.0):
+        self.alfa = alfa
+        self.cont = {}
+        self.total = {}
+        self.ncls = {}
+        self.vocab = set()
+
+    def aprender(self, palavras, classe):
+        c = self.cont.setdefault(classe, {})
+        for w in palavras:
+            c[w] = c.get(w, 0) + 1
+            self.vocab.add(w)
+        self.total[classe] = self.total.get(classe, 0) + len(palavras)
+        self.ncls[classe] = self.ncls.get(classe, 0) + 1
+
+    def prever(self, palavras):
+        from math import log
+        n = sum(self.ncls.values())
+        v = len(self.vocab) or 1
+        melhor, arg = None, None
+        for cl in sorted(self.ncls):
+            sc = log(self.ncls[cl] / n)
+            c, t = self.cont[cl], self.total[cl]
+            for w in palavras:
+                sc += log((c.get(w, 0) + self.alfa) / (t + self.alfa * v))
+            if melhor is None or sc > melhor:
+                melhor, arg = sc, cl
+        return arg
+
+
+class LogisticaSGD:
+    """Regressão logística multinomial (softmax) por gradiente estocástico, uma passada, passo constante: o rival padrão
+    do aprendizado contínuo. Atributos: presença das palavras da definição."""
+
+    def __init__(self, classes, passo=0.1):
+        self.classes = sorted(classes)
+        self.w = {c: {} for c in self.classes}
+        self.b = {c: 0.0 for c in self.classes}
+        self.passo = passo
+
+    def _escores(self, palavras):
+        return {c: self.b[c] + sum(self.w[c].get(x, 0.0) for x in set(palavras)) for c in self.classes}
+
+    def prever(self, palavras):
+        s = self._escores(palavras)
+        return max(self.classes, key=lambda c: (s[c], c))
+
+    def aprender(self, palavras, classe):
+        from math import exp
+        s = self._escores(palavras)
+        m = max(s.values())
+        z = {c: exp(v - m) for c, v in s.items()}
+        tot = sum(z.values())
+        for c in self.classes:
+            g = (1.0 if c == classe else 0.0) - z[c] / tot
+            self.b[c] += self.passo * g
+            wc = self.w[c]
+            for x in set(palavras):
+                wc[x] = wc.get(x, 0.0) + self.passo * g

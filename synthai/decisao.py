@@ -59,6 +59,24 @@ class ThompsonDescontado(ThompsonBernoulli):
         self.b = [1.0 + g * (b - 1.0) for b in self.b]
         super().atualizar(braco, r)
 
+
+class ThompsonMorris(ThompsonBernoulli):
+    """Thompson com contadores de Morris (1978) (Parte 34, trilha hexadecimal): cada contagem guarda só o expoente c, um
+    dígito hex (0..15); um sucesso incrementa c com chance 2^-c; a contagem estimada é 2^c − 1 (sem viés:
+    E[2^c − 1] = n). Memória: 2 dígitos hex por braço, para contagens até 2^15."""
+
+    def __init__(self, k, rng):
+        super().__init__(k, rng)
+        self.ca = [0] * k
+        self.cb = [0] * k
+
+    def atualizar(self, braco, r):
+        c = self.ca if r else self.cb
+        if c[braco] < 15 and self.rng.random() < 2.0 ** -c[braco]:
+            c[braco] += 1
+        self.a[braco] = 1.0 + 2 ** self.ca[braco] - 1
+        self.b[braco] = 1.0 + 2 ** self.cb[braco] - 1
+
 class QEpsilon:
     """Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso."""
 
