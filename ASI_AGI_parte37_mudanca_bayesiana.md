@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 37 (0x25): o modelo certo de um mundo que muda
 
-> Continuação da [Parte 36](ASI_AGI_parte36_exposicao_e_significado.md). Quatro partes construíram, à mão, agentes para quatro mundos (exato,
+> Continuação da [Parte 36](ASI_AGI_parte36_exposicao_e_significado.md). **Próxima:** [Parte 38 — aprender a suposição](ASI_AGI_parte38_aprender_a_suposicao.md) (P541–P610). Quatro partes construíram, à mão, agentes para quatro mundos (exato,
 > desconto, surpresa, exposição), e nenhum dominou. O pressuposto da série diz que a resposta já existe como equação. Para um mundo que pode
 > mudar, a equação é a **detecção bayesiana de mudança online** (Adams e MacKay, 2007): a crença de cada braço é uma mistura sobre "há quanto
 > tempo o meu mundo mudou". Esta parte testa se o modelo certo dispensa as regras. Novidades: `ThompsonBOCPD`
