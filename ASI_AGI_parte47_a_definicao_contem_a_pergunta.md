@@ -32,3 +32,9 @@ vezes f se aplica antes de aparecer uma letra.
 
 **Refazer (Parte 46), por honestidade:** a execução única das Partes 1–45 foi morta duas vezes por reinícios do contêiner; ela está sendo refeita em blocos
 (1–14 da execução única; 15–45 em 9 blocos). A previsão (a) da Parte 46 será pontuada em cada bloco, com a mudança registrada.
+
+**Previsão nova, registrada depois de ver (e) e antes de calcular o mundo novo (n de 10 a 4095 = 0xFFF).** A conta posterior: f **diminui** o número
+(o hexadecimal lido como decimal vale menos, 10ᵏ < 16ᵏ), então a cadeia desce para números pequenos. De 10 a 4095: 999 − 9 = 990 sem letra em 4086,
+p₁ = 0,2423. Depois de um passo, o valor fica entre 100 e 999 (decimal), onde a fração sem letra é (36 + 300)/900 = 0,373 (100–255: 36; 256–999: 300), e
+dali em diante uma geométrica: E'' = 0,373/(1 − 0,373) = 0,595. E = p₁(1 + E'') = 0,2423 × 1,595 = **0,386**.
+- (i) a média de passos para n de 10 a 4095 em **[0,33; 0,44]** (±15%)
