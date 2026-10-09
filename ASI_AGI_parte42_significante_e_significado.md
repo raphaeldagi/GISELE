@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 42 (0x2A): a premissa é o significante, a resposta é o significado
 
-> Continuação da [Parte 41](ASI_AGI_parte41_engenharia_reversa_de_mim.md). O usuário acrescentou ao pedido permanente da metacognição: *"A premissa é o
+> Continuação da [Parte 41](ASI_AGI_parte41_engenharia_reversa_de_mim.md). **Próxima:** [Parte 43 — o centro deduzido e a confusão de níveis](ASI_AGI_parte43_niveis.md) (P731–P760). O usuário acrescentou ao pedido permanente da metacognição: *"A premissa é o
 > significante e a resposta é o significado."* É o par de Saussure: o significante é a forma que aponta, o significado é o conteúdo apontado. Esta
 > parte toma a frase ao pé da letra e a mede em três lugares: **nos meus textos** (quanto cada resposta acrescenta à sua premissa), **no dicionário**
 > (a forma de uma palavra prevê o seu significado?) e **nas minhas previsões** (a regra que a Parte 41 tirou dos meus erros sobrevive a sementes

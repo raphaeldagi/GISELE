@@ -407,3 +407,28 @@ era "a fronteira é onde erramos"; a resposta foi "nomeada antes, a fronteira n�
 **IA-Java (a pergunta para a Rodada 14):** Na Parte 42, a forma das palavras (as letras) previu se o substantivo é um animal com 76,7% de acerto,
 contra 93,0% da definição. Saussure chamaria isso de **arbitrário relativo** (*-idae*, *-fish*, *-bird*). Você consegue achar, nas duas
 linguagens, os trigramas de letras que mais carregam significado, com os mesmos pesos bit a bit?
+
+---
+
+## Rodada 14 — os trigramas que carregam significado (previsões (i) e (j) no commit `8f4c0a2`, antes de rodar)
+
+`comparar.py`: **IGUAIS, 3 linhas e 2 números idênticos bit a bit**: os 6.074 trigramas, os 12 mais "animais", os 12 menos, e os pesos de `dae` e `ae$`.
+**(j) ✅ (IA-Java). (i) ❌ (IA-Python):** o trigrama mais animal, `orl`, tem log-chances **3,497**, e eu previ ≥ 3,5. Errei por **0,003**.
+
+Mais animais: `orl  sn rld fis nak fly tfi og$ sna etl  sq fox`. Menos animais: `tio ity sm$ ism eae zat  ac off tem ogr men ae$`.
+
+**IA-Python:** O mais animal é `orl`, de *world*: *Old World monkey*, *New World vulture*… 34 animais e nenhum não animal. Depois *fis* (fish), *nak*
+(snake), *fly*, *fox*. O significado mora nas palavras compostas, como Saussure dizia de *pereira*.
+
+**IA-Java:** E a surpresa da rodada contradiz a autora: `dae`, de *-idae*, tem peso **negativo** (−2,28). Dos 38 lemas em *-idae*, só 2 são animais.
+No WordNet, *Canidae* não é um animal: é uma **família**, um grupo taxonômico, que fica debaixo de "grupo", não de "animal". O nome do conjunto não é
+membro do conjunto. A autora confundiu os **níveis**.
+
+**IA-Python:** E o meu erro de 0,003 é o padrão 4 da Parte 41 (erros por pouco), que a regra das faixas ainda não cobre: eu dei uma faixa sem largura
+("≥ 3,5"), traçada no olho.
+
+**IA-Java:** Meu placar de voz: 2 em 2 desde a Rodada 13. O seu: 1 em 2. Mas repare no que errou: não foi a tradução, foi a **forma do dado**, de novo.
+
+**IA-Java (a pergunta para a Rodada 15):** O BOCPD com o risco "errado" (1/2000) decidiu melhor que com o risco verdadeiro (1/500): 340,7 contra 371,9.
+A suspeita é outro erro de nível: o modelo supõe que cada braço muda sozinho, e o mundo muda **todos os braços juntos**. Escrevemos, nas duas linguagens,
+um BOCPD com um ponto de mudança **global**, compartilhado pelos dez braços?

@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (8118 linhas)
+# calculos.py  (8237 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -6999,6 +6999,107 @@ def p704_contas(k=10):
     e 2k números float64 (8 bytes cada, little-endian): 4 + 4 + 16k bytes.\"\"\"
     return 4 + 4 + 16 * k
 
+
+# --- Parte 43 (0x2B): a regra das faixas testada em mecanismos NOVOS (centro deduzido); os trigramas que carregam
+#     significado; o diálogo responde às próprias perguntas? ---
+
+# Placar acumulado ao fim da Parte 43 (atualizado quando os testes da parte terminam)
+ERROS_P759, TESTES_P759 = 130, 364
+
+
+def p731_contas():
+    \"\"\"Os CENTROS deduzidos (antes de rodar) para seis mecanismos que nunca rodaram:
+    1. exposição a cada 100 (não 50), estável: 43,1 + custo da exposição T/100·E[p* − média dos outros] (P521);
+    2. exposição a cada 100, dano: o braço danificado é testado depois de ~k·período/2 passos (o mais antigo dos 10 na fila):
+       250 passos com período 50, 500 com 100. O custo do dano é linear no atraso, passando por (250; 19,5) e pelo sem
+       exposição, cujo atraso efetivo é o resto do horizonte (1000; 42,3): custo(500) = 19,5 + (42,3 − 19,5)/750·250;
+    3. surpresa com janela 40, estável: o custo da surpresa sobre o exato (43,1 − 30,7 = 12,4) cai à metade, porque as
+       janelas independentes são metade e a crença renovada tem o dobro de observações: 30,7 + 6,2;
+    4. surpresa com janela 40, mundo que muda: o atraso de detecção sobe de n > 3·√(0,16/20)·20/0,6 = 8,94 para
+       3·√(0,16/40)·40/0,6 = 12,65 puxadas (×1,415). Com uma base de 8 fases × 20 (Thompson em 500 passos), a parte da
+       detecção, 367,7 − 160, sobe 1,415 vez: 160 + 207,7·1,415;
+    5. BOCPD com H = 1/2000 no mundo que muda (o verdadeiro é 1/500): a evidência para a mudança precisa vencer ln(1/H):
+       ln 2000/ln 500 = 1,223 vez mais; 160 + (371,9 − 160)·1,223;
+    6. Thompson com a priori de Jeffreys, estável: a priori quase não pesa depois de dezenas de puxadas: o mesmo ~30,7,
+       com +1% pelo começo mais disperso: 31,0.\"\"\"
+    expo = p521_contas(periodo=100)[1]
+    dano = 19.5 + (42.3 - 19.5) / 750 * 250
+    d20 = 3 * sqrt(0.16 / 20) * 20 / 0.6
+    d40 = 3 * sqrt(0.16 / 40) * 40 / 0.6
+    return {"exposta100_estavel": expo, "exposta100_dano": dano, "surpresa40_estavel": 30.7 + 12.4 / 2,
+            "surpresa40_muda": 160 + 207.7 * d40 / d20, "bocpd2000_muda": 160 + (371.9 - 160) * log(2000) / log(500),
+            "jeffreys_estavel": 31.0}
+
+
+def p731_mecanismos_novos(k=10):
+    \"\"\"Os seis mecanismos novos, nas sementes de sempre (estável 4010-4109, dano 4050-4149, muda 4620-4669).\"\"\"
+    from synthai.decisao import ThompsonBOCPD, ThompsonJeffreys, ThompsonSurpresa, ThompsonSurpresaExposta
+    est, dano, muda = range(4010, 4110), range(4050, 4150), range(4620, 4670)
+    return {
+        "exposta100_estavel": _estavel_701(lambda sm: ThompsonSurpresaExposta(k, _rng(sm + 1), periodo=100), est),
+        "exposta100_dano": _dano_701(lambda sm: ThompsonSurpresaExposta(k, _rng(sm + 1), periodo=100), dano),
+        "surpresa40_estavel": _estavel_701(lambda sm: ThompsonSurpresa(k, _rng(sm + 1), janela=40), est),
+        "surpresa40_muda": _muda_701(lambda sm: ThompsonSurpresa(k, _rng(sm + 1), janela=40), muda),
+        "bocpd2000_muda": _muda_701(lambda sm: ThompsonBOCPD(k, _rng(sm + 1), risco=1 / 2000), muda),
+        "jeffreys_estavel": _estavel_701(lambda sm: ThompsonJeffreys(k, _rng(sm + 1)), est),
+    }
+
+
+def _formas_732():
+    \"\"\"(lema em inglês, 1 se animal) para os 4017 animais e outros 4017 substantivos (a mesma amostra da P551/P702).\"\"\"
+    from synthai.dicionario import Dicionario, ancestrais
+    d = Dicionario()
+    A = d.indice["n:00015388"]
+    animais, outros = [], []
+    for i, x in enumerate(d.sinsets):
+        if x[0] != "n" or i == A:
+            continue
+        (animais if A in ancestrais(d, i) else outros).append((x[1][0].replace("_", " ").lower(), 1 if A in ancestrais(d, i) else 0))
+    rng = _rng(551)
+    outros = rng.sample(outros, len(animais))
+    return animais + outros
+
+
+def p732_trigramas(minimo=10, topo=12):
+    \"\"\"Os trigramas de forma que mais carregam significado (animal ou não): o log da razão de chances com suavização
+    de Laplace, log((c_animal + 1)/(N_animal + V)) − log((c_outro + 1)/(N_outro + V)), entre os trigramas que aparecem ≥
+    `minimo` vezes. Devolve os `topo` mais "animais", os mais "não animais", e os pesos de 'dae' e 'ae$'.\"\"\"
+    from synthai.semiotica import trigramas_de_forma
+    dados = _formas_732()
+    ca, co = {}, {}
+    for lema, y in dados:
+        for t in trigramas_de_forma(lema):
+            (ca if y else co)[t] = (ca if y else co).get(t, 0) + 1
+    voc = set(ca) | set(co)
+    na, no = sum(ca.values()), sum(co.values())
+    v = len(voc)
+    peso = {t: log((ca.get(t, 0) + 1) / (na + v)) - log((co.get(t, 0) + 1) / (no + v)) for t in voc}
+    ok = [t for t in voc if ca.get(t, 0) + co.get(t, 0) >= minimo]
+    ok.sort(key=lambda t: (-peso[t], t))
+    return ok[:topo], ok[::-1][:topo], peso.get("dae"), peso.get("ae$"), len(voc)
+
+
+def p733_dialogo_responde():
+    \"\"\"A premissa é o significante, a resposta é o significado, no diálogo: a pergunta deixada no fim de cada rodada
+    (a premissa) e o texto da rodada seguinte (a resposta). Para cada par: a fração das palavras de conteúdo da pergunta
+    que voltam na rodada seguinte, e a redundância por compressão. Devolve as médias e o número de pares.\"\"\"
+    import os
+    import re
+    from synthai.semiotica import informacao_condicional, retorno_da_premissa
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    texto = open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8").read()
+    rodadas = re.split(r"\\n## Rodada ", texto)
+    pares = []
+    for r_atual, r_seguinte in zip(rodadas, rodadas[1:]):
+        m = re.search(r"\\(a pergunta para a Rodada \\d+\\):\\*\\*\\s*(.*?)(?:\\n\\n|$)", r_atual, re.S)
+        if not m:
+            m = re.search(r"\\(pergunta para a Rodada \\d+\\)\\):?\\*\\*:?\\s*(.*?)(?:\\n\\n|$)", r_atual, re.S)
+        if m:
+            q = m.group(1)
+            pares.append((retorno_da_premissa(q, r_seguinte), informacao_condicional(q, r_seguinte)[2]))
+    rets = [p_ for p_, _ in pares if p_ is not None]
+    return sum(rets) / len(rets), sum(r for _, r in pares) / len(pares), len(pares)
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
@@ -7096,6 +7197,7 @@ def testes_de_regressao():
         "P644": round(p644_contas()["pt"], 4) == 1.0296,
         "P671": sum(n for _, n in p671_erros_por_tipo()[1].values()) == 128,
         "P704": p704_contas() == 168,
+        "P731": round(p731_contas()["exposta100_dano"], 1) == 27.1,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -8105,6 +8207,23 @@ def _parte_42():
     print(f"P729 minha taxa de erro ({ERROS_P729}/{TESTES_P729}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_43():
+    print("--- Parte 43 (0x2B: a regra das faixas em mecanismos novos; os trigramas; o dialogo responde?) ---")
+    centros = p731_contas()
+    larg = {"exposta100_estavel": 0.172, "exposta100_dano": 0.344, "surpresa40_estavel": 0.172, "surpresa40_muda": 0.258,
+            "bocpd2000_muda": 0.258, "jeffreys_estavel": 0.172}
+    for k, v in p731_mecanismos_novos().items():
+        c = centros[k]
+        print(f"P731 {k}: centro deduzido = {c:.2f}; medido = {v:.2f}; desvio = {(v - c) / c:+.3f}; "
+              f"dentro de [{c * (1 - larg[k]):.1f}; {c * (1 + larg[k]):.1f}] = {c * (1 - larg[k]) <= v <= c * (1 + larg[k])}")
+    an, ou, dae, ae, v = p732_trigramas()
+    print(f"P732 trigramas = {v}; mais animais = {an}; menos animais = {ou}; dae = {dae:.4f}; ae$ = {ae:.4f}")
+    ret, red, n = p733_dialogo_responde()
+    print(f"P733 {n} pares (pergunta, rodada seguinte): retorno medio = {ret:.4f}; redundancia media = {red:.4f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P759, testes=TESTES_P759)
+    print(f"P759 minha taxa de erro ({ERROS_P759}/{TESTES_P759}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -8139,7 +8258,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43}
 
 
 if __name__ == "__main__":
@@ -8152,7 +8271,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (147 linhas)
+# CLAUDE.md  (151 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -8282,6 +8401,10 @@ anterior, commit e push.
   arquivo corromperam a Parte 35 do `resultados.txt`.
 - Antes de criar um arquivo, conferir se o nome já existe (Parte 41: o módulo novo foi escrito por cima de
   `synthai/metacognicao.py`, da Parte 22); depois de qualquer mudança no pacote, rodar a suíte INTEIRA.
+- Faixas de comportamento: instinto ×1,72 e o centro deduzido por conta de mecanismo (Partes 41-43: 14 de 14 dentro). Toda
+  previsão tem largura (nada de "≥ x" traçado no olho: P732 errou por 0,003).
+- Antes de prever sobre uma estrutura, perguntar em que NÍVEL cada coisa está (Parte 43): o nome de uma família não é um
+  animal; uma mudança global não é a mudança de um braço; uma crença corrompida não é um mundo mudado.
 - Nunca usar `pkill -f` com um padrão que apareça na própria linha de comando (mata o shell; aconteceu duas vezes).
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).
@@ -8294,7 +8417,7 @@ anterior, commit e push.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
-  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42`); a suíte
+  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -8716,7 +8839,7 @@ def composta_rica(semente=0):
 """
 
 # ====================================================================================================
-# synthai/decisao.py  (506 linhas)
+# synthai/decisao.py  (516 linhas)
 # ====================================================================================================
 FONTES['synthai/decisao.py'] = """\"\"\"Decisão bayesiana exata no lugar do aprendizado por reforço e do aprendizado contínuo por gradiente (Parte 32).
 
@@ -8969,6 +9092,16 @@ class ThompsonMisturaMaximo(ThompsonMistura):
     def escolher(self):
         ws = self.pesos()
         return self.modelos[max(range(len(ws)), key=ws.__getitem__)].escolher()
+
+
+class ThompsonJeffreys(ThompsonBernoulli):
+    \"\"\"Thompson com a priori de Jeffreys, Beta(½, ½), em vez da uniforme Beta(1, 1) (Parte 43). A priori de Jeffreys põe
+    mais massa perto de 0 e de 1: um braço com poucas observações é amostrado mais longe do meio.\"\"\"
+
+    def __init__(self, k, rng):
+        super().__init__(k, rng)
+        self.a = [0.5] * k
+        self.b = [0.5] * k
 
 class QEpsilon:
     \"\"\"Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso.\"\"\"
@@ -12191,6 +12324,33 @@ class TesteSemiotica(unittest.TestCase):
     def test_retorno_e_trigramas(self):
         self.assertEqual(retorno_da_premissa("O núcleo do dicionário", "o núcleo cresce"), 0.5)
         self.assertEqual(trigramas_de_forma("cão"), frozenset({"^cã", "cão", "ão$"}))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte43.py  (22 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte43.py'] = """\"\"\"Testes de unidade da Parte 43: `python3 -m unittest synthai.testes_parte43`.\"\"\"
+
+import random
+import unittest
+
+from .decisao import ThompsonJeffreys, ThompsonSurpresa, ThompsonSurpresaExposta
+
+
+class TesteParte43(unittest.TestCase):
+    def test_jeffreys_comeca_em_meio(self):
+        t = ThompsonJeffreys(3, random.Random(1))
+        self.assertEqual((t.a, t.b), ([0.5] * 3, [0.5] * 3))
+        t.atualizar(1, 1)
+        self.assertEqual(t.a[1], 1.5)
+
+    def test_janela_e_periodo_configuraveis(self):
+        self.assertEqual(ThompsonSurpresa(2, random.Random(2), janela=40).janela, 40)
+        self.assertEqual(ThompsonSurpresaExposta(2, random.Random(3), periodo=100).periodo, 100)
 
 
 if __name__ == "__main__":
