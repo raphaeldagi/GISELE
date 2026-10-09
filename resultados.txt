@@ -726,7 +726,156 @@ P371 hexspeak = ['aaa', 'aba', 'abaca', 'abb', 'abbe', 'abc', 'abed', 'acc', 'ac
 P371 minset_exemplo = ['abbot', 'abdomen', 'ability', 'able', 'abode', 'abrupt', 'absence', 'absolute', 'absorb', 'abstract', 'academic', 'accept', 'acceptable', 'acceptance', 'accepted', 'access', 'accessory', 'accommodation', 'accompanied', 'accompany', 'accord', 'according', 'account', 'accounting', 'accumulation', 'ace', 'acid', 'acknowledge', 'acknowledgment', 'acquire', 'across', 'act', 'action', 'active', 'activity', 'actor', 'acts', 'actually', 'acute', 'adapt']
 P372 hexspeak = 83 palavras; maior = fabaceae = 0xFABACEAE = 4206546606; uma palavra = 4.0605 digitos hex; uma letra = 1.0533 digito hex
 P379 minha taxa de erro (90/201): media = 0.45, intervalo 90% = [0.39, 0.51]
-=== Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 221; pares de interacao possiveis = 24310
-Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)
-Regressao: 68/68 resultados publicados reproduzidos; falhas = []
+--- Parte 31 (0x1F: o curriculo do dicionario e a avalanche; o hipercubo, Gray e os ULPs) ---
+P381 palavras = 77503; MinSet guloso = 3985
+P381 curriculo frequencia, k = 500, theta = 1.0: cobertura = 0.0320
+P381 curriculo frequencia, k = 500, theta = 0.8: cobertura = 0.0655
+P381 curriculo frequencia, k = 500, theta = 0.6: cobertura = 0.9999
+P381 curriculo frequencia, k = 1000, theta = 1.0: cobertura = 0.0767
+P381 curriculo frequencia, k = 1000, theta = 0.8: cobertura = 0.1992
+P381 curriculo frequencia, k = 1000, theta = 0.6: cobertura = 0.9999
+P381 curriculo frequencia, k = 2000, theta = 1.0: cobertura = 0.1926
+P381 curriculo frequencia, k = 2000, theta = 0.8: cobertura = 0.9959
+P381 curriculo frequencia, k = 2000, theta = 0.6: cobertura = 0.9999
+P381 curriculo frequencia, k = 3985, theta = 1.0: cobertura = 0.4855
+P381 curriculo frequencia, k = 3985, theta = 0.8: cobertura = 0.9968
+P381 curriculo frequencia, k = 3985, theta = 0.6: cobertura = 1.0000
+P381 curriculo define_mais, k = 500, theta = 1.0: cobertura = 0.0321
+P381 curriculo define_mais, k = 500, theta = 0.8: cobertura = 0.0645
+P381 curriculo define_mais, k = 500, theta = 0.6: cobertura = 0.9999
+P381 curriculo define_mais, k = 1000, theta = 1.0: cobertura = 0.0790
+P381 curriculo define_mais, k = 1000, theta = 0.8: cobertura = 0.2351
+P381 curriculo define_mais, k = 1000, theta = 0.6: cobertura = 0.9999
+P381 curriculo define_mais, k = 2000, theta = 1.0: cobertura = 0.2037
+P381 curriculo define_mais, k = 2000, theta = 0.8: cobertura = 0.9965
+P381 curriculo define_mais, k = 2000, theta = 0.6: cobertura = 1.0000
+P381 curriculo define_mais, k = 3985, theta = 1.0: cobertura = 0.5243
+P381 curriculo define_mais, k = 3985, theta = 0.8: cobertura = 0.9975
+P381 curriculo define_mais, k = 3985, theta = 0.6: cobertura = 1.0000
+P381 curriculo minset, k = 500, theta = 1.0: cobertura = 0.0308
+P381 curriculo minset, k = 500, theta = 0.8: cobertura = 0.0582
+P381 curriculo minset, k = 500, theta = 0.6: cobertura = 0.9999
+P381 curriculo minset, k = 1000, theta = 1.0: cobertura = 0.0743
+P381 curriculo minset, k = 1000, theta = 0.8: cobertura = 0.2482
+P381 curriculo minset, k = 1000, theta = 0.6: cobertura = 0.9999
+P381 curriculo minset, k = 2000, theta = 1.0: cobertura = 0.2109
+P381 curriculo minset, k = 2000, theta = 0.8: cobertura = 0.9965
+P381 curriculo minset, k = 2000, theta = 0.6: cobertura = 1.0000
+P381 curriculo minset, k = 3985, theta = 1.0: cobertura = 1.0000
+P381 curriculo minset, k = 3985, theta = 0.8: cobertura = 1.0000
+P381 curriculo minset, k = 3985, theta = 0.6: cobertura = 1.0000
+P381 curriculo acaso, k = 500, theta = 1.0: cobertura = 0.0072
+P381 curriculo acaso, k = 500, theta = 0.8: cobertura = 0.0072
+P381 curriculo acaso, k = 500, theta = 0.6: cobertura = 0.0073
+P381 curriculo acaso, k = 1000, theta = 1.0: cobertura = 0.0140
+P381 curriculo acaso, k = 1000, theta = 0.8: cobertura = 0.0140
+P381 curriculo acaso, k = 1000, theta = 0.6: cobertura = 0.0141
+P381 curriculo acaso, k = 2000, theta = 1.0: cobertura = 0.0272
+P381 curriculo acaso, k = 2000, theta = 0.8: cobertura = 0.0272
+P381 curriculo acaso, k = 2000, theta = 0.6: cobertura = 0.0275
+P381 curriculo acaso, k = 3985, theta = 1.0: cobertura = 0.0541
+P381 curriculo acaso, k = 3985, theta = 0.8: cobertura = 0.0541
+P381 curriculo acaso, k = 3985, theta = 0.6: cobertura = 0.0556
+P382 MinSet guloso, reduzido, cobertura do fecho, rodadas = (3985, 3171, 1.0, 587)
+P383 Zipf s = 1.0694, palavras distintas nas definicoes = 32927
+P383 k = 100: cobertura medida = 0.1780, conta de Zipf = 0.5666
+P383 k = 500: cobertura medida = 0.3919, conta de Zipf = 0.7047
+P383 k = 1000: cobertura medida = 0.5187, conta de Zipf = 0.7597
+P383 k = 2000: cobertura medida = 0.6565, conta de Zipf = 0.8121
+P383 k = 4000: cobertura medida = 0.7872, conta de Zipf = 0.8620
+P383 k = 10000: cobertura medida = 0.9177, conta de Zipf = 0.9245
+P384 Spearman(Wu-Palmer, Lesk) = 0.0243; media Wu-Palmer = 0.2428; media Lesk = 0.00160; pares com Lesk > 0 = 0.0150
+P385 theta = 0.6: k critico = 363; cobertura com k-1 = 0.3865, com k = 0.9999
+P385 theta = 0.7: k critico = 759; cobertura com k-1 = 0.4047, com k = 0.9990
+P385 theta = 0.8: k critico = 1320; cobertura com k-1 = 0.4343, com k = 0.5998
+P385 theta = 0.9: k critico = 2904; cobertura com k-1 = 0.4879, com k = 0.5035
+P391 escolha única: Spearman(Hamming, |dif|) = 0.105; |dif| medio por distancia = {1: 0.0308, 2: 0.0403, 3: 0.0311}
+P391 sequencial: Spearman(Hamming, |dif|) = -0.062; |dif| medio por distancia = {1: 0.1534, 2: 0.1685, 3: 0.1069}
+P391 bandido: Spearman(Hamming, |dif|) = 0.298; |dif| medio por distancia = {1: 0.0588, 2: 0.0795, 3: 0.0951}
+P392 Gray = 0 1 3 2 6 7 5 4 C D F E A B 9 8
+P392 escolha única: caminho, melhor, chegou = (['0x0'], '0xB', False)
+P392 sequencial: caminho, melhor, chegou = (['0x0'], '0x0', True)
+P392 bandido: caminho, melhor, chegou = (['0x0', '0x4', '0xC'], '0xC', True)
+P393 n = 2000: erro medio = 11.35 ulps; conta linear = 5.95
+P393 n = 100000: erro medio = 56.30 ulps; conta linear = 42.05
+P393 n = 1000000: erro medio = 202.45 ulps; conta linear = 132.98
+P393 0.1 + 0.2 = 0x1.3333333333334p-2; 0.3 = 0x1.3333333333333p-2
+P394 n = 2000: erro medio = 7.210 ulps; conta em degrau = 7.720; conta linear = 5.947
+P394 n = 3000: erro medio = 8.495 ulps; conta em degrau = 8.129; conta linear = 7.284
+P394 n = 50000: erro medio = 35.040 ulps; conta em degrau = 34.097; conta linear = 29.735
+P394 n = 300000: erro medio = 62.895 ulps; conta em degrau = 63.207; conta linear = 72.837
+P399 minha taxa de erro (95/216): media = 0.44, intervalo 90% = [0.39, 0.50]
+--- Parte 32 (0x20: a decisao bayesiana exata no lugar do RL e do aprendizado continuo; autopoiese; avalanche) ---
+P401 conta: Lai-Robbins medio = 62.43; exploracao do eps-guloso = 80.66 (esperanca 81.82)
+P401 arrependimento final (T 2000, 100 sementes): {'q_eps': 185.36, 'q_otimista': 45.09, 'ucb1': 185.84, 'thompson': 30.71}
+P401 q_eps - thompson = 154.65, dp = 79.36, t = 19.49
+P401 q_otimista - thompson = 14.38, dp = 21.06, t = 6.83
+P401 ucb1 - thompson = 155.13, dp = 30.39, t = 51.05
+P402 conta: g* = 0.2572; otimo em 5000 passos = 1285.9; so a esquerda = 25.0; Q eps preso = 23.75
+P402 recompensa total (20 sementes): {'psrl': 996.82, 'q_eps': 22.98, 'q_otimista': 387.24}
+P402 psrl - q_eps = 973.84, dp = 67.01, t = 65.00
+P402 psrl - q_otimista = 609.58, dp = 52.78, t = 51.65
+P403 bayes: erro em A depois de A = 0.000199, depois de B = 0.000169 (razao 0.85)
+P403 sgd: erro em A depois de A = 0.005630, depois de B = 0.127772 (razao 22.70)
+P403 sgd - bayes depois de B = 0.1276, dp = 0.1185, t = 3.41; recursiva - lote, maior diferenca = 2.32e-12
+P404 conta (theta 1, uma rodada): {0.1: 0.9545, 0.5: 0.5386, 0.9: 0.1043}
+P404 nucleo = 16795 palavras; fechamento = 1.0
+P404 esquecer 10%, theta = 1.0: regenera = 0.9688
+P404 esquecer 10%, theta = 0.8: regenera = 1.0000
+P404 esquecer 50%, theta = 1.0: regenera = 0.5344
+P404 esquecer 50%, theta = 0.8: regenera = 0.5545
+P404 esquecer 90%, theta = 1.0: regenera = 0.1032
+P404 esquecer 90%, theta = 0.8: regenera = 0.1032
+P405 thompson 1a metade = 26.96; 2a metade (danificado) = 75.04; Q eps 2a metade = 93.57; Q - thompson = 18.53, dp = 89.76, t = 2.06
+P411 conta: {16: 72.11, 256: 3.68}
+P411 arrependimento: {'completo': 30.71, 16: 93.67, 256: 33.4}
+P411 teto 16 - completo = 62.96, dp = 25.45, t = 24.74
+P411 teto 256 - completo = 2.69, dp = 4.36, t = 6.15
+P421 frequencia, theta = 0.6: maior salto em k = 363 (within) = 0.6133; k de 50% = 363
+P421 frequencia, theta = 0.7: maior salto em k = 759 (well) = 0.5943; k de 50% = 759
+P421 frequencia, theta = 0.8: maior salto em k = 1326 (worship) = 0.3807; k de 50% = 1320
+P421 frequencia, theta = 0.9: maior salto em k = 2904 (outstanding) = 0.0156; k de 50% = 2904
+P421 acaso, theta = 0.6: maior salto em k = 28526 (greatest) = 0.4384; k de 50% = 27862
+P421 acaso, theta = 0.7: maior salto em k = 38753 (time) = 0.2757; k de 50% = 32597
+P421 acaso, theta = 0.8: maior salto em k = 37951 (relate) = 0.0060; k de 50% = 34717
+P421 acaso, theta = 0.9: maior salto em k = 30362 (manner) = 0.0048; k de 50% = 35828
+P429 minha taxa de erro (103/242): media = 0.43, intervalo 90% = [0.37, 0.48]
+--- Parte 33 (0x21: a arquitetura pos-ASI numa CPU so, auditada) ---
+P431 Landauer (J/bit): {293.15: '2.8054e-21', 300.0: '2.8710e-21', 4.0: '3.8280e-23'}; o 2,75e-21 do texto seria a 287.36 K
+P432 Bremermann mc^2/h = 1.3564e+50 /s/kg; Margolus-Levitin 2E/(pi hbar) = 5.4256e+50; razao = 4.0
+P433 laco Python = 2.243e+07 adicoes/s; Bremermann de 1 g = 1.356e+47; log10 da distancia = 39.78 (medido com outras simulacoes rodando: a taxa varia de execucao para execucao)
+P434 AIXI(t,l), t = 1000, anos a essa taxa: {20: '1.481e-06', 30: '1.517e-03', 40: '1.553e+00', 64: '2.606e+07', 128: '4.806e+26'}
+P435 auditoria estatica: {'transformador_so_devolve_o_no': True, 'nos_mudados': 0, 'linhas_do_corpo': 6, 'texto_mutado': ['inspect.getsource(AgentHarness)'], 'run_benchmarks_constante': 0.85, 'avaliador_pergunta_ao_agente': True, 'classes': ['AgentHarness', 'AgentState', 'DarwinArchiveManager', 'EnvironmentEvaluator', 'SelfModificationEngine']}
+P435 a arquitetura original rodada num processo separado (estados, geracao maxima, notas): ('2 1 [0.5, 0.85]', 0)
+P436 conta: chance de campeao inflado = 0.9510
+P436 autoavaliacao: campeoes inflados = 0.850; arrependimento real do campeao = 251.72
+P436 selado: campeoes inflados = 0.125; arrependimento real do campeao = 232.82
+P437 arrependimento real do campeao: L3 = 200.09, L4 = 110.85; L4 - L3 = -89.24, dp = 215.08, t = -1.86; melhor campeao = 45.07; Thompson sem evolucao = 34.07
+P438 conta: sigma da nota = 50.11; sigma*sqrt(2 ln N) = {10: 107.5, 50: 140.2, 150: 158.6}
+P438 regra dgm: inflacao da nota guardada = 80.85; filhos aceitos = 7.25
+P438 regra godel: inflacao da nota guardada = 33.50; filhos aceitos = 2.70
+P439 conta: {0.99: (100.0, 299.6), 0.999: (1000.0, 2995.7)}
+P439 gama = 0.99: 2a metade sem dano = 78.31, com dano = 92.44, custo do dano = 14.13; total sem dano = 163.23
+P439 gama = 0.999: 2a metade sem dano = 17.42, com dano = 71.06, custo do dano = 53.64; total sem dano = 51.40
+P459 minha taxa de erro (105/258): media = 0.41, intervalo 90% = [0.36, 0.46]
+--- Parte 34 (0x22: as promessas testadas em casos novos) ---
+P461 conta, alfa = 0.1: cota sem aprisionamento = 120.58; cota com aprisionamento = 266.94
+P461 conta, alfa = 0.05: cota sem aprisionamento = 99.03; cota com aprisionamento = 387.71
+P461 Q eps com alfa = 0,05: arrependimento = 311.05
+P462 conta (quebras, gama de Garivier-Moulines, memoria): (7, 0.9895417496683241, 95.61828874675179)
+P462 bandido que muda a cada 500 passos: {0.95: 801.64, 0.98: 541.37, 0.99: 425.52, 0.995: 380.16, 0.999: 549.65, 1.0: 808.75}
+P463 Zipf-Mandelbrot ajustado nos substantivos: s = 1.08, q = 64
+P463 verbos, k = 100: previsto = 0.2231; Zipf puro = 0.6323; medido = 0.2516
+P463 verbos, k = 500: previsto = 0.4925; Zipf puro = 0.7807; medido = 0.4940
+P463 verbos, k = 2000: previsto = 0.7486; Zipf puro = 0.8943; medido = 0.7668
+P463 verbos, k = 4000: previsto = 0.8722; Zipf puro = 0.9466; medido = 0.8882
+P464 tarefa A = 55457, tarefa B = 48338, teste de A = 13864
+P464 naive_bayes: acuracia em A depois de A = 0.7833; depois de B = 0.7892
+P464 sgd: acuracia em A depois de A = 0.8210; depois de B = 0.8334
+P465 conta: Thompson com Morris = 73.09
+P465 Thompson com Morris = 76.95; Morris - completo = 46.23, dp = 74.04, t = 6.24
+P489 minha taxa de erro (110/271): media = 0.41, intervalo 90% = [0.36, 0.46]
+--- Parte 35 (0x23: renovacao dirigidP96 funcoes pNN no arquivo = 266; pares de interacao possiveis = 35245
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombraP96 funcoes pNN no arquivo = 266; pares de interacao possiveis = 35245
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 79/79 resultados publicados reproduzidos; falhas = []
