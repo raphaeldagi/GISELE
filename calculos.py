@@ -6134,6 +6134,122 @@ def p493_float16():
     ulps.sort()
     return risco / len(teste), mudou / len(teste), ulps[len(ulps) // 2]
 
+
+# --- Parte 36 (0x24): a exposição que faltava à renovação dirigida; a lei de Zipf do significado no WordNet;
+#     Gray contra binário no (1+1)-EA ---
+
+# Placar acumulado ao fim da Parte 36 (atualizado quando os testes da parte terminam)
+ERROS_P549, TESTES_P549 = 0, 0
+
+
+def p521_contas(k=10, periodo=50, t=2000, sementes=tuple(range(4010, 4110))):
+    """A CONTA antes da P521: a exposição força T/periodo puxadas do braço puxado há mais tempo, que no estacionário é
+    quase sempre um braço ruim; custo ≈ (T/periodo)·E[p* − média dos outros braços]. Somado aos 43,1 da surpresa sem
+    exposição (P491)."""
+    custo = []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        m = max(ps)
+        outros = sorted(ps)[:-1]
+        custo.append(t / periodo * (m - sum(outros) / len(outros)))
+    c = sum(custo) / len(custo)
+    return c, 43.147 + c
+
+
+def p521_exposta(k=10, janela=20, z=3.0, periodo=50):
+    """A surpresa com exposição nos três mundos da P491 (mesmas sementes): estacionário, custo do dano, mundo que muda."""
+    from synthai.decisao import ThompsonSurpresaExposta, rodar_bandido
+    fab = lambda sm: ThompsonSurpresaExposta(k, _rng(sm + 1), janela, z, periodo)
+    est = [rodar_bandido(fab(sm), _bracos_401(sm, k), 2000, _rng(sm + 2))[-1] for sm in range(4010, 4110)]
+
+    def lixo(ag):
+        r = _rng(ag.lixo)
+        ag.a = [float(r.randint(1, 20)) for _ in ag.a]
+        ag.b = [float(r.randint(1, 20)) for _ in ag.b]
+
+    sem, com = [], []
+    for sm in range(4050, 4150):
+        ps = _bracos_401(sm, k)
+        a = rodar_bandido(fab(sm), ps, 2000, _rng(sm + 2))
+        ag = fab(sm)
+        ag.lixo = sm + 3
+        b = rodar_bandido(ag, ps, 2000, _rng(sm + 2), 1000, lixo)
+        sem.append(a[-1] - a[999])
+        com.append(b[-1] - b[999])
+    muda = []
+    for sm in range(4620, 4670):
+        r = _rng(sm)
+        fases = [[r.random() for _ in range(k)] for _ in range(8)]
+        ag = fab(sm)
+        rr = _rng(sm + 2)
+        reg = 0.0
+        for passo in range(4000):
+            ps = fases[passo // 500]
+            i = ag.escolher()
+            ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+            reg += max(ps) - ps[i]
+        muda.append(reg)
+    m = lambda v: sum(v) / len(v)
+    return m(est), m(com) - m(sem), m(muda)
+
+
+def p522_lei_do_significado():
+    """A lei de Zipf do significado (Zipf, 1945): o número de sentidos m de uma palavra cresce como f^δ, δ ≈ 1/2. No
+    WordNet: m = sinsets que contêm o lema (de uma palavra só); f = frequência dele nas definições (P381). Duas
+    estimativas de δ: mínimos quadrados em log m × log f com todas as palavras de f ≥ 1, e com as médias por faixa de
+    posto (como Zipf fez: postos 1-100, 101-200, ...). Devolve (δ por palavra, δ por faixa, número de palavras)."""
+    from synthai.dicionario import Dicionario, sentidos_por_lema
+    d, _, freq = _grafo_31()
+    m = sentidos_por_lema(d)
+    pares = [(freq[w], m[w]) for w in m if freq.get(w, 0) >= 1]
+
+    def mq(xs, ys):
+        mx, my = sum(xs) / len(xs), sum(ys) / len(ys)
+        return sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
+
+    d1 = mq([log(f) for f, _ in pares], [log(s_) for _, s_ in pares])
+    pares.sort(key=lambda x: -x[0])
+    xs, ys = [], []
+    for i in range(0, len(pares) - 99, 100):
+        fa = pares[i:i + 100]
+        xs.append(log(sum(f for f, _ in fa) / 100))
+        ys.append(log(sum(s_ for _, s_ in fa) / 100))
+    return d1, mq(xs, ys), len(pares)
+
+
+def p523_contas(bits=24):
+    """A CONTA antes da P523: o (1+1)-EA a partir de 0x7F7F7F com a aptidão −Σ(v − 128)². Em binário, o único vizinho
+    melhor de 0x7F é 0x80, a 8 bits: a chance de um passo inverter exatamente esses 8 bits de um parâmetro (e nenhum
+    outro) é (1/24)^8·(23/24)^16 = 3,6e-12 por parâmetro: preso. Em Gray, 0x7F e 0x80 diferem em 1 bit: chance
+    (1/24)·(23/24)^23 = 0,0157 por passo e parâmetro."""
+    p = 1 / bits
+    return p ** 8 * (1 - p) ** (bits - 8), p * (1 - p) ** (bits - 1)
+
+
+def p523_gray_binario(rodadas=100, avaliacoes=10000, semente=523):
+    """Gray contra binário no (1+1)-EA, 3 parâmetros de 8 bits, aptidão −Σ(v − 128)² (o ótimo, 0x80, está do outro lado
+    do penhasco de Hamming de 0x7F). Dois começos: o penhasco (0x7F nos três, em cada código) e começos ao acaso.
+    Devolve, para cada (código, começo), a fração de rodadas que chegam ao ótimo e a média das avaliações até ele."""
+    from synthai.hexadecimal import ea_um_mais_um, gray
+    apt = lambda vs: -sum((v - 128) ** 2 for v in vs)
+    res = {}
+    for codigo in ("binario", "gray"):
+        for comeco in ("penhasco", "acaso"):
+            ok, quando = 0, []
+            for r in range(rodadas):
+                rng = _rng(semente + r)
+                if comeco == "penhasco":
+                    v = gray(0x7F) if codigo == "gray" else 0x7F
+                    x0 = v | (v << 8) | (v << 16)
+                else:
+                    x0 = rng.getrandbits(24)
+                fx, q = ea_um_mais_um(apt, 24, x0, rng, avaliacoes, codigo)
+                if fx == 0:
+                    ok += 1
+                    quando.append(q)
+            res[(codigo, comeco)] = (ok / rodadas, sum(quando) / len(quando) if quando else None)
+    return res
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:

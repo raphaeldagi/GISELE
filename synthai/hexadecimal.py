@@ -109,3 +109,35 @@ def ulps_entre(a, b):
     """Quantas unidades na última casa (ULPs, no expoente de b) separam a de b."""
     from math import ulp
     return abs(a - b) / ulp(b) if b else abs(a - b)
+
+
+
+def de_gray(g):
+    """O inverso do código de Gray: n = g ^ (g >> 1) ^ (g >> 2) ^ … (Parte 36)."""
+    n = 0
+    while g:
+        n ^= g
+        g >>= 1
+    return n
+
+
+def ea_um_mais_um(aptidao, bits, inicio, rng, avaliacoes, codigo="binario"):
+    """O (1+1)-EA de Droste: inverte cada bit com chance 1/bits e aceita o filho se a aptidão não piorar. `codigo` diz
+    como a cadeia de bits vira inteiros de 8 bits ("binario" ou "gray"). Devolve (melhor aptidão, avaliações até ela)."""
+    def decodificar(x):
+        vs = [(x >> (8 * i)) & 0xFF for i in range(bits // 8)]
+        return [de_gray(v) for v in vs] if codigo == "gray" else vs
+    x = inicio
+    fx = aptidao(decodificar(x))
+    quando = 0
+    for t in range(1, avaliacoes + 1):
+        y = x
+        for b in range(bits):
+            if rng.random() < 1 / bits:
+                y ^= 1 << b
+        fy = aptidao(decodificar(y))
+        if fy >= fx:
+            if fy > fx:
+                quando = t
+            x, fx = y, fy
+    return fx, quando

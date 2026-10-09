@@ -473,3 +473,14 @@ class LogisticaSGD:
             wc = self.w[c]
             for x in set(palavras):
                 wc[x] = wc.get(x, 0.0) + self.passo * g
+
+
+
+def sentidos_por_lema(d):
+    """Quantos sinsets contêm cada lema de uma palavra só (a polissemia, contada em todas as classes gramaticais)."""
+    m = {}
+    for _, lemas, _, _ in d.sinsets:
+        for x in lemas:
+            if "_" not in x and x.isalpha():
+                m[x] = m.get(x, 0) + 1
+    return m

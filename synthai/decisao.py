@@ -106,6 +106,27 @@ class ThompsonSurpresa(ThompsonBernoulli):
                 self.b[braco] = 1.0 + self.janela - sum(rec)
                 self.renovacoes += 1
 
+
+class ThompsonSurpresaExposta(ThompsonSurpresa):
+    """A renovação dirigida com EXPOSIÇÃO (Parte 36, ↩ P491): a cada `periodo` escolhas, puxa o braço puxado há mais
+    tempo, em vez de amostrar. Um braço desacreditado (que Thompson não puxaria) volta a ser testado e, se a crença sobre
+    ele estiver errada, a surpresa a desmente. Custo: periodo⁻¹ das escolhas vão para braços provavelmente ruins."""
+
+    def __init__(self, k, rng, janela=20, z=3.0, periodo=50):
+        super().__init__(k, rng, janela, z)
+        self.periodo = periodo
+        self.passo = 0
+        self.ultimo = [-1] * k
+
+    def escolher(self):
+        self.passo += 1
+        if self.passo % self.periodo == 0:
+            i = min(range(len(self.ultimo)), key=self.ultimo.__getitem__)
+        else:
+            i = super().escolher()
+        self.ultimo[i] = self.passo
+        return i
+
 class QEpsilon:
     """Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso."""
 
