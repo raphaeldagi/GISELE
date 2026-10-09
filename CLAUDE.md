@@ -143,6 +143,12 @@ anterior, commit e push.
   porque eu esqueço custos. Ao deduzir quanto tempo a evidência leva, calcular a KL entre as previsões das hipóteses no
   caso em questão (uma crença errada e modesta, perto da ignorância, quase não é desmentida).
 - Nunca usar `pkill -f` com um padrão que apareça na própria linha de comando (mata o shell; aconteceu duas vezes).
+- Execuções longas em blocos retomáveis (Parte 46): o contêiner reinicia e mata processos em segundo plano (a execução única das 45 partes morreu
+  duas vezes). Um processo por bloco de partes, cada um no seu arquivo, com marca de concluído (`python3 calculos.py 15 16 17 18`).
+- Antes de prever, calcular à mão um exemplo do caso presente (Parte 47): 5 de 6 erros vieram de responder à pergunta anterior (a rodada passada, um
+  exemplo lembrado, a aparência do símbolo: supus que ler o hexadecimal em base 10 aumenta o número; diminui).
+- Medida de si leva controle (Parte 48): toda conclusão sobre os meus próprios textos é refeita com outras partes no lugar (o "ciclo" da Parte 41 não
+  passou no controle). Numa reprodução, separar antes as medidas que olham para o próprio projeto (P143, P213 mudam porque o projeto cresceu).
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).
 
@@ -154,7 +160,8 @@ anterior, commit e push.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
-  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45`); a suíte
+  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
+  synthai.testes_parte48`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
