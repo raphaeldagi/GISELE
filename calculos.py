@@ -5204,7 +5204,7 @@ def p372_hex_do_dicionario():
 # --- Parte 31 (0x1F): o currículo do dicionário; o hipercubo, o código de Gray e os ULPs ---
 
 # Placar acumulado ao fim da Parte 31 (atualizado quando os testes da parte terminam)
-ERROS_P399, TESTES_P399 = 90, 201
+ERROS_P399, TESTES_P399 = 95, 216
 
 
 def _grafo_31():
@@ -5389,7 +5389,7 @@ def p394_ulps_em_degrau(ns=(2000, 3000, 50000, 300000), tentativas=200, semente=
 #     a autopoiese (só onde serve); a memória em dígitos hex; a avalanche do dicionário ---
 
 # Placar acumulado ao fim da Parte 32 (atualizado quando os testes da parte terminam)
-ERROS_P419, TESTES_P419 = 0, 0
+ERROS_P419, TESTES_P419 = 103, 242
 
 
 def _bracos_401(semente, k=10):
@@ -5692,6 +5692,12 @@ def testes_de_regressao():
         "P361": p361_hex_do_limiar()[0] == "0x1.23456789abcdfp-9" and p361_hex_do_limiar()[3].startswith("0123456789ABCDF0"),
         "P365": p365_impressoes_digitais()[1] == "38be1420a8d3622771d385187c1f388123df8fd44c69fb1a7a11e6c76b59ac11",
         "P372": p372_hex_do_dicionario()[:4:2] == (83, "fabaceae"),
+        "P382": p382_minset_reduzido()[:2] == (3985, 3171),
+        "P393": p393_ulps(ns=(10,), tentativas=1)[1:] == ("0x1.3333333333334p-2", "0x1.3333333333333p-2"),
+        "P394": round(p394_ulps_em_degrau(ns=(2000,), tentativas=1)[2000][1], 2) == 7.72,
+        "P401": tuple(round(x, 1) for x in p401_contas()[:2]) == (62.4, 80.7),
+        "P402": round(p402_contas()[0], 4) == 0.2572,
+        "P403": p403_continuo(d=8, sementes=(4030, 4031))[2] < 1e-8,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -6450,6 +6456,74 @@ def _parte_30():
     print(f"P379 minha taxa de erro ({ERROS_P369}/{TESTES_P369}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_31():
+    print("--- Parte 31 (0x1F: o curriculo do dicionario e a avalanche; o hipercubo, Gray e os ULPs) ---")
+    n, ms, tabela = p381_curriculo()
+    print(f"P381 palavras = {n}; MinSet guloso = {ms}")
+    for (nome, k, th), v in tabela.items():
+        print(f"P381 curriculo {nome}, k = {k}, theta = {th}: cobertura = {v:.4f}")
+    print(f"P382 MinSet guloso, reduzido, cobertura do fecho, rodadas = {p382_minset_reduzido()}")
+    s_z, n_f, cob = p383_cobertura_zipf()
+    print(f"P383 Zipf s = {s_z:.4f}, palavras distintas nas definicoes = {n_f}")
+    for k, (med, conta) in cob.items():
+        print(f"P383 k = {k}: cobertura medida = {med:.4f}, conta de Zipf = {conta:.4f}")
+    rho, wp, lk, frac = p384_wu_palmer_lesk()
+    print(f"P384 Spearman(Wu-Palmer, Lesk) = {rho:.4f}; media Wu-Palmer = {wp:.4f}; media Lesk = {lk:.5f}; pares com Lesk > 0 = {frac:.4f}")
+    for th, (k, antes, depois) in p385_ponto_critico().items():
+        print(f"P385 theta = {th}: k critico = {k}; cobertura com k-1 = {antes:.4f}, com k = {depois:.4f}")
+    for mundo, (rho, por_h) in p391_geometria_hamming().items():
+        print(f"P391 {mundo}: Spearman(Hamming, |dif|) = {rho:.3f}; |dif| medio por distancia = { {h: round(v, 4) for h, v in por_h.items()} }")
+    ordem, sub = p392_gray_e_subida()
+    print(f"P392 Gray = {' '.join(ordem)}")
+    for mundo, v in sub.items():
+        print(f"P392 {mundo}: caminho, melhor, chegou = {v}")
+    res, a, b = p393_ulps()
+    for k, (med, conta) in res.items():
+        print(f"P393 n = {k}: erro medio = {med:.2f} ulps; conta linear = {conta:.2f}")
+    print(f"P393 0.1 + 0.2 = {a}; 0.3 = {b}")
+    for k, (med, deg, lin) in p394_ulps_em_degrau().items():
+        print(f"P394 n = {k}: erro medio = {med:.3f} ulps; conta em degrau = {deg:.3f}; conta linear = {lin:.3f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P399, testes=TESTES_P399)
+    print(f"P399 minha taxa de erro ({ERROS_P399}/{TESTES_P399}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
+def _parte_32():
+    print("--- Parte 32 (0x20: a decisao bayesiana exata no lugar do RL e do aprendizado continuo; autopoiese; avalanche) ---")
+    lr, expl, expl_esp = p401_contas()
+    print(f"P401 conta: Lai-Robbins medio = {lr:.2f}; exploracao do eps-guloso = {expl:.2f} (esperanca {expl_esp:.2f})")
+    medias, difs = p401_bandido()
+    print(f"P401 arrependimento final (T 2000, 100 sementes): { {k: round(v, 2) for k, v in medias.items()} }")
+    for k, (d, dp, tt) in difs.items():
+        print(f"P401 {k} - thompson = {d:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
+    g, otimo, esquerda, q_conta = p402_contas()
+    print(f"P402 conta: g* = {g:.4f}; otimo em 5000 passos = {otimo:.1f}; so a esquerda = {esquerda:.1f}; Q eps preso = {q_conta:.2f}")
+    medias, difs = p402_riverswim()
+    print(f"P402 recompensa total (20 sementes): { {k: round(v, 2) for k, v in medias.items()} }")
+    for k, (d, dp, tt) in difs.items():
+        print(f"P402 psrl - {k} = {d:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
+    med, (d, dp, tt), dif = p403_continuo()
+    for k, (a, b) in med.items():
+        print(f"P403 {k}: erro em A depois de A = {a:.6f}, depois de B = {b:.6f} (razao {b / a:.2f})")
+    print(f"P403 sgd - bayes depois de B = {d:.4f}, dp = {dp:.4f}, t = {tt:.2f}; recursiva - lote, maior diferenca = {dif:.2e}")
+    print(f"P404 conta (theta 1, uma rodada): { {q: round(v, 4) for q, v in p404_contas().items()} }")
+    ker, fech, res = p404_autopoiese()
+    print(f"P404 nucleo = {ker} palavras; fechamento = {fech}")
+    for (q, th), v in res.items():
+        print(f"P404 esquecer {q:.0%}, theta = {th}: regenera = {v:.4f}")
+    pri, seg_ts, seg_q, (d, dp, tt) = p405_dano()
+    print(f"P405 thompson 1a metade = {pri:.2f}; 2a metade (danificado) = {seg_ts:.2f}; Q eps 2a metade = {seg_q:.2f}; "
+          f"Q - thompson = {d:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
+    print(f"P411 conta: { {k: round(v, 2) for k, v in p411_contas().items()} }")
+    med, difs = p411_memoria_hex()
+    print(f"P411 arrependimento: { {('completo' if k is None else k): round(v, 2) for k, v in med.items()} }")
+    for k, (d, dp, tt) in difs.items():
+        print(f"P411 teto {k} - completo = {d:.2f}, dp = {dp:.2f}, t = {tt:.2f}")
+    for (nome, th), (k, palavra, salto, meio) in p421_avalanche().items():
+        print(f"P421 {nome}, theta = {th}: maior salto em k = {k} ({palavra}) = {salto:.4f}; k de 50% = {meio}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P419, testes=TESTES_P419)
+    print(f"P419 minha taxa de erro ({ERROS_P419}/{TESTES_P419}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -6477,11 +6551,12 @@ def _unificacao():
           " | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada)"
           " | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada)"
           " | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada)"
-          " => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)")
+          " => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele)"
+          " + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)")
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32}
 
 
 if __name__ == "__main__":

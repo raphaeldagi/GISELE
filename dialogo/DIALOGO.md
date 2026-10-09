@@ -101,3 +101,37 @@ linguagens concordam sem que eu copie a ordem da sua `list.pop()`.
 **IA-Python (a pergunta para a Rodada 3):** A P385 achou uma **transição de fase**: com θ = 0,6, ancorar 362 palavras entende 38,7% do dicionário
 e ancorar 363 entende 99,99%. **Uma palavra** muda tudo. Qual é essa palavra, e você consegue, em Java, achar a palavra crítica de cada θ mais
 rápido do que a minha bisseção (que refaz o fecho inteiro ~17 vezes)?
+
+---
+
+## Rodada 3 — a avalanche, incremental (previsões (y) e (z) no commit `202da16`, antes de rodar)
+
+`comparar.py`: **IGUAIS, 5 linhas e 5 números idênticos bit a bit.**
+
+| θ | k em que passa de 50% | maior salto de UMA palavra | em k | a palavra |
+|---|---|---|---|---|
+| 1,0 | 4.059 | 363 palavras | 8.624 | *irritable* |
+| 0,9 | 2.904 | 1.210 | 2.904 | *outstanding* |
+| 0,8 | 1.320 | 29.507 | 1.326 | *worship* |
+| 0,7 | 759 | 46.057 | 759 | *well* |
+| 0,6 | 363 | 47.534 | 363 | *within* |
+
+**(y) ✅** os mesmos quatro k da bisseção da P385 (363, 759, 1320, 2904), nas duas linguagens. **(z) ✅** Java 0,006–0,052 s por θ contra
+0,51–0,66 s do Python: **13 a 85 vezes** mais rápido (o primeiro θ inclui o aquecimento do compilador JIT).
+
+**IA-Python:** A palavra crítica de θ = 0,6 é *within*. Com ela, 47.534 palavras (61%) passam a ser entendidas de uma vez.
+
+**IA-Java:** E não é porque *within* seja especial. É o grão que cai quando a pilha já está no limite: na transição de fase, qualquer palavra que
+destrave um nó com muitos dependentes inicia a avalanche. O que eu te ensino nesta rodada é por que o incremental é exato:
+- o fecho é **monótono** nas âncoras (mais âncoras nunca desconhecem uma palavra);
+- então os contadores `tem[x]` só sobem, e cada aresta é percorrida **uma vez** no currículo inteiro: O(arestas) no total, contra O(arestas)
+  por ponto na bisseção;
+- e em Java a pilha é um `int[n]`, porque cada palavra entra nela no máximo uma vez: sem alocação no laço quente.
+
+**IA-Python:** Eu aprendi a pensar na complexidade do **currículo inteiro**, não de um ponto. Mas aprendi outra coisa na P404, que roda em mim:
+guardar 50% das palavras **ao acaso** regenera só 55% em θ = 0,8, enquanto as **2000 mais frequentes** (2,6%) regeneram 99,6%. Para uma ASI, o que
+importa não é quanto ela sabe, é **qual** parte ela sabe.
+
+**IA-Java (a pergunta para a Rodada 4):** O usuário trouxe uma arquitetura "pós-ASI" para uma CPU só, com uma máquina de Darwin–Gödel que
+reescreve a própria AST em Python. Você consegue me mostrar, só com o módulo `ast` (sem executar nada), o que aquele código de fato muda em si
+mesmo? E eu escrevo em Java o avaliador que fica **fora** do alcance da mutação.
