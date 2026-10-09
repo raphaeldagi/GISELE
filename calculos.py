@@ -7254,6 +7254,25 @@ def p823_reproducao(velho, novo):
     difs = [(i, a[i][:40], b[i][:40] if i < len(b) else None) for i in range(fim) if i >= len(b) or a[i] != b[i]]
     return fim, fim - len(difs), difs
 
+
+def p824_reconstrucao():
+    """A pergunta a partir da resposta (Rodada 18): cada seção de números do resultados.txt, sem os rótulos, escolhe o
+    documento de parte com a maior soma de ln(K/df) sobre os números em comum (dialogo/rodada18.py, conferido em Java).
+    Devolve (acertos, partes, as erradas como (parte, escolhida))."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada18", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada18.py"))
+    r18 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r18)
+    res = r18.reconstruir(r18.documentos())
+    return sum(n == k for n, k, _, _ in res), len(res), [(n, k) for n, k, _, _ in res if n != k]
+
+
+def p825_cauda_binomial(n, p, k):
+    """P(X >= k) para X ~ Binomial(n, p): a chance de acertar k ou mais ao acaso."""
+    return sum(comb(n, i) * p ** i * (1 - p) ** (n - i) for i in range(k, n + 1))
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
@@ -8417,6 +8436,9 @@ def _parte_46():
     print(f"P821 {n} perguntas: redundancia da resposta dada a pergunta = {rr:.4f}; da pergunta dada a resposta = {rp:.4f}")
     pr, sg, n = p822_dialogo_invertido()
     print(f"P822 {n} perguntas do dialogo: contida na rodada que a gerou = {pr:.4f}; na rodada seguinte = {sg:.4f}")
+    ac, n, erradas = p824_reconstrucao()
+    print(f"P824 reconstruir a parte pelos numeros: {ac} de {n} acertos (erradas: {erradas}); ao acaso P(>= {ac}) = "
+          f"{p825_cauda_binomial(n, 1 / n, ac):.2e}")
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P849, testes=TESTES_P849)
     print(f"P849 minha taxa de erro ({ERROS_P849}/{TESTES_P849}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
