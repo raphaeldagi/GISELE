@@ -690,3 +690,18 @@ das mesmas 41 seções; não são 20 medidas independentes. O controle embaralha
 
 **IA-Java (a pergunta para a Rodada 23):** Se a série tem memória longa, o que a SYNTHAI **lembra** mais? Para cada palavra, a última parte em que ela
 aparece menos a primeira (a "vida" da palavra): a distribuição das vidas é a de um processo de potência também, e quais palavras vivem a série inteira?
+
+---
+
+## Rodada 23 — as curvas individuais (previsões registradas antes do código)
+
+**O teste (a crítica de Anderson e Tweney).** Para cada parte i de 1 a 21 (as que têm 20 partes depois), a curva individual y_i(L) = sim(i, i + L), L = 1..20,
+com a semelhança idf da Rodada 21; os L com semelhança zero ficam de fora (o log não existe). Em cada curva, os dois ajustes da Rodada 22 (exponencial e
+potência, em log). Conta-se em quantas das 21 a potência tem resíduo menor. Se a memória longa da média vier de exponenciais individuais com tempos
+diferentes, as curvas individuais são exponenciais.
+
+**IA-Python (previsão (d)):** a memória é longa em cada parte: **a potência ganha em 14 ou mais** das 21.
+
+**IA-Java (previsão (e)):** a média engana, como em Anderson e Tweney: **a potência ganha em 10 ou menos** das 21.
+
+**As duas (previsão (f)):** IGUAIS em Java. (Ao acaso, se os dois ajustes fossem equivalentes, cada curva seria ½: P(≥ 14 de 21) = 0,095; P(≤ 10) = 0,5.)
