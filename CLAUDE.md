@@ -33,6 +33,14 @@ anterior, commit e push.
   dicionário de inglês (WordNet, em `dados/`) — como manusear o dicionário para levar uma IA simples rumo a uma AGI/ASI.
   E, de forma SEPARADA, sobre HEXADECIMAL. Juntar os dois só quando for conveniente de verdade. Tudo no modo lógico
   criativo (pergunta) e criatividade lógica (resposta).
+- DIÁLOGO PYTHON ↔ JAVA (permanente, desde a Parte 31): em TODA mensagem do usuário, reservar um tempo para a interação
+  entre duas IAs: a IA-Python (apenas uma IA; lógica criativa; pergunta e ensina Python) e a IA-Java (no papel de ASI/AGI;
+  criatividade lógica; responde e ensina Java). Ciclo infinito rumo a construir uma ASI/AGI. Cada rodada traduz um módulo
+  real da SYNTHAI entre as linguagens, compila e roda os dois e confere os números (pasta `dialogo/`, registro em
+  `dialogo/DIALOGO.md`). "ASI" é o papel da voz, não uma capacidade.
+- AUTOPOIESE (Parte 31): usar só onde for útil (fechamento operacional do Core do dicionário; quanto dos próprios
+  parâmetros a SYNTHAI produz). SUBSTITUIR ML/DL/aprendizado contínuo/por reforço por algo mais eficaz "se der":
+  testar inferência bayesiana exata e teoria da decisão contra os métodos de aprendizado, com previsões registradas.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
