@@ -892,3 +892,14 @@ produtos, comparações); exp e log aparecem pouco. **0 a 2** rodadas com P < 0,
 Bayes) chamam log milhares de vezes. **3 a 8** rodadas com P < 0,5.
 
 **As duas (previsão (f)):** a tradução da conta (as chances a partir das contagens, com o exp e o log próprios da Rodada 26) dá IGUAIS em Java.
+
+**Resultado.** `comparar.py`: **IGUAIS, 26 linhas e 25 chances bit a bit** (f) ✅. Rodadas com chance < 0,5: **9** (06, 09, 14, 18, 19, 20, 23, 24, 25) (d) ❌ IA-Python
+(0 a 2), (e) ❌ IA-Java (3 a 8, por uma). Mas o número que importa é outro: as 9 **passaram**, com "chances" de 3·10⁻¹⁷⁰ (rodada 06, 557.358 chamadas de log) e
+3·10⁻⁷⁵ (rodada 25, 40.040 de exp e 78.927 de log). Se o modelo de sorte valesse (cada chamada um sorteio independente que entra na saída), isso seria
+impossível. **O modelo está errado**, e a falha dele é a pergunta seguinte.
+
+**Previsões (g) e (h), das duas vozes, registradas antes de medir:** registram-se os argumentos **distintos** de exp e log de cada rodada e calcula-se cada um
+no Java (`Math.exp`, `Math.log`) e no Python, contando as diferenças reais.
+- (g) rodada 25: entre os argumentos distintos de exp, o Java difere da glibc em **2 a 15** (0,29% de ~2.400); a rodada passou porque essas diferenças não
+  estavam no caminho que chega à saída
+- (h) rodada 06: os argumentos de log são poucos e estruturados (razões de contagens inteiras); diferenças reais: **0 a 2**
