@@ -7461,6 +7461,7 @@ def testes_de_regressao():
         "P943": round(p943_periodo_hex()[0], 4) == 0.2793,
         "P947": p947_o_texto_voltou()[0] and p947_o_texto_voltou()[1]["nos_mudados"] == 0,
         "P973": len(p973_kaprekar_hex()[0]) == 4 and p973_kaprekar_hex(4, 10)[0] == [(6174,)],
+        "P1003": round(p1003_inverte_e_soma()[0], 4) == 0.9819 and len(p1003_inverte_e_soma(9999, 10)[2]) == 246,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9026,6 +9027,24 @@ def p1003_inverte_e_soma(ate=4095, base=16, maximo=50):
             nao.append(n)
     return len(passos) / ate, sum(passos) / len(passos), nao
 
+
+def p1001_duas_memorias_em_log():
+    """Rodada 26 (P1001): as duas exponenciais ajustadas em log por Gauss-Newton, com exp e log próprios
+    (dialogo/rodada26.py, IGUAL em Java). Devolve (sse da grade, (A, B, t1, t2, sse em log), AIC, limiar para vencer a
+    potência)."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada26", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada26.py"))
+    r26 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r26)
+    sim = r26.r21.semelhancas(r26.r21.conjuntos())
+    ys = [r26.r21.media_distancia(sim, L) for L in range(1, 21)]
+    ly = [r26.log_(y) for y in ys]
+    s0, A, B, t1, t2 = r26.grade(ys)
+    th, sse = r26.gauss_newton([r26.log_(A), r26.log_(B), t1, t2], ly)
+    return s0, (r26.exp_(th[0]), r26.exp_(th[1]), th[2], th[3], sse), 20 * r26.log_(sse / 20) + 8, 0.3095 * r26.exp_(-0.2)
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -9107,6 +9126,22 @@ def _parte_51():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P999, testes=TESTES_P999)
     print(f"P999 minha taxa de erro ({ERROS_P999}/{TESTES_P999}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_52():
+    print("--- Parte 52 (0x34: o metodo ou a serie) ---")
+    s0, (A, B, t1, t2, sse), aic2, limiar = p1001_duas_memorias_em_log()
+    print(f"P1001 duas exponenciais em log (Gauss-Newton, exp/log proprios): sse da grade = {s0:.4f} -> {sse:.4f}; A = {A:.4f}, B = {B:.4f}, "
+          f"t1 = {t1:.3f}, t2 = {t2:.3e}; AIC = {aic2:.2f} (potencia: -79.37; limiar de sse = {limiar:.4f})")
+    top, g, frac, n, dez = p1002_funis_pt()
+    print(f"P1002 funis do portugues: a mais escolhida = {top} ({g}); as 10 mais = {frac:.4f} de {n} palavras; {dez}")
+    f, m, nao = p1003_inverte_e_soma()
+    f10, m10, n10 = p1003_inverte_e_soma(9999, 10)
+    print(f"P1003 inverte e soma, base 16 (1..4095): chegam {f:.4f}, em {m:.3f} passos; nao chegam {len(nao)} (o primeiro: {hex(nao[0])}); "
+          f"base 10 (1..9999): nao chegam {len(n10)} (o primeiro: {n10[0]})")
+    uni = p974_previsoes_sem_largura(range(52, 53))
+    print(f"P974 previsoes unilaterais da Parte 52: {uni}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1029, testes=TESTES_P1029)
+    print(f"P1029 minha taxa de erro ({ERROS_P1029}/{TESTES_P1029}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -9143,7 +9178,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52}
 
 
 if __name__ == "__main__":

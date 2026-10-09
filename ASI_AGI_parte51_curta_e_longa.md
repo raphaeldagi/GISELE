@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 51 (0x33): a memória curta e a longa
 
-> Continuação da [Parte 50](ASI_AGI_parte50_a_vida_das_coisas.md). **Previsões no commit `3ce8f41`, antes de rodar.** A Parte 50 achou
+> Continuação da [Parte 50](ASI_AGI_parte50_a_vida_das_coisas.md). **Próxima:** [Parte 52 — o método ou a série](ASI_AGI_parte52_o_metodo_ou_a_serie.md) (P1001–P1030). **Previsões no commit `3ce8f41`, antes de rodar.** A Parte 50 achou
 > que a memória longa da série vem do **cotovelo** (cada parte divide muito com a vizinha). Esta parte testa se o cotovelo é uma memória curta somada a uma
 > longa, mede que parte da taxonomia inglesa o português cobre, e procura a constante de Kaprekar do hexadecimal.
 

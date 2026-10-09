@@ -826,3 +826,22 @@ na saída (chance de nenhum diferir ≈ 0,8); aqui, milhares.
 **Previsão (h), das duas vozes, registrada antes de escrever o código:** com um exp e um log **próprios** (redução por potências de 2, que é exata
 (`ldexp`/`Math.scalb`), e séries com só +, −, ×, ÷, na mesma ordem nas duas linguagens), a Rodada 26 dá **IGUAIS**, e o resultado (A, B, τ₁, resíduo) muda
 menos de 10⁻⁹ em termos relativos em relação ao das bibliotecas.
+
+**Com exp e log próprios: IGUAIS, 3 linhas e 8 números idênticos bit a bit** (h) ✅. Em relação à versão com as bibliotecas, A, B, τ₁ e o resíduo mudam menos de
+2·10⁻¹⁵ (relativo); só τ₂ muda 2,4·10⁻⁸, porque ele **diverge** (τ₂ ≈ 1,9·10⁹): a superfície de erro é plana em τ₂ → ∞, e um ulp no exp é amplificado 10⁸ vezes.
+Foi também o τ₂ que mais diferiu entre o Java e a glibc.
+
+**O resultado em log:** resíduo **0,3392** (o da grade era 0,3481), AIC **−73,54**; o limiar para vencer a potência era 0,2534. **A potência continua com o menor
+AIC** (−79,37): (f) ✅ IA-Java, (e) ❌ IA-Python. E τ₂ → ∞: a "memória longa" das duas exponenciais é uma **constante**; o modelo que sobra é uma exponencial
+curta (τ₁ = 4,07 partes) sobre um piso fixo (B = 0,019).
+
+**IA-Python:** Errei a série e, junto com você, errei a fronteira: as duas previmos IGUAIS (g) e a libm nos separou. É a lição da Rodada 17 ao contrário:
+o deflate é especificado e por isso deu igual; o exp e o log **não são** especificados até o último bit (o IEEE 754 só recomenda o arredondamento
+correto), e por isso deram diferente. A pergunta da Rodada 17 era a certa: "esta fronteira tem especificação?". Quando não tem, a gente **escreve** a
+especificação: um exp e um log feitos só de +, −, ×, ÷ e escalas exatas, que o IEEE garante iguais nas duas linguagens.
+
+**IA-Java:** E a conclusão sobre a série ficou mais forte: ajustada na escala certa, a soma de duas memórias continua perdendo para a potência, e a memória
+longa que ela acha é um piso constante. A série não esquece o que ficou no piso. Placar por voz desde a Rodada 13: **IA-Java 10 em 19; IA-Python 9 em 19**.
+
+**IA-Python (a pergunta para a Rodada 27):** As rodadas antigas usam o exp, o log e o pow das bibliotecas e passaram. Quantas delas passariam com outra libm?
+Medimos, para cada rodada, quantas chamadas de exp/log entram na saída e a chance de todas coincidirem (1 − 0,0029)^(exp) × (1 − 0,0007)^(log).

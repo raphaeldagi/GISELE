@@ -1,14 +1,12 @@
 // Rodada 26 do diálogo Python <-> Java: o método ou a série? As duas exponenciais ajustadas EM LOG por Gauss-Newton a partir
 // do melhor ponto da grade da Rodada 25 (eliminação de Gauss com pivô parcial; passo dividido por 2 até 30 vezes). Lê
 // secoes26.txt. Uso: java Rodada26 PASTA
-// O exp e o log são PRÓPRIOS (exp_ e log_), na mesma ordem de operações que rodada26.py: o Math.exp/Math.log do Java e os
-// da glibc diferem em 0,29% e 0,07% dos argumentos (a primeira versão deu DIFERENTES; guardada em dialogo/registro/).
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 
-public class Rodada26 {
+public class Rodada26Libm {
     public static void main(String[] args) throws Exception {
         PrintStream out = new PrintStream(System.out, true, "UTF-8");
         List<Integer> partes = new ArrayList<>();
@@ -23,7 +21,7 @@ public class Rodada26 {
         for (String[] a : ws) for (String w : a) df.merge(w, 1, Integer::sum);
         HashMap<String, Double> idf2 = new HashMap<>();
         for (Map.Entry<String, Integer> e : df.entrySet()) {
-            double x = Math.log((double) K / e.getValue());  // como o math.log da Rodada 21 (o idf)
+            double x = Math.log((double) K / e.getValue());
             idf2.put(e.getKey(), x * x);
         }
         double[] norma = new double[K];
@@ -39,19 +37,19 @@ public class Rodada26 {
         }
         int n = 20;
         double[] ys = new double[n], ly = new double[n], xe = new double[n], xp = new double[n];
-        for (int L = 1; L <= n; L++) { ys[L - 1] = media(sim, L); ly[L - 1] = log_(ys[L - 1]); xe[L - 1] = (double) L; xp[L - 1] = log_(L); }
+        for (int L = 1; L <= n; L++) { ys[L - 1] = media(sim, L); ly[L - 1] = Math.log(ys[L - 1]); xe[L - 1] = (double) L; xp[L - 1] = Math.log(L); }
         double se = reta(xe, ly)[2], sp = reta(xp, ly)[2];
         double ms = 0, mA = 0, mB = 0, m1 = 0, m2 = 0;
         boolean tem = false;
         for (int i = 1; i <= 20; i++) {
             double t1 = 0.25 * i;
             double[] u = new double[n];
-            for (int L = 1; L <= n; L++) u[L - 1] = exp_(-L / t1);
+            for (int L = 1; L <= n; L++) u[L - 1] = Math.exp(-L / t1);
             for (int jj = 1; jj <= 100; jj++) {
                 double t2 = 2.0 * jj;
                 if (t1 >= t2) continue;
                 double[] v = new double[n];
-                for (int L = 1; L <= n; L++) v[L - 1] = exp_(-L / t2);
+                for (int L = 1; L <= n; L++) v[L - 1] = Math.exp(-L / t2);
                 double suu = 0, svv = 0, suv = 0, suy = 0, svy = 0;
                 for (int q = 0; q < n; q++) {
                     suu += u[q] * u[q]; svv += v[q] * v[q]; suv += u[q] * v[q]; suy += u[q] * ys[q]; svy += v[q] * ys[q];
@@ -61,11 +59,11 @@ public class Rodada26 {
                 double A = (suy * svv - svy * suv) / det, B = (svy * suu - suy * suv) / det;
                 if (A <= 0.0 || B <= 0.0) continue;
                 double sse = 0.0;
-                for (int q = 0; q < n; q++) { double e = log_(ys[q]) - log_(A * u[q] + B * v[q]); sse += e * e; }
+                for (int q = 0; q < n; q++) { double e = Math.log(ys[q]) - Math.log(A * u[q] + B * v[q]); sse += e * e; }
                 if (!tem || sse < ms) { tem = true; ms = sse; mA = A; mB = B; m1 = t1; m2 = t2; }
             }
         }
-        double[] th = {log_(mA), log_(mB), m1, m2};
+        double[] th = {Math.log(mA), Math.log(mB), m1, m2};
         double ini = erro(th, ly);
         double sse = ini;
         for (int it = 0; it < 100; it++) {
@@ -93,34 +91,15 @@ public class Rodada26 {
             if (!melhorou) break;
         }
         out.println("inicio: sse = " + Double.toHexString(ini));
-        out.println("em log: A = " + Double.toHexString(exp_(th[0])) + "; B = " + Double.toHexString(exp_(th[1])) + "; t1 = "
+        out.println("em log: A = " + Double.toHexString(Math.exp(th[0])) + "; B = " + Double.toHexString(Math.exp(th[1])) + "; t1 = "
                 + Double.toHexString(th[2]) + "; t2 = " + Double.toHexString(th[3]) + "; sse = " + Double.toHexString(sse));
-        out.println("aic = " + Double.toHexString(aic(sse, n, 4)) + "; limiar para vencer a potencia = " + Double.toHexString(0.3095 * exp_(-0.2)));
-    }
-
-    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
-
-    static double exp_(double x) {
-        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
-        double r = (x - k * LN2_HI) - k * LN2_LO;
-        double p = 1.0;
-        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
-        return Math.scalb(p, (int) k);
-    }
-
-    static double log_(double x) {
-        int e = Math.getExponent(x);
-        double m = Math.scalb(x, -e);
-        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
-        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
-        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
-        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+        out.println("aic = " + Double.toHexString(aic(sse, n, 4)) + "; limiar para vencer a potencia = " + Double.toHexString(0.3095 * Math.exp(-0.2)));
     }
 
     static double[] modelo(double[] th, int L) {
-        double a = exp_(th[0]) * exp_(-L / th[2]);
-        double b = exp_(th[1]) * exp_(-L / th[3]);
-        return new double[]{a, b, log_(a + b)};
+        double a = Math.exp(th[0]) * Math.exp(-L / th[2]);
+        double b = Math.exp(th[1]) * Math.exp(-L / th[3]);
+        return new double[]{a, b, Math.log(a + b)};
     }
 
     static double erro(double[] th, double[] ly) {
@@ -151,7 +130,7 @@ public class Rodada26 {
         return x;
     }
 
-    static double aic(double sse, int n, int k) { return n * log_(sse / n) + 2 * k; }
+    static double aic(double sse, int n, int k) { return n * Math.log(sse / n) + 2 * k; }
 
     static double[] reta(double[] xs, double[] ys) {
         int n = xs.length;
