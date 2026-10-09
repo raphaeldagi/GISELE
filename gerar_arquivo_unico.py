@@ -11,16 +11,19 @@ import os
 RAIZ = os.path.dirname(os.path.abspath(__file__))
 FONTES = ["calculos.py", "CLAUDE.md"] + sorted(
     os.path.join("synthai", f) for f in os.listdir(os.path.join(RAIZ, "synthai")) if f.endswith(".py"))
+DADOS = sorted(os.path.join("dados", f) for f in os.listdir(os.path.join(RAIZ, "dados"))
+               if f.endswith((".gz", ".txt", ".py")))  # o dicionário (Parte 30): binários em base64
 
 CABECALHO = '''#!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 26, perguntas P1 a P330).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 30, perguntas P1 a P380).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
     regressão);
   - synthai/: o protótipo em módulos, uma função de Jung por arquivo (percepção, pensamento, intuição, sentimento,
     relação com o humano), os mundos, as réguas e as suítes de testes de unidade;
-  - CLAUDE.md: as convenções do projeto (a P143 mede o tamanho dele).
+  - CLAUDE.md: as convenções do projeto (a P143 mede o tamanho dele);
+  - dados/: o dicionário WordNet 3.0 (Parte 30), em base64, com a licença de Princeton.
 
 Como rodar (só biblioteca padrão do Python 3):
   python3 SYNTHAI_completo.py              todas as partes (leva ~45 minutos) e a unificação
@@ -32,12 +35,14 @@ Como rodar (só biblioteca padrão do Python 3):
 Gerado por gerar_arquivo_unico.py a partir do repositório; não editar à mão.
 """
 
+import base64
 import os
 import runpy
 import sys
 import tempfile
 
 FONTES = {}
+DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 '''
 
 RODAPE = '''
@@ -48,6 +53,11 @@ def extrair(destino):
         os.makedirs(os.path.dirname(caminho) or destino, exist_ok=True)
         with open(caminho, "w", encoding="utf-8") as f:
             f.write(fonte)
+    for nome, b64 in DADOS.items():
+        caminho = os.path.join(destino, nome)
+        os.makedirs(os.path.dirname(caminho), exist_ok=True)
+        with open(caminho, "wb") as f:
+            f.write(base64.b64decode(b64))
     return destino
 
 
@@ -87,6 +97,12 @@ def gerar(saida="SYNTHAI_completo.py"):
         texto = open(os.path.join(RAIZ, nome), encoding="utf-8").read()
         partes.append(f"\n# {'=' * 100}\n# {nome}  ({texto.count(chr(10))} linhas)\n# {'=' * 100}\n"
                       f"FONTES[{nome!r}] = {literal(texto)}\n")
+    import base64
+    for nome in DADOS:
+        b64 = base64.b64encode(open(os.path.join(RAIZ, nome), "rb").read()).decode()
+        linhas = [b64[i:i + 120] for i in range(0, len(b64), 120)]
+        partes.append(f"\n# {'=' * 100}\n# {nome}  (dados, base64)\n# {'=' * 100}\n"
+                      f"DADOS[{nome!r}] = (\n" + "\n".join(f"    {l!r}" for l in linhas) + "\n)\n")
     partes.append(RODAPE)
     with open(os.path.join(RAIZ, saida), "w", encoding="utf-8") as f:
         f.write("".join(partes))

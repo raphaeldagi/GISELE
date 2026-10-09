@@ -56,11 +56,15 @@ def walsh_hadamard(valores):
 
 
 def efeitos_fatoriais(valores):
-    """Efeitos de um fatorial 2^k (média no nível alto − média no nível baixo) a partir das respostas em ordem de Yates.
-    O sinal da transformada é (+) no nível baixo, então o efeito é −contraste / 2^(k−1); o índice 0 devolve a média."""
+    """Efeitos de um fatorial 2^k a partir das respostas em ordem de Yates; o índice 0 devolve a média.
+
+    O sinal da linha j da transformada é (−1)^popcount(i & j): (+) no nível BAIXO de cada fator. O contraste padrão de
+    um efeito de ordem r (r = popcount(j)) usa o produto dos sinais ±1 com (+) no nível ALTO, que é (−1)^r vezes o da
+    transformada. Então: efeito_j = (−1)^r × contraste_j / 2^(k−1). (Correção da Parte 30: a primeira versão negava
+    todos os contrastes, o que troca o sinal das interações de ordem par.)"""
     t = walsh_hadamard(valores)
     n = len(valores)
-    return [t[0] / n] + [-c / (n / 2) for c in t[1:]]
+    return [t[0] / n] + [(-1) ** bin(j).count("1") * t[j] / (n / 2) for j in range(1, n)]
 
 
 def quantizar(pesos, bits):

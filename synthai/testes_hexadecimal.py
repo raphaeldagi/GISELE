@@ -48,6 +48,25 @@ class TesteHexadecimal(unittest.TestCase):
     def test_efeitos_de_um_fatorial_feito_a_mao(self):
         self.assertEqual(efeitos_fatoriais([10, 12, 20, 22]), [16.0, 2.0, 10.0, 0.0])
 
+    def test_interacao_com_sinal_certo(self):
+        # A = 21 − 15 = 6; B = 25 − 11 = 14; AB = ((30 − 20) − (12 − 10)) / 2 = 4
+        self.assertEqual(efeitos_fatoriais([10, 12, 20, 30]), [18.0, 6.0, 14.0, 4.0])
+
+    def test_efeitos_contra_a_definicao_em_tres_fatores(self):
+        rng = _rng(35)
+        y = [rng.gauss(0, 1) for _ in range(8)]
+        e = efeitos_fatoriais(y)
+        for j in range(1, 8):
+            sinal = lambda i: 1
+            direto = 0.0
+            for i in range(8):
+                prod = 1
+                for k in range(3):
+                    if j >> k & 1:
+                        prod *= 1 if i >> k & 1 else -1  # +1 no nível alto
+                direto += prod * y[i]
+            self.assertAlmostEqual(e[j], direto / 4)
+
     def test_quantizacao_erra_no_maximo_meio_passo(self):
         w = [-6.0, 1.2, 0.5, 0.9, -0.3]
         for bits in (4, 8):

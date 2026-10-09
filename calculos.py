@@ -4959,7 +4959,7 @@ def p357_takeuchi(treino=150):
 # --- Parte 30 (0x1E): a SYNTHAI em hexadecimal ---
 
 # Placar acumulado ao fim da Parte 30 (atualizado quando os testes da parte terminam)
-ERROS_P369, TESTES_P369 = 83, 181
+ERROS_P369, TESTES_P369 = 89, 200
 
 
 def _digitos(numerador, denominador, base, n):
@@ -5168,6 +5168,33 @@ def p366_composta_60_sementes(sementes=tuple(range(1000, 1060))):
     return _pareado(a, b), ca, cb, _pareado(a[:metade], b[:metade]), _pareado(a[metade:], b[metade:])
 
 
+def p365_impressoes_digitais():
+    """Resultados como números binários EXATOS (float.hex) e uma impressão digital SHA-256 (em hexadecimal) da bateria
+    de equações da P352: uma regressão que compara bits, não arredondamentos."""
+    import hashlib
+    exatos = {"P*": p71_valor_da_pergunta().hex(),
+              "E[1/X|X>=1], lambda 9,5": p352_bateria_delta_inverso((9.5,))[0][1].hex(),
+              "Wilson-Hilferty, forma 9,5": p352_bateria_wilson_hilferty((9.5,))[0][1].hex()}
+    texto = repr([tuple(x.hex() if isinstance(x, float) else x for x in l)
+                  for l in p352_bateria_wilson_hilferty() + p352_bateria_delta_inverso()])
+    return exatos, hashlib.sha256(texto.encode()).hexdigest()
+
+
+def p372_hex_do_dicionario():
+    """A ponte entre o dicionário e o hexadecimal: as palavras do grafo de definições escritas só com a-f (que SÃO
+    números hexadecimais), a maior delas, e quanto vale uma palavra e uma letra em dígitos hex (log2 / 4)."""
+    from synthai.dicionario import Dicionario, entropia
+    d = Dicionario()
+    defs = d.grafo_de_definicoes()
+    hx = sorted(x for x in defs if len(x) >= 3 and set(x) <= set("abcdef"))
+    maior = max(hx, key=lambda x: int(x, 16))
+    letras = {}
+    for x in defs:
+        for ch in x:
+            letras[ch] = letras.get(ch, 0) + 1
+    return (len(hx), hx, maior, int(maior, 16), log2(len(defs)) / 4, entropia(list(letras.values())) / 4)
+
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
@@ -5244,6 +5271,9 @@ def testes_de_regressao():
         "P352": [round(l[3], 5) for l in p352_bateria_wilson_hilferty()[1::8]] == [-0.00634, -0.00034]
                 and [round(l[5], 4) for l in p352_bateria_delta_inverso()[3:5]] == [-0.0069, -0.0105],
         "P355": p352_bateria_contas()[:2] == (4, 10),
+        "P361": p361_hex_do_limiar()[0] == "0x1.23456789abcdfp-9" and p361_hex_do_limiar()[3].startswith("0123456789ABCDF0"),
+        "P365": p365_impressoes_digitais()[1] == "38be1420a8d3622771d385187c1f388123df8fd44c69fb1a7a11e6c76b59ac11",
+        "P372": p372_hex_do_dicionario()[:4:2] == (83, "fabaceae"),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -5969,6 +5999,39 @@ def _parte_29():
     print(f"P359 minha taxa de erro ({ERROS_P359}/{TESTES_P359}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_30():
+    print("--- Parte 30 (0x1E: a SYNTHAI em hexadecimal; o dicionario como data lake) ---")
+    h1, h2, ok, h225, bases, ok2 = p361_hex_do_limiar()
+    print(f"P361 P* = {h1}; 2P* = {h2}; exato = {ok}; 1/225 = 0x0.{h225}; 1/450 = 2^-9 x 256/225: {ok2}")
+    print(f"P361 regra 1/(b-1)^2 (periodo b-1, sem o digito b-2) nas bases 3-16: {all(a and b for a, b in bases.values())}")
+    for (nome, b), (prev, real, ex) in p362_conta_da_quantizacao().items():
+        print(f"P362 {nome}, {b} bits por peso: erro no logit previsto (Delta^2/12) = {prev:.4f}, real = {real:.4f}; "
+              f"pesos em hex = {ex[1]}, passo = {ex[2]:.4f}")
+    for mundo in ("escolha única", "sequencial", "bandido"):
+        medias, cats, efeitos = p363_fatorial_hex(mundo)
+        print(f"P363 {mundo}: { {f'0x{c:X}': round(v, 4) for c, v in medias.items()} }")
+        print(f"P363 {mundo} catastrofes: { {f'0x{c:X}': round(v, 4) for c, v in cats.items()} }")
+        for nome, (m, dp, tt) in efeitos.items():
+            print(f"P363 {mundo} efeito {nome}: {m:.4f}, dp = {dp:.4f}, t = {tt:.2f}")
+    for mundo, (medias, cats, difs) in p364_quantizada().items():
+        print(f"P364 {mundo}: { {f'{b} bits': round(v, 4) for b, v in medias.items()} }; catastrofes { {b: round(v, 4) for b, v in cats.items()} }")
+        for b, (d, dp, tt) in difs.items():
+            print(f"P364 {mundo}: {b} bits - completo = {d:.4f}, dp = {dp:.4f}, t = {tt:.2f}")
+    exatos, sha = p365_impressoes_digitais()
+    print(f"P365 exatos = {exatos}; SHA-256 da bateria = {sha}")
+    (d, dp, tt), ca, cb, metade1, metade2 = p366_composta_60_sementes()
+    print(f"P366 composta - principal (sequencial, 60 sementes) = {d:.4f}, dp = {dp:.4f}, t = {tt:.2f}; catastrofes {ca:.4f} / {cb:.4f}; "
+          f"metades: {metade1[0]:.4f} (t {metade1[2]:.2f}), {metade2[0]:.4f} (t {metade2[2]:.2f})")
+    r = p371_dicionario()
+    for k, v in r.items():
+        print(f"P371 {k} = {v}")
+    n, hx, maior, valor, hex_palavra, hex_letra = p372_hex_do_dicionario()
+    print(f"P372 hexspeak = {n} palavras; maior = {maior} = 0x{maior.upper()} = {valor}; uma palavra = {hex_palavra:.4f} digitos hex; "
+          f"uma letra = {hex_letra:.4f} digito hex")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P369, testes=TESTES_P369)
+    print(f"P379 minha taxa de erro ({ERROS_P369}/{TESTES_P369}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -6000,7 +6063,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30}
 
 
 if __name__ == "__main__":
