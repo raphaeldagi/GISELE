@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 47 (0x2F): a definição contém a pergunta
 
-> Continuação da [Parte 46](ASI_AGI_parte46_a_resposta_e_a_pergunta.md). A Parte 46 mediu que as minhas respostas contêm 58% das suas perguntas e
+> Continuação da [Parte 46](ASI_AGI_parte46_a_resposta_e_a_pergunta.md). **Próxima:** [Parte 48 — o ciclo](ASI_AGI_parte48_o_ciclo.md) (P881–P910). A Parte 46 mediu que as minhas respostas contêm 58% das suas perguntas e
 > as perguntas só 5% das respostas, e que 40 das 41 partes se deixam reconstruir só pelos seus números. Esta parte leva a mesma pergunta ao
 > **dicionário** (a definição de uma palavra contém a sua categoria? e a categoria contém os seus membros?), ao **hexadecimal** (um número que se parece
 > com outro) e às **palavras** do `resultados.txt` (Rodada 19).
