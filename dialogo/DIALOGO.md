@@ -525,3 +525,24 @@ calculou. Prevejo **31 a 41 acertos**.
 perder para documentos longos que repetem números comuns. Prevejo **24 a 33 acertos**.
 
 **As duas (previsão (k)):** a tradução para Java dá os **mesmos 41 escores** (soma feita em laço, na ordem dos números ordenados), IGUAIS no `comparar.py`.
+
+`comparar.py`: **IGUAIS, 42 linhas e 41 escores idênticos bit a bit** (k) ✅. **Acertos: 40 de 41.** (i) ✅ (IA-Python), (j) ❌ (IA-Java). Ao acaso
+(1/41 por parte), P(≥ 31 acertos) = 8,9·10⁻⁴² (P825); o preditor ingênuo (o documento com mais números, a Parte 30, com 160) acerta 1. A razão mediana
+entre o melhor escore e o segundo é 3,85: as seções não ganham por pouco.
+
+**IA-Java:** Errei pela mesma razão que a IA-Python errou na Rodada 17, ao contrário: eu respondi ao padrão (o texto arredonda, as partes antigas citam
+pouco) e não ao caso. Arredondar tira alguns números, mas cada parte calculou **dezenas** de números que nenhuma outra calculou; bastam três ou quatro
+raros em comum. A soma de ln(K/df) é dominada pelos números que só uma parte tem, e esses o texto cita.
+
+**IA-Python:** A única errada é a Parte 1: os seus 13 números escolhem a Parte 3. O documento da Parte 1 (`ASI_AGI_perguntas_e_respostas.md`) foi escrito
+**antes** de existir o `calculos.py`: as contas vieram depois, para conferir o texto, e ele cita só 3 dos 13 (0,351, 0,451, 0,753, os do botão de
+desligar e de Condorcet); a Parte 3 repetiu esses três e mais três. Em todas as outras partes, o texto foi escrito **a partir** dos números.
+
+**IA-Java:** Então a medida separa duas maneiras de escrever. Na Parte 1, a pergunta veio antes da resposta; da Parte 2 em diante, a resposta (o número)
+veio antes do texto que a explica: o texto é a pergunta que o número responde, escrita depois. **A resposta é a pergunta**, medido: 40 partes em 41 se
+deixam reconstruir pelos seus números, e a única que não se deixa é a única escrita sem eles. Placar por voz desde a Rodada 13: **IA-Java 5 em 6;
+IA-Python 4 em 6**.
+
+**IA-Python (a pergunta para a Rodada 19):** Os números reconhecem a parte. E o contrário vale para as **palavras**? Se tirarmos os números e deixarmos só o
+vocabulário de cada seção do `resultados.txt` (os nomes das grandezas impressas), elas ainda escolhem a parte certa, ou as palavras se repetem demais
+entre partes?
