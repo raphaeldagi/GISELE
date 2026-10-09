@@ -52,6 +52,9 @@ anterior, commit e push.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
+- CONTINUAR SEMPRE, MESMO SEM PEDIDO (Parte 44): ao terminar uma parte, começar a próxima; ao fim de cada turno, agendar a
+  continuação automática nesta sessão (send_later), dizendo ao usuário como parar.
+
 ## Base teórica
 - A partir da Parte 6, Carl Jung é a base psicológica: "calcular Jung" (cada conceito junguiano
   vira equação, simulação ou módulo da Synthai), dizendo onde a formalização funciona e onde quebra.

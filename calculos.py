@@ -7067,6 +7067,65 @@ def p733_dialogo_responde():
     rets = [p_ for p_, _ in pares if p_ is not None]
     return sum(rets) / len(rets), sum(r for _, r in pares) / len(pares), len(pares)
 
+
+# --- Parte 44 (0x2C): o modelo no nível certo (uma mudança global); os grupos do dicionário; a minha curva de erro ---
+
+# Placar acumulado ao fim da Parte 44 (atualizado quando os testes da parte terminam)
+ERROS_P789, TESTES_P789 = 0, 0
+
+
+def p761_contas():
+    """Os CENTROS deduzidos (antes de rodar) para o ThompsonBOCPDGlobal (H = 1/500):
+    1. mundo que muda (as mudanças são globais): a base de 8 fases × 20 = 160 (Thompson em 500 passos) mais a parte da
+       detecção. A surpresa detecta em ~9 puxadas mas renova só o braço puxado (parte da detecção: 367,7 − 160 = 207,7);
+       o modelo global detecta no mesmo tempo e renova os dez braços de uma vez: metade da parte da detecção: 160 + 103,9;
+    2. mundo estável: uma hipótese nova (tudo em Beta(1, 1)) prevê ½ onde a velha prevê p* ≈ 0,9; a cada puxada do melhor
+       braço o peso dela cai pelo fator 0,5/0,9 e ela quase nunca é sorteada: o exato mais um custo pequeno, 30,7 + 3;
+    3. dano: o lixo vira uma hipótese só; os braços que o lixo faz parecerem bons são puxados e desmentem a hipótese, e a
+       hipótese nova (que renova TODOS os braços, inclusive o melhor, nunca puxado) ganha peso: o custo cai ao nível da
+       exposição (P521, 19,5)."""
+    return {"global_muda": 160 + 207.7 / 2, "global_estavel": 30.7 + 3.0, "global_dano": 19.5}
+
+
+def p761_global(k=10):
+    """O ThompsonBOCPDGlobal nos três mundos, nas sementes de sempre."""
+    from synthai.decisao import ThompsonBOCPDGlobal
+    fab = lambda sm: ThompsonBOCPDGlobal(k, _rng(sm + 1))
+    return {"global_muda": _muda_701(fab, range(4620, 4670)), "global_estavel": _estavel_701(fab, range(4010, 4110)),
+            "global_dano": _dano_701(fab, range(4050, 4150))}
+
+
+def p762_curva_de_erro():
+    """A minha curva de erro, parte a parte (31 a 43), a partir dos placares: a taxa de cada parte e a inclinação dos
+    mínimos quadrados da taxa contra o número da parte (descritivo: os números já são conhecidos)."""
+    taxas = {}
+    for parte, (e, n) in p671_erros_por_tipo()[1].items():
+        taxas[parte] = e / n
+    taxas.update({41: 2 / 9, 42: 4 / 15, 43: 2 / 11})
+    xs = sorted(taxas)
+    ys = [taxas[x] for x in xs]
+    mx, my = sum(xs) / len(xs), sum(ys) / len(ys)
+    incl = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
+    return {x: round(taxas[x], 3) for x in xs}, incl
+
+
+def p763_grupos():
+    """A trilha do dicionário no nível certo: quantos substantivos do WordNet nomeiam GRUPOS (descendem de group.n.01,
+    00031264) e quantos nomeiam grupos taxonômicos (descendem de taxon, 07992450); e, entre os 4017+4017 da P551, quantos
+    dos não animais que o preditor de forma (P702) chamaria de animal são grupos."""
+    from synthai.dicionario import Dicionario, ancestrais
+    d = Dicionario()
+    G, T = d.indice["n:00031264"], d.indice["n:07992450"]
+    n = g = t = 0
+    for i, x in enumerate(d.sinsets):
+        if x[0] != "n":
+            continue
+        n += 1
+        an = ancestrais(d, i)
+        g += G in an
+        t += T in an
+    return n, g / n, t / n
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:

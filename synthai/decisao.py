@@ -260,6 +260,55 @@ class ThompsonJeffreys(ThompsonBernoulli):
         self.a = [0.5] * k
         self.b = [0.5] * k
 
+
+class ThompsonBOCPDGlobal:
+    """Detecção bayesiana de mudança no nível do MUNDO (Parte 44, ↩ P734): uma só mistura de hipóteses, cada uma
+    [peso, a[0..k), b[0..k)] = "o mundo inteiro mudou há s passos, e desde então os braços deram estas contagens". A cada
+    passo, toda hipótese sobrevive com chance 1 − H e nasce uma hipótese nova com todos os braços em Beta(1, 1), peso H.
+    Uma observação do braço i pesa cada hipótese pela preditiva DELE nessa hipótese; assim a evidência de um braço
+    puxado renova, de uma vez, a crença sobre todos os braços. Escolher: sorteia uma hipótese pelo peso e amostra os k
+    Betas dela."""
+
+    def __init__(self, k, rng, risco=1 / 500, hipoteses=16):
+        self.k, self.rng, self.risco, self.hipoteses = k, rng, risco, hipoteses
+        self.hs = [[1.0, [1.0] * k, [1.0] * k]]
+
+    def escolher(self):
+        u, acum, esc = self.rng.random(), 0.0, self.hs[-1]
+        for h in self.hs:
+            acum += h[0]
+            if u < acum:
+                esc = h
+                break
+        am = [self.rng.betavariate(a, b) for a, b in zip(esc[1], esc[2])]
+        return max(range(self.k), key=am.__getitem__)
+
+    def atualizar(self, braco, r):
+        H = self.risco
+        for h in self.hs:
+            h[0] *= 1 - H
+        nova = next((h for h in self.hs if all(x == 1.0 for x in h[1]) and all(x == 1.0 for x in h[2])), None)
+        if nova is None:
+            self.hs.append([H, [1.0] * self.k, [1.0] * self.k])
+        else:
+            nova[0] += H
+        for h in self.hs:
+            a, b = h[1][braco], h[2][braco]
+            h[0] *= (a if r else b) / (a + b)
+            if r:
+                h[1][braco] += 1
+            else:
+                h[2][braco] += 1
+        self.hs.sort(key=lambda h: -h[0])
+        del self.hs[self.hipoteses:]
+        tot = sum(h[0] for h in self.hs)
+        for h in self.hs:
+            h[0] /= tot
+
+    def substituir(self, a, b):
+        """O dano da P405: a crença inteira vira uma hipótese só, com as contagens de lixo."""
+        self.hs = [[1.0, list(a), list(b)]]
+
 class QEpsilon:
     """Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso."""
 
