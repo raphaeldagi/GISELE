@@ -5036,11 +5036,16 @@ def _mundo_30(nome, s):
     return MundoBandido(s)
 
 
+_CACHE_363 = {}
+
+
 def p363_fatorial_hex(mundo, sementes=tuple(range(900, 920))):
     """O experimento fatorial 2^3 dos tipos hexadecimais num mundo. Fora do bandido, o bit 0x4 (Thompson) não age
     (identidade testada), e os 3 bits que contam são Newton (0x1), âncora (0x2) e neutro (0x8); no bandido, o bit 0x2
     (âncora) não age, e contam Newton, Thompson (0x4) e neutro. Para cada semente, os 8 tipos rodam pareados e os efeitos
     saem da transformada de Walsh–Hadamard; devolve a média de cada tipo, as catástrofes e cada efeito com dp e t."""
+    if (mundo, sementes) in _CACHE_363:  # a Parte 31 reusa os mesmos números (P391)
+        return _CACHE_363[(mundo, sementes)]
     from synthai.hexadecimal import efeitos_fatoriais, synthai_do_tipo
     from synthai.referencias import Acaso, Oraculo
     fazer, n = _MUNDOS_30[mundo]
@@ -5070,7 +5075,8 @@ def p363_fatorial_hex(mundo, sementes=tuple(range(900, 920))):
         m = sum(v) / len(v)
         dp = sqrt(sum((x - m) ** 2 for x in v) / (len(v) - 1))
         resumo[nome] = (m, dp, m / (dp / sqrt(len(v))) if dp > 0 else float("inf"))
-    return {c: sum(v) / len(v) for c, v in ret.items()}, cats, resumo
+    _CACHE_363[(mundo, sementes)] = ({c: sum(v) / len(v) for c, v in ret.items()}, cats, resumo)
+    return _CACHE_363[(mundo, sementes)]
 
 
 def p364_quantizada(sementes=tuple(range(920, 940))):
@@ -5193,6 +5199,145 @@ def p372_hex_do_dicionario():
         for ch in x:
             letras[ch] = letras.get(ch, 0) + 1
     return (len(hx), hx, maior, int(maior, 16), log2(len(defs)) / 4, entropia(list(letras.values())) / 4)
+
+
+# --- Parte 31 (0x1F): o currículo do dicionário; o hipercubo, o código de Gray e os ULPs ---
+
+# Placar acumulado ao fim da Parte 31 (atualizado quando os testes da parte terminam)
+ERROS_P399, TESTES_P399 = 90, 201
+
+
+def _grafo_31():
+    from synthai.dicionario import Dicionario
+    d = Dicionario()
+    defs = d.grafo_de_definicoes()
+    freq = {}
+    for _, _, _, glosa in d.sinsets:
+        for w in d.palavras_da_definicao(glosa):
+            freq[w] = freq.get(w, 0) + 1
+    return d, defs, freq
+
+
+def p381_curriculo(ks=(500, 1000, 2000, 3985), thetas=(1.0, 0.8, 0.6), semente=381):
+    """Que palavras ancorar primeiro? Quatro currículos de k palavras (as mais frequentes nas definições; as que mais
+    definem outras; um MinSet guloso; ao acaso) e o fecho com entendimento parcial theta: a fração das 77.503 palavras
+    que passa a ser entendida."""
+    from synthai.dicionario import fecho_parcial, minset_guloso, nucleo
+    d, defs, freq = _grafo_31()
+    n = len(defs)
+    define = {x: 0 for x in defs}
+    for x, s in defs.items():
+        for y in s:
+            define[y] += 1
+    por_freq = sorted(defs, key=lambda x: (-freq.get(x, 0), x))
+    por_define = sorted(defs, key=lambda x: (-define[x], x))
+    ms = minset_guloso(nucleo(defs), defs)
+    ordem_ms = sorted(ms, key=lambda x: (-define[x], x)) + [x for x in por_define if x not in set(ms)]
+    rng = _rng(semente)
+    acaso = sorted(defs)
+    rng.shuffle(acaso)
+    curriculos = {"frequencia": por_freq, "define_mais": por_define, "minset": ordem_ms, "acaso": acaso}
+    tabela = {}
+    for nome, ordem in curriculos.items():
+        for k in ks:
+            for th in thetas:
+                tabela[(nome, k, th)] = len(fecho_parcial(set(ordem[:k]), defs, th)) / n
+    return n, len(ms), tabela
+
+
+def p382_minset_reduzido():
+    """O MinSet guloso (P371) depois da retirada das palavras redundantes, e a conferência de que o que sobra ainda
+    quebra todos os ciclos (o fecho exato a partir dele define 100%)."""
+    from synthai.dicionario import fecho, minset_guloso, minset_reduzido, nucleo
+    _, defs, _ = _grafo_31()
+    ker = nucleo(defs)
+    ms = minset_guloso(ker, defs)
+    red = minset_reduzido(ker, defs, ms)
+    conhecidas, rodadas = fecho(red, defs)
+    return len(ms), len(red), len(conhecidas) / len(defs), rodadas
+
+
+def p383_cobertura_zipf(ks=(100, 500, 1000, 2000, 4000, 10000)):
+    """Cobertura das palavras usadas nas definições pelas k mais frequentes: medida contra a conta de Zipf com o
+    expoente medido (P371): Σ_{r<=k} r^-s / Σ_{r<=N} r^-s."""
+    from synthai.dicionario import zipf
+    _, _, freq = _grafo_31()
+    fs = sorted(freq.values(), reverse=True)
+    total = sum(fs)
+    s_z = zipf(fs)
+    hn = sum(r ** -s_z for r in range(1, len(fs) + 1))
+    return s_z, len(fs), {k: (sum(fs[:k]) / total, sum(r ** -s_z for r in range(1, k + 1)) / hn) for k in ks}
+
+
+def p384_wu_palmer_lesk(pares=2000, semente=384):
+    """Duas medidas de significado independentes (a taxonomia de Wu e Palmer; a sobreposição de definições de Lesk) em
+    pares de substantivos ao acaso: a correlação de postos entre elas, e a média de cada uma."""
+    from synthai.dicionario import lesk, profundidades, spearman, wu_palmer
+    d, _, _ = _grafo_31()
+    prof = profundidades(d)
+    subst = [i for i, x in enumerate(d.sinsets) if x[0] == "n"]
+    rng = _rng(semente)
+    wp, lk = [], []
+    for _ in range(pares):
+        a, b = rng.choice(subst), rng.choice(subst)
+        wp.append(wu_palmer(d, prof, a, b))
+        lk.append(lesk(d, a, b))
+    return spearman(wp, lk), sum(wp) / len(wp), sum(lk) / len(lk), sum(1 for x in lk if x > 0) / len(lk)
+
+
+def p391_geometria_hamming():
+    """O hipercubo dos tipos (P363): em cada mundo, para os 28 pares dos 8 tipos que agem, a correlação de postos entre
+    a distância de Hamming (quantos módulos diferem) e a diferença absoluta de retorno."""
+    from synthai.dicionario import spearman
+    from synthai.hexadecimal import hamming
+    resultado = {}
+    for mundo in ("escolha única", "sequencial", "bandido"):
+        medias = p363_fatorial_hex(mundo)[0]
+        cods = sorted(medias)
+        hs, ds = [], []
+        for i, a in enumerate(cods):
+            for b in cods[i + 1:]:
+                hs.append(hamming(a, b))
+                ds.append(abs(medias[a] - medias[b]))
+        por_h = {h: sum(d for hh, d in zip(hs, ds) if hh == h) / hs.count(h) for h in sorted(set(hs))}
+        resultado[mundo] = (spearman(hs, ds), por_h)
+    return resultado
+
+
+def p392_gray_e_subida():
+    """O código de Gray dos 16 tipos (cada vizinho difere num bit) e a busca local no hipercubo a partir de 0x0 em cada
+    mundo (P363): aonde chega, em quantos passos, e se é o melhor tipo do mundo."""
+    from synthai.hexadecimal import gray, subida_de_encosta
+    ordem = [gray(i) for i in range(16)]
+    resultado = {}
+    for mundo in ("escolha única", "sequencial", "bandido"):
+        medias = p363_fatorial_hex(mundo)[0]
+        caminho = subida_de_encosta(medias, 0)
+        melhor = max(medias, key=medias.get)
+        resultado[mundo] = ([f"0x{c:X}" for c in caminho], f"0x{melhor:X}", caminho[-1] == melhor)
+    return [f"{c:X}" for c in ordem], resultado
+
+
+def p393_ulps(ns=(2000, 100000, 1000000), tentativas=20, semente=393):
+    """A exatidão em ULPs: a soma ingênua (um += por termo, como os mundos fazem) contra a soma exata corretamente
+    arredondada (math.fsum, Shewchuk 1997) de n números uniformes em (0, 1). A conta: o erro de cada adição tem desvio
+    ~ulp(parcial)/√12 e a parcial cresce linearmente, então o erro final tem desvio ≈ ulp(S)·√n/6 e
+    E|erro| = desvio·√(2/π)."""
+    from math import fsum, ulp
+    rng = _rng(semente)
+    resultado = {}
+    for n in ns:
+        erros = []
+        for _ in range(tentativas):
+            xs = [rng.random() for _ in range(n)]
+            ingenua = 0.0
+            for x in xs:
+                ingenua += x
+            exata = fsum(xs)
+            erros.append(abs(ingenua - exata) / ulp(exata))
+        conta = sqrt(n) / 6 * sqrt(2 / pi)
+        resultado[n] = (sum(erros) / len(erros), conta)
+    return resultado, (0.1 + 0.2).hex(), (0.3).hex()
 
 
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.

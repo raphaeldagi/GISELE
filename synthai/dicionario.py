@@ -235,3 +235,134 @@ def zipf(frequencias, de=10, ate=10000):
 def entropia(contagens):
     total = sum(contagens)
     return -sum(c / total * log2(c / total) for c in contagens if c)
+
+
+# --- Parte 31: o currículo, o MinSet mínimo (local), e duas medidas de significado ---
+
+def fecho_parcial(ancoradas, defs, theta=1.0):
+    """Fecho com entendimento parcial (P381): uma palavra passa a ser entendida quando pelo menos uma fração `theta` das
+    palavras da sua definição já é conhecida (theta = 1 é o fecho exato da P371). Propagação em O(arestas): cada
+    palavra guarda quantas das que a definem já se conhecem."""
+    conhecidas = set(ancoradas)
+    precisa = {x: max(0, -(-int(round(theta * 1000)) * len(s) // 1000)) for x, s in defs.items()}  # teto(theta·|s|)
+    tem = {x: 0 for x in defs}
+    usado_por = {}
+    for x, s in defs.items():
+        for y in s:
+            usado_por.setdefault(y, []).append(x)
+    fila = list(conhecidas)
+    for x in defs:
+        if x not in conhecidas and precisa[x] == 0:
+            conhecidas.add(x)
+            fila.append(x)
+    while fila:
+        y = fila.pop()
+        for x in usado_por.get(y, ()):
+            if x in conhecidas:
+                continue
+            tem[x] += 1
+            if tem[x] >= precisa[x]:
+                conhecidas.add(x)
+                fila.append(x)
+    return conhecidas
+
+
+def minset_reduzido(nos, defs, minset):
+    """Tira as palavras redundantes de um conjunto de retroalimentação (o pós-processamento padrão, P382): uma palavra
+    v do conjunto é redundante se, devolvida ao grafo que já é acíclico, não fecha nenhum ciclo, isto é, se nenhuma
+    palavra que v define alcança, pelo que está fora do conjunto, uma palavra que define v. Testa as palavras na ordem
+    inversa da escolha gulosa (as últimas escolhidas primeiro) e devolve o conjunto mínimo (não necessariamente o
+    mínimo de todos) resultante."""
+    conjunto = set(minset)
+    sai = {x: [] for x in nos}
+    for x in nos:
+        for y in defs[x]:
+            if y in nos:
+                sai[y].append(x)   # y define x: aresta y -> x
+    for v in reversed(list(minset)):
+        conjunto.discard(v)
+        alvo = set(y for y in defs[v] if y in nos and y not in conjunto)
+        fecha = v in alvo
+        vistos = {v}
+        pilha = [x for x in sai[v] if x not in conjunto]
+        while pilha and not fecha:
+            x = pilha.pop()
+            if x in vistos:
+                continue
+            vistos.add(x)
+            if x in alvo or x == v:
+                fecha = True
+                break
+            pilha.extend(z for z in sai[x] if z not in conjunto and z not in vistos)
+        if fecha:
+            conjunto.add(v)
+    return conjunto
+
+
+def profundidades(d):
+    """Profundidade de cada sinset na taxonomia (o menor número de hiperônimos até uma raiz), por programação dinâmica."""
+    prof = {}
+    for i in range(len(d.sinsets)):
+        pilha = [i]
+        while pilha:
+            j = pilha[-1]
+            if j in prof:
+                pilha.pop()
+                continue
+            pais = [d.indice[h] for h in d.sinsets[j][2] if h in d.indice]
+            faltam = [k for k in pais if k not in prof]
+            if faltam:
+                pilha.extend(faltam)
+                continue
+            prof[j] = 0 if not pais else 1 + min(prof[k] for k in pais)
+            pilha.pop()
+    return prof
+
+
+def ancestrais(d, i):
+    """Todos os ancestrais de um sinset na taxonomia (ele incluído)."""
+    vistos, pilha = set(), [i]
+    while pilha:
+        j = pilha.pop()
+        if j in vistos:
+            continue
+        vistos.add(j)
+        pilha.extend(d.indice[h] for h in d.sinsets[j][2] if h in d.indice)
+    return vistos
+
+
+def wu_palmer(d, prof, a, b):
+    """Similaridade de Wu e Palmer (1994): 2·prof(LCS) / (prof(a) + prof(b)), com profundidade contada em nós (raiz = 1)
+    e LCS o ancestral comum mais profundo. 0 se não houver ancestral comum."""
+    comuns = ancestrais(d, a) & ancestrais(d, b)
+    if not comuns:
+        return 0.0
+    lcs = max(prof[c] for c in comuns) + 1
+    return 2 * lcs / ((prof[a] + 1) + (prof[b] + 1))
+
+
+def lesk(d, a, b):
+    """Sobreposição de Lesk (1986): o índice de Jaccard entre as palavras de conteúdo das duas definições."""
+    pa = set(d.palavras_da_definicao(d.sinsets[a][3]))
+    pb = set(d.palavras_da_definicao(d.sinsets[b][3]))
+    return len(pa & pb) / len(pa | pb) if pa | pb else 0.0
+
+
+def spearman(x, y):
+    """Correlação de postos de Spearman (com empates pela média dos postos)."""
+    def postos(v):
+        ordem = sorted(range(len(v)), key=lambda i: v[i])
+        r = [0.0] * len(v)
+        i = 0
+        while i < len(v):
+            j = i
+            while j + 1 < len(v) and v[ordem[j + 1]] == v[ordem[i]]:
+                j += 1
+            for k in range(i, j + 1):
+                r[ordem[k]] = (i + j) / 2 + 1
+            i = j + 1
+        return r
+    rx, ry = postos(x), postos(y)
+    mx, my = sum(rx) / len(rx), sum(ry) / len(ry)
+    cov = sum((a - mx) * (b - my) for a, b in zip(rx, ry))
+    return cov / (sum((a - mx) ** 2 for a in rx) * sum((b - my) ** 2 for b in ry)) ** 0.5

@@ -77,3 +77,35 @@ def quantizar(pesos, bits):
     codigos = [min(niveis, max(0, round((w + r) / passo))) for w in pesos]
     digitos = bits // 4
     return [c * passo - r for c in codigos], "".join(f"{c:0{digitos}X}" for c in codigos), passo
+
+
+# --- Parte 31: a geometria do hipercubo, o código de Gray e a exatidão em ULPs ---
+
+def hamming(a, b):
+    """Distância de Hamming entre dois tipos: quantos bits (módulos) diferem."""
+    return bin(a ^ b).count("1")
+
+
+def gray(n):
+    """Código de Gray refletido: g(n) = n XOR (n >> 1); g(n) e g(n + 1) diferem em exatamente um bit."""
+    return n ^ (n >> 1)
+
+
+def subida_de_encosta(valores, inicio=0):
+    """Busca local no hipercubo (P392): a partir de `inicio`, troca o bit que mais melhora `valores[código]` (só entre
+    os códigos presentes), até nenhum vizinho a um bit ser melhor. Devolve o caminho."""
+    caminho = [inicio]
+    atual = inicio
+    while True:
+        vizinhos = [atual ^ (1 << k) for k in range(4) if (atual ^ (1 << k)) in valores]
+        melhor = max(vizinhos, key=lambda c: valores[c], default=None)
+        if melhor is None or valores[melhor] <= valores[atual]:
+            return caminho
+        atual = melhor
+        caminho.append(atual)
+
+
+def ulps_entre(a, b):
+    """Quantas unidades na última casa (ULPs, no expoente de b) separam a de b."""
+    from math import ulp
+    return abs(a - b) / ulp(b) if b else abs(a - b)
