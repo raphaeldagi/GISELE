@@ -250,6 +250,16 @@ class ThompsonMisturaMaximo(ThompsonMistura):
         ws = self.pesos()
         return self.modelos[max(range(len(ws)), key=ws.__getitem__)].escolher()
 
+
+class ThompsonJeffreys(ThompsonBernoulli):
+    """Thompson com a priori de Jeffreys, Beta(½, ½), em vez da uniforme Beta(1, 1) (Parte 43). A priori de Jeffreys põe
+    mais massa perto de 0 e de 1: um braço com poucas observações é amostrado mais longe do meio."""
+
+    def __init__(self, k, rng):
+        super().__init__(k, rng)
+        self.a = [0.5] * k
+        self.b = [0.5] * k
+
 class QEpsilon:
     """Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso."""
 

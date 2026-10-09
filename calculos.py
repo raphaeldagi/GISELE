@@ -6966,6 +6966,107 @@ def p704_contas(k=10):
     e 2k números float64 (8 bytes cada, little-endian): 4 + 4 + 16k bytes."""
     return 4 + 4 + 16 * k
 
+
+# --- Parte 43 (0x2B): a regra das faixas testada em mecanismos NOVOS (centro deduzido); os trigramas que carregam
+#     significado; o diálogo responde às próprias perguntas? ---
+
+# Placar acumulado ao fim da Parte 43 (atualizado quando os testes da parte terminam)
+ERROS_P759, TESTES_P759 = 0, 0
+
+
+def p731_contas():
+    """Os CENTROS deduzidos (antes de rodar) para seis mecanismos que nunca rodaram:
+    1. exposição a cada 100 (não 50), estável: 43,1 + custo da exposição T/100·E[p* − média dos outros] (P521);
+    2. exposição a cada 100, dano: o braço danificado é testado depois de ~k·período/2 passos (o mais antigo dos 10 na fila):
+       250 passos com período 50, 500 com 100. O custo do dano é linear no atraso, passando por (250; 19,5) e pelo sem
+       exposição, cujo atraso efetivo é o resto do horizonte (1000; 42,3): custo(500) = 19,5 + (42,3 − 19,5)/750·250;
+    3. surpresa com janela 40, estável: o custo da surpresa sobre o exato (43,1 − 30,7 = 12,4) cai à metade, porque as
+       janelas independentes são metade e a crença renovada tem o dobro de observações: 30,7 + 6,2;
+    4. surpresa com janela 40, mundo que muda: o atraso de detecção sobe de n > 3·√(0,16/20)·20/0,6 = 8,94 para
+       3·√(0,16/40)·40/0,6 = 12,65 puxadas (×1,415). Com uma base de 8 fases × 20 (Thompson em 500 passos), a parte da
+       detecção, 367,7 − 160, sobe 1,415 vez: 160 + 207,7·1,415;
+    5. BOCPD com H = 1/2000 no mundo que muda (o verdadeiro é 1/500): a evidência para a mudança precisa vencer ln(1/H):
+       ln 2000/ln 500 = 1,223 vez mais; 160 + (371,9 − 160)·1,223;
+    6. Thompson com a priori de Jeffreys, estável: a priori quase não pesa depois de dezenas de puxadas: o mesmo ~30,7,
+       com +1% pelo começo mais disperso: 31,0."""
+    expo = p521_contas(periodo=100)[1]
+    dano = 19.5 + (42.3 - 19.5) / 750 * 250
+    d20 = 3 * sqrt(0.16 / 20) * 20 / 0.6
+    d40 = 3 * sqrt(0.16 / 40) * 40 / 0.6
+    return {"exposta100_estavel": expo, "exposta100_dano": dano, "surpresa40_estavel": 30.7 + 12.4 / 2,
+            "surpresa40_muda": 160 + 207.7 * d40 / d20, "bocpd2000_muda": 160 + (371.9 - 160) * log(2000) / log(500),
+            "jeffreys_estavel": 31.0}
+
+
+def p731_mecanismos_novos(k=10):
+    """Os seis mecanismos novos, nas sementes de sempre (estável 4010-4109, dano 4050-4149, muda 4620-4669)."""
+    from synthai.decisao import ThompsonBOCPD, ThompsonJeffreys, ThompsonSurpresa, ThompsonSurpresaExposta
+    est, dano, muda = range(4010, 4110), range(4050, 4150), range(4620, 4670)
+    return {
+        "exposta100_estavel": _estavel_701(lambda sm: ThompsonSurpresaExposta(k, _rng(sm + 1), periodo=100), est),
+        "exposta100_dano": _dano_701(lambda sm: ThompsonSurpresaExposta(k, _rng(sm + 1), periodo=100), dano),
+        "surpresa40_estavel": _estavel_701(lambda sm: ThompsonSurpresa(k, _rng(sm + 1), janela=40), est),
+        "surpresa40_muda": _muda_701(lambda sm: ThompsonSurpresa(k, _rng(sm + 1), janela=40), muda),
+        "bocpd2000_muda": _muda_701(lambda sm: ThompsonBOCPD(k, _rng(sm + 1), risco=1 / 2000), muda),
+        "jeffreys_estavel": _estavel_701(lambda sm: ThompsonJeffreys(k, _rng(sm + 1)), est),
+    }
+
+
+def _formas_732():
+    """(lema em inglês, 1 se animal) para os 4017 animais e outros 4017 substantivos (a mesma amostra da P551/P702)."""
+    from synthai.dicionario import Dicionario, ancestrais
+    d = Dicionario()
+    A = d.indice["n:00015388"]
+    animais, outros = [], []
+    for i, x in enumerate(d.sinsets):
+        if x[0] != "n" or i == A:
+            continue
+        (animais if A in ancestrais(d, i) else outros).append((x[1][0].replace("_", " ").lower(), 1 if A in ancestrais(d, i) else 0))
+    rng = _rng(551)
+    outros = rng.sample(outros, len(animais))
+    return animais + outros
+
+
+def p732_trigramas(minimo=10, topo=12):
+    """Os trigramas de forma que mais carregam significado (animal ou não): o log da razão de chances com suavização
+    de Laplace, log((c_animal + 1)/(N_animal + V)) − log((c_outro + 1)/(N_outro + V)), entre os trigramas que aparecem ≥
+    `minimo` vezes. Devolve os `topo` mais "animais", os mais "não animais", e os pesos de 'dae' e 'ae$'."""
+    from synthai.semiotica import trigramas_de_forma
+    dados = _formas_732()
+    ca, co = {}, {}
+    for lema, y in dados:
+        for t in trigramas_de_forma(lema):
+            (ca if y else co)[t] = (ca if y else co).get(t, 0) + 1
+    voc = set(ca) | set(co)
+    na, no = sum(ca.values()), sum(co.values())
+    v = len(voc)
+    peso = {t: log((ca.get(t, 0) + 1) / (na + v)) - log((co.get(t, 0) + 1) / (no + v)) for t in voc}
+    ok = [t for t in voc if ca.get(t, 0) + co.get(t, 0) >= minimo]
+    ok.sort(key=lambda t: (-peso[t], t))
+    return ok[:topo], ok[::-1][:topo], peso.get("dae"), peso.get("ae$"), len(voc)
+
+
+def p733_dialogo_responde():
+    """A premissa é o significante, a resposta é o significado, no diálogo: a pergunta deixada no fim de cada rodada
+    (a premissa) e o texto da rodada seguinte (a resposta). Para cada par: a fração das palavras de conteúdo da pergunta
+    que voltam na rodada seguinte, e a redundância por compressão. Devolve as médias e o número de pares."""
+    import os
+    import re
+    from synthai.semiotica import informacao_condicional, retorno_da_premissa
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    texto = open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8").read()
+    rodadas = re.split(r"\n## Rodada ", texto)
+    pares = []
+    for r_atual, r_seguinte in zip(rodadas, rodadas[1:]):
+        m = re.search(r"\(a pergunta para a Rodada \d+\):\*\*\s*(.*?)(?:\n\n|$)", r_atual, re.S)
+        if not m:
+            m = re.search(r"\(pergunta para a Rodada \d+\)\):?\*\*:?\s*(.*?)(?:\n\n|$)", r_atual, re.S)
+        if m:
+            q = m.group(1)
+            pares.append((retorno_da_premissa(q, r_seguinte), informacao_condicional(q, r_seguinte)[2]))
+    rets = [p_ for p_, _ in pares if p_ is not None]
+    return sum(rets) / len(rets), sum(r for _, r in pares) / len(pares), len(pares)
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
