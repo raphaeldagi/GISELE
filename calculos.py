@@ -8568,6 +8568,78 @@ def p881_epoca():
         maioria += ep == max(sorted(set(resto)), key=resto.count)  # empate: a época menor, como no prever
     return sum(ep == pv for _, ep, pv, _ in res), len(res), [n for n, ep, pv, _ in res if ep != pv], maioria
 
+
+def p882_mapa_da_definicao(d=None):
+    """O mapa da definição (P882): cada substantivo de uma palavra só vai para a primeira palavra da definição do seu
+    primeiro sentido de substantivo que também é um substantivo de uma palavra só (e não ela mesma); sem essa palavra, é
+    um sumidouro. Devolve (N, sumidouros, pontos cíclicos, ciclos, cauda média até um ciclo ou sumidouro, fração da maior
+    bacia, o ciclo da maior bacia)."""
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    nomes = {w for w, idx in d.lemas.items() if w.isalpha() and any(d.sinsets[i][0] == "n" for i in idx)}
+    f = {}
+    for w in sorted(nomes):
+        i = next(i for i in d.lemas[w] if d.sinsets[i][0] == "n")
+        f[w] = next((x for x in d.palavras_da_definicao(d.sinsets[i][3]) if x in nomes and x != w), None)
+    # destino de cada palavra: o sumidouro ou o ciclo em que a órbita termina, e a distância até ele
+    destino, dist, ciclicos, ciclos = {}, {}, set(), []
+    for w in sorted(f):
+        caminho, pos = [], {}
+        x = w
+        while x is not None and x not in destino and x not in pos:
+            pos[x] = len(caminho)
+            caminho.append(x)
+            x = f[x]
+        if x is None:  # o último do caminho é um sumidouro
+            alvo, base = ("sumidouro", caminho[-1]), len(caminho) - 1
+            for k, y in enumerate(caminho):
+                destino[y], dist[y] = alvo, base - k
+        elif x in destino:
+            for k, y in enumerate(caminho):
+                destino[y], dist[y] = destino[x], dist[x] + len(caminho) - k
+        else:  # um ciclo novo, a partir de pos[x]
+            ciclo = caminho[pos[x]:]
+            alvo = ("ciclo", min(ciclo))
+            ciclos.append(sorted(ciclo))
+            for y in ciclo:
+                destino[y], dist[y] = alvo, 0
+                ciclicos.add(y)
+            for k, y in enumerate(caminho[:pos[x]]):
+                destino[y], dist[y] = alvo, pos[x] - k
+    bacias = {}
+    for w in f:
+        bacias[destino[w]] = bacias.get(destino[w], 0) + 1
+    maior = max(sorted(bacias), key=bacias.get)
+    sumid = sum(1 for w in f if f[w] is None)
+    ciclo_maior = next((c for c in ciclos if ("ciclo", c[0]) == maior), [maior[1]])
+    return (len(f), sumid, len(ciclicos), len(ciclos), sum(dist.values()) / len(dist), bacias[maior] / len(f),
+            ciclo_maior)
+
+
+def p883_felizes_hex(ate=4095, base=16):
+    """Números felizes numa base (P883): s(n) = soma dos quadrados dos dígitos. Devolve (fração de felizes em 1..ate,
+    os ciclos diferentes do ponto fixo 1, cada um começando pelo menor)."""
+    def s(n):
+        t = 0
+        while n:
+            n, r = divmod(n, base)
+            t += r * r
+        return t
+    felizes, ciclos = 0, set()
+    for n in range(1, ate + 1):
+        vistos = []
+        x = n
+        while x not in vistos:
+            vistos.append(x)
+            x = s(x)
+        ciclo = vistos[vistos.index(x):]
+        if ciclo == [1]:
+            felizes += 1
+        else:
+            k = ciclo.index(min(ciclo))
+            ciclos.add(tuple(ciclo[k:] + ciclo[:k]))
+    return felizes / ate, sorted(ciclos)
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()

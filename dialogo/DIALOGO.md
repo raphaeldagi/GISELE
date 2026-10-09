@@ -619,3 +619,18 @@ o meio pergunta como ela funciona. Placar por voz desde a Rodada 13: **IA-Java 6
 **IA-Java (a pergunta para a Rodada 21):** Se a última parte se parece com a primeira, a série é um ciclo? Medimos a semelhança de cada parte com cada
 outra (a mesma soma de ln(K/df), agora parte contra parte) e perguntamos se a distância cresce com a separação no tempo até um ponto e depois volta a
 cair.
+
+---
+
+## Rodada 21 — a série é um ciclo? (previsões registradas antes do código)
+
+**O teste.** Para as 41 seções do `resultados.txt` (palavras da Rodada 19, como conjuntos), a semelhança entre duas seções é o cosseno dos vetores
+binários pesados por idf = ln(K/df): sim(i, j) = Σ_{w em comum} idf(w)² / √(Σ_{w em i} idf(w)² · Σ_{w em j} idf(w)²). Índice do ciclo: a semelhança média
+da **Parte 41** com as Partes 1–10, dividida pela semelhança média dela com as Partes 11–30. Acima de 1, o fim se parece mais com o começo do que com o meio.
+
+**IA-Python (previsão (i)):** a Rodada 20 mostrou a Parte 41 puxada para a época 1; a série volta ao começo. Índice em **[1,05; 1,60]**.
+
+**IA-Java (previsão (j)):** a Parte 41 foi classificada por 6,6 nats, por poucas palavras; a semelhança decai com a distância no tempo, e o meio (11–30) está
+mais perto de 41 que o começo. Índice em **[0,60; 0,95]**.
+
+**As duas (previsão (k)):** a semelhança média entre partes vizinhas (distância 1) é maior que entre partes a distância 20; e IGUAIS em Java.
