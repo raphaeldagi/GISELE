@@ -81,6 +81,10 @@ anterior, commit e push.
 - Antes de trocar uma heurística por uma solução exata (um teorema), verificar se as premissas da solução valem no agente (Parte 23).
 - Uma conta feita depois de ver o resultado (posterior) só vira evidência quando prevê um mundo ou sementes novas (Parte 25).
 - A conta (decomposição dos termos) vem antes da previsão de comportamento, não depois (Parte 27).
+- Um teste de unidade de uma fórmula usa um caso em que TODOS os termos são diferentes de zero (Parte 30: o teste
+  com interação zero deixou passar um erro de sinal nas interações).
+- O piso do caos (Parte 30): com desvio ~0,6 por semente no sequencial, o menor efeito visível é 2·0,6/√n
+  (0,26 com 20 sementes, 0,165 com 60). Não prever diferenças abaixo do piso; replicar em lotes novos antes de concluir.
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).
 

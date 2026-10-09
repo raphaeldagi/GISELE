@@ -4959,7 +4959,7 @@ def p357_takeuchi(treino=150):
 # --- Parte 30 (0x1E): a SYNTHAI em hexadecimal ---
 
 # Placar acumulado ao fim da Parte 30 (atualizado quando os testes da parte terminam)
-ERROS_P369, TESTES_P369 = 89, 200
+ERROS_P369, TESTES_P369 = 90, 201
 
 
 def _digitos(numerador, denominador, base, n):

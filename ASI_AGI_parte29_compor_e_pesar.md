@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 29: compor em vez de herdar, e pensar com mais pesos
 
-> Continuação da [Parte 28](ASI_AGI_parte28_a_ancora.md). Módulos novos: [`synthai/composta.py`](synthai/composta.py) e
+> Continuação da [Parte 28](ASI_AGI_parte28_a_ancora.md). **Próxima:** [Parte 30 — hexadecimal e o dicionário](ASI_AGI_parte30_hexadecimal_e_dicionario.md) (P361–P380). Módulos novos: [`synthai/composta.py`](synthai/composta.py) e
 > [`synthai/pensamento_rico.py`](synthai/pensamento_rico.py) (testes em [`synthai/testes_composta.py`](synthai/testes_composta.py)). Os números saem
 > de `p352_...` a `p357_...` em [`calculos.py`](calculos.py); a saída completa está em [`resultados.txt`](resultados.txt). O projeto inteiro num
 > arquivo só: [`SYNTHAI_completo.py`](SYNTHAI_completo.py).
