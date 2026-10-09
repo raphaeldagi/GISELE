@@ -300,22 +300,25 @@ def minset_reduzido(nos, defs, minset):
 
 
 def profundidades(d):
-    """Profundidade de cada sinset na taxonomia (o menor número de hiperônimos até uma raiz), por programação dinâmica."""
-    prof = {}
-    for i in range(len(d.sinsets)):
-        pilha = [i]
-        while pilha:
-            j = pilha[-1]
-            if j in prof:
-                pilha.pop()
-                continue
-            pais = [d.indice[h] for h in d.sinsets[j][2] if h in d.indice]
-            faltam = [k for k in pais if k not in prof]
-            if faltam:
-                pilha.extend(faltam)
-                continue
-            prof[j] = 0 if not pais else 1 + min(prof[k] for k in pais)
-            pilha.pop()
+    """Profundidade de cada sinset na taxonomia: o menor número de hiperônimos até uma raiz (um sinset sem hiperônimo).
+    Busca em largura a partir das raízes, descendo pelos hipônimos. O WordNet 3.0 tem um ciclo nos hiperônimos (P384): a
+    primeira versão (recursão pela pilha) não terminava nele e estourou 13,9 GB de memória; a busca em largura visita
+    cada sinset uma vez, com ou sem ciclo. Um sinset que não alcança raiz nenhuma fica de fora."""
+    filhos = {}
+    raizes = []
+    for i, x in enumerate(d.sinsets):
+        pais = [d.indice[h] for h in x[2] if h in d.indice]
+        if not pais:
+            raizes.append(i)
+        for k in pais:
+            filhos.setdefault(k, []).append(i)
+    prof = {i: 0 for i in raizes}
+    fila = list(raizes)
+    for j in fila:
+        for k in filhos.get(j, ()):
+            if k not in prof:
+                prof[k] = prof[j] + 1
+                fila.append(k)
     return prof
 
 

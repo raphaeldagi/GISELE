@@ -2,7 +2,7 @@
 
 import unittest
 
-from .dicionario import fecho_parcial, minset_reduzido, spearman
+from .dicionario import fecho_parcial, minset_reduzido, profundidades, spearman
 from .hexadecimal import gray, hamming, subida_de_encosta, ulps_entre
 
 BRINQUEDO = {"a": {"b"}, "b": {"a"}, "c": {"a"}, "d": {"c", "b"}, "e": {"d"}}
@@ -34,3 +34,16 @@ class TesteParte31(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TesteProfundidadesComCiclo(unittest.TestCase):
+    def test_ciclo_nos_hiperonimos_termina(self):
+        """O WordNet 3.0 tem um ciclo nos hiperônimos (P384); a primeira versão de profundidades não terminava nele."""
+        class D:
+            sinsets = [("n", ["raiz"], [], ""), ("v", ["a"], ["2", "0"], ""), ("v", ["b"], ["1"], ""), ("n", ["c"], ["2"], "")]
+            indice = {"0": 0, "1": 1, "2": 2, "3": 3}
+        prof = profundidades(D())
+        self.assertEqual(prof[0], 0)
+        self.assertEqual(prof[1], 1)  # a -> raiz (a -> b -> a é o ciclo)
+        self.assertEqual(prof[2], 2)  # b -> a -> raiz
+        self.assertEqual(prof[3], 3)
