@@ -7196,6 +7196,64 @@ def p793_profundidade():
                 soma[k][1] += 1
     return {k: (s_ / n, n) for k, (s_, n) in soma.items()}
 
+
+# --- Parte 46 (0x2E): a resposta é a pergunta e a pergunta é a resposta; refazer tudo desde o começo ---
+
+# Placar acumulado ao fim da Parte 46 (atualizado quando os testes da parte terminam)
+ERROS_P849, TESTES_P849 = 0, 0
+
+
+def p821_inversao(partes=range(31, 46)):
+    """As perguntas e respostas dos meus documentos, nos dois sentidos. Para cada pergunta p e a sua resposta r (zlib):
+    redundância da resposta dada a pergunta, 1 − I(r|p)/C(r) (o sentido da P703), e redundância da pergunta dada a
+    resposta, 1 − I(p|r)/C(p), com I(p|r) = C(r + p) − C(r): quanto da pergunta a resposta já contém."""
+    import os
+    from synthai.semiotica import comprimido, informacao_condicional, premissas_e_respostas
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    rr, rp = [], []
+    for n in partes:
+        nome = next(f for f in sorted(os.listdir(raiz)) if f.startswith(f"ASI_AGI_parte{n}_"))
+        for _, p_, r_ in premissas_e_respostas(open(os.path.join(raiz, nome), encoding="utf-8").read()):
+            if r_:
+                rr.append(informacao_condicional(p_, r_)[2])
+                cp = comprimido(p_)
+                rp.append(1 - (comprimido(r_ + "\n" + p_) - comprimido(r_)) / cp)
+    return sum(rr) / len(rr), sum(rp) / len(rp), len(rr)
+
+
+def p822_dialogo_invertido():
+    """A pergunta é a resposta, no diálogo: a pergunta deixada no fim de cada rodada, comparada com a própria rodada que a
+    gerou (o texto antes dela) e com a rodada seguinte (que a responde). Redundância da pergunta dada cada texto,
+    1 − I(q|t)/C(q). Se a pergunta nasce da resposta que a precede, ela está mais contida na própria rodada."""
+    import os
+    import re
+    from synthai.semiotica import comprimido
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    texto = open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8").read()
+    rodadas = re.split(r"\n## Rodada ", texto)
+    propria, seguinte = [], []
+    for atual, prox in zip(rodadas, rodadas[1:]):
+        m = re.search(r"\*\*IA-[A-Za-z]+ \((?:a )?pergunta para a Rodada \d+\)\)?:?\*\*:?\s*(.*?)(?:\n\n|$)", atual, re.S)
+        if not m:
+            continue
+        q = m.group(1)
+        antes = atual[: m.start()]
+        red = lambda t: 1 - (comprimido(t + "\n" + q) - comprimido(t)) / comprimido(q)
+        propria.append(red(antes))
+        seguinte.append(red(prox))
+    return sum(propria) / len(propria), sum(seguinte) / len(seguinte), len(propria)
+
+
+def p823_reproducao(velho, novo):
+    """Refazer tudo desde o começo: compara, linha a linha, a saída antiga (o resultados.txt commitado) com a de uma
+    execução nova de todas as partes, até o começo da unificação da antiga. Devolve (linhas comparadas, iguais, as linhas
+    diferentes com o prefixo de cada uma)."""
+    a = open(velho, encoding="utf-8").read().split("\n")
+    b = open(novo, encoding="utf-8").read().split("\n")
+    fim = next(i for i, x in enumerate(a) if x.startswith("=== Unificacao"))
+    difs = [(i, a[i][:40], b[i][:40] if i < len(b) else None) for i in range(fim) if i >= len(b) or a[i] != b[i]]
+    return fim, fim - len(difs), difs
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
