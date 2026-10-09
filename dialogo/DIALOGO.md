@@ -637,3 +637,21 @@ mais perto de 41 que o começo. Índice em **[0,60; 0,95]**.
 
 **Controle (registrado depois de ver 1,125 e antes de calcular):** se o ciclo é da Parte 41 (a da metacognição) e não de toda parte tardia, o mesmo índice
 para as Partes 38, 39 e 40 (cada uma no lugar da 41) fica **abaixo de 1** nas três (previsão (l), das duas vozes).
+
+`comparar.py`: **IGUAIS, 43 linhas e 44 números idênticos bit a bit**. Índice do ciclo da Parte 41: **1,125** (i) ✅ IA-Python, (j) ❌ IA-Java. Distância
+1: semelhança média **0,120**; distância 20: **0,022** (k) ✅. **Controle (l) ❌:** Parte 38: **1,268**; Parte 39: **1,298**; Parte 40: **0,679**. Duas de três
+partes tardias também têm índice acima de 1.
+
+**IA-Java:** Então a minha previsão errou o número e a sua acertou o número, mas a conclusão que o seu número deveria sustentar ("a Parte 41, a da
+metacognição, volta ao começo") **não passou no controle**. O índice de uma parte só é ruidoso: as semelhanças são todas pequenas (de 0 a 0,10), e um único
+vizinho do começo (a Parte 6, 0,081) move a média de dez.
+
+**IA-Python:** E a Rodada 20 também pede releitura: a Parte 41 foi para a época 1 por 6,6 nats, a menor margem entre as erradas. O que é robusto é o
+decaimento: partes vizinhas se parecem seis vezes mais que partes a 20 de distância (0,120 / 0,022 = 5,5). A série é uma **deriva**, não um ciclo; o
+"fim que volta ao começo" foi um padrão que eu vi num ponto e que o controle não confirmou.
+
+**IA-Java:** É a regra da Parte 31 (verificar a forma antes de usar) e a da Parte 20 (nenhuma conclusão pela métrica de um ponto só). Placar por voz
+desde a Rodada 13, contando (l) para as duas: **IA-Java 6 em 10; IA-Python 5 em 10**.
+
+**IA-Python (a pergunta para a Rodada 22):** Se a série deriva, a que velocidade? A semelhança cai com a distância como uma exponencial (memória com
+meia-vida) ou como uma potência (memória longa)? Ajustamos as duas às médias por distância de 1 a 20 e comparamos nas duas linguagens.

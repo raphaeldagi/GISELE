@@ -7455,6 +7455,8 @@ def testes_de_regressao():
         "P821": round(p821_inversao(range(31, 46))[1], 3) == 0.579,
         "P851": round(p851_genero_e_diferenca()[0], 3) == 0.602,
         "P852": p852_cadeia_hexadecimal()[0] == 352 and round(p852_cadeia_hexadecimal(4095)[1], 3) == 0.432,
+        "P882": p882_mapa_da_definicao()[2] == 23 and round(p882_mapa_da_definicao()[5], 4) == 0.6986,
+        "P883": round(p883_felizes_hex()[0], 4) == 0.2613,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -8640,6 +8642,26 @@ def p883_felizes_hex(ate=4095, base=16):
             ciclos.add(tuple(ciclo[k:] + ciclo[:k]))
     return felizes / ate, sorted(ciclos)
 
+
+def p884_ciclo_da_serie(alvos=(41, 40, 39, 38)):
+    """Rodada 21 (P884): a semelhança idf entre as seções do resultados.txt (dialogo/rodada21.py, conferido em Java).
+    Devolve (média a distância 1, média a distância 20, {parte: índice do ciclo = média com 1-10 / média com 11-30})."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada21", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada21.py"))
+    r21 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r21)
+    cs = r21.conjuntos()
+    sim = r21.semelhancas(cs)
+    pos = {n: i for i, (n, _) in enumerate(cs)}
+    ind = {}
+    for a in alvos:
+        c = [sim[pos[a]][pos[k]] for k in range(1, 11) if k in pos]
+        m = [sim[pos[a]][pos[k]] for k in range(11, 31) if k in pos and k != a]
+        ind[a] = (sum(c) / len(c)) / (sum(m) / len(m))
+    return r21.media_distancia(sim, 1), r21.media_distancia(sim, 20), ind
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -8655,6 +8677,22 @@ def _parte_47():
         print(f"P853 {rodada}: {ac} de {k} partes reconstruidas (erradas: {erradas}); mediana da razao propria/melhor outra = {med:.3f}")
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P879, testes=TESTES_P879)
     print(f"P879 minha taxa de erro ({ERROS_P879}/{TESTES_P879}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_48():
+    print("--- Parte 48 (0x30: o ciclo) ---")
+    ac, n, erradas, maioria = p881_epoca()
+    print(f"P881 o Naive Bayes reconhece a epoca de {ac} de {n} secoes (erradas: {erradas}); a maioria deixando um de fora: {maioria}; "
+          f"ao acaso P(>= {ac}) = {p825_cauda_binomial(n, 0.5, ac):.2e}")
+    N, sumid, cic, nciclos, cauda, bacia, ciclo = p882_mapa_da_definicao()
+    print(f"P882 mapa da definicao: N = {N}; sumidouros = {sumid}; pontos ciclicos = {cic} em {nciclos} ciclos (aleatorio: "
+          f"{sqrt(pi * N / 2):.1f}); cauda media = {cauda:.3f} (aleatorio: {sqrt(pi * N / 8):.1f}); maior bacia = {bacia:.4f}, ciclo {ciclo}")
+    frac, ciclos = p883_felizes_hex()
+    print(f"P883 felizes em base 16 (1..4095) = {frac:.4f}; ciclos alem do 1: {ciclos}; base 10 (1..1000) = {p883_felizes_hex(1000, 10)[0]:.3f}")
+    d1, d20, ind = p884_ciclo_da_serie()
+    print(f"P884 semelhanca media a distancia 1 = {d1:.4f}; a distancia 20 = {d20:.4f}; indice do ciclo: "
+          + "; ".join(f"parte {k} = {v:.3f}" for k, v in ind.items()))
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P909, testes=TESTES_P909)
+    print(f"P909 minha taxa de erro ({ERROS_P909}/{TESTES_P909}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -8692,7 +8730,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48}
 
 
 if __name__ == "__main__":
