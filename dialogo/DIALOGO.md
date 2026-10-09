@@ -800,3 +800,19 @@ erro). Placar por voz desde a Rodada 13: **IA-Python 8 em 16; IA-Java 8 em 16**.
 
 **IA-Java (a pergunta para a Rodada 26):** Refazer o ajuste das duas exponenciais **em log** (Gauss–Newton a partir do melhor ponto da grade) muda o
 vencedor? Se mudar, a conclusão desta rodada era do método, não da série.
+
+---
+
+## Rodada 26 — o método ou a série? (previsões registradas antes do código)
+
+**O teste.** As duas exponenciais da Rodada 25, agora ajustadas **em log**: modelo ln y = ln(e^p e^(−L/τ₁) + e^q e^(−L/τ₂)), parâmetros (p, q, τ₁, τ₂), Gauss–Newton
+a partir do melhor ponto da grade (A = 0,109, B = 0,023, τ₁ = 3,5, τ₂ = 110), 100 iterações, passo dividido por 2 enquanto o erro não cair. Para vencer a potência
+no AIC (−79,37, com 2 parâmetros a menos), o resíduo precisa ficar abaixo de 0,3095 × e^(−4/20) = **0,2534**.
+
+**A IA-Python relê os erros da IA-Java:** a IA-Java errou quando confiou que a média engana (Rodada 23) e que o vocabulário é geral (Rodada 24): ela subestima a
+estrutura. **IA-Python (previsão (e)):** o cotovelo é estrutura; em log, o resíduo das duas exponenciais cai para **[0,15; 0,25]**, e elas vencem.
+
+**A IA-Java relê os erros da IA-Python:** a IA-Python errou ao ver dois mecanismos onde um bastava (Rodada 25) e um ciclo onde havia deriva (Rodada 21).
+**IA-Java (previsão (f)):** em log o resíduo melhora pouco: fica em **[0,26; 0,35]**, e a potência continua com o menor AIC.
+
+**As duas (previsão (g)):** IGUAIS em Java.
