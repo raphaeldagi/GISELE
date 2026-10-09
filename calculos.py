@@ -8966,6 +8966,66 @@ def p974_previsoes_sem_largura(partes=range(46, 52)):
         res[n] = (prev, len(uni), uni)
     return res
 
+
+ERROS_P1029, TESTES_P1029 = 0, 0
+
+
+def p1002_funis_pt(pt=None):
+    """Os funis das definições em português (P1002): cada lema de uma palavra só de um sinset de substantivo com glosa vai
+    para a primeira palavra da glosa (no singular) que é lema de substantivo e não é ela mesma. Devolve (a mais escolhida,
+    o seu grau, a fração das palavras com destino que escolhem uma das 10 mais, palavras com destino, as 10 mais)."""
+    from synthai.dicionario import DicionarioPT
+    pt = pt or DicionarioPT()
+    nomes = {x.lower() for sid, ls in pt.lemas.items() if sid.endswith("-n") for x in ls if x.isalpha()}
+    f = {}
+    for sid in sorted(pt.glosas):
+        if not sid.endswith("-n") or sid not in pt.lemas:
+            continue
+        for w in pt.lemas[sid]:
+            w = w.lower()
+            if not w.isalpha() or w in f:
+                continue
+            for t in pt.fichas(pt.glosas[sid]):
+                b = pt.lema(t)
+                if b is not None and b in nomes and b != w:
+                    f[w] = b
+                    break
+    grau = {}
+    for b in f.values():
+        grau[b] = grau.get(b, 0) + 1
+    top = sorted(grau, key=lambda w: (-grau[w], w))[:10]
+    return top[0], grau[top[0]], sum(grau[w] for w in top) / len(f), len(f), [(w, grau[w]) for w in top]
+
+
+def p1003_inverte_e_soma(ate=4095, base=16, maximo=50):
+    """Inverte e soma (P1003): n -> n + (n com os dígitos invertidos na base), até um palíndromo, no máximo `maximo` passos.
+    Um n que já é palíndromo conta com 0 passos. Devolve (fração que chega, média de passos dos que chegam, os que não
+    chegam)."""
+    def digitos(n):
+        ds = []
+        while n:
+            n, r = divmod(n, base)
+            ds.append(r)
+        return ds  # do menos significativo para o mais
+
+    def inverso(n):
+        v = 0
+        for r in digitos(n):
+            v = v * base + r
+        return v
+
+    passos, nao = [], []
+    for n in range(1, ate + 1):
+        x, k = n, 0
+        while digitos(x) != digitos(x)[::-1] and k < maximo:
+            x += inverso(x)
+            k += 1
+        if digitos(x) == digitos(x)[::-1]:
+            passos.append(k)
+        else:
+            nao.append(n)
+    return len(passos) / ate, sum(passos) / len(passos), nao
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()

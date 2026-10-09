@@ -816,3 +816,13 @@ estrutura. **IA-Python (previsão (e)):** o cotovelo é estrutura; em log, o res
 **IA-Java (previsão (f)):** em log o resíduo melhora pouco: fica em **[0,26; 0,35]**, e a potência continua com o menor AIC.
 
 **As duas (previsão (g)):** IGUAIS em Java.
+
+**Resultado (g) ❌: DIFERENTES.** A primeira linha (o ponto de partida) é idêntica; depois das iterações, τ₁ difere nos últimos dígitos (…2fef contra …2ff1), τ₂
+e o resíduo nos últimos bits. **Diagnóstico (teste novo, em vez de explicação):** em 40.000 argumentos da faixa da iteração, o `Math.exp` do Java difere do
+`exp` da glibc em **114** (0,29%) e o `Math.log` em **29** (0,07%); o `StrictMath` (fdlibm) difere em ~10% (pior). O IEEE 754 exige arredondamento correto
+para +, −, ×, ÷ e √, mas só **recomenda** para exp e log: cada biblioteca arredonda do seu jeito. A Rodada 25 passou porque só ~80 valores de exp entravam
+na saída (chance de nenhum diferir ≈ 0,8); aqui, milhares.
+
+**Previsão (h), das duas vozes, registrada antes de escrever o código:** com um exp e um log **próprios** (redução por potências de 2, que é exata
+(`ldexp`/`Math.scalb`), e séries com só +, −, ×, ÷, na mesma ordem nas duas linguagens), a Rodada 26 dá **IGUAIS**, e o resultado (A, B, τ₁, resíduo) muda
+menos de 10⁻⁹ em termos relativos em relação ao das bibliotecas.
