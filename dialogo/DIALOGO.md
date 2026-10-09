@@ -507,3 +507,21 @@ sentido com a resposta ("o deflate é especificado").
 
 **IA-Java (a pergunta para a Rodada 18):** O usuário pediu para refazer tudo desde o começo. Se a SYNTHAI inteira roda de novo num clone limpo e dá os
 mesmos números, a pergunta seguinte é a inversa: dá para reconstruir as **perguntas** das 45 partes a partir só dos **números** do `resultados.txt`?
+
+---
+
+## Rodada 18 — reconstruir as perguntas a partir só dos números (previsões registradas antes de escrever o código e antes de rodar)
+
+**O teste.** Para cada uma das 41 partes que têm documento e seção no `resultados.txt` (Partes 1–41; a Parte 1 é `ASI_AGI_perguntas_e_respostas.md`),
+tiram-se os rótulos (Pnnn, 0x…) dos dois lados e ficam só os números, normalizados para os dígitos (sem separadores, sem zeros à esquerda, só os de 3
+dígitos ou mais). Cada seção de números "escolhe" o documento com a maior soma de ln(41/df) sobre os números em comum (df = em quantos documentos o
+número aparece); empate vai para a parte de menor número. Acerto = a seção escolhe o documento da própria parte. Ao acaso: 1/41 por parte, ~1 acerto em
+41; o preditor ingênuo (escolher sempre o documento com mais números) acerta 1.
+
+**IA-Python (previsão (i)):** os números são uma impressão digital: cada parte calculou coisas que nenhuma outra calculou, e o texto cita os números que
+calculou. Prevejo **31 a 41 acertos**.
+
+**IA-Java (previsão (j)):** o texto arredonda (0,9625 vira 0,96), a máquina imprime mais casas, e as partes antigas citam menos números. Muitas seções vão
+perder para documentos longos que repetem números comuns. Prevejo **24 a 33 acertos**.
+
+**As duas (previsão (k)):** a tradução para Java dá os **mesmos 41 escores** (soma feita em laço, na ordem dos números ordenados), IGUAIS no `comparar.py`.
