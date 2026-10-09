@@ -8,7 +8,8 @@ decidir é amostrar do posterior (Thompson; PSRL nos MDPs). Os rivais são os m�
 Só biblioteca padrão. Cada classe recebe o próprio gerador (random.Random) e nunca lê o mundo por dentro.
 """
 
-from math import log, sqrt
+import random
+from math import exp, log, sqrt
 
 
 # --------------------------------------------------------------------------- bandido de Bernoulli
@@ -189,6 +190,56 @@ class ThompsonBOCPD:
     def substituir(self, a, b):
         """O dano da P405: a crença de cada braço vira uma hipótese só, com as contagens de lixo."""
         self.mist = [[[1.0, x, y]] for x, y in zip(a, b)]
+
+
+class ThompsonMistura:
+    """O agente que aprende a suposição (Parte 38): média bayesiana de modelos sobre o risco de mudança. Mantém um
+    ThompsonBOCPD para cada H em `riscos` (H = 0 é o Thompson exato, que supõe um mundo que não muda) e o log do peso de
+    cada modelo, que soma, a cada observação, o log da probabilidade que o modelo deu a ela. Com o risco aplicado antes
+    da observação, a preditiva do modelo H é (1 − H)·Σ_h w_h·pred_h + H·½. Escolher: sorteia um modelo pelo peso e deixa
+    ele escolher. Na predição em perda logarítmica, a mistura perde no máximo ln(número de modelos) para o melhor modelo,
+    em qualquer sequência (é uma identidade: −ln Σ_m π_m·P_m ≤ −ln π_m* − ln P_m*)."""
+
+    def __init__(self, k, rng, riscos=(0.0, 1 / 2000, 1 / 500, 1 / 100), hipoteses=16):
+        self.rng = rng
+        self.modelos = [ThompsonBOCPD(k, random.Random(rng.random()), h, hipoteses) for h in riscos]
+        self.riscos = riscos
+        self.logw = [0.0] * len(riscos)
+        self.perda = [0.0] * len(riscos)  # −Σ ln P_m(observações), por modelo
+        self.perda_mistura = 0.0
+
+    def pesos(self):
+        m = max(self.logw)
+        e = [exp(x - m) for x in self.logw]
+        t = sum(e)
+        return [x / t for x in e]
+
+    def escolher(self):
+        u, acum = self.rng.random(), 0.0
+        ws = self.pesos()
+        for mod, w in zip(self.modelos, ws):
+            acum += w
+            if u < acum:
+                return mod.escolher()
+        return self.modelos[-1].escolher()
+
+    def atualizar(self, braco, r):
+        ws = self.pesos()
+        preds = []
+        for mod, H in zip(self.modelos, self.riscos):
+            hs = mod.mist[braco]
+            pr = sum(h[0] * ((h[1] if r else h[2]) / (h[1] + h[2])) for h in hs)
+            preds.append((1 - H) * pr + H * 0.5)
+        self.perda_mistura -= log(sum(w * p for w, p in zip(ws, preds)))
+        for i, p in enumerate(preds):
+            self.logw[i] += log(p)
+            self.perda[i] -= log(p)
+        for mod in self.modelos:
+            mod.atualizar(braco, r)
+
+    def substituir(self, a, b):
+        for mod in self.modelos:
+            mod.substituir(a, b)
 
 class QEpsilon:
     """Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso."""

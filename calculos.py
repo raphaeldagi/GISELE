@@ -6347,6 +6347,115 @@ def p533_abreviacao():
     resto = ws[1000:]
     return rho, sum(map(len, top)) / len(top), sum(map(len, resto)) / len(resto), len(ws)
 
+
+# --- Parte 38 (0x26): o agente que aprende a suposição (média bayesiana de modelos sobre o risco de mudança);
+#     quando o produto das verossimilhanças vira 0x0p+0; a lei de Heaps ---
+
+# Placar acumulado ao fim da Parte 38 (atualizado quando os testes da parte terminam)
+ERROS_P609, TESTES_P609 = 0, 0
+
+
+def p541_mistura(k=10):
+    """ThompsonMistura (H ∈ {0, 1/2000, 1/500, 1/100}) nos três mundos das P491/P521/P531, e os pesos finais médios dos
+    modelos no mundo estável e no que muda."""
+    from synthai.decisao import ThompsonMistura, rodar_bandido
+    fab = lambda sm: ThompsonMistura(k, _rng(sm + 1))
+    est, pesos_est = [], [0.0] * 4
+    for sm in range(4010, 4110):
+        ag = fab(sm)
+        est.append(rodar_bandido(ag, _bracos_401(sm, k), 2000, _rng(sm + 2))[-1])
+        pesos_est = [a + b / 100 for a, b in zip(pesos_est, ag.pesos())]
+
+    def lixo(ag):
+        r = _rng(ag.lixo)
+        a = [float(r.randint(1, 20)) for _ in range(k)]
+        b = [float(r.randint(1, 20)) for _ in range(k)]
+        ag.substituir(a, b)
+
+    sem, com = [], []
+    for sm in range(4050, 4150):
+        ps = _bracos_401(sm, k)
+        a = rodar_bandido(fab(sm), ps, 2000, _rng(sm + 2))
+        ag = fab(sm)
+        ag.lixo = sm + 3
+        b = rodar_bandido(ag, ps, 2000, _rng(sm + 2), 1000, lixo)
+        sem.append(a[-1] - a[999])
+        com.append(b[-1] - b[999])
+    muda, pesos_muda = [], [0.0] * 4
+    for sm in range(4620, 4670):
+        r = _rng(sm)
+        fases = [[r.random() for _ in range(k)] for _ in range(8)]
+        ag = fab(sm)
+        rr = _rng(sm + 2)
+        reg = 0.0
+        for passo in range(4000):
+            ps = fases[passo // 500]
+            i = ag.escolher()
+            ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+            reg += max(ps) - ps[i]
+        muda.append(reg)
+        pesos_muda = [a + b / 50 for a, b in zip(pesos_muda, ag.pesos())]
+    m = lambda v: sum(v) / len(v)
+    return m(est), m(com) - m(sem), m(muda), pesos_est, pesos_muda
+
+
+def p542_contas(semente=4010, k=10):
+    """A CONTA antes da P542: o produto NÃO normalizado das preditivas do modelo exato vira exatamente 0,0 quando passa
+    abaixo de 2⁻¹⁰⁷⁵ (meio subnormal mínimo, 0x0.0000000000001p-1022 = 2⁻¹⁰⁷⁴). Se o agente puxa quase sempre o melhor
+    braço, cada passo custa em média H₂(p*) = −p* log₂ p* − (1 − p*) log₂(1 − p*) bits; o passo do zero ≈ 1075/H₂(p*)."""
+    p = max(_bracos_401(semente, k))
+    h2 = -p * log2(p) - (1 - p) * log2(1 - p)
+    return p, h2, 1075 / h2
+
+
+def p542_underflow(semente=4010, k=10, t=6000):
+    """Roda a ThompsonMistura no mundo estável da semente e multiplica, sem normalizar, as preditivas do modelo exato
+    (H = 0). Devolve o passo em que o produto vira 0,0, o passo em que ele vira subnormal, e o −log₂ médio por passo."""
+    import sys as _s
+    from synthai.decisao import ThompsonMistura
+    ps = _bracos_401(semente, k)
+    ag = ThompsonMistura(k, _rng(semente + 1))
+    rr = _rng(semente + 2)
+    prod, zero, sub, bits = 1.0, None, None, 0.0
+    for passo in range(1, t + 1):
+        i = ag.escolher()
+        r = 1 if rr.random() < ps[i] else 0
+        hs = ag.modelos[0].mist[i]
+        pred = sum(h[0] * ((h[1] if r else h[2]) / (h[1] + h[2])) for h in hs)
+        prod *= pred
+        bits -= log2(pred)
+        if sub is None and 0.0 < prod < _s.float_info.min:
+            sub = passo
+        if zero is None and prod == 0.0:
+            zero = passo
+            break
+        ag.atualizar(i, r)
+    return zero, sub, bits / passo
+
+
+def p543_heaps(semente=543, pontos=10):
+    """A lei de Heaps no data lake: o vocabulário V(n) das definições lidas em ordem aleatória, contra o número n de
+    palavras lidas; β pela inclinação de log V × log n em `pontos` frações. A relação de Heaps com Zipf: β = 1/s para
+    s > 1 (com s da P463, 1,08, e da P383, 1,069)."""
+    from synthai.dicionario import Dicionario
+    d = Dicionario()
+    glosas = [d.palavras_da_definicao(g) for _, _, _, g in d.sinsets]
+    _rng(semente).shuffle(glosas)
+    total = sum(len(g) for g in glosas)
+    alvos = [total * (j + 1) // pontos for j in range(pontos)]
+    vistos, n, xs, ys, j = set(), 0, [], [], 0
+    for g in glosas:
+        for w in g:
+            vistos.add(w)
+            n += 1
+            if j < pontos and n == alvos[j]:
+                xs.append(log(n))
+                ys.append(log(len(vistos)))
+                j += 1
+    mx, my = sum(xs) / len(xs), sum(ys) / len(ys)
+    beta = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
+    return beta, 1 / 1.08, 1 / 1.0694, total, len(vistos)
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
