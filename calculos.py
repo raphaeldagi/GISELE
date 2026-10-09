@@ -6000,6 +6000,140 @@ def p465_morris(k=10, t=2000, sementes=tuple(range(4010, 4110))):
         b.append(rodar_bandido(ThompsonMorris(k, _rng(sm + 1)), ps, t, _rng(sm + 2))[-1])
     return sum(b) / len(b), _pareado(a, b)
 
+
+# --- Parte 35 (0x23): a renovação dirigida pela surpresa; o Naive Bayes com pares de palavras; os escores em float16 ---
+
+# Placar acumulado ao fim da Parte 35 (atualizado quando os testes da parte terminam)
+ERROS_P519, TESTES_P519 = 0, 0
+
+
+def p491_contas(janela=20, z=3.0, t=2000, k=10, sementes=tuple(range(4010, 4110))):
+    """A CONTA antes da P491: a chance de um alarme falso por puxada de um braço com p conhecido. A média da janela é
+    Binomial(janela, p)/janela; o alarme dispara se ela se afasta de p por mais de z·√(p(1 − p)/janela). Somada sobre as
+    puxadas esperadas do melhor braço (≈ T), dá quantas renovações falsas por rodada o mundo estacionário provoca."""
+    from math import comb as cb
+    falsos = []
+    for sm in sementes:
+        p = max(_bracos_401(sm, k))
+        lim = z * sqrt(p * (1 - p) / janela)
+        prob = sum(cb(janela, j) * p ** j * (1 - p) ** (janela - j) for j in range(janela + 1) if abs(j / janela - p) > lim)
+        falsos.append(prob * t)
+    return sum(falsos) / len(falsos)
+
+
+def p491_surpresa(k=10, janela=20, z=3.0):
+    """A renovação dirigida (ThompsonSurpresa) nos três mundos onde as anteriores foram medidas: o estacionário da P401
+    (arrependimento final), o dano da P405 (custo do dano na segunda metade) e o mundo que muda da P462 (arrependimento
+    contra o melhor do momento). Devolve os três números e o número médio de renovações no estacionário."""
+    from synthai.decisao import ThompsonSurpresa, rodar_bandido
+    est, ren = [], []
+    for sm in range(4010, 4110):
+        ag = ThompsonSurpresa(k, _rng(sm + 1), janela, z)
+        est.append(rodar_bandido(ag, _bracos_401(sm, k), 2000, _rng(sm + 2))[-1])
+        ren.append(ag.renovacoes)
+
+    def lixo(ag):
+        r = _rng(ag.lixo)
+        ag.a = [float(r.randint(1, 20)) for _ in ag.a]
+        ag.b = [float(r.randint(1, 20)) for _ in ag.b]
+
+    sem, com = [], []
+    for sm in range(4050, 4150):
+        ps = _bracos_401(sm, k)
+        a = rodar_bandido(ThompsonSurpresa(k, _rng(sm + 1), janela, z), ps, 2000, _rng(sm + 2))
+        ag = ThompsonSurpresa(k, _rng(sm + 1), janela, z)
+        ag.lixo = sm + 3
+        b = rodar_bandido(ag, ps, 2000, _rng(sm + 2), 1000, lixo)
+        sem.append(a[-1] - a[999])
+        com.append(b[-1] - b[999])
+    muda = []
+    for sm in range(4620, 4670):
+        r = _rng(sm)
+        fases = [[r.random() for _ in range(k)] for _ in range(8)]
+        ag = ThompsonSurpresa(k, _rng(sm + 1), janela, z)
+        rr = _rng(sm + 2)
+        reg = 0.0
+        for passo in range(4000):
+            ps = fases[passo // 500]
+            i = ag.escolher()
+            ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+            reg += max(ps) - ps[i]
+        muda.append(reg)
+    m = lambda v: sum(v) / len(v)
+    return m(est), m(com) - m(sem), m(muda), m(ren)
+
+
+def _dados_464(semente=464, bigramas=False):
+    from synthai.dicionario import Dicionario
+    d = Dicionario()
+    dados = []
+    for p, lemas, _, glosa in d.sinsets:
+        ws = d.palavras_da_definicao(glosa)
+        if bigramas:
+            ws = ws + [a + "_" + b for a, b in zip(ws, ws[1:])]
+        dados.append((lemas[0][0].lower() <= "m", ws, "a" if p == "s" else p))
+    rng = _rng(semente)
+    rng.shuffle(dados)
+    A = [(x, y) for a, x, y in dados if a]
+    B = [(x, y) for a, x, y in dados if not a]
+    corte = len(A) // 5
+    return A[corte:], B, A[:corte]
+
+
+def p492_nb_bigramas():
+    """O Naive Bayes da P464 com pares de palavras vizinhas da definição como atributos a mais (menos independência
+    suposta, ainda uma estatística suficiente: contagens). Acurácia no teste de A depois de A e depois de B."""
+    from synthai.dicionario import NaiveBayesContagens
+    A, B, teste = _dados_464(bigramas=True)
+    m = NaiveBayesContagens()
+    acc = lambda: sum(m.prever(x) == y for x, y in teste) / len(teste)
+    for x, y in A:
+        m.aprender(x, y)
+    a = acc()
+    for x, y in B:
+        m.aprender(x, y)
+    return a, acc()
+
+
+def p493_float16():
+    """Trilha hexadecimal: os escores do Naive Bayes da P464 (depois de A e B) guardados em float16 (4 dígitos hex,
+    11 bits de mantissa). A CONTA: uma previsão só pode mudar se a margem entre as duas melhores classes for menor que
+    a distância de arredondamento, ≤ meio ulp16 do escore de cada uma (≤ ulp16 no total). Devolve: a fração de exemplos
+    com margem < ulp16(escore), a fração que de fato mudou, e o ulp16 típico."""
+    import struct
+    from math import log as ln
+    from synthai.dicionario import NaiveBayesContagens
+    A, B, teste = _dados_464()
+    m = NaiveBayesContagens()
+    for x, y in A + B:
+        m.aprender(x, y)
+    n = sum(m.ncls.values())
+    v = len(m.vocab)
+    f16 = lambda x: struct.unpack("<e", struct.pack("<e", x))[0]
+
+    def ulp16(x):
+        e = abs(x)
+        return 2.0 ** (int(ln(e) / ln(2)) - 10) if e >= 2 ** -14 else 2.0 ** -24
+
+    risco = mudou = 0
+    ulps = []
+    for x, _ in teste:
+        sc = {}
+        for cl in sorted(m.ncls):
+            s_ = ln(m.ncls[cl] / n)
+            c, t = m.cont[cl], m.total[cl]
+            for w in x:
+                s_ += ln((c.get(w, 0) + m.alfa) / (t + m.alfa * v))
+            sc[cl] = s_
+        ordem = sorted(sc, key=lambda c: -sc[c])
+        margem = sc[ordem[0]] - sc[ordem[1]]
+        u = ulp16(sc[ordem[0]])
+        ulps.append(u)
+        risco += margem < u
+        mudou += max(sorted(sc), key=lambda c: f16(sc[c])) != max(sorted(sc), key=lambda c: sc[c])
+    ulps.sort()
+    return risco / len(teste), mudou / len(teste), ulps[len(ulps) // 2]
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:

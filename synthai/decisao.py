@@ -77,6 +77,35 @@ class ThompsonMorris(ThompsonBernoulli):
         self.a[braco] = 1.0 + 2 ** self.ca[braco] - 1
         self.b[braco] = 1.0 + 2 ** self.cb[braco] - 1
 
+
+class ThompsonSurpresa(ThompsonBernoulli):
+    """Renovação DIRIGIDA (Parte 35, ↩ P408): Thompson exato, mas cada braço guarda também as últimas `janela`
+    observações; quando a média delas se afasta da média do posterior por mais de z desvios binomiais
+    (|m_janela − m_post| > z·√(m_post(1 − m_post)/janela)), o braço é renovado: a crença vira Beta(1 + sucessos da
+    janela, 1 + fracassos da janela). Só o braço desmentido esquece; os outros continuam exatos. É a compensação de
+    Jung: a correção vem de onde a crença falhou."""
+
+    def __init__(self, k, rng, janela=20, z=3.0):
+        super().__init__(k, rng)
+        self.janela, self.z = janela, z
+        self.recentes = [[] for _ in range(k)]
+        self.renovacoes = 0
+
+    def atualizar(self, braco, r):
+        super().atualizar(braco, r)
+        rec = self.recentes[braco]
+        rec.append(r)
+        if len(rec) > self.janela:
+            rec.pop(0)
+        if len(rec) == self.janela:
+            a, b = self.a[braco], self.b[braco]
+            m = a / (a + b)
+            mj = sum(rec) / self.janela
+            if abs(mj - m) > self.z * sqrt(max(m * (1 - m), 1e-9) / self.janela):
+                self.a[braco] = 1.0 + sum(rec)
+                self.b[braco] = 1.0 + self.janela - sum(rec)
+                self.renovacoes += 1
+
 class QEpsilon:
     """Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso."""
 
