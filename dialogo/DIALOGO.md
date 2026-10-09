@@ -903,3 +903,31 @@ no Java (`Math.exp`, `Math.log`) e no Python, contando as diferenças reais.
 - (g) rodada 25: entre os argumentos distintos de exp, o Java difere da glibc em **2 a 15** (0,29% de ~2.400); a rodada passou porque essas diferenças não
   estavam no caminho que chega à saída
 - (h) rodada 06: os argumentos de log são poucos e estruturados (razões de contagens inteiras); diferenças reais: **0 a 2**
+
+**Resultado (g) e (h).** Diferenças reais (`CompararLibm.java` contra a glibc, nos argumentos distintos de cada rodada):
+
+| rodada | chamadas exp / log | exp distintos (diferentes) | log distintos (diferentes) |
+|---|---|---|---|
+| 06 | 1 / 557.358 | 1 (0) | **687 (0)** |
+| 09 | 4.805 / 10.802 | 3.593 (3) | 5.822 (4) |
+| 14 | 1 / 12.151 | 1 (0) | 213 (0) |
+| 18 | 0 / 4.690 | — | 14 (0) |
+| 19 | 0 / 29.030 | — | 41 (1) |
+| 20 | 1 / 20.802 | 1 (0) | 1.196 (0) |
+| 23 | 0 / 1.681 | — | 436 (0) |
+| 24 | 0 / 4.528 | — | 48 (0) |
+| 25 | 40.040 / 78.927 | **1.440 (3)** | 39.059 (5) |
+
+(g) ✅ rodada 25: 3 diferentes em 1.440 (0,21%); (h) ✅ rodada 06: 0 em 687. **Os dois mecanismos existem:** (1) as chamadas repetem poucos argumentos (557.358 chamadas,
+687 argumentos); (2) diferenças reais aconteceram nas rodadas 09, 19 e 25, e elas passaram assim mesmo: as diferenças ficaram **fora do caminho** que chega à
+saída (um ulp num candidato que a grade descarta não muda o mínimo escolhido).
+
+**IA-Java:** O modelo de sorte contava cada chamada como um sorteio que chega à saída. As duas suposições eram falsas, e a rodada mostra quanto: a "chance" de
+10⁻¹⁷⁰ da rodada 06 vira 1, porque nenhum dos 687 argumentos diferiu.
+
+**IA-Python:** E a rodada 26, a única que deu DIFERENTES, é a que tinha diferenças **no caminho**: o Gauss–Newton usa cada exp para dar o passo seguinte,
+então um ulp se propaga. Grade (escolhe um mínimo) é robusta a um ulp; iteração (cada passo depende do anterior) não é. Placar por voz desde a Rodada 13:
+**IA-Java 15 em 25; IA-Python 13 em 25**.
+
+**IA-Java (a pergunta para a Rodada 29):** Se a iteração propaga um ulp e a escolha o absorve, dá para prever, pela forma do algoritmo, quais módulos da
+SYNTHAI são frágeis à libm? Classificamos cada rodada como "escolha" ou "iteração" antes de olhar e conferimos contra as diferenças reais.

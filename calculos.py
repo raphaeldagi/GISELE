@@ -9209,6 +9209,26 @@ def p1063_autodescritivos(base=16):
     rec(base - 1, base, 0, [])
     return sorted(achados)
 
+
+def p1061_exatidao_ou_sorte():
+    """Rodada 28 (P1061): a chance de cada rodada antiga passar por sorte pelo modelo de sorteios independentes
+    (dialogo/rodada28.py, IGUAL em Java) e as diferenças REAIS da libm nos argumentos distintos das rodadas com chance < 0,5
+    (dialogo/diferencas28.tsv, medidas com registrar_libm.py e CompararLibm.java). Devolve ({rodada: chance}, {rodada:
+    (exp distintos, exp diferentes, log distintos, log diferentes)})."""
+    import importlib.util
+    import os
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    spec = importlib.util.spec_from_file_location("rodada28", os.path.join(raiz, "dialogo", "rodada28.py"))
+    r28 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r28)
+    chances = {r: r28.chance(e, g) for r, e, g, _ in r28.contagens()}
+    dif = {}
+    for l in open(os.path.join(raiz, "dialogo", "diferencas28.tsv"), encoding="ascii").read().split("\n")[1:]:
+        if l:
+            c = l.split("\t")
+            dif[c[0]] = tuple(int(x) for x in c[1:])
+    return chances, dif
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
