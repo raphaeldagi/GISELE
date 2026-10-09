@@ -9167,6 +9167,48 @@ def p1034_pi_hexadecimal(n=1000):
     chi2 = sum((c - esperado) ** 2 / esperado for c in cont)
     return sum(a == b for a, b in zip(pelo_bbp, exatos)), n, "".join(format(h, "X") for h in exatos[:8]), chi2
 
+
+ERROS_P1089, TESTES_P1089 = 0, 0
+
+
+def p1062_folhas(d=None):
+    """Folhas e ramos da taxonomia (P1062): nos substantivos com profundidade, folha = nenhum sinset tem este como
+    hiperônimo. Devolve (fração de folhas, média de filhos dos nós internos, substantivos)."""
+    from synthai.dicionario import Dicionario, profundidades
+    d = d or Dicionario()
+    prof = profundidades(d)
+    filhos = {}
+    for i, x in enumerate(d.sinsets):
+        for h in x[2]:
+            if h in d.indice:
+                k = d.indice[h]
+                filhos[k] = filhos.get(k, 0) + 1
+    nomes = [i for i in prof if d.sinsets[i][0] == "n"]
+    internos = [filhos[i] for i in nomes if filhos.get(i, 0) > 0]
+    return (len(nomes) - len(internos)) / len(nomes), sum(internos) / len(internos), len(nomes)
+
+
+def p1063_autodescritivos(base=16):
+    """Números autodescritivos de `base` dígitos na base (P1063): d_i = quantas vezes o dígito i aparece. Enumeração exata
+    dos vetores com Σ d_i = base e Σ i·d_i = base (condições necessárias), conferindo cada um. Devolve a lista, em texto."""
+    achados = []
+
+    def rec(i, resto_peso, usados, d):
+        if i == 0:
+            d0 = base - usados
+            if 0 <= d0 < base and resto_peso == 0:
+                v = [d0] + d[::-1]
+                if all(v[j] == v.count(j) for j in range(base)) and v[0] > 0:
+                    achados.append("".join(format(x, "X") for x in v))
+            return
+        for k in range(0, min(base - 1, resto_peso // i) + 1):
+            if usados + k > base:
+                break
+            rec(i - 1, resto_peso - i * k, usados + k, d + [k])
+
+    rec(base - 1, base, 0, [])
+    return sorted(achados)
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
