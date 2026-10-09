@@ -8547,6 +8547,27 @@ def p856_acaso_851(semente=851, d=None):
         inverso += contem(d.definicao(d.sinsets[k][3]).lower(), lemas)
     return direto / n, inverso / n
 
+ERROS_P909, TESTES_P909 = 0, 0
+
+
+def p881_epoca():
+    """Rodada 20 (P881): o Naive Bayes da Parte 34 reconhece a época (Partes 1-20 ou 21-41) de cada seção do
+    resultados.txt, deixando uma de fora (dialogo/rodada20.py, conferido em Java). Devolve (acertos, seções, as erradas,
+    acertos do preditor da maioria deixando um de fora)."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada20", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada20.py"))
+    r20 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r20)
+    ds = r20.dados()
+    res = r20.deixar_um_de_fora(ds)
+    maioria = 0
+    for i, (_, ep, _) in enumerate(ds):
+        resto = [e for j, (_, e, _) in enumerate(ds) if j != i]
+        maioria += ep == max(sorted(set(resto)), key=resto.count)  # empate: a época menor, como no prever
+    return sum(ep == pv for _, ep, pv, _ in res), len(res), [n for n, ep, pv, _ in res if ep != pv], maioria
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()

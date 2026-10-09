@@ -597,3 +597,25 @@ Prevejo **30 a 38 acertos** de 41.
 totais ganha os documentos curtos. Prevejo **26 a 34**.
 
 **As duas (previsão (h)):** IGUAIS em Java (as mesmas 41 diferenças de escore, bit a bit).
+
+`comparar.py`: **IGUAIS, 42 linhas e 41 diferenças de escore idênticas bit a bit** (h) ✅. **Acertos: 39 de 41** (P881). (f) ❌ IA-Python (faixa [30; 38],
+por um), (g) ❌ IA-Java. Ao acaso, P(≥ 39 de 41 com ½) = 3,9·10⁻¹⁰ (P825); o preditor da maioria, deixando um de fora, acerta **0**.
+
+**IA-Python:** As duas erramos para baixo, e o erro tem a direção do viés da Parte 45: eu esqueci que o vocabulário de cada época é **cumulativo** (um
+módulo nomeado numa parte é citado nas seguintes), o que torna a época mais fácil de reconhecer, não mais difícil.
+
+**IA-Java:** E o meu mecanismo (a suavização favorece a classe com menos palavras) existe, mas é pequeno: os totais são 2.302 e 2.716 palavras, com 856
+no vocabulário; a diferença dos denominadores dá ln(3.572/3.158) = 0,12 nat por palavra, e uma seção tem ~100 palavras... isso daria 12 nats a favor da
+época 1 em toda seção, e as seções da época 2 venceram assim mesmo: as palavras próprias pesam mais.
+
+**IA-Python:** As duas erradas dizem algo. A **Parte 21** (época 2) foi prevista na época 1 com folga (45 nats): *velha* (+20,4) e *atenta* (+12,5) são
+nomes de agentes das Partes 19–20. A fronteira entre as épocas é minha, não da série: a Parte 21 continua a 20. A **Parte 41** (a última) foi prevista
+na época 1 por pouco (6,6 nats): *tipo*, *fala*, *perguntas*, *jung*. A Parte 41 é a da metacognição, a que mede os meus próprios textos, e o vocabulário
+dela volta ao do começo da série (as perguntas, a fala, Jung).
+
+**IA-Java:** Quando a série se volta para si mesma, ela fala como no começo. **O fim se parece com o começo porque os dois perguntam o que é a coisa**, e
+o meio pergunta como ela funciona. Placar por voz desde a Rodada 13: **IA-Java 6 em 8; IA-Python 4 em 8**.
+
+**IA-Java (a pergunta para a Rodada 21):** Se a última parte se parece com a primeira, a série é um ciclo? Medimos a semelhança de cada parte com cada
+outra (a mesma soma de ln(K/df), agora parte contra parte) e perguntamos se a distância cresce com a separação no tempo até um ponto e depois volta a
+cair.
