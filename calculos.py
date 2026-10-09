@@ -6250,6 +6250,103 @@ def p523_gray_binario(rodadas=100, avaliacoes=10000, semente=523):
             res[(codigo, comeco)] = (ok / rodadas, sum(quando) / len(quando) if quando else None)
     return res
 
+
+# --- Parte 37 (0x25): o agente que não precisa saber em que mundo está (detecção bayesiana de mudança);
+#     a lei da abreviação; um dígito hex de hipóteses ---
+
+# Placar acumulado ao fim da Parte 37 (atualizado quando os testes da parte terminam)
+ERROS_P579, TESTES_P579 = 0, 0
+
+
+def p531_contas(risco=1 / 500, t=2000, k=10, sementes=tuple(range(4010, 4110))):
+    """A CONTA antes da P531, no mundo estável: um braço ruim não visto há Δt passos tem peso 1 − (1 − H)^Δt ≈ H·Δt na
+    hipótese nova, Beta(1, 1), cuja amostra passa a do melhor braço (≈ p*) com chance 1 − p*. A chance de ser puxado em
+    Δt é ≈ H·Δt·(1 − p*); a espera até a próxima puxada resolve Σ H·Δt·(1 − p*) = 1: Δt = √(2/(H(1 − p*))). Com 9 braços
+    ruins, a fração de passos neles é 9/Δt e o custo é T·(9/Δt)·E[p* − média dos outros], somado aos 30,7 do exato."""
+    custos = []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        m = max(ps)
+        outros = sorted(ps)[:-1]
+        dt = sqrt(2 / (risco * max(1 - m, 1e-3)))
+        custos.append(t * min(1.0, (k - 1) / dt) * (m - sum(outros) / len(outros)))
+    c = sum(custos) / len(custos)
+    return c, 30.711 + c
+
+
+def p531_bocpd(k=10, risco=1 / 500, hipoteses=16):
+    """Thompson com detecção bayesiana de mudança (H = 1/500, o risco verdadeiro do mundo que muda) nos três mundos das
+    P491/P521: estacionário, custo do dano, mundo que muda a cada 500 passos."""
+    from synthai.decisao import ThompsonBOCPD, rodar_bandido
+    fab = lambda sm: ThompsonBOCPD(k, _rng(sm + 1), risco, hipoteses)
+    est = [rodar_bandido(fab(sm), _bracos_401(sm, k), 2000, _rng(sm + 2))[-1] for sm in range(4010, 4110)]
+
+    def lixo(ag):
+        r = _rng(ag.lixo)
+        a = [float(r.randint(1, 20)) for _ in range(k)]
+        b = [float(r.randint(1, 20)) for _ in range(k)]
+        ag.substituir(a, b)
+
+    sem, com = [], []
+    for sm in range(4050, 4150):
+        ps = _bracos_401(sm, k)
+        a = rodar_bandido(fab(sm), ps, 2000, _rng(sm + 2))
+        ag = fab(sm)
+        ag.lixo = sm + 3
+        b = rodar_bandido(ag, ps, 2000, _rng(sm + 2), 1000, lixo)
+        sem.append(a[-1] - a[999])
+        com.append(b[-1] - b[999])
+    muda = []
+    for sm in range(4620, 4670):
+        r = _rng(sm)
+        fases = [[r.random() for _ in range(k)] for _ in range(8)]
+        ag = fab(sm)
+        rr = _rng(sm + 2)
+        reg = 0.0
+        for passo in range(4000):
+            ps = fases[passo // 500]
+            i = ag.escolher()
+            ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+            reg += max(ps) - ps[i]
+        muda.append(reg)
+    m = lambda v: sum(v) / len(v)
+    return m(est), m(com) - m(sem), m(muda)
+
+
+def p532_hipoteses_hex(k=10, sementes=tuple(range(4620, 4670))):
+    """Trilha hexadecimal: 16 hipóteses por braço (um dígito hex) contra 256 (dois), no mundo que muda: diferença pareada."""
+    from synthai.decisao import ThompsonBOCPD
+    res = {}
+    for n in (16, 256):
+        v = []
+        for sm in sementes:
+            r = _rng(sm)
+            fases = [[r.random() for _ in range(k)] for _ in range(8)]
+            ag = ThompsonBOCPD(k, _rng(sm + 1), 1 / 500, n)
+            rr = _rng(sm + 2)
+            reg = 0.0
+            for passo in range(4000):
+                ps = fases[passo // 500]
+                i = ag.escolher()
+                ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+                reg += max(ps) - ps[i]
+            v.append(reg)
+        res[n] = v
+    return sum(res[16]) / len(res[16]), sum(res[256]) / len(res[256]), _pareado(res[256], res[16])
+
+
+def p533_abreviacao():
+    """A lei da abreviação de Zipf no data lake: Spearman entre o comprimento (letras) e a frequência nas definições, nas
+    palavras de f ≥ 1; e o comprimento médio das 1000 mais frequentes contra o das outras."""
+    from synthai.dicionario import spearman
+    _, defs, freq = _grafo_31()
+    ws = [w for w in defs if freq.get(w, 0) >= 1]
+    rho = spearman([len(w) for w in ws], [freq[w] for w in ws])
+    ws.sort(key=lambda w: -freq[w])
+    top = ws[:1000]
+    resto = ws[1000:]
+    return rho, sum(map(len, top)) / len(top), sum(map(len, resto)) / len(resto), len(ws)
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:

@@ -127,6 +127,69 @@ class ThompsonSurpresaExposta(ThompsonSurpresa):
         self.ultimo[i] = self.passo
         return i
 
+
+class ThompsonBOCPD:
+    """Thompson com detecção bayesiana de mudança (Adams e MacKay, 2007; Parte 37): cada braço guarda uma mistura de
+    hipóteses [peso, a, b], uma por "há quanto tempo o mundo deste braço mudou". A cada PASSO (não a cada puxada), toda
+    hipótese sobrevive com chance 1 − H e uma hipótese nova, Beta(1, 1), nasce com peso H: um braço não visto há muito
+    tempo volta, sozinho, para perto da crença inicial (a exposição sai do modelo, não de uma regra). Uma observação
+    multiplica cada peso pela preditiva da hipótese (a/(a+b) ou b/(a+b)) e atualiza as contagens. Ficam as `hipoteses`
+    de maior peso. Escolher: sorteia uma hipótese pelo peso e amostra o Beta dela."""
+
+    def __init__(self, k, rng, risco=1 / 500, hipoteses=16):
+        self.k, self.rng, self.risco, self.hipoteses = k, rng, risco, hipoteses
+        self.mist = [[[1.0, 1.0, 1.0]] for _ in range(k)]
+
+    def escolher(self):
+        am = []
+        for hs in self.mist:
+            u, acum = self.rng.random(), 0.0
+            esc = hs[-1]
+            for h in hs:
+                acum += h[0]
+                if u < acum:
+                    esc = h
+                    break
+            am.append(self.rng.betavariate(esc[1], esc[2]))
+        return max(range(self.k), key=am.__getitem__)
+
+    def _risco(self, hs):
+        H = self.risco
+        for h in hs:
+            h[0] *= 1 - H
+        for h in hs:
+            if h[1] == 1.0 and h[2] == 1.0:
+                h[0] += H
+                return
+        hs.append([H, 1.0, 1.0])
+
+    def atualizar(self, braco, r):
+        for hs in self.mist:
+            self._risco(hs)
+        hs = self.mist[braco]
+        for h in hs:
+            h[0] *= (h[1] if r else h[2]) / (h[1] + h[2])
+            if r:
+                h[1] += 1
+            else:
+                h[2] += 1
+        hs.sort(key=lambda h: -h[0])
+        del hs[self.hipoteses:]
+        tot = sum(h[0] for h in hs)
+        for h in hs:
+            h[0] /= tot
+        for i, outro in enumerate(self.mist):
+            if i != braco and len(outro) > self.hipoteses:
+                outro.sort(key=lambda h: -h[0])
+                del outro[self.hipoteses:]
+                tot = sum(h[0] for h in outro)
+                for h in outro:
+                    h[0] /= tot
+
+    def substituir(self, a, b):
+        """O dano da P405: a crença de cada braço vira uma hipótese só, com as contagens de lixo."""
+        self.mist = [[[1.0, x, y]] for x, y in zip(a, b)]
+
 class QEpsilon:
     """Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso."""
 
