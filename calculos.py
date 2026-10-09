@@ -8524,11 +8524,36 @@ def _parte_46():
     print(f"P849 minha taxa de erro ({ERROS_P849}/{TESTES_P849}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def p856_acaso_851(semente=851, d=None):
+    """O acaso da P851: a mesma pergunta (a definição cita o lema de outro sinset?) trocando o hiperônimo por um
+    substantivo sorteado (semente fixa). Devolve (fração direta ao acaso, fração inversa ao acaso)."""
+    import re
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    rng = random.Random(semente)
+    nomes = [i for i, x in enumerate(d.sinsets) if x[0] == "n"]
+
+    def contem(definicao, lemas):
+        return any(re.search(r"(?<![a-z])" + re.escape(x.replace("_", " ").lower()) + r"(?:e?s)?(?![a-z])", definicao)
+                   for x in lemas)
+
+    direto = inverso = n = 0
+    for pos, lemas, hiper, glosa in d.sinsets:
+        if pos != "n" or not [h for h in hiper if h in d.indice]:
+            continue
+        k = rng.choice(nomes)
+        n += 1
+        direto += contem(d.definicao(glosa).lower(), d.sinsets[k][1])
+        inverso += contem(d.definicao(d.sinsets[k][3]).lower(), lemas)
+    return direto / n, inverso / n
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
     print(f"P851 {n} substantivos com hiperonimo: a definicao cita o hiperonimo em {direto:.4f}; a do hiperonimo cita o hiponimo em "
           f"{inverso:.4f} ({pares} pares); razao = {direto / inverso:.1f}")
+    ad, ai = p856_acaso_851()
+    print(f"P856 o acaso da P851 (um substantivo sorteado no lugar do hiperonimo): direto = {ad:.4f}; inverso = {ai:.4f}")
     for ate in (850, 4095):
         sem, media, conta = p852_cadeia_hexadecimal(ate)
         print(f"P852 ate {ate}: {sem} sem letra no hexadecimal; passos medios da cadeia = {media:.4f} (conta com independencia: {conta:.4f})")
