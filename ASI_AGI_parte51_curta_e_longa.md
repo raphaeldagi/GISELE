@@ -90,8 +90,8 @@ Ver P971. Placar por voz desde a Rodada 13: **IA-Python 8 em 16; IA-Java 8 em 16
 
 ### P1000 (0x3E8). Unificação e metacognição
 
-- **Novo:** `p971` (duas memórias pelo AIC), `p972` (o português por profundidade), `p973` (Kaprekar numa base), `p974` (as previsões sem faixa); 5 testes
-  (140 no pacote); rodada 25 (IGUAIS). Regressão: + P973 (4 ciclos; 6174).
+- **Novo:** `p971` (duas memórias pelo AIC), `p972` (o português por profundidade), `p973` (Kaprekar numa base), `p974` (as previsões sem faixa); 4 testes
+  (139 no pacote); rodada 25 (IGUAIS). Regressão: + P973 (4 ciclos; 6174).
 - **Regra nova (verificável):** `p974` roda em toda parte; previsão unilateral só com justificativa escrita.
 - A pergunta número **1000** desta série é a unificação da Parte 51.
 
