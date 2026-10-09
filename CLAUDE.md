@@ -47,6 +47,8 @@ anterior, commit e push.
   erro e por quê). Na prática: cada parte mede os próprios textos e previsões (n-gramas
   repetidos, compressibilidade, semelhança entre partes, erros por tipo de previsão) com funções em `calculos.py`, e
   tem uma seção "Engenharia reversa" que diz que padrão se repetiu, o que ele significa e que regra nova ele pede.
+  A PREMISSA É O SIGNIFICANTE E A RESPOSTA É O SIGNIFICADO (Parte 42): cada resposta é lida como o significado da sua
+  premissa; medir quanto a resposta acrescenta à premissa (informação condicional) e quanto a premissa já continha.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 

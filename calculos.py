@@ -6826,6 +6826,146 @@ def p674_as_duas_vozes():
         proprias[voz] = cand[:8]
     return res, proprias
 
+
+# --- Parte 42 (0x2A): a premissa é o significante, a resposta é o significado; a regra das faixas 1,72x testada em
+#     sementes novas; a arbitrariedade do signo no dicionário ---
+
+# Placar acumulado ao fim da Parte 42 (atualizado quando os testes da parte terminam)
+ERROS_P729, TESTES_P729 = 0, 0
+
+
+def _estavel_701(fab, sementes, k=10):
+    from synthai.decisao import rodar_bandido
+    v = [rodar_bandido(fab(sm), _bracos_401(sm, k), 2000, _rng(sm + 2))[-1] for sm in sementes]
+    return sum(v) / len(v)
+
+
+def _dano_701(fab, sementes, k=10):
+    from synthai.decisao import rodar_bandido
+
+    def lixo(ag):
+        r = _rng(ag.lixo)
+        a = [float(r.randint(1, 20)) for _ in range(k)]
+        b = [float(r.randint(1, 20)) for _ in range(k)]
+        if hasattr(ag, "substituir"):
+            ag.substituir(a, b)
+        else:
+            ag.a, ag.b = a, b
+
+    sem, com = [], []
+    for sm in sementes:
+        ps = _bracos_401(sm, k)
+        a = rodar_bandido(fab(sm), ps, 2000, _rng(sm + 2))
+        ag = fab(sm)
+        ag.lixo = sm + 3
+        b = rodar_bandido(ag, ps, 2000, _rng(sm + 2), 1000, lixo)
+        sem.append(a[-1] - a[999])
+        com.append(b[-1] - b[999])
+    return sum(com) / len(com) - sum(sem) / len(sem)
+
+
+def _muda_701(fab, sementes, k=10):
+    tot = []
+    for sm in sementes:
+        r = _rng(sm)
+        fases = [[r.random() for _ in range(k)] for _ in range(8)]
+        ag = fab(sm)
+        rr = _rng(sm + 2)
+        reg = 0.0
+        for passo in range(4000):
+            ps = fases[passo // 500]
+            i = ag.escolher()
+            ag.atualizar(i, 1 if rr.random() < ps[i] else 0)
+            reg += max(ps) - ps[i]
+        tot.append(reg)
+    return sum(tot) / len(tot)
+
+
+def p701_replicacao():
+    """Oito previsões de comportamento das Partes 32-40 refeitas em SEMENTES NOVAS (estável 5010-5109, dano 5050-5149,
+    mundo que muda 5620-5669), para testar a regra da P700 (faixas 1,72 vez mais largas que o instinto)."""
+    from synthai.decisao import (QEpsilon, ThompsonBOCPD, ThompsonBernoulli, ThompsonMisturaMaximo, ThompsonMorris,
+                                 ThompsonSurpresa, ThompsonSurpresaExposta)
+    k = 10
+    est, dano, muda = range(5010, 5110), range(5050, 5150), range(5620, 5670)
+    return {
+        "thompson_estavel": _estavel_701(lambda sm: ThompsonBernoulli(k, _rng(sm + 1)), est),
+        "surpresa_estavel": _estavel_701(lambda sm: ThompsonSurpresa(k, _rng(sm + 1)), est),
+        "exposta_dano": _dano_701(lambda sm: ThompsonSurpresaExposta(k, _rng(sm + 1)), dano),
+        "bocpd_muda": _muda_701(lambda sm: ThompsonBOCPD(k, _rng(sm + 1)), muda),
+        "maximo_estavel": _estavel_701(lambda sm: ThompsonMisturaMaximo(k, _rng(sm + 1)), est),
+        "maximo_dano": _dano_701(lambda sm: ThompsonMisturaMaximo(k, _rng(sm + 1)), dano),
+        "q_eps_estavel": _estavel_701(lambda sm: QEpsilon(k, _rng(sm + 1)), est),
+        "morris_estavel": _estavel_701(lambda sm: ThompsonMorris(k, _rng(sm + 1)), est),
+    }
+
+
+def p702_arbitrariedade(semente=551, taxa=0.5, epocas=5):
+    """A arbitrariedade do signo: a mesma tarefa da P551 (animal ou não, 4017 + 4017 substantivos), com o mesmo preditor
+    logístico, a partir (1) da FORMA do primeiro lema em inglês (trigramas de letras: o significante), (2) da definição
+    (o significado escrito), e (3) da forma do primeiro lema em PORTUGUÊS, nos sinsets que têm lema na OpenWordNet-PT.
+    Índice de motivação = (acurácia pela forma − ½)/(acurácia pela definição − ½): 0 se o signo é arbitrário."""
+    from synthai.dicionario import Dicionario, DicionarioPT, ancestrais
+    from synthai.neurossimbolico import Predicado, treinar_supervisionado
+    from synthai.semiotica import trigramas_de_forma
+    d = Dicionario()
+    pt = DicionarioPT()
+    A = d.indice["n:00015388"]
+    inv = {i: chave for chave, i in d.indice.items()}
+    animais, outros = [], []
+    for i, x in enumerate(d.sinsets):
+        if x[0] != "n" or i == A:
+            continue
+        pos, desloc = inv[i].split(":")
+        lema_pt = next((w for w in pt.lemas.get(f"{desloc}-{pos}", []) if w.isalpha()), None)
+        item = (trigramas_de_forma(x[1][0].replace("_", " ")), frozenset(d.palavras_da_definicao(x[3])),
+                trigramas_de_forma(lema_pt) if lema_pt else None)
+        (animais if A in ancestrais(d, i) else outros).append((item, 1 if A in ancestrais(d, i) else 0))
+    rng = _rng(semente)
+    outros = rng.sample(outros, len(animais))
+    dados = animais + outros
+    rng.shuffle(dados)
+    corte = len(dados) * 4 // 5
+    tr, te = dados[:corte], dados[corte:]
+    res = {}
+    for nome, j in (("forma_en", 0), ("definicao", 1), ("forma_pt", 2)):
+        trj = [(x[j], y) for x, y in tr if x[j] is not None]
+        tej = [(x[j], y) for x, y in te if x[j] is not None]
+        p_ = Predicado()
+        treinar_supervisionado(p_, trj, taxa, epocas, _rng(semente + j))
+        res[nome] = (sum((p_(x) >= 0.5) == bool(y) for x, y in tej) / len(tej), len(tej),
+                     sum(y for _, y in tej) / len(tej))
+    mot = lambda f: (res[f][0] - 0.5) / (res["definicao"][0] - 0.5)
+    return res, mot("forma_en"), mot("forma_pt")
+
+
+def p703_premissa_resposta():
+    """A premissa é o significante, a resposta é o significado, nos meus documentos das Partes 31-41: para cada pergunta
+    (o título "### Pnnn"), a informação condicional da resposta dada a premissa (zlib), a redundância 1 − I(r|p)/C(r), e a
+    fração das palavras de conteúdo da premissa que voltam na resposta. Devolve as médias, o número de perguntas, e as
+    três respostas que mais repetem a premissa."""
+    import os
+    from synthai.semiotica import informacao_condicional, premissas_e_respostas, retorno_da_premissa
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    itens = []
+    for n in range(31, 42):
+        nome = next(f for f in sorted(os.listdir(raiz)) if f.startswith(f"ASI_AGI_parte{n}_"))
+        for num, prem, resp in premissas_e_respostas(open(os.path.join(raiz, nome), encoding="utf-8").read()):
+            if resp:
+                c, i, red = informacao_condicional(prem, resp)
+                ret = retorno_da_premissa(prem, resp)
+                itens.append((num, red, ret, c))
+    reds = [x[1] for x in itens]
+    rets = [x[2] for x in itens if x[2] is not None]
+    mais = sorted(itens, key=lambda x: -x[1])[:3]
+    return sum(reds) / len(reds), sum(rets) / len(rets), len(itens), [(n, round(r, 4)) for n, r, _, _ in mais]
+
+
+def p704_contas(k=10):
+    """A CONTA antes da rodada 13 (o arquivo binário de pesos): 4 bytes de assinatura ('SYN1'), um inteiro de 4 bytes com k,
+    e 2k números float64 (8 bytes cada, little-endian): 4 + 4 + 16k bytes."""
+    return 4 + 4 + 16 * k
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
