@@ -655,3 +655,18 @@ desde a Rodada 13, contando (l) para as duas: **IA-Java 6 em 10; IA-Python 5 em 
 
 **IA-Python (a pergunta para a Rodada 22):** Se a série deriva, a que velocidade? A semelhança cai com a distância como uma exponencial (memória com
 meia-vida) ou como uma potência (memória longa)? Ajustamos as duas às médias por distância de 1 a 20 e comparamos nas duas linguagens.
+
+---
+
+## Rodada 22 — a deriva: meia-vida ou memória longa? (previsões registradas antes do código)
+
+**O teste.** As médias de semelhança por distância L = 1..20 (a semelhança idf da Rodada 21). Dois ajustes por mínimos quadrados em log: exponencial,
+ln y = a − L/τ; potência, ln y = b − α ln L. O melhor é o de menor soma dos quadrados dos resíduos (em log).
+
+**IA-Python (previsão (f)):** os módulos nomeados cedo continuam citados (a `SynthaiComposta`, o Thompson, Jung): memória longa. **A potência ajusta
+melhor**, com α em [0,4; 1,2].
+
+**IA-Java (previsão (g)):** cada parte fala do que a anterior deixou aberto e esquece o resto; a memória é curta. **A exponencial ajusta melhor**, com
+meia-vida τ·ln 2 em [2; 8] partes.
+
+**As duas (previsão (h)):** IGUAIS em Java.
