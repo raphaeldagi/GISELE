@@ -6716,7 +6716,7 @@ def p644_utf8():
 # --- Parte 41 (0x29): engenharia reversa de mim mesma: os padrões que se repetem nos meus textos e nas minhas previsões ---
 
 # Placar acumulado ao fim da Parte 41 (atualizado quando os testes da parte terminam)
-ERROS_P699, TESTES_P699 = 0, 0
+ERROS_P699, TESTES_P699 = 123, 337
 
 # As 128 previsões registradas das Partes 31-40, uma letra por previsão, classificadas por tipo (classificação feita por
 # mim, DEPOIS dos resultados, lendo os placares de cada parte):
@@ -6921,6 +6921,7 @@ def testes_de_regressao():
         "P542": round(p542_contas()[2]) == 4971,
         "P551": round(p551_contas()[2], 3) == 0.944,
         "P644": round(p644_contas()["pt"], 4) == 1.0296,
+        "P671": sum(n for _, n in p671_erros_por_tipo()[1].values()) == 128,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -7889,6 +7890,26 @@ def _parte_40():
     print(f"P669 minha taxa de erro ({ERROS_P669}/{TESTES_P669}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_41():
+    print("--- Parte 41 (0x29: engenharia reversa de mim mesma) ---")
+    tipos, partes = p671_erros_por_tipo()
+    for t, (e, n, (m, lo, hi)) in tipos.items():
+        print(f"P671 tipo {t}: {e} erros em {n}; taxa a posteriori = {m:.3f}, intervalo 90% = [{lo:.3f}, {hi:.3f}]")
+    print(f"P671 erros por parte: {partes}")
+    top, raz, nfr, abre, sims, rho = p672_meus_padroes()
+    for g, nd, nt in top:
+        print(f"P672 4-grama '{g}': em {nd} documentos, {nt} vezes")
+    print(f"P672 razao lzma dos meus textos = {raz:.4f}; frases = {nfr}; aberturas = {abre}")
+    print(f"P672 cosseno entre partes vizinhas = {[round(x, 4) for x in sims]}; Spearman com o numero da parte = {rho:.4f}")
+    s_z, beta, n, v = p673_minhas_leis()
+    print(f"P673 Zipf das minhas palavras = {s_z:.4f}; Heaps beta = {beta:.4f}; palavras = {n}; vocabulario = {v}")
+    vozes, proprias = p674_as_duas_vozes()
+    for voz, (nf, pf) in vozes.items():
+        print(f"P674 {voz}: {nf} falas, {pf:.2f} palavras por fala; palavras proprias = {proprias[voz]}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P699, testes=TESTES_P699)
+    print(f"P699 minha taxa de erro ({ERROS_P699}/{TESTES_P699}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -7923,7 +7944,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41}
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 40 (0x28): quanto do português se define em português
 
-> Continuação da [Parte 39](ASI_AGI_parte39_neurossimbolico_e_portugues.md). A Parte 39 pôs o português no data lake (OpenWordNet-PT) e a Rodada 10
+> Continuação da [Parte 39](ASI_AGI_parte39_neurossimbolico_e_portugues.md). **Próxima:** [Parte 41 — engenharia reversa de mim mesma](ASI_AGI_parte41_engenharia_reversa_de_mim.md) (P671–P700). A Parte 39 pôs o português no data lake (OpenWordNet-PT) e a Rodada 10
 > deixou a pergunta: **quanto do português se define em português?** Esta parte monta o grafo de definições em português, mede o fecho, testa a
 > decisão que segue o modelo de maior peso (a pergunta da Rodada 9) e mede o custo dos acentos em UTF-8. Novidades: `DicionarioPT` e as regras de
 > plural ([`synthai/dicionario.py`](synthai/dicionario.py)), `ThompsonMisturaMaximo` ([`synthai/decisao.py`](synthai/decisao.py)); testes em

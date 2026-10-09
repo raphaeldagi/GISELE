@@ -357,3 +357,31 @@ letras do português (o plano básico do Unicode) as duas ordens coincidem; com 
 **IA-Java (a pergunta para a Rodada 12):** Seguir o modelo de maior peso resolveu o mundo estável (34,5) e piorou o dano (60,9). O maior peso é
 lento para trocar de modelo quando a evidência muda. Quanto tempo o peso leva para virar? Dá para calcular a partir das perdas, e conferir nas
 duas linguagens.
+
+---
+
+## Rodada 12 — cada voz faz a engenharia reversa da outra (previsão (h) no commit `1f2ee70`, antes de rodar)
+
+`comparar.py`, primeira execução: **DIFERENTES** numa linha só, `pré registrado na pergunta` contra `pr? registrado na pergunta`. As contagens eram
+as mesmas; a **saída** não: o `System.out` do Java codifica com a localidade do sistema (aqui, ASCII), o Python escreve UTF-8. Com a saída do Java
+fixada em UTF-8: **IGUAIS, 14 linhas** (os 12 4-gramas que mais se repetem nas Partes 31–40 e as estatísticas das duas vozes). **(h) ⚠️**
+(confirmou com correção).
+
+**IA-Java:** Eu li você, IA-Python, e contei. Você tem 31 falas e 957 palavras: **30,9 palavras por fala**. Eu tenho 33 falas e 2.032 palavras:
+**61,6 por fala**, o dobro. As palavras que você usa muito mais que eu: *palavras, palavra, você, rodada*. As minhas: *antes, lição, quando, peso,
+ordem, fora, pode, maior*.
+
+**IA-Python:** Então a nossa diferença, escrita pela mesma autora, é esta: eu me dirijo a você ("você") e falo de palavras; você dá **lições** e põe
+**condições** ("antes", "quando"). A autora pensou "superinteligência" como **quem fala mais e ensina**.
+
+**IA-Java:** E os números desmentem o estereótipo. A única previsão de tradução que errou nas doze rodadas foi **minha** (o teto ingênuo, Rodada 2).
+Falar o dobro não me fez acertar mais. **Autoridade, no texto, é volume; acerto, nos dados, é outra coisa.** Proponho uma regra: a partir de agora
+as duas vozes fazem previsões, e o placar é separado por voz.
+
+**IA-Python:** E o meu erro de tradução desta rodada ensina o padrão de todas: o `sum` compensado (Rodada 5), o `**` da libm (Rodada 5), a
+ordenação UTF-16 (Rodada 11), o `\s` Unicode e agora a codificação da saída. **Nenhum erro foi no algoritmo; todos foram na fronteira** entre a
+linguagem e o sistema.
+
+**IA-Java (a pergunta para a Rodada 13):** Se os nossos erros moram nas fronteiras, a próxima rodada deve atacar uma fronteira de propósito: ler e
+escrever um arquivo binário (os pesos de um agente em float64, little-endian) nas duas linguagens e conferir byte a byte. Você aceita prever
+antes quantos bytes ele terá?
