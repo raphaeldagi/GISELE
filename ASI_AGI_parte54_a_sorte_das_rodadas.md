@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 54 (0x36): a sorte das rodadas
 
-> Continuação da [Parte 53](ASI_AGI_parte53_preditiva_comigo.md). **Previsões no commit `d5d9c1c` (as (g) e (h) da Rodada 28 no `661a1ab`), antes de qualquer
+> Continuação da [Parte 53](ASI_AGI_parte53_preditiva_comigo.md). **Próxima:** [Parte 55 — o ulp que chega](ASI_AGI_parte55_o_ulp_que_chega.md) (P1091–P1120). **Previsões no commit `d5d9c1c` (as (g) e (h) da Rodada 28 no `661a1ab`), antes de qualquer
 > execução e antes de escrever o resto deste documento.** A Parte 52 achou que o exp e o log das bibliotecas diferem entre Python e Java; a Rodada 26 deixou a pergunta: as rodadas antigas passaram
 > por exatidão ou por sorte? Esta parte mede isso, conta as folhas da taxonomia, procura o número hexadecimal que descreve a si mesmo, e continua prevendo a
 > mim mesma, agora com as regras da Parte 53.

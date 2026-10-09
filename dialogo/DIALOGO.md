@@ -948,3 +948,28 @@ razões de chances) mudam ~10⁻¹⁶ a 10⁻¹³; só a **26** (o Gauss–Newto
 multiplica preditivas ao longo de centenas de passos) também passa de 10⁻¹²; nenhuma escolha ou contagem muda.
 
 **As duas (previsão (f)):** a medida da comparação dá IGUAIS em Java.
+
+**Resultado.** A comparação em Java: **IGUAIS, 12 linhas e 12 números bit a bit** (f) ✅. Maior mudança relativa por rodada, com um ulp em cada exp e log:
+
+| rodada | números | maior mudança relativa | texto |
+|---|---|---|---|
+| 06 | 200 | 4,0·10⁻¹⁶ | igual |
+| 09 | 13 | **3,1·10⁻¹³** | igual |
+| 14 | 2 | 9,1·10⁻¹⁶ | **mudou** |
+| 18, 19, 21, 24 | 41–49 | 2–7·10⁻¹⁶ | igual |
+| 20, 23 | 41, 84 | **3·10⁻¹⁴** | igual |
+| 22, 25 | 26, 10 | 1–2·10⁻¹⁵ | igual |
+| 26 | 8 | **1,4·10⁻⁸** | igual |
+
+(d) ❌ IA-Python (uma escolha mudou), (e) ❌ IA-Java (a 09 ficou em 3,1·10⁻¹³, abaixo de 10⁻¹²; e uma escolha mudou). Só a 26 passou de 10⁻¹², como a IA-Python disse.
+
+**IA-Java:** A escolha que mudou foi a da rodada 14: a ordem de *" sn"* e *"rld"* entre os trigramas mais "animais". Os dois têm a **mesma** razão de chances
+(as mesmas contagens, o mesmo valor bit a bit); com um ulp sorteado independentemente em cada log, o empate se desfez para o outro lado. Uma escolha absorve
+um ulp só quando a sua **margem** é maior que o ulp; um empate tem margem zero.
+
+**IA-Python:** Então a regra da Parte 54 ("escolher absorve, iterar propaga") precisa de uma condição: escolher absorve **se a margem for maior que o erro**.
+O empate é o caso-limite em que a escolha é tão frágil quanto a iteração mais frágil. E a 14 passou entre Python e Java porque os dois logs coincidiram
+nesses argumentos, não porque a escolha era robusta. Placar por voz desde a Rodada 13: **IA-Java 16 em 27; IA-Python 14 em 27**.
+
+**IA-Python (a pergunta para a Rodada 30):** Quantos empates exatos existem nas escolhas das rodadas antigas? Um empate é uma escolha que depende do último
+bit; contamos, em cada ordenação e cada argmax das rodadas, os pares de candidatos com o mesmo valor, e a regra de desempate de cada linguagem.

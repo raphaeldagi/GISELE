@@ -1,0 +1,22 @@
+parte 1: 6 pontos; tau = -0x1.0035302bffc50p+7; residuo exp = 0x1.c7bffb5e46dcap+1; alfa = -0x1.740f6cd3fd522p-7; residuo pot = 0x1.c98acd0f33b3fp+1
+parte 2: 14 pontos; tau = 0x1.27a8f4f7a4c46p+4; residuo exp = 0x1.62fb754e7b84bp+3; alfa = 0x1.23a33cbe27b0ep-1; residuo pot = 0x1.296fbe89a2581p+3
+parte 3: 20 pontos; tau = -0x1.bb639cb38d09ep+4; residuo exp = 0x1.d57c6aa1155b2p+5; alfa = 0x1.bc8b6103d2ba7p-5; residuo pot = 0x1.dc1e313a892c0p+5
+parte 4: 20 pontos; tau = 0x1.54c1496e95b25p+5; residuo exp = 0x1.f11f75a8e6df4p+3; alfa = 0x1.0f068985b7f84p-2; residuo pot = 0x1.e0b85f82ad546p+3
+parte 5: 20 pontos; tau = 0x1.2daca1fbbfc68p+4; residuo exp = 0x1.887fff496b743p+2; alfa = 0x1.3daaa510c5099p-2; residuo pot = 0x1.b2ecb064d0565p+2
+parte 6: 20 pontos; tau = -0x1.98f8d827e8105p+9; residuo exp = 0x1.03c36492edd1ap+3; alfa = 0x1.3c0dbc9260326p-4; residuo pot = 0x1.0167708cd9be8p+3
+parte 7: 20 pontos; tau = 0x1.3a7d946e765f7p+4; residuo exp = 0x1.a0c1b931bf8a9p+4; alfa = 0x1.05da52dd8e8e2p-1; residuo pot = 0x1.87c6f515122a6p+4
+parte 8: 20 pontos; tau = 0x1.6e5d245a8ee09p+5; residuo exp = 0x1.9fb22f64671bbp+4; alfa = 0x1.a654c050ca4fbp-2; residuo pot = 0x1.829d4bdae2066p+4
+parte 9: 20 pontos; tau = 0x1.f0bb1675a0eabp+10; residuo exp = 0x1.8df39735cb79cp+2; alfa = 0x1.5c9fdfbf2fa17p-4; residuo pot = 0x1.8824d6ffc7decp+2
+parte 10: 20 pontos; tau = 0x1.1c2732ea94b28p+3; residuo exp = 0x1.c1d877aeebb19p+3; alfa = 0x1.571e554f7e17fp-1; residuo pot = 0x1.0daf3b40b3205p+4
+parte 11: 20 pontos; tau = 0x1.ec193fab03aabp+2; residuo exp = 0x1.705e1e5fca760p+5; alfa = 0x1.7e2066eb1bacfp-1; residuo pot = 0x1.926dc79e38caap+5
+parte 12: 20 pontos; tau = 0x1.9becf969ff5cbp+2; residuo exp = 0x1.0f4ec6c16b398p+5; alfa = 0x1.0835dd4220e58p+0; residuo pot = 0x1.24c9e7f2284d1p+5
+parte 13: 20 pontos; tau = 0x1.05f96c0b7ef53p+3; residuo exp = 0x1.ce133c657b49bp+4; alfa = 0x1.80010121fb033p-1; residuo pot = 0x1.fbe17cf79725bp+4
+parte 14: 20 pontos; tau = 0x1.3416de755d315p+3; residuo exp = 0x1.5435e2caa14a5p+4; alfa = 0x1.cbf3d699461e2p-1; residuo pot = 0x1.24f3b79a7b854p+4
+parte 15: 20 pontos; tau = 0x1.a2710c99af087p+2; residuo exp = 0x1.2c3e204e7f67ap+5; alfa = 0x1.2fafd0849e0a5p+0; residuo pot = 0x1.1b696b59ba168p+5
+parte 16: 20 pontos; tau = 0x1.24e22ff4ffdc5p+2; residuo exp = 0x1.428bd16d36f3cp+4; alfa = 0x1.73c7e25282b47p+0; residuo pot = 0x1.971d17f690acbp+4
+parte 17: 20 pontos; tau = 0x1.7bb66d9bfe63ep+2; residuo exp = 0x1.09c4036590a04p+6; alfa = 0x1.5a547c6253f4ap+0; residuo pot = 0x1.f2eb472c27134p+5
+parte 18: 20 pontos; tau = 0x1.0304930268005p+3; residuo exp = 0x1.51963e233dd6bp+5; alfa = 0x1.321b58d9235efp+0; residuo pot = 0x1.133e18ab31965p+5
+parte 19: 20 pontos; tau = 0x1.291ef99692eccp+3; residuo exp = 0x1.4ce17f81df4e9p+5; alfa = 0x1.06e3f717aebcap+0; residuo pot = 0x1.20b73cefbac5cp+5
+parte 20: 20 pontos; tau = 0x1.1568be7e10483p+2; residuo exp = 0x1.de71f75c72afcp+5; alfa = 0x1.aa65db3d1ca4cp+0; residuo pot = 0x1.e3139aac357aep+5
+parte 21: 20 pontos; tau = 0x1.6502319fb0decp+2; residuo exp = 0x1.48f110d1fa047p+5; alfa = 0x1.34449142f57c2p+0; residuo pot = 0x1.6254fb536dbaap+5
+a potencia ganha em 11

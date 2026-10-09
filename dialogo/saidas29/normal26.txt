@@ -1,0 +1,3 @@
+inicio: sse = 0x1.64810af927ddcp-2
+em log: A = 0x1.9a12c1b39cfb2p-4; B = 0x1.3991d187126c0p-6; t1 = 0x1.04735096c2ff4p+2; t2 = 0x1.c40d0dd2dee1ap+30; sse = 0x1.5b5a6a680a481p-2
+aic = -0x1.2626222fd3c16p+6; limiar para vencer a potencia = 0x1.037a8c172b7a6p-2

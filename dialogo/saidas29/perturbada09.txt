@@ -1,0 +1,4 @@
+logw = -0x1.a3bbf77f109d1p+9 -0x1.5c5ef4388718cp+9 -0x1.5b2b3da99c1e7p+9 -0x1.5d10efdb064e3p+9
+perda = 0x1.a3bbf77f109d1p+9 0x1.5c5ef4388718bp+9 0x1.5b2b3da99c1e8p+9 0x1.5d10efdb064e4p+9
+perda da mistura = 0x1.5bcf0015f8b1fp+9
+pesos = 0x1.61b6f60030c4ap-210 0x1.4c90849dd30b7p-4 0x1.cc14901e51d2dp-1 0x1.4b2be9be7976bp-6

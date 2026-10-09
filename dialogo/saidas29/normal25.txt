@@ -1,0 +1,4 @@
+exponencial: sse = 0x1.d3590205cfa6ep-1; aic = -0x1.cdead71e4fdccp+5
+potencia: sse = 0x1.3ce22ffe9bb1fp-2; aic = -0x1.3d7e5b33cab6bp+6
+duas exponenciais: sse = 0x1.64810af927de2p-2; A = 0x1.be1742b8cc5a1p-4; B = 0x1.7c7d5c9c40730p-6; t1 = 0x1.c000000000000p+1; t2 = 0x1.b800000000000p+6; aic = -0x1.2411948db5f59p+6
+menor aic: potencia

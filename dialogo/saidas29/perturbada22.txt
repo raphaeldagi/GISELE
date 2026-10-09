@@ -1,0 +1,23 @@
+distancia 1: ln(media) = -0x1.0f2d3c0acee47p+1
+distancia 2: ln(media) = -0x1.4f00ac9422b88p+1
+distancia 3: ln(media) = -0x1.686c57e7484adp+1
+distancia 4: ln(media) = -0x1.8f23ec6092353p+1
+distancia 5: ln(media) = -0x1.754bbcf40e873p+1
+distancia 6: ln(media) = -0x1.8a888e27cec6fp+1
+distancia 7: ln(media) = -0x1.9dab34b124d5bp+1
+distancia 8: ln(media) = -0x1.bffbf88222fdbp+1
+distancia 9: ln(media) = -0x1.b8d78d17616acp+1
+distancia 10: ln(media) = -0x1.c47567dea20b3p+1
+distancia 11: ln(media) = -0x1.bd126945588d6p+1
+distancia 12: ln(media) = -0x1.d3ac469d0a1e2p+1
+distancia 13: ln(media) = -0x1.e846dbb2ff1afp+1
+distancia 14: ln(media) = -0x1.ff30ac4706cdbp+1
+distancia 15: ln(media) = -0x1.d6e5dd3a9a9dbp+1
+distancia 16: ln(media) = -0x1.0350bc18e11d6p+2
+distancia 17: ln(media) = -0x1.00812257d40d1p+2
+distancia 18: ln(media) = -0x1.e64df7594ccfap+1
+distancia 19: ln(media) = -0x1.edfc89f00aef3p+1
+distancia 20: ln(media) = -0x1.e97869e30009dp+1
+exponencial: a = -0x1.4c5f75988fb35p+1; tau = 0x1.94abc489ca2f2p+3; residuo = 0x1.d3590205cfa65p-1
+potencia: b = -0x1.0fc107137fb96p+1; alfa = 0x1.3b6163b1c2905p-1; residuo = 0x1.3ce22ffe9bb22p-2
+melhor: potencia
