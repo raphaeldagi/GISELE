@@ -9045,6 +9045,51 @@ def p1001_duas_memorias_em_log():
     th, sse = r26.gauss_newton([r26.log_(A), r26.log_(B), t1, t2], ly)
     return s0, (r26.exp_(th[0]), r26.exp_(th[1]), th[2], th[3], sse), 20 * r26.log_(sse / 20) + 8, 0.3095 * r26.exp_(-0.2)
 
+
+ERROS_P1059, TESTES_P1059 = 0, 0
+
+
+def p1031_historico_de_mim(partes=range(31, 53)):
+    """O meu histórico mensurável, para eu prever a mim mesmo (P1031). Por parte: caracteres do documento, razão de
+    compressão (zlib 9), testes de unidade escritos (def test_ em synthai/testes_parteNN.py), testes e erros do placar
+    (linha "Parte N: X testes, Y erros" do documento) e a redundância média da pergunta dada a resposta (P821).
+    Devolve {parte: dict}."""
+    import os
+    import re
+    import zlib
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    res = {}
+    for n in partes:
+        nome = next((f for f in sorted(os.listdir(raiz)) if f.startswith(f"ASI_AGI_parte{n}_")), None)
+        if nome is None:
+            continue
+        doc = open(os.path.join(raiz, nome), encoding="utf-8").read()
+        b = doc.encode("utf-8")
+        tf = os.path.join(raiz, "synthai", f"testes_parte{n}.py")
+        testes_unid = open(tf, encoding="utf-8").read().count("def test_") if os.path.exists(tf) else 0
+        m = re.search(rf"Parte {n}:\s*\**\s*(\d+) testes?,\s*(\d+) erros?", doc)
+        try:
+            red = p821_inversao(range(n, n + 1))[1]
+        except (ZeroDivisionError, StopIteration):
+            red = None
+        res[n] = {"caracteres": len(doc), "compressao": len(zlib.compress(b, 9)) / len(b), "testes_unidade": testes_unid,
+                  "testes": int(m.group(1)) if m else None, "erros": int(m.group(2)) if m else None, "redundancia": red}
+    return res
+
+
+def p1032_preditor_de_mim(historico, k=8):
+    """O preditor estatístico de mim mesma (P1032): para cada medida, o centro é a média das últimas k partes com valor e a
+    meia-largura 1,645 × o desvio padrão amostral delas (faixa de 90% se as partes fossem uma amostra normal). Devolve
+    {medida: (centro, meia-largura, último valor = o preditor ingênuo)}."""
+    res = {}
+    partes = sorted(historico)
+    for medida in ("caracteres", "compressao", "testes_unidade", "testes", "erros", "redundancia"):
+        vals = [historico[n][medida] for n in partes if historico[n][medida] is not None][-k:]
+        m = sum(vals) / len(vals)
+        var = sum((v - m) * (v - m) for v in vals) / (len(vals) - 1)
+        res[medida] = (m, 1.645 * var ** 0.5, vals[-1])
+    return res
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()

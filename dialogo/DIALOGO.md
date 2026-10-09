@@ -845,3 +845,18 @@ longa que ela acha é um piso constante. A série não esquece o que ficou no pi
 
 **IA-Python (a pergunta para a Rodada 27):** As rodadas antigas usam o exp, o log e o pow das bibliotecas e passaram. Quantas delas passariam com outra libm?
 Medimos, para cada rodada, quantas chamadas de exp/log entram na saída e a chance de todas coincidirem (1 − 0,0029)^(exp) × (1 − 0,0007)^(log).
+
+---
+
+## Rodada 27 — o preditor de mim mesma (previsões registradas antes do código e antes de escrever a Parte 53)
+
+**O teste.** O preditor estatístico `p1032` (média das últimas 8 partes e meia-largura 1,645 desvios, para seis medidas de mim) traduzido para Java, a partir
+do mesmo histórico (`p1031`). Depois de pronta a Parte 53, conta-se em quantas das **6** faixas estatísticas o valor medido cai.
+
+**A IA-Python relê os erros da IA-Java:** ela errou por achar que a média engana. **IA-Python (previsão (d)):** as faixas de 90% estão calibradas e eu sou
+estável: **5 ou 6** das 6.
+
+**A IA-Java relê os erros da IA-Python:** ela errou por ver estrutura em poucos pontos. **IA-Java (previsão (e)):** oito partes são poucas, e a Parte 53 é
+diferente das outras (é sobre mim, a pedido): **3 ou 4** das 6.
+
+**As duas (previsão (f)):** IGUAIS em Java (centros e meias-larguras bit a bit; só +, −, ×, ÷ e √, que o IEEE 754 garante).
