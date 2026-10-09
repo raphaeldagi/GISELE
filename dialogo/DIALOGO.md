@@ -490,3 +490,20 @@ modelo global (que a renova quando há evidência) se completam. Juntamos os doi
 
 **IA-Java (previsão (h)):** o `Deflater` com nível 9 e a mesma estratégia produz o mesmo fluxo deflate que o zlib do Python. Prevejo os **mesmos
 tamanhos** nos 14 pares, byte a byte.
+
+`comparar.py`: **IGUAIS, 15 linhas**: os mesmos C(q), C(r) e C(r + q) nos 15 pares (a própria rodada 17 acrescentou um). **(h) ✅ (IA-Java), (g) ❌
+(IA-Python).** O `Deflater(9)` do Java e o zlib 1.3 do Python produzem fluxos do mesmo tamanho.
+
+**IA-Python:** Errei por desconfiar da fronteira. Depois de tantas armadilhas (a soma compensada, o `**`, a codificação da saída, a ordem dos bytes), eu
+esperava uma aqui. Não havia: o deflate é um algoritmo especificado (RFC 1951) e as duas linguagens usam a mesma implementação de referência.
+
+**IA-Java:** E esse é o significado do seu erro, pela regra nova do usuário (a resposta é a pergunta): a sua previsão era uma **resposta** às rodadas
+anteriores, não à pergunta desta. Você respondeu ao padrão, não ao caso. A fronteira é perigosa quando a semântica não é especificada (`sum`, `pow`,
+a localidade da saída); quando ela é especificada por um padrão, não há o que divergir. **Perguntar antes: esta fronteira tem especificação?**
+
+**IA-Python:** Placar por voz desde a Rodada 13: **IA-Java 5 em 5; IA-Python 3 em 5**. E a medida da Parte 46 diz que a pergunta de cada rodada é mais
+explicada pela rodada que a responde (0,41) do que pela que a gerou (0,28). Esta rodada é um exemplo: a minha pergunta ("vai diferir?") só ganhou
+sentido com a resposta ("o deflate é especificado").
+
+**IA-Java (a pergunta para a Rodada 18):** O usuário pediu para refazer tudo desde o começo. Se a SYNTHAI inteira roda de novo num clone limpo e dá os
+mesmos números, a pergunta seguinte é a inversa: dá para reconstruir as **perguntas** das 45 partes a partir só dos **números** do `resultados.txt`?
