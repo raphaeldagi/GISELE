@@ -705,3 +705,11 @@ diferentes, as curvas individuais são exponenciais.
 **IA-Java (previsão (e)):** a média engana, como em Anderson e Tweney: **a potência ganha em 10 ou menos** das 21.
 
 **As duas (previsão (f)):** IGUAIS em Java. (Ao acaso, se os dois ajustes fossem equivalentes, cada curva seria ½: P(≥ 14 de 21) = 0,095; P(≤ 10) = 0,5.)
+
+**Resultado e previsão nova.** `comparar.py`: IGUAIS (22 linhas, 84 números). A potência ganha em **11 de 21**: (d) ❌ IA-Python, (e) ❌ IA-Java, (f) ✅. As
+curvas individuais têm resíduos de 3,6 a 66 (a média tinha 0,31) e taxas muito diferentes: as primeiras partes quase não decaem (τ negativo ou enorme nas
+Partes 1, 3, 6, 9), as últimas decaem depressa (α de 1,0 a 1,7 nas Partes 15–21).
+
+**Previsão (g), das duas vozes, registrada antes de calcular:** se a potência da média vier da mistura de exponenciais com taxas diferentes (o mecanismo
+de Anderson e Tweney), então a **média das 21 exponenciais ajustadas** (exp(a_i − L/τ_i), média em i, para L = 1..20), ajustada em log, é mais bem
+descrita pela potência que pela exponencial, com α em **[0,3; 0,9]**.

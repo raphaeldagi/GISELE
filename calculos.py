@@ -8736,6 +8736,49 @@ def p911_deriva(sementes=(911, 1, 2, 3, 4, 5)):
         controle.append(r22.deriva(c2)[5])
     return tau, se, alfa, sp, controle
 
+
+ERROS_P969, TESTES_P969 = 0, 0
+
+
+def p942_definicoes_mutuas(d=None):
+    """Pares de palavras que se definem uma pela outra (P942), no grafo de definições. Devolve (N, M arestas, pares
+    mútuos, pares esperados ao acaso M·(M/N²)/2, fração das palavras em pelo menos um par, 5 exemplos)."""
+    from synthai.dicionario import Dicionario
+    g = (d or Dicionario()).grafo_de_definicoes()
+    n = len(g)
+    m = sum(len(v) for v in g.values())
+    pares, em_par = [], set()
+    for u in sorted(g):
+        for v in sorted(g[u]):
+            if u < v and u in g.get(v, ()):
+                pares.append((u, v))
+                em_par.update((u, v))
+    esperado = m * (m / n ** 2) / 2
+    return n, m, len(pares), esperado, len(em_par) / n, pares[:5]
+
+
+def p943_periodo_hex(ate=10000):
+    """O período de 1/p em base 16 (P943): a ordem de 16 módulo p, para os primos ímpares até `ate`. Devolve (a média de
+    ord_p(16)/(p − 1), a média de ord_p(2)/(p − 1), a média de 1/mdc(ord_p(2), 4), primos)."""
+    crivo = [True] * (ate + 1)
+    crivo[0] = crivo[1] = False
+    for i in range(2, int(ate ** 0.5) + 1):
+        if crivo[i]:
+            crivo[i * i::i] = [False] * len(crivo[i * i::i])
+    r16 = r2 = rg = 0.0
+    ps = [p for p in range(3, ate + 1) if crivo[p]]
+    for p in ps:
+        o, x = 1, 2 % p
+        while x != 1:
+            x = x * 2 % p
+            o += 1
+        g = 1 if o % 2 else (2 if o % 4 else 4)
+        r2 += o / (p - 1)
+        r16 += (o // g) / (p - 1)
+        rg += 1 / g
+    k = len(ps)
+    return r16 / k, r2 / k, rg / k, k
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
