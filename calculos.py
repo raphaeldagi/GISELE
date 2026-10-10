@@ -9528,6 +9528,61 @@ def p1211_nome_e_palavra():
     spec.loader.exec_module(r33)
     return r33.irmas(r33.lemas())
 
+
+def p1241_placar_por_voz(ate=33):
+    """Rodada 34 (P1241): o placar por voz do diálogo contado por uma função que lê dialogo/DIALOGO.md (rodadas 13 a ate), IGUAL
+    em Java (dialogo/Rodada34.java). Devolve ({voz: [previsões estritas, acertos estritos, previsões generosas, acertos
+    generosos]}, linhas por rodada)."""
+    import importlib.util
+    import os
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    spec = importlib.util.spec_from_file_location("rodada34", os.path.join(raiz, "dialogo", "rodada34.py"))
+    r34 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r34)
+    with open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8") as f:
+        return r34.placar(f.read(), 13, ate)
+
+
+def p1242_definicao_propria(d=None):
+    """As definições que usam a própria palavra (P1242): dos sinsets com pelo menos um lema de uma palavra só, a fração cuja
+    definição lematizada (morphy) contém um desses lemas. Devolve (fração, sinsets considerados, fração por classe, 5 exemplos)."""
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    n, k, por, ex = 0, 0, {}, []
+    for pos, lemas, _, glosa in d.sinsets:
+        simples = {w.lower() for w in lemas if "_" not in w and "-" not in w}
+        if not simples:
+            continue
+        sim = any(x in simples for x in d.palavras_da_definicao(glosa))
+        n += 1
+        k += sim
+        a, b = por.get(pos, (0, 0))
+        por[pos] = (a + sim, b + 1)
+        if sim and len(ex) < 5:
+            ex.append((lemas[0], glosa))
+    return k / n, n, {c: a / b for c, (a, b) in sorted(por.items())}, ex
+
+
+def p1243_narcisistas_hex(kmax=8, base=16):
+    """Números narcisistas numa base (P1243): n com k dígitos igual à soma dos dígitos elevados a k, para k de 1 a kmax. Como
+    a soma só depende do multiconjunto de dígitos, percorre os multiconjuntos (C(k + base − 1, k) por k). Devolve a lista
+    ordenada."""
+    from itertools import combinations_with_replacement
+    achados = []
+    for k in range(1, kmax + 1):
+        pot = [x ** k for x in range(base)]
+        for ds in combinations_with_replacement(range(base), k):
+            s = sum(pot[x] for x in ds)
+            if s == 0 or not base ** (k - 1) <= s < base ** k:
+                continue
+            dig, x = [], s
+            while x:
+                x, r = divmod(x, base)
+                dig.append(r)
+            if sorted(dig) == list(ds):
+                achados.append(s)
+    return sorted(achados)
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -9732,6 +9787,19 @@ def _parte_59():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1239, testes=TESTES_P1239)
     print(f"P1239 minha taxa de erro ({ERROS_P1239}/{TESTES_P1239}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_60():
+    print("--- Parte 60 (0x3C: o placar que se conta) ---")
+    tot, linhas = p1241_placar_por_voz()
+    for v, (a, b, c, e) in tot.items():
+        print(f"P1241 {v}: estrita {b} em {a}; generosa {e} em {c} (a mao: IA-Python 23 em 36, IA-Java 21 em 36)")
+    frac, n, por, ex = p1242_definicao_propria()
+    print(f"P1242 definicoes que usam um dos proprios lemas: {frac:.4f} de {n} sinsets; por classe {({c: round(f, 4) for c, f in por.items()})}; {ex[:3]}")
+    nar = p1243_narcisistas_hex()
+    print(f"P1243 narcisistas em base 16 (1 a 8 digitos): {len(nar)}; de 2 a 8 digitos: {[hex(x) for x in nar if x >= 16]}")
+    total, sem = p1092_pnn_sem_teste(1241, 1270)
+    print(f"P1092 pNN novas (P1241-P1270) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 60: {p974_previsoes_sem_largura(range(60, 61))}")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -9768,7 +9836,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60}
 
 
 if __name__ == "__main__":

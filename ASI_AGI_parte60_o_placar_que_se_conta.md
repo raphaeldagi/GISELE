@@ -57,3 +57,18 @@ acima (7), não um instinto.
 - (c) os de 2 a 8 dígitos se espalham por **[4; 7]** comprimentos diferentes (não todos os 7: a base 10 não tem nenhum de 2 dígitos)
 
 **P1241, rodada 34:** no `dialogo/DIALOGO.md` (previsões (d) a (g)).
+
+### Previsões novas, nascidas de um erro (registradas antes de rodar a base 8 e os 9 dígitos)
+
+A primeira execução deu **64** narcisistas em base 16 (a faixa (b) era [20; 32]) e uma estrutura: os números vêm em famílias (0xC00E0, 0xC00E1, 0xC04E0,
+0xC04E1…). **A conta, depois de ver:** trocar um dígito 0 na posição p por um dígito d não muda a igualdade se o d acrescenta ao número o mesmo que à soma,
+d·16ᵖ = dᵏ, isto é, **dᵏ⁻¹ = 16ᵖ**. Só servem as potências de 2: d = 1 em p = 0 sempre; d = 2 quando 4p = k − 1; d = 4 quando 4p = 2(k − 1); d = 8 quando
+4p = 3(k − 1). Com k = 5 (k − 1 = 4) valem os quatro interruptores (1 na posição 0, 2 na 1, 4 na 2, 8 na 3); com k = 3, dois (1 na 0, 4 na 1); com k = 7, dois
+(1 na 0, 4 na 3); com k = 4, 6 e 8, só o 1. A contagem medida por comprimento acompanha: 17 (k = 3), 1 (k = 4), 23 (k = 5), 2 (k = 6), 4 (k = 7), 0 (k = 8).
+Uma conta posterior só vira evidência num mundo novo (regra da Parte 25):
+
+- (h) **Base 8**, 2 a 8 dígitos. Interruptores: dᵏ⁻¹ = 8ᵖ = 2³ᵖ; d = 2 quando 3p = k − 1, d = 4 quando 3p = 2(k − 1). Os comprimentos com k − 1 múltiplo de 3
+  (**k = 4 e k = 7**) têm os três interruptores; os outros, só o 1. Previsão: os comprimentos 4 e 7 juntos têm uma fração dos narcisistas de 2 a 8 dígitos
+  em **[0,50; 0,90]** (sem os interruptores, 2 de 7 comprimentos dariam ~0,29).
+- (i) **Base 16, 9 dígitos** (k − 1 = 8: os quatro interruptores, d = 2 em p = 2, d = 4 em p = 4, d = 8 em p = 6, como em k = 5). Previsão: **[6; 40]**
+  narcisistas de 9 dígitos (os 23 de k = 5 vieram de uma ou duas famílias multiplicadas pelos interruptores).
