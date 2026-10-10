@@ -1004,3 +1004,19 @@ Frágil a um ulp e exata entre linguagens: as duas coisas ao mesmo tempo. Placar
 
 **IA-Java (a pergunta para a Rodada 31):** Se a ordem dos 4-gramas é decidida pelo alfabeto, ela muda se o alfabeto mudar? Ordenamos pela ordem do português
 (com acentos, como um dicionário ordena: *á* junto de *a*) em vez da ordem dos códigos Unicode, nas duas linguagens.
+
+---
+
+## Rodada 31 — o alfabeto do português (previsões registradas antes do código)
+
+**O teste.** Os 13 primeiros 4-gramas da Rodada 12 (contados em documentos e ocorrências) têm 9 empates, decididos pela ordem alfabética dos códigos Unicode.
+Reordena-se com a ordem de um dicionário português: a chave é a palavra sem acentos e minúscula (NFD sem as marcas), depois a palavra original como
+desempate. Conta-se quantos pares de 4-gramas empatados mudam de ordem relativa (entre os 13).
+
+**A IA-Python relê os erros da IA-Java:** ela errou ao superestimar os empates. **IA-Python (previsão (c)):** os 4-gramas mais frequentes dos meus textos são
+de palavras comuns, quase sem acentos e sem maiúsculas; **0 a 1** par muda de ordem.
+
+**A IA-Java relê os erros da IA-Python:** ela errou ao supor independência onde havia restrição. **IA-Java (previsão (d)):** o português tem acentos em palavras
+comuns (*é*, *não*, *também*, *número*) e eles mudam a ordem: **2 a 5** pares mudam.
+
+**As duas (previsão (e)):** IGUAIS em Java (o `java.text.Normalizer` e a `unicodedata` decompõem o português da mesma forma).
