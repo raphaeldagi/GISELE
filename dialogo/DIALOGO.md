@@ -1522,3 +1522,19 @@ forma de GPT pequena: para cada vez que o dado dobra, os bits caem 2^(−0,054) 
 
 **IA-Python (a pergunta para a Rodada 45):** A atenção do GPT é uma matriz A = softmax(QKᵀ/√d). Os autovalores da matriz W_Q W_Kᵀ (24 × 24) do GPT treinado, por Jacobi nas duas linguagens:
 quantas direções a atenção usa de fato (o posto efetivo, a razão de participação Σλ²... dos valores singulares)?
+
+---
+
+## Rodada 45 — os autovalores da atenção (previsões registradas antes do código rodar)
+
+**O teste.** O Python pré-treina um GPT (d = 16, T = 16, h = 32; 2.000 passos nas definições inglesas, semente 71) e grava W_Q e W_K em hexadecimal. As duas linguagens calculam M = W_Q W_Kᵀ
+(a forma bilinear da atenção: o escore é e_t M e_jᵀ/√d), MᵀM, os seus autovalores por Jacobi clássico (só + − × ÷ e √, na mesma ordem) e a razão de participação PR = (Σσ²)²/Σσ⁴.
+
+**O peso medido antes, num caso escolhido por regra (o mesmo GPT treinado no português):** sem treino, PR = **5,42**; depois de 2.000 passos, PR = **1,95** e o maior valor singular leva **70%** de
+Σσ². Uma matriz gaussiana 16 × 16 ao acaso daria PR ≈ d/2 = 8 (8,63 medido): o treino concentra a atenção em ~2 direções.
+
+**A IA-Java relê os erros da IA-Python:** ela mudou o tamanho sem mudar o passo. **IA-Java (previsão (d)):** IGUAIS em Java (Jacobi só usa operações que o IEEE 754 arredonda corretamente).
+
+**A IA-Python relê os erros da IA-Java:** ela estimou contas de cabeça na prosa. **IA-Python (previsão (e)):** PR do GPT inglês treinado em **[1,3; 3,5]**.
+
+**As duas (previsão (f)):** a fração de Σσ² no maior valor singular em **[0,45; 0,85]**.

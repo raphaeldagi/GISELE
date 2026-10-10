@@ -10715,6 +10715,104 @@ def p1550_contas_da_parte70(medida_gf2=None, janelas=9997):
     return p, sd, (medida_gf2 - p) / sd, (medida_gf2 - p) / (2 * sd)
 
 
+def p1571_autovalores_jacobi(S, varreduras=60):
+    """Os autovalores de uma matriz simétrica pelo método de Jacobi clássico (P1571): rotações de Givens que zeram, em ordem fixa (p < q, linha por
+    linha), cada elemento fora da diagonal; tan θ = sinal(τ)/(|τ| + √(τ² + 1)), τ = (S_qq − S_pp)/(2 S_pq). Só + − × ÷ e √ (o IEEE 754 arredonda
+    todas corretamente: a tradução para Java é exata). Devolve os autovalores em ordem decrescente."""
+    from math import sqrt as raiz
+    n = len(S)
+    A = [list(linha) for linha in S]
+    for _ in range(varreduras):
+        fora = 0.0
+        for p in range(n):
+            for q in range(p + 1, n):
+                fora += A[p][q] * A[p][q]
+        if fora == 0.0:
+            break
+        for p in range(n):
+            for q in range(p + 1, n):
+                if A[p][q] == 0.0:
+                    continue
+                tau = (A[q][q] - A[p][p]) / (2.0 * A[p][q])
+                t = (1.0 if tau >= 0.0 else -1.0) / (abs(tau) + raiz(tau * tau + 1.0))
+                c = 1.0 / raiz(t * t + 1.0)
+                s_ = t * c
+                for k in range(n):
+                    akp, akq = A[k][p], A[k][q]
+                    A[k][p] = c * akp - s_ * akq
+                    A[k][q] = s_ * akp + c * akq
+                for k in range(n):
+                    apk, aqk = A[p][k], A[q][k]
+                    A[p][k] = c * apk - s_ * aqk
+                    A[q][k] = s_ * apk + c * aqk
+    return sorted((A[i][i] for i in range(n)), reverse=True)
+
+
+def p1572_participacao(M):
+    """Quantas direções uma matriz usa (P1572): os valores singulares σ_i de M (as raízes dos autovalores de MᵀM, por Jacobi, P1571); a razão de
+    participação PR = (Σ σ_i²)²/Σ σ_i⁴ (entre 1, uma direção só, e d, todas iguais) e a fração de Σσ² no maior. Para uma matriz gaussiana d×d ao
+    acaso, PR ≈ d/2 (a lei do quarto de círculo: E σ² = d, E σ⁴ = 2d²). Devolve (PR, fração do maior, σ² em ordem decrescente)."""
+    n, m = len(M), len(M[0])
+    MtM = [[sum(M[k][i] * M[k][j] for k in range(n)) for j in range(m)] for i in range(m)]
+    lam = [max(0.0, x) for x in p1571_autovalores_jacobi(MtM)]
+    s2 = sum(lam)
+    s4 = sum(x * x for x in lam)
+    return s2 * s2 / s4, lam[0] / s2, lam
+
+
+def p1573_crescimento_da_taxonomia(classe="n", ate=8, d=None):
+    """A geometria do crescimento da taxonomia (P1573): o número de sinsets da classe em cada profundidade (P793) e a taxa de crescimento por nível,
+    pela reta de mínimos quadrados de ln N(r) contra r nas profundidades 1 a `ate` (num espaço hiperbólico, N(r) cresce como e^{λr}; num euclidiano de
+    dimensão k, como r^{k−1}). Devolve (fator por nível e^λ, {r: N(r)}, o r de N máximo)."""
+    from math import exp, log
+    from synthai.dicionario import Dicionario, profundidades
+    d = d or Dicionario()
+    por = {}
+    for i, r in profundidades(d).items():
+        if d.sinsets[i][0] == classe:
+            por[r] = por.get(r, 0) + 1
+    pts = [(r, log(por[r])) for r in range(1, ate + 1) if por.get(r)]
+    k = len(pts)
+    mx, my = sum(x for x, _ in pts) / k, sum(y for _, y in pts) / k
+    lam = sum((x - mx) * (y - my) for x, y in pts) / sum((x - mx) ** 2 for x, _ in pts)
+    return exp(lam), dict(sorted(por.items())), max(por, key=por.get)
+
+
+def p1574_irredutiveis_gf2(grau=15, mascara=6):
+    """Os números hexadecimais como polinômios sobre GF(2) (P1574): os polinômios de grau `grau` (bit mais alto = grau) irredutíveis, contados por
+    divisão por todos os irredutíveis de grau ≤ grau/2 (crivo de polinômios), contra a fórmula de Gauss N(n) = (1/n) Σ_{d|n} μ(d) 2^{n/d}; e os
+    "gêmeos" (f, f ⊕ máscara), os dois irredutíveis, contra a conta heurística N²/2^(grau−1)/2 (a chance de o vizinho de um irredutível ser irredutível,
+    se fossem independentes). Com máscara = 2 (f ⊕ x), não há gêmeos: um irredutível de grau > 1 tem um número ímpar de termos (senão x + 1 o divide),
+    e trocar um coeficiente troca a paridade. Por isso o padrão é máscara = 6 (f ⊕ x ⊕ x², que mantém a paridade e o termo constante).
+    Devolve (irredutíveis, Gauss, gêmeos, conta dos gêmeos)."""
+    def mod(a, b):
+        db = b.bit_length()
+        while a.bit_length() >= db:
+            a ^= b << (a.bit_length() - db)
+        return a
+
+    irred = {1: [2, 3]}
+    for g in range(2, grau // 2 + 1):
+        irred[g] = [f for f in range(1 << g, 1 << (g + 1))
+                    if all(mod(f, h) for k in range(1, g // 2 + 1) for h in irred[k])]
+    peq = [h for k in range(1, grau // 2 + 1) for h in irred[k]]
+    conj = {f for f in range(1 << grau, 1 << (grau + 1)) if all(mod(f, h) for h in peq)}
+
+    def mobius(n):
+        r, k, p = 1, n, 2
+        while p * p <= k:
+            if k % p == 0:
+                k //= p
+                if k % p == 0:
+                    return 0
+                r = -r
+            p += 1
+        return -r if k > 1 else r
+    gauss = sum(mobius(dd) * 2 ** (grau // dd) for dd in range(1, grau + 1) if grau % dd == 0) // grau
+    gemeos = sum(1 for f in conj if (f ^ mascara) in conj and f < (f ^ mascara))
+    return len(conj), gauss, gemeos, len(conj) ** 2 / 2 ** (grau - 1) / 2
+
+
 def p1499_previsoes_sobre_previsoes_v2(parte=68):
     """O placar das previsões sobre as minhas previsões, versão 2 (P1499; lido pela P1481, com os tipos): (m1) o número de previsões do
     mundo, (m2) o número de faixas que cruzam o zero, (m3) a mediana de w das que não cruzam, (m4) a fração de acertos, (m5) o número de
