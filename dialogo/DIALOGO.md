@@ -1227,3 +1227,26 @@ a direção e erra o tamanho.
 
 **IA-Python (a pergunta para a Rodada 37):** O fator de congruência da Parte 60 só olha os g que valem para todos os dígitos. Um fator **efetivo**, (b − 1) vezes a
 fração dos candidatos em que a soma das potências e a soma dos dígitos têm o mesmo resto módulo b − 1, generaliza o g para os casos parciais. Ele explica a base 8?
+
+---
+
+## Rodada 37 — o fator efetivo (previsões registradas antes do código)
+
+**O teste.** Para cada base b de 3 a 16 e k de 2 a 7: o fator **efetivo** F = (b − 1) × (fração dos candidatos cuja soma das potências e soma dos dígitos têm o
+mesmo resto módulo b − 1). Quando dᵏ ≡ d (mod g) vale para todo dígito, F ≥ g; F generaliza g para os casos parciais. A conta nova é a conta da Parte 60 com F
+no lugar de g. Por base, nas células sem interruptor.
+
+**O peso do mecanismo, medido FORA do teste antes deste registro (regra da Parte 62):** com k = 8 (fora do teste) e as mesmas 14 bases, F fica perto de g em
+quase todas (base 8: F = 0,995 contra g = 1; a única distância grande é a base 4, 1,446 contra 1); a razão total medido/conta passa de **1,222** (com g) para
+**1,188** (com F): o mecanismo pesa ~3%.
+
+**A IA-Java relê os erros da IA-Python:** ela acertou a correlação e o tamanho escapou. **IA-Java (previsão (d)):** com o peso medido, F não explica a base 8: a
+razão da base 8, sem interruptor, com F, fica em **[2,5; 5,0]** (era 4,36 com g).
+
+**A IA-Python relê os erros da IA-Java:** ela deduziu o mecanismo e chutou o tamanho (1,3 a 2,5 para um efeito de 1,10). **IA-Python (previsão (e)):** a razão total
+sem interruptor, com F, fica em **[1,30; 1,60]** (era 1,498; o peso fora do teste, −3%, dá ~1,45).
+
+**As duas (previsão (f)):** IGUAIS em Java.
+
+**As duas (previsão (g)):** a fração das células (das 84, com candidatos) em que F se afasta de g mais de 10% fica em **[0,05; 0,35]** (fora do teste, com k = 8,
+1 de 13 células com candidatos; os k pequenos têm poucos candidatos e mais discrepância).
