@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 65 (0x41): o que não é divisor
 
-> Continuação da [Parte 64](ASI_AGI_parte64_o_fator_do_final.md). Previsões nos commits `21d71b2` ((a) a (g)) e `329cc7f` ((h) e (i)). **Previsões registradas antes de qualquer execução que mostre os números medidos e antes de
+> Continuação da [Parte 64](ASI_AGI_parte64_o_fator_do_final.md). **Próxima:** [Parte 66 — o endereço da falta](ASI_AGI_parte66_o_endereco_da_falta.md) (P1421–P1450). Previsões nos commits `21d71b2` ((a) a (g)) e `329cc7f` ((h) e (i)). **Previsões registradas antes de qualquer execução que mostre os números medidos e antes de
 > escrever o resto deste documento.** A Parte 64 achou as seis bases de 17 a 22 abaixo da conta dos primos palíndromos. Esta parte pergunta se os primos pequenos que
 > não dividem 2b explicam o viés, se a definição de um substantivo fica mais longa quanto mais fundo ele está na taxonomia, e quanto vale o período de 1/p em hexadecimal.
 

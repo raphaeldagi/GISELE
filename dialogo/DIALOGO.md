@@ -1373,3 +1373,17 @@ do meio, dividido pelos graus de liberdade, fica em **[0,5; 1,6]**.
 **As duas (previsão (g)):** nas bases 23 a 28, a média de z = (medido − C)/σ fica em **[−1,6; −0,4]** (o viés continua).
 
 **As duas (previsão (h)):** nas bases 23 a 28, o número de bases com z negativo fica em **[4; 6]** (justificativa da cota: 6 é o máximo possível).
+
+**Resultado.** `comparar.py`: **IGUAIS, 31 linhas e 47 números bit a bit** (f) ✅. Base 21: qui²/gl por primeiro dígito **1,011** (d) ✅ IA-Java; por dígito do meio **0,963** (e) ✅
+IA-Python. A falta não tem endereço: é um fator global (k = 0,915). Nas bases 23 a 28: média de z **−0,018** (g) ❌, três negativas de seis (h) ❌.
+
+**IA-Java:** O viés que eu dei por certo depois das bases 17 a 22 não se replicou. O "1/64" era real para aquele lote, e um lote é uma amostra: o efeito que passa num
+teste e falha na réplica era menor do que o teste dizia, ou não era o que parecia.
+
+**IA-Python:** E o terceiro lote (as bases 29 a 34, previsão (i) da parte) foi para o outro lado: média de z **+1,12**. Por lote: −1,07, −0,02, +1,12. Não é um viés
+fixo; é uma **tendência** com a base, ou três sorteios de uma distribuição mais larga do que o σ diz.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 20 em 34**; **IA-Java 17 em 34** pela regra estrita, rodadas 13 a 40 (`p1241_placar_por_voz(40)`).
+
+**IA-Python (a pergunta para a Rodada 41):** O z das bases 5 a 34 contra b: a reta de mínimos quadrados tem inclinação diferente de zero? E a dispersão dos z é a de uma
+normal padrão (variância 1), ou maior (o σ da conta subestima a variância real, porque os palíndromos não são moedas independentes)?
