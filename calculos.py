@@ -7471,6 +7471,7 @@ def testes_de_regressao():
         "P1213": p1213_persistencia_hex(16 ** 4)[:2] == (7, 0x3DDE),
         "P1243": len(p1243_narcisistas_hex(8)) == 64 and p1249_fator_de_congruencia(9) == 15,
         "P1273": p1273_niven(16 ** 5)[0] == 93788 and p1278_familias_narcisistas()[:2] == (175, 157),
+        "P1303": p1303_autonumeros()[1] == 64999 and p1307_terminacoes_iguais()[1][0] == ("al", 434),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9483,6 +9484,7 @@ def p1181_primeira_diferenca():
 ERROS_P1239, TESTES_P1239 = 171, 492
 ERROS_P1269, TESTES_P1269 = 175, 503
 ERROS_P1299, TESTES_P1299 = 178, 511
+ERROS_P1329, TESTES_P1329 = 181, 519
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -9793,6 +9795,46 @@ def p1303_autonumeros(ate=16 ** 5, base=16):
     auto = [m for m in range(1, ate + 1) if not alcancado[m]]
     return len(auto) / ate, len(auto), auto[:8]
 
+
+def p1307_terminacoes_iguais(d=None, pt=None, classe="a", n_term=2):
+    """As terminações das palavras iguais nas duas línguas (P1307): nos sinsets da classe com uma palavra portuguesa idêntica
+    a uma inglesa (P1302), a contagem das últimas n_term letras da palavra igual (a primeira em ordem). Devolve (total,
+    [(terminação, contagem)] em ordem decrescente)."""
+    from synthai.dicionario import Dicionario, DicionarioPT
+    d = d or Dicionario()
+    pt = pt or DicionarioPT()
+    cont, total = {}, 0
+    for chave, i in sorted(d.indice.items()):
+        pos, desloc = chave.split(":")
+        if pos != classe:
+            continue
+        pts = pt.lemas.get(f"{desloc}-{pos}") or (pt.lemas.get(f"{desloc}-s") if pos == "a" else None)
+        if not pts:
+            continue
+        iguais = {w.lower() for w in d.sinsets[i][1] if "_" not in w} & {w.lower() for w in pts if " " not in w and "_" not in w}
+        if not iguais:
+            continue
+        w = sorted(iguais)[0]
+        total += 1
+        cont[w[-n_term:]] = cont.get(w[-n_term:], 0) + 1
+    return total, sorted(cont.items(), key=lambda x: (-x[1], x[0]))
+
+
+def p1308_chance_de_spearman(rho, n=14, vezes=20000, semente=1301):
+    """A chance de uma correlação de postos ≥ rho ao acaso (P1308), por permutações (semente fixa): sorteia uma ordem dos n
+    postos e calcula Pearson nos postos, como a rodada 36. Devolve a fração das permutações com correlação ≥ rho."""
+    import random
+    r = random.Random(semente)
+    xs = [float(i) for i in range(n)]
+    mx = sum(xs) / n
+    sxx = sum((x - mx) ** 2 for x in xs)
+    k = 0
+    for _ in range(vezes):
+        ys = xs[:]
+        r.shuffle(ys)
+        k += sum((x - mx) * (y - mx) for x, y in zip(xs, ys)) / sxx >= rho
+    return k / vezes
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -10049,6 +10091,33 @@ def _parte_61():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1299, testes=TESTES_P1299)
     print(f"P1299 minha taxa de erro ({ERROS_P1299}/{TESTES_P1299}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_62():
+    print("--- Parte 62 (0x3E: o ultimo digito) ---")
+    linhas, rho = p1301_ultimo_digito()
+    for b, exc, raz, m, e, ec in linhas:
+        print(f"P1301 base {b:2d}: excesso do ultimo digito {exc:.4f}; medido {m:2d}; conta {e:.3f} (razao {raz:.3f}); corrigida {ec:.3f} (razao {m / ec:.3f})")
+    m = sum(x[3] for x in linhas)
+    e = ec = 0.0
+    for x in linhas:
+        e += x[4]
+        ec += x[5]
+    print(f"P1301 Spearman excesso x razao = {rho:.4f}; total: medido {m}; conta {e:.3f} (razao {m / e:.4f}); corrigida {ec:.3f} (razao {m / ec:.4f})")
+    frac, n, por, ex = p1302_iguais_nas_duas_linguas()
+    print(f"P1302 sinsets com palavra igual em portugues e ingles: {frac:.4f} de {n}; por classe {({c: round(f, 6) for c, f in por.items()})}; "
+          f"substantivos/verbos = {por['n'] / por['v']:.1f}; {ex}")
+    print(f"P1308 chance ao acaso (14 bases, 20000 permutacoes): rho >= 0,3 em {p1308_chance_de_spearman(0.3):.4f}; rho >= {rho:.4f} em "
+          f"{p1308_chance_de_spearman(rho):.4f}")
+    t, term = p1307_terminacoes_iguais()
+    print(f"P1307 adjetivos iguais: {t}; terminacoes {term[:8]}; fracao em -al = {dict(term)['al'] / t:.4f}")
+    for ate, base in ((10 ** 6, 10), (16 ** 5, 16)):
+        dens, k, prim = p1303_autonumeros(ate, base)
+        print(f"P1303 autonumeros base {base} ate {ate}: {k} (densidade {dens:.4f}); os primeiros {prim}")
+    total, sem = p1092_pnn_sem_teste(1301, 1330)
+    print(f"P1092 pNN novas (P1301-P1330) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 62: {p974_previsoes_sem_largura(range(62, 63))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1329, testes=TESTES_P1329)
+    print(f"P1329 minha taxa de erro ({ERROS_P1329}/{TESTES_P1329}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -10085,7 +10154,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62}
 
 
 if __name__ == "__main__":

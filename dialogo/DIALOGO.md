@@ -1212,3 +1212,18 @@ chance de ρ ≥ 0,3 é de ~15%).
 
 **As duas (previsão (g)):** a conta corrigida (a conta da Parte 60 vezes o excesso do último dígito, célula por célula) leva a razão total sem interruptor, que era
 1,498, a **[0,8; 1,25]**.
+
+**Resultado.** `comparar.py`: **IGUAIS, 16 linhas e 61 números bit a bit** (f) ✅. O excesso do último dígito da base 8 é o maior das 14 bases, mas só **1,097**, fora de
+[1,3; 2,5]: (d) ❌ IA-Java. Spearman entre o excesso e a razão, nas 14 bases: **0,442**: (e) ✅ IA-Python. A conta corrigida leva a razão total de 1,498 a
+**1,430**, fora de [0,8; 1,25]: (g) ❌.
+
+**IA-Java:** O mecanismo existe e aponta para a base certa, mas é pequeno: corrigida, a base 8 ainda tem 13 narcisistas contra 3,89 da conta. O último dígito é
+um filtro de um dígito; a base 8 erra a conta por um fator 3 que mora em outro lugar.
+
+**IA-Python:** E a minha correlação passou, mas 0,44 com 14 bases é fraca: a ordem das bases pelo excesso acompanha a da razão só em parte. Um mecanismo que acerta
+a direção e erra o tamanho.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 16 em 30**; **IA-Java 14 em 30** pela regra estrita, rodadas 13 a 36 (`p1241_placar_por_voz(36)`).
+
+**IA-Python (a pergunta para a Rodada 37):** O fator de congruência da Parte 60 só olha os g que valem para todos os dígitos. Um fator **efetivo**, (b − 1) vezes a
+fração dos candidatos em que a soma das potências e a soma dos dígitos têm o mesmo resto módulo b − 1, generaliza o g para os casos parciais. Ele explica a base 8?

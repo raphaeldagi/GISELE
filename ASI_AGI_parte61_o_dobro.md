@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 61 (0x3D): o dobro
 
-> Continuação da [Parte 60](ASI_AGI_parte60_o_placar_que_se_conta.md). Previsões nos commits `996179c` ((a) a (g)) e `80d6fb8` ((h)). **Previsões registradas antes de qualquer execução que mostre os números medidos e
+> Continuação da [Parte 60](ASI_AGI_parte60_o_placar_que_se_conta.md). **Próxima:** [Parte 62 — o último dígito](ASI_AGI_parte62_o_ultimo_digito.md) (P1301–P1330). Previsões nos commits `996179c` ((a) a (g)) e `80d6fb8` ((h)). **Previsões registradas antes de qualquer execução que mostre os números medidos e
 > antes de escrever o resto deste documento** (os commits que as contêm são citados aqui depois). A Parte 60 mostrou que a conta dos narcisistas, com o fator de
 > congruência, ainda fica abaixo do medido; esta parte pergunta por quê, pergunta quantos adjetivos do inglês se definem pela negação e quantos números são
 > divisíveis pela soma dos seus dígitos hexadecimais, e corrige uma contagem minha.
