@@ -11623,6 +11623,73 @@ def p1751_rodada09_nova_contra_antiga():
     return len(a), sum(x != y for x, y in zip(a, b)), max(abs(x - y) / max(abs(x), 1e-300) for x, y in zip(a, b))
 
 
+def p1781_svd_por_jacobi(M, varreduras=60):
+    """Decomposição em valores singulares de uma matriz quadrada M (P1781): os autovalores e autovetores de MᵀM por Jacobi cíclico (acumulando as
+    rotações em V), σ = √λ, e U = M·V/σ (as colunas de σ = 0 ficam zero). Só + − × ÷ e √. Devolve (σ decrescentes, U, V), com U e V como listas de
+    linhas d × d (coluna i = vetor singular i)."""
+    import math
+    d = len(M)
+    A = [[sum(M[k][i] * M[k][j] for k in range(d)) for j in range(d)] for i in range(d)]
+    V = [[1.0 if i == j else 0.0 for j in range(d)] for i in range(d)]
+    for _ in range(varreduras):
+        fora = sum(A[p][q] * A[p][q] for p in range(d) for q in range(p + 1, d))
+        if fora < 1e-30:
+            break
+        for p in range(d):
+            for q in range(p + 1, d):
+                if A[p][q] == 0.0:
+                    continue
+                tau = (A[q][q] - A[p][p]) / (2.0 * A[p][q])
+                t = (1.0 if tau >= 0.0 else -1.0) / (abs(tau) + math.sqrt(tau * tau + 1.0))
+                c = 1.0 / math.sqrt(t * t + 1.0)
+                sn = t * c
+                for k in range(d):
+                    akp, akq = A[k][p], A[k][q]
+                    A[k][p], A[k][q] = c * akp - sn * akq, sn * akp + c * akq
+                for k in range(d):
+                    apk, aqk = A[p][k], A[q][k]
+                    A[p][k], A[q][k] = c * apk - sn * aqk, sn * apk + c * aqk
+                for k in range(d):
+                    vkp, vkq = V[k][p], V[k][q]
+                    V[k][p], V[k][q] = c * vkp - sn * vkq, sn * vkp + c * vkq
+    ordem = sorted(range(d), key=lambda i: -A[i][i])
+    sig = [math.sqrt(max(A[i][i], 0.0)) for i in ordem]
+    Vs = [[V[k][i] for i in ordem] for k in range(d)]
+    U = [[0.0] * d for _ in range(d)]
+    for j in range(d):
+        if sig[j] > 0.0:
+            for i in range(d):
+                U[i][j] = sum(M[i][k] * Vs[k][j] for k in range(d)) / sig[j]
+    return sig, U, Vs
+
+
+def p1782_atencao_de_posto(g, r):
+    """Troca a forma bilinear da atenção de um GPT treinado (M = W_Q W_Kᵀ) pela melhor aproximação de posto r (Eckart–Young), sem mexer no resto
+    (P1782): W_Q' = U_r Σ_r e W_K' = V_r, completadas com colunas zero, de modo que W_Q' W_K'ᵀ = M_r. Devolve uma cópia do GPT."""
+    import copy
+    h = copy.deepcopy(g)
+    Q, K = g.p["Q"], g.p["K"]
+    d = len(Q)
+    M = [[sum(Q[i][k] * K[j][k] for k in range(d)) for j in range(d)] for i in range(d)]
+    sig, U, V = p1781_svd_por_jacobi(M)
+    h.p["Q"] = [[U[i][j] * sig[j] if j < r else 0.0 for j in range(d)] for i in range(d)]
+    h.p["K"] = [[V[i][j] if j < r else 0.0 for j in range(d)] for i in range(d)]
+    return h
+
+
+def p1783_bits_por_posto(lingua="en", semente=71, postos=(1, 2, 4, 16), passos=2000):
+    """(P1783) Um GPT (d = 16, T = 16, h = 32, taxa 0,005) treinado nas glosas da língua; os bits por caractere no teste (300 janelas) com a atenção
+    original e com a de posto r. Devolve (bits original, {r: bits}, valores singulares de M)."""
+    from synthai.gpt import GPT
+    tr, te = p1511_corpus_de_glosas(lingua)
+    g = GPT(VOCAB_GPT, T=16, d=16, h=32, semente=semente)
+    g.treinar(tr, passos=passos, lr=0.005, semente=semente)
+    Q, K = g.p["Q"], g.p["K"]
+    M = [[sum(Q[i][k] * K[j][k] for k in range(16)) for j in range(16)] for i in range(16)]
+    sig = p1781_svd_por_jacobi(M)[0]
+    return g.bits_por_caractere(te, janelas=300), {r: p1782_atencao_de_posto(g, r).bits_por_caractere(te, janelas=300) for r in postos}, sig
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
