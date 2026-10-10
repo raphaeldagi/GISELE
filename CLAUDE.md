@@ -85,6 +85,9 @@ anterior, commit e push.
   era a base 8).
   Parte 62: um mecanismo deduzido antes de prever ganha uma conta do seu PESO num caso fora do teste (outra base, outro k), por código, antes do registro;
   sem ela, a faixa é a do estatístico (acertei a direção e chutei o tamanho duas vezes). Surpresa = erro maior que a largura da faixa, contada pelo script.
+  Parte 63 (a regra do peso deu 7 de 8): o caso de calibração precisa estar PERTO do teste na variável que move o mecanismo (k = 8 tem milhares de candidatos por
+  célula; os k pequenos, poucos: a única previsão errada foi essa). Estimativas de cabeça no texto são previsões: trocar por código antes do commit (`p1338` pegou um
+  fator 2).
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -173,7 +176,8 @@ anterior, commit e push.
   porque eu esqueço custos. Ao deduzir quanto tempo a evidência leva, calcular a KL entre as previsões das hipóteses no
   caso em questão (uma crença errada e modesta, perto da ignorância, quase não é desmentida).
 - Nunca usar `pkill -f` nem `pgrep -f` (num laço com `kill`) com um padrão que apareça na própria linha de comando: mata o shell (três vezes; a terceira
-  com `pgrep`, Parte 62). Buscar processos com a classe de caracteres: `ps aux | grep "[c]alculos"`.
+  com `pgrep`, Parte 62). Buscar processos com a classe de caracteres: `ps aux | grep "[c]alculos"`; e matar e reiniciar em comandos SEPARADOS (Parte 63:
+  a linha do shell continha o texto do reinício e casou com o padrão; quarta vez).
 - Execuções longas em blocos retomáveis (Parte 46): o contêiner reinicia e mata processos em segundo plano (a execução única das 45 partes morreu
   duas vezes). Um processo por bloco de partes, cada um no seu arquivo, com marca de concluído (`python3 calculos.py 15 16 17 18`).
 - Antes de prever, calcular à mão um exemplo do caso presente (Parte 47): 5 de 6 erros vieram de responder à pergunta anterior (a rodada passada, um
@@ -201,7 +205,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o

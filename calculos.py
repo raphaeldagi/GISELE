@@ -7472,6 +7472,7 @@ def testes_de_regressao():
         "P1243": len(p1243_narcisistas_hex(8)) == 64 and p1249_fator_de_congruencia(9) == 15,
         "P1273": p1273_niven(16 ** 5)[0] == 93788 and p1278_familias_narcisistas()[:2] == (175, 157),
         "P1303": p1303_autonumeros()[1] == 64999 and p1307_terminacoes_iguais()[1][0] == ("al", 434),
+        "P1333": p1333_primos_palindromos()[0] == 357 and p1331_fator_efetivo()[1:] == (84, 42),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9485,6 +9486,7 @@ ERROS_P1239, TESTES_P1239 = 171, 492
 ERROS_P1269, TESTES_P1269 = 175, 503
 ERROS_P1299, TESTES_P1299 = 178, 511
 ERROS_P1329, TESTES_P1329 = 181, 519
+ERROS_P1359, TESTES_P1359 = 182, 527
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -9930,6 +9932,38 @@ def p1337_conta_palindromos(ate, base):
             conta += 2 / log(n)
     return conta
 
+
+def p1338_contas_da_parte63(media_base8=None):
+    """As contas auxiliares da Parte 63 (P1338): (1) a chance de Poisson de 13 ou mais narcisistas na base 8 com a média da conta
+    com F (P1331); (2) o desvio da contagem dos primos palíndromos em base 16 sob a conta (Σ p(1 − p) nos de comprimento ímpar
+    ≥ 3, p = 2/ln n), relativo à conta; (3) o ingênuo "fração dos primos até 16⁵ vezes o número de palíndromos". Devolve
+    (cauda de Poisson, desvio relativo, ingênuo, palíndromos, média usada)."""
+    from math import exp, log, sqrt
+    if media_base8 is None:
+        media_base8 = next(x[3] for x in p1331_fator_efetivo()[0] if x[0] == 8)
+    termo, cdf = exp(-media_base8), 0.0
+    for j in range(13):
+        cdf += termo
+        termo *= media_base8 / (j + 1)
+    ate = 16 ** 5
+    var, npal = 0.0, 0
+    for n in range(1, ate):
+        ds = _digitos_base(n, 16)
+        if ds != ds[::-1]:
+            continue
+        npal += 1
+        if len(ds) >= 3 and len(ds) % 2 and n % 2:
+            q = 2 / log(n)
+            var += q * (1 - q)
+    k, conta, _ = p1333_primos_palindromos()
+    crivo = bytearray([1]) * ate
+    crivo[0] = crivo[1] = 0
+    for i in range(2, int(ate ** 0.5) + 1):
+        if crivo[i]:
+            crivo[i * i::i] = bytearray(len(range(i * i, ate, i)))
+    ingenuo = sum(crivo) / ate * npal
+    return 1 - cdf, sqrt(var) / conta, ingenuo, npal, media_base8
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -10213,6 +10247,32 @@ def _parte_62():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1329, testes=TESTES_P1329)
     print(f"P1329 minha taxa de erro ({ERROS_P1329}/{TESTES_P1329}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_63():
+    print("--- Parte 63 (0x3F: o peso do mecanismo) ---")
+    linhas, com, longe = p1331_fator_efetivo()
+    for b, m, cg, cf in linhas:
+        print(f"P1331 base {b:2d}: medido {m:2d}; conta com g {cg:.3f} (razao {m / cg:.3f}); com F {cf:.3f} (razao {m / cf:.3f})")
+    tm = sum(x[1] for x in linhas)
+    tg = tf = 0.0
+    for x in linhas:
+        tg += x[2]
+        tf += x[3]
+    print(f"P1331 total: medido {tm}; razao com g {tm / tg:.4f}; com F {tm / tf:.4f}; celulas com F a mais de 10% de g: {longe} de {com} ({longe / com:.4f})")
+    med, mais, n, media = p1332_glosa_pt_e_en()
+    print(f"P1332 glosas portuguesas ({n}): razao de palavras PT/EN mediana {med:.4f}, media {media:.4f}; portuguesa mais longa em {mais:.4f}")
+    for ate, base in ((16 ** 5, 16), (12 ** 5, 12), (10 ** 7, 10)):
+        k, conta, por = p1333_primos_palindromos(ate, base)
+        print(f"P1333 primos palindromos base {base} ate {ate}: {k}; conta {conta:.1f} (P1337 sozinha: {p1337_conta_palindromos(ate, base):.1f}); "
+              f"erro {(k - conta) / k:+.4f}; por comprimento {por}")
+    cauda, desvio, ingenuo, npal, mb8 = p1338_contas_da_parte63()
+    print(f"P1338 Poisson(media {mb8:.3f}) >= 13: {cauda:.2e}; desvio relativo da contagem sob a conta (base 16): {desvio:.4f}; "
+          f"ingenuo pi(16^5)/16^5 x {npal} palindromos = {ingenuo:.1f}")
+    total, sem = p1092_pnn_sem_teste(1331, 1360)
+    print(f"P1092 pNN novas (P1331-P1360) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 63: {p974_previsoes_sem_largura(range(63, 64))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1359, testes=TESTES_P1359)
+    print(f"P1359 minha taxa de erro ({ERROS_P1359}/{TESTES_P1359}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -10249,7 +10309,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63}
 
 
 if __name__ == "__main__":

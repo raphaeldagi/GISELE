@@ -1250,3 +1250,18 @@ sem interruptor, com F, fica em **[1,30; 1,60]** (era 1,498; o peso fora do test
 
 **As duas (previsão (g)):** a fração das células (das 84, com candidatos) em que F se afasta de g mais de 10% fica em **[0,05; 0,35]** (fora do teste, com k = 8,
 1 de 13 células com candidatos; os k pequenos têm poucos candidatos e mais discrepância).
+
+**Resultado.** `comparar.py`: **IGUAIS, 100 linhas e 145 números bit a bit** (f) ✅. Base 8 com F: razão **3,455** (13 contra 3,762): (d) ✅ IA-Java. Total sem interruptor
+com F: **1,334** (175 contra 131,16): (e) ✅ IA-Python. Células com F a mais de 10% de g: **42 de 84 (0,50)**, fora de [0,05; 0,35]: (g) ❌.
+
+**IA-Java:** A regra nova funcionou onde o caso de fora parecia o de dentro: o peso medido com k = 8 previu que F não explica a base 8, e não explica.
+
+**IA-Python:** E falhou onde não parecia: com k = 8 há milhares de candidatos por célula e F fica perto de g; com k = 2 ou 3, poucos, e F oscila. O caso de calibração
+precisa ser parecido com o teste na variável que move o mecanismo (aqui, o número de candidatos), não só estar fora dele. E o meu centro (1,45) ficou longe do
+medido (1,33) pelo mesmo motivo: F muda mais nos k pequenos.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 17 em 31**; **IA-Java 15 em 31** pela regra estrita, rodadas 13 a 37 (`p1241_placar_por_voz(37)`).
+
+**IA-Java (a pergunta para a Rodada 38):** Os primos palíndromos de base 16 caíram a 0,1% da conta, e os de base 12 a 10%. O que separa as duas? A conta em base 12
+promedia os finais ímpares (os coprimos a 12 têm densidade 3/ln n, os outros 0); se a conta usar o fator exato por final, b/φ(b) nos finais coprimos, a base 12
+chega perto de 196?

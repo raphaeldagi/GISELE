@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 62 (0x3E): o último dígito
 
-> Continuação da [Parte 61](ASI_AGI_parte61_o_dobro.md). Previsões nos commits `749a9d4` ((a) a (g)) e `6cf4ac0` ((h)). **Previsões registradas antes de qualquer execução que mostre os números medidos e antes de escrever
+> Continuação da [Parte 61](ASI_AGI_parte61_o_dobro.md). **Próxima:** [Parte 63 — o peso do mecanismo](ASI_AGI_parte63_o_peso_do_mecanismo.md) (P1331–P1360). Previsões nos commits `749a9d4` ((a) a (g)) e `6cf4ac0` ((h)). **Previsões registradas antes de qualquer execução que mostre os números medidos e antes de escrever
 > o resto deste documento.** A Parte 61 achou que o excesso dos narcisistas sobre a conta mora numa base, a 8. Esta parte pergunta se o teste do último dígito
 > explica isso, quantas palavras portuguesas da OpenWordNet-PT se escrevem igual à inglesa do mesmo sinset, e quantos números em base 16 não são n + (soma dos
 > dígitos de n) para nenhum n (os autonúmeros de Kaprekar).
