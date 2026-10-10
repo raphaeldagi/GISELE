@@ -35,3 +35,8 @@
 - **(b)** funções e classes de primeiro nível dos módulos de `synthai/` (fora os testes) não referenciadas fora do próprio arquivo nem dentro dele: **[0; 30]**
 - **(c)** arquivos versionados cujo nome não aparece em nenhum outro arquivo versionado: **[0; 8]**
 - **(d)** depois de tirar o que (a), (b) e (c) acharem, a suíte inteira de testes e a regressão completa passam como antes (categórica)
+
+**Medido:** (a) **0** ✅; (b) **0** ✅; (c) **83** ❌ pela letra (o nome literal), mas **0** depois de olhar cada um (`p1872`): 34 rodadas que o `verificar.py` acha por `glob`, 24 saídas que a `rodada29.py` abre por
+um nome montado, 24 originais em `dialogo/registro/` citadas pela pasta e este documento (ainda não ligado). (d) **não se aplica**: não havia nada a tirar. **Pelo critério escrito antes, nada no
+repositório deixa de servir.** O erro da previsão (c) é o terceiro verificador meu, seguido, que acusa defeitos que não existem (o auditor da Parte 72, a `p1638`, e agora a `p1871`): procurar o
+nome escrito não acha o uso por padrão.

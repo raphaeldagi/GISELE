@@ -9531,6 +9531,8 @@ VEREDITOS_P1839 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"  # a (e) é medida nas Parte
 ERROS_P1839, TESTES_P1839 = 201, 649
 VEREDITOS_P1869 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅"
 ERROS_P1869, TESTES_P1869 = 201, 657
+VEREDITOS_P1899 = "(a) ✅ (b) ✅ (c) ❌"  # a (d) não se aplica: não havia nada a tirar
+ERROS_P1899, TESTES_P1899 = 202, 660
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -11855,6 +11857,67 @@ def p1843_rodada49():
     return rat[0] / n, rat[1] / n, ot_[0] / n, ot_[1] / n, par / n
 
 
+def p1871_o_que_nao_serve():
+    """O pedido da Parte 81 ("tire tudo que não serve pra nada"), medido (P1871): o que nada usa. Corpus: os arquivos de texto versionados (git ls-files),
+    fora as cópias geradas (SYNTHAI_completo.py, que contém tudo) e os dados. Devolve três listas: (a) funções e classes de primeiro nível do calculos.py
+    que não são pNN, _parte_N nem as da unificação, e cujo nome (palavra inteira) não aparece em lugar nenhum além da própria definição; (b) o mesmo para os
+    módulos de synthai/ fora os testes; (c) arquivos versionados cujo nome (com ou sem a extensão, ou como módulo) não aparece em nenhum outro."""
+    import ast
+    import os
+    import re
+    import subprocess
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    arquivos = [f for f in subprocess.run(["git", "ls-files"], cwd=raiz, capture_output=True, text=True, check=True).stdout.split("\n") if f]
+    texto = {f: open(os.path.join(raiz, f), encoding="utf-8").read() for f in arquivos
+             if f != "SYNTHAI_completo.py" and not f.startswith("dados/") and f.endswith((".py", ".java", ".md", ".txt", ".tsv"))}
+
+    def usos(nome):
+        pat = re.compile(r"(?<![\w])" + re.escape(nome) + r"(?![\w])")
+        return sum(len(pat.findall(t)) for t in texto.values())
+    fixos = {"testes_de_regressao", "_unificacao"}
+    mortos_c = []
+    for no in ast.parse(texto["calculos.py"]).body:
+        if isinstance(no, (ast.FunctionDef, ast.ClassDef)) and not re.match(r"p\d+_|_parte_\d+$", no.name) and no.name not in fixos:
+            if usos(no.name) <= 1:
+                mortos_c.append(no.name)
+    mortos_s = []
+    for f in sorted(x for x in texto if x.startswith("synthai/") and not os.path.basename(x).startswith("testes") and x.endswith(".py")):
+        for no in ast.parse(texto[f]).body:
+            if isinstance(no, (ast.FunctionDef, ast.ClassDef)) and not no.name.startswith("__") and usos(no.name) <= 1:
+                mortos_s.append(f"{f}:{no.name}")
+    soltos = []
+    for f in sorted(texto):
+        base = os.path.basename(f)
+        nomes = {base, os.path.splitext(base)[0]}
+        if f.endswith(".py"):
+            nomes.add(f[:-3].replace("/", "."))
+        outros = [t for g, t in texto.items() if g != f]
+        if not any(re.search(r"(?<![\w])" + re.escape(n) + r"(?![\w])", t) for n in nomes for t in outros):
+            soltos.append(f)
+    return mortos_c, mortos_s, soltos
+
+
+def p1872_candidatos_explicados(candidatos=None):
+    """Os arquivos que a P1871 acusa como "não referenciados pelo nome", conferidos um a um (P1872; a regra da Parte 75: todo defeito acusado é olhado antes de
+    ser contado). Um candidato é usado se cair num destes usos por padrão, achados lendo o código: os RodadaNN.java e rodadaNN.py (o verificar.py os acha por
+    glob), os dialogo/saidas29/* (a rodada29.py monta o nome com f-string), os dialogo/registro/* (as originais das rodadas corrigidas, citadas pela pasta nos
+    documentos e abertas pela p1751) e o documento da parte mais nova (ligado pela anterior no fechamento). Devolve ({motivo: quantos}, [sem motivo])."""
+    import re
+    if candidatos is None:
+        candidatos = p1871_o_que_nao_serve()[2]
+    regras = [("verificar.py (glob)", r"^dialogo/(Rodada\d+\.java|rodada\d+\.py)$"), ("rodada29.py (f-string)", r"^dialogo/saidas29/"),
+              ("registro (citado pela pasta)", r"^dialogo/registro/"), ("documento da parte mais nova", r"^ASI_AGI_parte\d+_.*\.md$")]
+    contagem, sobra = {}, []
+    for f in candidatos:
+        for motivo, pat in regras:
+            if re.search(pat, f):
+                contagem[motivo] = contagem.get(motivo, 0) + 1
+                break
+        else:
+            sobra.append(f)
+    return contagem, sobra
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -12627,6 +12690,18 @@ def _parte_80():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1869, testes=TESTES_P1869)
     print(f"P1869 minha taxa de erro ({ERROS_P1869}/{TESTES_P1869}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_81():
+    print("--- Parte 81 (0x51: o que nao serve) ---")
+    a, b, c = p1871_o_que_nao_serve()
+    print(f"P1871 nao referenciados pelo nome: calculos.py {len(a)} {a}; synthai/ {len(b)} {b}; arquivos {len(c)}")
+    contagem, sobra = p1872_candidatos_explicados(c)
+    print(f"P1872 os arquivos acusados, olhados um a um: {contagem}; sem uso: {len(sobra)} {sobra}")
+    total, sem = p1092_pnn_sem_teste(1871, 1900)
+    print(f"P1092 pNN novas (P1871-P1900) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 81: {p974_previsoes_sem_largura(range(81, 82))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1899, testes=TESTES_P1899)
+    print(f"P1899 minha taxa de erro ({ERROS_P1899}/{TESTES_P1899}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -12663,7 +12738,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81}
 
 
 if __name__ == "__main__":
