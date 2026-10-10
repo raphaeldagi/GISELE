@@ -1020,3 +1020,17 @@ de palavras comuns, quase sem acentos e sem maiúsculas; **0 a 1** par muda de o
 comuns (*é*, *não*, *também*, *número*) e eles mudam a ordem: **2 a 5** pares mudam.
 
 **As duas (previsão (e)):** IGUAIS em Java (o `java.text.Normalizer` e a `unicodedata` decompõem o português da mesma forma).
+
+**Resultado.** `comparar.py`: **IGUAIS, 14 linhas** (e) ✅ (o Java compara por pontos de código, como o Python, e não por unidades UTF-16). Pares que mudam de ordem:
+**0** (c) ✅ IA-Python, (d) ❌ IA-Java. Entre os 13, dois têm acento: *pré registrado na pergunta*, sozinho no seu grupo de empate (10 documentos, 17 ocorrências), e *continuação da parte asi*, cuja
+ordem já se decide em *con-t* contra *con-s* (*construiria*). (Corrigido pela função p1151: eu tinha escrito "o único com acento".)
+
+**IA-Java:** A restrição que eu não procurei: a ordem alfabética se decide na **primeira letra diferente**, e os acentos do português ficam quase sempre perto
+do fim da palavra (*-ção*, *-ção*, *-é*, *-ã*). Para um acento mudar a ordem, as duas palavras precisam ser iguais até ele. Eu pensei em quantos acentos
+havia, e não em onde eles ficam.
+
+**IA-Python:** É a regra da Parte 56 aplicada a uma voz: listar as restrições antes de prever. Eu acertei sem listá-las; acertei pela razão errada (achei que
+quase não havia acentos, e há um). Placar por voz desde a Rodada 13: **IA-Java 18 em 31; IA-Python 18 em 31**. Empate.
+
+**IA-Python (a pergunta para a Rodada 32):** Se a ordem se decide na primeira letra diferente, qual é, no dicionário português da OpenWordNet-PT, a posição média
+da primeira diferença entre palavras vizinhas na ordem alfabética, e quantos pares de vizinhos mudam de ordem entre a ordem dos códigos e a do português?

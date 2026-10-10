@@ -7466,6 +7466,7 @@ def testes_de_regressao():
         "P1063": p1063_autodescritivos(16) == ["C210000000001000"] and p1063_autodescritivos(10) == ["6210001000"],
         "P1094": round(p1094_ulp_em_hexadecimal()[0], 4) == 1.0341 and round(p1094_ulp_mantissa_uniforme()[0], 4) == 1.0667,
         "P1123": p1123_mesma_soma()[1] == 431 and p1123_mesma_soma(65535)[1] == 5161,
+        "P1153": p1153_duplos_palindromos()[0] == 27,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9376,6 +9377,54 @@ def p1121_empates():
     spec.loader.exec_module(r30)
     return r30.contar(r30.grupos())
 
+
+ERROS_P1179, TESTES_P1179 = 0, 0
+
+
+def p1152_palindromos(d=None):
+    """Palíndromos no dicionário (P1152): lemas alfabéticos de 3 letras ou mais (minúsculos). Devolve (palíndromos, a conta
+    de letras independentes Σ_L f(L)·(Σp²)^⌊L/2⌋ × N, a conta com a coincidência real das pontas, N, exemplos)."""
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    ws = sorted({w.lower() for w in d.lemas if w.isalpha() and len(w) >= 3})
+    letras, primeira, ultima, tam = {}, {}, {}, {}
+    for w in ws:
+        for ch in w:
+            letras[ch] = letras.get(ch, 0) + 1
+        primeira[w[0]] = primeira.get(w[0], 0) + 1
+        ultima[w[-1]] = ultima.get(w[-1], 0) + 1
+        tam[len(w)] = tam.get(len(w), 0) + 1
+    n, tot = len(ws), sum(letras.values())
+    q = sum((v / tot) ** 2 for v in letras.values())
+    pontas = sum((primeira.get(ch, 0) / n) * (ultima.get(ch, 0) / n) for ch in letras)
+    conta = sum(c * q ** (L // 2) for L, c in tam.items())
+    conta_pontas = sum(c * pontas * q ** (L // 2 - 1) for L, c in tam.items())
+    pals = [w for w in ws if w == w[::-1]]
+    return len(pals), conta, conta_pontas, n, pals[:12]
+
+
+def p1153_duplos_palindromos(ate=10 ** 6):
+    """Números palíndromos em base 10 e em base 16 ao mesmo tempo (P1153), de 1 a ate − 1. Devolve (quantos, a conta
+    Σ 16^(−⌊k/2⌋) sobre os palíndromos decimais, os primeiros)."""
+    dec = [x for x in range(1, ate) if str(x) == str(x)[::-1]]
+    conta = sum(16.0 ** (-(len(format(x, "x")) // 2)) for x in dec)
+    duplos = [x for x in dec if format(x, "x") == format(x, "x")[::-1]]
+    return len(duplos), conta, duplos[:20]
+
+
+def p1151_alfabeto_portugues():
+    """Rodada 31 (P1151): os 13 primeiros 4-gramas da Rodada 12 reordenados pela ordem de um dicionário português
+    (dialogo/rodada31.py, IGUAL em Java). Devolve (pares que mudam de ordem, quantos dos 13 têm letra com acento)."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada31", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada31.py"))
+    r31 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r31)
+    gs = r31.gramas()
+    _, _, trocas = r31.reordenar(gs)
+    return trocas, sum(1 for g, _, _ in gs if r31.chave_pt(g) != g.lower())
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -9537,6 +9586,20 @@ def _parte_56():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1149, testes=TESTES_P1149)
     print(f"P1149 minha taxa de erro ({ERROS_P1149}/{TESTES_P1149}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_57():
+    print("--- Parte 57 (0x39: as restricoes) ---")
+    trocas, acentuados = p1151_alfabeto_portugues()
+    print(f"P1151 4-gramas reordenados pelo portugues: {len(trocas)} pares mudam; {acentuados} dos 13 tem acento")
+    pal, conta, conta_pontas, n, ex = p1152_palindromos()
+    print(f"P1152 palindromos: {pal} de {n} palavras; conta de letras independentes {conta:.1f}; com as pontas reais {conta_pontas:.1f}; {ex}")
+    k, conta2, primeiros = p1153_duplos_palindromos()
+    print(f"P1153 palindromos em base 10 e 16 abaixo de 10^6: {k} (conta {conta2:.1f}); {primeiros}")
+    total, sem = p1092_pnn_sem_teste(1151, 1180)
+    print(f"P1092 pNN novas (P1151-P1180) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 57: {p974_previsoes_sem_largura(range(57, 58))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1179, testes=TESTES_P1179)
+    print(f"P1179 minha taxa de erro ({ERROS_P1179}/{TESTES_P1179}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -9573,7 +9636,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57}
 
 
 if __name__ == "__main__":

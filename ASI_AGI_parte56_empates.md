@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 56 (0x38): os empates
 
-> Continuação da [Parte 55](ASI_AGI_parte55_o_ulp_que_chega.md). **Previsões no commit `5033d6e` (a (b2) no seguinte), antes de qualquer execução e antes de
+> Continuação da [Parte 55](ASI_AGI_parte55_o_ulp_que_chega.md). **Próxima:** [Parte 57 — as restrições](ASI_AGI_parte57_as_restricoes.md) (P1151–P1180). **Previsões no commit `5033d6e` (a (b2) no seguinte), antes de qualquer execução e antes de
 > escrever o resto deste documento.** A Parte 55 achou que uma escolha só absorve um erro quando a margem é maior que ele, e que um empate exato (margem zero) se desfaz com
 > um ulp. Esta parte conta os empates: nas escolhas das rodadas antigas, entre as palavras do dicionário (sinônimos perfeitos) e entre as somas de dígitos
 > de um número em base 16 e em base 10.
