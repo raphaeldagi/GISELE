@@ -10230,6 +10230,79 @@ def p1427_bases_29_a_34(bases=range(29, 35)):
         saida.append((b, m, C, sg, (m - C) / sg))
     return saida
 
+
+def _numero_pt(x):
+    """Um número escrito em português (vírgula decimal, ponto de milhar, sinal −, %) como float, ou None."""
+    x = x.strip().replace("*", "").replace("−", "-").replace("%", "").replace(" ", "")
+    if "," in x:
+        x = x.replace(".", "").replace(",", ".")
+    elif x.count(".") >= 1 and len(x.split(".")[-1]) == 3 and x.replace(".", "").lstrip("-").isdigit():
+        x = x.replace(".", "")
+    try:
+        return float(x)
+    except ValueError:
+        return None
+
+
+def p1452_minhas_previsoes(partes=range(53, 67)):
+    """As minhas previsões do mundo, lidas dos documentos (P1452): para cada parte, os vereditos da linha "Do mundo: (a) ✅ (b) ❌ …"
+    e, para cada letra, a primeira faixa "**[a; b]**" escrita depois da letra no documento da parte ou na rodada do diálogo dela
+    (rodada = parte − 26). Devolve [(parte, letra, a, b, acerto)] com a e b None quando a previsão não tem faixa numérica."""
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    dialogo = open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8").read()
+    faixa = re.compile(r"\(([a-z])\)[^\n]*?\*\*\[([^\];]+?);\s*([^\]]+?)\]\*\*")
+    saida = []
+    for parte in partes:
+        arq = glob.glob(os.path.join(raiz, f"ASI_AGI_parte{parte}_*.md"))
+        if not arq:
+            continue
+        texto = open(arq[0], encoding="utf-8").read()
+        m = re.search(r"Do mundo: ((?:\([a-z]\) [✅❌] ?)+)", texto)
+        if not m:
+            continue
+        vered = re.findall(r"\(([a-z])\) ([✅❌])", m.group(1))
+        cab = re.search(rf"## Rodada {parte - 26} [^\n]*\n(.*?)(?=\n## |\Z)", dialogo, re.S)
+        rodada = cab.group(1) if cab else ""
+        corpo = texto.split("## As respostas")[0]
+        faixas = {}
+        for fonte in (corpo, rodada.split("**Resultado")[0]):
+            for letra, a, b in faixa.findall(fonte):
+                if letra not in faixas and _numero_pt(a) is not None and _numero_pt(b) is not None:
+                    faixas[letra] = (_numero_pt(a), _numero_pt(b))
+        for letra, v in vered:
+            a, b = faixas.get(letra, (None, None))
+            saida.append((parte, letra, a, b, v == "✅"))
+    return saida
+
+
+def p1453_engenharia_das_previsoes(previsoes=None):
+    """A engenharia reversa das minhas previsões (P1453), sobre as lidas pela P1452: a largura relativa de cada faixa,
+    w = (b − a)/(|a| + |b|), a taxa de acerto por tipo (com faixa, sem faixa) e por terço de w, e um preditor de w (a mediana das
+    outras, deixando uma de fora) contra o ingênuo (o w da previsão anterior). Devolve um dicionário."""
+    prev = previsoes if previsoes is not None else p1452_minhas_previsoes()
+    com = [x for x in prev if x[2] is not None and abs(x[2]) + abs(x[3]) > 0]
+    sem = [x for x in prev if x[2] is None]
+    ws = [(x[3] - x[2]) / (abs(x[2]) + abs(x[3])) for x in com]
+
+    def mediana(v):
+        v = sorted(v)
+        n = len(v)
+        return v[n // 2] if n % 2 else (v[n // 2 - 1] + v[n // 2]) / 2
+    ordem = sorted(range(len(ws)), key=lambda i: (ws[i], i))
+    tercos = [ordem[:len(ordem) // 3], ordem[len(ordem) // 3:2 * len(ordem) // 3], ordem[2 * len(ordem) // 3:]]
+    por_terco = [(mediana([ws[i] for i in t]), sum(com[i][4] for i in t) / len(t)) for t in tercos]
+    erro_loo = sum(abs(ws[i] - mediana(ws[:i] + ws[i + 1:])) for i in range(len(ws))) / len(ws)
+    erro_ing = sum(abs(ws[i] - ws[i - 1]) for i in range(1, len(ws))) / (len(ws) - 1)
+    q = sorted(ws)
+    return {"previsoes": len(prev), "com_faixa": len(com), "acerto": sum(x[4] for x in prev) / len(prev),
+            "acerto_com_faixa": sum(x[4] for x in com) / len(com), "acerto_sem_faixa": sum(x[4] for x in sem) / len(sem),
+            "w_mediana": mediana(ws), "w_q25": q[len(q) // 4], "w_q75": q[3 * len(q) // 4], "por_terco": por_terco,
+            "erro_loo": erro_loo, "erro_ingenuo": erro_ing,
+            "por_parte": {pa: sum(1 for x in prev if x[0] == pa) for pa in sorted({x[0] for x in prev})}}
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
