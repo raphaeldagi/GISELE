@@ -1336,7 +1336,26 @@ P1455 automorficos base 16 ate 16^6: 0 (conta 0.00); []
 P1092 pNN novas (P1451-P1480) sem teste: 0 de 6: []
 P974 previsoes unilaterais da Parte 67: {67: (2, 0, [])}
 P1479 minha taxa de erro (189/559): media = 0.34, intervalo 90% = [0.31, 0.37]
+--- Parte 68 (0x44: o tipo da quantidade) ---
+P1481 previsoes do mundo (Partes 53-67): 103; com faixa: 75
+P1482 tipo zero: 8 previsoes; acerto 0.5000
+P1482 tipo fracao: 21 previsoes; acerto 0.7143; w mediana 0.3684; acerto das estreitas 0.8000, das largas 0.6000
+P1482 tipo contagem: 18 previsoes; acerto 0.6111; w mediana 0.2517; acerto das estreitas 0.5556, das largas 0.6667
+P1482 tipo outra: 28 previsoes; acerto 0.7500; w mediana 0.3333; acerto das estreitas 0.6429, das largas 0.9167
+P1482 tipo None: 28 previsoes; acerto 0.7857
+P1499 previsoes sobre as minhas previsoes da Parte 68: {'m1': 6, 'm2': 1, 'm3': 0.36645962732919257, 'm4': 1.0, 'm5': 1}; ws (sem as do zero) [0.125, 0.3043, 0.4286, 0.8182]
+P1491 R_b = pi(b^5)/(Li(b^5) - Li(2)): [(5, 0.97313), (10, 0.99618), (20, 0.99939), (30, 0.99978), (40, 0.99989)]; maior |R - 1| (10-40) 0.00382
+P1491 inclinacao de z: antes 0.03792; com a conta corrigida 0.03549; mudanca 0.00243
+P1492 folhas na classe a: 1.0000 de 18156
+P1492 folhas na classe n: 0.7911 de 82115
+P1492 folhas na classe r: 1.0000 de 3621
+P1492 folhas na classe v: 0.7592 de 13767
+P1493 palindromos nas bases 16 e 10 ate 65536: 18; conta 20.085; razao 0.8962; [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 353, 626, 787, 979, 1991, 3003, 39593, 41514]
+P1493 palindromos nas bases 8 e 10 ate 32768: 22; conta 19.251; razao 1.1428; [1, 2, 3, 4, 5, 6, 7, 9, 121, 292, 333, 373, 414, 585, 3663, 8778, 13131, 13331, 26462, 26662, 30103, 30303]
+P1092 pNN novas (P1481-P1510) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 68: {68: (2, 0, [])}
+P1509 minha taxa de erro (189/565): media = 0.34, intervalo 90% = [0.30, 0.37]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 401; pares de interacao possiveis = 80200
+P96 funcoes pNN no arquivo = 412; pares de interacao possiveis = 84666
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
-Regressao: 114/114 resultados publicados reproduzidos; falhas = []
+Regressao: 115/115 resultados publicados reproduzidos; falhas = []

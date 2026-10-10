@@ -112,6 +112,12 @@ anterior, commit e push.
   Medido (Parte 69): 6.898 pesos, 8.000 passos, 3,22 bits por caractere nas definições inglesas (bigrama 3,43; trigrama 2,77, que viu 30 vezes mais texto); a decisão do próximo
   caractere é IGUAL em Java (rodada 43). Depois de escrever a resposta de uma parte, passar por uma linha de código todo número do texto que não veio de uma saída impressa (os "~",
   as contas de cabeça): na Parte 69, os dois erros foram desse tipo.
+- ÁLGEBRA E GEOMETRIA (Parte 70, permanente; "Continue ao máximo que puder! Use álgebra e geometria! Grave na memória!"): em toda parte, resolver por álgebra e ler por
+  geometria. Na prática: soluções em forma fechada (mínimos quadrados pelas equações normais, autovalores e autovetores por iteração de potência ou Jacobi, posto, determinante,
+  álgebra sobre corpos finitos como GF(2)), e a geometria dos objetos (o GPT é geometria: a atenção é um produto interno, os embeddings são pontos com ângulos e distâncias, as
+  componentes principais são direções; a taxonomia do dicionário é uma árvore, isto é, um espaço hiperbólico, medido pelo δ de Gromov; os dígitos hexadecimais são vetores de
+  GF(2)⁴, os vértices de um hipercubo). Cada resultado algébrico é conferido por outra conta ou por simulação, como sempre; e "ao máximo": o maior número de contas, equações e
+  testes que o tempo permitir, com trabalho real.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
