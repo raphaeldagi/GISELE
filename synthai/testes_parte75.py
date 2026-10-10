@@ -46,5 +46,10 @@ class TesteParte75(unittest.TestCase):
         self.assertAlmostEqual(v, vmax, places=15)
 
 
+    def test_p1698_comparar_reenvio_v2(self):
+        # o bloco Java reenviado é idêntico ao guardado; o JSON foi guardado em linha (fora de bloco), por isso não casa como bloco
+        self.assertEqual(calculos.p1698_comparar_reenvio_v2(), [("java", 0, 39), ("json", None, 7)])
+
+
 if __name__ == "__main__":
     unittest.main()

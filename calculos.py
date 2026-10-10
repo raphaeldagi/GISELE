@@ -11521,6 +11521,18 @@ def p1694_verificador_do_texto():
     return sc, ordem, valor, melhor, vmax
 
 
+def p1698_comparar_reenvio_v2(novo="externos/texto_recebido_parte75b.md", guardado="externos/texto_recebido_parte75.md"):
+    """A regra da Parte 50 para um texto reenviado, versão 2 (P1698; a P1631 só olhava blocos python): cada bloco de código cercado (```linguagem) do
+    texto novo é comparado com todos os blocos guardados, sem os espaços das pontas. Devolve [(linguagem, índice do bloco guardado idêntico ou None,
+    linhas)]."""
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    blocos = lambda f: [(m.group(1), m.group(2).strip()) for m in re.finditer(r"```(\w*)\n(.*?)```", open(os.path.join(raiz, f), encoding="utf-8").read(), re.S)]
+    velhos = [b for _, b in blocos(guardado)]
+    return [(lg, next((j for j, v in enumerate(velhos) if v == b), None), b.count("\n") + 1) for lg, b in blocos(novo)]
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -12213,6 +12225,7 @@ def _parte_75():
     n, a, m = p1693_godel_no_pacote()
     print(f"P1693 synthai/ (sem testes): {n} funcoes e metodos; aprovados {a} ({a / n:.4f}); mudados {m} ({m / n:.4f})")
     sc, ordem, v, melhor, vmax = p1694_verificador_do_texto()
+    print(f"P1698 reenvio (linguagem, bloco guardado identico, linhas): {p1698_comparar_reenvio_v2()}")
     print(f"P1694 Verifier do texto: scores {[(k, round(x, 4)) for k, x in sc.items()]}; ordem gulosa {ordem} (valor {v:.4f}); otimo {melhor} ({vmax:.4f})")
     total, sem = p1092_pnn_sem_teste(1691, 1720)
     print(f"P1092 pNN novas (P1691-P1720) sem teste: {len(sem)} de {total}: {sem}")
