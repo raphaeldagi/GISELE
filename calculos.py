@@ -7482,6 +7482,7 @@ def testes_de_regressao():
         "P1549": abs(p1549_lei_de_escala()[0][24][1] - 0.0541) < 0.0001 and abs(p1545_bases_gf2(p1514_pi_hex_digitos(10000))[0] - 0.30269) < 0.00001,
         "P1574": p1574_irredutiveis_gf2(15, 6)[:3] == (2182, 2182, 224) and p1573_crescimento_da_taxonomia("n")[2] == 7,
         "P1612": p1612_animais_por_horn()[:4] == (4017, True, True, 4) and p1608_auditoria_estatica()[1] == ("test_engine", 7, 5, 8),
+        "P1639": p1639_rodada47()[1:2] + p1639_rodada47()[4:5] == (958, 102) and abs(p1632_prioridade_contra_voi(20000, 74)[0] - 0.49995) < 1e-9,
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
         "P1579": p1574_irredutiveis_gf2(17, 6)[2] == 758 and abs(p1579_serie_singular_gf2(17)[1] - 755.458) < 0.001,
     }
@@ -9508,6 +9509,8 @@ ERROS_P1569, TESTES_P1569 = 191, 583
 VEREDITOS_P1629 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ❌ (l) ❌ (m) ✅ (n) ✅ (o) ✅ (p) ✅"
 ERROS_P1599, TESTES_P1599 = 193, 591
 ERROS_P1629, TESTES_P1629 = 195, 607
+VEREDITOS_P1659 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) H_PENDENTE (i) ✅ (j) ✅"
+ERROS_P1659, TESTES_P1659 = 196, 616
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -11267,6 +11270,27 @@ def p1638_rodadas_com_libm():
     return len(arqs), com
 
 
+def p1639_rodada47():
+    """Rodada 47 (P1639): o valor da informação e a prioridade S(q) do dialogo/rodada47.py (IGUAL em Java). Devolve (n, VOI = 0, soma dos VOI, soma dos S,
+    VOI = 0 entre os 200 de maior S, VOI médio dos 200 de maior VOI, VOI médio dos 200 de maior S)."""
+    import importlib.util
+    import os
+    import tempfile
+    spec = importlib.util.spec_from_file_location("rodada47", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada47.py"))
+    r47 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r47)
+    with tempfile.TemporaryDirectory() as pasta:
+        r47.preparar(pasta)
+        voi, s = r47.calcular(r47.ler(pasta))
+    sv = ss = 0.0
+    for v, x in zip(voi, s):
+        sv += v
+        ss += x
+    ts, tv = r47.topo(s, 200), r47.topo(voi, 200)
+    return (len(voi), sum(1 for v in voi if v == 0.0), sv, ss, sum(1 for i in ts if voi[i] == 0.0),
+            sum(voi[i] for i in tv) / 200, sum(voi[i] for i in ts) / 200)
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -11909,6 +11933,28 @@ def _parte_72():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1629, testes=TESTES_P1629)
     print(f"P1629 minha taxa de erro ({ERROS_P1629}/{TESTES_P1629}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_73():
+    print("--- Parte 73 (0x49: o que refuta) ---")
+    print(f"P1631 reenvio (bloco novo, bloco guardado identico, linhas): {p1631_comparar_reenvio()}")
+    for n, sem in ((2000, 73), (20000, 74)):
+        z, zt, rho, _ = p1632_prioridade_contra_voi(n, sem)
+        print(f"P1632 n = {n}, semente {sem}: VOI = 0 em {z:.5f} (conta: 1/2, desvio {(0.25 / n) ** 0.5:.5f}); entre os 10% de maior S: {zt:.4f}; Spearman(S, VOI) = {rho:.4f}")
+    n, z0, sv, ss, zt, mtv, mts = p1639_rodada47()
+    print(f"P1639 rodada 47: VOI = 0 em {z0} de {n}; nos 200 de maior S, {zt}; VOI medio dos 200 de maior VOI {mtv:.4f}, dos 200 de maior S {mts:.4f} (razao {mts / mtv:.3f})")
+    from synthai.dicionario import Dicionario
+    d = Dicionario()
+    nv, pares = p1635_contradicoes_de_animal(d)
+    print(f"P1635 violacoes da disjuncao entre animal e os irmaos: {nv}: {[(d.sinsets[b][1][0], [d.sinsets[x][1][0] for x in v]) for b, v in pares]}")
+    tam, contra = p1636_contraexemplos(d=d)
+    print(f"P1636 'toda ave voa': fecho de bird {tam}; contraexemplos {len(contra)}: {contra}")
+    print(f"P1637 polissemia dos substantivos (lemas, polissemicos, fracao): {p1637_polissemia(d)}")
+    print(f"P1638 rodadas com funcoes da libm: {p1638_rodadas_com_libm()}")
+    total, sem = p1092_pnn_sem_teste(1631, 1660)
+    print(f"P1092 pNN novas (P1631-P1660) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 73: {p974_previsoes_sem_largura(range(73, 74))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1659, testes=TESTES_P1659)
+    print(f"P1659 minha taxa de erro ({ERROS_P1659}/{TESTES_P1659}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -11945,7 +11991,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73}
 
 
 if __name__ == "__main__":

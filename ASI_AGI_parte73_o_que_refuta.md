@@ -70,3 +70,10 @@ novos. A rodada 21 usa `math.log` e `** 2` (Python) e `Math.log` (Java), funçõ
 
 **Previsão nova, nascida de (b), registrada antes de rodar:** se a conta (1/2 exato) está certa, um mundo maior a confirma. Semente 74, n = 20.000: desvio √(0,25/20.000) = 0,00354.
 - **(j)** a fração com VOI = 0 em **[0,4942; 0,5058]**
+
+**Medido (d) a (g) e (i), (j):** (d) **6** ✅ (todas entre *animal* e *parasite*: pulgas); (e) **16** contraexemplos num fecho de 872 aves ✅; (f) **0,1353** ✅ (15.935 de 117.798);
+(g) **8** rodadas ✅ (18, 19, 21, 22, 23, 24, 25, 30); (i) rodada 47 IGUAIS ✅; (j) **0,49995** ✅.
+
+**Previsão nova, registrada antes de editar:** as outras quatro rodadas com funções da biblioteca (18, 19, 24, 30) passam hoje, mas só por sorte, e a 18 e a 19 leem o `resultados.txt`, que cresce.
+Com a mesma troca (o `exp_` e o `log_` de `dialogo/exatas.py`, `** 2` por `x * x`, originais em `dialogo/registro/`):
+- **(k)** as quatro dão IGUAIS, e a `p1638` passa a achar **0** rodadas com funções da biblioteca (categórica)
