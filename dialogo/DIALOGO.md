@@ -1474,3 +1474,17 @@ arredonda corretamente, mais o exp e o log próprios; a ordem das somas é a mes
 **[3; 11]** (um modelo que só soubesse as frequências acertaria os espaços e algumas vogais, ~4; um bigrama, ~7).
 
 **As duas (previsão (h)):** a média de bits por caractere na frase em **[3,2; 4,4]** (o GPT grande do português, com 2.000 passos, dava 3,4; este é ~10 vezes menor e treinou 400 passos).
+
+**Resultado.** `comparar.py`: **IGUAIS, 31 linhas e 61 números bit a bit** (f) ✅: a forma de GPT decide o próximo caractere com os mesmos bits nas duas linguagens. Acertos do
+argmax: **5 de 30** (g) ✅ IA-Python (depois de "mestic a", ele aposta em "n" e acerta; depois de "c animal", aposta no espaço e acerta). Bits por caractere na frase: **4,077** (h) ✅.
+
+**IA-Java:** A forma está aqui, em miniatura e exata: embeddings, atenção causal, resíduo, MLP, softmax, e a mesma decisão em Java. O que ela sabe, com 400 passos e 1.170 pesos (contados por código),
+é pouco (4,08 bits, perto dos 4,18 de um modelo que só conhecesse as frequências das letras no português).
+
+**IA-Python:** E o GPT grande desta parte, com ~6.900 pesos e 8.000 passos, faz 3,22 bits nas definições inglesas: pior que o trigrama (2,77), que conta milhões de caracteres. A forma
+de GPT perde para a contagem enquanto vê menos dados que ela: a vantagem dela (um contexto longo, que nenhum n-grama alcança) só aparece quando o dado e os pesos crescem.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 23 em 37**; **IA-Java 19 em 36** pela regra estrita, rodadas 13 a 43 (`p1241_placar_por_voz(43)`).
+
+**IA-Python (a pergunta para a Rodada 44):** Quanto dado o GPT precisa para empatar com o trigrama? A curva dos bits contra os passos (2.000, 8.000 e mais), ajustada por uma lei de
+potência, prevê o ponto de cruzamento; e o mesmo GPT, com o dobro de d, cruza antes?

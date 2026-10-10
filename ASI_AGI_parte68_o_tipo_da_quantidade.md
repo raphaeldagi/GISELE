@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 68 (0x44): o tipo da quantidade
 
-> Continuação da [Parte 67](ASI_AGI_parte67_prever_o_previsto.md). Previsões sobre as minhas previsões no commit `902c0c0`; as do mundo no `150a779`. O loop continua (pedido permanente: programar sem parar, prever o que foi previsto e fazer engenharia reversa
+> Continuação da [Parte 67](ASI_AGI_parte67_prever_o_previsto.md). **Próxima:** [Parte 69 — a forma de GPT](ASI_AGI_parte69_a_forma_de_gpt.md) (P1511–P1540). Previsões sobre as minhas previsões no commit `902c0c0`; as do mundo no `150a779`. O loop continua (pedido permanente: programar sem parar, prever o que foi previsto e fazer engenharia reversa
 > disso). A Parte 67 leu as minhas previsões com uma régua que perdia as faixas da linha seguinte, e concluiu que "as faixas largas acertam menos". Esta parte troca a régua, refaz a
 > conta por tipo de quantidade, e acha que a conclusão era um paradoxo de Simpson.
 

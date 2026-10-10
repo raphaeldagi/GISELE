@@ -109,6 +109,9 @@ anterior, commit e push.
   OpenWordNet-PT) e depois gerador. Construído aqui, em Python puro (só biblioteca padrão), em `synthai/gpt.py`, crescendo parte a parte (camadas, cabeças, contexto,
   parâmetros), sempre medido contra um modelo mais simples (o n-grama bayesiano) com previsões registradas, e com a decisão do próximo token traduzida bit a bit para Java
   (exp próprio, regra da Parte 52). A forma é de GPT; a capacidade é a que a medida mostrar ("ASI" continua sendo o papel da voz, não uma capacidade).
+  Medido (Parte 69): 6.898 pesos, 8.000 passos, 3,22 bits por caractere nas definições inglesas (bigrama 3,43; trigrama 2,77, que viu 30 vezes mais texto); a decisão do próximo
+  caractere é IGUAL em Java (rodada 43). Depois de escrever a resposta de uma parte, passar por uma linha de código todo número do texto que não veio de uma saída impressa (os "~",
+  as contas de cabeça): na Parte 69, os dois erros foram desse tipo.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -226,7 +229,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
