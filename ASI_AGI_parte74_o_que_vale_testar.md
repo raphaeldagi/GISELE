@@ -43,3 +43,10 @@ informação" é escolher por H(p). **A conta:** H depende só de p, e p é inde
 - **(c)** guloso por VOI/custo, em fração do ótimo, em **[0,9912; 0,9946]**
 - **(d)** guloso por ganho de informação/custo, em fração do ótimo (em VOI), em **[0,5364; 0,5943]**
 - **(e)** a fração de instâncias em que o guloso por VOI é ótimo em **[0,6009; 0,6941]**
+
+**Medido (a) a (e):** (a) **0,510** ✅; (b) **0,251** ✅ (0,0426/0,1696); (c) **0,9922** ✅; (d) **0,568** ✅; (e) **0,573** ❌ (0,028 abaixo do piso; não é surpresa).
+
+**Previsão nova, nascida de (e), registrada antes de rodar.** A faixa de (e) usou o desvio de 4 lotes de calibração (0,0177), e uma fração em 300 instâncias tem um desvio binomial conhecido,
+√(p(1 − p)/300) ≈ 0,028: havia uma conta melhor que a estimativa de 4 amostras. Com os 5 lotes (os 4 de calibração e o do teste), p = 0,6327, desvio 0,0278, e a faixa de 90% para um lote novo
+é p ± 1,645 · 0,0278 · √(1 + 1/5).
+- **(f)** a fração de instâncias em que o guloso por VOI é ótimo, semente 75, em **[0,5825; 0,6828]**
