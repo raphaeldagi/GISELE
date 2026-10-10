@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 79 (0x4F): causa e confiança
 
-> Continuação da [Parte 78](ASI_AGI_parte78_a_atencao_de_posto_baixo.md). Nasce do texto recebido do usuário sobre o Módulo 009 (`externos/texto_recebido_parte79.md`): correlação, previsão e
+> Continuação da [Parte 78](ASI_AGI_parte78_a_atencao_de_posto_baixo.md). **Próxima:** [Parte 80 — o valor de um conjunto](ASI_AGI_parte80_o_valor_de_um_conjunto.md) (P1841–P1870). Nasce do texto recebido do usuário sobre o Módulo 009 (`externos/texto_recebido_parte79.md`): correlação, previsão e
 > causalidade, com o diagrama Z → X, Z → Y, X → Y; e a prévia do Módulo 010 (confiança declarada contra precisão observada). Pedido permanente: "Continue sem parar."
 
 ## Previsões sobre as minhas previsões desta parte (num commit só delas)
