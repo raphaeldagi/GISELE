@@ -65,3 +65,8 @@ novos. A rodada 21 usa `math.log` e `** 2` (Python) e `Math.log` (Java), funçõ
 - **(h)** depois de trocar, nas rodadas que divergiram (21, 22, 23 e 25, em Python e em Java), as funções da biblioteca pelo `exp_` e `log_` da rodada 26 e `** 2` por `x * x`, o `verificar.py`
   dá **46 de 46 IGUAIS** (categórica)
 - **(i)** a rodada 47 (o VOI e o S(q) da P1632 em Java, só com + − × ÷ e √) dá IGUAIS (categórica)
+
+**Medido (a) a (c):** (a) idêntico, 135 linhas ✅. (b) **0,479** ❌ (z = (0,479 − 0,5)/0,0112 = −1,88: por 0,003 fora da faixa de 90%, que erra 10% das vezes). (c) **0,510** ✅.
+
+**Previsão nova, nascida de (b), registrada antes de rodar:** se a conta (1/2 exato) está certa, um mundo maior a confirma. Semente 74, n = 20.000: desvio √(0,25/20.000) = 0,00354.
+- **(j)** a fração com VOI = 0 em **[0,4942; 0,5058]**

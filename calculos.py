@@ -11158,6 +11158,55 @@ def p1634_irmaos(sinset, d=None):
     return [i for i, s in enumerate(d.sinsets) if s[0] == "n" and alvo in s[2]]
 
 
+def p1632_prioridade_contra_voi(n=2000, semente=73):
+    """A prioridade de perguntas do texto recebido na Parte 73, S(q) = U + I + T, contra o valor da informação perfeita (P1632). n problemas com 2
+    ações e 2 estados: prior p ~ U(0, 1), utilidades u[a][s] ~ U(0, 1), semente fixa; a pergunta é observar o estado.
+    VOI = p·max_a u[a][1] + (1 − p)·max_a u[a][0] − max_a (p·u[a][1] + (1 − p)·u[a][0]) (só + − × ÷: IGUAL em Java, rodada 47);
+    U = entropia binária de p (log₂ pelo log_ próprio da rodada 26, para a tradução bit a bit), I = max_s |u[0][s] − u[1][s]|, T = 1.
+    Devolve (fração com VOI = 0, fração com VOI = 0 entre os 10% de maior S, correlação de postos de Spearman entre S e VOI, lista (S, VOI))."""
+    import random
+    from dialogo.rodada26 import log_
+    r = random.Random(semente)
+    ln2 = log_(2.0)
+    pares = []
+    for _ in range(n):
+        p = r.random()
+        u = [[r.random(), r.random()], [r.random(), r.random()]]
+        com = p * max(u[0][1], u[1][1]) + (1.0 - p) * max(u[0][0], u[1][0])
+        sem = max(p * u[0][1] + (1.0 - p) * u[0][0], p * u[1][1] + (1.0 - p) * u[1][0])
+        voi = com - sem
+        if voi < 0.0:
+            voi = 0.0
+        h = 0.0
+        for q in (p, 1.0 - p):
+            if q > 0.0:
+                h -= q * log_(q) / ln2
+        imp = max(abs(u[0][0] - u[1][0]), abs(u[0][1] - u[1][1]))
+        pares.append((h + imp + 1.0, voi))
+    zero = sum(1 for _, v in pares if v == 0.0) / n
+    topo = sorted(pares, key=lambda x: -x[0])[: n // 10]
+    zero_topo = sum(1 for _, v in topo if v == 0.0) / len(topo)
+
+    def postos(xs):
+        ordem = sorted(range(len(xs)), key=lambda i: xs[i])
+        rk = [0.0] * len(xs)
+        i = 0
+        while i < len(ordem):
+            j = i
+            while j + 1 < len(ordem) and xs[ordem[j + 1]] == xs[ordem[i]]:
+                j += 1
+            for k in range(i, j + 1):
+                rk[ordem[k]] = (i + j) / 2.0
+            i = j + 1
+        return rk
+    a, b = postos([x for x, _ in pares]), postos([v for _, v in pares])
+    ma, mb = sum(a) / n, sum(b) / n
+    cov = sum((x - ma) * (y - mb) for x, y in zip(a, b))
+    va = sum((x - ma) ** 2 for x in a)
+    vb = sum((y - mb) ** 2 for y in b)
+    return zero, zero_topo, cov / (va * vb) ** 0.5, pares
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
