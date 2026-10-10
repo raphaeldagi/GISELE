@@ -45,3 +45,10 @@ sinsets.
   variância ~1,5 + 3 × 8,25 = 26,25. Se a diferença D fosse normal com média 7,5 e variância 63,75 + 26,25 = 90 (desvio 9,49), P(D = 0) ≈ φ(7,5/9,49)/9,49 =
   φ(0,79)/9,49 = 0,292/9,49 = **0,031**.
 - (b) fração em **[1,8%; 5,3%]** (centro 3,1%, ×1,72)
+
+**Previsão nova (b2), registrada depois de ver (b) e antes de calcular:** a diferença D = S₁₆ − S₁₀ é sempre múltipla de 3 (n ≡ S₁₀(n) mod 9 e n ≡ S₁₆(n) mod 15, logo
+os dois ≡ n mod 3), então P(D = 0) ≈ **3** × a densidade normal. Mundo novo: n de 1 a 65.535. Conta: S₁₆ com 4 dígitos uniformes, média 4 × 7,5 = 30, variância
+4 × 21,25 = 85; S₁₀ com o dígito das dezenas de milhar de 0 a 6 (média (0 + 1 + … + 5) × 10.000 + 6 × 5.536 = 183.216/65.536 = 2,80, variância ~3,6) e quatro dígitos
+uniformes (média 18, variância 33): média 20,8, variância 36,6; a correlação medida no mundo antigo, 0,21, dá covariância 0,21 × √(85 × 36,6) = 11,7; variância de D
+= 85 + 36,6 − 2 × 11,7 = 98,2, desvio 9,91, média 9,2. P(D = 0) ≈ 3 × φ(9,2/9,91)/9,91 = 3 × φ(0,928)/9,91 = 3 × 0,2595/9,91 = **0,0786**.
+- (b2) fração em **[0,065; 0,092]** (±17%)

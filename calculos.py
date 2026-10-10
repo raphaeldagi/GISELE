@@ -9328,6 +9328,53 @@ def p1091_o_ulp_que_chega():
         res[r] = r29.comparar(a, b)
     return res
 
+
+ERROS_P1149, TESTES_P1149 = 0, 0
+
+
+def p1122_sinonimos_perfeitos(d=None):
+    """Sinônimos perfeitos (P1122): palavras de uma palavra só (alfabéticas) com exatamente o mesmo conjunto de sinsets que
+    outra. Devolve (fração das palavras com gêmeo, palavras, o maior grupo de gêmeos)."""
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    grupos = {}
+    n = 0
+    for w, idx in d.lemas.items():
+        if not w.isalpha():
+            continue
+        n += 1
+        grupos.setdefault(tuple(sorted(set(idx))), []).append(w)
+    com = sum(len(g) for g in grupos.values() if len(g) > 1)
+    maior = max(grupos.values(), key=lambda g: (len(g), sorted(g)))
+    return com / n, n, sorted(maior)
+
+
+def p1123_mesma_soma(ate=4095):
+    """A mesma soma de dígitos em base 16 e em base 10 (P1123), para n de 1 a `ate`. Devolve (fração, quantos, a conta
+    normal φ(7,5/√90)/√90)."""
+    def soma(n, b):
+        s = 0
+        while n:
+            n, r = divmod(n, b)
+            s += r
+        return s
+    iguais = sum(1 for n in range(1, ate + 1) if soma(n, 16) == soma(n, 10))
+    dp = sqrt(90.0)
+    conta = exp(-0.5 * (7.5 / dp) ** 2) / sqrt(2 * pi) / dp
+    return iguais / ate, iguais, conta
+
+
+def p1121_empates():
+    """Rodada 30 (P1121): os empates exatos nas escolhas impressas das rodadas 12, 14, 18, 19, 20 e 24 (dialogo/rodada30.py,
+    conferido em Java). Devolve {rodada: empates}."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada30", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada30.py"))
+    r30 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r30)
+    return r30.contar(r30.grupos())
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
