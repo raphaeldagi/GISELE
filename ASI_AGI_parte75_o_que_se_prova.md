@@ -44,3 +44,11 @@ e valor com `": "` (dois-pontos e espaço).
 pela fórmula do núcleo (tokens = comprimento div 4; utilidade = tokens/(linhas + 1) − 0,5 > 0), com o defeito do separador corrigido.
 - **(d)** a fração das funções que o núcleo **aprova** em **[0,95; 1,00]** (linhas de ~40 a 100 caracteres dão ~10 a 25 tokens por linha, muito acima de 0,5)
 - **(e)** a fração das funções cujo comportamento a mutação **muda** (as que têm pelo menos um `+` binário) em **[0,55; 0,90]**
+
+**Medido (a) a (e):** (a) os dois campos não são achados ✅; (b) rejeitada em toda geração, delta −1,0, o código não muda ✅; (c) com o separador corrigido, delta **2,8333**, aprovado, e **1** código
+distinto depois da geração 1 (o ponto fixo) ✅; (d) **584 de 584** funções aprovadas ✅; (e) **288 de 584 = 0,493** mudadas pela mutação ❌ (0,057 abaixo do piso; não é surpresa).
+
+**Previsão nova, nascida de (e), registrada antes de medir.** A faixa de (e) veio de uma impressão do estilo do código, e o `calculos.py` deu 0,493. Mundo novo, pela regra escrita antes: as funções
+e os métodos de todos os arquivos `synthai/*.py` que não são testes. Centro: a medida do `calculos.py`; a largura cobre a diferença de estilo entre um arquivo de contas e um pacote de agentes.
+- **(f)** a fração das funções e métodos do `synthai/` (fora os testes) com pelo menos um `+` binário em **[0,35; 0,65]**
+- **(g)** a fração deles que o núcleo aprova depois da mutação em **[0,95; 1,00]**

@@ -11391,6 +11391,88 @@ def p1663_rodada48():
     return so, s1, s2, otimos
 
 
+def _java_extract_json_field(json_texto, campo):
+    """A semântica do extractJsonField do texto recebido na Parte 75, reescrita por mim: indexOf da chave com aspas e dois-pontos SEM espaço."""
+    chave = '"' + campo + '":"'
+    ini = json_texto.find(chave)
+    if ini == -1:
+        return ""
+    ini += len(chave)
+    return json_texto[ini:json_texto.index('"', ini)]
+
+
+def _nucleo_utilidade(codigo, conceito):
+    """A fórmula do CreativeLogicKernel do texto recebido, reescrita por mim (nada dele é executado): consistência = (conceito "reasoning" e "Mult"
+    no código) ou código não vazio; utilidade = (comprimento UTF-16 div 4)/(linhas + 1) − 0,5, com as linhas do split("\\r\\n|\\r|\\n") do Java (que
+    descarta as vazias do fim); −1 se inconsistente. Devolve (aprovado, delta)."""
+    import re
+    ok = (conceito.lower() == "reasoning" and "Mult" in codigo) or len(codigo) > 0
+    partes = re.split(r"\r\n|\r|\n", codigo)
+    while len(partes) > 1 and partes[-1] == "":
+        partes.pop()
+    n = len(codigo.encode("utf-16-le")) // 2
+    delta = ((n // 4) / (len(partes) + 1) - 0.5) if ok else -1.0
+    return ok and delta > 0.0, delta
+
+
+def _mutar_soma_em_produto(codigo):
+    """A mutação do texto recebido (todo + binário vira *), reescrita por mim com o ast da biblioteca padrão. O código mutado NUNCA é executado
+    (regra da Parte 33): só é lido de volta como texto. Devolve (código mutado, número de trocas)."""
+    import ast
+    arvore = ast.parse(codigo)
+    trocas = [0]
+
+    class Mutador(ast.NodeTransformer):
+        def visit_BinOp(self, no):
+            self.generic_visit(no)
+            if isinstance(no.op, ast.Add):
+                trocas[0] += 1
+                return ast.copy_location(ast.BinOp(left=no.left, op=ast.Mult(), right=no.right), no)
+            return no
+    nova = Mutador().visit(arvore)
+    ast.fix_missing_locations(nova)
+    return ast.unparse(nova), trocas[0]
+
+
+def p1691_laco_de_auto_modificacao(codigo="def compute_factor(x, y):\n    return x + y", conceito="reasoning", geracoes=5, separador_corrigido=False):
+    """O laço de auto-modificação do texto recebido na Parte 75 (P1691), simulado pelas reimplementações acima, sem executar nada do texto nem do
+    código mutado: em cada geração, mutar (+ → *), montar o payload como o json.dumps do Python (com ou sem o separador compacto), extrair os campos
+    como o Java, avaliar pela fórmula do núcleo e, se aprovado, adotar o código com o comentário acrescentado. Devolve a lista de gerações
+    (campos achados, aprovado, delta, código atual)."""
+    import json
+    atual, hist = codigo, []
+    for g in range(1, geracoes + 1):
+        mutado, _ = _mutar_soma_em_produto(atual)
+        payload = {"generation": g, "hypothesis_code_hex": mutado.encode("utf-8").hex().upper(),
+                   "dictionary_query_hex": conceito.encode("utf-8").hex().upper()}
+        texto = json.dumps(payload, separators=(",", ":")) if separador_corrigido else json.dumps(payload)
+        hc, hq = _java_extract_json_field(texto, "hypothesis_code_hex"), _java_extract_json_field(texto, "dictionary_query_hex")
+        cod, conc = bytes.fromhex(hc).decode("utf-8"), bytes.fromhex(hq).decode("utf-8")
+        aprovado, delta = _nucleo_utilidade(cod, conc)
+        if aprovado:
+            atual = cod + "\n# Verified by Java ASI"
+        hist.append((hc != "" and hq != "", aprovado, delta, atual))
+    return hist
+
+
+def p1692_godel_nas_funcoes():
+    """A "prova de utilidade de Gödel" do texto recebido, aplicada a cada função de primeiro nível do calculos.py como hipótese (P1692): a mutação
+    (+ → *) e a fórmula do núcleo, com o defeito do separador corrigido. Nada é executado. Devolve (funções, aprovadas, mudadas pela mutação,
+    aprovadas e mudadas)."""
+    import ast
+    import os
+    fonte = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "calculos.py"), encoding="utf-8").read()
+    funcs = [n for n in ast.parse(fonte).body if isinstance(n, ast.FunctionDef)]
+    aprov = mud = ambos = 0
+    for f in funcs:
+        mutado, trocas = _mutar_soma_em_produto(ast.get_source_segment(fonte, f))
+        a, _ = _nucleo_utilidade(mutado, "reasoning")
+        aprov += a
+        mud += trocas > 0
+        ambos += a and trocas > 0
+    return len(funcs), aprov, mud, ambos
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
