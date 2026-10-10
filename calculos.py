@@ -7479,6 +7479,7 @@ def testes_de_regressao():
         "P1455": len(p1455_automorficos(12, 6)[0]) == 11 and len(p1452_minhas_previsoes(range(53, 67))) == 97,
         "P1493": len(p1493_palindromos_duplos()[0]) == 18 and p1491_densidade_da_conta()[0][5][1] == 9592,
         "P1516": p1514_pi_hex_digitos(16) == "243f6a8885a308d3" and p1516_gpt_decide()[1] == 5,
+        "P1549": abs(p1549_lei_de_escala()[0][24][1] - 0.0541) < 0.0001 and abs(p1545_bases_gf2(p1514_pi_hex_digitos(10000))[0] - 0.30269) < 0.00001,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -11259,6 +11260,36 @@ def _parte_69():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1539, testes=TESTES_P1539)
     print(f"P1539 minha taxa de erro ({ERROS_P1539}/{TESTES_P1539}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_70():
+    print("--- Parte 70 (0x46: algebra e geometria) ---")
+    for classe, q in (("v", 300), ("n", 300)):
+        mx, med, frac, nos, dist = p1544_delta_de_gromov(classe, q)
+        print(f"P1544 delta de Gromov ({classe}, {q} quadruplos, semente 70): maximo {mx}; medio {med:.4f}; fracao com delta > 0 {frac:.4f}; "
+              f"{nos} nos na componente; distancia media {dist:.2f}")
+    import random
+    r = random.Random(1570)
+    aleat = "".join("0123456789abcdef"[r.randrange(16)] for _ in range(10000))
+    for nome, texto in (("aleatorio (semente 1570)", aleat), ("pi", p1514_pi_hex_digitos(10000))):
+        f, teo, jan = p1545_bases_gf2(texto)
+        print(f"P1545 janelas de 4 digitos que formam base de GF(2)^4, {nome}: {f:.5f} de {jan}; teoria |GL(4,2)|/16^4 = {teo:.5f}")
+    p, sd, z1, z2 = p1550_contas_da_parte70()
+    print(f"P1550 desvio binomial {sd:.5f}; pi fica a {z1:+.3f} desvios (simples) e {z2:+.3f} (dobro, janelas sobrepostas)")
+    ajustes, dif, pontos = p1549_lei_de_escala()
+    for d_, (A, alfa, ne) in ajustes.items():
+        print(f"P1549 rodada 44, d = {d_}: pontos {[(n, round(b, 4)) for n, b in pontos[d_]]}; A {A:.4f}; alfa {alfa:.5f}; n* (trigrama 2,768) {ne:.4g}")
+    print(f"P1549 bits(d = 48) - bits(d = 24) em 8000 passos: {dif:+.4f}")
+    pts, n, g = p1541_escala_gpt("en", d=24)
+    vv, vc, cc, frac = p1543_geometria_dos_embeddings(g)
+    print(f"P1541 escala refeita (d = 24, {n} pesos): {[(m, round(b, 4)) for m, b in pts]}")
+    print(f"P1543 geometria dos embeddings: cos vogais {vv:.4f}; vogal-consoante {vc:.4f}; consoantes {cc:.4f}; diferenca {vv - vc:.4f}; 1a componente {frac:.4f}")
+    pts48, n48, _ = p1541_escala_gpt("en", d=48, marcos=(4000, 8000), lr=0.0025)
+    print(f"P1541 d = 48 com lr 0,0025 ({n48} pesos): {[(m, round(b, 4)) for m, b in pts48]}")
+    total, sem = p1092_pnn_sem_teste(1541, 1570)
+    print(f"P1092 pNN novas (P1541-P1570) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 70: {p974_previsoes_sem_largura(range(70, 71))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1569, testes=TESTES_P1569)
+    print(f"P1569 minha taxa de erro ({ERROS_P1569}/{TESTES_P1569}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -11295,7 +11326,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70}
 
 
 if __name__ == "__main__":
