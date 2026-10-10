@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 77 (0x4D): as duas abertas
 
-> Continuação da [Parte 76](ASI_AGI_parte76_a_forma_do_byte.md). Fecha os dois itens que a auditoria das duas linguagens (`p1722`) deixou abertos: as rodadas 09 e 14, em que o Java usa o log da
+> Continuação da [Parte 76](ASI_AGI_parte76_a_forma_do_byte.md). **Próxima:** [Parte 78 — a atenção de posto baixo](ASI_AGI_parte78_a_atencao_de_posto_baixo.md) (P1781–P1810). Fecha os dois itens que a auditoria das duas linguagens (`p1722`) deixou abertos: as rodadas 09 e 14, em que o Java usa o log da
 > biblioteca e o Python o usa dentro de peças medidas (`synthai/decisao.py` e a `p732`). Pedido permanente: "Continue sem parar."
 
 ## Previsões sobre as minhas previsões desta parte (num commit só delas)
