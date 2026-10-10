@@ -7,8 +7,6 @@ import importlib.util
 import math
 import os
 import sys
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from exatas import log_  # noqa: E402  (Parte 73: log próprio, exato nas duas línguas)
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 RAIZ = os.path.dirname(AQUI)
@@ -36,7 +34,7 @@ def pontuar(ds, texto):
         s = 0.0
         for w in ws:
             if w in t:
-                s += log_(K / df[w])
+                s += math.log(K / df[w])
         res.append((k, s))
     return res
 

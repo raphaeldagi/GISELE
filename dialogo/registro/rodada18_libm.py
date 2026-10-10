@@ -1,20 +1,17 @@
-"""Rodada 19 do diálogo Python <-> Java: reconstruir a parte a partir só das PALAVRAS (a Rodada 18 usou os números). Tiram-se
-os rótulos (Pnnn, 0x...), os acentos (NFD sem as marcas combinantes), minúsculas, e ficam as palavras a-z de 4 letras ou mais;
-o resto é a Rodada 18 (soma de ln(K/df), empate para a menor parte). Com `--preparar PASTA`, escreve PASTA/docs19.txt.
-Rodar da raiz do repositório: python3 dialogo/rodada19.py"""
+"""Rodada 18 do diálogo Python <-> Java: reconstruir as perguntas a partir só dos números. Para cada parte com documento e
+seção no resultados.txt, tiram-se os rótulos (Pnnn, 0x...) e ficam os números (só os dígitos, sem zeros à esquerda, 3 ou
+mais); cada seção escolhe o documento com a maior soma de ln(K/df) sobre os números em comum. Com `--preparar PASTA`,
+escreve PASTA/docs18.txt (parte TAB arquivo), que o Java lê. Rodar da raiz do repositório: python3 dialogo/rodada18.py"""
 
 import glob
 import math
 import os
 import re
 import sys
-import unicodedata
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from exatas import log_  # noqa: E402  (Parte 73: log próprio, exato nas duas línguas)
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROTULO = re.compile(r"P[0-9]+|0x[0-9A-Fa-f]+")
-PALAVRA = re.compile(r"[a-z]{4,}")
+NUMERO = re.compile(r"[0-9][0-9.,]*[0-9]|[0-9]")
 
 
 def documentos():
@@ -26,10 +23,12 @@ def documentos():
 
 
 def numeros(texto):
-    """As palavras (o nome ficou da Rodada 18, para o resto do código ser o mesmo)."""
-    t = unicodedata.normalize("NFD", ROTULO.sub(" ", texto))
-    t = "".join(c for c in t if not unicodedata.category(c).startswith("M")).lower()
-    return set(PALAVRA.findall(t))
+    res = set()
+    for x in NUMERO.findall(ROTULO.sub(" ", texto)):
+        d = x.replace(".", "").replace(",", "").lstrip("0")
+        if len(d) >= 3:
+            res.add(d)
+    return res
 
 
 def secoes():
@@ -62,7 +61,7 @@ def reconstruir(docs):
         for k in partes:
             s = 0.0
             for t in sorted(r & dn[k]):
-                s += log_(K / df[t])
+                s += math.log(K / df[t])
             if s > me:
                 melhor, me = k, s
         res.append((n, melhor, me, len(r)))
@@ -72,14 +71,14 @@ def reconstruir(docs):
 def main():
     docs = documentos()
     if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
-        with open(os.path.join(sys.argv[2], "docs19.txt"), "w", encoding="utf-8") as f:
+        with open(os.path.join(sys.argv[2], "docs18.txt"), "w", encoding="utf-8") as f:
             for k in sorted(docs):
                 f.write(f"{k}\t{docs[k]}\n")
         return
     acertos = 0
     for n, k, s, m in reconstruir(docs):
         acertos += n == k
-        print(f"parte {n}: {m} palavras; escolhe a parte {k}; escore = {s.hex()}")
+        print(f"parte {n}: {m} numeros; escolhe a parte {k}; escore = {s.hex()}")
     print(f"acertos: {acertos}")
 
 

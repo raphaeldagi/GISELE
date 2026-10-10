@@ -6,19 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 
-public class Rodada24 {
-    // Parte 73: log PRÓPRIO (cópia do da Rodada26), exato nas duas línguas; a versão com Math.log está em dialogo/registro/
-    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
-
-    static double log_(double x) {
-        int e = Math.getExponent(x);
-        double m = Math.scalb(x, -e);
-        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
-        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
-        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
-        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
-    }
-
+public class Rodada24Libm {
     public static void main(String[] args) throws Exception {
         PrintStream out = new PrintStream(System.out, true, "UTF-8");
         List<Integer> partes = new ArrayList<>();
@@ -37,7 +25,7 @@ public class Rodada24 {
         double me = -1.0;
         for (int i = 0; i < K; i++) {
             double s = 0.0;
-            for (String w : ws.get(i)) if (t.contains(w)) s += log_((double) K / df.get(w));
+            for (String w : ws.get(i)) if (t.contains(w)) s += Math.log((double) K / df.get(w));
             out.println("parte " + partes.get(i) + ": escore = " + Double.toHexString(s));
             if (s > me) { melhor = partes.get(i); me = s; }
         }

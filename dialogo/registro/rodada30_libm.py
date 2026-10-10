@@ -9,8 +9,6 @@ import importlib.util
 import math
 import os
 import sys
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from exatas import log_  # noqa: E402  (Parte 73: log próprio, exato nas duas línguas)
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 RAIZ = os.path.dirname(AQUI)
@@ -40,7 +38,7 @@ def grupos():
             (ca if y else co)[t] = (ca if y else co).get(t, 0) + 1
     voc = set(ca) | set(co)
     na, no, v = sum(ca.values()), sum(co.values()), len(voc)
-    peso = {t: log_((ca.get(t, 0) + 1) / (na + v)) - log_((co.get(t, 0) + 1) / (no + v)) for t in voc}
+    peso = {t: math.log((ca.get(t, 0) + 1) / (na + v)) - math.log((co.get(t, 0) + 1) / (no + v)) for t in voc}
     ok = sorted((t for t in voc if ca.get(t, 0) + co.get(t, 0) >= 10), key=lambda t: (-peso[t], t))
     res.append(("14", "mais-animais", [peso[t] for t in ok[:13]]))
     res.append(("14", "menos-animais", [peso[t] for t in ok[::-1][:13]]))
@@ -60,7 +58,7 @@ def grupos():
             for k in partes:
                 s = 0.0
                 for t in sorted(rr & dn[k]):
-                    s += log_(len(partes) / df[t])
+                    s += math.log(len(partes) / df[t])
                 esc.append(s)
             esc.sort(reverse=True)
             res.append((nome[-2:], f"parte{n}", esc[:2]))

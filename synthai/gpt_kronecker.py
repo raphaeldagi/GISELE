@@ -17,13 +17,15 @@ from synthai.gpt import GPT, _zeros
 
 
 class GPTKronecker(GPT):
-    def __init__(self, vocab, T=16, d1=4, d2=4, h=32, semente=69):
+    def __init__(self, vocab, T=16, d1=4, d2=4, h=32, semente=69, mapa=None):
         super().__init__(vocab, T=T, d=d1 * d2, h=h, semente=semente)
         r = random.Random(semente + 1)
         self.d1, self.d2 = d1, d2
-        self.alto = [ord(ch) >> 4 for ch in vocab]
-        self.baixo = [ord(ch) & 0x0F for ch in vocab]
-        if max(ord(ch) for ch in vocab) > 255:
+        # mapa: o byte de cada caractere (o padrão é o código ASCII; o controle da Parte 76 embaralha os mesmos bytes entre os caracteres)
+        self.bytes = list(mapa) if mapa is not None else [ord(ch) for ch in vocab]
+        self.alto = [b >> 4 for b in self.bytes]
+        self.baixo = [b & 0x0F for b in self.bytes]
+        if max(self.bytes) > 255:
             raise ValueError("o vocabulário precisa caber num byte")
         # escala: o produto de dois fatores com desvio s tem desvio s², e o E do GPT nasce com desvio 0,3
         s = math.sqrt(0.3)

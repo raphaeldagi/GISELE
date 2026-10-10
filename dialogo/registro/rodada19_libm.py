@@ -9,8 +9,6 @@ import os
 import re
 import sys
 import unicodedata
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from exatas import log_  # noqa: E402  (Parte 73: log próprio, exato nas duas línguas)
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROTULO = re.compile(r"P[0-9]+|0x[0-9A-Fa-f]+")
@@ -62,7 +60,7 @@ def reconstruir(docs):
         for k in partes:
             s = 0.0
             for t in sorted(r & dn[k]):
-                s += log_(K / df[t])
+                s += math.log(K / df[t])
             if s > me:
                 melhor, me = k, s
         res.append((n, melhor, me, len(r)))

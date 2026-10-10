@@ -37,3 +37,11 @@ Planejadas: ~4 previsões do mundo, ~3 funções novas e um módulo novo no paco
 novas pareadas é a média ± t₃ · desvio · √(1/4 + 1/4), com t₃ = 2,353.
 - **(a)** a diferença média (Kronecker − cheio) no inglês, sementes 76 a 79, em **[+0,0229; +0,0986]** bit
 - **(b)** o número de sementes (de 4) em que o Kronecker perde em **[3; 4]** (perdeu em 4 de 4 na calibração; dois casos não fixam um sinal, quatro fixam pouco, por isso 3 entra)
+
+**Medido (a) e (b), logo depois do registro:** diferenças no inglês +0,1029, +0,0689, +0,0685, +0,0751; média **+0,0788** ✅; o Kronecker perde em **4 de 4** ✅.
+
+**Previsão nova (o controle do mecanismo), registrada antes de treinar.** A perda pode vir de ter menos pesos (80 contra 544) ou da estrutura dos nibbles ASCII (as letras de *a* a *o* compartilham
+um fator, as de *p* a *z* outro). O controle separa as duas: o mesmo Kronecker com os caracteres **embaralhados entre os mesmos 34 bytes** (uma permutação com a semente 1.000 + semente). Os nibbles
+usados e o número de pesos ficam iguais, e só muda quem compartilha fator com quem. **A conta:** a ordem ASCII foi escolhida para máquinas de escrever e telégrafos, não pela estatística do inglês, e
+por isso não deve carregar informação sobre quais letras se parecem. O desvio de uma diferença pareada entre dois Kronecker vem do mesmo ruído de semente da calibração (0,0228).
+- **(c)** a diferença média (embaralhado − ASCII), no inglês, sementes 76 a 79, em **[−0,038; +0,038]** bit (0 ± 2,353 · 0,0228 · √(1/4 + 1/4))

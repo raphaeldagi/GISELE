@@ -23,7 +23,7 @@ public class Rodada26 {
         for (String[] a : ws) for (String w : a) df.merge(w, 1, Integer::sum);
         HashMap<String, Double> idf2 = new HashMap<>();
         for (Map.Entry<String, Integer> e : df.entrySet()) {
-            double x = Math.log((double) K / e.getValue());  // como o math.log da Rodada 21 (o idf)
+            double x = log_((double) K / e.getValue());  // Parte 73: o log_ próprio, como o da Rodada 21 corrigida (o idf)
             idf2.put(e.getKey(), x * x);
         }
         double[] norma = new double[K];

@@ -77,3 +77,13 @@ novos. A rodada 21 usa `math.log` e `** 2` (Python) e `Math.log` (Java), funçõ
 **Previsão nova, registrada antes de editar:** as outras quatro rodadas com funções da biblioteca (18, 19, 24, 30) passam hoje, mas só por sorte, e a 18 e a 19 leem o `resultados.txt`, que cresce.
 Com a mesma troca (o `exp_` e o `log_` de `dialogo/exatas.py`, `** 2` por `x * x`, originais em `dialogo/registro/`):
 - **(k)** as quatro dão IGUAIS, e a `p1638` passa a achar **0** rodadas com funções da biblioteca (categórica)
+
+**Medido (h):** **45 de 46** IGUAIS ❌. A rodada 26 ainda deu DIFERENTES por 4 ulps. O mecanismo: em Python, a 26 *herda* o idf da 21 por `import`, e a correção da 21 chegou a ela; em Java, a 26 tem uma
+*cópia* do cálculo (`Rodada26.java`, linha 26: `Math.log`, com o comentário "como o math.log da Rodada 21"), e a cópia ficou com a biblioteca. Depois da correção, os dois lados calculavam de jeitos
+diferentes. A checagem rápida das cinco rodadas tinha dado IGUAIS por sorte, com os dados de antes; o `resultados.txt` cresceu (as Partes 70 a 72) entre ela e o `verificar.py`. E a `p1638` olhou
+só o lado Python e só a forma `math.log`: ela não via `from math import log` nem o `Math.log` do Java, e não acusou as rodadas 06, 09, 14 e 20. As duas lacunas são o defeito que a Parte 75
+apontou no texto recebido: um verificador sem caso de controle.
+
+**Medido (k), depois de corrigir as rodadas 18, 19, 24 e 30 (e a cópia Java da 26):** as cinco dão IGUAIS (73, 73, 50, 3 e 7 linhas), mas a `p1638` acha **1** rodada com a biblioteca, e não 0: a **48**, que
+eu escrevi na Parte 74, depois desta regra, com `math.log2` na preparação dos dados (o Java lê os valores do arquivo, então não há risco entre as linguagens, mas a auditoria não distingue). Pela letra
+da previsão, (k) ❌. O texto "a regra vale para a frente" (Parte 73) falhou dentro do próprio dia: escrevi uma rodada nova que a auditoria acusa.
