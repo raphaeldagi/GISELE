@@ -47,3 +47,17 @@ definição (sem os exemplos).
 - (b) média de ord_p(16)/(p − 1) nos primos de 10⁴ a 10⁵ em **[0,26; 0,30]**
 
 **P1391, rodada 39:** no `dialogo/DIALOGO.md` (previsões (c) a (g)).
+
+### Previsões novas, nascidas do viés que persistiu (registradas antes de rodar a correção nas bases 17 a 22)
+
+**Resultado da rodada 39, antes desta seção:** a correção dos primos pequenos não muda nada (média |correção − 1| = 0,0149; (c) ❌ por pouco), e o viés persiste
+(média de z nas bases 17 a 22 = −1,07, (d) ✅), 86,5% dele nos palíndromos de comprimento 5.
+
+**Um mecanismo novo, deduzido:** para um primo r que divide b² + 1, um palíndromo de 5 dígitos d₀d₁d₂d₁d₀ é n = d₀(b⁴ + 1) + d₁(b³ + b) + d₂b²; como b² ≡ −1 (mod r),
+b³ + b ≡ 0 e b⁴ + 1 ≡ 2, então **n ≡ 2d₀ − d₂ (mod r)**: a divisibilidade depende só de dois dígitos, e o par (d₀, d₂ = 2d₀) a produz com chance ~1/(2b), muito maior
+que 1/r quando r ≈ b². **O peso, medido antes nas bases escolhidas por regra (23 a 26), só as frações:** nas pares, f·r = 12,5 e 13,5 e a correção é **0,978**; nas
+ímpares, a correção é **1,019 e 1,002**, porque numa base ímpar o palíndromo coprimo a 2b é ímpar, a paridade de n é a do dígito do meio, e d₂ = 2d₀ (par) fica proibido.
+O mecanismo existe, pesa ~2% e troca de sinal com a paridade da base.
+- (h) com a correção dos primos r > 13 que dividem (b² + 1)(b⁴ + 1) e não dividem 2b, a média de z nas bases 17 a 22 fica em **[−1,4; −0,7]** (o efeito se cancela entre
+  pares e ímpares; o viés continua sem explicação).
+- (i) o sinal de (correção_r − 1) nas seis bases: **negativo nas três pares (18, 20, 22) e não negativo nas três ímpares (17, 19, 21)**, as seis (ao acaso, (½)⁶ = 1/64).
