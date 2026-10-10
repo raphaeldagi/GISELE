@@ -26,3 +26,14 @@ Planejadas: ~4 previsões do mundo, ~3 funções novas e um módulo novo no paco
 | redundância P821 | **[0,563; 0,651]** | o estatístico |
 | previsões unilaterais | **0** | `p974` |
 | pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de treinar no inglês)
+
+**O teste.** Dois GPTs iguais em tudo (d = 16, T = 16, h = 32, 2.000 passos, taxa 0,005), um com a tabela de embeddings cheia (34 × 16 = 544 pesos) e outro com o embedding de Kronecker por nibble
+(d₁ = d₂ = 4; os 4 nibbles altos e os 16 baixos do vocabulário usam 4·4 + 16·4 = **80** pesos), nas mesmas sementes. A medida: bits por caractere no teste (300 janelas); a diferença Kronecker − cheio.
+**O mecanismo:** caracteres com o mesmo nibble alto (as letras de *a* a *o* são todas 0x6_) compartilham o fator A, e cada embedding, visto como matriz 4 × 4, tem posto 1. Isso tira liberdade.
+**Está presente na calibração?** Sim: o português sem acentos usa o mesmo alfabeto `VOCAB_GPT`.
+**Calibração, pela regra escrita antes (o português, sementes 76 a 79, pareadas):** diferenças +0,0712, +0,0287, +0,0619, +0,0812; média **+0,0608**, desvio 0,0228. A faixa para a média de 4 sementes
+novas pareadas é a média ± t₃ · desvio · √(1/4 + 1/4), com t₃ = 2,353.
+- **(a)** a diferença média (Kronecker − cheio) no inglês, sementes 76 a 79, em **[+0,0229; +0,0986]** bit
+- **(b)** o número de sementes (de 4) em que o Kronecker perde em **[3; 4]** (perdeu em 4 de 4 na calibração; dois casos não fixam um sinal, quatro fixam pouco, por isso 3 entra)
