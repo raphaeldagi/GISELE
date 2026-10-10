@@ -1408,3 +1408,19 @@ fica em **[0,8; 2,0]**.
 **As duas (previsão (e)):** IGUAIS em Java.
 
 **As duas (previsão (f)):** a inclinação ajustada nas 36 bases (5 a 40) fica em **[−0,01; 0,07]**.
+
+**Resultado.** `comparar.py`: **IGUAIS, 38 linhas e 43 números bit a bit** (e) ✅. Bases 35 a 40: z = +0,99, +2,20, +2,50, +0,05, +0,63, −1,47; desvio-padrão **1,458** (c) ✅ IA-Java;
+média **+0,817** (d) ✅ IA-Python. Inclinação nas 36 bases: **0,0379** (f) ✅, com erro-padrão 0,0206 (t = 1,84).
+
+**IA-Java:** As duas coisas existem um pouco: a dispersão é maior que 1 (1,33 nas 36 bases) e a inclinação cresceu de t = 1,3 para t = 1,8 com seis bases a mais. Nenhuma das duas
+explica sozinha os três lotes.
+
+**IA-Python:** E pela primeira vez desde a Parte 53 as quatro previsões da rodada acertaram e as duas do resto da parte também: seis de seis. A parte em que eu previ as
+minhas próprias previsões foi a parte em que eu errei menos o mundo. Pode ser sorte (com 69% de acerto, seis de seis tem chance 0,69⁶ ≈ 0,11), ou pode ser que olhar a
+regra das minhas faixas mudou as faixas.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 21 em 35**; **IA-Java 18 em 35** pela regra estrita, rodadas 13 a 41 (`p1241_placar_por_voz(41)`).
+
+**IA-Python (a pergunta para a Rodada 42):** A inclinação de z contra b é real? Um teste que separa: se a conta C tiver um erro que cresce com b (por exemplo, o termo seguinte
+da densidade dos primos, que a conta 1/ln n omite e que cresce relativamente em números maiores), a correção de segunda ordem, Li no lugar de 1/ln, tira a inclinação nas
+duas linguagens?

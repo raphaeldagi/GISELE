@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 66 (0x42): o endereço da falta
 
-> Continuação da [Parte 65](ASI_AGI_parte65_o_que_nao_e_divisor.md). Previsões nos commits `0ab943e` ((a) a (h)) e `d996b22` ((i)). **Previsões registradas antes de qualquer execução que mostre os números medidos e antes de
+> Continuação da [Parte 65](ASI_AGI_parte65_o_que_nao_e_divisor.md). **Próxima:** [Parte 67 — prever o previsto](ASI_AGI_parte67_prever_o_previsto.md) (P1451–P1480). Previsões nos commits `0ab943e` ((a) a (h)) e `d996b22` ((i)). **Previsões registradas antes de qualquer execução que mostre os números medidos e antes de
 > escrever o resto deste documento.** A Parte 65 deixou a base 21 a −3σ da conta dos primos palíndromos, com todas as correções. Esta parte pergunta se a falta tem
 > endereço (alguns primeiros dígitos, alguns dígitos do meio), se os sinsets de verbos têm mais sinônimos que os de substantivos, e quantos números têm a mesma soma de
 > dígitos em base 10 e em base 16.

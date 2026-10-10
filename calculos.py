@@ -7476,6 +7476,7 @@ def testes_de_regressao():
         "P1363": p1363_quadrados_palindromos()[0] == 24 and p1361_fator_do_final()[7][1] == 196,
         "P1393": p1393_periodo_hex()[3] == 8363 and p1391_o_que_nao_e_divisor()[0][1] == 48,
         "P1423": p1427_bases_29_a_34((29,))[0][1] == 1610 and p1421_endereco_da_falta()[0]["d0"][1] == 11,
+        "P1455": len(p1455_automorficos(12, 6)[0]) == 11 and len(p1452_minhas_previsoes(range(53, 67))) == 97,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9493,6 +9494,7 @@ ERROS_P1359, TESTES_P1359 = 182, 527
 ERROS_P1389, TESTES_P1389 = 184, 535
 ERROS_P1419, TESTES_P1419 = 186, 544
 ERROS_P1449, TESTES_P1449 = 189, 553
+ERROS_P1479, TESTES_P1479 = 189, 559
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -10303,6 +10305,75 @@ def p1453_engenharia_das_previsoes(previsoes=None):
             "erro_loo": erro_loo, "erro_ingenuo": erro_ing,
             "por_parte": {pa: sum(1 for x in prev if x[0] == pa) for pa in sorted({x[0] for x in prev})}}
 
+
+def p1459_previsoes_sobre_previsoes(parte=67, historico=range(53, 67)):
+    """O placar das previsões sobre as minhas previsões (P1459): para a parte, lida pela P1452, (m1) a mediana de w das faixas, (m2) o
+    número de previsões do mundo, (m3) a fração de acertos, (m4) a fração das faixas com w a menos de 0,05 de 1/3, (m5) o erro médio
+    do preditor "mediana histórica" (P1453) para o w de cada faixa. Devolve (medidas, mediana histórica, ws da parte)."""
+    prev = p1452_minhas_previsoes(range(parte, parte + 1))
+    hist = p1453_engenharia_das_previsoes(p1452_minhas_previsoes(historico))
+    com = [x for x in prev if x[2] is not None and abs(x[2]) + abs(x[3]) > 0]
+    ws = [(x[3] - x[2]) / (abs(x[2]) + abs(x[3])) for x in com]
+    v = sorted(ws)
+    n = len(v)
+    med = (v[n // 2] if n % 2 else (v[n // 2 - 1] + v[n // 2]) / 2) if n else None
+    m = {"m1": med, "m2": len(prev), "m3": sum(x[4] for x in prev) / len(prev) if prev else None,
+         "m4": sum(1 for w in ws if abs(w - 1 / 3) <= 0.05) / n if n else None,
+         "m5": sum(abs(w - hist["w_mediana"]) for w in ws) / n if n else None}
+    return m, hist["w_mediana"], ws
+
+
+def p1451_tendencia_ou_dispersao():
+    """Rodada 41 (P1451): o z dos primos palíndromos nas bases 5 a 40 (conta C da rodada 39), a reta de z contra b e a média e o
+    desvio-padrão dos z das bases 35 a 40 (dialogo/rodada41.py, IGUAL em Java). Devolve ([(b, medido, z)], (inclinação, intercepto,
+    erro-padrão), (média, dp) das novas, (média, dp) de todas)."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada41", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada41.py"))
+    r41 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r41)
+    todos = r41.zs(range(5, 41), r41.crivo(40 ** 5))
+    return (todos, r41.reta([(float(b), z) for b, _, z in todos]), r41.media_dp([z for b, _, z in todos if b >= 35]),
+            r41.media_dp([z for _, _, z in todos]))
+
+
+def p1454_heranca_multipla(d=None):
+    """A herança múltipla (P1454): a fração dos sinsets de cada classe com dois ou mais hiperônimos, e 5 exemplos de substantivos.
+    Devolve ({classe: (fração, sinsets)}, exemplos)."""
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    por, ex = {}, []
+    for pos, lemas, hip, _ in d.sinsets:
+        a, b = por.get(pos, (0, 0))
+        por[pos] = (a + (len(hip) >= 2), b + 1)
+        if pos == "n" and len(hip) >= 2 and len(ex) < 5:
+            ex.append(lemas[0])
+    return {c: (a / b, b) for c, (a, b) in sorted(por.items())}, ex
+
+
+def p1455_automorficos(base=12, kmax=6):
+    """Os números automórficos numa base (P1455): n ≥ 2 de 1 a kmax dígitos com n² ≡ n (mod b^k), k = dígitos de n; e a conta
+    (2^ω − 2 soluções não triviais módulo b^k, ω = número de primos de b, vezes a chance (b − 1)/b de o dígito inicial não ser 0, somada
+    em k). Devolve (lista, conta)."""
+    primos, m, q = [], base, 2
+    while q * q <= m:
+        if m % q == 0:
+            primos.append(q)
+            while m % q == 0:
+                m //= q
+        q += 1
+    if m > 1:
+        primos.append(m)
+    achados = []
+    for k in range(1, kmax + 1):
+        mod = base ** k
+        for n in range(max(2, base ** (k - 1)), mod):
+            if (n * n - n) % mod == 0:
+                achados.append(n)
+    conta = (2 ** len(primos) - 2) * kmax * (base - 1) / base
+    return achados, conta
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -10697,6 +10768,31 @@ def _parte_66():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1449, testes=TESTES_P1449)
     print(f"P1449 minha taxa de erro ({ERROS_P1449}/{TESTES_P1449}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_67():
+    print("--- Parte 67 (0x43: prever o previsto) ---")
+    prev = p1452_minhas_previsoes(range(53, 67))
+    r = p1453_engenharia_das_previsoes(prev)
+    print(f"P1452 previsoes do mundo lidas (Partes 53-66): {r['previsoes']}; com faixa numerica: {r['com_faixa']}; por parte {r['por_parte']}")
+    print(f"P1453 acerto {r['acerto']:.4f} (com faixa {r['acerto_com_faixa']:.4f}; sem faixa {r['acerto_sem_faixa']:.4f}); w mediana {r['w_mediana']:.4f} "
+          f"(quartis {r['w_q25']:.4f}, {r['w_q75']:.4f}); por terco de w (w mediano, acerto): {[(round(a, 4), round(b, 4)) for a, b in r['por_terco']]}; "
+          f"erro do preditor de w: mediana das outras {r['erro_loo']:.4f}, ingenuo {r['erro_ingenuo']:.4f}")
+    m, mediana, ws = p1459_previsoes_sobre_previsoes(67, range(53, 67))
+    print(f"P1459 previsoes sobre as minhas previsoes da Parte 67: m1 (mediana de w) {m['m1']:.4f}; m2 (previsoes) {m['m2']}; m3 (acerto) {m['m3']:.4f}; "
+          f"m4 (perto de 1/3) {m['m4']:.4f}; m5 (erro da mediana historica {mediana:.4f}) {m['m5']:.4f}; ws {[round(w, 4) for w in ws]}")
+    todos, (beta, alfa, ep), (mn, dpn), (mt, dpt) = p1451_tendencia_ou_dispersao()
+    print(f"P1451 bases 35-40: z {[(b, round(z, 3)) for b, _, z in todos if b >= 35]}; media {mn:+.4f}; dp {dpn:.4f}")
+    print(f"P1451 reta de z contra b (5-40): inclinacao {beta:.5f} (ep {ep:.5f}; t {beta / ep:.3f}); intercepto {alfa:.4f}; todas: media {mt:+.4f}, dp {dpt:.4f}")
+    por, ex = p1454_heranca_multipla()
+    print(f"P1454 sinsets com 2+ hiperonimos: {({c: (round(f, 5), n) for c, (f, n) in por.items()})}; exemplos {ex}")
+    for b, k in ((12, 6), (10, 6), (16, 6)):
+        ach, conta = p1455_automorficos(b, k)
+        print(f"P1455 automorficos base {b} ate {b}^{k}: {len(ach)} (conta {conta:.2f}); {ach}")
+    total, sem = p1092_pnn_sem_teste(1451, 1480)
+    print(f"P1092 pNN novas (P1451-P1480) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 67: {p974_previsoes_sem_largura(range(67, 68))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1479, testes=TESTES_P1479)
+    print(f"P1479 minha taxa de erro ({ERROS_P1479}/{TESTES_P1479}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -10733,7 +10829,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67}
 
 
 if __name__ == "__main__":
