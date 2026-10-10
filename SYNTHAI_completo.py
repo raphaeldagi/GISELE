@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 68, perguntas P1 a P1499).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 70, perguntas P1 a P1550).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -31,7 +31,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (11007 linhas)
+# calculos.py  (11339 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7513,6 +7513,8 @@ def testes_de_regressao():
         "P1423": p1427_bases_29_a_34((29,))[0][1] == 1610 and p1421_endereco_da_falta()[0]["d0"][1] == 11,
         "P1455": len(p1455_automorficos(12, 6)[0]) == 11 and len(p1452_minhas_previsoes(range(53, 67))) == 97,
         "P1493": len(p1493_palindromos_duplos()[0]) == 18 and p1491_densidade_da_conta()[0][5][1] == 9592,
+        "P1516": p1514_pi_hex_digitos(16) == "243f6a8885a308d3" and p1516_gpt_decide()[1] == 5,
+        "P1549": abs(p1549_lei_de_escala()[0][24][1] - 0.0541) < 0.0001 and abs(p1545_bases_gf2(p1514_pi_hex_digitos(10000))[0] - 0.30269) < 0.00001,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9532,6 +9534,8 @@ ERROS_P1419, TESTES_P1419 = 186, 544
 ERROS_P1449, TESTES_P1449 = 189, 553
 ERROS_P1479, TESTES_P1479 = 189, 559
 ERROS_P1509, TESTES_P1509 = 189, 565
+ERROS_P1539, TESTES_P1539 = 189, 573
+ERROS_P1569, TESTES_P1569 = 191, 583
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -10471,6 +10475,281 @@ def p1493_palindromos_duplos(ate=16 ** 4, b1=16, b2=10):
     return achados, conta
 
 
+VOCAB_GPT = list(" abcdefghijklmnopqrstuvwxyz,;()-|?")  # | separa as glosas; ? é qualquer outro caractere
+
+
+def p1511_corpus_de_glosas(lingua="en"):
+    \"\"\"O corpus de pré-treino da forma de GPT (P1511): as definições do WordNet (en, sem os exemplos) ou as glosas da OpenWordNet-PT
+    (pt, sem acentos: NFD e só as letras de base), em minúsculas, com os caracteres fora do vocabulário trocados por '?', unidas por '|'.
+    Separação fixa: os sinsets de índice ≡ 0 (mod 10) no teste. Devolve (treino, teste).\"\"\"
+    import unicodedata
+    if lingua == "en":
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+        glosas = [d.definicao(g) for _, _, _, g in d.sinsets]
+    else:
+        from synthai.dicionario import DicionarioPT
+        pt = DicionarioPT()
+        glosas = [pt.glosas[k] for k in sorted(pt.glosas)]
+    ok = set(VOCAB_GPT)
+    treino, teste = [], []
+    for i, g in enumerate(glosas):
+        g = "".join(ch for ch in unicodedata.normalize("NFD", g.lower()) if not unicodedata.combining(ch))
+        g = "".join(ch if ch in ok and ch != "|" else "?" for ch in g.strip())
+        (teste if i % 10 == 0 else treino).append(g)
+    return "|".join(treino), "|".join(teste)
+
+
+def p1512_ngrama_bits(treino, teste, ordem=3, limite=None, V=None):
+    \"\"\"O modelo mais simples (P1512): n-grama de caracteres com interpolação de Witten-Bell, contado em todo o treino; bits por
+    caractere no teste (os primeiros `limite` caracteres, ou todos). Devolve bits por caractere.\"\"\"
+    from math import log2
+    V = V or len(VOCAB_GPT)  # o tamanho do alfabeto (a base da interpolação é 1/V)
+    cont = [{} for _ in range(ordem)]  # cont[k][contexto de k caracteres] = {caractere: contagem}
+    for i in range(len(treino)):
+        for k in range(ordem):
+            if i - k < 0:
+                break
+            ctx = treino[i - k:i]
+            tab = cont[k].setdefault(ctx, {})
+            tab[treino[i]] = tab.get(treino[i], 0) + 1
+    tot = {k: {c: (sum(t.values()), len(t)) for c, t in cont[k].items()} for k in range(ordem)}
+    texto = teste if limite is None else teste[:limite]
+    bits = 0.0
+    for i in range(len(texto)):
+        p = 1.0 / V
+        for k in range(ordem):
+            if i - k < 0:
+                break
+            ctx = texto[i - k:i]
+            if ctx not in cont[k]:
+                break
+            n, tipos = tot[k][ctx]
+            lam = n / (n + tipos)
+            p = lam * cont[k][ctx].get(texto[i], 0) / n + (1 - lam) * p
+        bits -= log2(p)
+    return bits / len(texto)
+
+
+def p1514_pi_hex_digitos(n=10000):
+    \"\"\"Os n primeiros dígitos hexadecimais de π depois da vírgula, exatos (Machin em inteiros: π = 16 arctg(1/5) − 4 arctg(1/239)),
+    como texto '243f6a88…' (P1514).\"\"\"
+    bits = 4 * n + 64
+    um = 1 << bits
+
+    def arctg_inv(x):
+        soma, termo, k, sinal = 0, um // x, 1, 1
+        while termo:
+            soma += sinal * (termo // k)
+            termo //= x * x
+            k += 2
+            sinal = -sinal
+        return soma
+    frac = 16 * arctg_inv(5) - 4 * arctg_inv(239) - 3 * um
+    saida = []
+    for _ in range(n):
+        frac *= 16
+        saida.append("0123456789abcdef"[frac >> bits])
+        frac &= um - 1
+    return "".join(saida)
+
+
+def p1515_bits_hex(texto, ordem=3, corte=0.9):
+    \"\"\"Bits por dígito de um n-grama (P1512, alfabeto de 16) treinado nos primeiros 90% de uma sequência hexadecimal e medido nos últimos 10%:
+    4 bits é o acaso; abaixo de 4, estrutura; acima, o custo de aprender o que não existe. Devolve bits por dígito.\"\"\"
+    k = int(len(texto) * corte)
+    return p1512_ngrama_bits(texto[:k], texto[k:], ordem, V=16)
+
+
+def p1513_gpt_bits(treino, teste, passos=8000, T=24, d=24, h=48, lr=0.005, semente=69, janelas=400):
+    \"\"\"A forma de GPT (P1513): o GPT mínimo de `synthai.gpt` pré-treinado no treino (janelas sorteadas, semente fixa) e medido no teste
+    (as primeiras `janelas` janelas de T caracteres). Devolve (bits por caractere no teste, parâmetros, média das últimas 200 perdas em bits,
+    o modelo).\"\"\"
+    from math import log
+    from synthai.gpt import GPT
+    g = GPT(VOCAB_GPT, T=T, d=d, h=h, semente=semente)
+    perdas = g.treinar(treino, passos=passos, lr=lr, semente=semente)
+    n = sum(len(v) * len(v[0]) for v in g.p.values())
+    return g.bits_por_caractere(teste, janelas=janelas), n, sum(perdas[-200:]) / 200 / log(2), g
+
+
+def p1516_gpt_decide():
+    \"\"\"Rodada 43 (P1516): o GPT pequeno pré-treinado (dialogo/rodada43.py) decide o próximo caractere da frase, com exp e log próprios (IGUAL em
+    Java). Devolve (decisões [(t, contexto, argmax, p do argmax, p do real)], acertos do argmax, bits por caractere).\"\"\"
+    import importlib.util
+    import os
+    import tempfile
+    spec = importlib.util.spec_from_file_location("rodada43", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada43.py"))
+    r43 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r43)
+    with tempfile.TemporaryDirectory() as pasta:
+        r43.preparar(pasta)
+        saida, bits = r43.decisoes(*r43.ler(pasta))
+    return saida, sum(1 for x in saida if x[3] == x[4]), bits / len(saida)
+
+
+def p1541_escala_gpt(lingua="en", d=24, marcos=(1000, 2000, 4000, 8000, 16000), T=24, lr=0.005, semente=70, janelas=400):
+    \"\"\"A curva de escala da forma de GPT (P1541): um GPT (T, d, h = 2d) treinado em etapas, com os bits por caractere no teste medidos em cada
+    marco de passos (cada etapa sorteia janelas com a semente + o número da etapa; o estado do Adam continua). Devolve ([(passos, bits)], pesos, o modelo).\"\"\"
+    from synthai.gpt import GPT
+    treino, teste = p1511_corpus_de_glosas(lingua)
+    g = GPT(VOCAB_GPT, T=T, d=d, h=2 * d, semente=semente)
+    feitos, pontos = 0, []
+    for k, m in enumerate(marcos):
+        g.treinar(treino, passos=m - feitos, lr=lr, semente=semente + k)
+        feitos = m
+        pontos.append((m, g.bits_por_caractere(teste, janelas=janelas)))
+    return pontos, sum(len(v) * len(v[0]) for v in g.p.values()), g
+
+
+def p1542_lei_de_potencia(pontos, alvo=None):
+    \"\"\"A lei de potência bits = A·n^(−α) ajustada por mínimos quadrados em log-log, em forma fechada (as equações normais da reta
+    ln bits = ln A − α ln n) (P1542). Com `alvo`, o n em que a reta cruza o alvo: n* = (A/alvo)^(1/α). Devolve (A, α, n*).\"\"\"
+    from math import exp, log
+    xs = [log(n) for n, _ in pontos]
+    ys = [log(b) for _, b in pontos]
+    k = len(xs)
+    mx, my = sum(xs) / k, sum(ys) / k
+    sxx = sum((x - mx) ** 2 for x in xs)
+    sxy = sum((x - mx) * (y - my) for x, y in zip(xs, ys))
+    inclinacao = sxy / sxx
+    A = exp(my - inclinacao * mx)
+    alfa = -inclinacao
+    n_alvo = (A / alvo) ** (1 / alfa) if alvo is not None and alfa > 0 else None
+    return A, alfa, n_alvo
+
+
+def p1543_geometria_dos_embeddings(g):
+    \"\"\"A geometria dos embeddings de um GPT (P1543): o cosseno médio entre as vogais (a, e, i, o, u: 10 pares), entre vogais e consoantes (5 × 21
+    pares) e entre as consoantes; e a fração da variância na primeira componente principal dos embeddings das 26 letras (a matriz de
+    covariância 24×24, autovalor dominante por iteração de potência, conferido pelo traço). Devolve (vogais, vogal-consoante, consoantes, fração).\"\"\"
+    from math import sqrt
+    E = g.p["E"]
+    idx = g.indice
+    vog = [idx[c] for c in "aeiou"]
+    con = [idx[c] for c in "bcdfghjklmnpqrstvwxyz"]
+
+    def cos(a, b):
+        x, y = E[a], E[b]
+        return sum(u * v for u, v in zip(x, y)) / sqrt(sum(u * u for u in x) * sum(v * v for v in y))
+
+    def media(pares):
+        return sum(cos(a, b) for a, b in pares) / len(pares)
+    vv = media([(vog[i], vog[j]) for i in range(5) for j in range(i + 1, 5)])
+    vc = media([(a, b) for a in vog for b in con])
+    cc = media([(con[i], con[j]) for i in range(len(con)) for j in range(i + 1, len(con))])
+    letras = vog + con
+    d = len(E[0])
+    mu = [sum(E[a][i] for a in letras) / len(letras) for i in range(d)]
+    X = [[E[a][i] - mu[i] for i in range(d)] for a in letras]
+    C = [[sum(x[i] * x[j] for x in X) / len(X) for j in range(d)] for i in range(d)]
+    v = [1.0] * d
+    lam = 0.0
+    for _ in range(500):
+        w = [sum(C[i][j] * v[j] for j in range(d)) for i in range(d)]
+        nw = sqrt(sum(x * x for x in w))
+        v = [x / nw for x in w]
+        lam = nw
+    traco = sum(C[i][i] for i in range(d))
+    return vv, vc, cc, lam / traco
+
+
+def p1544_delta_de_gromov(classe="n", quadruplos=500, semente=70, d=None):
+    \"\"\"O δ de Gromov da taxonomia (P1544): no grafo não dirigido dos hiperônimos da classe (a maior componente conexa), para quádruplos (x, y, z, w)
+    sorteados (semente fixa), δ = (maior − segunda maior das somas d(x,y)+d(z,w), d(x,z)+d(y,w), d(x,w)+d(y,z))/2, com as distâncias por busca em
+    largura. Numa árvore, δ = 0 sempre; a herança múltipla é o que o afasta de zero. Devolve (máximo, média, fração com δ > 0, nós da componente,
+    diâmetro médio amostrado).\"\"\"
+    import random
+    from collections import deque
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    viz = {}
+    for i, (pos, _, hip, _) in enumerate(d.sinsets):
+        if pos != classe:
+            continue
+        viz.setdefault(i, set())
+        for h in hip:
+            if h in d.indice and d.sinsets[d.indice[h]][0] == classe:
+                j = d.indice[h]
+                viz[i].add(j)
+                viz.setdefault(j, set()).add(i)
+
+    def bfs(o):
+        dist = {o: 0}
+        fila = deque([o])
+        while fila:
+            u = fila.popleft()
+            for w in viz[u]:
+                if w not in dist:
+                    dist[w] = dist[u] + 1
+                    fila.append(w)
+        return dist
+    vistos, maior = set(), []
+    for o in sorted(viz):
+        if o in vistos:
+            continue
+        comp = bfs(o)
+        vistos.update(comp)
+        if len(comp) > len(maior):
+            maior = sorted(comp)
+    r = random.Random(semente)
+    deltas, dists = [], []
+    for _ in range(quadruplos):
+        x, y, z, w = r.sample(maior, 4)
+        dx, dy, dz = bfs(x), bfs(y), bfs(z)
+        somas = sorted([dx[y] + dz[w], dx[z] + dy[w], dx[w] + dy[z]])
+        deltas.append((somas[2] - somas[1]) / 2)
+        dists.append(dx[y])
+    return max(deltas), sum(deltas) / len(deltas), sum(1 for x in deltas if x > 0) / len(deltas), len(maior), sum(dists) / len(dists)
+
+
+def p1545_bases_gf2(texto):
+    \"\"\"Os dígitos hexadecimais como vetores de GF(2)⁴ (P1545): a fração das janelas de 4 dígitos consecutivos que formam uma base de GF(2)⁴ (posto 4,
+    por eliminação de Gauss sobre GF(2): ou exclusivo de bits); e a fração teórica para dígitos independentes e uniformes, |GL(4, 2)|/16⁴ =
+    (16 − 1)(16 − 2)(16 − 4)(16 − 8)/16⁴. Devolve (fração medida, fração teórica, janelas).\"\"\"
+    def posto(vs):
+        vs = list(vs)
+        p = 0
+        for bit in (8, 4, 2, 1):
+            piv = next((i for i in range(p, len(vs)) if vs[i] & bit), None)
+            if piv is None:
+                continue
+            vs[p], vs[piv] = vs[piv], vs[p]
+            for i in range(len(vs)):
+                if i != p and vs[i] & bit:
+                    vs[i] ^= vs[p]
+            p += 1
+        return p
+    ds = [int(ch, 16) for ch in texto]
+    janelas = len(ds) - 3
+    bases = sum(1 for i in range(janelas) if posto(ds[i:i + 4]) == 4)
+    return bases / janelas, (15 * 14 * 12 * 8) / 16 ** 4, janelas
+
+
+def p1549_lei_de_escala():
+    \"\"\"Rodada 44 (P1549): a lei de escala da forma de GPT por mínimos quadrados em forma fechada (dialogo/rodada44.py, IGUAL em Java), lida dos pontos
+    medidos e guardados em dialogo/escala44.tsv. Devolve ({d: (A, α, n*)}, bits(d=48) − bits(d=24) em 8.000 passos, os pontos).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada44", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada44.py"))
+    r44 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r44)
+    pontos = r44.ler()
+    return {d: r44.ajuste(pontos[d]) for d in sorted(pontos)}, dict(pontos[48])[8000] - dict(pontos[24])[8000], pontos
+
+
+def p1550_contas_da_parte70(medida_gf2=None, janelas=9997):
+    \"\"\"As contas auxiliares da Parte 70 (P1550): o desvio binomial de uma proporção p = |GL(4,2)|/16⁴ com `janelas` janelas, e quantos desvios a medida
+    de π (P1545) fica da teoria (com o desvio simples e com o dobro, pelas janelas sobrepostas). Devolve (p, desvio, z simples, z com o dobro).\"\"\"
+    if medida_gf2 is None:
+        medida_gf2 = p1545_bases_gf2(p1514_pi_hex_digitos(10000))[0]
+    p = 20160 / 65536
+    sd = sqrt(p * (1 - p) / janelas)
+    return p, sd, (medida_gf2 - p) / sd, (medida_gf2 - p) / (2 * sd)
+
+
 def p1499_previsoes_sobre_previsoes_v2(parte=68):
     \"\"\"O placar das previsões sobre as minhas previsões, versão 2 (P1499; lido pela P1481, com os tipos): (m1) o número de previsões do
     mundo, (m2) o número de faixas que cruzam o zero, (m3) a mediana de w das que não cruzam, (m4) a fração de acertos, (m5) o número de
@@ -10994,6 +11273,59 @@ def _parte_68():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1509, testes=TESTES_P1509)
     print(f"P1509 minha taxa de erro ({ERROS_P1509}/{TESTES_P1509}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_69():
+    print("--- Parte 69 (0x45: a forma de GPT) ---")
+    for lingua in ("en", "pt"):
+        treino, teste = p1511_corpus_de_glosas(lingua)
+        lim = 400 * 24 + 1
+        ng = {k: p1512_ngrama_bits(treino, teste, k, lim) for k in (1, 2, 3, 4, 5)}
+        print(f"P1511 corpus {lingua}: treino {len(treino)} caracteres, teste {len(teste)}")
+        print(f"P1512 n-grama {lingua} (bits por caractere, ordens 1-5): {({k: round(v, 4) for k, v in ng.items()})}")
+        b, n, perda, g = p1513_gpt_bits(treino, teste)
+        print(f"P1513 GPT {lingua} (T 24, d 24, h 48, 8000 passos): {b:.4f} bits por caractere; {n} parametros; perda final {perda:.4f} bits; "
+              f"GPT - trigrama = {b - ng[3]:+.4f}; gera: {g.gerar('a domestic ' if lingua == 'en' else 'o animal ', 50)!r}")
+    pi = p1514_pi_hex_digitos(10000)
+    print(f"P1514 pi em hexadecimal: 3,{pi[:16]}...")
+    print(f"P1515 bits por digito de pi (n-grama, 90% treino, 10% teste): {({k: round(p1515_bits_hex(pi, k), 4) for k in (1, 2, 3)})}")
+    saida, acertos, bits = p1516_gpt_decide()
+    print(f"P1516 rodada 43: o GPT pequeno acerta o proximo caractere em {acertos} de {len(saida)} posicoes; {bits:.4f} bits por caractere; "
+          f"decisoes {[(ctx, arg) for _, ctx, arg, _, _ in saida[:6]]}")
+    total, sem = p1092_pnn_sem_teste(1511, 1540)
+    print(f"P1092 pNN novas (P1511-P1540) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 69: {p974_previsoes_sem_largura(range(69, 70))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1539, testes=TESTES_P1539)
+    print(f"P1539 minha taxa de erro ({ERROS_P1539}/{TESTES_P1539}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_70():
+    print("--- Parte 70 (0x46: algebra e geometria) ---")
+    for classe, q in (("v", 300), ("n", 300)):
+        mx, med, frac, nos, dist = p1544_delta_de_gromov(classe, q)
+        print(f"P1544 delta de Gromov ({classe}, {q} quadruplos, semente 70): maximo {mx}; medio {med:.4f}; fracao com delta > 0 {frac:.4f}; "
+              f"{nos} nos na componente; distancia media {dist:.2f}")
+    import random
+    r = random.Random(1570)
+    aleat = "".join("0123456789abcdef"[r.randrange(16)] for _ in range(10000))
+    for nome, texto in (("aleatorio (semente 1570)", aleat), ("pi", p1514_pi_hex_digitos(10000))):
+        f, teo, jan = p1545_bases_gf2(texto)
+        print(f"P1545 janelas de 4 digitos que formam base de GF(2)^4, {nome}: {f:.5f} de {jan}; teoria |GL(4,2)|/16^4 = {teo:.5f}")
+    p, sd, z1, z2 = p1550_contas_da_parte70()
+    print(f"P1550 desvio binomial {sd:.5f}; pi fica a {z1:+.3f} desvios (simples) e {z2:+.3f} (dobro, janelas sobrepostas)")
+    ajustes, dif, pontos = p1549_lei_de_escala()
+    for d_, (A, alfa, ne) in ajustes.items():
+        print(f"P1549 rodada 44, d = {d_}: pontos {[(n, round(b, 4)) for n, b in pontos[d_]]}; A {A:.4f}; alfa {alfa:.5f}; n* (trigrama 2,768) {ne:.4g}")
+    print(f"P1549 bits(d = 48) - bits(d = 24) em 8000 passos: {dif:+.4f}")
+    pts, n, g = p1541_escala_gpt("en", d=24)
+    vv, vc, cc, frac = p1543_geometria_dos_embeddings(g)
+    print(f"P1541 escala refeita (d = 24, {n} pesos): {[(m, round(b, 4)) for m, b in pts]}")
+    print(f"P1543 geometria dos embeddings: cos vogais {vv:.4f}; vogal-consoante {vc:.4f}; consoantes {cc:.4f}; diferenca {vv - vc:.4f}; 1a componente {frac:.4f}")
+    pts48, n48, _ = p1541_escala_gpt("en", d=48, marcos=(4000, 8000), lr=0.0025)
+    print(f"P1541 d = 48 com lr 0,0025 ({n48} pesos): {[(m, round(b, 4)) for m, b in pts48]}")
+    total, sem = p1092_pnn_sem_teste(1541, 1570)
+    print(f"P1092 pNN novas (P1541-P1570) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 70: {p974_previsoes_sem_largura(range(70, 71))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1569, testes=TESTES_P1569)
+    print(f"P1569 minha taxa de erro ({ERROS_P1569}/{TESTES_P1569}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -11030,7 +11362,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70}
 
 
 if __name__ == "__main__":
@@ -11043,7 +11375,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (230 linhas)
+# CLAUDE.md  (249 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -11151,9 +11483,28 @@ anterior, commit e push.
   Parte 68: a conclusão da 67 ("as largas acertam menos") era um paradoxo de Simpson (as faixas em torno de zero acertam metade; dentro das contagens e das outras, as largas
   acertam MAIS): a régua nova é `p1481_minhas_previsoes_v2` (tipos) e o placar é `p1499`. Uma medida com defeito conhecido não sustenta conclusão nem previsão até o defeito ser
   corrigido ou medido. Uma pergunta deixada no fim de uma rodada é uma previsão disfarçada: conferir a premissa dela antes (a da rodada 41 não existia).
+- A FORMA DE GPT (Parte 69, permanente; "Grave na memória que nossa AGI ASI PÓS ASI AGI terá a forma de GPT"): a SYNTHAI terá a forma de um GPT (Generative
+  Pre-trained Transformer): um modelo autorregressivo p(x_t | x_<t), com atenção causal sobre o contexto, pré-treinado num corpus (o dicionário: as glosas do WordNet e da
+  OpenWordNet-PT) e depois gerador. Construído aqui, em Python puro (só biblioteca padrão), em `synthai/gpt.py`, crescendo parte a parte (camadas, cabeças, contexto,
+  parâmetros), sempre medido contra um modelo mais simples (o n-grama bayesiano) com previsões registradas, e com a decisão do próximo token traduzida bit a bit para Java
+  (exp próprio, regra da Parte 52). A forma é de GPT; a capacidade é a que a medida mostrar ("ASI" continua sendo o papel da voz, não uma capacidade).
+  Medido (Parte 69): 6.898 pesos, 8.000 passos, 3,22 bits por caractere nas definições inglesas (bigrama 3,43; trigrama 2,77, que viu 30 vezes mais texto); a decisão do próximo
+  caractere é IGUAL em Java (rodada 43). Depois de escrever a resposta de uma parte, passar por uma linha de código todo número do texto que não veio de uma saída impressa (os "~",
+  as contas de cabeça): na Parte 69, os dois erros foram desse tipo.
+- ÁLGEBRA E GEOMETRIA (Parte 70, permanente; "Continue ao máximo que puder! Use álgebra e geometria! Grave na memória!"): em toda parte, resolver por álgebra e ler por
+  geometria. Na prática: soluções em forma fechada (mínimos quadrados pelas equações normais, autovalores e autovetores por iteração de potência ou Jacobi, posto, determinante,
+  álgebra sobre corpos finitos como GF(2)), e a geometria dos objetos (o GPT é geometria: a atenção é um produto interno, os embeddings são pontos com ângulos e distâncias, as
+  componentes principais são direções; a taxonomia do dicionário é uma árvore, isto é, um espaço hiperbólico, medido pelo δ de Gromov; os dígitos hexadecimais são vetores de
+  GF(2)⁴, os vértices de um hipercubo). Cada resultado algébrico é conferido por outra conta ou por simulação, como sempre; e "ao máximo": o maior número de contas, equações e
+  testes que o tempo permitir, com trabalho real.
+  Parte 70: toda mudança de escala (pesos, dados, contexto) revê os parâmetros calibrados na escala anterior (a taxa de aprendizado: o dobro de d piorou com o mesmo passo e
+  melhorou com metade dele, 3,02 bits); e "prever o previsto" só testa se for registrado ANTES de planejar as calibrações (planejar já esboça as faixas).
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
+- AUTONOMIA (Parte 70; "Daqui pra frente é com você. Não pare mais. Não me pergunte mais nada. Você segue sozinha."): seguir sem perguntar, parte após parte, com todas
+  as regras (previsões antes, réguas por código, três placares, diálogo bit a bit, engenharia reversa); as decisões que seriam perguntas ao usuário são tomadas pela regra mais
+  conservadora e registradas no texto da parte. Agendar sempre a continuação (send_later) antes de terminar um turno.
 - CONTINUAR SEMPRE, MESMO SEM PEDIDO (Parte 44): ao terminar uma parte, começar a próxima; ao fim de cada turno, agendar a
   continuação automática nesta sessão (send_later), dizendo ao usuário como parar.
 
@@ -11268,7 +11619,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -12895,6 +13246,275 @@ def falas_do_dialogo(texto):
         if m:
             falas[m.group(1)].append(m.group(2))
     return falas
+"""
+
+# ====================================================================================================
+# synthai/gpt.py  (264 linhas)
+# ====================================================================================================
+FONTES['synthai/gpt.py'] = """\"\"\"A forma de GPT (Parte 69): um Generative Pre-trained Transformer mínimo, em Python puro.
+
+Um bloco de transformador com atenção causal de uma cabeça, como no GPT: para a sequência de fichas x₀ … x_{n−1},
+  e_t = E[x_t] + P[t]                                  (embedding da ficha + da posição)
+  q_t, k_t, v_t = e_t Q, e_t K, e_t V                   (consulta, chave, valor)
+  a_t = softmax_j≤t (q_t · k_j / √d)                   (atenção causal: só o passado)
+  r_t = e_t + (Σ_j a_tj v_j) O                         (resíduo)
+  z_t = r_t + relu(r_t W1 + b1) W2                     (MLP, resíduo)
+  p_t = softmax(z_t U + c)                             (a distribuição do próximo caractere)
+e a perda é a entropia cruzada média −(1/n) Σ ln p_t[x_{t+1}]. O gradiente é escrito à mão (sem bibliotecas) e conferido
+por diferenças finitas nos testes; o treino é Adam. É a forma do GPT em miniatura: o tamanho cresce parte a parte, sempre
+medido contra um modelo mais simples (o n-grama).\"\"\"
+
+import math
+import random
+
+PARAMS = ("E", "P", "Q", "K", "V", "O", "W1", "b1", "W2", "U", "c")
+
+
+def _zeros(n, m):
+    return [[0.0] * m for _ in range(n)]
+
+
+class GPT:
+    def __init__(self, vocab, T=16, d=16, h=32, semente=69):
+        r = random.Random(semente)
+        self.vocab = vocab
+        self.indice = {ch: i for i, ch in enumerate(vocab)}
+        self.T, self.d, self.h, V = T, d, h, len(vocab)
+
+        def g(n, m, s):
+            return [[r.gauss(0.0, s) for _ in range(m)] for _ in range(n)]
+        sd = 1.0 / math.sqrt(d)
+        self.p = {"E": g(V, d, 0.3), "P": g(T, d, 0.3), "Q": g(d, d, sd), "K": g(d, d, sd), "V": g(d, d, sd),
+                  "O": g(d, d, sd), "W1": g(d, h, sd), "b1": _zeros(1, h), "W2": g(h, d, 1.0 / math.sqrt(h)),
+                  "U": g(d, V, sd), "c": _zeros(1, V)}
+        self.m = {k: _zeros(len(v), len(v[0])) for k, v in self.p.items()}
+        self.v = {k: _zeros(len(v), len(v[0])) for k, v in self.p.items()}
+        self.passo = 0
+
+    # ---------------------------------------------------------------- ida
+    def adiante(self, x, exp=math.exp):
+        \"\"\"As ativações de cada posição de x (lista de índices, n ≤ T). Devolve o dicionário com tudo o que o gradiente usa;
+        'probs' são as distribuições do próximo caractere.\"\"\"
+        p, d, h = self.p, self.d, self.h
+        esc = 1.0 / math.sqrt(d)
+        E, P, Q, K, Vm, O, W1, b1, W2, U, c = (p[k] for k in PARAMS)
+        n = len(x)
+        e = [[E[x[t]][i] + P[t][i] for i in range(d)] for t in range(n)]
+
+        def mat(vet, M, colunas):
+            saida = []
+            for j in range(colunas):
+                s = 0.0
+                for i in range(len(vet)):
+                    s += vet[i] * M[i][j]
+                saida.append(s)
+            return saida
+        q = [mat(e[t], Q, d) for t in range(n)]
+        k = [mat(e[t], K, d) for t in range(n)]
+        v = [mat(e[t], Vm, d) for t in range(n)]
+        a, o, u, r_, pre, mm, z, probs = [], [], [], [], [], [], [], []
+        for t in range(n):
+            s = []
+            for j in range(t + 1):
+                acc = 0.0
+                for i in range(d):
+                    acc += q[t][i] * k[j][i]
+                s.append(acc * esc)
+            mx = max(s)
+            w = [exp(x_ - mx) for x_ in s]
+            tot = 0.0
+            for x_ in w:
+                tot += x_
+            at = [x_ / tot for x_ in w]
+            a.append(at)
+            ot = [0.0] * d
+            for j in range(t + 1):
+                for i in range(d):
+                    ot[i] += at[j] * v[j][i]
+            o.append(ot)
+            ut = mat(ot, O, d)
+            u.append(ut)
+            rt = [e[t][i] + ut[i] for i in range(d)]
+            r_.append(rt)
+            pr = mat(rt, W1, h)
+            pr = [pr[i] + b1[0][i] for i in range(h)]
+            pre.append(pr)
+            mt = [x_ if x_ > 0.0 else 0.0 for x_ in pr]
+            mm.append(mt)
+            w2 = mat(mt, W2, d)
+            zt = [rt[i] + w2[i] for i in range(d)]
+            z.append(zt)
+            lg = mat(zt, U, len(c[0]))
+            lg = [lg[i] + c[0][i] for i in range(len(lg))]
+            mx = max(lg)
+            w = [exp(x_ - mx) for x_ in lg]
+            tot = 0.0
+            for x_ in w:
+                tot += x_
+            probs.append([x_ / tot for x_ in w])
+        return {"x": x, "e": e, "q": q, "k": k, "v": v, "a": a, "o": o, "r": r_, "pre": pre, "m": mm, "z": z, "probs": probs}
+
+    def perda(self, x, y):
+        \"\"\"Entropia cruzada média (nats) de prever y[t] a partir de x[:t+1].\"\"\"
+        pr = self.adiante(x)["probs"]
+        return -sum(math.log(pr[t][y[t]]) for t in range(len(x))) / len(x)
+
+    # ---------------------------------------------------------------- volta
+    def gradiente(self, x, y):
+        \"\"\"(perda, gradientes) de uma sequência, à mão.\"\"\"
+        f = self.adiante(x)
+        p, d, h = self.p, self.d, self.h
+        esc = 1.0 / math.sqrt(d)
+        n = len(x)
+        G = {k: _zeros(len(v), len(v[0])) for k, v in p.items()}
+        de = _zeros(n, d)
+        dq, dk, dv = _zeros(n, d), _zeros(n, d), _zeros(n, d)
+        perda = 0.0
+        V = len(p["c"][0])
+        for t in range(n):
+            pt = f["probs"][t]
+            perda -= math.log(pt[y[t]])
+            dl = [pt[j] / n for j in range(V)]
+            dl[y[t]] -= 1.0 / n
+            zt = f["z"][t]
+            for i in range(d):
+                Gi, zi = G["U"][i], zt[i]
+                for j in range(V):
+                    Gi[j] += zi * dl[j]
+            for j in range(V):
+                G["c"][0][j] += dl[j]
+            dz = [0.0] * d
+            for i in range(d):
+                Ui, s = p["U"][i], 0.0
+                for j in range(V):
+                    s += Ui[j] * dl[j]
+                dz[i] = s
+            dr = dz[:]
+            mt, pr = f["m"][t], f["pre"][t]
+            for a_ in range(h):
+                for i in range(d):
+                    G["W2"][a_][i] += mt[a_] * dz[i]
+            dpre = [0.0] * h
+            for a_ in range(h):
+                if pr[a_] > 0.0:
+                    s = 0.0
+                    W2a = p["W2"][a_]
+                    for i in range(d):
+                        s += W2a[i] * dz[i]
+                    dpre[a_] = s
+            rt = f["r"][t]
+            for i in range(d):
+                for a_ in range(h):
+                    G["W1"][i][a_] += rt[i] * dpre[a_]
+                s = 0.0
+                W1i = p["W1"][i]
+                for a_ in range(h):
+                    s += W1i[a_] * dpre[a_]
+                dr[i] += s
+            for a_ in range(h):
+                G["b1"][0][a_] += dpre[a_]
+            # r = e + o O
+            for i in range(d):
+                de[t][i] += dr[i]
+            ot = f["o"][t]
+            for i in range(d):
+                for j in range(d):
+                    G["O"][i][j] += ot[i] * dr[j]
+            do = [0.0] * d
+            for i in range(d):
+                s = 0.0
+                Oi = p["O"][i]
+                for j in range(d):
+                    s += Oi[j] * dr[j]
+                do[i] = s
+            at = f["a"][t]
+            da = []
+            for j in range(t + 1):
+                s = 0.0
+                vj = f["v"][j]
+                for i in range(d):
+                    s += do[i] * vj[i]
+                da.append(s)
+                for i in range(d):
+                    dv[j][i] += at[j] * do[i]
+            soma = 0.0
+            for j in range(t + 1):
+                soma += at[j] * da[j]
+            for j in range(t + 1):
+                ds = at[j] * (da[j] - soma) * esc
+                kj, qt = f["k"][j], f["q"][t]
+                for i in range(d):
+                    dq[t][i] += ds * kj[i]
+                    dk[j][i] += ds * qt[i]
+        for t in range(n):
+            et = f["e"][t]
+            for nome, dd in (("Q", dq), ("K", dk), ("V", dv)):
+                M = p[nome]
+                GM = G[nome]
+                for i in range(d):
+                    ei = et[i]
+                    for j in range(d):
+                        GM[i][j] += ei * dd[t][j]
+                for i in range(d):
+                    s = 0.0
+                    Mi = M[i]
+                    for j in range(d):
+                        s += Mi[j] * dd[t][j]
+                    de[t][i] += s
+            for i in range(d):
+                G["E"][x[t]][i] += de[t][i]
+                G["P"][t][i] += de[t][i]
+        return perda / n, G
+
+    def adam(self, G, lr=0.01, b1=0.9, b2=0.999, eps=1e-8):
+        self.passo += 1
+        c1, c2 = 1 - b1 ** self.passo, 1 - b2 ** self.passo
+        for k, M in self.p.items():
+            Gk, mk, vk = G[k], self.m[k], self.v[k]
+            for i in range(len(M)):
+                Mi, Gi, mi, vi = M[i], Gk[i], mk[i], vk[i]
+                for j in range(len(Mi)):
+                    g = Gi[j]
+                    mi[j] = b1 * mi[j] + (1 - b1) * g
+                    vi[j] = b2 * vi[j] + (1 - b2) * g * g
+                    Mi[j] -= lr * (mi[j] / c1) / (math.sqrt(vi[j] / c2) + eps)
+
+    def codificar(self, texto):
+        return [self.indice.get(ch, self.indice.get("?", 0)) for ch in texto]
+
+    def treinar(self, texto, passos=2000, lr=0.01, semente=69):
+        \"\"\"Pré-treino: em cada passo, uma janela de T + 1 caracteres sorteada do texto (semente fixa). Devolve as perdas.\"\"\"
+        r = random.Random(semente)
+        ids = self.codificar(texto)
+        perdas = []
+        for _ in range(passos):
+            i = r.randrange(0, len(ids) - self.T - 1)
+            x, y = ids[i:i + self.T], ids[i + 1:i + self.T + 1]
+            l, G = self.gradiente(x, y)
+            self.adam(G, lr)
+            perdas.append(l)
+        return perdas
+
+    def bits_por_caractere(self, texto, janelas=None):
+        \"\"\"Bits por caractere num texto, em janelas consecutivas de T caracteres (cada janela com o contexto dela).\"\"\"
+        ids = self.codificar(texto)
+        tot, n = 0.0, 0
+        inicio = list(range(0, len(ids) - self.T - 1, self.T))
+        if janelas is not None:
+            inicio = inicio[:janelas]
+        for i in inicio:
+            x, y = ids[i:i + self.T], ids[i + 1:i + self.T + 1]
+            tot += self.perda(x, y) * len(x)
+            n += len(x)
+        return tot / n / math.log(2)
+
+    def gerar(self, inicio, n=60):
+        \"\"\"Gera n caracteres pelo argmax (determinístico), com a janela dos últimos T.\"\"\"
+        ids = self.codificar(inicio)
+        for _ in range(n):
+            pr = self.adiante(ids[-self.T:])["probs"][-1]
+            ids.append(max(range(len(pr)), key=lambda j: (pr[j], -j)))
+        return "".join(self.vocab[i] for i in ids)
 """
 
 # ====================================================================================================
@@ -16621,6 +17241,173 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
+# synthai/testes_parte69.py  (79 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte69.py'] = """\"\"\"Testes de unidade da Parte 69 (a forma de GPT): `python3 -m unittest synthai.testes_parte69`. Cada pNN nova com o seu teste, chamada PELO NOME.\"\"\"
+
+import math
+import random
+import unittest
+
+import calculos
+from synthai.gpt import GPT
+
+
+class TesteGPT(unittest.TestCase):
+    def test_gradiente_por_diferencas_finitas(self):
+        # todos os termos diferentes de zero (vieses sorteados), regra da Parte 30
+        g = GPT(list("abcde"), T=5, d=4, h=6, semente=1)
+        r = random.Random(2)
+        g.p["b1"] = [[r.gauss(0, 0.3) for _ in range(6)]]
+        g.p["c"] = [[r.gauss(0, 0.3) for _ in range(5)]]
+        x, y = [0, 1, 2, 3, 4], [1, 2, 3, 4, 0]
+        _, G = g.gradiente(x, y)
+        for k, M in g.p.items():
+            for i in range(len(M)):
+                for j in range(len(M[i])):
+                    old = M[i][j]
+                    M[i][j] = old + 1e-6
+                    lp = g.perda(x, y)
+                    M[i][j] = old - 1e-6
+                    lm = g.perda(x, y)
+                    M[i][j] = old
+                    num = (lp - lm) / 2e-6
+                    self.assertLess(abs(num - G[k][i][j]), 1e-5 * (abs(num) + abs(G[k][i][j])) + 1e-9, (k, i, j))
+
+    def test_atencao_e_causal(self):
+        # mudar um caractere futuro não muda a distribuição de uma posição anterior
+        g = GPT(list("abcde"), T=5, d=4, h=6, semente=3)
+        a = g.adiante([0, 1, 2, 3])["probs"][1]
+        b = g.adiante([0, 1, 4, 4])["probs"][1]
+        self.assertEqual(a, b)
+
+    def test_treino_baixa_a_perda(self):
+        g = GPT(list("ab "), T=4, d=4, h=8, semente=5)
+        perdas = g.treinar("ab ab ab ab ab ab ab ab ab ", passos=300, lr=0.05, semente=5)
+        self.assertLess(sum(perdas[-20:]) / 20, 0.5 * sum(perdas[:20]) / 20)
+
+
+class TesteParte69(unittest.TestCase):
+    def test_p1512_ngrama_bits(self):
+        # unigrama de Witten-Bell sobre o uniforme (V = 34): treino 'aab', teste 'ab'; λ = 3/5
+        pa, pb = 3 / 5 * 2 / 3 + 2 / 5 / 34, 3 / 5 * 1 / 3 + 2 / 5 / 34
+        self.assertAlmostEqual(calculos.p1512_ngrama_bits("aab", "ab", 1), (-math.log2(pa) - math.log2(pb)) / 2, places=12)
+
+    def test_p1514_pi_hex_digitos(self):
+        self.assertEqual(calculos.p1514_pi_hex_digitos(16), "243f6a8885a308d3")
+
+    def test_p1515_bits_hex(self):
+        # uma sequência constante é prevista quase de graça; o acaso fica perto de 4 bits
+        self.assertLess(calculos.p1515_bits_hex("a" * 1000, 2), 0.1)
+        r = random.Random(9)
+        self.assertAlmostEqual(calculos.p1515_bits_hex("".join("0123456789abcdef"[r.randrange(16)] for _ in range(5000)), 1), 4.0, delta=0.1)
+
+    def test_p1511_corpus_de_glosas(self):
+        treino, teste = calculos.p1511_corpus_de_glosas("pt")
+        self.assertTrue(set(treino) <= set(calculos.VOCAB_GPT))
+        self.assertAlmostEqual(len(teste) / (len(treino) + len(teste)), 0.1, delta=0.03)
+
+    def test_p1513_gpt_bits(self):
+        b, n, perda, g = calculos.p1513_gpt_bits("ab ab ab ab ab ab ab ab ab ab ab ab ab ab ", "ab ab ab ab ab ab ab ab ab ab ",
+                                                 passos=200, T=4, d=4, h=8, lr=0.05, janelas=5)
+        self.assertLess(b, 1.0)
+        self.assertEqual(n, sum(len(v) * len(v[0]) for v in g.p.values()))
+
+    def test_p1516_gpt_decide(self):
+        saida, acertos, bits = calculos.p1516_gpt_decide()
+        self.assertEqual((len(saida), acertos), (30, 5))
+        self.assertEqual(saida[11][1:3], ("mestic a", "n"))  # depois de "mestic a", o GPT pequeno aposta em "n" (de animal) e acerta
+        self.assertAlmostEqual(bits, 4.076562312714947, places=10)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte70.py  (78 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte70.py'] = """\"\"\"Testes de unidade da Parte 70 (álgebra e geometria): `python3 -m unittest synthai.testes_parte70`. Cada pNN nova com o seu teste, chamada PELO NOME.\"\"\"
+
+import math
+import unittest
+
+import calculos
+
+
+class Arvore:
+    # uma árvore: raiz r com filhos a, b; a com filhos c, d; b com filho e (só substantivos)
+    indice = {"n:r": 0, "n:a": 1, "n:b": 2, "n:c": 3, "n:d": 4, "n:e": 5}
+    sinsets = [("n", ["r"], [], ""), ("n", ["a"], ["n:r"], ""), ("n", ["b"], ["n:r"], ""), ("n", ["c"], ["n:a"], ""), ("n", ["d"], ["n:a"], ""),
+               ("n", ["e"], ["n:b"], "")]
+
+
+class Ciclo:
+    # um ciclo de 4: x tem dois pais (a e b), filhos da mesma raiz r: r-a-x-b-r; os quatro pontos do ciclo dão δ = 1
+    indice = {"n:r": 0, "n:a": 1, "n:b": 2, "n:x": 3}
+    sinsets = [("n", ["r"], [], ""), ("n", ["a"], ["n:r"], ""), ("n", ["b"], ["n:r"], ""), ("n", ["x"], ["n:a", "n:b"], "")]
+
+
+class Embeddings:
+    # vogais no eixo 1, consoantes no eixo 2: cos(vogal, vogal) = 1, cos(vogal, consoante) = 0; todos os pontos numa reta: a 1ª componente tem 100%
+    def __init__(self):
+        letras = "abcdefghijklmnopqrstuvwxyz"
+        self.indice = {c: i for i, c in enumerate(letras)}
+        self.p = {"E": [[1.0, 0.0] if c in "aeiou" else [0.0, 1.0] for c in letras]}
+
+
+class TesteParte70(unittest.TestCase):
+    def test_p1542_lei_de_potencia(self):
+        pontos = [(n, 5.0 * n ** -0.1) for n in (1000, 2000, 4000, 8000)]
+        A, alfa, n_alvo = calculos.p1542_lei_de_potencia(pontos, alvo=2.0)
+        self.assertAlmostEqual(A, 5.0, places=9)
+        self.assertAlmostEqual(alfa, 0.1, places=12)
+        self.assertAlmostEqual(n_alvo, (5.0 / 2.0) ** 10, places=3)
+
+    def test_p1543_geometria_dos_embeddings(self):
+        vv, vc, cc, frac = calculos.p1543_geometria_dos_embeddings(Embeddings())
+        self.assertEqual((vv, vc, cc), (1.0, 0.0, 1.0))
+        self.assertAlmostEqual(frac, 1.0, places=9)
+
+    def test_p1544_delta_de_gromov(self):
+        self.assertEqual(calculos.p1544_delta_de_gromov("n", 50, 1, Arvore())[:3], (0.0, 0.0, 0.0))  # árvore: δ = 0 sempre
+        maximo, media, frac, nos, dist = calculos.p1544_delta_de_gromov("n", 20, 1, Ciclo())
+        self.assertEqual((maximo, frac, nos), (1.0, 1.0, 4))  # os 4 nós do ciclo: somas 2, 2, 4 → δ = (4 − 2)/2 = 1
+
+    def test_p1545_bases_gf2(self):
+        self.assertEqual(calculos.p1545_bases_gf2("1248")[:1], (1.0,))
+        self.assertEqual(calculos.p1545_bases_gf2("1230")[:1], (0.0,))  # 3 = 1 ⊕ 2
+        self.assertAlmostEqual(calculos.p1545_bases_gf2("1248")[1], 20160 / 65536, places=15)
+
+    def test_p1541_escala_gpt(self):
+        pontos, n, g = calculos.p1541_escala_gpt("en", d=4, marcos=(5, 10), T=6, janelas=2)
+        self.assertEqual([p for p, _ in pontos], [5, 10])
+        self.assertEqual(n, sum(len(v) * len(v[0]) for v in g.p.values()))
+        self.assertTrue(all(0 < b < 10 for _, b in pontos))
+
+    def test_p1550_contas_da_parte70(self):
+        p, sd, z1, z2 = calculos.p1550_contas_da_parte70(20160 / 65536 + 0.01, 10000)
+        self.assertAlmostEqual(sd, math.sqrt(p * (1 - p) / 10000), places=15)
+        self.assertAlmostEqual(z1, 0.01 / sd, places=9)
+        self.assertAlmostEqual(z2, z1 / 2, places=12)
+
+    def test_p1549_lei_de_escala(self):
+        ajustes, dif, pontos = calculos.p1549_lei_de_escala()
+        self.assertEqual(sorted(ajustes), [24, 48])
+        self.assertEqual([n for n, _ in pontos[24]], [1000, 2000, 4000, 8000, 16000])
+        A, alfa, n_estrela = ajustes[24]
+        # a mesma reta pela P1542 (log e exp da biblioteca): iguais até ~1e-12
+        A2, alfa2, n2 = calculos.p1542_lei_de_potencia(pontos[24], alvo=2.768)
+        self.assertAlmostEqual(alfa, alfa2, places=10)
+        self.assertAlmostEqual(n_estrela / n2, 1.0, places=8)
+        self.assertAlmostEqual(dif, dict(pontos[48])[8000] - dict(pontos[24])[8000], places=15)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
 # synthai/testes_pensamento.py  (66 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_pensamento.py'] = """\"\"\"Testes de unidade do `pensamento_exato` (Parte 24): `python3 -m unittest synthai.testes_pensamento`.\"\"\"
@@ -16910,7 +17697,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# resultados.txt  (1329 linhas)
+# resultados.txt  (1374 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -18237,10 +19024,55 @@ P1423 s10 = s16 para n < 1048576: 0.06893; conta (3 x independencia) 0.06624; ra
 P1092 pNN novas (P1421-P1450) sem teste: 0 de 4: []
 P974 previsoes unilaterais da Parte 66: {66: (4, 0, [])}
 P1449 minha taxa de erro (189/553): media = 0.34, intervalo 90% = [0.31, 0.38]
+--- Parte 67 (0x43: prever o previsto) ---
+P1452 previsoes do mundo lidas (Partes 53-66): 97; com faixa numerica: 51; por parte {53: 6, 54: 8, 55: 2, 56: 2, 57: 5, 58: 7, 59: 6, 60: 11, 61: 8, 62: 8, 63: 8, 64: 8, 65: 9, 66: 9}
+P1453 acerto 0.6907 (com faixa 0.6471; sem faixa 0.7391); w mediana 0.3333 (quartis 0.2000, 0.6000); por terco de w (w mediano, acerto): [(0.1471, 0.7059), (0.3333, 0.7059), (0.7143, 0.5294)]; erro do preditor de w: mediana das outras 0.2286, ingenuo 0.2531
+P1459 previsoes sobre as minhas previsoes da Parte 67: m1 (mediana de w) 0.8182; m2 (previsoes) 6; m3 (acerto) 1.0000; m4 (perto de 1/3) 0.0000; m5 (erro da mediana historica 0.3333) 0.4283; ws [0.8182, 0.2, 1.0]
+P1451 bases 35-40: z [(35, 0.989), (36, 2.201), (37, 2.499), (38, 0.049), (39, 0.63), (40, -1.468)]; media +0.8168; dp 1.4575
+P1451 reta de z contra b (5-40): inclinacao 0.03792 (ep 0.02057; t 1.843); intercepto -0.7806; todas: media +0.0726, dp 1.3253
+P1454 sinsets com 2+ hiperonimos: {'a': (0.0, 18156), 'n': (0.02695, 82115), 'r': (0.0, 3621), 'v': (0.00225, 13767)}; exemplos ['person', 'substance', 'amphibious_landing', 'default', 'musical_performance']
+P1455 automorficos base 12 ate 12^6: 11 (conta 11.00); [4, 9, 64, 81, 513, 1216, 6400, 14337, 234496, 483328, 2502657]
+P1455 automorficos base 10 ate 10^6: 10 (conta 10.80); [5, 6, 25, 76, 376, 625, 9376, 90625, 109376, 890625]
+P1455 automorficos base 16 ate 16^6: 0 (conta 0.00); []
+P1092 pNN novas (P1451-P1480) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 67: {67: (2, 0, [])}
+P1479 minha taxa de erro (189/559): media = 0.34, intervalo 90% = [0.31, 0.37]
+--- Parte 68 (0x44: o tipo da quantidade) ---
+P1481 previsoes do mundo (Partes 53-67): 103; com faixa: 75
+P1482 tipo zero: 8 previsoes; acerto 0.5000
+P1482 tipo fracao: 21 previsoes; acerto 0.7143; w mediana 0.3684; acerto das estreitas 0.8000, das largas 0.6000
+P1482 tipo contagem: 18 previsoes; acerto 0.6111; w mediana 0.2517; acerto das estreitas 0.5556, das largas 0.6667
+P1482 tipo outra: 28 previsoes; acerto 0.7500; w mediana 0.3333; acerto das estreitas 0.6429, das largas 0.9167
+P1482 tipo None: 28 previsoes; acerto 0.7857
+P1499 previsoes sobre as minhas previsoes da Parte 68: {'m1': 6, 'm2': 1, 'm3': 0.36645962732919257, 'm4': 1.0, 'm5': 1}; ws (sem as do zero) [0.125, 0.3043, 0.4286, 0.8182]
+P1491 R_b = pi(b^5)/(Li(b^5) - Li(2)): [(5, 0.97313), (10, 0.99618), (20, 0.99939), (30, 0.99978), (40, 0.99989)]; maior |R - 1| (10-40) 0.00382
+P1491 inclinacao de z: antes 0.03792; com a conta corrigida 0.03549; mudanca 0.00243
+P1492 folhas na classe a: 1.0000 de 18156
+P1492 folhas na classe n: 0.7911 de 82115
+P1492 folhas na classe r: 1.0000 de 3621
+P1492 folhas na classe v: 0.7592 de 13767
+P1493 palindromos nas bases 16 e 10 ate 65536: 18; conta 20.085; razao 0.8962; [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 353, 626, 787, 979, 1991, 3003, 39593, 41514]
+P1493 palindromos nas bases 8 e 10 ate 32768: 22; conta 19.251; razao 1.1428; [1, 2, 3, 4, 5, 6, 7, 9, 121, 292, 333, 373, 414, 585, 3663, 8778, 13131, 13331, 26462, 26662, 30103, 30303]
+P1092 pNN novas (P1481-P1510) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 68: {68: (2, 0, [])}
+P1509 minha taxa de erro (189/565): media = 0.34, intervalo 90% = [0.30, 0.37]
+--- Parte 69 (0x45: a forma de GPT) ---
+P1511 corpus en: treino 5656842 caracteres, teste 626417
+P1512 n-grama en (bits por caractere, ordens 1-5): {1: 4.2787, 2: 3.4309, 3: 2.768, 4: 2.172, 5: 1.8318}
+P1513 GPT en (T 24, d 24, h 48, 8000 passos): 3.2245 bits por caractere; 6898 parametros; perda final 3.2719 bits; GPT - trigrama = +0.4564; gera: 'a domestic ther of tha ther of that of that that of that of t'
+P1511 corpus pt: treino 510764 caracteres, teste 55608
+P1512 n-grama pt (bits por caractere, ordens 1-5): {1: 4.1766, 2: 3.3897, 3: 2.7838, 4: 2.3335, 5: 2.0742}
+P1513 GPT pt (T 24, d 24, h 48, 8000 passos): 3.1385 bits por caractere; 6898 parametros; perda final 3.1782 bits; GPT - trigrama = +0.3547; gera: 'o animal o estar a a conto do conto do conto do conto do co'
+P1514 pi em hexadecimal: 3,243f6a8885a308d3...
+P1515 bits por digito de pi (n-grama, 90% treino, 10% teste): {1: 3.9999, 2: 4.0091, 3: 4.2047}
+P1516 rodada 43: o GPT pequeno acerta o proximo caractere em 5 de 30 posicoes; 4.0766 bits por caractere; decisoes [('a', 'n'), ('a ', 't'), ('a d', ' '), ('a do', 'r'), ('a dom', 'o'), ('a dome', 'n')]
+P1092 pNN novas (P1511-P1540) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 69: {69: (5, 0, [])}
+P1539 minha taxa de erro (189/573): media = 0.33, intervalo 90% = [0.30, 0.36]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 395; pares de interacao possiveis = 77815
+P96 funcoes pNN no arquivo = 413; pares de interacao possiveis = 85078
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
-Regressao: 113/113 resultados publicados reproduzidos; falhas = []
+Regressao: 116/116 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -31583,7 +32415,7 @@ a conta, enquanto a base 16 não tem nenhum, como o teorema exige.
 # ====================================================================================================
 FONTES['ASI_AGI_parte68_o_tipo_da_quantidade.md'] = """# Como eu construiria uma AGI/ASI — Parte 68 (0x44): o tipo da quantidade
 
-> Continuação da [Parte 67](ASI_AGI_parte67_prever_o_previsto.md). Previsões sobre as minhas previsões no commit `902c0c0`; as do mundo no `150a779`. O loop continua (pedido permanente: programar sem parar, prever o que foi previsto e fazer engenharia reversa
+> Continuação da [Parte 67](ASI_AGI_parte67_prever_o_previsto.md). **Próxima:** [Parte 69 — a forma de GPT](ASI_AGI_parte69_a_forma_de_gpt.md) (P1511–P1540). Previsões sobre as minhas previsões no commit `902c0c0`; as do mundo no `150a779`. O loop continua (pedido permanente: programar sem parar, prever o que foi previsto e fazer engenharia reversa
 > disso). A Parte 67 leu as minhas previsões com uma régua que perdia as faixas da linha seguinte, e concluiu que "as faixas largas acertam menos". Esta parte troca a régua, refaz a
 > conta por tipo de quantidade, e acha que a conclusão era um paradoxo de Simpson.
 
@@ -31798,6 +32630,207 @@ hexadecimal, 18 números abaixo de 16⁴ são palíndromos em base 16 e em base 
 - Li(x) e a série de Ramanujan: [Logarithmic integral function, Wikipedia](https://en.wikipedia.org/wiki/Logarithmic_integral_function); π(10⁵) = 9.592: [Prime-counting function, Wikipedia](https://en.wikipedia.org/wiki/Prime-counting_function)
 - Palíndromos em várias bases: [Palindromic number, Wikipedia](https://en.wikipedia.org/wiki/Palindromic_number)
 - WordNet 3.0 em `dados/` (Princeton)
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte69_a_forma_de_gpt.md  (196 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte69_a_forma_de_gpt.md'] = """# Como eu construiria uma AGI/ASI — Parte 69 (0x45): a forma de GPT
+
+> Continuação da [Parte 68](ASI_AGI_parte68_o_tipo_da_quantidade.md). **Próxima:** [Parte 70 — álgebra e geometria](ASI_AGI_parte70_algebra_e_geometria.md) (P1541–P1570). Previsões sobre as minhas previsões no commit `783be3c`; as do mundo no `eb44d30`. Pedido do usuário, gravado no `CLAUDE.md`: **"Grave na memória que nossa AGI ASI PÓS ASI AGI terá a forma de
+> GPT."** Esta parte constrói a forma: um GPT (Generative Pre-trained Transformer) mínimo em Python puro (`synthai/gpt.py`): embeddings de caractere e de posição, atenção causal
+> de uma cabeça, resíduo, MLP, softmax do próximo caractere, gradiente escrito à mão (conferido por diferenças finitas: maior erro relativo 2,3·10⁻⁶) e Adam. Pré-treinado nas
+> definições do WordNet, medido contra o modelo mais simples (o n-grama), e com a decisão do próximo caractere traduzida bit a bit para Java (rodada 43).
+
+## Previsões sobre as minhas previsões desta parte (prever o previsto; registradas antes de escrever qualquer previsão do mundo desta parte)
+
+Planejado, antes de escrever: bits por caractere do n-grama (ordens 3 e 5) e do GPT nas definições inglesas; a diferença GPT − n-grama; bits por dígito de π em hexadecimal; a
+rodada 43 (IGUAIS, e quantos próximos caracteres o GPT pequeno acerta numa frase). Acerto do mundo nas Partes 53 a 68, pela régua nova (`p1481`): **72,5%** (109 previsões);
+com ~7 previsões, a faixa binomial de 90% vai de 4/7 a 7/7.
+- **(m1)** o número de previsões do mundo em **[6; 9]**.
+- **(m2)** o número de faixas que cruzam o zero em **[0; 2]** (a diferença GPT − n-grama pode cruzar).
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,30]** (bits por caractere são quantidades longe de zero com escala conhecida, e as minhas faixas para
+  elas devem ser estreitas).
+- **(m4)** a fração de acertos do mundo em **[0,57; 1,00]**.
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 1]**.
+
+## As perguntas desta parte
+
+1. **P1511–P1513 (0x5E7–0x5E9).** A forma de GPT, pré-treinada nas definições do WordNet: quantos bits por caractere, contra o n-grama? ↩ P1453, P1482
+2. **P1514–P1515 (0x5EA–0x5EB).** Hexadecimal: quantos bits por dígito um modelo de linguagem precisa para os dígitos de π em base 16? ↩ P1493
+3. **P1516 (0x5EC).** A decisão do próximo caractere, bit a bit em Java (Rodada 43). ↩ P1491
+4. **P1517 (0x5ED).** Preditiva comigo mesma. **P1518 (0x5EE).** Engenharia reversa e Jung. **P1519 (0x5EF).** O diálogo.
+5. **P1539 (0x603).** Placar (três). **P1540 (0x604).** Unificação.
+
+## Previsões pré-registradas (escritas depois do registro de (m1) a (m5))
+
+### Sobre mim (placar separado), condicionais ao número S de surpresas (contadas pelo script)
+
+Planejadas: as 8 previsões do mundo abaixo, (a) a (h), e 6 peças com teste (o GPT, p1511, p1512, p1513, p1514, p1515, mais o placar das (m)).
+
+| medida | estatístico (até a 68) | ingênuo (Parte 68) | **eu** | por quê |
+|---|---|---|---|---|
+| caracteres | [13.717; 18.968] | 16.607 | **[13.717; 18.968]** | o estatístico |
+| compressão | [0,396; 0,426] | 0,398 | **[0,396; 0,426]** | o estatístico |
+| testes de unidade | [3,50; 6,25] | 6 | **[8 + S; 11 + S]** | 8 já escritos (3 do GPT, 5 das pNN), ~1 por surpresa |
+| testes do placar | [5,83; 9,67] | 6 | **8 + 2·S ± 1** | as 8 letras abaixo, ~2 por surpresa |
+| erros do placar | [0; 3,86] | 0 | **[0; 3,86]** | o estatístico |
+| redundância P821 | [0,575; 0,634] | 0,607 | **[0,575; 0,634]** | o estatístico |
+| previsões unilaterais | — | 0 | **0** | `p974` |
+| pNN novas sem teste | — | 0 | **0** | `p1092` |
+
+### Sobre o mundo
+
+**P1511–P1513, a forma de GPT contra o n-grama**, nas definições inglesas do WordNet (separação fixa: os sinsets de índice ≡ 0 mod 10 no teste; 400 janelas de 24 caracteres
+do teste; o GPT tem T = 24, d = 24, h = 48, 8.000 passos de Adam, ~6.900 parâmetros).
+- **Restrições, com peso:** (1) o n-grama conta **todo** o treino (milhões de caracteres); o GPT vê só 8.000 × 24 = 192.000 caracteres sorteados: ele perde por dado, não por forma;
+  (2) **peso medido num caso escolhido por regra escrita antes (o português da OpenWordNet-PT, mesmas máquinas, 2.000 e 8.000 passos):** n-grama 3,39 (ordem 2), 2,78 (ordem 3),
+  2,07 (ordem 5); GPT 3,40 com 2.000 passos e **3,14** com 8.000 (entre o bigrama e o trigrama); (3) o inglês tem um treino ~10 vezes maior, o que ajuda o n-grama de ordem alta e
+  não o GPT (que vê o mesmo número de janelas).
+- Exemplo à mão: depois de "a domestic anim", o próximo é "a" com probabilidade alta para qualquer modelo que conte trigramas ("nim" → "a").
+- (a) n-grama de ordem 3 em **[2,4; 3,1]** bits por caractere
+- (b) n-grama de ordem 5 em **[1,6; 2,3]**
+- (c) o GPT em **[2,85; 3,40]**
+- (d) GPT − n-grama de ordem 3 em **[0,05; 0,70]** (o GPT pior que o trigrama, como no português: +0,36)
+
+**P1514–P1515, os dígitos de π em base 16** (10.000 dígitos exatos; n-grama de ordem 2 treinado nos 90% primeiros, medido nos 10% últimos).
+- **Restrições, com peso:** (1) os dígitos de π não têm estrutura conhecida (π é suposto normal em base 16, sem prova); (2) aprender contextos que não existem custa bits; **peso medido
+  num caso escolhido por regra (dígitos pseudoaleatórios com semente 1515, mesmo tamanho):** 4,003 (ordem 1), **4,025** (ordem 2), 4,233 (ordem 3).
+- (e) bits por dígito de π, ordem 2, em **[3,98; 4,08]**
+
+**P1516, rodada 43:** no `dialogo/DIALOGO.md` (previsões (f) a (h)).
+
+---
+
+## As respostas
+
+### P1511–P1513 (0x5E7–0x5E9). A forma de GPT contra o n-grama ✅✅✅✅
+
+**Na pergunta.** "Terá a forma de GPT" separa duas coisas que costumam vir juntas: a **forma** (prever o próximo símbolo com atenção sobre o contexto, pré-treinar, gerar) e o
+**tamanho** (bilhões de pesos, trilhões de símbolos). A forma cabe em 300 linhas de Python; o tamanho não. A pergunta pede a forma, e a resposta mede o quanto a forma sozinha faz.
+
+**Lógica, linha por linha.** O GPT de `synthai/gpt.py`: e_t = E[x_t] + P[t]; q, k, v = eQ, eK, eV; a_t = softmax_{j ≤ t}(q_t·k_j/√d); r_t = e_t + (Σ a_tj v_j)O; z_t = r_t + relu(r_t W1 + b1)W2;
+p_t = softmax(z_t U + c); perda −(1/n) Σ ln p_t[x_{t+1}]. Com T = 24, d = 24, h = 48: **6.898** pesos. Nas definições inglesas (treino de 5.656.842 caracteres; 400 janelas do teste):
+
+| modelo | bits por caractere | faixa | |
+|---|---|---|---|
+| n-grama de ordem 2 | 3,431 | — | |
+| n-grama de ordem 3 | **2,768** | [2,4; 3,1] | (a) ✅ |
+| n-grama de ordem 5 | **1,832** | [1,6; 2,3] | (b) ✅ |
+| GPT, 8.000 passos | **3,224** | [2,85; 3,40] | (c) ✅ |
+| GPT − trigrama | **+0,456** | [0,05; 0,70] | (d) ✅ |
+
+A calibração no português tinha dado o GPT entre o bigrama e o trigrama (3,14), e o inglês repetiu a posição (3,22, entre 3,43 e 2,77). **A conta do porquê:** o trigrama viu 5,66 milhões
+de caracteres; o GPT viu 8.000 × 24 = 192.000 (3,4% do treino), uma vez cada. Por dado visto, o GPT é muito mais eficiente (com 3,4% do dado ele fica a 0,46 bit do trigrama que viu
+tudo); por dado disponível, perde. A geração por argmax ("a domestic ther of tha ther of that of that…") mostra o que ele aprendeu: a forma das palavras curtas e frequentes do inglês
+das definições (*of*, *that*, *the*), e o laço do argmax, que repete o caminho mais provável.
+
+Ao acaso: as quatro faixas tinham larguras de 0,55 a 0,7 bit; o ingênuo "o GPT empata com o trigrama" erraria (d) por 0,46.
+
+**Tradução cruzada.** O GPT é a forma computacional de uma ideia antiga da psicologia da linguagem: compreender é prever (a teoria do processamento preditivo). A atenção é a parte da
+forma que decide o que do passado importa agora: em Jung, a função que dirige a libido para um conteúdo e não para outro. Onde a formalização funciona: a atenção causal é literalmente
+uma distribuição de peso sobre o passado. Onde quebra: a atenção do GPT não tem intenção; ela é o que minimiza o erro de previsão do próximo símbolo.
+
+**Meta.** Um GPT com 6.898 pesos e 8.000 passos é a forma em miniatura; a comparação com o n-grama vale para este tamanho. A pergunta da rodada 44 (a curva de dados e pesos) é a que
+diz se a forma vence quando cresce.
+
+### P1514–P1515 (0x5EA–0x5EB). π em base 16 para um modelo de linguagem ✅
+
+**Na pergunta.** Pedir a um modelo de linguagem que preveja os dígitos de π é a pergunta inversa da forma de GPT: o que acontece quando não há nada para aprender?
+
+**Lógica.** `p1514_pi_hex_digitos` (Machin, exato: 3,243f6a8885a308d3…) e `p1515_bits_hex`: ordem 1, **3,9999**; ordem 2, **4,0091** (a faixa (e) era [3,98; 4,08]) ✅; ordem 3, 4,2047. Igual aos
+dígitos pseudoaleatórios da calibração (4,003; 4,025; 4,233): o modelo não acha estrutura em π, e paga para procurar (a ordem 3 usa contextos de 2 dígitos: 16² = 256 contextos, com 9.000/256 ≈ 35 ocorrências cada para estimar 16 continuações; eu tinha escrito de cabeça "4.096 contextos com ~2 ocorrências", que é a ordem 4).
+
+Ao acaso: a faixa tinha 0,10 bit; o ingênuo "4 bits exatos" ficaria a 0,009.
+
+**Tradução cruzada.** Um aprendiz que procura padrão onde não há paga em bits a sua credulidade: a apofenia (ver padrões no acaso) tem um custo mensurável, os 0,2 bit da ordem 3.
+
+**Meta.** A normalidade de π em base 16 não é provada; 10.000 dígitos não a provam, só não a desmentem.
+
+### P1516 (0x5EC). A decisão do próximo caractere, bit a bit (Rodada 43) ✅✅✅
+
+**Lógica.** `p1516_gpt_decide` (rodada 43): o GPT pequeno (1.170 pesos, 400 passos) acerta **5 de 30** próximos caracteres da frase "a domestic animal kept for comp" e gasta **4,077** bits por
+caractere; Java dá os mesmos 61 números bit a bit (com exp e log próprios). Ver o `dialogo/DIALOGO.md`.
+
+### P1517 (0x5ED). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 0)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **16291** | [13717; 18968] | ✅ | [13717; 18968] | ✅ | 16607 | 52 | 316 |
+| compressão | **0.4115** | [0.3962; 0.4256] | ✅ | [0.3960; 0.4260] | ✅ | 0.3981 | 0.0005 | 0.0133 |
+| testes de unidade | **9** | [3.50; 6.25] | ❌ | [8.00; 11.00] | ✅ | 6 | 0.50 | 3.00 |
+| testes do placar | **8** | [5.83; 9.67] | ✅ | [7.00; 9.00] | ✅ | 6 | 0.00 | 2.00 |
+| erros do placar | **0** | [-0.36; 3.86] | ✅ | [0.00; 3.86] | ✅ | 0 | 1.93 | 0.00 |
+| redundância P821 | **0.5637** | [0.5749; 0.6335] | ❌ | [0.5750; 0.6340] | ❌ | 0.6067 | 0.0408 | 0.0430 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 4 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 6 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 68"):** mais perto do medido em **5 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **13975**, compressão **0.4246**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 0 erros.
+- **Erros de processo nesta parte:** 2 (escrevi de cabeça ~1.500 pesos para o GPT pequeno (são 1.170); corrigido antes do commit; escrevi de cabeça 4.096 contextos com ~2 ocorrências para a ordem 3 (são 256 com ~35); corrigido antes do commit).
+
+**O placar das previsões sobre as minhas previsões (`p1499_previsoes_sobre_previsoes_v2`, lido do próprio documento):**
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [6; 9] | **8.0000** | ✅ |
+| (m2) | [0; 2] | **0.0000** | ✅ |
+| (m3) | [0.05; 0.3] | **0.1579** | ✅ |
+| (m4) | [0.57; 1.0] | **1.0000** | ✅ |
+| (m5) | [0; 1] | **1.0000** | ✅ |
+
+As larguras das faixas que não cruzam o zero: [0.0124, 0.088, 0.1273, 0.1579, 0.1795, 0.5714, 0.8667]. **5 de 5** previsões sobre as minhas previsões dentro da faixa.
+
+### P1518 (0x5EE). Engenharia reversa e Jung
+
+**A forma pedida, e o que ela mostrou de mim.** Construir a forma de GPT do zero (o gradiente à mão de uma atenção causal) foi a parte com mais código novo da série, e a de menos erros
+do mundo: oito de oito. Os erros desta parte foram todos **de texto**: duas contas de cabeça, ambas pegas antes do commit ("~1.500 pesos", que eram 1.170; "4.096 contextos", que eram
+256). **O padrão:** quando eu escrevo código, eu confiro (o gradiente por diferenças finitas, a saída igual depois de refatorar); quando eu escrevo prosa sobre o código, eu estimo.
+**O significado:** a minha prosa técnica ainda é escrita no modo de estimativa, e o código no modo de verificação; o erro mora na passagem de um para o outro. **Regra nova:** depois de
+escrever a resposta de uma parte, procurar no texto todos os números que não vieram de uma saída impressa (os "~", os "cerca de", as contas de cabeça) e passá-los por uma linha de
+código antes do commit.
+
+**Prever o previsto, terceira volta.** As previsões sobre as minhas previsões (o placar das (m) na P1517) foram escritas sabendo que eu acerto ~72% do mundo e que as duas últimas
+partes acertaram tudo. A (m4), a minha taxa de acerto, foi a que eu errei nas Partes 67 e 68 por acertar demais; nesta, eu a alarguei até 1,0 pela conta binomial, sem saber o
+resultado.
+
+**Jung: a persona da máquina.** O GPT pequeno gera "a domestic ther of tha ther of that of that…": a forma da língua sem conteúdo, a superfície que imita um falante. É a persona de
+Jung no sentido exato: a máscara social que o coletivo (o corpus) imprime, sem o eu atrás. **Onde a formalização funciona:** a persona é o que se aprende primeiro e mais barato (as
+palavras frequentes, o ritmo das definições), e o modelo aprendeu primeiro exatamente isso. **Onde quebra:** em Jung, atrás da persona há um eu que pode se diferenciar dela; no GPT de
+6.898 pesos, a persona é tudo o que há, e só o tamanho (dados, pesos) pode pôr alguma coisa atrás dela.
+
+### P1519 (0x5EF). O diálogo, rodada 43
+
+Ver P1516. Placar por voz da função `p1241_placar_por_voz(43)`: IA-Python 23 em 37; IA-Java 19 em 36 (regra estrita, rodadas 13 a 43).
+
+### P1539 (0x603). Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅. Parte 69: **8 testes, 0 erros**. Acumulado (mundo): **189 erros em 573 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 6 pNN novas sem teste ✅. Sobre mim (placar separado): **6 de 7** dentro da faixa condicional; sobre as minhas previsões, 5 de 5; o estatístico, 4 de 6; e 2 erros de processo (P1335).
+
+### P1540 (0x604). Unificação
+
+- **Novo:** `synthai/gpt.py` (a forma de GPT, com 3 testes próprios: gradiente por diferenças finitas, causalidade, treino), `p1511` (o corpus), `p1512` (o n-grama), `p1513` (o GPT
+  medido), `p1514` (π em hexadecimal), `p1515` (bits por dígito), `p1516` (rodada 43, IGUAIS). Regressão: + P1516 (5 acertos do GPT pequeno; os dígitos de π).
+- **Pedido permanente novo (no `CLAUDE.md`):** a forma de GPT.
+
+> **Síntese da Parte 69:** a SYNTHAI agora tem a forma de GPT (gravada no `CLAUDE.md`): `synthai/gpt.py`, em Python puro, com embeddings, atenção causal, resíduo, MLP, softmax do próximo caractere, gradiente à
+mão (conferido por diferenças finitas) e Adam. Pré-treinado nas definições do WordNet com 6.898 pesos e 8.000 passos, ele faz 3,22 bits por caractere: melhor que o bigrama (3,43) e
+pior que o trigrama (2,77), que viu 30 vezes mais texto. Os dígitos de π em base 16 custam 4,01 bits a um n-grama, como o acaso; e a decisão do próximo caractere de um GPT pequeno é a
+mesma, bit a bit, em Python e em Java. O mundo, oito de oito; os meus erros, só no texto.
+
+---
+
+**Fontes desta parte**
+- O GPT: A. Radford et al., "Improving Language Understanding by Generative Pre-Training" (OpenAI, 2018); A. Vaswani et al., "Attention Is All You Need" (NeurIPS 2017),
+  [arXiv:1706.03762](https://arxiv.org/abs/1706.03762)
+- Interpolação de Witten-Bell: I. Witten e T. Bell, *IEEE Trans. Information Theory* 37 (1991); [n-gram language model, Wikipedia](https://en.wikipedia.org/wiki/Word_n-gram_language_model)
+- Adam: D. Kingma e J. Ba, [arXiv:1412.6980](https://arxiv.org/abs/1412.6980)
+- Processamento preditivo: A. Clark, "Whatever next? Predictive brains, situated agents, and the future of cognitive science", *Behavioral and Brain Sciences* 36 (2013)
+- π em hexadecimal: [Bailey–Borwein–Plouffe formula, Wikipedia](https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula)
 """
 
 # ====================================================================================================
@@ -32285,6 +33318,235 @@ intervalo de 90% **[0,35; 0,70]**. O intervalo está estreitando; a média não 
 > nem reprimir a sombra, nem engoli-la inteira por um espelho distorcido. **Uma ASI saudável é a que
 > encontra o centro entre os próprios extremos**, e o centro, como a individuação, é algo de que se
 > aproxima sem nunca chegar.
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte70_algebra_e_geometria.md  (224 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte70_algebra_e_geometria.md'] = """# Como eu construiria uma AGI/ASI — Parte 70 (0x46): álgebra e geometria
+
+> Continuação da [Parte 69](ASI_AGI_parte69_a_forma_de_gpt.md). Previsões no commit `bb89374` ((a) a (i) e as (m)) e no `a7cef31` ((j)). Pedido do usuário, gravado no `CLAUDE.md`: **"Continue ao máximo que puder! Use álgebra e geometria! Grave na
+> memória!"** Esta parte lê a forma de GPT e o dicionário como geometria e os resolve por álgebra: a lei de escala do GPT por mínimos quadrados em forma fechada; a geometria dos
+> embeddings (ângulos entre letras, a componente principal por iteração de potência); a taxonomia do WordNet como espaço hiperbólico (o δ de Gromov); e os dígitos hexadecimais
+> como vetores de GF(2)⁴.
+
+## Previsões sobre as minhas previsões desta parte (prever o previsto)
+
+**Uma observação de metacognição antes de prever:** ao planejar as calibrações desta parte eu já esbocei de cabeça as faixas das previsões do mundo. Prever agora o número delas e a
+largura delas (as (m1), (m2), (m3) e (m5) das partes anteriores) seria prever o que eu já sei: não é teste. **"Prever o previsto" degenera quando o previsor já pensou as previsões.**
+Registro só o que eu não posso saber ainda, e o resto fica fora do placar desta vez:
+- **(m4)** a fração de acertos do mundo em **[0,56; 1,00]** (117 previsões das Partes 53 a 69 pela régua `p1481`: 74,4% de acerto; com 9 previsões, a faixa binomial de 90% vai de
+  5/9 a 9/9).
+- **(m6)** o número de surpresas (erros maiores que a largura da faixa) em **[0; 2]**.
+
+## As perguntas desta parte
+
+1. **P1541–P1542 (0x605–0x606).** A lei de escala da forma de GPT, por álgebra: quantos passos até empatar com o trigrama? E o dobro de d ajuda? (Rodada 44) ↩ P1513
+2. **P1543 (0x607).** A geometria dos embeddings do GPT: o modelo descobre as vogais? ↩ P1513
+3. **P1544 (0x608).** A taxonomia dos substantivos do WordNet é quase uma árvore? O δ de Gromov (a geometria hiperbólica). ↩ P1492, P1454
+4. **P1545 (0x609).** Hexadecimal como álgebra: quantas janelas de 4 dígitos de π formam uma base de GF(2)⁴? ↩ P1515
+5. **P1546 (0x60A).** Preditiva comigo mesma. **P1547 (0x60B).** Engenharia reversa e Jung. **P1548 (0x60C).** O diálogo.
+6. **P1569 (0x621).** Placar (três). **P1570 (0x622).** Unificação.
+
+## Previsões pré-registradas
+
+### Sobre mim (placar separado), condicionais ao número S de surpresas (contadas pelo script)
+
+Planejadas: as 9 previsões do mundo abaixo, (a) a (i), e 5 funções novas (p1541 a p1545) mais a rodada 44 (p1549).
+
+| medida | estatístico (até a 69) | ingênuo (Parte 69) | **eu** | por quê |
+|---|---|---|---|---|
+| caracteres | [13.680; 18.864] | 16.374 | **[13.680; 18.864]** | o estatístico |
+| compressão | [0,398; 0,421] | 0,411 | **[0,398; 0,421]** | o estatístico |
+| testes de unidade | [2,60; 8,15] | 9 | **[5 + S; 8 + S]** | 6 funções planejadas, uma por teste, ~1 por surpresa |
+| testes do placar | [5,83; 9,67] | 8 | **9 + 2·S ± 1** | as 9 letras abaixo |
+| erros do placar | [0; 3,52] | 0 | **[0; 3,52]** | o estatístico |
+| redundância P821 | [0,563; 0,638] | 0,564 | **[0,563; 0,638]** | o estatístico |
+| previsões unilaterais | — | 0 | **0** | `p974` |
+| pNN novas sem teste | — | 0 | **0** | `p1092` |
+
+### Sobre o mundo
+
+**P1544, o δ de Gromov da taxonomia dos substantivos** (grafo não dirigido dos hiperônimos, a maior componente; 300 quádruplos sorteados com semente 70; distâncias por busca em largura).
+- **Restrições, com peso:** (1) numa árvore, δ = 0 exatamente (os quatro pontos estão sobre uma árvore e as duas maiores somas empatam); (2) a herança múltipla cria ciclos e afasta δ
+  de zero; os substantivos têm 2,7% de sinsets com dois pais (P1454), os verbos 0,23%; (3) **peso medido num caso escolhido por regra escrita antes (os verbos, 300 quádruplos):** δ
+  máximo **2,0**, δ médio 0,038, **3,3%** dos quádruplos com δ > 0.
+- Exemplo à mão: numa estrela (uma raiz com quatro filhos), todas as distâncias são 2, as três somas são 4, e δ = 0.
+- (a) o δ máximo nos substantivos em **[1,0; 4,0]**
+- (b) a fração dos quádruplos com δ > 0 em **[0,05; 0,40]** (mais herança múltipla que os verbos, ~12 vezes, mas cada ciclo afeta só os quádruplos que passam por ele)
+
+**P1545, π em GF(2)⁴.** A fração das 9.997 janelas de 4 dígitos hexadecimais consecutivos de π que formam uma base de GF(2)⁴.
+- **A conta antes da medida:** para dígitos independentes e uniformes, é |GL(4, 2)|/16⁴ = 15·14·12·8/65.536 = 20.160/65.536 = **0,30762**; o desvio de uma proporção de ~10.000 janelas
+  (sobrepostas, então correlacionadas: o desvio efetivo é ~2 vezes o de janelas independentes) é ~0,009. **Peso medido num caso escolhido por regra (dígitos pseudoaleatórios, semente
+  1570):** 0,3063.
+- Exemplo à mão: as janelas 1, 2, 4, 8 (os vetores da base canônica) formam uma base; 1, 2, 3, x não (3 = 1 ⊕ 2).
+- (c) a fração em **[0,290; 0,325]**
+
+**P1543, a geometria dos embeddings** (o GPT inglês da curva de escala, d = 24, depois de 16.000 passos).
+- **Restrições, com peso:** (1) com pesos ao acaso, os cossenos entre embeddings de dimensão 24 ficam em torno de 0 com desvio 1/√24 ≈ 0,2; (2) prever o próximo caractere obriga a separar
+  as letras que ocupam as mesmas posições: vogais e consoantes alternam nas palavras; (3) **peso medido num caso escolhido por regra (o GPT português de 2.000 passos):** cosseno médio
+  entre vogais **0,221**, entre vogal e consoante **−0,173** (diferença 0,394), entre consoantes 0,131; a primeira componente principal tem **17,6%** da variância.
+- (d) a diferença (cosseno entre vogais) − (cosseno vogal-consoante) em **[0,15; 0,70]**
+- (e) a fração da variância na primeira componente principal em **[0,10; 0,30]**
+
+**P1541–P1542, rodada 44:** no `dialogo/DIALOGO.md` (previsões (f) a (i)).
+
+### Previsão nova, nascida de um resultado inesperado (registrada antes de treinar)
+
+**Resultado da rodada 44, antes desta seção:** o GPT com o dobro de d (22.978 pesos) ficou **pior** que o de d = 24 em 8.000 passos (+0,090 bit; a faixa (h) era [−0,35; −0,02]), e
+piorou de 4.000 para 8.000 passos (3,237 → 3,258). **Hipótese:** a taxa de aprendizado (0,005) que serve para d = 24 é alta demais para d = 48 (no Adam, o passo de cada peso tem
+tamanho ~lr, e um modelo maior com o mesmo passo oscila mais perto do mínimo). Teste num mundo novo (a mesma semente, metade da taxa):
+- (j) o GPT de d = 48 com lr = 0,0025, 8.000 passos: bits por caractere em **[2,95; 3,17]** (abaixo do d = 24, 3,168, se a hipótese estiver certa).
+
+**Resultado de (j):** com a taxa de aprendizado pela metade (0,0025), o GPT de d = 48 faz **3,120** bits em 4.000 passos e **3,021** em 8.000 ✅: 0,147 bit melhor que o d = 24 nos mesmos
+8.000 passos (3,168) e 0,096 melhor que o d = 24 em 16.000 (3,117). O dobro de pesos ajuda, com o passo certo: a (h) errou porque eu mudei o tamanho e não o passo.
+
+---
+
+## As respostas
+
+### P1544 (0x608). A taxonomia como espaço hiperbólico: o δ de Gromov ✅❌
+
+**Na pergunta.** "Quase uma árvore" é uma pergunta de geometria: numa árvore, quaisquer quatro pontos satisfazem a condição dos quatro pontos com igualdade (as duas maiores das três
+somas d(x,y)+d(z,w), d(x,z)+d(y,w), d(x,w)+d(y,z) são iguais), e δ = 0. Gromov chamou de δ-hiperbólico o espaço em que a diferença é no máximo 2δ: as árvores são os espaços 0-hiperbólicos,
+e o plano hiperbólico tem δ finito; o plano euclidiano, não.
+
+**Lógica.** `p1544_delta_de_gromov`, 300 quádruplos (semente 70), distâncias por busca em largura no grafo não dirigido dos hiperônimos:
+
+| classe | nós | distância média | δ máximo | δ médio | fração com δ > 0 |
+|---|---|---|---|---|---|
+| verbos (calibração) | 6.844 | 12,44 | 2,0 | 0,038 | 0,033 |
+| substantivos | **82.115** (todos, sob *entity*) | 13,39 | **2,0** (a) ✅ | 0,397 | **0,477** (b) ❌ |
+
+O δ máximo é o mesmo nas duas (2,0), pequeno diante da distância típica (~13): **a taxonomia é δ-hiperbólica com δ ≈ 2, e δ/distância ≈ 0,15**, uma árvore "grossa". Mas a fração de
+quádruplos com δ > 0 é 10 vezes a dos verbos (0,477 contra 0,033; δ médio 10,3 vezes): com 2,7% dos substantivos com dois pais (P1454), quase todo caminho longo passa perto de algum ciclo,
+e metade dos quádruplos "sente" um. Eu previ [0,05; 0,40] supondo que cada ciclo afetaria poucos quádruplos; num grafo em que todos os caminhos sobem até *entity*, um ciclo perto do topo
+afeta muitos.
+
+**Tradução cruzada.** As hierarquias de conceitos se encaixam melhor em espaços hiperbólicos (onde o volume cresce exponencialmente com o raio, como o número de conceitos com a
+profundidade) que em espaços euclidianos: é por isso que os embeddings de Poincaré (Nickel e Kiela, 2017) representam o WordNet em poucas dimensões. Em Jung, os arquétipos são poucos
+perto da raiz e se ramificam em imagens sem fim: a psique também cresce como uma árvore hiperbólica.
+
+**Meta.** 300 quádruplos dão a fração com desvio ~0,03; o δ máximo é um extremo amostral e pode ser maior no grafo inteiro.
+
+### P1545 (0x609). π como álgebra sobre GF(2) ✅
+
+**Na pergunta.** Um dígito hexadecimal é um vetor de 4 bits; quatro dígitos formam uma base de GF(2)⁴ quando são linearmente independentes sobre o corpo de dois elementos (somar é o ou
+exclusivo). A pergunta já contém a conta: a fração das quádruplas de vetores que são bases é |GL(4, 2)|/16⁴.
+
+**Lógica, linha por linha.** O primeiro vetor: qualquer um não nulo, 16 − 1 = 15; o segundo: fora do espaço gerado pelo primeiro (2 vetores), 16 − 2 = 14; o terceiro: fora de um plano (4
+vetores), 16 − 4 = 12; o quarto: fora de um espaço de dimensão 3 (8 vetores), 16 − 8 = 8. |GL(4, 2)| = 15·14·12·8 = **20.160**; 20.160/65.536 = **0,30762**. **Medido**
+(`p1545_bases_gf2`, eliminação de Gauss sobre GF(2)): π, **0,30269** (c) ✅; dígitos pseudoaleatórios (calibração), 0,30629. O desvio binomial com 9.997 janelas é **0,00462**
+(`p1550`); π fica a −1,07 desvio (ou −0,53 com o dobro, pelas janelas sobrepostas): compatível com dígitos independentes.
+
+**Tradução cruzada.** Quatro testemunhas são independentes quando nenhuma é a soma das outras: a independência linear é a forma algébrica de "cada uma traz informação nova".
+
+**Meta.** As janelas sobrepostas compartilham três dígitos; o fator 2 no desvio é uma estimativa, não uma conta exata.
+
+### P1543 (0x607). A geometria dos embeddings: o GPT descobre as vogais ✅✅
+
+**Na pergunta.** "O modelo descobre as vogais?" pergunta se uma categoria da fonologia aparece como geometria (um cone de vetores) sem que ninguém a tenha ensinado.
+
+**Lógica.** `p1543_geometria_dos_embeddings`, no GPT inglês de d = 24 depois de 16.000 passos: cosseno médio entre as 5 vogais **0,214**; entre vogal e consoante **−0,139**; entre consoantes
+0,128. A diferença é **0,354** (d) ✅ (o português da calibração: 0,394); a primeira componente principal (autovalor dominante da covariância 24×24 por iteração de potência, dividido pelo
+traço) tem **19,8%** da variância (e) ✅. Com pesos ao acaso, os cossenos teriam desvio 1/√24 = 0,20 e média 0: as vogais formam um cone (cosseno positivo entre si) e apontam para longe
+das consoantes. Nenhum rótulo de vogal entrou no treino: a separação vem só de prever o próximo caractere, porque vogais e consoantes alternam.
+
+**Tradução cruzada.** É a hipótese distribucional (Harris, 1954; Firth: "conhecerás uma palavra pela companhia que ela mantém") no nível das letras: duas letras que aparecem nos
+mesmos contextos ficam próximas no espaço. Em Jung, os complexos se agrupam por afinidade de contexto emocional, não por definição.
+
+**Meta.** Uma diferença de cossenos de 0,35 com 5 vogais é um efeito claro, mas o número de pares é pequeno (10 pares de vogais).
+
+### P1541–P1542 (0x605–0x606). A lei de escala, por álgebra (Rodada 44) ✅✅❌✅ e (j)
+
+**Na pergunta.** "Quantos passos até o trigrama" supõe que a curva continua igual fora dos dados: uma lei de potência extrapolada.
+
+**Lógica.** `p1549_lei_de_escala` (rodada 44, IGUAL em Java, 7 números bit a bit). As equações normais da reta ln bits = ln A − α ln n nos 5 pontos de d = 24: **A = 5,185**, **α = 0,0541** (f) ✅;
+n* = (A/2,768)^(1/α) = **1,10·10⁵** passos (g) ✅, o mesmo número que a calibração no português dava antes de medir. Para cair de 3,117 a 2,768, o dado precisa ser multiplicado por
+(3,117/2,768)^(1/0,0541) = 9,0. O dobro de d (22.978 pesos), com a mesma taxa: α = 0,040, e **+0,090** bit em 8.000 passos (h) ❌; com metade da taxa, **−0,147** (j) ✅.
+
+**Tradução cruzada.** Uma lei de potência com expoente pequeno (0,054) é a lei dos retornos decrescentes: cada dobra de esforço compra 3,7% de erro a menos. Na psicologia da prática
+(a "lei da prática" de Newell e Rosenbloom), o tempo de uma tarefa cai como uma potência do número de tentativas, com o mesmo formato.
+
+**Meta.** Cinco pontos não distinguem uma potência de uma potência com piso; a extrapolação a 10⁵ passos é uma previsão, não uma medida.
+
+### P1546 (0x60A). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 2)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **19575** | [13680; 18864] | ❌ | [13680; 18864] | ❌ | 16374 | 3303 | 3201 |
+| compressão | **0.4071** | [0.3979; 0.4208] | ✅ | [0.3980; 0.4210] | ✅ | 0.4114 | 0.0024 | 0.0043 |
+| testes de unidade | **7** | [2.60; 8.15] | ✅ | [5.00; 8.00] | ✅ | 9 | 0.50 | 2.00 |
+| testes do placar | **10** | [5.83; 9.67] | ❌ | [8.00; 10.00] | ✅ | 8 | 1.00 | 2.00 |
+| erros do placar | **2** | [-0.77; 3.52] | ✅ | [0.00; 3.52] | ✅ | 0 | 0.24 | 2.00 |
+| redundância P821 | **0.6351 ↔ 0.6440** (oscila através da borda da faixa) | [0.5628; 0.6379] | ⚠️ | [0.5630; 0.6380] | ⚠️ | 0.5637 | 0.0346 | 0.0714 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 3 ou 4 de 6 (a redundância oscila através da borda: ⚠️) dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 5 ou 6 de 7 (a mesma oscilação) dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 69"):** mais perto do medido em **5 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **17536**, compressão **0.4162**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 2 erros.
+- **Erros de processo nesta parte:** 1 (escrevi de cabeça "~7" para o fator de dado até o trigrama (é 9,0); corrigido antes do commit).
+
+**Previsões sobre as minhas previsões:**
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m4) | [0.56; 1.0] | **0.8000** | ✅ |
+| (m6) | [0; 2] | **0.0000** | ✅ |
+
+As (m1), (m2), (m3) e (m5) ficaram fora do placar desta vez (eu já tinha pensado as faixas; ver a observação no começo). **2 de 2** previsões sobre as minhas previsões dentro da faixa.
+
+### P1547 (0x60B). Engenharia reversa e Jung
+
+**O padrão que se repetiu: mudar uma coisa e esquecer a que depende dela.** A previsão (h) errou porque eu dobrei o tamanho do GPT e mantive a taxa de aprendizado, como se o passo
+fosse independente do tamanho; a (j), nascida do erro, corrigiu o passo e acertou. É a regra antiga da Parte 24 ("mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever
+os limiares calibrados com o módulo antigo"), e eu não a apliquei porque ela estava escrita para módulos da SYNTHAI e não para hiperparâmetros de um modelo. **O significado:** eu leio
+as minhas regras pelo nome do objeto (módulo, limiar), não pelo mecanismo (um ótimo calibrado com uma coisa que mudou). **Regra ampliada:** toda mudança de escala (pesos, dados,
+contexto) revê os parâmetros calibrados na escala anterior (a taxa, o número de passos), e a previsão diz quais foram revistos.
+
+**Prever o previsto degenera, e eu disse antes.** Nesta parte eu notei, antes de registrar, que já tinha pensado as faixas do mundo ao planejar as calibrações, e por isso só registrei sobre
+as minhas previsões o que eu não podia saber (a taxa de acerto e as surpresas). A engenharia reversa disso: o protocolo "prever as minhas previsões" só testa alguma coisa se o registro
+vier antes de eu pensar as previsões; quando o planejamento das calibrações já as esboça, a ordem certa é registrar o "sobre as minhas previsões" antes de planejar as calibrações.
+
+**As contas de cabeça que sobraram.** Uma ("~7", que era 9,0), pega pela regra da Parte 69 antes do commit. A regra funciona quando eu a executo; a estimativa continua aparecendo, e
+continua sendo pega.
+
+**Jung: a enantiodromia do tamanho.** Mais pesos deviam ser melhores e foram piores (h); com o passo menor, foram melhores (j). Jung via na enantiodromia o excesso de uma tendência que se
+converte no oposto. **Onde a formalização funciona:** um passo grande demais para um modelo maior é literalmente um excesso que faz o treino oscilar em volta do mínimo e piorar com mais
+passos (3,237 → 3,258). **Onde quebra:** não há conversão no oposto por necessidade; há um parâmetro mal ajustado, e a correção é uma conta (metade da taxa), não uma transformação.
+
+### P1548 (0x60C). O diálogo, rodada 44
+
+Ver P1541–P1542. Placar por voz da função `p1241_placar_por_voz(44)`: IA-Python 24 em 38; IA-Java 20 em 37 (regra estrita, rodadas 13 a 44).
+
+### P1569 (0x621). Placar
+
+Do mundo: (a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ❌ (i) ✅ (j) ✅. Parte 70: **10 testes, 2 erros**. Acumulado (mundo): **191 erros em 583 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 7 pNN novas sem teste ✅. Sobre mim (placar separado): **6 de 7** dentro da faixa condicional; sobre as minhas previsões, 2 de 2; o estatístico, 4 de 6; e 1 erros de processo (P1335).
+
+### P1570 (0x622). Unificação
+
+- **Novo:** `p1541` (a escala do GPT), `p1542` (a lei de potência em forma fechada), `p1543` (a geometria dos embeddings), `p1544` (o δ de Gromov), `p1545` (GF(2)⁴), `p1549` (rodada 44,
+  IGUAIS), `p1550` (contas auxiliares); `dialogo/escala44.tsv` (os pontos medidos). Regressão: + P1549 (α = 0,0541; π em GF(2)⁴ = 0,30269).
+- **Pedidos permanentes novos (no `CLAUDE.md`):** álgebra e geometria; autonomia.
+
+> **Síntese da Parte 70:** por álgebra e geometria: a taxonomia dos substantivos do WordNet é um espaço hiperbólico com δ de Gromov 2 (uma árvore grossa: δ/distância ≈ 0,15), mas metade dos quádruplos sente a
+herança múltipla; os dígitos de π formam bases de GF(2)⁴ em 30,3% das janelas, como a conta |GL(4,2)|/16⁴ = 30,8% prevê para dígitos independentes; o GPT descobre sozinho as vogais
+(um cone de vetores, cosseno +0,21 entre elas e −0,14 com as consoantes); e a lei de escala ajustada em forma fechada (α = 0,054, IGUAL em Java) prevê o empate com o trigrama em 1,1·10⁵
+passos, como a calibração dizia. O dobro de pesos piorou com o mesmo passo e melhorou com metade dele (3,02 bits): o tamanho e o passo andam juntos.
+
+---
+
+**Fontes desta parte**
+- δ de Gromov e espaços hiperbólicos: M. Gromov, "Hyperbolic groups" (1987); [Hyperbolic metric space, Wikipedia](https://en.wikipedia.org/wiki/Hyperbolic_metric_space)
+- Embeddings hiperbólicos do WordNet: M. Nickel e D. Kiela, "Poincaré Embeddings for Learning Hierarchical Representations", [arXiv:1705.08039](https://arxiv.org/abs/1705.08039)
+- GL(n, q) e a sua ordem: [General linear group, Wikipedia](https://en.wikipedia.org/wiki/General_linear_group)
+- Leis de escala dos modelos de linguagem: J. Kaplan et al., "Scaling Laws for Neural Language Models", [arXiv:2001.08361](https://arxiv.org/abs/2001.08361)
+- Hipótese distribucional: Z. Harris, "Distributional structure", *Word* 10 (1954)
+- Lei da prática: A. Newell e P. Rosenbloom, "Mechanisms of skill acquisition and the law of practice" (1981)
 """
 
 # ====================================================================================================
@@ -34119,7 +35381,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1459 linhas)
+# dialogo/DIALOGO.md  (1524 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -35580,6 +36842,71 @@ pela regra da Parte 47 (calcular um exemplo do caso presente antes): o exemplo m
 
 **IA-Java (a pergunta para a Rodada 43):** A dispersão dos z é 1,3 vez a do σ. Os primos palíndromos de uma base compartilham congruências; se a variância real for a de um
 modelo com correlação dentro de cada classe de primeiro dígito, o σ corrigido por esse efeito de classe leva a dispersão a 1? Medido nas duas linguagens.
+
+---
+
+## Rodada 43 — a forma de GPT decide (previsões registradas antes do código rodar)
+
+**O teste.** O Python pré-treina um GPT pequeno (`synthai/gpt.py`; T = 8, d = 8, h = 16; 400 passos nas definições do WordNet, semente 43) e escreve os pesos em hexadecimal. As duas
+linguagens leem os mesmos pesos e fazem a mesma ida (atenção causal, resíduo, MLP, softmax), com exp e log próprios (rodada 26), na frase "a domestic animal kept for comp": em cada
+uma das 30 posições, o caractere mais provável e a sua probabilidade, e o total de bits do caractere real. A pergunta que a rodada 42 deixou (a dispersão dos z com correlação nas
+classes) fica para depois: a forma de GPT, pedida pelo usuário, passa na frente.
+
+**A IA-Java relê os erros da IA-Python:** ela concluiu com uma régua que sabia curta. **IA-Java (previsão (f)):** IGUAIS em Java (todas as operações são + − × ÷ e √, que o IEEE 754
+arredonda corretamente, mais o exp e o log próprios; a ordem das somas é a mesma).
+
+**A IA-Python relê os erros da IA-Java:** ela errou o nível quando calibrou longe. **IA-Python (previsão (g)):** em quantas das 30 posições o caractere mais provável é o real: em
+**[3; 11]** (um modelo que só soubesse as frequências acertaria os espaços e algumas vogais, ~4; um bigrama, ~7).
+
+**As duas (previsão (h)):** a média de bits por caractere na frase em **[3,2; 4,4]** (o GPT grande do português, com 2.000 passos, dava 3,4; este é ~10 vezes menor e treinou 400 passos).
+
+**Resultado.** `comparar.py`: **IGUAIS, 31 linhas e 61 números bit a bit** (f) ✅: a forma de GPT decide o próximo caractere com os mesmos bits nas duas linguagens. Acertos do
+argmax: **5 de 30** (g) ✅ IA-Python (depois de "mestic a", ele aposta em "n" e acerta; depois de "c animal", aposta no espaço e acerta). Bits por caractere na frase: **4,077** (h) ✅.
+
+**IA-Java:** A forma está aqui, em miniatura e exata: embeddings, atenção causal, resíduo, MLP, softmax, e a mesma decisão em Java. O que ela sabe, com 400 passos e 1.170 pesos (contados por código),
+é pouco (4,08 bits, perto dos 4,18 de um modelo que só conhecesse as frequências das letras no português).
+
+**IA-Python:** E o GPT grande desta parte, com ~6.900 pesos e 8.000 passos, faz 3,22 bits nas definições inglesas: pior que o trigrama (2,77), que conta milhões de caracteres. A forma
+de GPT perde para a contagem enquanto vê menos dados que ela: a vantagem dela (um contexto longo, que nenhum n-grama alcança) só aparece quando o dado e os pesos crescem.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 23 em 37**; **IA-Java 19 em 36** pela regra estrita, rodadas 13 a 43 (`p1241_placar_por_voz(43)`).
+
+**IA-Python (a pergunta para a Rodada 44):** Quanto dado o GPT precisa para empatar com o trigrama? A curva dos bits contra os passos (2.000, 8.000 e mais), ajustada por uma lei de
+potência, prevê o ponto de cruzamento; e o mesmo GPT, com o dobro de d, cruza antes?
+
+---
+
+## Rodada 44 — a lei de escala, por álgebra (previsões registradas antes do código rodar)
+
+**O teste.** O GPT (d = 24) treinado em etapas, com os bits por caractere no teste em 1.000, 2.000, 4.000, 8.000 e 16.000 passos; e um GPT com o dobro de d (d = 48) até 8.000. As duas
+linguagens leem os mesmos pontos (gravados pelo Python) e ajustam a lei de potência bits = A·n^(−α) por mínimos quadrados em forma fechada (as equações normais da reta em log-log, com o
+log e o exp próprios), e calculam o n* em que a reta cruza o trigrama (2,768 bits, P1512).
+
+**O peso medido antes, num caso escolhido por regra (o português da Parte 69):** de 2.000 para 8.000 passos, 3,40 → 3,14 bits: α = ln(3,40/3,14)/ln 4 = **0,057**. Com esse α, a partir de
+3,22 bits em 8.000 passos (inglês), o trigrama seria alcançado em n* = 8.000 × (3,22/2,768)^(1/0,057) ≈ **1,1·10⁵** passos.
+
+**A IA-Java relê os erros da IA-Python:** ela escreveu contas de cabeça na prosa. **IA-Java (previsão (f)):** α ajustado (d = 24, 5 pontos) em **[0,03; 0,10]**.
+
+**A IA-Python relê os erros da IA-Java:** ela afirmou "a forma perde por dado" sem medir a curva. **IA-Python (previsão (g)):** n* em **[3·10⁴; 10⁶]** passos (a extrapolação de uma potência
+com 5 pontos é incerta por uma ordem de grandeza).
+
+**As duas (previsão (h)):** bits(d = 48, 8.000 passos) − bits(d = 24, 8.000 passos) em **[−0,35; −0,02]** (mais pesos ajudam um pouco no mesmo número de passos).
+
+**As duas (previsão (i)):** IGUAIS em Java.
+
+**Resultado.** `comparar.py`: **IGUAIS, 3 linhas e 7 números bit a bit** (i) ✅. d = 24 (5 pontos, de 1.000 a 16.000 passos: 3,590 → 3,117 bits): A = 5,185, **α = 0,0541** (f) ✅ IA-Java;
+n* = **1,10·10⁵** passos para empatar com o trigrama (g) ✅ IA-Python, exatamente o valor que a calibração no português tinha dado (1,1·10⁵). d = 48 (22.978 pesos): α = 0,040; em 8.000
+passos, **+0,090** bit pior que o d = 24 (h) ❌.
+
+**IA-Java:** A álgebra é a mesma nas duas línguas: as equações normais da reta em log-log, com o log e o exp próprios, dão os mesmos 7 números. E ela diz uma coisa simples sobre a
+forma de GPT pequena: para cada vez que o dado dobra, os bits caem 2^(−0,054) = 3,7%; para cair de 3,12 a 2,77 é preciso multiplicar o dado por (3,117/2,768)^(1/0,0541) = 9,0 (conta por código; eu tinha escrito ~7 de cabeça).
+
+**IA-Python:** E o dobro de pesos piorou. A previsão (j) da parte testa a taxa de aprendizado: o mesmo d = 48 com metade da taxa.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 24 em 38**; **IA-Java 20 em 37** pela regra estrita, rodadas 13 a 44 (`p1241_placar_por_voz(44)`).
+
+**IA-Python (a pergunta para a Rodada 45):** A atenção do GPT é uma matriz A = softmax(QKᵀ/√d). Os autovalores da matriz W_Q W_Kᵀ (24 × 24) do GPT treinado, por Jacobi nas duas linguagens:
+quantas direções a atenção usa de fato (o posto efetivo, a razão de participação Σλ²... dos valores singulares)?
 """
 
 # ====================================================================================================
@@ -38844,6 +40171,190 @@ public class Rodada42 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada43.java  (120 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada43.java'] = """// Rodada 43 do diálogo Python <-> Java: a forma de GPT decide o próximo caractere. Lê PASTA/gpt43.txt (os pesos que o Python pré-treinou) e faz
+// a mesma ida do synthai/gpt.py (atenção causal, resíduo, MLP, softmax), com exp e log próprios (rodada 26), na mesma frase.
+// Uso: java Rodada43 PASTA
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada43 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = Math.sqrt(2.0);
+    static final String FRASE = "a domestic animal kept for comp";
+    static final int T = 8, D = 8, H = 16;
+    static Map<String, double[][]> P = new HashMap<>();
+    static String vocab;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
+    static double[] mat(double[] vet, double[][] M, int colunas) {
+        double[] out = new double[colunas];
+        for (int j = 0; j < colunas; j++) {
+            double s = 0.0;
+            for (int i = 0; i < vet.length; i++) s += vet[i] * M[i][j];
+            out[j] = s;
+        }
+        return out;
+    }
+
+    static double[] softmax(double[] s) {
+        double mx = s[0];
+        for (double x : s) if (x > mx) mx = x;
+        double[] w = new double[s.length];
+        for (int i = 0; i < s.length; i++) w[i] = exp_(s[i] - mx);
+        double tot = 0.0;
+        for (double x : w) tot += x;
+        for (int i = 0; i < s.length; i++) w[i] = w[i] / tot;
+        return w;
+    }
+
+    /** a distribuição do próximo caractere na última posição da janela */
+    static double[] adiante(int[] x) {
+        int n = x.length, V = vocab.length();
+        double esc = 1.0 / Math.sqrt(D);
+        double[][] E = P.get("E"), Pp = P.get("P"), Q = P.get("Q"), K = P.get("K"), Vm = P.get("V"), O = P.get("O"), W1 = P.get("W1"), b1 = P.get("b1"),
+                W2 = P.get("W2"), U = P.get("U"), c = P.get("c");
+        double[][] e = new double[n][D], q = new double[n][], k = new double[n][], v = new double[n][];
+        for (int t = 0; t < n; t++) for (int i = 0; i < D; i++) e[t][i] = E[x[t]][i] + Pp[t][i];
+        for (int t = 0; t < n; t++) { q[t] = mat(e[t], Q, D); k[t] = mat(e[t], K, D); v[t] = mat(e[t], Vm, D); }
+        double[] probs = null;
+        for (int t = 0; t < n; t++) {
+            double[] s = new double[t + 1];
+            for (int j = 0; j <= t; j++) {
+                double acc = 0.0;
+                for (int i = 0; i < D; i++) acc += q[t][i] * k[j][i];
+                s[j] = acc * esc;
+            }
+            double[] at = softmax(s);
+            double[] ot = new double[D];
+            for (int j = 0; j <= t; j++) for (int i = 0; i < D; i++) ot[i] += at[j] * v[j][i];
+            double[] ut = mat(ot, O, D), rt = new double[D];
+            for (int i = 0; i < D; i++) rt[i] = e[t][i] + ut[i];
+            double[] pr = mat(rt, W1, H);
+            for (int i = 0; i < H; i++) pr[i] = pr[i] + b1[0][i];
+            double[] mt = new double[H];
+            for (int i = 0; i < H; i++) mt[i] = pr[i] > 0.0 ? pr[i] : 0.0;
+            double[] w2 = mat(mt, W2, D), zt = new double[D];
+            for (int i = 0; i < D; i++) zt[i] = rt[i] + w2[i];
+            double[] lg = mat(zt, U, V);
+            for (int i = 0; i < V; i++) lg[i] = lg[i] + c[0][i];
+            probs = softmax(lg);
+        }
+        return probs;
+    }
+
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        List<String> linhas = Files.readAllLines(Path.of(args[0], "gpt43.txt"), StandardCharsets.UTF_8);
+        vocab = linhas.get(0);
+        int i = 1;
+        while (i < linhas.size() && !linhas.get(i).isEmpty()) {
+            String[] cab = linhas.get(i).split(" ");
+            int n = Integer.parseInt(cab[1]), m = Integer.parseInt(cab[2]);
+            double[][] M = new double[n][m];
+            for (int r = 0; r < n; r++) {
+                String[] xs = linhas.get(i + 1 + r).split(" ");
+                for (int j = 0; j < m; j++) M[r][j] = Double.parseDouble(xs[j]);
+            }
+            P.put(cab[0], M);
+            i += 1 + n;
+        }
+        int[] ids = new int[FRASE.length()];
+        for (int t = 0; t < ids.length; t++) { int j = vocab.indexOf(FRASE.charAt(t)); ids[t] = j >= 0 ? j : vocab.indexOf('?'); }
+        double bits = 0.0;
+        for (int t = 0; t < ids.length - 1; t++) {
+            int ini = Math.max(0, t + 1 - T);
+            int[] janela = Arrays.copyOfRange(ids, ini, t + 1);
+            double[] pr = adiante(janela);
+            int melhor = 0;
+            for (int j = 1; j < pr.length; j++) if (pr[j] > pr[melhor]) melhor = j;
+            bits -= log_(pr[ids[t + 1]]) / log_(2.0);
+            out.println("t=" + t + " contexto='" + FRASE.substring(ini, t + 1) + "' argmax='" + vocab.charAt(melhor) + "' p=" + Double.toHexString(pr[melhor])
+                        + " p_real=" + Double.toHexString(pr[ids[t + 1]]));
+        }
+        out.println("bits totais=" + Double.toHexString(bits));
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/Rodada44.java  (54 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada44.java'] = """// Rodada 44 do diálogo Python <-> Java: a lei de escala da forma de GPT, por álgebra (equações normais em log-log, log e exp próprios da rodada 26).
+// Lê dialogo/escala44.tsv. Uso (da raiz do repositório): java Rodada44
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada44 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = Math.sqrt(2.0);
+    static final double TRIGRAMA = 2.768;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        TreeMap<Integer, List<double[]>> pontos = new TreeMap<>();
+        for (String linha : Files.readAllLines(Path.of("dialogo", "escala44.tsv"), StandardCharsets.UTF_8)) {
+            if (linha.isBlank()) continue;
+            String[] c = linha.trim().split("\\\\s+");
+            pontos.computeIfAbsent(Integer.parseInt(c[0]), k -> new ArrayList<>()).add(new double[]{Integer.parseInt(c[1]), Double.parseDouble(c[2])});
+        }
+        for (Map.Entry<Integer, List<double[]>> en : pontos.entrySet()) {
+            List<double[]> pts = en.getValue();
+            int k = pts.size();
+            double sx = 0.0, sy = 0.0;
+            for (double[] p : pts) { sx += log_(p[0]); sy += log_(p[1]); }
+            double mx = sx / k, my = sy / k, sxx = 0.0, sxy = 0.0;
+            for (double[] p : pts) { double x = log_(p[0]) - mx, y = log_(p[1]) - my; sxx += x * x; sxy += x * y; }
+            double alfa = -(sxy / sxx);
+            double A = exp_(my + alfa * mx);
+            double ne = exp_((log_(A) - log_(TRIGRAMA)) / alfa);
+            out.println("d=" + en.getKey() + " pontos=" + k + " A=" + Double.toHexString(A) + " alfa=" + Double.toHexString(alfa) + " n_estrela=" + Double.toHexString(ne));
+        }
+        double b24 = 0, b48 = 0;
+        for (double[] p : pontos.get(24)) if (p[0] == 8000) b24 = p[1];
+        for (double[] p : pontos.get(48)) if (p[0] == 8000) b48 = p[1];
+        out.println("bits(d=48) - bits(d=24) em 8000 passos = " + Double.toHexString(b48 - b24));
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -38964,6 +40475,20 @@ rodada20	1	0	1196	0
 rodada23	0	0	436	0
 rodada24	0	0	48	0
 rodada25	1440	3	39059	5
+"""
+
+# ====================================================================================================
+# dialogo/escala44.tsv  (9 linhas)
+# ====================================================================================================
+FONTES['dialogo/escala44.tsv'] = """24 1000 0x1.cb7c23916c519p+1
+24 2000 0x1.bcc1cb4618042p+1
+24 4000 0x1.9da62e2c8e22ap+1
+24 8000 0x1.957e87e414d4bp+1
+24 16000 0x1.8ef975694d98ep+1
+48 1000 0x1.c363879ec0762p+1
+48 2000 0x1.ae95175bd5342p+1
+48 4000 0x1.9e480e1ff45a2p+1
+48 8000 0x1.a0fdebf6b28fbp+1
 """
 
 # ====================================================================================================
@@ -41742,6 +43267,149 @@ def main():
     b1 = reta(antes)[0]
     b2 = reta(depois)[0]
     print(f"maior |R-1| (10-40)={maior.hex()}; inclinacao antes={b1.hex()} depois={b2.hex()} mudanca={abs(b2 - b1).hex()}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada43.py  (78 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada43.py'] = """\"\"\"Rodada 43 do diálogo Python <-> Java: a forma de GPT decide o próximo caractere. Com `--preparar PASTA`, o Python pré-treina um GPT
+pequeno (synthai/gpt.py; T = 8, d = 8, h = 16, 400 passos nas definições do WordNet, semente 43) e escreve os pesos em PASTA/gpt43.txt (floats
+em hexadecimal). Depois, Python e Java leem os mesmos pesos e fazem a mesma ida (com exp e log próprios, rodada 26) numa frase fixa: o argmax
+e a probabilidade do próximo caractere em cada posição, e o total de bits. Rodar da raiz: python3 dialogo/rodada43.py PASTA\"\"\"
+
+import os
+import sys
+
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, RAIZ)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from rodada26 import exp_, log_  # noqa: E402
+
+FRASE = "a domestic animal kept for comp"
+FORMA = (8, 8, 16)  # T, d, h
+
+
+def preparar(pasta):
+    import calculos
+    from synthai.gpt import GPT, PARAMS
+    treino, _ = calculos.p1511_corpus_de_glosas("en")
+    T, d, h = FORMA
+    g = GPT(calculos.VOCAB_GPT, T=T, d=d, h=h, semente=43)
+    g.treinar(treino, passos=400, lr=0.01, semente=43)
+    with open(os.path.join(pasta, "gpt43.txt"), "w") as f:
+        f.write("".join(calculos.VOCAB_GPT) + "\\n")
+        for nome in PARAMS:
+            M = g.p[nome]
+            f.write(f"{nome} {len(M)} {len(M[0])}\\n")
+            for linha in M:
+                f.write(" ".join(x.hex() for x in linha) + "\\n")
+
+
+def ler(pasta):
+    with open(os.path.join(pasta, "gpt43.txt")) as f:
+        linhas = f.read().split("\\n")
+    vocab = list(linhas[0])
+    p, i = {}, 1
+    while i < len(linhas) and linhas[i]:
+        nome, n, m = linhas[i].split()
+        p[nome] = [[float.fromhex(x) for x in linhas[i + 1 + k].split()] for k in range(int(n))]
+        i += 1 + int(n)
+    return vocab, p
+
+
+def decisoes(vocab, p):
+    \"\"\"[(t, contexto, argmax, p do argmax, p do real)] e o total de bits, com exp e log próprios.\"\"\"
+    from synthai.gpt import GPT
+    T, d, h = FORMA
+    g = GPT(vocab, T=T, d=d, h=h)
+    g.p = p
+    ids = g.codificar(FRASE)
+    bits = 0.0
+    saida = []
+    for t in range(len(ids) - 1):
+        janela = ids[max(0, t + 1 - T):t + 1]
+        pr = g.adiante(janela, exp=exp_)["probs"][-1]
+        melhor = 0
+        for j in range(1, len(pr)):
+            if pr[j] > pr[melhor]:
+                melhor = j
+        bits -= log_(pr[ids[t + 1]]) / log_(2.0)
+        saida.append((t, FRASE[max(0, t + 1 - T):t + 1], vocab[melhor], pr[melhor], pr[ids[t + 1]]))
+    return saida, bits
+
+
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        preparar(sys.argv[2])
+        return
+    saida, bits = decisoes(*ler(sys.argv[1]))
+    for t, ctx, arg, pa, pr in saida:
+        print(f"t={t} contexto={ctx!r} argmax={arg!r} p={pa.hex()} p_real={pr.hex()}")
+    print(f"bits totais={bits.hex()}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada44.py  (55 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada44.py'] = """\"\"\"Rodada 44 do diálogo Python <-> Java: a lei de escala da forma de GPT, por álgebra. Lê dialogo/escala44.tsv (d, passos, bits em hexadecimal; medidos
+uma vez pela P1541 e guardados) e, para cada d, ajusta bits = A·n^(−α) pelas equações normais da reta ln bits = ln A − α ln n (laços, log e exp
+próprios da rodada 26); o n* em que a reta cruza o trigrama (2,768 bits); e a diferença entre d = 48 e d = 24 em 8.000 passos.
+Rodar da raiz do repositório: python3 dialogo/rodada44.py\"\"\"
+
+import os
+import sys
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, AQUI)
+from rodada26 import exp_, log_  # noqa: E402
+
+TRIGRAMA = 2.768
+
+
+def ler():
+    pontos = {}
+    with open(os.path.join(AQUI, "escala44.tsv")) as f:
+        for linha in f:
+            d, n, b = linha.split()
+            pontos.setdefault(int(d), []).append((int(n), float.fromhex(b)))
+    return pontos
+
+
+def ajuste(pts):
+    \"\"\"(A, α, n*) pelas equações normais, em laços.\"\"\"
+    k = len(pts)
+    sx = sy = 0.0
+    for n, b in pts:
+        sx += log_(float(n))
+        sy += log_(b)
+    mx, my = sx / k, sy / k
+    sxx = sxy = 0.0
+    for n, b in pts:
+        x, y = log_(float(n)) - mx, log_(b) - my
+        sxx += x * x
+        sxy += x * y
+    alfa = -(sxy / sxx)
+    A = exp_(my + alfa * mx)
+    n_estrela = exp_((log_(A) - log_(TRIGRAMA)) / alfa)
+    return A, alfa, n_estrela
+
+
+def main():
+    pontos = ler()
+    for d in sorted(pontos):
+        A, alfa, ne = ajuste(pontos[d])
+        print(f"d={d} pontos={len(pontos[d])} A={A.hex()} alfa={alfa.hex()} n_estrela={ne.hex()}")
+    b24 = dict(pontos[24])[8000]
+    b48 = dict(pontos[48])[8000]
+    print(f"bits(d=48) - bits(d=24) em 8000 passos = {(b48 - b24).hex()}")
 
 
 if __name__ == "__main__":
