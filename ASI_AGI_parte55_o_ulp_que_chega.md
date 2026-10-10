@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 55 (0x37): o ulp que chega
 
-> Continuação da [Parte 54](ASI_AGI_parte54_a_sorte_das_rodadas.md). **Previsões no commit `a6e6724` (a (c2) no seguinte), antes de qualquer execução e antes de
+> Continuação da [Parte 54](ASI_AGI_parte54_a_sorte_das_rodadas.md). **Próxima:** [Parte 56 — os empates](ASI_AGI_parte56_empates.md) (P1121–P1150). **Previsões no commit `a6e6724` (a (c2) no seguinte), antes de qualquer execução e antes de
 > escrever o resto deste documento.** A Parte 54 achou que as diferenças da libm somem quando caem fora do caminho da saída (uma escolha as absorve) e se propagam numa
 > iteração. Esta parte **injeta** um ulp em cada exp e log das rodadas antigas e mede quanto ele chega à saída; mede a fragilidade do mapa da definição a
 > uma palavra; conta os dígitos hexadecimais que um ulp muda; e audita as funções novas sem teste.

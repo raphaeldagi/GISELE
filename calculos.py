@@ -7465,6 +7465,7 @@ def testes_de_regressao():
         "P1034": p1034_pi_hexadecimal(200)[:3] == (200, 200, "243F6A88"),
         "P1063": p1063_autodescritivos(16) == ["C210000000001000"] and p1063_autodescritivos(10) == ["6210001000"],
         "P1094": round(p1094_ulp_em_hexadecimal()[0], 4) == 1.0341 and round(p1094_ulp_mantissa_uniforme()[0], 4) == 1.0667,
+        "P1123": p1123_mesma_soma()[1] == 431 and p1123_mesma_soma(65535)[1] == 5161,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9520,6 +9521,22 @@ def _parte_55():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1119, testes=TESTES_P1119)
     print(f"P1119 minha taxa de erro ({ERROS_P1119}/{TESTES_P1119}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_56():
+    print("--- Parte 56 (0x38: os empates) ---")
+    emp = p1121_empates()
+    print("P1121 empates exatos nas escolhas impressas: " + "; ".join(f"rodada{r} = {e}" for r, e in sorted(emp.items()))
+          + f"; rodadas com empate: {sum(1 for e in emp.values() if e > 0)} de {len(emp)}")
+    frac, n, maior = p1122_sinonimos_perfeitos()
+    print(f"P1122 sinonimos perfeitos: {frac:.4f} das {n} palavras tem gemeo; o maior grupo ({len(maior)}): {maior}")
+    for ate in (4095, 65535):
+        f, k, conta = p1123_mesma_soma(ate)
+        print(f"P1123 mesma soma de digitos em base 16 e 10 (1..{ate}): {k} = {f:.4f} (conta continua {conta:.4f}; com a rede de multiplos de 3: x3)")
+    total, sem = p1092_pnn_sem_teste(1091, 1150)
+    print(f"P1092 pNN novas (P1091-P1150) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 56: {p974_previsoes_sem_largura(range(56, 57))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1149, testes=TESTES_P1149)
+    print(f"P1149 minha taxa de erro ({ERROS_P1149}/{TESTES_P1149}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -9556,7 +9573,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56}
 
 
 if __name__ == "__main__":

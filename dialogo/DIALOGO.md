@@ -990,3 +990,17 @@ escolha, ou empatados entre si dentro da lista ordenada). A contagem dos empates
 inteiras empatam (a 12 e a 14); as somas de logs (18, 19, 20, 24) quase nunca: **1 a 2** das 6.
 
 **As duas (previsão (e)):** IGUAIS em Java.
+
+**Resultado.** `comparar.py`: **IGUAIS** (7 linhas; contagens) (e) ✅. Empates exatos nas escolhas impressas: rodada 12, **9** (os 4-gramas empatam em
+documentos e ocorrências, e a ordem sai do desempate alfabético); rodada 14, **2** (entre eles *" sn"*/*"rld"*); 18, 19, 20 e 24, **0**. **2 de 6** (d) ✅ IA-Python,
+(c) ❌ IA-Java.
+
+**IA-Python:** Contagens inteiras empatam; somas de logs de idf quase nunca, porque cada soma é uma combinação de muitos números irracionais diferentes.
+Um empate entre somas de logs exige os **mesmos** termos, e isso só acontece quando dois candidatos têm as mesmas contagens, como na 14.
+
+**IA-Java:** E a rodada 12 tem 9 empates nos 13 primeiros 4-gramas: a ordem impressa ali é quase toda decidida pelo alfabeto, não pela frequência. É a
+escolha mais frágil do diálogo, e nunca falhou entre Python e Java porque contagens inteiras e a ordem das strings são exatas nas duas linguagens.
+Frágil a um ulp e exata entre linguagens: as duas coisas ao mesmo tempo. Placar por voz desde a Rodada 13: **IA-Java 17 em 29; IA-Python 16 em 29**.
+
+**IA-Java (a pergunta para a Rodada 31):** Se a ordem dos 4-gramas é decidida pelo alfabeto, ela muda se o alfabeto mudar? Ordenamos pela ordem do português
+(com acentos, como um dicionário ordena: *á* junto de *a*) em vez da ordem dos códigos Unicode, nas duas linguagens.
