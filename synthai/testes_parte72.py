@@ -41,5 +41,47 @@ class TesteParte72(unittest.TestCase):
         self.assertTrue(0 <= ms <= 1 and 0 <= mr <= 1)
 
 
+    def test_p1608_auditoria_estatica(self):
+        # o texto recebido: run_tests tem 6 verificações e declara 6; test_engine tem 7 (5 asserts + 2 por exceção no laço de duas) e declara 8
+        self.assertEqual(calculos.p1608_auditoria_estatica(), [("run_tests", 6, 4, 6), ("test_engine", 7, 5, 8)])
+
+    def test_p1609_horn_linear(self):
+        # regra de duas premissas (a, b ⇒ c), premissa repetida (c, c ⇒ d), ciclo sem fato (x ⇒ y, y ⇒ x) e regra sem premissa (⇒ e)
+        regras = [(("a", "b"), "c"), (("c", "c"), "d"), (("x",), "y"), (("y",), "x"), ((), "e")]
+        ordem, prova, dec = calculos.p1609_horn_linear(["a", "b"], regras)
+        self.assertEqual(ordem, ["a", "b", "e", "c", "d"])
+        self.assertEqual(prova, {"a": None, "b": None, "e": 4, "c": 0, "d": 1})
+        self.assertEqual(dec, 3)
+        self.assertEqual(calculos.p1609_horn_linear(["a"], regras)[0], ["a", "e"])
+
+    def test_p1610_horn_ingenuo(self):
+        # regras em ordem desfavorável: c ⇒ d antes de b ⇒ c antes de a ⇒ b: três passagens que mudam e uma que não muda
+        regras = [(("c",), "d"), (("b",), "c"), (("a",), "b")]
+        conhecidos, passagens, checagens = calculos.p1610_horn_ingenuo(["a"], regras)
+        self.assertEqual((conhecidos, passagens), ({"a", "b", "c", "d"}, 4))
+        self.assertEqual(checagens, 3 + 2 + 1)
+
+    def test_p1611_regras_de_animal(self):
+        fatos, regras = calculos.p1611_regras_de_animal()
+        self.assertEqual(len(regras), 84427)
+        self.assertTrue(all(len(p) == 1 for p, _ in regras))
+
+    def test_p1612_animais_por_horn(self):
+        self.assertEqual(calculos.p1612_animais_por_horn()[:4], (4017, True, True, 4))
+
+    def test_p1613_fecho_horn(self):
+        self.assertEqual(calculos.p1613_fecho_horn("person"), 10297)
+
+    def test_p1614_rodada46(self):
+        r = calculos.p1614_rodada46()
+        self.assertEqual([x[1] for x in r], [4017, 10297])
+        self.assertEqual(r[0][3], 4051)
+
+
+    def test_p1615_imports_sem_uso(self):
+        # o primeiro bloco usa json e hashlib; o segundo importa deque e não usa (a fila prometida ficou para depois)
+        self.assertEqual(calculos.p1615_imports_sem_uso(), [[], ["deque"]])
+
+
 if __name__ == "__main__":
     unittest.main()

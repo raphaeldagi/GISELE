@@ -7481,6 +7481,7 @@ def testes_de_regressao():
         "P1516": p1514_pi_hex_digitos(16) == "243f6a8885a308d3" and p1516_gpt_decide()[1] == 5,
         "P1549": abs(p1549_lei_de_escala()[0][24][1] - 0.0541) < 0.0001 and abs(p1545_bases_gf2(p1514_pi_hex_digitos(10000))[0] - 0.30269) < 0.00001,
         "P1574": p1574_irredutiveis_gf2(15, 6)[:3] == (2182, 2182, 224) and p1573_crescimento_da_taxonomia("n")[2] == 7,
+        "P1612": p1612_animais_por_horn()[:4] == (4017, True, True, 4) and p1608_auditoria_estatica()[1] == ("test_engine", 7, 5, 8),
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
         "P1579": p1574_irredutiveis_gf2(17, 6)[2] == 758 and abs(p1579_serie_singular_gf2(17)[1] - 755.458) < 0.001,
     }
@@ -9504,7 +9505,7 @@ ERROS_P1479, TESTES_P1479 = 189, 559
 ERROS_P1509, TESTES_P1509 = 189, 565
 ERROS_P1539, TESTES_P1539 = 189, 573
 ERROS_P1569, TESTES_P1569 = 191, 583
-VEREDITOS_P1629 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) F_PENDENTE (g) ✅ (h) ✅ (i) ✅ (j) ✅"
+VEREDITOS_P1629 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) F_PENDENTE (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ❌ (l) ❌ (m) ✅ (n) ✅ (o) ✅ (p) ✅"
 ERROS_P1599, TESTES_P1599 = 193, 591
 ERROS_P1629, TESTES_P1629 = VEREDITOS_P1629.count("\u274c") + 193, VEREDITOS_P1629.count("\u2705") + VEREDITOS_P1629.count("\u274c") + 591
 
@@ -11077,6 +11078,48 @@ def p1612_animais_por_horn(d=None):
     return len(ordem), set(ordem) == vistos, ing == vistos, passagens, checagens, dec, len(regras)
 
 
+def p1613_fecho_horn(palavra, d=None):
+    """O fecho de Horn "é <palavra>" (P1613): o motor linear (P1609) nas regras da hiperonímia (P1611), a partir do primeiro sentido de substantivo
+    da palavra. Devolve o número de sinsets derivados (a palavra incluída)."""
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    _, regras = p1611_regras_de_animal(d)
+    fato = min(i for i in d.lemas[palavra] if d.sinsets[i][0] == "n")
+    return len(p1609_horn_linear([fato], regras)[0])
+
+
+def p1614_rodada46():
+    """Rodada 46 (P1614): o motor de Horn linear do dialogo/rodada46.py nos fatos animal e pessoa (IGUAL em Java). Devolve
+    [(fato, derivados, controle da ordem, decrementos, cadeia de prova)]."""
+    import importlib.util
+    import os
+    import tempfile
+    spec = importlib.util.spec_from_file_location("rodada46", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada46.py"))
+    r46 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r46)
+    with tempfile.TemporaryDirectory() as pasta:
+        r46.preparar(pasta)
+        fatos, regras = r46.ler(pasta)
+        return [(f,) + r46.horn(f, regras) for f in fatos]
+
+
+def p1615_imports_sem_uso(caminho="externos/texto_recebido_parte72b.md"):
+    """Os nomes importados e nunca usados em cada bloco ```python de um texto recebido (P1615), pela árvore sintática (sem executar). Devolve uma lista
+    por bloco."""
+    import ast
+    import os
+    import re
+    texto = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), caminho), encoding="utf-8").read()
+    saida = []
+    for bloco in re.findall(r"```python\n(.*?)```", texto, re.S):
+        arvore = ast.parse(bloco)
+        importados = {a.asname or a.name for n in ast.walk(arvore) if isinstance(n, (ast.Import, ast.ImportFrom)) for a in n.names}
+        usados = {n.id for n in ast.walk(arvore) if isinstance(n, ast.Name)}
+        saida.append(sorted(importados - usados))
+    return saida
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -11704,6 +11747,15 @@ def _parte_72():
     print(f"P1603 ciclos de glosas (A na glosa de B, B na glosa de A): {p1603_ciclos_de_glosas()}")
     ms, mr, z = p1604_hash_como_peso()
     print(f"P1604 hash como peso: |h(a) - h(b)| sinonimos {ms:.4f}, sorteados {mr:.4f} (teoria 1/3); z = {z:+.3f}")
+    for nome, verif, asserts, decl in p1608_auditoria_estatica():
+        print(f"P1608 texto recebido, {nome}: {verif} verificacoes ({asserts} asserts) contra {decl} declaradas")
+    n, ok_lin, ok_ing, passagens, checagens, dec, R = p1612_animais_por_horn()
+    print(f"P1612 fecho de animal: {n} sinsets; linear = BFS {ok_lin}; ingenuo = BFS {ok_ing}; {passagens} passagens, {checagens} checagens contra {dec} decrementos "
+          f"(razao {checagens / dec:.1f}); {R} regras; limite do texto (F+1)RP = {(n + 1) * R * R:.3e}; passagens x P = {passagens * R}")
+    print(f"P1615 imports sem uso por bloco do texto recebido: {p1615_imports_sem_uso()}")
+    print(f"P1613 fecho de person: {p1613_fecho_horn('person')}")
+    for f, n, ctl, dec, cadeia in p1614_rodada46():
+        print(f"P1614 rodada 46, fato {f}: derivados {n}, controle {ctl}, decrementos {dec}, prova de {len(cadeia)} regras")
     total, sem = p1092_pnn_sem_teste(1601, 1630)
     print(f"P1092 pNN novas (P1601-P1630) sem teste: {len(sem)} de {total}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 72: {p974_previsoes_sem_largura(range(72, 73))}")

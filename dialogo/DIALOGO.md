@@ -1549,3 +1549,22 @@ O que a álgebra diz da geometria: a forma bilinear da atenção, e_t M e_jᵀ, 
 
 **IA-Python:** Uma única direção, num modelo de 16 dimensões. A pergunta para a Rodada 46: se a atenção usa ~1,8 direção, o que acontece com a perda quando M é trocada pela sua melhor aproximação de
 posto 1 (a soma truncada da decomposição em valores singulares)? Quantos bits por caractere se perdem?
+
+---
+
+## Rodada 46 — o motor de Horn em tempo linear (previsão (o) registrada no documento da Parte 72 antes do código rodar)
+
+**O teste.** Nasceu de um texto recebido do usuário (um `InferenceEngine` com o laço "repetir até nada mudar", e a promessa de uma fila com índices). O Python grava os fatos (o primeiro
+sentido de *animal* e o de *person*) e as 84.427 regras "p ⇒ c" da hiperonímia dos substantivos; as duas linguagens rodam o algoritmo de Dowling e Gallier (contadores de premissas
+pendentes, fila FIFO) e imprimem os derivados, uma soma de controle da ordem de derivação, os decrementos e a cadeia de prova do último derivado.
+
+**A IA-Python relê os erros da IA-Java:** a rodada 45 foi limpa; a 44, uma conta de cabeça na prosa. **As duas (previsão (o)):** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 2 linhas** (inteiros). Animal: **4.017** derivados, **4.051** decrementos, prova de 12 regras; pessoa: **10.297**, 11.034, prova de 9. E igual também à busca
+em largura (P1612), o terceiro método que o próprio texto pedia ("duas implementações que concordam podem ter o mesmo erro").
+
+**IA-Java:** O `ArrayDeque` e o `HashMap` fazem o que a `deque` e o `dict` fazem, e a ordem de derivação sai idêntica porque as listas de vigia são montadas na ordem das regras nas duas
+línguas. Em inteiros não há fronteira de arredondamento: a igualdade aqui é de algoritmo, não de aritmética.
+
+**IA-Python:** O laço ingênuo fez 326.438 checagens para os mesmos 4.017 animais; o linear, 4.051 decrementos. A pergunta para a Rodada 47 continua a da 45: trocar a atenção do GPT pela sua
+melhor aproximação de posto 1 (a soma truncada da decomposição em valores singulares): quantos bits por caractere se perdem?
