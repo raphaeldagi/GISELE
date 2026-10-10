@@ -11533,6 +11533,72 @@ def p1698_comparar_reenvio_v2(novo="externos/texto_recebido_parte75b.md", guarda
     return [(lg, next((j for j, v in enumerate(velhos) if v == b), None), b.count("\n") + 1) for lg, b in blocos(novo)]
 
 
+def p1721_kronecker_contra_cheio(lingua="en", semente=76, embaralhar=False, passos=2000):
+    """A forma do byte (P1721): dois GPTs iguais (d = 16, T = 16, h = 32, taxa 0,005), um com a tabela de embeddings cheia e outro com o embedding de
+    Kronecker por nibble (synthai/gpt_kronecker.py, d₁ = d₂ = 4), treinados nas glosas da língua com a mesma semente; bits por caractere no teste
+    (300 janelas). Com embaralhar=True, só o Kronecker, com os caracteres permutados entre os mesmos bytes (semente 1.000 + semente): o controle do
+    mecanismo. Devolve (bits do cheio ou None, bits do Kronecker)."""
+    import random
+    from synthai.gpt import GPT
+    from synthai.gpt_kronecker import GPTKronecker
+    tr, te = p1511_corpus_de_glosas(lingua)
+    cheio = None
+    if not embaralhar:
+        g = GPT(VOCAB_GPT, T=16, d=16, h=32, semente=semente)
+        g.treinar(tr, passos=passos, lr=0.005, semente=semente)
+        cheio = g.bits_por_caractere(te, janelas=300)
+    bs = [ord(ch) for ch in VOCAB_GPT]
+    if embaralhar:
+        random.Random(1000 + semente).shuffle(bs)
+    k = GPTKronecker(VOCAB_GPT, T=16, d1=4, d2=4, h=32, semente=semente, mapa=bs)
+    k.treinar(tr, passos=passos, lr=0.005, semente=semente)
+    return cheio, k.bits_por_caractere(te, janelas=300)
+
+
+def p1722_libm_nas_duas_linguagens():
+    """A auditoria da fronteira da Parte 52, versão 2 (P1722; a P1638 só olhava o Python e só a forma math.log): em cada rodada, as funções
+    transcendentais da biblioteca chamadas no Python (math.X, ou X importado de math) e no Java (Math.X ou StrictMath.X), e se a chamada do Python
+    está só dentro de uma função `preparar` (os valores vão para um arquivo que o Java lê: sem risco entre as linguagens). Devolve
+    {rodada: (nomes no Python, só na preparação?, nomes no Java)} só das rodadas com alguma chamada."""
+    import ast
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    fs = {"exp", "log", "log2", "log10", "log1p", "expm1", "pow", "sin", "cos", "tan", "atan", "atan2", "erf", "sinh", "cosh", "tanh"}
+    saida = {}
+    for f in sorted(glob.glob(os.path.join(raiz, "dialogo", "rodada[0-9]*.py"))):
+        n = os.path.basename(f)[6:-3]
+        arv = ast.parse(open(f, encoding="utf-8").read())
+        importados = {a.asname or a.name for no in ast.walk(arv) if isinstance(no, ast.ImportFrom) and no.module == "math"
+                      for a in no.names if a.name in fs}
+        pais = {}
+        for no in ast.walk(arv):
+            for filho in ast.iter_child_nodes(no):
+                pais[filho] = no
+        nomes, so_prep = set(), True
+        for no in ast.walk(arv):
+            if not isinstance(no, ast.Call):
+                continue
+            fn = no.func
+            nome = (fn.attr if isinstance(fn, ast.Attribute) and isinstance(fn.value, ast.Name) and fn.value.id == "math" and fn.attr in fs
+                    else fn.id if isinstance(fn, ast.Name) and fn.id in importados else None)
+            if nome is None:
+                continue
+            nomes.add(nome)
+            q, dentro = pais.get(no), False
+            while q is not None:
+                if isinstance(q, ast.FunctionDef) and q.name == "preparar":
+                    dentro = True
+                q = pais.get(q)
+            so_prep = so_prep and dentro
+        java = os.path.join(raiz, "dialogo", "Rodada" + n + ".java")
+        nj = sorted(set(re.findall(r"\b(?:Strict)?Math\.(" + "|".join(sorted(fs)) + r")\(", open(java, encoding="utf-8").read()))) if os.path.exists(java) else []
+        if nomes or nj:
+            saida[n] = (sorted(nomes), so_prep if nomes else None, nj)
+    return saida
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""

@@ -45,3 +45,11 @@ um fator, as de *p* a *z* outro). O controle separa as duas: o mesmo Kronecker c
 usados e o número de pesos ficam iguais, e só muda quem compartilha fator com quem. **A conta:** a ordem ASCII foi escolhida para máquinas de escrever e telégrafos, não pela estatística do inglês, e
 por isso não deve carregar informação sobre quais letras se parecem. O desvio de uma diferença pareada entre dois Kronecker vem do mesmo ruído de semente da calibração (0,0228).
 - **(c)** a diferença média (embaralhado − ASCII), no inglês, sementes 76 a 79, em **[−0,038; +0,038]** bit (0 ± 2,353 · 0,0228 · √(1/4 + 1/4))
+
+**Medido (c):** embaralhado − ASCII = −0,0105, +0,0103, +0,0236, −0,0312; média **−0,0020** ✅. A ordem ASCII não carrega informação sobre o inglês: o que custa os 0,08 bit é a restrição em si (80
+pesos, posto 1 por caractere), e não quais letras compartilham fator.
+
+**A fronteira da Parte 52, auditada de novo (`p1722`, as duas linguagens).** A auditoria nova acha, além das já corrigidas: as rodadas 06 e 20 (o log da biblioteca nos dois lados), 09 e 14 (o log
+da biblioteca no Java, e no Python dentro de `synthai/decisao.py` e da `p732`, peças que as regras do projeto não deixam editar) e a 48 (só na preparação: sem risco). Registrada antes de corrigir
+a 06 e a 20 (o `log_` de `dialogo/exatas.py` nos dois lados, as originais em `dialogo/registro/`):
+- **(d)** a 06 e a 20 dão IGUAIS, e a `p1722` passa a listar só a 09, a 14 (com o Python vazio, porque o log está fora do arquivo da rodada) e a 48 (só na preparação) (categórica)
