@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 57 (0x39): as restrições
 
-> Continuação da [Parte 56](ASI_AGI_parte56_empates.md). **Previsões no commit `4eddc47`, antes de qualquer execução e antes de escrever o resto deste
+> Continuação da [Parte 56](ASI_AGI_parte56_empates.md). **Próxima:** [Parte 58 — a primeira diferença](ASI_AGI_parte58_a_primeira_diferenca.md) (P1181–P1210). **Previsões no commit `4eddc47`, antes de qualquer execução e antes de escrever o resto deste
 > documento.** A Parte 56 achou que a conta fecha quando acho a restrição escondida (a rede dos múltiplos de 3). Esta parte aplica a regra antes de cada conta:
 > listar as restrições, depois prever. Palíndromos no dicionário, números palíndromos em base 10 e 16 ao mesmo tempo, e a ordem alfabética do português.
 

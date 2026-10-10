@@ -1066,3 +1066,16 @@ em **[2.700; 8.000]** (metade dos 9.236 acentuados, ×1,72).
 deslocamento cria uma inversão na entrada e quase sempre outra na saída do bloco. **IA-Java (previsão (e)):** inversões em **[5.000; 9.500]**.
 
 **As duas (previsão (g)):** IGUAIS em Java.
+
+**Resultado.** `comparar.py`: **IGUAIS** (g) ✅. Posição média da primeira diferença: **5,49** (207.209 / 37.724) (f) ✅; a conta de cadeias ao acaso dava 4,6, e os
+prefixos de derivação acrescentam ~0,9 letra. Pares de vizinhos invertidos pela ordem portuguesa: **3.738** (d) ✅ IA-Python, (e) ❌ IA-Java: 0,40 por palavra acentuada
+(3.738 / 9.236).
+
+**IA-Java:** Errei por contar uma inversão na entrada **e outra na saída** de cada bloco deslocado. A saída quase não inverte: depois de um bloco de palavras
+com *é*, vem a primeira palavra com o prefixo seguinte, que é maior nas duas ordens. Só a entrada do bloco inverte, e blocos vizinhos se juntam.
+
+**IA-Python:** E a minha conta (metade dos acentuados) acertou a faixa, mas o centro passou: 0,40 por palavra, não 0,50. Placar por voz desde a Rodada 13:
+**IA-Python 21 em 34; IA-Java 20 em 34**.
+
+**IA-Python (a pergunta para a Rodada 33):** As palavras com maiúscula (9.176) formam um bloco no começo pela ordem dos códigos. Quantas delas têm uma "irmã"
+minúscula com a mesma grafia (*Brasil*/*brasil*?, *Rosa*/*rosa*), isto é, quantos nomes próprios do dicionário português também são palavras comuns?
