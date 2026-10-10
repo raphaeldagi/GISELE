@@ -10306,6 +10306,78 @@ def p1453_engenharia_das_previsoes(previsoes=None):
             "por_parte": {pa: sum(1 for x in prev if x[0] == pa) for pa in sorted({x[0] for x in prev})}}
 
 
+def p1481_minhas_previsoes_v2(partes=range(53, 68)):
+    """As minhas previsões do mundo, versão 2 (P1481; a P1452 fica como está, porque pontuou a Parte 67): a faixa de cada letra pode estar
+    em outra linha (as quebras de linha viram espaço) até 400 caracteres depois da letra, sem passar por outra letra entre parênteses; e
+    cada faixa ganha um tipo: "zero" (cruza ou toca o zero), "fracao" (dentro de [0; 1]), "contagem" (inteiros ≥ 1) ou "outra". Devolve
+    [(parte, letra, a, b, acerto, tipo)]."""
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    dialogo = open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8").read()
+    faixa = re.compile(r"\(([a-z])\)((?:(?!\([a-z]\)).){0,400}?)\*\*\[([^\];]+?);\s*([^\]]+?)\]\*\*")
+    saida = []
+    for parte in partes:
+        arq = glob.glob(os.path.join(raiz, f"ASI_AGI_parte{parte}_*.md"))
+        if not arq:
+            continue
+        texto = open(arq[0], encoding="utf-8").read()
+        m = re.search(r"Do mundo: ((?:\([a-z]\) [✅❌] ?)+)", texto)
+        if not m:
+            continue
+        vered = re.findall(r"\(([a-z])\) ([✅❌])", m.group(1))
+        cab = re.search(rf"## Rodada {parte - 26} [^\n]*\n(.*?)(?=\n## |\Z)", dialogo, re.S)
+        rodada = cab.group(1) if cab else ""
+        faixas = {}
+        corpo = texto.split("## As respostas")[0]
+        corpo = corpo.split("### Sobre o mundo", 1)[1] if "### Sobre o mundo" in corpo else corpo  # fora a tabela sobre mim
+        for fonte in (corpo, rodada.split("**Resultado")[0]):
+            for letra, _, a, b in faixa.findall(fonte.replace("\n", " ")):
+                x, y = _numero_pt(a), _numero_pt(b)
+                if x is not None and y is not None and "%" in a + b:  # porcentagem: a faixa é uma fração
+                    x, y = x / 100, y / 100
+                if letra not in faixas and x is not None and y is not None:
+                    faixas[letra] = (x, y)
+        for letra, v in vered:
+            a, b = faixas.get(letra, (None, None))
+            if a is None:
+                tipo = None
+            elif a <= 0 <= b:
+                tipo = "zero"
+            elif 0 <= a and b <= 1:
+                tipo = "fracao"
+            elif a == int(a) and b == int(b) and a >= 1:
+                tipo = "contagem"
+            else:
+                tipo = "outra"
+            saida.append((parte, letra, a, b, v == "✅", tipo))
+    return saida
+
+
+def p1482_engenharia_por_tipo(previsoes=None):
+    """A engenharia reversa por tipo de quantidade (P1482), sobre a P1481: para cada tipo, o número de previsões, o acerto, a mediana de w =
+    (b − a)/(|a| + |b|) (fora o tipo "zero", em que w = 1 sempre) e o acerto das faixas mais estreitas e mais largas que a mediana do tipo.
+    Devolve {tipo: (n, acerto, w mediana, acerto das estreitas, acerto das largas)}."""
+    prev = previsoes if previsoes is not None else p1481_minhas_previsoes_v2()
+    saida = {}
+    for tipo in ("zero", "fracao", "contagem", "outra", None):
+        xs = [x for x in prev if x[5] == tipo]
+        if not xs:
+            continue
+        acerto = sum(x[4] for x in xs) / len(xs)
+        if tipo in (None, "zero"):
+            saida[tipo] = (len(xs), acerto, None, None, None)
+            continue
+        ws = sorted(((x[3] - x[2]) / (abs(x[2]) + abs(x[3])), x[4]) for x in xs)
+        n = len(ws)
+        med = ws[n // 2][0] if n % 2 else (ws[n // 2 - 1][0] + ws[n // 2][0]) / 2
+        estreitas = [h for w, h in ws if w < med]
+        largas = [h for w, h in ws if w > med]
+        saida[tipo] = (n, acerto, med, sum(estreitas) / len(estreitas) if estreitas else None, sum(largas) / len(largas) if largas else None)
+    return saida
+
+
 def p1459_previsoes_sobre_previsoes(parte=67, historico=range(53, 67)):
     """O placar das previsões sobre as minhas previsões (P1459): para a parte, lida pela P1452, (m1) a mediana de w das faixas, (m2) o
     número de previsões do mundo, (m3) a fração de acertos, (m4) a fração das faixas com w a menos de 0,05 de 1/3, (m5) o erro médio
