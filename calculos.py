@@ -9583,6 +9583,52 @@ def p1243_narcisistas_hex(kmax=8, base=16):
                 achados.append(s)
     return sorted(achados)
 
+
+def p1247_interruptores(k, base=16):
+    """Os interruptores dos narcisistas (P1247): pares (d, p) com d ≥ 1 e p < k tais que d^(k−1) = base^p, isto é,
+    d·base^p = d^k: trocar um 0 na posição p por d soma o mesmo ao número e à soma das potências. Devolve a lista ordenada."""
+    return [(d, q) for d in range(1, base) for q in range(k) if d ** (k - 1) == base ** q]
+
+
+def p1248_por_comprimento(nums, base=16):
+    """Quantos números de cada comprimento (em dígitos da base) há numa lista (P1248). Devolve {k: quantos}."""
+    por = {}
+    for n in nums:
+        k, x = 0, n
+        while x:
+            x //= base
+            k += 1
+        por[k] = por.get(k, 0) + 1
+    return dict(sorted(por.items()))
+
+
+def p1249_fator_de_congruencia(k, base=16):
+    """O fator de congruência dos narcisistas (P1249): o maior divisor g de base − 1 com d^k ≡ d (mod g) para todo dígito d.
+    Como n ≡ soma dos dígitos (mod base − 1), com esse g a congruência n ≡ soma das potências (mod g) vale sozinha, e a chance de
+    um candidato acertar sobe g vezes. Devolve g."""
+    return max(g for g in range(1, base) if (base - 1) % g == 0 and all((d ** k - d) % g == 0 for d in range(base)))
+
+
+def p1250_esperado_narcisistas(k, base=16):
+    """A conta do número esperado de narcisistas com k dígitos (P1250): soma, sobre os multiconjuntos de dígitos cuja soma de
+    potências tem k dígitos, da chance de um número de k dígitos ao acaso ter aquele multiconjunto (multinomial, sem zero à
+    esquerda); depois multiplica pelo fator de congruência (P1249). Devolve (sem o fator, com o fator)."""
+    from itertools import combinations_with_replacement
+    from math import factorial
+    pot = [x ** k for x in range(base)]
+    e = 0
+    for ds in combinations_with_replacement(range(base), k):
+        s = sum(pot[x] for x in ds)
+        if not base ** (k - 1) <= s < base ** k:
+            continue
+        m = factorial(k)
+        for x in set(ds):
+            m //= factorial(ds.count(x))
+        z = ds.count(0)
+        e += m * (k - z) // k if z else m
+    e = e / ((base - 1) * base ** (k - 1))
+    return e, e * p1249_fator_de_congruencia(k, base)
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()

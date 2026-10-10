@@ -64,7 +64,7 @@ A primeira execução deu **64** narcisistas em base 16 (a faixa (b) era [20; 32
 0xC04E1…). **A conta, depois de ver:** trocar um dígito 0 na posição p por um dígito d não muda a igualdade se o d acrescenta ao número o mesmo que à soma,
 d·16ᵖ = dᵏ, isto é, **dᵏ⁻¹ = 16ᵖ**. Só servem as potências de 2: d = 1 em p = 0 sempre; d = 2 quando 4p = k − 1; d = 4 quando 4p = 2(k − 1); d = 8 quando
 4p = 3(k − 1). Com k = 5 (k − 1 = 4) valem os quatro interruptores (1 na posição 0, 2 na 1, 4 na 2, 8 na 3); com k = 3, dois (1 na 0, 4 na 1); com k = 7, dois
-(1 na 0, 4 na 3); com k = 4, 6 e 8, só o 1. A contagem medida por comprimento acompanha: 17 (k = 3), 1 (k = 4), 23 (k = 5), 2 (k = 6), 4 (k = 7), 0 (k = 8).
+(1 na 0, 4 na 3); com k = 4, 6 e 8, só o 1. A contagem medida por comprimento acompanha: 17 (k = 3), 1 (k = 4), 23 (k = 5), 2 (k = 6), 4 (k = 7), 0 (k = 8). **[Correção, depois: o 17 foi contado à mão na lista impressa e está errado; `p1248_por_comprimento` dá 19. Mais uma quantidade contada de cabeça, mais um erro por pouco.]**
 Uma conta posterior só vira evidência num mundo novo (regra da Parte 25):
 
 - (h) **Base 8**, 2 a 8 dígitos. Interruptores: dᵏ⁻¹ = 8ᵖ = 2³ᵖ; d = 2 quando 3p = k − 1, d = 4 quando 3p = 2(k − 1). Os comprimentos com k − 1 múltiplo de 3
@@ -72,3 +72,17 @@ Uma conta posterior só vira evidência num mundo novo (regra da Parte 25):
   em **[0,50; 0,90]** (sem os interruptores, 2 de 7 comprimentos dariam ~0,29).
 - (i) **Base 16, 9 dígitos** (k − 1 = 8: os quatro interruptores, d = 2 em p = 2, d = 4 em p = 4, d = 8 em p = 6, como em k = 5). Previsão: **[6; 40]**
   narcisistas de 9 dígitos (os 23 de k = 5 vieram de uma ou duas famílias multiplicadas pelos interruptores).
+
+### Previsões novas, nascidas do segundo erro (registradas antes de rodar as bases 6 e 12)
+
+**Resultado de (h) e (i), antes desta seção:** base 8, a fração em k = 4 e k = 7 é **0,25** (k = 4 não tem **nenhum**) ❌; base 16, k = 9: **13** ✅. Os
+interruptores existem, mas só multiplicam soluções que têm zeros nas posições certas; não explicam por que um comprimento tem muitas.
+
+**A segunda conta, depois de ver:** n ≡ soma dos dígitos (mod b − 1). Se dᵏ ≡ d (mod g) para todo dígito d, com g dividindo b − 1, então a soma das potências
+já tem o mesmo resto que n módulo g, de graça: a chance de um candidato acertar sobe **g vezes** (`p1249_fator_de_congruencia`). Em base 16 (b − 1 = 15 = 3·5;
+λ(3) = 2, λ(5) = 4): g = 15 quando 4 divide k − 1 (k = 5, 9), g = 3 quando só 2 divide (k = 3, 7), g = 1 com k par. Sem o fator, a conta do multinomial
+(`p1250_esperado_narcisistas`) dá ~0,7 por comprimento em toda base; com o fator, 0,7 × g. Previsões num mundo novo:
+
+- (j) **Base 6** (b − 1 = 5, λ = 4: g = 5 em k = 5, 9, 13; g = 1 nos outros), k de 2 a 13: a fração dos narcisistas de 2 a 13 dígitos que fica em k = 5, 9 e 13 em
+  **[0,45; 0,85]** (conta: 3 × 0,75 × 5 = 11,25 contra 9 × 0,75 = 6,75: 0,625; sem o fator, 3 de 12 comprimentos: 0,25).
+- (k) **Base 12** (b − 1 = 11, primo, λ = 10: g = 11 só em k = 11), k de 2 a 11: narcisistas de 11 dígitos em **[3; 20]** (conta: 0,75 × 11 = 8,25).
