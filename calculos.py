@@ -10552,6 +10552,144 @@ def p1516_gpt_decide():
     return saida, sum(1 for x in saida if x[3] == x[4]), bits / len(saida)
 
 
+def p1541_escala_gpt(lingua="en", d=24, marcos=(1000, 2000, 4000, 8000, 16000), T=24, lr=0.005, semente=70, janelas=400):
+    """A curva de escala da forma de GPT (P1541): um GPT (T, d, h = 2d) treinado em etapas, com os bits por caractere no teste medidos em cada
+    marco de passos (cada etapa sorteia janelas com a semente + o número da etapa; o estado do Adam continua). Devolve ([(passos, bits)], pesos)."""
+    from synthai.gpt import GPT
+    treino, teste = p1511_corpus_de_glosas(lingua)
+    g = GPT(VOCAB_GPT, T=T, d=d, h=2 * d, semente=semente)
+    feitos, pontos = 0, []
+    for k, m in enumerate(marcos):
+        g.treinar(treino, passos=m - feitos, lr=lr, semente=semente + k)
+        feitos = m
+        pontos.append((m, g.bits_por_caractere(teste, janelas=janelas)))
+    return pontos, sum(len(v) * len(v[0]) for v in g.p.values())
+
+
+def p1542_lei_de_potencia(pontos, alvo=None):
+    """A lei de potência bits = A·n^(−α) ajustada por mínimos quadrados em log-log, em forma fechada (as equações normais da reta
+    ln bits = ln A − α ln n) (P1542). Com `alvo`, o n em que a reta cruza o alvo: n* = (A/alvo)^(1/α). Devolve (A, α, n*)."""
+    from math import exp, log
+    xs = [log(n) for n, _ in pontos]
+    ys = [log(b) for _, b in pontos]
+    k = len(xs)
+    mx, my = sum(xs) / k, sum(ys) / k
+    sxx = sum((x - mx) ** 2 for x in xs)
+    sxy = sum((x - mx) * (y - my) for x, y in zip(xs, ys))
+    inclinacao = sxy / sxx
+    A = exp(my - inclinacao * mx)
+    alfa = -inclinacao
+    n_alvo = (A / alvo) ** (1 / alfa) if alvo is not None and alfa > 0 else None
+    return A, alfa, n_alvo
+
+
+def p1543_geometria_dos_embeddings(g):
+    """A geometria dos embeddings de um GPT (P1543): o cosseno médio entre as vogais (a, e, i, o, u: 10 pares), entre vogais e consoantes (5 × 21
+    pares) e entre as consoantes; e a fração da variância na primeira componente principal dos embeddings das 26 letras (a matriz de
+    covariância 24×24, autovalor dominante por iteração de potência, conferido pelo traço). Devolve (vogais, vogal-consoante, consoantes, fração)."""
+    from math import sqrt
+    E = g.p["E"]
+    idx = g.indice
+    vog = [idx[c] for c in "aeiou"]
+    con = [idx[c] for c in "bcdfghjklmnpqrstvwxyz"]
+
+    def cos(a, b):
+        x, y = E[a], E[b]
+        return sum(u * v for u, v in zip(x, y)) / sqrt(sum(u * u for u in x) * sum(v * v for v in y))
+
+    def media(pares):
+        return sum(cos(a, b) for a, b in pares) / len(pares)
+    vv = media([(vog[i], vog[j]) for i in range(5) for j in range(i + 1, 5)])
+    vc = media([(a, b) for a in vog for b in con])
+    cc = media([(con[i], con[j]) for i in range(len(con)) for j in range(i + 1, len(con))])
+    letras = vog + con
+    d = len(E[0])
+    mu = [sum(E[a][i] for a in letras) / len(letras) for i in range(d)]
+    X = [[E[a][i] - mu[i] for i in range(d)] for a in letras]
+    C = [[sum(x[i] * x[j] for x in X) / len(X) for j in range(d)] for i in range(d)]
+    v = [1.0] * d
+    lam = 0.0
+    for _ in range(500):
+        w = [sum(C[i][j] * v[j] for j in range(d)) for i in range(d)]
+        nw = sqrt(sum(x * x for x in w))
+        v = [x / nw for x in w]
+        lam = nw
+    traco = sum(C[i][i] for i in range(d))
+    return vv, vc, cc, lam / traco
+
+
+def p1544_delta_de_gromov(classe="n", quadruplos=500, semente=70, d=None):
+    """O δ de Gromov da taxonomia (P1544): no grafo não dirigido dos hiperônimos da classe (a maior componente conexa), para quádruplos (x, y, z, w)
+    sorteados (semente fixa), δ = (maior − segunda maior das somas d(x,y)+d(z,w), d(x,z)+d(y,w), d(x,w)+d(y,z))/2, com as distâncias por busca em
+    largura. Numa árvore, δ = 0 sempre; a herança múltipla é o que o afasta de zero. Devolve (máximo, média, fração com δ > 0, nós da componente,
+    diâmetro médio amostrado)."""
+    import random
+    from collections import deque
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    viz = {}
+    for i, (pos, _, hip, _) in enumerate(d.sinsets):
+        if pos != classe:
+            continue
+        viz.setdefault(i, set())
+        for h in hip:
+            if h in d.indice and d.sinsets[d.indice[h]][0] == classe:
+                j = d.indice[h]
+                viz[i].add(j)
+                viz.setdefault(j, set()).add(i)
+
+    def bfs(o):
+        dist = {o: 0}
+        fila = deque([o])
+        while fila:
+            u = fila.popleft()
+            for w in viz[u]:
+                if w not in dist:
+                    dist[w] = dist[u] + 1
+                    fila.append(w)
+        return dist
+    vistos, maior = set(), []
+    for o in sorted(viz):
+        if o in vistos:
+            continue
+        comp = bfs(o)
+        vistos.update(comp)
+        if len(comp) > len(maior):
+            maior = sorted(comp)
+    r = random.Random(semente)
+    deltas, dists = [], []
+    for _ in range(quadruplos):
+        x, y, z, w = r.sample(maior, 4)
+        dx, dy, dz = bfs(x), bfs(y), bfs(z)
+        somas = sorted([dx[y] + dz[w], dx[z] + dy[w], dx[w] + dy[z]])
+        deltas.append((somas[2] - somas[1]) / 2)
+        dists.append(dx[y])
+    return max(deltas), sum(deltas) / len(deltas), sum(1 for x in deltas if x > 0) / len(deltas), len(maior), sum(dists) / len(dists)
+
+
+def p1545_bases_gf2(texto):
+    """Os dígitos hexadecimais como vetores de GF(2)⁴ (P1545): a fração das janelas de 4 dígitos consecutivos que formam uma base de GF(2)⁴ (posto 4,
+    por eliminação de Gauss sobre GF(2): ou exclusivo de bits); e a fração teórica para dígitos independentes e uniformes, |GL(4, 2)|/16⁴ =
+    (16 − 1)(16 − 2)(16 − 4)(16 − 8)/16⁴. Devolve (fração medida, fração teórica, janelas)."""
+    def posto(vs):
+        vs = list(vs)
+        p = 0
+        for bit in (8, 4, 2, 1):
+            piv = next((i for i in range(p, len(vs)) if vs[i] & bit), None)
+            if piv is None:
+                continue
+            vs[p], vs[piv] = vs[piv], vs[p]
+            for i in range(len(vs)):
+                if i != p and vs[i] & bit:
+                    vs[i] ^= vs[p]
+            p += 1
+        return p
+    ds = [int(ch, 16) for ch in texto]
+    janelas = len(ds) - 3
+    bases = sum(1 for i in range(janelas) if posto(ds[i:i + 4]) == 4)
+    return bases / janelas, (15 * 14 * 12 * 8) / 16 ** 4, janelas
+
+
 def p1499_previsoes_sobre_previsoes_v2(parte=68):
     """O placar das previsões sobre as minhas previsões, versão 2 (P1499; lido pela P1481, com os tipos): (m1) o número de previsões do
     mundo, (m2) o número de faixas que cruzam o zero, (m3) a mediana de w das que não cruzam, (m4) a fração de acertos, (m5) o número de

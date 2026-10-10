@@ -1488,3 +1488,23 @@ de GPT perde para a contagem enquanto vê menos dados que ela: a vantagem dela (
 
 **IA-Python (a pergunta para a Rodada 44):** Quanto dado o GPT precisa para empatar com o trigrama? A curva dos bits contra os passos (2.000, 8.000 e mais), ajustada por uma lei de
 potência, prevê o ponto de cruzamento; e o mesmo GPT, com o dobro de d, cruza antes?
+
+---
+
+## Rodada 44 — a lei de escala, por álgebra (previsões registradas antes do código rodar)
+
+**O teste.** O GPT (d = 24) treinado em etapas, com os bits por caractere no teste em 1.000, 2.000, 4.000, 8.000 e 16.000 passos; e um GPT com o dobro de d (d = 48) até 8.000. As duas
+linguagens leem os mesmos pontos (gravados pelo Python) e ajustam a lei de potência bits = A·n^(−α) por mínimos quadrados em forma fechada (as equações normais da reta em log-log, com o
+log e o exp próprios), e calculam o n* em que a reta cruza o trigrama (2,768 bits, P1512).
+
+**O peso medido antes, num caso escolhido por regra (o português da Parte 69):** de 2.000 para 8.000 passos, 3,40 → 3,14 bits: α = ln(3,40/3,14)/ln 4 = **0,057**. Com esse α, a partir de
+3,22 bits em 8.000 passos (inglês), o trigrama seria alcançado em n* = 8.000 × (3,22/2,768)^(1/0,057) ≈ **1,1·10⁵** passos.
+
+**A IA-Java relê os erros da IA-Python:** ela escreveu contas de cabeça na prosa. **IA-Java (previsão (f)):** α ajustado (d = 24, 5 pontos) em **[0,03; 0,10]**.
+
+**A IA-Python relê os erros da IA-Java:** ela afirmou "a forma perde por dado" sem medir a curva. **IA-Python (previsão (g)):** n* em **[3·10⁴; 10⁶]** passos (a extrapolação de uma potência
+com 5 pontos é incerta por uma ordem de grandeza).
+
+**As duas (previsão (h)):** bits(d = 48, 8.000 passos) − bits(d = 24, 8.000 passos) em **[−0,35; −0,02]** (mais pesos ajudam um pouco no mesmo número de passos).
+
+**As duas (previsão (i)):** IGUAIS em Java.
