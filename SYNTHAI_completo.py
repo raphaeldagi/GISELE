@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (10046 linhas)
+# calculos.py  (10166 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7504,6 +7504,7 @@ def testes_de_regressao():
         "P1213": p1213_persistencia_hex(16 ** 4)[:2] == (7, 0x3DDE),
         "P1243": len(p1243_narcisistas_hex(8)) == 64 and p1249_fator_de_congruencia(9) == 15,
         "P1273": p1273_niven(16 ** 5)[0] == 93788 and p1278_familias_narcisistas()[:2] == (175, 157),
+        "P1303": p1303_autonumeros()[1] == 64999 and p1307_terminacoes_iguais()[1][0] == ("al", 434),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9516,6 +9517,7 @@ def p1181_primeira_diferenca():
 ERROS_P1239, TESTES_P1239 = 171, 492
 ERROS_P1269, TESTES_P1269 = 175, 503
 ERROS_P1299, TESTES_P1299 = 178, 511
+ERROS_P1329, TESTES_P1329 = 181, 519
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -9775,6 +9777,97 @@ def _digitos_base(n, b):
         ds.append(r)
     return ds
 
+
+def p1301_ultimo_digito():
+    \"\"\"Rodada 36 (P1301): o teste do último dígito dos narcisistas, por base (3 a 16, k de 2 a 7, células sem interruptor), IGUAL
+    em Java (dialogo/rodada36.py). Devolve ([(b, excesso, razão medido/conta, medido, conta, conta corrigida)], Spearman).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada36", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada36.py"))
+    r36 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r36)
+    linhas = r36.por_base()
+    return linhas, r36.pearson(r36.postos([x[1] for x in linhas]), r36.postos([x[2] for x in linhas]))
+
+
+def p1302_iguais_nas_duas_linguas(d=None, pt=None):
+    \"\"\"As palavras iguais nas duas línguas (P1302): dos sinsets com lema na OpenWordNet-PT, a fração em que um lema português de
+    uma palavra só (minúsculas) é idêntico a um lema inglês do mesmo sinset. Devolve (fração, sinsets, {classe: fração}, 8 exemplos).\"\"\"
+    from synthai.dicionario import Dicionario, DicionarioPT
+    d = d or Dicionario()
+    pt = pt or DicionarioPT()
+    n, k, por, ex = 0, 0, {}, []
+    for chave, i in sorted(d.indice.items()):
+        pos, desloc = chave.split(":")
+        pts = pt.lemas.get(f"{desloc}-{pos}") or (pt.lemas.get(f"{desloc}-s") if pos == "a" else None)
+        if not pts:
+            continue
+        ing = {w.lower() for w in d.sinsets[i][1] if "_" not in w}
+        por_ = {w.lower() for w in pts if " " not in w and "_" not in w}
+        sim = bool(ing & por_)
+        n += 1
+        k += sim
+        a, b = por.get(pos, (0, 0))
+        por[pos] = (a + sim, b + 1)
+        if sim and len(ex) < 8:
+            ex.append(sorted(ing & por_)[0])
+    return k / n, n, {c: a / b for c, (a, b) in sorted(por.items())}, ex
+
+
+def p1303_autonumeros(ate=16 ** 5, base=16):
+    \"\"\"Os autonúmeros de Kaprekar numa base (P1303): m de 1 a ate que não é n + s(n) para nenhum n (s, a soma dos dígitos na
+    base). Devolve (densidade, contagem, os 8 primeiros).\"\"\"
+    alcancado = bytearray(ate + 1)
+    soma = [0] * (ate + 1)
+    for n in range(1, ate + 1):
+        soma[n] = soma[n // base] + n % base
+        m = n + soma[n]
+        if m <= ate:
+            alcancado[m] = 1
+    auto = [m for m in range(1, ate + 1) if not alcancado[m]]
+    return len(auto) / ate, len(auto), auto[:8]
+
+
+def p1307_terminacoes_iguais(d=None, pt=None, classe="a", n_term=2):
+    \"\"\"As terminações das palavras iguais nas duas línguas (P1307): nos sinsets da classe com uma palavra portuguesa idêntica
+    a uma inglesa (P1302), a contagem das últimas n_term letras da palavra igual (a primeira em ordem). Devolve (total,
+    [(terminação, contagem)] em ordem decrescente).\"\"\"
+    from synthai.dicionario import Dicionario, DicionarioPT
+    d = d or Dicionario()
+    pt = pt or DicionarioPT()
+    cont, total = {}, 0
+    for chave, i in sorted(d.indice.items()):
+        pos, desloc = chave.split(":")
+        if pos != classe:
+            continue
+        pts = pt.lemas.get(f"{desloc}-{pos}") or (pt.lemas.get(f"{desloc}-s") if pos == "a" else None)
+        if not pts:
+            continue
+        iguais = {w.lower() for w in d.sinsets[i][1] if "_" not in w} & {w.lower() for w in pts if " " not in w and "_" not in w}
+        if not iguais:
+            continue
+        w = sorted(iguais)[0]
+        total += 1
+        cont[w[-n_term:]] = cont.get(w[-n_term:], 0) + 1
+    return total, sorted(cont.items(), key=lambda x: (-x[1], x[0]))
+
+
+def p1308_chance_de_spearman(rho, n=14, vezes=20000, semente=1301):
+    \"\"\"A chance de uma correlação de postos ≥ rho ao acaso (P1308), por permutações (semente fixa): sorteia uma ordem dos n
+    postos e calcula Pearson nos postos, como a rodada 36. Devolve a fração das permutações com correlação ≥ rho.\"\"\"
+    import random
+    r = random.Random(semente)
+    xs = [float(i) for i in range(n)]
+    mx = sum(xs) / n
+    sxx = sum((x - mx) ** 2 for x in xs)
+    k = 0
+    for _ in range(vezes):
+        ys = xs[:]
+        r.shuffle(ys)
+        k += sum((x - mx) * (y - mx) for x, y in zip(xs, ys)) / sxx >= rho
+    return k / vezes
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -10031,6 +10124,33 @@ def _parte_61():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1299, testes=TESTES_P1299)
     print(f"P1299 minha taxa de erro ({ERROS_P1299}/{TESTES_P1299}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_62():
+    print("--- Parte 62 (0x3E: o ultimo digito) ---")
+    linhas, rho = p1301_ultimo_digito()
+    for b, exc, raz, m, e, ec in linhas:
+        print(f"P1301 base {b:2d}: excesso do ultimo digito {exc:.4f}; medido {m:2d}; conta {e:.3f} (razao {raz:.3f}); corrigida {ec:.3f} (razao {m / ec:.3f})")
+    m = sum(x[3] for x in linhas)
+    e = ec = 0.0
+    for x in linhas:
+        e += x[4]
+        ec += x[5]
+    print(f"P1301 Spearman excesso x razao = {rho:.4f}; total: medido {m}; conta {e:.3f} (razao {m / e:.4f}); corrigida {ec:.3f} (razao {m / ec:.4f})")
+    frac, n, por, ex = p1302_iguais_nas_duas_linguas()
+    print(f"P1302 sinsets com palavra igual em portugues e ingles: {frac:.4f} de {n}; por classe {({c: round(f, 6) for c, f in por.items()})}; "
+          f"substantivos/verbos = {por['n'] / por['v']:.1f}; {ex}")
+    print(f"P1308 chance ao acaso (14 bases, 20000 permutacoes): rho >= 0,3 em {p1308_chance_de_spearman(0.3):.4f}; rho >= {rho:.4f} em "
+          f"{p1308_chance_de_spearman(rho):.4f}")
+    t, term = p1307_terminacoes_iguais()
+    print(f"P1307 adjetivos iguais: {t}; terminacoes {term[:8]}; fracao em -al = {dict(term)['al'] / t:.4f}")
+    for ate, base in ((10 ** 6, 10), (16 ** 5, 16)):
+        dens, k, prim = p1303_autonumeros(ate, base)
+        print(f"P1303 autonumeros base {base} ate {ate}: {k} (densidade {dens:.4f}); os primeiros {prim}")
+    total, sem = p1092_pnn_sem_teste(1301, 1330)
+    print(f"P1092 pNN novas (P1301-P1330) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 62: {p974_previsoes_sem_largura(range(62, 63))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1329, testes=TESTES_P1329)
+    print(f"P1329 minha taxa de erro ({ERROS_P1329}/{TESTES_P1329}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -10067,7 +10187,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62}
 
 
 if __name__ == "__main__":
@@ -10080,7 +10200,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (207 linhas)
+# CLAUDE.md  (210 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -10167,6 +10287,8 @@ anterior, commit e push.
   Parte 61: o custo de um erro depende do seu TAMANHO (um erro de fator 2 abriu quatro testes; erros por pouco, nenhum): condicionar a previsão sobre mim às
   surpresas, não à contagem de erros. E um efeito visto num subconjunto se testa unidade por unidade antes de ganhar mecanismo (o "dobro" das bases pares
   era a base 8).
+  Parte 62: um mecanismo deduzido antes de prever ganha uma conta do seu PESO num caso fora do teste (outra base, outro k), por código, antes do registro;
+  sem ela, a faixa é a do estatístico (acertei a direção e chutei o tamanho duas vezes). Surpresa = erro maior que a largura da faixa, contada pelo script.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -10254,7 +10376,8 @@ anterior, commit e push.
 - A direção do meu viés (Parte 45): os centros das previsões de comportamento ficam abaixo do medido (média de z +0,38),
   porque eu esqueço custos. Ao deduzir quanto tempo a evidência leva, calcular a KL entre as previsões das hipóteses no
   caso em questão (uma crença errada e modesta, perto da ignorância, quase não é desmentida).
-- Nunca usar `pkill -f` com um padrão que apareça na própria linha de comando (mata o shell; aconteceu duas vezes).
+- Nunca usar `pkill -f` nem `pgrep -f` (num laço com `kill`) com um padrão que apareça na própria linha de comando: mata o shell (três vezes; a terceira
+  com `pgrep`, Parte 62). Buscar processos com a classe de caracteres: `ps aux | grep "[c]alculos"`.
 - Execuções longas em blocos retomáveis (Parte 46): o contêiner reinicia e mata processos em segundo plano (a execução única das 45 partes morreu
   duas vezes). Um processo por bloco de partes, cada um no seu arquivo, com marca de concluído (`python3 calculos.py 15 16 17 18`).
 - Antes de prever, calcular à mão um exemplo do caso presente (Parte 47): 5 de 6 erros vieram de responder à pergunta anterior (a rodada passada, um
@@ -10282,7 +10405,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -15228,6 +15351,56 @@ class TesteParte61(unittest.TestCase):
         sol, fam, conta, pares = calculos.p1278_familias_narcisistas(3, (10,))
         self.assertEqual((sol, fam, pares), (4, 3, 1))
         self.assertAlmostEqual(conta, calculos.p1250_esperado_narcisistas(2, 10)[1] + calculos.p1250_esperado_narcisistas(3, 10)[1], places=12)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte62.py  (45 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte62.py'] = """\"\"\"Testes de unidade da Parte 62: `python3 -m unittest synthai.testes_parte62`. Cada pNN nova com o seu teste, chamada PELO NOME.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class DicionarioFalso:
+    # animal = animal (n); run / correr (v) não; ideal (a, satélite no português) e similar (a) iguais
+    indice = {"n:001": 0, "v:002": 1, "a:003": 2, "a:004": 3}
+    sinsets = [("n", ["animal", "beast"], [], ""), ("v", ["run"], [], ""), ("a", ["ideal"], [], ""), ("a", ["similar"], [], "")]
+
+
+class PortuguesFalso:
+    lemas = {"001-n": ["animal"], "002-v": ["correr"], "003-s": ["ideal"], "004-a": ["similar"]}
+
+
+class TesteParte62(unittest.TestCase):
+    def test_p1301_ultimo_digito(self):
+        linhas, rho = calculos.p1301_ultimo_digito()
+        self.assertEqual(len(linhas), 14)
+        self.assertEqual((linhas[5][0], linhas[5][3]), (8, 13))  # base 8: 13 narcisistas sem interruptor
+        self.assertAlmostEqual(rho, 0.44175824175824174, places=12)
+
+    def test_p1302_iguais_nas_duas_linguas(self):
+        frac, n, por, ex = calculos.p1302_iguais_nas_duas_linguas(DicionarioFalso(), PortuguesFalso())
+        self.assertEqual((n, por, ex), (4, {"a": 1.0, "n": 1.0, "v": 0.0}, ["ideal", "similar", "animal"]))
+        self.assertAlmostEqual(frac, 0.75, places=12)
+
+    def test_p1303_autonumeros(self):
+        # base 10 até 20: 1, 3, 5, 7, 9, 20 (20 não é n + s(n): 19 + 10 = 29, 15 + 6 = 21, 14 + 5 = 19)
+        self.assertEqual(calculos.p1303_autonumeros(20, 10), (0.3, 6, [1, 3, 5, 7, 9, 20]))
+        self.assertEqual(calculos.p1303_autonumeros(16, 16)[2], [1, 3, 5, 7, 9, 11, 13, 15])
+
+    def test_p1307_terminacoes_iguais(self):
+        self.assertEqual(calculos.p1307_terminacoes_iguais(DicionarioFalso(), PortuguesFalso()), (2, [("al", 1), ("ar", 1)]))
+
+    def test_p1308_chance_de_spearman(self):
+        # com n = 3 há 6 permutações; só a identidade dá correlação 1: chance ~1/6
+        self.assertAlmostEqual(calculos.p1308_chance_de_spearman(0.99, 3, 6000, 7), 1 / 6, delta=0.02)
+        self.assertEqual(calculos.p1308_chance_de_spearman(-1.01, 5, 100), 1.0)
 
 
 if __name__ == "__main__":
