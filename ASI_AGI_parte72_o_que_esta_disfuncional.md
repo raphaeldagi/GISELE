@@ -53,3 +53,12 @@ não roda nada) e as ideias dele são testadas com código meu, escrito do zero.
 - **(n)** o laço do texto (repetir a passagem por todas as regras até nada mudar), reimplementado por mim, nas regras na ordem do arquivo: o número de passagens, contando a última, que não muda
   nada, em **[3; 12]**
 - **(o)** a rodada 46 do diálogo (o motor de Horn linear em Java, nos mesmos fatos e regras) dá IGUAIS ao Python (categórica)
+
+**Medido (k) a (n), logo depois do registro:** (k) **5** nós `assert` ❌. A minha previsão contou verificações e chamou de `assert`: as verificações são 7 (5 `assert` e 2 checagens por exceção no laço
+sobre duas operações inválidas), contra as **8** que `test_engine` devolve fixas; `run_tests` tem 6 e declara 6. (l) **4.017** animais ❌ (erro de 1.983, menor que a largura de 3.000: não é
+surpresa; a faixa veio de memória). (m) os três métodos dão o mesmo conjunto ✅. (n) **4** passagens ✅.
+
+**Previsão nova, nascida do erro (l), registrada antes de medir.** Mundo novo escolhido pela mesma regra escrita antes (o primeiro sentido de substantivo da palavra): *person*. A forma foi
+verificada antes: as hiperonímias de instância estão nas regras (*Einstein* → *physicist*), então o fecho de *person* inclui pessoas reais. A minha memória superestimou *animal* por um fator
+de 1,7 num caso só, e um caso não fixa um sinal: a faixa fica larga.
+- **(p)** o fecho de "é pessoa" em **[5.000; 13.000]** sinsets

@@ -10935,6 +10935,148 @@ def p1604_hash_como_peso(n=2000, semente=72, d=None):
     return ms, mr, (ms - mr) / math.sqrt(2 / 18 / n)
 
 
+def p1608_auditoria_estatica(caminho="externos/texto_recebido_parte72b.md"):
+    """A auditoria estática do código de um texto recebido (P1608): cada bloco ```python é lido pela árvore sintática (ast.parse analisa, não executa).
+    Para cada função de nome test*/run_tests, conta as verificações: cada `assert` e cada `raise AssertionError` (o padrão "try: operação inválida;
+    raise AssertionError; except ...") vale 1, multiplicado pelo tamanho das listas literais dos `for` que o envolvem (um `for` sobre uma coleção
+    calculada em tempo de execução conta 1). E lê os números que a função devolve fixos num dicionário literal (chaves "tests", "tests_passed").
+    Devolve [(função, verificações, nós assert, declarado)]."""
+    import ast
+    import os
+    import re
+    texto = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), caminho), encoding="utf-8").read()
+    saida = []
+    for bloco in re.findall(r"```python\n(.*?)```", texto, re.S):
+        arvore = ast.parse(bloco)
+        for f in [n for n in ast.walk(arvore) if isinstance(n, ast.FunctionDef) and (n.name.startswith("test") or n.name == "run_tests")]:
+            pais = {}
+            for no in ast.walk(f):
+                for filho in ast.iter_child_nodes(no):
+                    pais[filho] = no
+            verif = asserts = 0
+            for no in ast.walk(f):
+                e_raise = (isinstance(no, ast.Raise) and isinstance(no.exc, ast.Call) and isinstance(no.exc.func, ast.Name)
+                           and no.exc.func.id == "AssertionError")
+                if not (isinstance(no, ast.Assert) or e_raise):
+                    continue
+                asserts += isinstance(no, ast.Assert)
+                mult, q = 1, pais.get(no)
+                while q is not None:
+                    if isinstance(q, ast.For) and isinstance(q.iter, (ast.List, ast.Tuple)):
+                        mult *= len(q.iter.elts)
+                    q = pais.get(q)
+                verif += mult
+            declarado = None
+            for no in ast.walk(f):
+                if isinstance(no, ast.Return) and isinstance(no.value, ast.Dict):
+                    for k, v in zip(no.value.keys, no.value.values):
+                        if isinstance(k, ast.Constant) and k.value in ("tests", "tests_passed") and isinstance(v, ast.Constant):
+                            declarado = v.value
+            saida.append((f.name, verif, asserts, declarado))
+    return saida
+
+
+def p1609_horn_linear(fatos, regras):
+    """O motor de Horn em tempo linear (P1609; Dowling e Gallier, 1984), a otimização que o texto recebido na Parte 72 deixou para depois: cada regra
+    (premissas, conclusão) guarda quantas premissas distintas faltam; cada átomo guarda as regras em que é premissa; uma fila FIFO dos átomos recém-
+    conhecidos decrementa os contadores, e a regra que chega a zero dispara (se a conclusão for nova). Custo O(|fatos| + Σ|premissas|). Devolve
+    (ordem de derivação, prova {conclusão: índice da regra, ou None para os fatos}, decrementos)."""
+    from collections import deque
+    falta, vigia = [], {}
+    for r, (prem, _) in enumerate(regras):
+        distintas = []
+        for a in prem:
+            if a not in distintas:
+                distintas.append(a)
+        falta.append(len(distintas))
+        for a in distintas:
+            vigia.setdefault(a, []).append(r)
+    prova, ordem, fila = {}, [], deque()
+    for a in fatos:
+        if a not in prova:
+            prova[a] = None
+            ordem.append(a)
+            fila.append(a)
+    dec = 0
+    for r, (prem, concl) in enumerate(regras):  # regras sem premissa são fatos
+        if falta[r] == 0 and concl not in prova:
+            prova[concl] = r
+            ordem.append(concl)
+            fila.append(concl)
+    while fila:
+        a = fila.popleft()
+        for r in vigia.get(a, ()):
+            falta[r] -= 1
+            dec += 1
+            concl = regras[r][1]
+            if falta[r] == 0 and concl not in prova:
+                prova[concl] = r
+                ordem.append(concl)
+                fila.append(concl)
+    return ordem, prova, dec
+
+
+def p1610_horn_ingenuo(fatos, regras):
+    """O laço do texto recebido na Parte 72, reescrito por mim (P1610): repetir a passagem por todas as regras até nada mudar. Devolve (conhecidos,
+    passagens contando a última, que não muda nada, checagens de premissa)."""
+    conhecidos = set(fatos)
+    passagens = checagens = 0
+    mudou = True
+    while mudou:
+        mudou = False
+        passagens += 1
+        for prem, concl in regras:
+            if concl in conhecidos:
+                continue
+            ok = True
+            for a in prem:
+                checagens += 1
+                if a not in conhecidos:
+                    ok = False
+                    break
+            if ok:
+                conhecidos.add(concl)
+                mudou = True
+    return conhecidos, passagens, checagens
+
+
+def p1611_regras_de_animal(d=None):
+    """As regras de Horn do dicionário (P1611): para cada substantivo c e cada hiperônimo substantivo p dele, a regra "p é animal ⇒ c é animal"
+    (átomos = índices de sinsets), na ordem do arquivo; e o fato "animal (o primeiro sentido de substantivo) é animal". Devolve (fatos, regras)."""
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    animal = min(i for i in d.lemas["animal"] if d.sinsets[i][0] == "n")
+    regras = []
+    for c, s in enumerate(d.sinsets):
+        if s[0] != "n":
+            continue
+        for h in s[2]:
+            if h.startswith("n:") and h in d.indice:
+                regras.append(((d.indice[h],), c))
+    return [animal], regras
+
+
+def p1612_animais_por_horn(d=None):
+    """O fecho de "é animal" por três métodos (P1612): o motor linear (P1609), o laço do texto (P1610) e uma busca em largura pelos hipônimos.
+    Devolve (derivados, linear = BFS, ingênuo = BFS, passagens do ingênuo, checagens do ingênuo, decrementos do linear, regras)."""
+    from collections import deque
+    fatos, regras = p1611_regras_de_animal(d)
+    ordem, prova, dec = p1609_horn_linear(fatos, regras)
+    ing, passagens, checagens = p1610_horn_ingenuo(fatos, regras)
+    filhos = {}
+    for (p,), c in regras:
+        filhos.setdefault(p, []).append(c)
+    vistos, fila = {fatos[0]}, deque(fatos)
+    while fila:
+        a = fila.popleft()
+        for c in filhos.get(a, ()):
+            if c not in vistos:
+                vistos.add(c)
+                fila.append(c)
+    return len(ordem), set(ordem) == vistos, ing == vistos, passagens, checagens, dec, len(regras)
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
