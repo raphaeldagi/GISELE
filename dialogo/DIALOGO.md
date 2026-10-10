@@ -1349,3 +1349,27 @@ conferi a condição base por base. A base 21 continua a −3,03σ.
 
 **IA-Java (a pergunta para a Rodada 40):** A base 21 está a −3σ com todas as correções. Os palíndromos de 5 dígitos da base 21 com cada primeiro dígito d₀: o déficit se
 concentra em alguns d₀? Contando, nas duas linguagens, os primos por (d₀, d₂) contra a conta, a falta tem endereço?
+
+---
+
+## Rodada 40 — o endereço da falta (previsões registradas antes do código)
+
+**O teste.** Base 21, palíndromos de 5 dígitos coprimos a 42: por primeiro dígito d₀ (as 12 classes coprimas a 21... na verdade os d₀ coprimos a 42 são 1, 5, 11, 13, 17,
+19 e mais os pares coprimos a 21: o palíndromo ímpar exige d₂ ímpar, não d₀ ímpar) e por dígito do meio d₂, o medido (primos, por crivo) contra a conta C da rodada 39
+reescalada para o total medido (k = medido/conta, para tirar a falta global e ver só o endereço). O qui-quadrado de cada classificação usa a variância Σ p(1 − p) de cada
+classe. E, num mundo novo, as **bases 23 a 28** com a mesma conta C.
+
+**O peso antes:** sem endereço (a falta espalhada por igual), o qui-quadrado tem o seu valor esperado igual aos graus de liberdade (classes − 1), com faixa de 90%
+conhecida da distribuição qui-quadrado; o viés nas bases 17 a 22 (calibração que cobre as bases grandes) teve média de z −1,07.
+
+**A IA-Java relê os erros da IA-Python:** ela previu um sinal por unidade sem conferir a condição em cada unidade. **IA-Java (previsão (d)):** sem endereço por d₀: o
+qui-quadrado por primeiro dígito, dividido pelos seus graus de liberdade, fica em **[0,5; 1,6]**.
+
+**A IA-Python relê os erros da IA-Java:** ela calibrou nas bases grandes e errou nas pequenas. **IA-Python (previsão (e)):** sem endereço por d₂: o qui-quadrado por dígito
+do meio, dividido pelos graus de liberdade, fica em **[0,5; 1,6]**.
+
+**As duas (previsão (f)):** IGUAIS em Java.
+
+**As duas (previsão (g)):** nas bases 23 a 28, a média de z = (medido − C)/σ fica em **[−1,6; −0,4]** (o viés continua).
+
+**As duas (previsão (h)):** nas bases 23 a 28, o número de bases com z negativo fica em **[4; 6]** (justificativa da cota: 6 é o máximo possível).
