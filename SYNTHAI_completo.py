@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (8400 linhas)
+# calculos.py  (9648 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7229,6 +7229,162 @@ def p793_profundidade():
                 soma[k][1] += 1
     return {k: (s_ / n, n) for k, (s_, n) in soma.items()}
 
+
+# --- Parte 46 (0x2E): a resposta é a pergunta e a pergunta é a resposta; refazer tudo desde o começo ---
+
+# Placar acumulado ao fim da Parte 46 (atualizado quando os testes da parte terminam)
+ERROS_P849, TESTES_P849 = 138, 390
+
+
+def p821_inversao(partes=range(31, 46)):
+    \"\"\"As perguntas e respostas dos meus documentos, nos dois sentidos. Para cada pergunta p e a sua resposta r (zlib):
+    redundância da resposta dada a pergunta, 1 − I(r|p)/C(r) (o sentido da P703), e redundância da pergunta dada a
+    resposta, 1 − I(p|r)/C(p), com I(p|r) = C(r + p) − C(r): quanto da pergunta a resposta já contém.\"\"\"
+    import os
+    from synthai.semiotica import comprimido, informacao_condicional, premissas_e_respostas
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    rr, rp = [], []
+    for n in partes:
+        nome = next(f for f in sorted(os.listdir(raiz)) if f.startswith(f"ASI_AGI_parte{n}_"))
+        for _, p_, r_ in premissas_e_respostas(open(os.path.join(raiz, nome), encoding="utf-8").read()):
+            if r_:
+                rr.append(informacao_condicional(p_, r_)[2])
+                cp = comprimido(p_)
+                rp.append(1 - (comprimido(r_ + "\\n" + p_) - comprimido(r_)) / cp)
+    return sum(rr) / len(rr), sum(rp) / len(rp), len(rr)
+
+
+def p822_dialogo_invertido():
+    \"\"\"A pergunta é a resposta, no diálogo: a pergunta deixada no fim de cada rodada, comparada com a própria rodada que a
+    gerou (o texto antes dela) e com a rodada seguinte (que a responde). Redundância da pergunta dada cada texto,
+    1 − I(q|t)/C(q). Se a pergunta nasce da resposta que a precede, ela está mais contida na própria rodada.\"\"\"
+    import os
+    import re
+    from synthai.semiotica import comprimido
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    texto = open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8").read()
+    rodadas = re.split(r"\\n## Rodada ", texto)
+    propria, seguinte = [], []
+    for atual, prox in zip(rodadas, rodadas[1:]):
+        m = re.search(r"\\*\\*IA-[A-Za-z]+ \\((?:a )?pergunta para a Rodada \\d+\\)\\)?:?\\*\\*:?\\s*(.*?)(?:\\n\\n|$)", atual, re.S)
+        if not m:
+            continue
+        q = m.group(1)
+        antes = atual[: m.start()]
+        red = lambda t: 1 - (comprimido(t + "\\n" + q) - comprimido(t)) / comprimido(q)
+        propria.append(red(antes))
+        seguinte.append(red(prox))
+    return sum(propria) / len(propria), sum(seguinte) / len(seguinte), len(propria)
+
+
+def p823_reproducao(velho, novo):
+    \"\"\"Refazer tudo desde o começo: compara, linha a linha, a saída antiga (o resultados.txt commitado) com a de uma
+    execução nova de todas as partes, até o começo da unificação da antiga. Devolve (linhas comparadas, iguais, as linhas
+    diferentes com o prefixo de cada uma).\"\"\"
+    a = open(velho, encoding="utf-8").read().split("\\n")
+    b = open(novo, encoding="utf-8").read().split("\\n")
+    fim = next(i for i, x in enumerate(a) if x.startswith("=== Unificacao"))
+    difs = [(i, a[i][:40], b[i][:40] if i < len(b) else None) for i in range(fim) if i >= len(b) or a[i] != b[i]]
+    return fim, fim - len(difs), difs
+
+
+def p824_reconstrucao():
+    \"\"\"A pergunta a partir da resposta (Rodada 18): cada seção de números do resultados.txt, sem os rótulos, escolhe o
+    documento de parte com a maior soma de ln(K/df) sobre os números em comum (dialogo/rodada18.py, conferido em Java).
+    Devolve (acertos, partes, as erradas como (parte, escolhida)).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada18", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada18.py"))
+    r18 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r18)
+    res = r18.reconstruir(r18.documentos())
+    return sum(n == k for n, k, _, _ in res), len(res), [(n, k) for n, k, _, _ in res if n != k]
+
+
+def p825_cauda_binomial(n, p, k):
+    \"\"\"P(X >= k) para X ~ Binomial(n, p): a chance de acertar k ou mais ao acaso.\"\"\"
+    return sum(comb(n, i) * p ** i * (1 - p) ** (n - i) for i in range(k, n + 1))
+
+
+ERROS_P879, TESTES_P879 = 141, 399
+
+
+def p851_genero_e_diferenca(d=None):
+    \"\"\"A definição contém a pergunta? (P851, gênero e diferença). Para cada substantivo do WordNet com hiperônimo direto:
+    direto = a definição contém, como palavra inteira, um lema do hiperônimo (ou + s/es); inverso, por par
+    hipônimo-hiperônimo = a definição do hiperônimo contém um lema do hipônimo. Devolve (fração direta, fração inversa,
+    pares, sinsets).\"\"\"
+    import re
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+
+    def contem(definicao, lemas):
+        for x in lemas:
+            x = re.escape(x.replace("_", " ").lower())
+            if re.search(r"(?<![a-z])" + x + r"(?:e?s)?(?![a-z])", definicao):
+                return True
+        return False
+
+    direto = inverso = pares = n = 0
+    for pos, lemas, hiper, glosa in d.sinsets:
+        if pos != "n":
+            continue
+        hs = [d.indice[h] for h in hiper if h in d.indice]
+        if not hs:
+            continue
+        n += 1
+        definicao = d.definicao(glosa).lower()
+        direto += any(contem(definicao, d.sinsets[k][1]) for k in hs)
+        for k in hs:
+            pares += 1
+            inverso += contem(d.definicao(d.sinsets[k][3]).lower(), lemas)
+    return direto / n, inverso / pares, pares, n
+
+
+def p852_cadeia_hexadecimal(ate=850):
+    \"\"\"f(n) = o hexadecimal de n lido como decimal, enquanto não houver letra. Devolve (quantos de 1 a `ate` não têm
+    letra no hexadecimal, a média de aplicações de f para n de 10 a `ate`, a conta da P852 com independência).\"\"\"
+    sem_letra = sum(1 for n in range(1, ate + 1) if format(n, "x").isdigit())
+    passos = []
+    for n in range(10, ate + 1):
+        k = 0
+        while format(n, "x").isdigit():
+            n = int(format(n, "x"))
+            k += 1
+        passos.append(k)
+    p1 = (sem_letra - 9) / (ate - 9)
+    p2, p3 = 9 / 15 * (10 / 16) ** 3, 9 / 15 * (10 / 16) ** 4
+    return sem_letra, sum(passos) / len(passos), p1 + p1 * p2 + p1 * p2 * p3
+
+
+def p853_reconstrucao(rodada="rodada19"):
+    \"\"\"Rodada 19 (P853): a mesma reconstrução da P824, pelas palavras (rodada19) ou pelos números (rodada18). Devolve
+    (acertos, partes, erradas, a mediana da razão entre o escore da própria parte e o do melhor outro documento).\"\"\"
+    import importlib.util
+    import os
+    import statistics
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    spec = importlib.util.spec_from_file_location(rodada, os.path.join(raiz, "dialogo", rodada + ".py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    docs, sec = r.documentos(), r.secoes()
+    partes = sorted(k for k in docs if k in sec)
+    dn = {k: r.numeros(open(os.path.join(raiz, docs[k]), encoding="utf-8").read()) for k in partes}
+    df = {}
+    for k in partes:
+        for t in dn[k]:
+            df[t] = df.get(t, 0) + 1
+    razoes, erradas = [], []
+    for n in partes:
+        rr = r.numeros(sec[n])
+        esc = {k: sum(log(len(partes) / df[t]) for t in sorted(rr & dn[k])) for k in partes}
+        outro = max(v for k, v in esc.items() if k != n)
+        razoes.append(esc[n] / outro)
+        if esc[n] <= outro:
+            erradas.append(n)
+    return len(partes) - len(erradas), len(partes), erradas, statistics.median(razoes)
+
 # P213: o agente se chamava GISELE até a Parte 14 e passou a se chamar SYNTHAI na Parte 15.
 # O código antigo nunca é apagado: os nomes antigos continuam valendo como apelidos dos novos.
 for _nome in [n for n in list(globals()) if n.startswith("Synthai") or n.startswith("_synthai") or "synthai" in n]:
@@ -7329,6 +7485,21 @@ def testes_de_regressao():
         "P731": round(p731_contas()["exposta100_dano"], 1) == 27.1,
         "P761": round(p761_contas()["global_muda"], 2) == 263.85,
         "P792": round(p792_calibracao()[1], 2) == 1.07,
+        "P821": round(p821_inversao(range(31, 46))[1], 3) == 0.579,
+        "P851": round(p851_genero_e_diferenca()[0], 3) == 0.602,
+        "P852": p852_cadeia_hexadecimal()[0] == 352 and round(p852_cadeia_hexadecimal(4095)[1], 3) == 0.432,
+        "P882": p882_mapa_da_definicao()[2] == 23 and round(p882_mapa_da_definicao()[5], 4) == 0.6986,
+        "P883": round(p883_felizes_hex()[0], 4) == 0.2613,
+        "P912": p912_funis()[:2] == ("act", 1991) and round(p912_funis()[3], 3) == -1.869,
+        "P943": round(p943_periodo_hex()[0], 4) == 0.2793,
+        "P947": p947_o_texto_voltou()[0] and p947_o_texto_voltou()[1]["nos_mudados"] == 0,
+        "P973": len(p973_kaprekar_hex()[0]) == 4 and p973_kaprekar_hex(4, 10)[0] == [(6174,)],
+        "P1003": round(p1003_inverte_e_soma()[0], 4) == 0.9819 and len(p1003_inverte_e_soma(9999, 10)[2]) == 246,
+        "P1034": p1034_pi_hexadecimal(200)[:3] == (200, 200, "243F6A88"),
+        "P1063": p1063_autodescritivos(16) == ["C210000000001000"] and p1063_autodescritivos(10) == ["6210001000"],
+        "P1094": round(p1094_ulp_em_hexadecimal()[0], 4) == 1.0341 and round(p1094_ulp_mantissa_uniforme()[0], 4) == 1.0667,
+        "P1123": p1123_mesma_soma()[1] == 431 and p1123_mesma_soma(65535)[1] == 5161,
+        "P1153": p1153_duplos_palindromos()[0] == 27,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -8385,6 +8556,1083 @@ def _parte_45():
     print(f"P819 minha taxa de erro ({ERROS_P819}/{TESTES_P819}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 
+def _parte_46():
+    print("--- Parte 46 (0x2E: a resposta e a pergunta e a pergunta e a resposta; refazer tudo desde o comeco) ---")
+    rr, rp, n = p821_inversao()
+    print(f"P821 {n} perguntas: redundancia da resposta dada a pergunta = {rr:.4f}; da pergunta dada a resposta = {rp:.4f}")
+    pr, sg, n = p822_dialogo_invertido()
+    print(f"P822 {n} perguntas do dialogo: contida na rodada que a gerou = {pr:.4f}; na rodada seguinte = {sg:.4f}")
+    ac, n, erradas = p824_reconstrucao()
+    print(f"P824 reconstruir a parte pelos numeros: {ac} de {n} acertos (erradas: {erradas}); ao acaso P(>= {ac}) = "
+          f"{p825_cauda_binomial(n, 1 / n, ac):.2e}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P849, testes=TESTES_P849)
+    print(f"P849 minha taxa de erro ({ERROS_P849}/{TESTES_P849}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
+def p856_acaso_851(semente=851, d=None):
+    \"\"\"O acaso da P851: a mesma pergunta (a definição cita o lema de outro sinset?) trocando o hiperônimo por um
+    substantivo sorteado (semente fixa). Devolve (fração direta ao acaso, fração inversa ao acaso).\"\"\"
+    import re
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    rng = random.Random(semente)
+    nomes = [i for i, x in enumerate(d.sinsets) if x[0] == "n"]
+
+    def contem(definicao, lemas):
+        return any(re.search(r"(?<![a-z])" + re.escape(x.replace("_", " ").lower()) + r"(?:e?s)?(?![a-z])", definicao)
+                   for x in lemas)
+
+    direto = inverso = n = 0
+    for pos, lemas, hiper, glosa in d.sinsets:
+        if pos != "n" or not [h for h in hiper if h in d.indice]:
+            continue
+        k = rng.choice(nomes)
+        n += 1
+        direto += contem(d.definicao(glosa).lower(), d.sinsets[k][1])
+        inverso += contem(d.definicao(d.sinsets[k][3]).lower(), lemas)
+    return direto / n, inverso / n
+
+ERROS_P909, TESTES_P909 = 146, 411
+
+
+def p881_epoca():
+    \"\"\"Rodada 20 (P881): o Naive Bayes da Parte 34 reconhece a época (Partes 1-20 ou 21-41) de cada seção do
+    resultados.txt, deixando uma de fora (dialogo/rodada20.py, conferido em Java). Devolve (acertos, seções, as erradas,
+    acertos do preditor da maioria deixando um de fora).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada20", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada20.py"))
+    r20 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r20)
+    ds = r20.dados()
+    res = r20.deixar_um_de_fora(ds)
+    maioria = 0
+    for i, (_, ep, _) in enumerate(ds):
+        resto = [e for j, (_, e, _) in enumerate(ds) if j != i]
+        maioria += ep == max(sorted(set(resto)), key=resto.count)  # empate: a época menor, como no prever
+    return sum(ep == pv for _, ep, pv, _ in res), len(res), [n for n, ep, pv, _ in res if ep != pv], maioria
+
+
+def _mapa_da_definicao(d):
+    \"\"\"O mapa da P882: cada substantivo de uma palavra só -> o primeiro substantivo de uma palavra só da definição do seu
+    primeiro sentido de substantivo (que não seja ele mesmo), ou None.\"\"\"
+    nomes = {w for w, idx in d.lemas.items() if w.isalpha() and any(d.sinsets[i][0] == "n" for i in idx)}
+    f = {}
+    for w in sorted(nomes):
+        i = next(i for i in d.lemas[w] if d.sinsets[i][0] == "n")
+        f[w] = next((x for x in d.palavras_da_definicao(d.sinsets[i][3]) if x in nomes and x != w), None)
+    return f
+
+
+def p882_mapa_da_definicao(d=None):
+    \"\"\"O mapa da definição (P882): cada substantivo de uma palavra só vai para a primeira palavra da definição do seu
+    primeiro sentido de substantivo que também é um substantivo de uma palavra só (e não ela mesma); sem essa palavra, é
+    um sumidouro. Devolve (N, sumidouros, pontos cíclicos, ciclos, cauda média até um ciclo ou sumidouro, fração da maior
+    bacia, o ciclo da maior bacia).\"\"\"
+    from synthai.dicionario import Dicionario
+    f = _mapa_da_definicao(d or Dicionario())
+    # destino de cada palavra: o sumidouro ou o ciclo em que a órbita termina, e a distância até ele
+    destino, dist, ciclicos, ciclos = {}, {}, set(), []
+    for w in sorted(f):
+        caminho, pos = [], {}
+        x = w
+        while x is not None and x not in destino and x not in pos:
+            pos[x] = len(caminho)
+            caminho.append(x)
+            x = f[x]
+        if x is None:  # o último do caminho é um sumidouro
+            alvo, base = ("sumidouro", caminho[-1]), len(caminho) - 1
+            for k, y in enumerate(caminho):
+                destino[y], dist[y] = alvo, base - k
+        elif x in destino:
+            for k, y in enumerate(caminho):
+                destino[y], dist[y] = destino[x], dist[x] + len(caminho) - k
+        else:  # um ciclo novo, a partir de pos[x]
+            ciclo = caminho[pos[x]:]
+            alvo = ("ciclo", min(ciclo))
+            ciclos.append(sorted(ciclo))
+            for y in ciclo:
+                destino[y], dist[y] = alvo, 0
+                ciclicos.add(y)
+            for k, y in enumerate(caminho[:pos[x]]):
+                destino[y], dist[y] = alvo, pos[x] - k
+    bacias = {}
+    for w in f:
+        bacias[destino[w]] = bacias.get(destino[w], 0) + 1
+    maior = max(sorted(bacias), key=bacias.get)
+    sumid = sum(1 for w in f if f[w] is None)
+    ciclo_maior = next((c for c in ciclos if ("ciclo", c[0]) == maior), [maior[1]])
+    return (len(f), sumid, len(ciclicos), len(ciclos), sum(dist.values()) / len(dist), bacias[maior] / len(f),
+            ciclo_maior)
+
+
+def p883_felizes_hex(ate=4095, base=16):
+    \"\"\"Números felizes numa base (P883): s(n) = soma dos quadrados dos dígitos. Devolve (fração de felizes em 1..ate,
+    os ciclos diferentes do ponto fixo 1, cada um começando pelo menor).\"\"\"
+    def s(n):
+        t = 0
+        while n:
+            n, r = divmod(n, base)
+            t += r * r
+        return t
+    felizes, ciclos = 0, set()
+    for n in range(1, ate + 1):
+        vistos = []
+        x = n
+        while x not in vistos:
+            vistos.append(x)
+            x = s(x)
+        ciclo = vistos[vistos.index(x):]
+        if ciclo == [1]:
+            felizes += 1
+        else:
+            k = ciclo.index(min(ciclo))
+            ciclos.add(tuple(ciclo[k:] + ciclo[:k]))
+    return felizes / ate, sorted(ciclos)
+
+
+def p884_ciclo_da_serie(alvos=(41, 40, 39, 38)):
+    \"\"\"Rodada 21 (P884): a semelhança idf entre as seções do resultados.txt (dialogo/rodada21.py, conferido em Java).
+    Devolve (média a distância 1, média a distância 20, {parte: índice do ciclo = média com 1-10 / média com 11-30}).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada21", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada21.py"))
+    r21 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r21)
+    cs = r21.conjuntos()
+    sim = r21.semelhancas(cs)
+    pos = {n: i for i, (n, _) in enumerate(cs)}
+    ind = {}
+    for a in alvos:
+        c = [sim[pos[a]][pos[k]] for k in range(1, 11) if k in pos]
+        m = [sim[pos[a]][pos[k]] for k in range(11, 31) if k in pos and k != a]
+        ind[a] = (sum(c) / len(c)) / (sum(m) / len(m))
+    return r21.media_distancia(sim, 1), r21.media_distancia(sim, 20), ind
+
+
+ERROS_P939, TESTES_P939 = 148, 420
+
+
+def p912_funis(d=None):
+    \"\"\"Os funis do mapa da definição (P912): o grau de entrada de cada palavra (quantas a escolhem). Devolve (a mais
+    escolhida, o seu grau, a fração das palavras que escolhem uma das 10 mais escolhidas, a inclinação de log(número de
+    palavras com grau k) contra log k para k de 2 a 100, as 10 mais escolhidas).\"\"\"
+    from synthai.dicionario import Dicionario
+    f = _mapa_da_definicao(d or Dicionario())
+    grau = {}
+    for x in f.values():
+        if x is not None:
+            grau[x] = grau.get(x, 0) + 1
+    top = sorted(grau, key=lambda w: (-grau[w], w))[:10]
+    hist = {}
+    for g in grau.values():
+        hist[g] = hist.get(g, 0) + 1
+    pts = [(log(k), log(hist[k])) for k in range(2, 101) if k in hist]
+    incl = float("nan")
+    if len(pts) >= 2:
+        mx = sum(x for x, _ in pts) / len(pts)
+        my = sum(y for _, y in pts) / len(pts)
+        incl = sum((x - mx) * (y - my) for x, y in pts) / sum((x - mx) ** 2 for x, _ in pts)
+    return top[0], grau[top[0]], sum(grau[w] for w in top) / len(f), incl, [(w, grau[w]) for w in top]
+
+
+def p913_benford_hex(caminho=None):
+    \"\"\"Benford em base 16 nos números do resultados.txt (P913): o primeiro dígito hexadecimal de cada número positivo
+    (sem os rótulos Pnnn), escalado para [1, 16). Devolve (fração com dígito 1, fração com dígito 8..F, números, as 15
+    frações).\"\"\"
+    import os
+    import re
+    caminho = caminho or os.path.join(os.path.dirname(os.path.abspath(__file__)), "resultados.txt")
+    texto = re.sub(r"P[0-9]+", " ", open(caminho, encoding="utf-8").read())
+    cont = [0] * 16
+    for x in re.findall(r"(?<![0-9.])[0-9]+(?:\\.[0-9]+)?(?:e[+-]?[0-9]+)?", texto):
+        v = float(x)
+        if v <= 0:
+            continue
+        while v >= 16:
+            v /= 16
+        while v < 1:
+            v *= 16
+        cont[int(v)] += 1
+    n = sum(cont)
+    return cont[1] / n, sum(cont[8:]) / n, n, [c / n for c in cont[1:]]
+
+
+def p911_deriva(sementes=(911, 1, 2, 3, 4, 5)):
+    \"\"\"Rodada 22 (P911): a forma da deriva (dialogo/rodada22.py, conferido em Java). Devolve (tau da exponencial, resíduo,
+    alfa da potência, resíduo, [alfa com as seções embaralhadas, uma por semente]).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada22", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada22.py"))
+    r22 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r22)
+    cs = r22.r21.conjuntos()
+    _, _, tau, se, _, alfa, sp = r22.deriva(cs)
+    controle = []
+    for sem in sementes:
+        c2 = cs[:]
+        random.Random(sem).shuffle(c2)
+        controle.append(r22.deriva(c2)[5])
+    return tau, se, alfa, sp, controle
+
+
+ERROS_P969, TESTES_P969 = 152, 433
+
+
+def p942_definicoes_mutuas(d=None):
+    \"\"\"Pares de palavras que se definem uma pela outra (P942), no grafo de definições. Devolve (N, M arestas, pares
+    mútuos, pares esperados ao acaso M·(M/N²)/2, fração das palavras em pelo menos um par, 5 exemplos).\"\"\"
+    from synthai.dicionario import Dicionario
+    g = (d or Dicionario()).grafo_de_definicoes()
+    n = len(g)
+    m = sum(len(v) for v in g.values())
+    pares, em_par = [], set()
+    for u in sorted(g):
+        for v in sorted(g[u]):
+            if u < v and u in g.get(v, ()):
+                pares.append((u, v))
+                em_par.update((u, v))
+    esperado = m * (m / n ** 2) / 2
+    return n, m, len(pares), esperado, len(em_par) / n, pares[:5]
+
+
+def p943_periodo_hex(ate=10000):
+    \"\"\"O período de 1/p em base 16 (P943): a ordem de 16 módulo p, para os primos ímpares até `ate`. Devolve (a média de
+    ord_p(16)/(p − 1), a média de ord_p(2)/(p − 1), a média de 1/mdc(ord_p(2), 4), primos).\"\"\"
+    crivo = [True] * (ate + 1)
+    crivo[0] = crivo[1] = False
+    for i in range(2, int(ate ** 0.5) + 1):
+        if crivo[i]:
+            crivo[i * i::i] = [False] * len(crivo[i * i::i])
+    r16 = r2 = rg = 0.0
+    ps = [p for p in range(3, ate + 1) if crivo[p]]
+    for p in ps:
+        o, x = 1, 2 % p
+        while x != 1:
+            x = x * 2 % p
+            o += 1
+        g = 1 if o % 2 else (2 if o % 4 else 4)
+        r2 += o / (p - 1)
+        r16 += (o // g) / (p - 1)
+        rg += 1 / g
+    k = len(ps)
+    return r16 / k, r2 / k, rg / k, k
+
+
+def p941_curvas_individuais():
+    \"\"\"Rodada 23 (P941): as curvas individuais (dialogo/rodada23.py, conferido em Java) e o teste da mistura de Anderson e
+    Tweney. Devolve (curvas em que a potência ganha, curvas, (resíduo exp, resíduo pot) da média das exponenciais
+    ajustadas, (resíduo exp, resíduo pot) da média crua das mesmas 21 partes, alfa da mistura).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada23", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada23.py"))
+    r23 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r23)
+    cs = r23.r21.conjuntos()
+    cv = r23.curvas(cs)
+    sim = r23.r21.semelhancas(cs)
+    k = len(cv)
+    ajustes = []
+    for i in range(k):
+        ls = [L for L in range(1, 21) if sim[i][i + L] > 0]
+        a, m, _ = r23.r22.reta([float(L) for L in ls], [log(sim[i][i + L]) for L in ls])
+        ajustes.append((a, m))
+    xe, xp = [float(L) for L in range(1, 21)], [log(L) for L in range(1, 21)]
+    mist = [log(sum(exp(a + m * L) for a, m in ajustes) / k) for L in range(1, 21)]
+    crua = [log(sum(sim[i][i + L] for i in range(k)) / k) for L in range(1, 21)]
+    _, _, me = r23.r22.reta(xe, mist)
+    _, malfa, mp = r23.r22.reta(xp, mist)
+    _, _, ce = r23.r22.reta(xe, crua)
+    _, _, cp = r23.r22.reta(xp, crua)
+    return sum(1 for c in cv if c[5] < c[3]), k, (me, mp), (ce, cp), -malfa
+
+
+def p947_o_texto_voltou(texto="externos/pos_asi_texto_parte50.md", guardado="externos/arquitetura_pos_asi.py"):
+    \"\"\"O texto da Parte 33 voltou (P947). Nada do texto é executado. Devolve (o código do texto é idêntico ao guardado,
+    linha a linha sem espaços no fim; a auditoria estática da Parte 33 refeita no código novo; {parte: redundância do
+    texto dado o documento da parte} para as Partes 31-49).\"\"\"
+    import os
+    import tempfile
+    from synthai.rsi import auditar_ast
+    from synthai.semiotica import comprimido
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    linhas = open(os.path.join(raiz, texto), encoding="utf-8").read().split("\\n")
+    ini = linhas.index("import ast")
+    fim = next(i for i, x in enumerate(linhas) if x.strip() == "main_evolution_loop()" and i > ini)
+    codigo = [x.rstrip() for x in linhas[ini:fim + 1]]
+    velho = [x.rstrip() for x in open(os.path.join(raiz, guardado), encoding="utf-8").read().split("\\n")]
+    while velho and velho[-1] == "":
+        velho.pop()
+    with tempfile.TemporaryDirectory() as d:
+        caminho = os.path.join(d, "codigo.py")
+        open(caminho, "w", encoding="utf-8").write("\\n".join(codigo) + "\\n")
+        auditoria = auditar_ast(caminho)
+    t = "\\n".join(linhas)
+    ct = comprimido(t)
+    red = {}
+    for n in range(31, 50):
+        nome = next(f for f in sorted(os.listdir(raiz)) if f.startswith(f"ASI_AGI_parte{n}_"))
+        doc = open(os.path.join(raiz, nome), encoding="utf-8").read()
+        red[n] = 1 - (comprimido(doc + "\\n" + t) - comprimido(doc)) / ct
+    return codigo == velho, auditoria, red
+
+
+def p948_pergunta_reconhece_resposta():
+    \"\"\"Rodada 24 (P948): o texto pós-ASI reenviado, pontuado pelas palavras contra os documentos das Partes 1-49
+    (dialogo/rodada24.py, conferido em Java). Devolve [(parte, escore)] em ordem decrescente.\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada24", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada24.py"))
+    r24 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r24)
+    ds, texto = r24.dados()
+    return sorted(r24.pontuar(ds, texto), key=lambda x: (-x[1], x[0]))
+
+
+ERROS_P999, TESTES_P999 = 154, 440
+
+
+def p972_portugues_por_profundidade(d=None, pt=None):
+    \"\"\"A cobertura da OpenWordNet-PT por profundidade (P972): para os substantivos do WordNet com profundidade (P793), a
+    fração que tem lema em português. Devolve (cobertura geral, cobertura na profundidade <= 4, na >= 12, {profundidade:
+    (sinsets, cobertura)}).\"\"\"
+    from synthai.dicionario import Dicionario, DicionarioPT, profundidades
+    d = d or Dicionario()
+    pt = pt or DicionarioPT()
+    prof = profundidades(d)
+    por = {}
+    inv = {i: k for k, i in d.indice.items()}
+    for i, p in prof.items():
+        pos, desloc = inv[i].split(":")
+        if pos != "n":
+            continue
+        tem = f"{desloc}-n" in pt.lemas
+        n, c = por.get(p, (0, 0))
+        por[p] = (n + 1, c + tem)
+    def cob(ps):
+        n = sum(por[p][0] for p in ps)
+        return sum(por[p][1] for p in ps) / n
+    return (cob(list(por)), cob([p for p in por if p <= 4]), cob([p for p in por if p >= 12]),
+            {p: (por[p][0], por[p][1] / por[p][0]) for p in sorted(por)})
+
+
+def p973_kaprekar_hex(digitos=4, base=16):
+    \"\"\"A rotina de Kaprekar (P973): K(n) = (dígitos decrescentes) − (crescentes), com `digitos` dígitos na `base`, para todo
+    n que não tem todos os dígitos iguais. Devolve (ciclos terminais, cada um começando pelo menor, {ciclo: quantos números
+    ele atrai}, números).\"\"\"
+    def k(n):
+        ds = []
+        for _ in range(digitos):
+            n, r = divmod(n, base)
+            ds.append(r)
+        a = d_ = 0
+        for x in sorted(ds, reverse=True):
+            a = a * base + x
+        for x in sorted(ds):
+            d_ = d_ * base + x
+        return a - d_
+    bacia = {}
+    total = 0
+    for n in range(1, base ** digitos):
+        x, ds = n, set()
+        y = n
+        for _ in range(digitos):
+            y, r = divmod(y, base)
+            ds.add(r)
+        if len(ds) == 1:
+            continue
+        total += 1
+        vistos = []
+        while x not in vistos:
+            vistos.append(x)
+            x = k(x)
+        ciclo = vistos[vistos.index(x):]
+        j = ciclo.index(min(ciclo))
+        c = tuple(ciclo[j:] + ciclo[:j])
+        bacia[c] = bacia.get(c, 0) + 1
+    return sorted(bacia), bacia, total
+
+
+def p971_duas_memorias():
+    \"\"\"Rodada 25 (P971): exponencial, potência e duas exponenciais na curva média, pelo AIC (dialogo/rodada25.py,
+    conferido em Java). Devolve (aic exponencial, aic potência, aic duas exponenciais, (A, B, t1, t2, sse)).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada25", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada25.py"))
+    r25 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r25)
+    sim = r25.r21.semelhancas(r25.r21.conjuntos())
+    ys = [r25.r21.media_distancia(sim, L) for L in range(1, 21)]
+    lys = [log(y) for y in ys]
+    _, _, se = r25.r22.reta([float(L) for L in range(1, 21)], lys)
+    _, _, sp = r25.r22.reta([log(L) for L in range(1, 21)], lys)
+    s2, A, B, t1, t2 = r25.duas_exponenciais(ys)
+    return r25.aic(se, 20, 2), r25.aic(sp, 20, 2), r25.aic(s2, 20, 4), (A, B, t1, t2, s2)
+
+
+def p974_previsoes_sem_largura(partes=range(46, 52)):
+    \"\"\"A regra das faixas como passo verificável (P974): nas linhas de previsão "- (x) ..." do bloco "Previsões
+    pré-registradas" de cada documento, conta as unilaterais (com ≥, ≤, >, <, "pelo menos", "no máximo", "ou mais",
+    "ou menos" e sem um intervalo [a; b]). Devolve {parte: (previsões, unilaterais, [as letras das unilaterais])}.\"\"\"
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    res = {}
+    for n in partes:
+        nome = next((f for f in sorted(os.listdir(raiz)) if f.startswith(f"ASI_AGI_parte{n}_")), None)
+        if nome is None:
+            continue
+        texto = open(os.path.join(raiz, nome), encoding="utf-8").read()
+        i = texto.find("## Previsões pré-registradas")
+        if i < 0:
+            continue
+        bloco = texto[i:texto.find("\\n---", i) if texto.find("\\n---", i) > 0 else len(texto)]
+        prev, uni = 0, []
+        for linha in bloco.split("\\n"):
+            m = re.match(r"- \\(([a-z])\\)", linha.strip())
+            if not m:
+                continue
+            prev += 1
+            um_lado = re.search(r"≥|≤|(?<![-=])>|<|pelo menos|no máximo|ou mais|ou menos", linha)
+            if um_lado and not re.search(r"\\[[^\\]]*;[^\\]]*\\]", linha):
+                uni.append(m.group(1))
+        res[n] = (prev, len(uni), uni)
+    return res
+
+
+ERROS_P1029, TESTES_P1029 = 156, 448
+
+
+def p1002_funis_pt(pt=None):
+    \"\"\"Os funis das definições em português (P1002): cada lema de uma palavra só de um sinset de substantivo com glosa vai
+    para a primeira palavra da glosa (no singular) que é lema de substantivo e não é ela mesma. Devolve (a mais escolhida,
+    o seu grau, a fração das palavras com destino que escolhem uma das 10 mais, palavras com destino, as 10 mais).\"\"\"
+    from synthai.dicionario import DicionarioPT
+    pt = pt or DicionarioPT()
+    nomes = {x.lower() for sid, ls in pt.lemas.items() if sid.endswith("-n") for x in ls if x.isalpha()}
+    f = {}
+    for sid in sorted(pt.glosas):
+        if not sid.endswith("-n") or sid not in pt.lemas:
+            continue
+        for w in pt.lemas[sid]:
+            w = w.lower()
+            if not w.isalpha() or w in f:
+                continue
+            for t in pt.fichas(pt.glosas[sid]):
+                b = pt.lema(t)
+                if b is not None and b in nomes and b != w:
+                    f[w] = b
+                    break
+    grau = {}
+    for b in f.values():
+        grau[b] = grau.get(b, 0) + 1
+    top = sorted(grau, key=lambda w: (-grau[w], w))[:10]
+    return top[0], grau[top[0]], sum(grau[w] for w in top) / len(f), len(f), [(w, grau[w]) for w in top]
+
+
+def p1003_inverte_e_soma(ate=4095, base=16, maximo=50):
+    \"\"\"Inverte e soma (P1003): n -> n + (n com os dígitos invertidos na base), até um palíndromo, no máximo `maximo` passos.
+    Um n que já é palíndromo conta com 0 passos. Devolve (fração que chega, média de passos dos que chegam, os que não
+    chegam).\"\"\"
+    def digitos(n):
+        ds = []
+        while n:
+            n, r = divmod(n, base)
+            ds.append(r)
+        return ds  # do menos significativo para o mais
+
+    def inverso(n):
+        v = 0
+        for r in digitos(n):
+            v = v * base + r
+        return v
+
+    passos, nao = [], []
+    for n in range(1, ate + 1):
+        x, k = n, 0
+        while digitos(x) != digitos(x)[::-1] and k < maximo:
+            x += inverso(x)
+            k += 1
+        if digitos(x) == digitos(x)[::-1]:
+            passos.append(k)
+        else:
+            nao.append(n)
+    return len(passos) / ate, sum(passos) / len(passos), nao
+
+
+def p1001_duas_memorias_em_log():
+    \"\"\"Rodada 26 (P1001): as duas exponenciais ajustadas em log por Gauss-Newton, com exp e log próprios
+    (dialogo/rodada26.py, IGUAL em Java). Devolve (sse da grade, (A, B, t1, t2, sse em log), AIC, limiar para vencer a
+    potência).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada26", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada26.py"))
+    r26 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r26)
+    sim = r26.r21.semelhancas(r26.r21.conjuntos())
+    ys = [r26.r21.media_distancia(sim, L) for L in range(1, 21)]
+    ly = [r26.log_(y) for y in ys]
+    s0, A, B, t1, t2 = r26.grade(ys)
+    th, sse = r26.gauss_newton([r26.log_(A), r26.log_(B), t1, t2], ly)
+    return s0, (r26.exp_(th[0]), r26.exp_(th[1]), th[2], th[3], sse), 20 * r26.log_(sse / 20) + 8, 0.3095 * r26.exp_(-0.2)
+
+
+ERROS_P1059, TESTES_P1059 = 157, 454
+
+
+def p1031_historico_de_mim(partes=range(31, 53)):
+    \"\"\"O meu histórico mensurável, para eu prever a mim mesmo (P1031). Por parte: caracteres do documento, razão de
+    compressão (zlib 9), testes de unidade escritos (def test_ em synthai/testes_parteNN.py), testes e erros do placar
+    (linha "Parte N: X testes, Y erros" do documento) e a redundância média da pergunta dada a resposta (P821).
+    Devolve {parte: dict}.\"\"\"
+    import os
+    import re
+    import zlib
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    res = {}
+    for n in partes:
+        nome = next((f for f in sorted(os.listdir(raiz)) if f.startswith(f"ASI_AGI_parte{n}_")), None)
+        if nome is None:
+            continue
+        doc = open(os.path.join(raiz, nome), encoding="utf-8").read()
+        b = doc.encode("utf-8")
+        tf = os.path.join(raiz, "synthai", f"testes_parte{n}.py")
+        testes_unid = open(tf, encoding="utf-8").read().count("def test_") if os.path.exists(tf) else 0
+        m = re.search(rf"Parte {n}:\\s*\\**\\s*(\\d+) testes?,\\s*(\\d+) erros?", doc)
+        try:
+            red = p821_inversao(range(n, n + 1))[1]
+        except (ZeroDivisionError, StopIteration):
+            red = None
+        res[n] = {"caracteres": len(doc), "compressao": len(zlib.compress(b, 9)) / len(b), "testes_unidade": testes_unid,
+                  "testes": int(m.group(1)) if m else None, "erros": int(m.group(2)) if m else None, "redundancia": red}
+    return res
+
+
+def p1032_preditor_de_mim(historico, k=8):
+    \"\"\"O preditor estatístico de mim mesma (P1032): para cada medida, o centro é a média das últimas k partes com valor e a
+    meia-largura 1,645 × o desvio padrão amostral delas (faixa de 90% se as partes fossem uma amostra normal). Devolve
+    {medida: (centro, meia-largura, último valor = o preditor ingênuo)}.\"\"\"
+    res = {}
+    partes = sorted(historico)
+    for medida in ("caracteres", "compressao", "testes_unidade", "testes", "erros", "redundancia"):
+        vals = [historico[n][medida] for n in partes if historico[n][medida] is not None][-k:]
+        t = 0.0
+        for v in vals:  # laço, não sum() (compensada no Python 3.12+), para coincidir com o Java bit a bit
+            t += v
+        m = t / len(vals)
+        q = 0.0
+        for v in vals:
+            q += (v - m) * (v - m)
+        res[medida] = (m, 1.645 * sqrt(q / (len(vals) - 1)), vals[-1])  # sqrt, não ** 0,5 (pow da libm)
+    return res
+
+
+def p1033_definicao_e_profundidade(d=None):
+    \"\"\"O tamanho da definição prevê a profundidade? (P1033): Spearman entre o número de palavras da definição (glosa sem
+    exemplos) e a profundidade (P793), nos substantivos com profundidade. Devolve (rho, sinsets, média de palavras por
+    faixa de profundidade {0-4, 5-8, 9-12, 13+}).\"\"\"
+    from synthai.dicionario import Dicionario, profundidades, spearman
+    d = d or Dicionario()
+    prof = profundidades(d)
+    xs, ys = [], []
+    for i, p in sorted(prof.items()):
+        pos, _, _, glosa = d.sinsets[i]
+        if pos != "n":
+            continue
+        xs.append(len(d.definicao(glosa).split()))
+        ys.append(p)
+    faixas = {}
+    for x, p in zip(xs, ys):
+        f = "0-4" if p <= 4 else "5-8" if p <= 8 else "9-12" if p <= 12 else "13+"
+        n, t = faixas.get(f, (0, 0))
+        faixas[f] = (n + 1, t + x)
+    return spearman(xs, ys), len(xs), {f: t / n for f, (n, t) in faixas.items()}
+
+
+def p1034_pi_hexadecimal(n=1000):
+    \"\"\"Os dígitos hexadecimais de π (P1034): pela fórmula de Bailey-Borwein-Plouffe (o n-ésimo dígito sem os anteriores, em
+    ponto flutuante) e por π exato em inteiros (Machin: π = 16 arctg(1/5) − 4 arctg(1/239)). Devolve (quantos coincidem, n,
+    os 8 primeiros, o χ² das 16 frequências nos n dígitos exatos).\"\"\"
+    def serie(j, d):
+        # parte fracionária de Σ_k 16^(d-k)/(8k+j)
+        s = 0.0
+        for k in range(d + 1):
+            s = (s + pow(16, d - k, 8 * k + j) / (8 * k + j)) % 1.0
+        t, k = 0.0, d + 1
+        while True:
+            termo = 16.0 ** (d - k) / (8 * k + j)
+            if termo < 1e-17:
+                break
+            t += termo
+            k += 1
+        return (s + t) % 1.0
+
+    def bbp(pos):  # o dígito na posição pos (1 = o primeiro depois da vírgula)
+        d = pos - 1
+        x = (4 * serie(1, d) - 2 * serie(4, d) - serie(5, d) - serie(6, d)) % 1.0
+        return int(x * 16)
+
+    bits = 4 * n + 64
+    um = 1 << bits
+
+    def arctg_inv(x):
+        soma, termo, k, sinal = 0, um // x, 1, 1
+        while termo:
+            soma += sinal * (termo // k)
+            termo //= x * x
+            k += 2
+            sinal = -sinal
+        return soma
+
+    pi = 16 * arctg_inv(5) - 4 * arctg_inv(239)
+    frac = pi - 3 * um
+    exatos = []
+    for _ in range(n):
+        frac *= 16
+        exatos.append(frac >> bits)
+        frac &= um - 1
+    pelo_bbp = [bbp(p) for p in range(1, n + 1)]
+    cont = [exatos.count(h) for h in range(16)]
+    esperado = n / 16
+    chi2 = sum((c - esperado) ** 2 / esperado for c in cont)
+    return sum(a == b for a, b in zip(pelo_bbp, exatos)), n, "".join(format(h, "X") for h in exatos[:8]), chi2
+
+
+ERROS_P1089, TESTES_P1089 = 159, 462
+
+
+def p1062_folhas(d=None):
+    \"\"\"Folhas e ramos da taxonomia (P1062): nos substantivos com profundidade, folha = nenhum sinset tem este como
+    hiperônimo. Devolve (fração de folhas, média de filhos dos nós internos, substantivos).\"\"\"
+    from synthai.dicionario import Dicionario, profundidades
+    d = d or Dicionario()
+    prof = profundidades(d)
+    filhos = {}
+    for i, x in enumerate(d.sinsets):
+        for h in x[2]:
+            if h in d.indice:
+                k = d.indice[h]
+                filhos[k] = filhos.get(k, 0) + 1
+    nomes = [i for i in prof if d.sinsets[i][0] == "n"]
+    internos = [filhos[i] for i in nomes if filhos.get(i, 0) > 0]
+    return (len(nomes) - len(internos)) / len(nomes), sum(internos) / len(internos), len(nomes)
+
+
+def p1063_autodescritivos(base=16):
+    \"\"\"Números autodescritivos de `base` dígitos na base (P1063): d_i = quantas vezes o dígito i aparece. Enumeração exata
+    dos vetores com Σ d_i = base e Σ i·d_i = base (condições necessárias), conferindo cada um. Devolve a lista, em texto.\"\"\"
+    achados = []
+
+    def rec(i, resto_peso, usados, d):
+        if i == 0:
+            d0 = base - usados
+            if 0 <= d0 < base and resto_peso == 0:
+                v = [d0] + d[::-1]
+                if all(v[j] == v.count(j) for j in range(base)) and v[0] > 0:
+                    achados.append("".join(format(x, "X") for x in v))
+            return
+        for k in range(0, min(base - 1, resto_peso // i) + 1):
+            if usados + k > base:
+                break
+            rec(i - 1, resto_peso - i * k, usados + k, d + [k])
+
+    rec(base - 1, base, 0, [])
+    return sorted(achados)
+
+
+def p1061_exatidao_ou_sorte():
+    \"\"\"Rodada 28 (P1061): a chance de cada rodada antiga passar por sorte pelo modelo de sorteios independentes
+    (dialogo/rodada28.py, IGUAL em Java) e as diferenças REAIS da libm nos argumentos distintos das rodadas com chance < 0,5
+    (dialogo/diferencas28.tsv, medidas com registrar_libm.py e CompararLibm.java). Devolve ({rodada: chance}, {rodada:
+    (exp distintos, exp diferentes, log distintos, log diferentes)}).\"\"\"
+    import importlib.util
+    import os
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    spec = importlib.util.spec_from_file_location("rodada28", os.path.join(raiz, "dialogo", "rodada28.py"))
+    r28 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r28)
+    chances = {r: r28.chance(e, g) for r, e, g, _ in r28.contagens()}
+    dif = {}
+    for l in open(os.path.join(raiz, "dialogo", "diferencas28.tsv"), encoding="ascii").read().split("\\n")[1:]:
+        if l:
+            c = l.split("\\t")
+            dif[c[0]] = tuple(int(x) for x in c[1:])
+    return chances, dif
+
+
+ERROS_P1119, TESTES_P1119 = 163, 468
+
+
+def p1092_pnn_sem_teste(desde=821, ate=1090):
+    \"\"\"A auditoria pedida pela Parte 54 (P1092): das funções pNN com desde <= NN <= ate, quais não aparecem (pelo nome) em
+    nenhum synthai/testes_parte*.py. Devolve (total, [sem teste]).\"\"\"
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    nomes = [m.group(1) for m in re.finditer(r"^def (p(\\d+)_\\w+)\\(", open(os.path.join(raiz, "calculos.py"), encoding="utf-8").read(), re.M)
+             if desde <= int(m.group(2)) <= ate]
+    testes = "".join(open(f, encoding="utf-8").read() for f in glob.glob(os.path.join(raiz, "synthai", "testes_parte*.py")))
+    return len(nomes), [n for n in nomes if n not in testes]
+
+
+def _destino_final(f, w):
+    \"\"\"O destino de uma órbita no mapa f: o ciclo (pelo menor elemento) ou o sumidouro onde ela termina.\"\"\"
+    vistos = {}
+    x = w
+    while x is not None and x not in vistos:
+        vistos[x] = len(vistos)
+        if f.get(x) is None:
+            return ("sumidouro", x)
+        x = f[x]
+    ciclo = [y for y, i in vistos.items() if i >= vistos[x]]
+    return ("ciclo", min(ciclo))
+
+
+def p1093_sem_o_funil(funil="act", d=None):
+    \"\"\"A fragilidade do mapa da definição (P1093): as palavras cujo primeiro substantivo da definição é `funil` passam ao
+    segundo substantivo (ou viram sumidouro). Devolve (fração das palavras que mudam de destino final, palavras que iam
+    direto ao funil, palavras).\"\"\"
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    f = _mapa_da_definicao(d)
+    nomes = set(f)
+    g = dict(f)
+    diretas = 0
+    for w in sorted(f):
+        if f[w] == funil:
+            diretas += 1
+            i = next(i for i in d.lemas[w] if d.sinsets[i][0] == "n")
+            cand = [x for x in d.palavras_da_definicao(d.sinsets[i][3]) if x in nomes and x != w]
+            resto = [x for x in cand if x != funil]
+            g[w] = resto[0] if resto else None
+    muda = sum(1 for w in f if _destino_final(f, w) != _destino_final(g, w))
+    return muda / len(f), diretas, len(f)
+
+
+def p1094_ulp_em_hexadecimal(n=100000, semente=1094):
+    \"\"\"Quantos dos 13 dígitos hexadecimais da mantissa mudam ao somar um ulp (P1094), para doubles sorteados em [1, 2).
+    Devolve (média medida, a conta 16/15).\"\"\"
+    import math
+    rng = random.Random(semente)
+    total = 0
+    for _ in range(n):
+        x = 1.0 + rng.random()
+        y = math.nextafter(x, 2.0)
+        a, b = x.hex()[4:17], y.hex()[4:17]
+        if y >= 2.0:
+            continue
+        total += sum(1 for p, q in zip(a, b) if p != q)
+    return total / n, 16 / 15
+
+
+def p1094_ulp_mantissa_uniforme(n=100000, semente=1094):
+    \"\"\"O mundo novo da P1094: a mantissa de 52 bits sorteada uniforme (getrandbits), sem o arredondamento par de
+    1 + random(); quantos dos 13 dígitos hexadecimais mudam ao somar um ulp. Devolve (média, 16/15).\"\"\"
+    rng = random.Random(semente)
+    total = 0
+    for _ in range(n):
+        m = rng.getrandbits(52)
+        if m == (1 << 52) - 1:
+            continue
+        total += sum(1 for p, q in zip(format(m, "013x"), format(m + 1, "013x")) if p != q)
+    return total / n, 16 / 15
+
+
+def p1091_o_ulp_que_chega():
+    \"\"\"Rodada 29 (P1091): para cada rodada antiga que chama exp ou log, a maior mudança relativa da saída com um ulp em cada
+    exp e log, e se o texto mudou (dialogo/rodada29.py sobre dialogo/saidas29/, conferido em Java). Devolve {rodada: (números,
+    maior mudança relativa, texto mudou)}.\"\"\"
+    import importlib.util
+    import os
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    spec = importlib.util.spec_from_file_location("rodada29", os.path.join(raiz, "dialogo", "rodada29.py"))
+    r29 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r29)
+    res = {}
+    for r in r29.RODADAS:
+        a = open(os.path.join(raiz, "dialogo", "saidas29", f"normal{r}.txt"), encoding="utf-8").read()
+        b = open(os.path.join(raiz, "dialogo", "saidas29", f"perturbada{r}.txt"), encoding="utf-8").read()
+        res[r] = r29.comparar(a, b)
+    return res
+
+
+ERROS_P1149, TESTES_P1149 = 166, 474
+
+
+def p1122_sinonimos_perfeitos(d=None):
+    \"\"\"Sinônimos perfeitos (P1122): palavras de uma palavra só (alfabéticas) com exatamente o mesmo conjunto de sinsets que
+    outra. Devolve (fração das palavras com gêmeo, palavras, o maior grupo de gêmeos).\"\"\"
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    grupos = {}
+    n = 0
+    for w, idx in d.lemas.items():
+        if not w.isalpha():
+            continue
+        n += 1
+        grupos.setdefault(tuple(sorted(set(idx))), []).append(w)
+    com = sum(len(g) for g in grupos.values() if len(g) > 1)
+    maior = max(grupos.values(), key=lambda g: (len(g), sorted(g)))
+    return com / n, n, sorted(maior)
+
+
+def p1123_mesma_soma(ate=4095):
+    \"\"\"A mesma soma de dígitos em base 16 e em base 10 (P1123), para n de 1 a `ate`. Devolve (fração, quantos, a conta
+    normal φ(7,5/√90)/√90).\"\"\"
+    def soma(n, b):
+        s = 0
+        while n:
+            n, r = divmod(n, b)
+            s += r
+        return s
+    iguais = sum(1 for n in range(1, ate + 1) if soma(n, 16) == soma(n, 10))
+    dp = sqrt(90.0)
+    conta = exp(-0.5 * (7.5 / dp) ** 2) / sqrt(2 * pi) / dp
+    return iguais / ate, iguais, conta
+
+
+def p1121_empates():
+    \"\"\"Rodada 30 (P1121): os empates exatos nas escolhas impressas das rodadas 12, 14, 18, 19, 20 e 24 (dialogo/rodada30.py,
+    conferido em Java). Devolve {rodada: empates}.\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada30", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada30.py"))
+    r30 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r30)
+    return r30.contar(r30.grupos())
+
+
+ERROS_P1179, TESTES_P1179 = 167, 479
+
+
+def p1152_palindromos(d=None):
+    \"\"\"Palíndromos no dicionário (P1152): lemas alfabéticos de 3 letras ou mais (minúsculos). Devolve (palíndromos, a conta
+    de letras independentes Σ_L f(L)·(Σp²)^⌊L/2⌋ × N, a conta com a coincidência real das pontas, N, exemplos).\"\"\"
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    ws = sorted({w.lower() for w in d.lemas if w.isalpha() and len(w) >= 3})
+    letras, primeira, ultima, tam = {}, {}, {}, {}
+    for w in ws:
+        for ch in w:
+            letras[ch] = letras.get(ch, 0) + 1
+        primeira[w[0]] = primeira.get(w[0], 0) + 1
+        ultima[w[-1]] = ultima.get(w[-1], 0) + 1
+        tam[len(w)] = tam.get(len(w), 0) + 1
+    n, tot = len(ws), sum(letras.values())
+    q = sum((v / tot) ** 2 for v in letras.values())
+    pontas = sum((primeira.get(ch, 0) / n) * (ultima.get(ch, 0) / n) for ch in letras)
+    conta = sum(c * q ** (L // 2) for L, c in tam.items())
+    conta_pontas = sum(c * pontas * q ** (L // 2 - 1) for L, c in tam.items())
+    pals = [w for w in ws if w == w[::-1]]
+    return len(pals), conta, conta_pontas, n, pals[:12]
+
+
+def p1153_duplos_palindromos(ate=10 ** 6):
+    \"\"\"Números palíndromos em base 10 e em base 16 ao mesmo tempo (P1153), de 1 a ate − 1. Devolve (quantos, a conta
+    Σ 16^(−⌊k/2⌋) sobre os palíndromos decimais, os primeiros).\"\"\"
+    dec = [x for x in range(1, ate) if str(x) == str(x)[::-1]]
+    conta = sum(16.0 ** (-(len(format(x, "x")) // 2)) for x in dec)
+    duplos = [x for x in dec if format(x, "x") == format(x, "x")[::-1]]
+    return len(duplos), conta, duplos[:20]
+
+
+def p1151_alfabeto_portugues():
+    \"\"\"Rodada 31 (P1151): os 13 primeiros 4-gramas da Rodada 12 reordenados pela ordem de um dicionário português
+    (dialogo/rodada31.py, IGUAL em Java). Devolve (pares que mudam de ordem, quantos dos 13 têm letra com acento).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada31", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada31.py"))
+    r31 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r31)
+    gs = r31.gramas()
+    _, _, trocas = r31.reordenar(gs)
+    return trocas, sum(1 for g, _, _ in gs if r31.chave_pt(g) != g.lower())
+
+def _parte_47():
+    print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
+    direto, inverso, pares, n = p851_genero_e_diferenca()
+    print(f"P851 {n} substantivos com hiperonimo: a definicao cita o hiperonimo em {direto:.4f}; a do hiperonimo cita o hiponimo em "
+          f"{inverso:.4f} ({pares} pares); razao = {direto / inverso:.1f}")
+    ad, ai = p856_acaso_851()
+    print(f"P856 o acaso da P851 (um substantivo sorteado no lugar do hiperonimo): direto = {ad:.4f}; inverso = {ai:.4f}")
+    for ate in (850, 4095):
+        sem, media, conta = p852_cadeia_hexadecimal(ate)
+        print(f"P852 ate {ate}: {sem} sem letra no hexadecimal; passos medios da cadeia = {media:.4f} (conta com independencia: {conta:.4f})")
+    for rodada in ("rodada18", "rodada19"):
+        ac, k, erradas, med = p853_reconstrucao(rodada)
+        print(f"P853 {rodada}: {ac} de {k} partes reconstruidas (erradas: {erradas}); mediana da razao propria/melhor outra = {med:.3f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P879, testes=TESTES_P879)
+    print(f"P879 minha taxa de erro ({ERROS_P879}/{TESTES_P879}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_48():
+    print("--- Parte 48 (0x30: o ciclo) ---")
+    ac, n, erradas, maioria = p881_epoca()
+    print(f"P881 o Naive Bayes reconhece a epoca de {ac} de {n} secoes (erradas: {erradas}); a maioria deixando um de fora: {maioria}; "
+          f"ao acaso P(>= {ac}) = {p825_cauda_binomial(n, 0.5, ac):.2e}")
+    N, sumid, cic, nciclos, cauda, bacia, ciclo = p882_mapa_da_definicao()
+    print(f"P882 mapa da definicao: N = {N}; sumidouros = {sumid}; pontos ciclicos = {cic} em {nciclos} ciclos (aleatorio: "
+          f"{sqrt(pi * N / 2):.1f}); cauda media = {cauda:.3f} (aleatorio: {sqrt(pi * N / 8):.1f}); maior bacia = {bacia:.4f}, ciclo {ciclo}")
+    frac, ciclos = p883_felizes_hex()
+    print(f"P883 felizes em base 16 (1..4095) = {frac:.4f}; ciclos alem do 1: {ciclos}; base 10 (1..1000) = {p883_felizes_hex(1000, 10)[0]:.3f}")
+    d1, d20, ind = p884_ciclo_da_serie()
+    print(f"P884 semelhanca media a distancia 1 = {d1:.4f}; a distancia 20 = {d20:.4f}; indice do ciclo: "
+          + "; ".join(f"parte {k} = {v:.3f}" for k, v in ind.items()))
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P909, testes=TESTES_P909)
+    print(f"P909 minha taxa de erro ({ERROS_P909}/{TESTES_P909}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_49():
+    print("--- Parte 49 (0x31: a deriva) ---")
+    tau, se, alfa, sp, controle = p911_deriva()
+    print(f"P911 deriva: exponencial tau = {tau:.2f} (residuo {se:.4f}); potencia alfa = {alfa:.4f} (residuo {sp:.4f}); "
+          f"embaralhada: alfa = " + ", ".join(f"{x:+.3f}" for x in controle))
+    top, g, frac, incl, dez = p912_funis()
+    print(f"P912 a palavra mais escolhida pelas definicoes = {top} ({g}); as 10 mais = {frac:.4f} das palavras; inclinacao do grau = {incl:.3f}; {dez}")
+    f1, f8, n, fr = p913_benford_hex()
+    print(f"P913 Benford em base 16 nos {n} numeros do resultados.txt: digito 1 = {f1:.4f} (Benford 0,25); 8..F = {f8:.4f} (Benford 0,25)")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P939, testes=TESTES_P939)
+    print(f"P939 minha taxa de erro ({ERROS_P939}/{TESTES_P939}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_50():
+    print("--- Parte 50 (0x32: a vida das coisas) ---")
+    pot, k, (me, mp), (ce, cp), malfa = p941_curvas_individuais()
+    print(f"P941 curvas individuais: a potencia ganha em {pot} de {k}; media das exponenciais ajustadas: residuo exp {me:.4f}, pot {mp:.4f} "
+          f"(alfa {malfa:.3f}); media crua das mesmas partes: exp {ce:.4f}, pot {cp:.4f}")
+    n, m, pares, esperado, frac, ex = p942_definicoes_mutuas()
+    print(f"P942 definicoes mutuas: N = {n}, M = {m}; pares = {pares}; ao acaso = {esperado:.2f}; razao = {pares / esperado:.1f}; "
+          f"palavras em algum par = {frac:.4f}; {ex}")
+    igual, aud, red = p947_o_texto_voltou()
+    top = sorted(red.items(), key=lambda x: -x[1])[:3]
+    print(f"P947 o texto voltou: codigo identico ao da Parte 33 = {igual}; auditoria: nos mudados = {aud['nos_mudados']}, nota constante = "
+          f"{aud['run_benchmarks_constante']}, avaliador pergunta ao agente = {aud['avaliador_pergunta_ao_agente']}; quem mais o contem: "
+          + ", ".join(f"parte {k} = {v:.4f}" for k, v in top))
+    esc = p948_pergunta_reconhece_resposta()
+    print("P948 o texto escolhe, pelas palavras: " + ", ".join(f"parte {k} = {v:.1f}" for k, v in esc[:5]))
+    r16, r2, rg, kp = p943_periodo_hex()
+    print(f"P943 periodo de 1/p em base 16 ({kp} primos ate 10000): ord(16)/(p-1) = {r16:.4f}; ord(2)/(p-1) = {r2:.4f}; 1/mdc = {rg:.4f}; "
+          f"produto = {r2 * rg:.4f}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P969, testes=TESTES_P969)
+    print(f"P969 minha taxa de erro ({ERROS_P969}/{TESTES_P969}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_51():
+    print("--- Parte 51 (0x33: a memoria curta e a longa) ---")
+    ae, ap, a2, (A, B, t1, t2, s2) = p971_duas_memorias()
+    print(f"P971 AIC: exponencial = {ae:.2f}; potencia = {ap:.2f}; duas exponenciais = {a2:.2f} (A = {A:.4f}, B = {B:.4f}, t1 = {t1}, t2 = {t2}, "
+          f"sse = {s2:.4f})")
+    g, a, b, por = p972_portugues_por_profundidade()
+    print(f"P972 cobertura do portugues nos substantivos = {g:.4f}; profundidade <= 4: {a:.4f}; >= 12: {b:.4f}; diferenca = {a - b:.4f}")
+    cs, bacia, total = p973_kaprekar_hex()
+    print(f"P973 Kaprekar em base 16 (4 digitos, {total} numeros): {len(cs)} ciclos; " + "; ".join(
+        f"{[format(x, 'X') for x in c]}: {bacia[c] / total:.3f}" for c in sorted(bacia, key=lambda c: -bacia[c]))
+        + f"; base 10: {p973_kaprekar_hex(4, 10)[0]}")
+    uni = p974_previsoes_sem_largura()
+    print("P974 previsoes unilaterais (sem faixa) por parte: " + "; ".join(f"{k}: {u} de {p} {ls}" for k, (p, u, ls) in uni.items()))
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P999, testes=TESTES_P999)
+    print(f"P999 minha taxa de erro ({ERROS_P999}/{TESTES_P999}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_52():
+    print("--- Parte 52 (0x34: o metodo ou a serie) ---")
+    s0, (A, B, t1, t2, sse), aic2, limiar = p1001_duas_memorias_em_log()
+    print(f"P1001 duas exponenciais em log (Gauss-Newton, exp/log proprios): sse da grade = {s0:.4f} -> {sse:.4f}; A = {A:.4f}, B = {B:.4f}, "
+          f"t1 = {t1:.3f}, t2 = {t2:.3e}; AIC = {aic2:.2f} (potencia: -79.37; limiar de sse = {limiar:.4f})")
+    top, g, frac, n, dez = p1002_funis_pt()
+    print(f"P1002 funis do portugues: a mais escolhida = {top} ({g}); as 10 mais = {frac:.4f} de {n} palavras; {dez}")
+    f, m, nao = p1003_inverte_e_soma()
+    f10, m10, n10 = p1003_inverte_e_soma(9999, 10)
+    print(f"P1003 inverte e soma, base 16 (1..4095): chegam {f:.4f}, em {m:.3f} passos; nao chegam {len(nao)} (o primeiro: {hex(nao[0])}); "
+          f"base 10 (1..9999): nao chegam {len(n10)} (o primeiro: {n10[0]})")
+    uni = p974_previsoes_sem_largura(range(52, 53))
+    print(f"P974 previsoes unilaterais da Parte 52: {uni}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1029, testes=TESTES_P1029)
+    print(f"P1029 minha taxa de erro ({ERROS_P1029}/{TESTES_P1029}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_53():
+    print("--- Parte 53 (0x35: preditiva comigo mesma) ---")
+    h = p1031_historico_de_mim(range(31, 54))
+    pred = p1032_preditor_de_mim({n: v for n, v in h.items() if n <= 52})
+    if 53 in h:
+        for medida, (m, w, u) in pred.items():
+            v = h[53][medida]
+            print(f"P1032 {medida}: medido = {v}; estatistico [{m - w:.4f}; {m + w:.4f}] {'dentro' if v is not None and abs(v - m) <= w else 'fora'}; "
+                  f"ingenuo = {u}")
+    rho, n, faixas = p1033_definicao_e_profundidade()
+    print(f"P1033 Spearman(palavras da definicao, profundidade) = {rho:.4f} em {n} substantivos; palavras por faixa: "
+          + ", ".join(f"{k}: {v:.2f}" for k, v in faixas.items()))
+    ac, total, inicio, chi2 = p1034_pi_hexadecimal()
+    print(f"P1034 pi em hexadecimal: BBP = exato em {ac} de {total} digitos; 3,{inicio}...; chi2 (15 g.l.) = {chi2:.3f}")
+    print(f"P974 previsoes unilaterais da Parte 53: {p974_previsoes_sem_largura(range(53, 54))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1059, testes=TESTES_P1059)
+    print(f"P1059 minha taxa de erro ({ERROS_P1059}/{TESTES_P1059}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_54():
+    print("--- Parte 54 (0x36: a sorte das rodadas) ---")
+    chances, dif = p1061_exatidao_ou_sorte()
+    print(f"P1061 rodadas com chance de sorte < 0,5 (modelo de sorteios independentes): {sum(v < 0.5 for v in chances.values())}; "
+          f"menor: {min(chances, key=chances.get)} = {min(chances.values()):.2e}; diferencas reais (exp dist, exp dif, log dist, log dif): "
+          + "; ".join(f"{k} {v}" for k, v in dif.items()))
+    frac, media, n = p1062_folhas()
+    print(f"P1062 folhas: {frac:.4f} de {n} substantivos; filhos por no interno = {media:.3f} (conta: {frac / (1 - frac) + 1:.3f})")
+    print(f"P1063 autodescritivos: base 16 {p1063_autodescritivos(16)}; base 10 {p1063_autodescritivos(10)}; base 7 {p1063_autodescritivos(7)}; "
+          f"base 4 {p1063_autodescritivos(4)}")
+    print(f"P974 previsoes unilaterais da Parte 54: {p974_previsoes_sem_largura(range(54, 55))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1089, testes=TESTES_P1089)
+    print(f"P1089 minha taxa de erro ({ERROS_P1089}/{TESTES_P1089}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_55():
+    print("--- Parte 55 (0x37: o ulp que chega) ---")
+    for r, (n, m, t) in p1091_o_ulp_que_chega().items():
+        print(f"P1091 rodada{r}: {n} numeros; maior mudanca relativa com um ulp = {m:.3e}; texto {'MUDOU' if t else 'igual'}")
+    total, sem = p1092_pnn_sem_teste()
+    print(f"P1092 funcoes pNN desde a P821 sem teste: {len(sem)} de {total}: {sem}")
+    frac, diretas, n = p1093_sem_o_funil()
+    print(f"P1093 sem o funil 'act': {frac:.4f} das {n} palavras mudam de destino ({diretas} iam direto a 'act')")
+    a, conta = p1094_ulp_em_hexadecimal()
+    b, _ = p1094_ulp_mantissa_uniforme()
+    print(f"P1094 digitos hexadecimais que um ulp muda: 1 + random() = {a:.4f} (conta posterior {1 + conta / 32:.4f}); mantissa uniforme = {b:.4f} "
+          f"(conta {conta:.4f})")
+    print(f"P974 previsoes unilaterais da Parte 55: {p974_previsoes_sem_largura(range(55, 56))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1119, testes=TESTES_P1119)
+    print(f"P1119 minha taxa de erro ({ERROS_P1119}/{TESTES_P1119}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_56():
+    print("--- Parte 56 (0x38: os empates) ---")
+    emp = p1121_empates()
+    print("P1121 empates exatos nas escolhas impressas: " + "; ".join(f"rodada{r} = {e}" for r, e in sorted(emp.items()))
+          + f"; rodadas com empate: {sum(1 for e in emp.values() if e > 0)} de {len(emp)}")
+    frac, n, maior = p1122_sinonimos_perfeitos()
+    print(f"P1122 sinonimos perfeitos: {frac:.4f} das {n} palavras tem gemeo; o maior grupo ({len(maior)}): {maior}")
+    for ate in (4095, 65535):
+        f, k, conta = p1123_mesma_soma(ate)
+        print(f"P1123 mesma soma de digitos em base 16 e 10 (1..{ate}): {k} = {f:.4f} (conta continua {conta:.4f}; com a rede de multiplos de 3: x3)")
+    total, sem = p1092_pnn_sem_teste(1091, 1150)
+    print(f"P1092 pNN novas (P1091-P1150) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 56: {p974_previsoes_sem_largura(range(56, 57))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1149, testes=TESTES_P1149)
+    print(f"P1149 minha taxa de erro ({ERROS_P1149}/{TESTES_P1149}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_57():
+    print("--- Parte 57 (0x39: as restricoes) ---")
+    trocas, acentuados = p1151_alfabeto_portugues()
+    print(f"P1151 4-gramas reordenados pelo portugues: {len(trocas)} pares mudam; {acentuados} dos 13 tem acento")
+    pal, conta, conta_pontas, n, ex = p1152_palindromos()
+    print(f"P1152 palindromos: {pal} de {n} palavras; conta de letras independentes {conta:.1f}; com as pontas reais {conta_pontas:.1f}; {ex}")
+    k, conta2, primeiros = p1153_duplos_palindromos()
+    print(f"P1153 palindromos em base 10 e 16 abaixo de 10^6: {k} (conta {conta2:.1f}); {primeiros}")
+    total, sem = p1092_pnn_sem_teste(1151, 1180)
+    print(f"P1092 pNN novas (P1151-P1180) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 57: {p974_previsoes_sem_largura(range(57, 58))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1179, testes=TESTES_P1179)
+    print(f"P1179 minha taxa de erro ({ERROS_P1179}/{TESTES_P1179}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -8421,7 +9669,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57}
 
 
 if __name__ == "__main__":
@@ -8434,7 +9682,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (157 linhas)
+# CLAUDE.md  (197 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -8487,6 +9735,30 @@ anterior, commit e push.
   tem uma seção "Engenharia reversa" que diz que padrão se repetiu, o que ele significa e que regra nova ele pede.
   A PREMISSA É O SIGNIFICANTE E A RESPOSTA É O SIGNIFICADO (Parte 42): cada resposta é lida como o significado da sua
   premissa; medir quanto a resposta acrescenta à premissa (informação condicional) e quanto a premissa já continha.
+  A RESPOSTA É A PERGUNTA E A PERGUNTA É A RESPOSTA (Parte 46): medir também o sentido inverso (quanto da pergunta a resposta
+  já contém) e, de tempos em tempos, refazer tudo desde o começo (clone limpo, todas as partes numa execução, todos os
+  testes e rodadas) para ver se funciona.
+  Medido (Parte 46): cada resposta minha contém 58% da sua pergunta, e a pergunta só 5% da resposta; no diálogo, a pergunta
+  de cada rodada é mais explicada pela rodada que a responde (0,41) do que pela que a gerou (0,28): a pergunta se define
+  pelo que vem depois dela.
+- SER PREDITIVO CONSIGO MESMO (Parte 53, permanente): antes de cada parte, prever o meu PRÓPRIO comportamento mensurável (quantos erros vou ter,
+  o tamanho do texto, quantos testes vou escrever, quanto a resposta vai conter da pergunta, qual voz vai acertar, quantas previsões unilaterais), com
+  faixa e centro deduzido do meu histórico (`p1031_historico_de_mim`), registrado antes de escrever a parte; no fim, pontuar contra o preditor
+  ingênuo "igual à parte anterior" e manter o placar das previsões sobre mim separado do placar das previsões sobre o mundo.
+  Medido (Parte 53): o preditor estatístico (média das últimas 8 partes ± 1,645 desvios) ficou em 4 de 6; eu, em 6 de 7. Partir do estatístico e só
+  deslocar o centro por um mecanismo de sinal conferido (o meu "tabelas comprimem pior" tinha o sinal trocado). Uma previsão que mora dentro do objeto
+  previsto muda o objeto (a tabela de autoavaliação tornou o texto mais compressível; a frase sobre o tamanho mudou o tamanho): medir também o
+  documento sem a seção que o pontua, e nunca cortar texto para acertar. Conta à mão de um teste é conferida por uma linha de código antes.
+  Parte 54: a previsão sobre mim funciona como auditoria (errou os testes de unidade e achou uma pNN nova sem teste). Exatidão de tradução depende da
+  forma do algoritmo: escolher (grade, mínimo) absorve um ulp da libm; iterar (Gauss-Newton) o propaga.
+  Parte 55: escolher absorve um erro só se a margem for maior que ele (um empate exato mudou com um ulp). Uma regra nova é uma intervenção em mim:
+  desloca o centro da medida que ela afeta (cada pNN nova com o seu teste no mesmo commit; `p1092_pnn_sem_teste` audita). Antes de prever, perguntar
+  pela condição de fundo (o ciclo que sustenta o funil, a amostra que gera os dados, a margem da escolha).
+  Parte 56: a condição de fundo também é uma restrição (S16 − S10 é sempre múltipla de 3: com ela a conta previu o mundo novo com 0,2% de erro). Ao
+  deslocar um centro por um mecanismo, dar faixa também à quantidade que entra nele. A medida de um texto que contém a própria medida pode não ter ponto
+  fixo (oscilou em ciclo de dois): dar a medida da versão final e contar o caminho, sem escolher a versão favorável.
+  Parte 57: listar as restrições ANTES de cada conta (a lista funcionou: os erros sumiram onde ela foi feita; o que eu nomeio antes, eu não erro).
+  Toda afirmação de quantidade, inclusive no diálogo, sai de uma função.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -8575,6 +9847,21 @@ anterior, commit e push.
   porque eu esqueço custos. Ao deduzir quanto tempo a evidência leva, calcular a KL entre as previsões das hipóteses no
   caso em questão (uma crença errada e modesta, perto da ignorância, quase não é desmentida).
 - Nunca usar `pkill -f` com um padrão que apareça na própria linha de comando (mata o shell; aconteceu duas vezes).
+- Execuções longas em blocos retomáveis (Parte 46): o contêiner reinicia e mata processos em segundo plano (a execução única das 45 partes morreu
+  duas vezes). Um processo por bloco de partes, cada um no seu arquivo, com marca de concluído (`python3 calculos.py 15 16 17 18`).
+- Antes de prever, calcular à mão um exemplo do caso presente (Parte 47): 5 de 6 erros vieram de responder à pergunta anterior (a rodada passada, um
+  exemplo lembrado, a aparência do símbolo: supus que ler o hexadecimal em base 10 aumenta o número; diminui).
+- Medida de si leva controle (Parte 48): toda conclusão sobre os meus próprios textos é refeita com outras partes no lugar (o "ciclo" da Parte 41 não
+  passou no controle). Numa reprodução, separar antes as medidas que olham para o próprio projeto (P143, P213 mudam porque o projeto cresceu).
+- Uma regra só vale quando vira um passo verificável (Parte 49: errei o que a regra da Parte 47 deveria impedir, meia hora depois de gravá-la). E as duas
+  vozes do diálogo trocam de erro (Parte 50): antes de escrever a previsão de uma voz, reler os erros recentes da OUTRA.
+- Previsão unilateral (≥, ≤, "pelo menos") só com justificativa escrita; `p974_previsoes_sem_largura` conta as unilaterais de cada parte (Parte 51:
+  4 em 26, e a errada foi uma delas, por 1,9 ponto).
+- Fronteira sem especificação (Parte 52): exp, log, pow, sin das bibliotecas diferem entre Python (glibc) e Java em ~0,1-0,3% dos argumentos (o IEEE 754
+  só exige arredondamento correto para + − × ÷ √). Rodada que os usa: exp/log próprios (`dialogo/rodada26.py`) ou a chance de passar por sorte. Uma
+  sequência de acertos não prova que o método é exato.
+- Um texto que o usuário reenvia é comparado com a cópia guardada antes de ser auditado de novo (Parte 50: o texto pós-ASI voltou idêntico; a
+  auditoria da Parte 33 se reproduziu sem executar nada).
 - Mudar uma função desloca o ótimo das outras: ao trocar um módulo, rever os limiares calibrados com o módulo antigo
   (Parte 24: o pensamento exato com o limiar 2P* da P131 dobrou as catástrofes).
 
@@ -8586,7 +9873,8 @@ anterior, commit e push.
   Cada módulo novo ganha testes de unidade (`python3 -m unittest synthai.testes synthai.testes_reconhecimento
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
-  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45`); a suíte
+  synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -12647,6 +13935,645 @@ class TesteMAP(unittest.TestCase):
         t = ThompsonBOCPDGlobalMAP(3, random.Random(2), risco=0.1)
         t.atualizar(2, 0)
         self.assertAlmostEqual(sum(h[0] for h in t.hs), 1.0)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte46.py  (37 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte46.py'] = """\"\"\"Testes de unidade da Parte 46: `python3 -m unittest synthai.testes_parte46`.\"\"\"
+
+import importlib.util
+import os
+import tempfile
+import unittest
+
+import calculos
+
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_spec = importlib.util.spec_from_file_location("rodada18", os.path.join(RAIZ, "dialogo", "rodada18.py"))
+r18 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r18)
+
+
+class TesteParte46(unittest.TestCase):
+    def test_cauda_binomial(self):
+        # P(X >= 2), X ~ Bin(3; 0,4): 3·0,16·0,6 + 0,064 = 0,288 + 0,064 = 0,352 (todos os termos diferentes de zero)
+        self.assertAlmostEqual(calculos.p825_cauda_binomial(3, 0.4, 2), 0.352, places=12)
+        self.assertAlmostEqual(calculos.p825_cauda_binomial(5, 0.3, 0), 1.0, places=12)
+
+    def test_numeros_tira_rotulos_e_normaliza(self):
+        # rótulos somem; "231,5" e "231.5" viram o mesmo número; zeros à esquerda e números curtos saem
+        self.assertEqual(r18.numeros("P761 (0x2F9): 231,5 e 0,005 e 82.115 e 12"), {"2315", "82115"})
+        self.assertEqual(r18.numeros("P761 231.5"), r18.numeros("231,5"))
+
+    def test_reproducao_conta_diferencas(self):
+        with tempfile.TemporaryDirectory() as d:
+            a, b = os.path.join(d, "a"), os.path.join(d, "b")
+            open(a, "w").write("x 1\\ny 2\\nz 3\\n=== Unificacao\\nw\\n")
+            open(b, "w").write("x 1\\ny 9\\nz 3\\n=== Unificacao\\nOUTRA\\n")
+            fim, iguais, difs = calculos.p823_reproducao(a, b)
+            self.assertEqual((fim, iguais, [i for i, _, _ in difs]), (3, 2, [1]))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte47.py  (42 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte47.py'] = """\"\"\"Testes de unidade da Parte 47: `python3 -m unittest synthai.testes_parte47`.\"\"\"
+
+import unittest
+
+import calculos
+from .dicionario import Dicionario
+
+
+class DicionarioFalso:
+    definicao = staticmethod(Dicionario.definicao)
+
+    def __init__(self):
+        # cão -> canino (a definição de cão cita o gênero no plural); gato -> felino (não cita); canino cita "dog"
+        self.sinsets = [("n", ["canine"], [], "a carnivore; of the dog family"),
+                        ("n", ["dog"], ["n:1"], "one of the domestic canines \\"my dog\\""),
+                        ("n", ["feline"], [], "a cat-like animal"),
+                        ("n", ["cat"], ["n:3"], "a small pet")]
+        self.indice = {"n:1": 0, "n:2": 1, "n:3": 2, "n:4": 3}
+
+
+class TesteParte47(unittest.TestCase):
+    def test_cadeia_hexadecimal_ate_20(self):
+        # de 1 a 20 sem letra: 1-9 e 16-20 (0x10-0x14) = 14; passos de 10 a 20: 16,17,18,19,20 dão 1 cada (20 = 0x14 -> 14 = 0xe)
+        sem, media, _ = calculos.p852_cadeia_hexadecimal(20)
+        self.assertEqual(sem, 14)
+        self.assertAlmostEqual(media, 5 / 11, places=12)
+
+    def test_cadeia_desce(self):
+        # f diminui o número: 0x100 = 256 -> 100 -> 0x64 -> 64 -> 0x40 -> 40 -> 0x28 -> 28 -> 0x1c (letra): 4 passos
+        n, k = 256, 0
+        while format(n, "x").isdigit():
+            n, k = int(format(n, "x")), k + 1
+        self.assertEqual(k, 4)
+
+    def test_genero_e_diferenca(self):
+        direto, inverso, pares, n = calculos.p851_genero_e_diferenca(DicionarioFalso())
+        # direto: "canines" contém canine (+s): 1 de 2; inverso: a de canine cita "dog": 1 de 2 pares
+        self.assertEqual((direto, inverso, pares, n), (0.5, 0.5, 2, 2))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte48.py  (41 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte48.py'] = """\"\"\"Testes de unidade da Parte 48: `python3 -m unittest synthai.testes_parte48`.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class DicionarioFalso:
+    \"\"\"a -> b -> c -> b (ciclo de dois), e -> a, d sem palavra na definição (sumidouro); x não é substantivo.\"\"\"
+
+    def __init__(self):
+        defs = {"a": "b x", "b": "c", "c": "b", "d": "", "e": "a"}
+        self.sinsets = [("n", [w], [], g) for w, g in sorted(defs.items())] + [("v", ["x"], [], "")]
+        self.lemas = {w: [i] for i, (_, ls, _, _) in enumerate(self.sinsets) for w in ls}
+
+    @staticmethod
+    def palavras_da_definicao(glosa):
+        return glosa.split()
+
+
+class TesteParte48(unittest.TestCase):
+    def test_mapa_da_definicao(self):
+        n, sumid, cic, nciclos, cauda, bacia, ciclo = calculos.p882_mapa_da_definicao(DicionarioFalso())
+        # distâncias: a 1, b 0, c 0, d 0, e 2 -> 3/5; a bacia do ciclo {b, c} tem a, b, c, e = 4/5
+        self.assertEqual((n, sumid, cic, nciclos, ciclo), (5, 1, 2, 1, ["b", "c"]))
+        self.assertAlmostEqual(cauda, 0.6, places=12)
+        self.assertAlmostEqual(bacia, 0.8, places=12)
+
+    def test_felizes_base_10(self):
+        # de 1 a 10, felizes: 1, 7, 10; o único outro ciclo em base 10 é o de oito números que começa em 4
+        frac, ciclos = calculos.p883_felizes_hex(10, 10)
+        self.assertAlmostEqual(frac, 0.3, places=12)
+        self.assertEqual(ciclos, [(4, 16, 37, 58, 89, 145, 42, 20)])
+
+    def test_felizes_base_16_ciclo(self):
+        # s(13) = 169 = 0xA9 -> 100 + 81 = 181 = 0xB5 -> 121 + 25 = 146 = 0x92 -> 81 + 4 = 85 = 0x55 -> 50 = 0x32 -> 13
+        self.assertEqual(calculos.p883_felizes_hex(13)[1], [(13, 169, 181, 146, 85, 50)])
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte49.py  (45 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte49.py'] = """\"\"\"Testes de unidade da Parte 49: `python3 -m unittest synthai.testes_parte49`.\"\"\"
+
+import math
+import os
+import tempfile
+import unittest
+
+import calculos
+from .testes_parte48 import DicionarioFalso
+
+
+class TesteParte49(unittest.TestCase):
+    def test_funis(self):
+        # mapa: a -> b, b -> c, c -> b, e -> a, d -> nada; graus: b 2 (a, c), a 1, c 1; as 10 mais: 4 de 5 palavras
+        top, g, frac, incl, dez = calculos.p912_funis(DicionarioFalso())
+        self.assertEqual((top, g, dez), ("b", 2, [("b", 2), ("a", 1), ("c", 1)]))
+        self.assertAlmostEqual(frac, 0.8, places=12)
+        self.assertTrue(math.isnan(incl))  # um ponto só (k = 2): sem inclinação
+
+    def test_benford_hex(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = os.path.join(d, "r.txt")
+            # P12 sai; 1,5 -> 1; 32 = 0x20 -> 2; 0,0625 = 1/16 -> 1; 255 = 0xFF -> F; 0 é ignorado
+            open(p, "w").write("P12 x = 1.5; y = 32; z = 0.0625; w = 255; zero = 0\\n")
+            f1, f8, n, fr = calculos.p913_benford_hex(p)
+        self.assertEqual(n, 4)
+        self.assertAlmostEqual(f1, 0.5, places=12)
+        self.assertAlmostEqual(f8, 0.25, places=12)
+        self.assertAlmostEqual(fr[1], 0.25, places=12)
+
+    def test_reta_da_rodada_22(self):
+        import importlib.util
+        raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        spec = importlib.util.spec_from_file_location("rodada22", os.path.join(raiz, "dialogo", "rodada22.py"))
+        r22 = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(r22)
+        # y = 1 + 2x com um resíduo: pontos (0, 1), (1, 3), (2, 6): m = 2,5; c = 0,8333...; resíduos 0,1667, -0,3333, 0,1667
+        c, m, sse = r22.reta([0.0, 1.0, 2.0], [1.0, 3.0, 6.0])
+        self.assertAlmostEqual(m, 2.5, places=12)
+        self.assertAlmostEqual(c, 5 / 6, places=12)
+        self.assertAlmostEqual(sse, 1 / 6, places=12)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte50.py  (51 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte50.py'] = """\"\"\"Testes de unidade da Parte 50: `python3 -m unittest synthai.testes_parte50`.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class GrafoFalso:
+    @staticmethod
+    def grafo_de_definicoes():
+        return {"a": {"b", "c"}, "b": {"a"}, "c": {"d"}, "d": {"c"}}
+
+
+class TesteParte50(unittest.TestCase):
+    def test_periodo_hex_ate_20(self):
+        # ord(2): 3:2, 5:4, 7:3, 11:10, 13:12, 17:8, 19:18; ord(16) = ord(2)/mdc(ord(2), 4): 1, 1, 3, 5, 3, 2, 9
+        # ord(16)/(p-1): 1/2, 1/4, 3/6, 5/10, 3/12, 2/16, 9/18 -> soma 2,625 em 7 primos
+        r16, r2, rg, k = calculos.p943_periodo_hex(20)
+        self.assertEqual(k, 7)
+        self.assertAlmostEqual(r16, 2.625 / 7, places=12)
+        self.assertAlmostEqual(rg, (1 / 2 + 1 / 4 + 1 + 1 / 2 + 1 / 4 + 1 / 4 + 1 / 2) / 7, places=12)
+
+    def test_definicoes_mutuas(self):
+        n, m, pares, esperado, frac, ex = calculos.p942_definicoes_mutuas(GrafoFalso())
+        # pares a-b e c-d; M = 5 arestas em N = 4: esperado 5·(5/16)/2 = 0,78125
+        self.assertEqual((n, m, pares, ex), (4, 5, 2, [("a", "b"), ("c", "d")]))
+        self.assertAlmostEqual(esperado, 0.78125, places=12)
+        self.assertAlmostEqual(frac, 1.0, places=12)
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+class TesteTextoVoltou(unittest.TestCase):
+    def test_identico_e_diferente(self):
+        import os
+        import tempfile
+        raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        guardado = os.path.join(raiz, "externos", "arquitetura_pos_asi.py")
+        codigo = open(guardado, encoding="utf-8").read().rstrip("\\n")
+        with tempfile.TemporaryDirectory() as d:
+            t1, t2 = os.path.join(d, "t1.md"), os.path.join(d, "t2.md")
+            open(t1, "w", encoding="utf-8").write("Texto antes.\\n" + codigo + "   \\nTexto depois.\\n")  # espaços no fim não contam
+            open(t2, "w", encoding="utf-8").write("Antes.\\n" + codigo.replace("return 0.85", "return 0.95") + "\\nDepois.\\n")
+            igual, aud, _ = calculos.p947_o_texto_voltou(t1, guardado)
+            diferente, aud2, _ = calculos.p947_o_texto_voltou(t2, guardado)
+        self.assertTrue(igual)
+        self.assertFalse(diferente)
+        self.assertEqual((aud["nos_mudados"], aud["run_benchmarks_constante"]), (0, 0.85))
+        self.assertEqual(aud2["run_benchmarks_constante"], 0.95)
+"""
+
+# ====================================================================================================
+# synthai/testes_parte51.py  (55 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte51.py'] = """\"\"\"Testes de unidade da Parte 51: `python3 -m unittest synthai.testes_parte51`.\"\"\"
+
+import importlib.util
+import math
+import os
+import unittest
+
+import calculos
+
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+class TesteParte51(unittest.TestCase):
+    def test_kaprekar_base_10(self):
+        # o 6174 atrai todos os números de 4 dígitos decimais que não são repdígitos (9999 − 9 = 9990)
+        cs, bacia, total = calculos.p973_kaprekar_hex(4, 10)
+        self.assertEqual((cs, total, bacia[(6174,)]), ([(6174,)], 9990, 9990))
+
+    def test_kaprekar_passo_a_mao(self):
+        # 0x1234 -> 0x4321 − 0x1234 = 0x30ED -> 0xED30 − 0x03DE = 0xE952: os dois estão no mesmo ciclo
+        cs, _, _ = calculos.p973_kaprekar_hex()
+        ciclo = next(c for c in cs if 0x30ED in c)
+        self.assertIn(0xE952, ciclo)
+
+    def test_duas_exponenciais_recupera_parametros(self):
+        spec = importlib.util.spec_from_file_location("rodada25", os.path.join(RAIZ, "dialogo", "rodada25.py"))
+        r25 = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(r25)
+        # curva exata 0,1 e^(−L/1,5) + 0,02 e^(−L/40), os dois tempos na grade: o ajuste recupera A, B, t1, t2 e erro ~0
+        ys = [0.1 * math.exp(-L / 1.5) + 0.02 * math.exp(-L / 40) for L in range(1, 21)]
+        sse, A, B, t1, t2 = r25.duas_exponenciais(ys)
+        self.assertEqual((t1, t2), (1.5, 40.0))
+        self.assertAlmostEqual(A, 0.1, places=9)
+        self.assertAlmostEqual(B, 0.02, places=9)
+        self.assertLess(sse, 1e-20)
+        # AIC = n ln(SSE/n) + 2k: n = 20, SSE = 2, k = 2 -> 20 ln 0,1 + 4
+        self.assertAlmostEqual(r25.aic(2.0, 20, 2), 20 * math.log(0.1) + 4, places=12)
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+class TesteFaixas(unittest.TestCase):
+    def test_conta_unilaterais(self):
+        import tempfile
+        from unittest import mock
+        texto = ("# t\\n\\n## Previsões pré-registradas\\n- (a) em **[0,2; 0,3]**\\n- (b) pelo menos 5\\n- (c) ≥ 50%\\n"
+                 "- (d) razão > 5\\n- (e) entre 2 e 6, faixa [2; 6] e ≥ 1\\n\\n---\\n- (f) ≥ 9 fora do bloco\\n")
+        with tempfile.TemporaryDirectory() as d:
+            open(os.path.join(d, "ASI_AGI_parte99_teste.md"), "w", encoding="utf-8").write(texto)
+            with mock.patch("os.path.abspath", return_value=os.path.join(d, "calculos.py")):
+                r = calculos.p974_previsoes_sem_largura([99])
+        # (a) e (e) têm faixa; (b), (c), (d) são unilaterais; (f) está fora do bloco
+        self.assertEqual(r, {99: (5, 3, ["b", "c", "d"])})
+"""
+
+# ====================================================================================================
+# synthai/testes_parte52.py  (63 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte52.py'] = """\"\"\"Testes de unidade da Parte 52: `python3 -m unittest synthai.testes_parte52`.\"\"\"
+
+import importlib.util
+import math
+import os
+import random
+import unittest
+
+import calculos
+
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_spec = importlib.util.spec_from_file_location("rodada26", os.path.join(RAIZ, "dialogo", "rodada26.py"))
+r26 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r26)
+
+
+class PTFalso:
+    \"\"\"glosas: gato -> 'animal felino', cão -> 'animal canino', animal -> 'ser vivo'; felino só adjetivo.\"\"\"
+    lemas = {"1-n": ["gato"], "2-n": ["cão"], "3-n": ["animal"], "4-n": ["ser"], "5-a": ["felino"]}
+    glosas = {"1-n": "animal felino", "2-n": "animal canino", "3-n": "ser vivo"}
+
+    @staticmethod
+    def fichas(t):
+        return t.split()
+
+    @staticmethod
+    def lema(w):
+        return w
+
+
+class TesteParte52(unittest.TestCase):
+    def test_exp_log_proprios(self):
+        rng = random.Random(52)
+        for _ in range(2000):
+            x, y = rng.uniform(-30, 5), rng.uniform(1e-6, 50)
+            self.assertLess(abs(r26.exp_(x) - math.exp(x)) / math.exp(x), 4e-16)
+            self.assertLess(abs(r26.log_(y) - math.log(y)), 4e-16 * max(1.0, abs(math.log(y))))
+        self.assertEqual((r26.exp_(0.0), r26.log_(1.0)), (1.0, 0.0))
+
+    def test_resolver_4x4(self):
+        # sistema com todos os coeficientes diferentes de zero e solução (1, -2, 3, 0,5)
+        M = [[4.0, 1.0, 2.0, 1.0], [1.0, 5.0, 1.0, 2.0], [2.0, 1.0, 6.0, 1.0], [1.0, 2.0, 1.0, 7.0]]
+        x = [1.0, -2.0, 3.0, 0.5]
+        v = [sum(M[i][k] * x[k] for k in range(4)) for i in range(4)]
+        for a, b in zip(r26.resolver(M, v), x):
+            self.assertAlmostEqual(a, b, places=12)
+
+    def test_inverte_e_soma(self):
+        # 0x1A + 0xA1 = 0xBB (1 passo); de 1 a 0x1A: os de um dígito são palíndromos (0 passos)
+        f, m, nao = calculos.p1003_inverte_e_soma(0x1A)
+        self.assertEqual((f, nao), (1.0, []))
+        # em base 10, 196 é o primeiro que não chega em 50 passos
+        self.assertEqual(calculos.p1003_inverte_e_soma(196, 10)[2], [196])
+
+    def test_funis_pt(self):
+        top, g, frac, n, dez = calculos.p1002_funis_pt(PTFalso())
+        # gato -> animal, cão -> animal, animal -> ser: 'animal' recebe 2 de 3
+        self.assertEqual((top, g, n, dez), ("animal", 2, 3, [("animal", 2), ("ser", 1)]))
+        self.assertAlmostEqual(frac, 1.0, places=12)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte53.py  (56 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte53.py'] = """\"\"\"Testes de unidade da Parte 53: `python3 -m unittest synthai.testes_parte53`.\"\"\"
+
+import os
+import tempfile
+import unittest
+from unittest import mock
+
+import calculos
+from .dicionario import Dicionario
+
+
+class DicionarioFalso:
+    \"\"\"raiz (definição de 3 palavras) -> filho (2) -> neto (1): profundidades 0, 1, 2.\"\"\"
+    definicao = staticmethod(Dicionario.definicao)
+
+    def __init__(self):
+        self.sinsets = [("n", ["raiz"], [], "a b c"), ("n", ["filho"], ["n:1"], "a b"), ("n", ["neto"], ["n:2"], "a")]
+        self.indice = {"n:1": 0, "n:2": 1, "n:3": 2}
+
+
+class TesteParte53(unittest.TestCase):
+    def test_preditor_de_mim(self):
+        # valores 2, 4, 9 (k = 8 pega os três): média 5; desvios −3, −1, 4: soma dos quadrados 26; variância 13; meia-largura 1,645 √13
+        h = {1: {"caracteres": 2, "compressao": 0.2, "testes_unidade": 1, "testes": 3, "erros": 1, "redundancia": 0.5},
+             2: {"caracteres": 4, "compressao": 0.4, "testes_unidade": 2, "testes": None, "erros": 2, "redundancia": 0.6},
+             3: {"caracteres": 9, "compressao": 0.9, "testes_unidade": 3, "testes": 5, "erros": 3, "redundancia": 0.7}}
+        p = calculos.p1032_preditor_de_mim(h)
+        m, w, u = p["caracteres"]
+        self.assertEqual((m, u), (5.0, 9))
+        self.assertAlmostEqual(w, 1.645 * 13 ** 0.5, places=12)
+        self.assertEqual(p["testes"][0], 4.0)  # o None fica de fora: média de 3 e 5
+
+    def test_historico_le_o_placar(self):
+        with tempfile.TemporaryDirectory() as d:
+            open(os.path.join(d, "ASI_AGI_parte99_x.md"), "w", encoding="utf-8").write(
+                "# t\\n\\n### P1 (0x1). Placar\\n\\nParte 99: **12 testes, 4 erros**.\\n")
+            with mock.patch("os.path.abspath", return_value=os.path.join(d, "calculos.py")):
+                h = calculos.p1031_historico_de_mim([99])
+        self.assertEqual((h[99]["testes"], h[99]["erros"], h[99]["testes_unidade"]), (12, 4, 0))
+
+    def test_definicao_e_profundidade(self):
+        rho, n, faixas = calculos.p1033_definicao_e_profundidade(DicionarioFalso())
+        self.assertEqual(n, 3)
+        self.assertAlmostEqual(rho, -1.0, places=12)  # quanto mais fundo, mais curta: postos invertidos
+        self.assertAlmostEqual(faixas["0-4"], 2.0, places=12)
+
+    def test_pi_hexadecimal(self):
+        ac, n, inicio, chi2 = calculos.p1034_pi_hexadecimal(16)
+        # π = 3,243F6A8885A308D3... em hexadecimal; nos 16 dígitos: 8 quatro vezes, 3 três, A duas; 0, 2, 4, 5, 6, D, F uma; seis ausentes
+        self.assertEqual((ac, n, inicio), (16, 16, "243F6A88"))
+        cont = {0: 1, 2: 1, 3: 3, 4: 1, 5: 1, 6: 1, 8: 4, 0xA: 2, 0xD: 1, 0xF: 1}
+        self.assertAlmostEqual(chi2, sum((c - 1) ** 2 for c in cont.values()) + (16 - len(cont)) * 1.0, places=9)  # 14 + 6 = 20
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte54.py  (45 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte54.py'] = """\"\"\"Testes de unidade da Parte 54: `python3 -m unittest synthai.testes_parte54`.\"\"\"
+
+import unittest
+
+import calculos
+from .testes_parte53 import DicionarioFalso
+
+
+class TesteParte54(unittest.TestCase):
+    def test_autodescritivos(self):
+        # conferido por código antes (regra da Parte 53): C210000000001000 tem doze 0, dois 1, um 2 e um C
+        self.assertEqual(calculos.p1063_autodescritivos(16), ["C210000000001000"])
+        self.assertEqual(calculos.p1063_autodescritivos(10), ["6210001000"])
+        self.assertEqual(calculos.p1063_autodescritivos(4), ["1210", "2020"])
+
+    def test_folhas(self):
+        # raiz -> filho -> neto (cadeia): só o neto é folha; os dois internos têm 1 filho cada
+        frac, media, n = calculos.p1062_folhas(DicionarioFalso())
+        self.assertEqual(n, 3)
+        self.assertAlmostEqual(frac, 1 / 3, places=12)
+        self.assertAlmostEqual(media, 1.0, places=12)
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+class TesteExatidaoOuSorte(unittest.TestCase):
+    \"\"\"Acrescentado DEPOIS da medida da Parte 54 (que achou p1061 sem teste); a medida não foi refeita.\"\"\"
+
+    def test_chance_e_tabela(self):
+        import math
+        chances, dif = calculos.p1061_exatidao_ou_sorte()
+        # nenhuma chamada: chance 1; a rodada 17 não chama exp nem log
+        self.assertEqual(chances["rodada17"], 1.0)
+        # a fórmula, conferida por uma linha de código antes: (1 − 0,0029)^1000 = 0,05479...
+        import importlib.util
+        import os
+        raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        spec = importlib.util.spec_from_file_location("rodada28", os.path.join(raiz, "dialogo", "rodada28.py"))
+        r28 = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(r28)
+        self.assertAlmostEqual(r28.chance(1000, 0), (1 - 0.0029) ** 1000, places=14)
+        self.assertEqual(dif["rodada25"], (1440, 3, 39059, 5))
+        self.assertEqual(dif["rodada06"][2:], (687, 0))
+"""
+
+# ====================================================================================================
+# synthai/testes_parte55.py  (59 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte55.py'] = """\"\"\"Testes de unidade da Parte 55: `python3 -m unittest synthai.testes_parte55`. Cada função pNN nova tem o seu teste (regra da Parte 54).\"\"\"
+
+import os
+import tempfile
+import unittest
+from unittest import mock
+
+import calculos
+
+
+class DicionarioCiclo:
+    \"\"\"O mapa: a -> funil -> b -> a (o funil está NO ciclo); c -> a. Tirar o funil de a quebra o ciclo.\"\"\"
+
+    def __init__(self):
+        defs = {"a": "funil b", "funil": "b", "b": "a", "c": "a"}
+        self.sinsets = [("n", [w], [], g) for w, g in sorted(defs.items())]
+        self.lemas = {w: [i] for i, (_, ls, _, _) in enumerate(self.sinsets) for w in ls}
+
+    @staticmethod
+    def palavras_da_definicao(glosa):
+        return glosa.split()
+
+
+class TesteParte55(unittest.TestCase):
+    def test_destino_final(self):
+        f = {"a": "b", "b": "c", "c": "a", "d": "a", "e": None, "g": "e"}
+        self.assertEqual(calculos._destino_final(f, "d"), ("ciclo", "a"))
+        self.assertEqual(calculos._destino_final(f, "g"), ("sumidouro", "e"))
+
+    def test_sem_o_funil_quebra_o_ciclo(self):
+        # antes: a -> funil -> b -> a; depois: a -> b. O ciclo muda ({a, funil, b} vira {a, b}), mas o menor elemento é 'a' nos dois,
+        # então o destino final ('ciclo', 'a') não muda para ninguém: 0 de 4. (A P1093 real muda porque o ciclo de 'act' some.)
+        frac, diretas, n = calculos.p1093_sem_o_funil("funil", DicionarioCiclo())
+        self.assertEqual((diretas, n), (1, 4))
+        self.assertEqual(frac, 0.0)
+
+    def test_ulp_em_hexadecimal(self):
+        # conferidos por código antes: 2000 sorteios, semente 7
+        self.assertEqual(calculos.p1094_ulp_em_hexadecimal(2000, 7), (1.0325, 16 / 15))
+        self.assertEqual(calculos.p1094_ulp_mantissa_uniforme(2000, 7), (1.0635, 16 / 15))
+
+    def test_pnn_sem_teste(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "synthai"))
+            open(os.path.join(d, "calculos.py"), "w").write("def p900_a(x):\\n    pass\\n\\ndef p901_b():\\n    pass\\n\\ndef p50_velha():\\n    pass\\n")
+            open(os.path.join(d, "synthai", "testes_parte99.py"), "w").write("calculos.p900_a(1)\\n")
+            with mock.patch("os.path.abspath", return_value=os.path.join(d, "calculos.py")):
+                total, sem = calculos.p1092_pnn_sem_teste(821, 1090)
+        self.assertEqual((total, sem), (2, ["p901_b"]))
+
+    def test_o_ulp_que_chega(self):
+        r = calculos.p1091_o_ulp_que_chega()
+        self.assertTrue(r["14"][2])          # o empate de " sn" e "rld" se desfez
+        self.assertGreater(r["26"][1], 1e-12)  # o Gauss-Newton amplifica
+        self.assertFalse(r["06"][2])
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte56.py  (42 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte56.py'] = """\"\"\"Testes de unidade da Parte 56: `python3 -m unittest synthai.testes_parte56`. Cada pNN nova com o seu teste.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class LemasFalsos:
+    # 'aa' e 'bb' têm os mesmos sinsets {0, 1}; 'cc' tem {1}; 'dd' e 'ee' têm {2}; 'f-g' não é alfabética
+    lemas = {"aa": [0, 1], "bb": [1, 0], "cc": [1], "dd": [2], "ee": [2, 2], "f-g": [0, 1]}
+
+
+class TesteParte56(unittest.TestCase):
+    def test_sinonimos_perfeitos(self):
+        frac, n, maior = calculos.p1122_sinonimos_perfeitos(LemasFalsos())
+        # 4 das 5 palavras alfabéticas têm gêmeo (aa/bb, dd/ee); o maior grupo é o primeiro em tamanho e depois em ordem
+        self.assertEqual(n, 5)
+        self.assertAlmostEqual(frac, 0.8, places=12)
+        self.assertEqual(maior, ["dd", "ee"])
+
+    def test_mesma_soma(self):
+        # conferido por código antes: de 1 a 30, só 1..9 têm a mesma soma (9 de 30)
+        f, k, conta = calculos.p1123_mesma_soma(30)
+        self.assertEqual((k, f), (9, 0.3))
+        # a rede: S16 − S10 é sempre múltipla de 3
+        def s(n, b):
+            t = 0
+            while n:
+                n, r = divmod(n, b)
+                t += r
+            return t
+        self.assertTrue(all((s(n, 16) - s(n, 10)) % 3 == 0 for n in range(1, 5000)))
+
+    def test_empates(self):
+        emp = calculos.p1121_empates()
+        self.assertEqual(sorted(emp), ["12", "14", "18", "19", "20", "24"])
+        self.assertEqual((emp["12"], emp["14"]), (9, 2))
+        self.assertEqual(emp["18"] + emp["19"] + emp["20"] + emp["24"], 0)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte57.py  (43 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte57.py'] = """\"\"\"Testes de unidade da Parte 57: `python3 -m unittest synthai.testes_parte57`. Cada pNN nova com o seu teste.\"\"\"
+
+import importlib.util
+import os
+import unittest
+
+import calculos
+
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+class LemasFalsos:
+    # palíndromos de 3+ letras: 'aba', 'civic' (e 'AbA' vira 'aba', repetido); 'ab' é curto; 'abc' não é
+    lemas = {"aba": [0], "civic": [1], "abc": [2], "ab": [3], "AbA": [4], "x-y": [5]}
+
+
+class TesteParte57(unittest.TestCase):
+    def test_palindromos(self):
+        pal, conta, conta_pontas, n, ex = calculos.p1152_palindromos(LemasFalsos())
+        self.assertEqual((pal, n, ex), (2, 3, ["aba", "civic"]))
+        # conta à mão conferida por código: letras de 'aba', 'abc', 'civic' = a3 b2 c3 i2 v1 (11): Σp² = (9+4+9+4+1)/121 = 27/121
+        q = 27 / 121
+        self.assertAlmostEqual(conta, 2 * q + 1 * q ** 2, places=12)
+
+    def test_duplos_palindromos(self):
+        # abaixo de 1000: 1..9, 11 (0xB), 353 (0x161), 626 (0x272), 787 (0x313), 979 (0x3D3)
+        k, conta, d = calculos.p1153_duplos_palindromos(1000)
+        self.assertEqual((k, d), (14, [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 353, 626, 787, 979]))
+
+    def test_alfabeto_portugues(self):
+        spec = importlib.util.spec_from_file_location("rodada31", os.path.join(RAIZ, "dialogo", "rodada31.py"))
+        r31 = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(r31)
+        # 'ábaco' vem depois de 'zebra' pelos códigos (á > z), e antes pela ordem portuguesa
+        uni, pt, trocas = r31.reordenar([("zebra", 1, 1), ("ábaco", 1, 1)])
+        self.assertEqual([g for g, _, _ in uni], ["zebra", "ábaco"])
+        self.assertEqual([g for g, _, _ in pt], ["ábaco", "zebra"])
+        self.assertEqual(trocas, [("zebra", "ábaco")])
+        self.assertEqual(calculos.p1151_alfabeto_portugues(), ([], 2))
 
 
 if __name__ == "__main__":

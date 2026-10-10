@@ -115,7 +115,9 @@ compreensão). **Onde funciona:** a ordem temporal (o texto antes ou depois do n
 
 - **Novo:** `p821` (os dois sentidos), `p822` (o diálogo invertido), `p823` (a comparação de duas execuções), `p824` (a reconstrução), `p825` (a cauda
   binomial); 3 testes (123 no pacote, com a Parte 46). Regressão: + P821 (0,579).
-- **`resultados.txt`:** RESULTADOS_46
+- **`resultados.txt`:** trocado pela execução refeita no clone limpo (Partes 1–14 da execução única; 15–45 em 13 blocos, cada um com regressão 89/89) mais as Partes
+  46–57 rodadas juntas no repositório atual, com a unificação final: **104/104**, 354 funções pNN. As linhas das Partes 46–57 que medem a mim mesma (a P1032
+  refeita com o histórico de hoje) mudam quando o histórico muda; o registro de cada parte é a tabela do seu documento, medida no commit que a fechou.
 - **Regra nova:** a resposta é a pergunta: medir também o sentido inverso, e de tempos em tempos refazer tudo desde o começo. E, aprendido refazendo:
   uma execução longa num contêiner que reinicia precisa ser **retomável** (blocos, cada um no seu arquivo, com marca de concluído).
 

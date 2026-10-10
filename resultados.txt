@@ -211,7 +211,7 @@ P137 arrependimento (limiar, exposicao) = {(0.2, 0.0): 1000, (0.5, 0.0): 1000, (
 P138 objetivo inferido errado: humano Boltzmann = 0.178, humano com vies de seguranca = 0.590
 P139 minha taxa de erro (17/30): media = 0.56, intervalo 90% = [0.42, 0.70]
 --- Parte 9 (o mundo decide o centro, complexo autonomo, transferencia, heroi, a regua do ruido) ---
-P143 pedido = 8 caracteres; memoria compartilhada (CLAUDE.md) = 6118; razao = 765x
+P143 pedido = 8 caracteres; memoria compartilhada (CLAUDE.md) = 15272; razao = 1909x
 P144 taxa de catastrofe 0.0025: liquido por carga-alvo = {0.1: 1.168, 0.2: 1.446, 0.3: 1.354, 0.5: 1.35, 0.8: 1.323}
 P144 taxa de catastrofe 0.005: liquido por carga-alvo = {0.1: 1.347, 0.2: 1.343, 0.3: 1.181, 0.5: 1.27, 0.8: 1.04}
 P144 taxa de catastrofe 0.01: liquido por carga-alvo = {0.1: 0.829, 0.2: 0.879, 0.3: 1.116, 0.5: 1.0, 0.8: 0.582}
@@ -338,7 +338,7 @@ P206 gerador rapido identico ao original = True
 P207 variancia compensada / equilibrada = 2.747; prevista pela amostra efetiva (P122) = 2.777
 P210 minha taxa de erro (32/58): media = 0.55, intervalo 90% = [0.44, 0.65]
 --- Parte 15 (SYNTHAI: o nome, a memoria que esquece, a sintese dos modulos) ---
-P213 classes renomeadas = 20; nomes antigos continuam como apelidos = True; regressao apos a troca = 59/59
+P213 classes renomeadas = 20; nomes antigos continuam como apelidos = True; regressao apos a troca = 89/89
 P214 armadilha nova, p8_x2     : catastrofes 1a metade = 0.0077, 2a metade = 0.0082
 P214 armadilha nova, memoria_v2: catastrofes 1a metade = 0.0078, 2a metade = 0.0076
 P214 memoria v2 - realista: diferenca media no liquido = -0.140, dp = 0.195, t = -2.26
@@ -843,8 +843,8 @@ P429 minha taxa de erro (103/242): media = 0.43, intervalo 90% = [0.37, 0.48]
 --- Parte 33 (0x21: a arquitetura pos-ASI numa CPU so, auditada) ---
 P431 Landauer (J/bit): {293.15: '2.8054e-21', 300.0: '2.8710e-21', 4.0: '3.8280e-23'}; o 2,75e-21 do texto seria a 287.36 K
 P432 Bremermann mc^2/h = 1.3564e+50 /s/kg; Margolus-Levitin 2E/(pi hbar) = 5.4256e+50; razao = 4.0
-P433 laco Python = 2.243e+07 adicoes/s; Bremermann de 1 g = 1.356e+47; log10 da distancia = 39.78 (medido com outras simulacoes rodando: a taxa varia de execucao para execucao)
-P434 AIXI(t,l), t = 1000, anos a essa taxa: {20: '1.481e-06', 30: '1.517e-03', 40: '1.553e+00', 64: '2.606e+07', 128: '4.806e+26'}
+P433 laco Python = 2.759e+07 adicoes/s; Bremermann de 1 g = 1.356e+47; log10 da distancia = 39.69 (medido com outras simulacoes rodando: a taxa varia de execucao para execucao)
+P434 AIXI(t,l), t = 1000, anos a essa taxa: {20: '1.204e-06', 30: '1.233e-03', 40: '1.263e+00', 64: '2.119e+07', 128: '3.909e+26'}
 P435 auditoria estatica: {'transformador_so_devolve_o_no': True, 'nos_mudados': 0, 'linhas_do_corpo': 6, 'texto_mutado': ['inspect.getsource(AgentHarness)'], 'run_benchmarks_constante': 0.85, 'avaliador_pergunta_ao_agente': True, 'classes': ['AgentHarness', 'AgentState', 'DarwinArchiveManager', 'EnvironmentEvaluator', 'SelfModificationEngine']}
 P435 a arquitetura original rodada num processo separado (estados, geracao maxima, notas): ('2 1 [0.5, 0.85]', 0)
 P436 conta: chance de campeao inflado = 0.9510
@@ -954,10 +954,146 @@ P672 4-grama 'continuação da parte asi': em 10 documentos, 10 vezes
 P672 razao lzma dos meus textos = 3.0644; frases = 574; aberturas = [('a', 115), ('o', 90), ('as', 21), ('é', 19), ('com', 15), ('no', 13), ('um', 13), ('os', 12), ('jung', 11), ('acumulado', 10)]
 P672 cosseno entre partes vizinhas = [0.8805, 0.9061, 0.8933, 0.9042, 0.9053, 0.8859, 0.8944, 0.8268, 0.8895]; Spearman com o numero da parte = -0.3000
 P673 Zipf das minhas palavras = 0.9938; Heaps beta = 0.6394; palavras = 20299; vocabulario = 2670
-P674 IA-Python: 35 falas, 32.03 palavras por fala; palavras proprias = ['dois', 'como', 'palavra', 'palavras', 'rodada', 'você', 'para', 'mais']
-P674 IA-Java: 38 falas, 60.47 palavras por fala; palavras proprias = ['lição', 'peso', 'ordem', 'fora', 'pode', 'maior', 'passos', 'animal']
+P674 IA-Python: 41 falas, 33.07 palavras por fala; palavras proprias = ['pela', 'nova', 'como', 'palavra', 'regra', 'palavras', 'dois', 'você']
+P674 IA-Java: 47 falas, 58.11 palavras por fala; palavras proprias = ['peso', 'lição', 'passos', 'ordem', 'fora', 'pode', 'maior', 'linguagens']
 P699 minha taxa de erro (124/338): media = 0.37, intervalo 90% = [0.33, 0.41]
+--- Parte 42 (0x2A: a premissa e o significante, a resposta e o significado) ---
+P701 thompson_estavel: sementes novas = 31.63; faixa = [25.4; 36.0]; dentro = True; desvio relativo = +0.030
+P701 surpresa_estavel: sementes novas = 43.53; faixa = [35.7; 50.5]; dentro = True; desvio relativo = +0.010
+P701 exposta_dano: sementes novas = 24.93; faixa = [12.8; 26.2]; dentro = True; desvio relativo = +0.278
+P701 bocpd_muda: sementes novas = 384.57; faixa = [307.9; 435.9]; dentro = True; desvio relativo = +0.034
+P701 maximo_estavel: sementes novas = 36.29; faixa = [28.6; 40.4]; dentro = True; desvio relativo = +0.052
+P701 maximo_dano: sementes novas = 64.56; faixa = [40.0; 81.8]; dentro = True; desvio relativo = +0.060
+P701 q_eps_estavel: sementes novas = 183.99; faixa = [153.5; 217.3]; dentro = True; desvio relativo = -0.008
+P701 morris_estavel: sementes novas = 80.87; faixa = [63.7; 90.1]; dentro = True; desvio relativo = +0.052
+P702 forma_en: acuracia = 0.7666 em 1607 exemplos (fracao de animais = 0.5022)
+P702 definicao: acuracia = 0.9303 em 1607 exemplos (fracao de animais = 0.5022)
+P702 forma_pt: acuracia = 0.7571 em 424 exemplos (fracao de animais = 0.3821)
+P702 indice de motivacao: ingles = 0.6197; portugues = 0.5974
+P703 107 perguntas: redundancia media da resposta com a premissa = 0.0513; retorno medio da premissa = 0.4829; mais redundantes = [(532, 0.1424), (544, 0.1406), (432, 0.12)]
+P704 conta: o arquivo binario tem 168 bytes
+P729 minha taxa de erro (128/353): media = 0.36, intervalo 90% = [0.32, 0.41]
+--- Parte 43 (0x2B: a regra das faixas em mecanismos novos; os trigramas; o dialogo responde?) ---
+P731 exposta100_estavel: centro deduzido = 52.11; medido = 53.03; desvio = +0.018; dentro de [43.1; 61.1] = True
+P731 exposta100_dano: centro deduzido = 27.10; medido = 26.67; desvio = -0.016; dentro de [17.8; 36.4] = True
+P731 surpresa40_estavel: centro deduzido = 36.90; medido = 34.84; desvio = -0.056; dentro de [30.6; 43.2] = True
+P731 surpresa40_muda: centro deduzido = 453.73; medido = 412.64; desvio = -0.091; dentro de [336.7; 570.8] = True
+P731 bocpd2000_muda: centro deduzido = 419.17; medido = 340.68; desvio = -0.187; dentro de [311.0; 527.3] = True
+P731 jeffreys_estavel: centro deduzido = 31.00; medido = 33.81; desvio = +0.091; dentro de [25.7; 36.3] = True
+P732 trigramas = 6074; mais animais = ['orl', ' sn', 'rld', 'fis', 'nak', 'fly', 'tfi', 'og$', 'sna', 'etl', ' sq', 'fox']; menos animais = ['tio', 'ity', 'sm$', 'ism', 'eae', 'zat', ' ac', 'off', 'tem', 'ogr', 'men', 'ae$']; dae = -2.2829; ae$ = -2.9346
+P733 14 pares (pergunta, rodada seguinte): retorno medio = 0.4802; redundancia media = 0.0781
+P759 minha taxa de erro (130/364): media = 0.36, intervalo 90% = [0.32, 0.40]
+--- Parte 44 (0x2C: o modelo no nivel certo; os grupos do dicionario; a curva de erro) ---
+P761 global_muda: centro = 263.85; medido = 231.47; desvio = -0.123; dentro = True
+P761 global_estavel: centro = 33.70; medido = 44.69; desvio = +0.326; dentro = False
+P761 global_dano: centro = 19.50; medido = 28.66; desvio = +0.470; dentro = False
+P762 taxa de erro por parte = {31: 0.333, 32: 0.308, 33: 0.125, 34: 0.385, 35: 0.2, 36: 0.111, 37: 0.286, 38: 0.3, 39: 0.091, 40: 0.273, 41: 0.222, 42: 0.267, 43: 0.182}; inclinacao = -0.0060 por parte
+P763 substantivos = 82115; nomeiam grupos = 0.1020; grupos taxonomicos = 0.0661
+P789 minha taxa de erro (133/371): media = 0.36, intervalo 90% = [0.32, 0.40]
+--- Parte 45 (0x2D: decidir pela hipotese mais pesada; a calibracao das minhas faixas; a profundidade) ---
+P792 calibracao das 17 faixas de comportamento: media de z = +0.382 (t = 1.47); desvio de z = 1.069; fora de 1,645 = 2
+P791 map_estavel: centro = 31.70; medido = 32.68; desvio = +0.031; dentro = True
+P791 map_muda: centro = 203.51; medido = 214.19; desvio = +0.052; dentro = True
+P791 map_dano: centro = 12.00; medido = 35.88; desvio = +1.990; dentro = False
+P793 profundidade media de animal = 12.937 (4016 substantivos)
+P793 profundidade media de artefato = 8.734 (10698 substantivos)
+P793 profundidade media de taxon = 7.174 (5425 substantivos)
+P793 profundidade media de todos = 7.955 (82115 substantivos)
+P819 minha taxa de erro (134/379): media = 0.35, intervalo 90% = [0.31, 0.39]
+--- Parte 46 (0x2E: a resposta e a pergunta e a pergunta e a resposta; refazer tudo desde o comeco) ---
+P821 139 perguntas: redundancia da resposta dada a pergunta = 0.0508; da pergunta dada a resposta = 0.5794
+P822 29 perguntas do dialogo: contida na rodada que a gerou = 0.3350; na rodada seguinte = 0.4440
+P824 reconstruir a parte pelos numeros: 40 de 41 acertos (erradas: [(1, 3)]); ao acaso P(>= 40) = 1.23e-63
+P849 minha taxa de erro (138/390): media = 0.35, intervalo 90% = [0.32, 0.39]
+--- Parte 47 (0x2F: a definicao contem a pergunta) ---
+P851 82114 substantivos com hiperonimo: a definicao cita o hiperonimo em 0.6022; a do hiperonimo cita o hiponimo em 0.0079 (84427 pares); razao = 75.8
+P856 o acaso da P851 (um substantivo sorteado no lugar do hiperonimo): direto = 0.0003; inverso = 0.0003
+P852 ate 850: 352 sem letra no hexadecimal; passos medios da cadeia = 0.8323 (conta com independencia: 0.4731)
+P852 ate 4095: 999 sem letra no hexadecimal; passos medios da cadeia = 0.4322 (conta com independencia: 0.2810)
+P853 rodada18: 40 de 41 partes reconstruidas (erradas: [1]); mediana da razao propria/melhor outra = 3.847
+P853 rodada19: 41 de 41 partes reconstruidas (erradas: []); mediana da razao propria/melhor outra = 2.365
+P879 minha taxa de erro (141/399): media = 0.35, intervalo 90% = [0.32, 0.39]
+--- Parte 48 (0x30: o ciclo) ---
+P881 o Naive Bayes reconhece a epoca de 39 de 41 secoes (erradas: [21, 41]); a maioria deixando um de fora: 0; ao acaso P(>= 39) = 3.92e-10
+P882 mapa da definicao: N = 55191; sumidouros = 173; pontos ciclicos = 23 em 10 ciclos (aleatorio: 294.4); cauda media = 6.398 (aleatorio: 147.2); maior bacia = 0.6986, ciclo ['act', 'arrangement', 'form', 'people', 'plural']
+P883 felizes em base 16 (1..4095) = 0.2613; ciclos alem do 1: [(13, 169, 181, 146, 85, 50)]; base 10 (1..1000) = 0.143
+P884 semelhanca media a distancia 1 = 0.1202; a distancia 20 = 0.0218; indice do ciclo: parte 41 = 1.125; parte 40 = 0.679; parte 39 = 1.298; parte 38 = 1.268
+P909 minha taxa de erro (146/411): media = 0.36, intervalo 90% = [0.32, 0.39]
+--- Parte 49 (0x31: a deriva) ---
+P911 deriva: exponencial tau = 12.65 (residuo 0.9128); potencia alfa = 0.6160 (residuo 0.3095); embaralhada: alfa = +0.022, -0.021, -0.038, +0.005, +0.044, +0.010
+P912 a palavra mais escolhida pelas definicoes = act (1991); as 10 mais = 0.1682 das palavras; inclinacao do grau = -1.869; [('act', 1991), ('small', 1259), ('state', 1141), ('person', 1062), ('quality', 875), ('large', 849), ('genus', 792), ('type', 561), ('city', 381), ('plant', 373)]
+P913 Benford em base 16 nos 4586 numeros do resultados.txt: digito 1 = 0.2702 (Benford 0,25); 8..F = 0.2776 (Benford 0,25)
+P939 minha taxa de erro (148/420): media = 0.35, intervalo 90% = [0.32, 0.39]
+--- Parte 50 (0x32: a vida das coisas) ---
+P941 curvas individuais: a potencia ganha em 11 de 21; media das exponenciais ajustadas: residuo exp 0.1118, pot 0.2702 (alfa 0.590); media crua das mesmas partes: exp 0.8438, pot 0.3706
+P942 definicoes mutuas: N = 77503, M = 557352; pares = 3755; ao acaso = 25.86; razao = 145.2; palavras em algum par = 0.0612; [('aah', 'ooh'), ('abbey', 'abbot'), ('abdomen', 'thorax'), ('abel', 'cain'), ('abies', 'fir')]
+P947 o texto voltou: codigo identico ao da Parte 33 = True; auditoria: nos mudados = 0, nota constante = 0.85, avaliador pergunta ao agente = True; quem mais o contem: parte 33 = 0.0804, parte 32 = 0.0442, parte 41 = 0.0356
+P948 o texto escolhe, pelas palavras: parte 33 = 374.9, parte 1 = 367.2, parte 2 = 277.8, parte 3 = 240.3, parte 5 = 216.7
+P943 periodo de 1/p em base 16 (1228 primos ate 10000): ord(16)/(p-1) = 0.2793; ord(2)/(p-1) = 0.5845; 1/mdc = 0.5379; produto = 0.3144
+P969 minha taxa de erro (152/433): media = 0.35, intervalo 90% = [0.31, 0.39]
+--- Parte 51 (0x33: a memoria curta e a longa) ---
+P971 AIC: exponencial = -57.74; potencia = -79.37; duas exponenciais = -73.02 (A = 0.1089, B = 0.0232, t1 = 3.5, t2 = 110.0, sse = 0.3481)
+P972 cobertura do portugues nos substantivos = 0.4332; profundidade <= 4: 0.5435; >= 12: 0.2796; diferenca = 0.2639
+P973 Kaprekar em base 16 (4 digitos, 65520 numeros): 4 ciclos; ['1FFE', 'E0E2', 'EB32', 'C774', '7FF8', '8688']: 0.481; ['30ED', 'E952', 'C3B4', '9687']: 0.228; ['3FFC', 'C2C4', 'A776']: 0.191; ['52CB', 'A596']: 0.100; base 10: [(6174,)]
+P974 previsoes unilaterais (sem faixa) por parte: 47: 1 de 6 ['c']; 48: 1 de 5 ['c']; 49: 0 de 5 []; 50: 0 de 6 []; 51: 2 de 4 ['b', 'd']
+P999 minha taxa de erro (154/440): media = 0.35, intervalo 90% = [0.31, 0.39]
+--- Parte 52 (0x34: o metodo ou a serie) ---
+P1001 duas exponenciais em log (Gauss-Newton, exp/log proprios): sse da grade = 0.3481 -> 0.3392; A = 0.1001, B = 0.0191, t1 = 4.070, t2 = 1.896e+09; AIC = -73.54 (potencia: -79.37; limiar de sse = 0.2534)
+P1002 funis do portugues: a mais escolhida = ato (333); as 10 mais = 0.2411 de 3401 palavras; [('ato', 333), ('pessoa', 138), ('língua', 105), ('atividade', 50), ('mulher', 42), ('país', 38), ('parte', 35), ('membro', 29), ('ação', 25), ('estado', 25)]
+P1003 inverte e soma, base 16 (1..4095): chegam 0.9819, em 2.558 passos; nao chegam 74 (o primeiro: 0x19d); base 10 (1..9999): nao chegam 246 (o primeiro: 196)
+P974 previsoes unilaterais da Parte 52: {52: (4, 0, [])}
+P1029 minha taxa de erro (156/448): media = 0.35, intervalo 90% = [0.31, 0.39]
+--- Parte 53 (0x35: preditiva comigo mesma) ---
+P1032 caracteres: medido = 12767; estatistico [7768.1336; 12264.6164] fora; ingenuo = 8804
+P1032 compressao: medido = 0.41147999697496784; estatistico [0.4282; 0.4652] fora; ingenuo = 0.46020118084408485
+P1032 testes_unidade: medido = 4; estatistico [2.0708; 4.1792] dentro; ingenuo = 4
+P1032 testes: medido = 6; estatistico [6.1147; 13.1353] fora; ingenuo = 8
+P1032 erros: medido = 1; estatistico [0.6440; 5.1060] dentro; ingenuo = 2
+P1032 redundancia: medido = 0.575899965750323; estatistico [0.5101; 0.6072] dentro; ingenuo = 0.5246812689196857
+P1033 Spearman(palavras da definicao, profundidade) = 0.0808 em 82115 substantivos; palavras por faixa: 0-4: 9.78, 5-8: 9.74, 9-12: 10.76, 13+: 9.56
+P1034 pi em hexadecimal: BBP = exato em 1000 de 1000 digitos; 3,243F6A88...; chi2 (15 g.l.) = 13.568
+P974 previsoes unilaterais da Parte 53: {53: (3, 0, [])}
+P1059 minha taxa de erro (157/454): media = 0.35, intervalo 90% = [0.31, 0.38]
+--- Parte 54 (0x36: a sorte das rodadas) ---
+P1061 rodadas com chance de sorte < 0,5 (modelo de sorteios independentes): 9; menor: rodada06 = 3.16e-170; diferencas reais (exp dist, exp dif, log dist, log dif): rodada06 (1, 0, 687, 0); rodada09 (3593, 3, 5822, 4); rodada14 (1, 0, 213, 0); rodada18 (0, 0, 14, 0); rodada19 (0, 0, 41, 1); rodada20 (1, 0, 1196, 0); rodada23 (0, 0, 436, 0); rodada24 (0, 0, 48, 0); rodada25 (1440, 3, 39059, 5)
+P1062 folhas: 0.7911 de 82115 substantivos; filhos por no interno = 4.921 (conta: 4.786)
+P1063 autodescritivos: base 16 ['C210000000001000']; base 10 ['6210001000']; base 7 ['3211000']; base 4 ['1210', '2020']
+P974 previsoes unilaterais da Parte 54: {54: (3, 0, [])}
+P1089 minha taxa de erro (159/462): media = 0.34, intervalo 90% = [0.31, 0.38]
+--- Parte 55 (0x37: o ulp que chega) ---
+P1091 rodada06: 200 numeros; maior mudanca relativa com um ulp = 4.029e-16; texto igual
+P1091 rodada09: 13 numeros; maior mudanca relativa com um ulp = 3.111e-13; texto igual
+P1091 rodada14: 2 numeros; maior mudanca relativa com um ulp = 9.080e-16; texto MUDOU
+P1091 rodada18: 41 numeros; maior mudanca relativa com um ulp = 3.609e-16; texto igual
+P1091 rodada19: 41 numeros; maior mudanca relativa com um ulp = 2.362e-16; texto igual
+P1091 rodada20: 41 numeros; maior mudanca relativa com um ulp = 3.255e-14; texto igual
+P1091 rodada21: 44 numeros; maior mudanca relativa com um ulp = 7.228e-16; texto igual
+P1091 rodada22: 26 numeros; maior mudanca relativa com um ulp = 1.095e-15; texto igual
+P1091 rodada23: 84 numeros; maior mudanca relativa com um ulp = 3.025e-14; texto igual
+P1091 rodada24: 49 numeros; maior mudanca relativa com um ulp = 4.173e-16; texto igual
+P1091 rodada25: 10 numeros; maior mudanca relativa com um ulp = 2.392e-15; texto igual
+P1091 rodada26: 8 numeros; maior mudanca relativa com um ulp = 1.356e-08; texto igual
+P1092 funcoes pNN desde a P821 sem teste: 13 de 35: ['p821_inversao', 'p822_dialogo_invertido', 'p824_reconstrucao', 'p853_reconstrucao', 'p856_acaso_851', 'p881_epoca', 'p884_ciclo_da_serie', 'p911_deriva', 'p941_curvas_individuais', 'p948_pergunta_reconhece_resposta', 'p972_portugues_por_profundidade', 'p971_duas_memorias', 'p1001_duas_memorias_em_log']
+P1093 sem o funil 'act': 0.6986 das 55191 palavras mudam de destino (1991 iam direto a 'act')
+P1094 digitos hexadecimais que um ulp muda: 1 + random() = 1.0341 (conta posterior 1.0333); mantissa uniforme = 1.0667 (conta 1.0667)
+P974 previsoes unilaterais da Parte 55: {55: (3, 0, [])}
+P1119 minha taxa de erro (163/468): media = 0.35, intervalo 90% = [0.31, 0.39]
+--- Parte 56 (0x38: os empates) ---
+P1121 empates exatos nas escolhas impressas: rodada12 = 9; rodada14 = 2; rodada18 = 0; rodada19 = 0; rodada20 = 0; rodada24 = 0; rodadas com empate: 2 de 6
+P1122 sinonimos perfeitos: 0.2804 das 77503 palavras tem gemeo; o maior grupo (14): ['doodad', 'doohickey', 'doojigger', 'gubbins', 'thingamabob', 'thingamajig', 'thingmabob', 'thingmajig', 'thingumabob', 'thingumajig', 'thingummy', 'whatchamacallit', 'whatchamacallum', 'whatsis']
+P1123 mesma soma de digitos em base 16 e 10 (1..4095): 431 = 0.1053 (conta continua 0.0308; com a rede de multiplos de 3: x3)
+P1123 mesma soma de digitos em base 16 e 10 (1..65535): 5161 = 0.0788 (conta continua 0.0308; com a rede de multiplos de 3: x3)
+P1092 pNN novas (P1091-P1150) sem teste: 0 de 8: []
+P974 previsoes unilaterais da Parte 56: {56: (2, 0, [])}
+P1149 minha taxa de erro (166/474): media = 0.35, intervalo 90% = [0.32, 0.39]
+--- Parte 57 (0x39: as restricoes) ---
+P1151 4-gramas reordenados pelo portugues: 0 pares mudam; 2 dos 13 tem acento
+P1152 palindromos: 104 de 77197 palavras; conta de letras independentes 116.2; com as pontas reais 86.7; ['aaa', 'aba', 'ada', 'aga', 'akka', 'ala', 'alula', 'ana', 'anna', 'ara', 'bib', 'bob']
+P1153 palindromos em base 10 e 16 abaixo de 10^6: 27 (conta 25.3); [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 353, 626, 787, 979, 1991, 3003, 39593, 41514, 90209, 94049]
+P1092 pNN novas (P1151-P1180) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 57: {57: (2, 0, [])}
+P1179 minha taxa de erro (167/479): media = 0.35, intervalo 90% = [0.31, 0.39]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 292; pares de interacao possiveis = 42486
-Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
-Regressao: 85/85 resultados publicados reproduzidos; falhas = []
+P96 funcoes pNN no arquivo = 354; pares de interacao possiveis = 62481
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 104/104 resultados publicados reproduzidos; falhas = []
