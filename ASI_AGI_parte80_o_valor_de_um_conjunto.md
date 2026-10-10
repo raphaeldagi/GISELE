@@ -47,3 +47,9 @@ em 0,8167, 0,8267, 0,8267, 0,7967; complementaridade em 0,3633, 0,3667, 0,3833, 
 - **(e)** a média de guloso/ótimo com `olhar = 2` em **[0,9466; 1,0000]**
 - **(f)** a fração com o guloso ótimo em **[0,8805; 0,9411]**
 - **(g)** a fração parada em zero com o ótimo positivo em **[0,0036; 0,0314]**
+
+**Medido (e) a (g):** **0,9771** ✅; **0,9100** ✅; **0,0167** ✅.
+
+**A Rodada 49, registrada antes de rodar:** o Python grava as 300 instâncias da semente 80 (p, utilidades e acurácias em hexadecimal, custos inteiros); Python e Java calculam o VOI de cada conjunto
+pela mesma enumeração, o ótimo e os dois gulosos (olhar 1 e 2, com os mesmos desempates), só com + − × ÷ e comparações.
+- **(h)** IGUAIS (categórica)
