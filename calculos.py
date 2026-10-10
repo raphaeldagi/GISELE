@@ -7468,6 +7468,7 @@ def testes_de_regressao():
         "P1123": p1123_mesma_soma()[1] == 431 and p1123_mesma_soma(65535)[1] == 5161,
         "P1153": p1153_duplos_palindromos()[0] == 27,
         "P1183": p1183_primeiro_digito_hex(2) == [0, 2500, 2500, 0, 2500, 0, 0, 0, 2500] + [0] * 7 and p1183_primeiro_digito_hex(3)[1] == 2506,
+        "P1213": p1213_persistencia_hex(16 ** 4)[:2] == (7, 0x3DDE),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9476,6 +9477,57 @@ def p1181_primeira_diferenca():
     soma, pares, inv = r32.medir(ws)
     return soma / pares, pares, inv, sum(1 for w in ws if r32.chave_pt(w) != w.lower())
 
+
+ERROS_P1239, TESTES_P1239 = 171, 492
+
+
+def p1212_palavras_que_nao_definem(d=None):
+    """As palavras que nunca aparecem na definição de outra (P1212): no grafo de definições, o grau de entrada zero.
+    Devolve (fração, palavras, as 5 que mais definem, com o grau)."""
+    from synthai.dicionario import Dicionario
+    g = (d or Dicionario()).grafo_de_definicoes()
+    grau = {w: 0 for w in g}
+    for u, vs in g.items():
+        for v in vs:
+            if v in grau:
+                grau[v] += 1
+    zero = sum(1 for x in grau.values() if x == 0)
+    top = sorted(grau, key=lambda w: (-grau[w], w))[:5]
+    return zero / len(grau), len(grau), [(w, grau[w]) for w in top]
+
+
+def p1213_persistencia_hex(ate=16 ** 5):
+    """A persistência multiplicativa em base 16 (P1213), para n de 16 a ate − 1: quantas vezes se multiplicam os dígitos
+    hexadecimais até sobrar um dígito. Devolve (a maior, o primeiro número com ela, a média)."""
+    def prod(n):
+        p = 1
+        while n:
+            n, r = divmod(n, 16)
+            p *= r
+        return p
+    maior, quem, soma = 0, None, 0
+    for n in range(16, ate):
+        k, x = 0, n
+        while x >= 16:
+            x = prod(x)
+            k += 1
+        soma += k
+        if k > maior:
+            maior, quem = k, n
+    return maior, quem, soma / (ate - 16)
+
+
+def p1211_nome_e_palavra():
+    """Rodada 33 (P1211): dos lemas portugueses com maiúscula, quantos têm irmã minúscula com a mesma grafia
+    (dialogo/rodada33.py, IGUAL em Java). Devolve (com maiúscula, com irmã, exemplos)."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada33", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada33.py"))
+    r33 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r33)
+    return r33.irmas(r33.lemas())
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -9666,6 +9718,20 @@ def _parte_58():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1209, testes=TESTES_P1209)
     print(f"P1209 minha taxa de erro ({ERROS_P1209}/{TESTES_P1209}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_59():
+    print("--- Parte 59 (0x3B: o nome e a coisa) ---")
+    n, k, ex = p1211_nome_e_palavra()
+    print(f"P1211 lemas portugueses com maiuscula: {n}; com irma minuscula: {k} ({k / n:.4f}); {ex}")
+    frac, total, top = p1212_palavras_que_nao_definem()
+    print(f"P1212 palavras que nunca definem outra: {frac:.4f} de {total}; as que mais definem: {top}")
+    m, q, med = p1213_persistencia_hex()
+    print(f"P1213 persistencia multiplicativa em base 16 (16..16^5-1): maior = {m} (primeiro em {hex(q)}); media = {med:.4f}")
+    total, sem = p1092_pnn_sem_teste(1211, 1240)
+    print(f"P1092 pNN novas (P1211-P1240) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 59: {p974_previsoes_sem_largura(range(59, 60))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1239, testes=TESTES_P1239)
+    print(f"P1239 minha taxa de erro ({ERROS_P1239}/{TESTES_P1239}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -9702,7 +9768,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59}
 
 
 if __name__ == "__main__":

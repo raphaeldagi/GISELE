@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 58 (0x3A): a primeira diferença
 
-> Continuação da [Parte 57](ASI_AGI_parte57_as_restricoes.md). **Previsões no commit `aad4618`, antes de qualquer execução e antes de escrever o resto deste
+> Continuação da [Parte 57](ASI_AGI_parte57_as_restricoes.md). **Próxima:** [Parte 59 — o nome e a coisa](ASI_AGI_parte59_o_nome_e_a_coisa.md) (P1211–P1240). **Previsões no commit `aad4618`, antes de qualquer execução e antes de escrever o resto deste
 > documento.** O refazer da Parte 46 está fechado (57 partes num `resultados.txt`, regressão 104/104, 31 rodadas IGUAIS). A Rodada 31 achou que a ordem alfabética
 > se decide na primeira letra diferente; esta parte mede onde fica essa primeira diferença no dicionário português, quanto o português é mais longo que o inglês,
 > e o primeiro dígito hexadecimal das potências.

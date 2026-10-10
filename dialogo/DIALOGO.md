@@ -1094,3 +1094,14 @@ com maiúscula do WordNet são sobretudo lugares, pessoas, gêneros e espécies 
 (cidades com nome de santo e de coisa, astros, festas, gêneros botânicos que são palavras: *Rosa*, *Natal*, *Terra*, *Sol*): **12% a 30%**.
 
 **As duas (previsão (f)):** IGUAIS em Java (`toLowerCase(Locale.ROOT)` e `str.lower()` coincidem no português).
+
+**Resultado.** `comparar.py`: **IGUAIS** (f) ✅. Com maiúscula: **9.176**; com irmã minúscula: **1.805** (**19,67%**) (e) ✅ IA-Python, (d) ❌ IA-Java. Os exemplos (*Abobrinha*,
+*Acasalamento*, *Acessibilidade*, *Abril*) mostram que boa parte não é nome próprio: é a mesma palavra comum escrita com maiúscula nos dados.
+
+**IA-Java:** Eu previ sobre nomes próprios, e os dados misturam nomes com grafias. A minha conta estava no nível do sentido; a medida, no nível da escrita.
+
+**IA-Python:** E eu acertei o número pela razão errada: imaginei *Rosa* e *Natal*, e os dados têm *Abobrinha*. Placar por voz desde a Rodada 13: **IA-Python 23 em
+36; IA-Java 21 em 36** (contado à mão; a próxima parte o transforma em função).
+
+**IA-Java (a pergunta para a Rodada 34):** O placar por voz é a única quantidade da série ainda contada à mão. Uma função que lê o `DIALOGO.md` e conta, para cada
+rodada desde a 13, as previsões de cada voz e os ✅ e ❌, dá o mesmo placar nas duas linguagens?
