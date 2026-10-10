@@ -36,3 +36,7 @@
 - **(b)** a média de Δ₄ em **[−0,005; +0,020]** bit
 - **(c)** Δ₁ > Δ₂ > Δ₄ nas **duas** sementes (categórica: mais direções, menos perda)
 - **(d)** |Δ₁₆| < 10⁻⁶ nas duas (categórica: o posto cheio reconstrói M a menos de arredondamento)
+
+**Medido (inglês):** semente 73 (PR 1,50): Δ₁ = +0,0232, Δ₂ = +0,0129, Δ₄ = +0,0028, Δ₁₆ = 0; semente 74 (PR 2,28): Δ₁ = +0,0436, Δ₂ = +0,0269, Δ₄ = +0,0067, Δ₁₆ = 0. (a) média **+0,0334** ✅;
+(b) **+0,0047** ✅; (c) monótona nas duas ✅; (d) Δ₁₆ = 0 exatamente ✅. A relação entre a razão de participação e Δ₁ não é monótona nos quatro pontos (1,95 → 0,065; 3,08 → 0,011; 1,50 → 0,023;
+2,28 → 0,044): a concentração da atenção não prevê sozinha quanto custa cortá-la.
