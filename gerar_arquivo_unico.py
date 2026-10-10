@@ -12,11 +12,28 @@ RAIZ = os.path.dirname(os.path.abspath(__file__))
 FONTES = ["calculos.py", "CLAUDE.md"] + sorted(
     os.path.join("synthai", f) for f in os.listdir(os.path.join(RAIZ, "synthai")) if f.endswith(".py")) + sorted(
     os.path.join("externos", f) for f in os.listdir(os.path.join(RAIZ, "externos")) if f.endswith(".py"))  # Parte 33
+
+
+def _textos_lidos_pelo_codigo():
+    """Os textos que as funções leem (Parte 68): o resultados.txt (as rodadas 18 a 21 e a P853 o leem), os documentos das partes (P1031, P1452,
+    P1481 os leem), o diálogo inteiro (as pNN das rodadas importam dialogo/rodadaNN.py, a P1241 lê o DIALOGO.md; os .java vão como texto,
+    para o verificar.py funcionar depois de --extrair) e os textos de externos/ (só dados, nunca executados)."""
+    saida = ["resultados.txt"] + sorted(f for f in os.listdir(RAIZ) if f.startswith("ASI_AGI_") and f.endswith(".md"))
+    saida += sorted(os.path.join("externos", f) for f in os.listdir(os.path.join(RAIZ, "externos")) if f.endswith(".md"))
+    for pasta, subpastas, arquivos in sorted(os.walk(os.path.join(RAIZ, "dialogo"))):
+        subpastas[:] = sorted(d for d in subpastas if d != "__pycache__")
+        for f in sorted(arquivos):
+            if f.endswith((".py", ".java", ".md", ".tsv", ".txt")):
+                saida.append(os.path.relpath(os.path.join(pasta, f), RAIZ))
+    return saida
+
+
+FONTES += _textos_lidos_pelo_codigo()
 DADOS = sorted(os.path.join("dados", f) for f in os.listdir(os.path.join(RAIZ, "dados"))
                if f.endswith((".gz", ".txt", ".py")))  # o dicionário (Parte 30): binários em base64
 
 CABECALHO = '''#!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 30, perguntas P1 a P380).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a PARTE_FINAL, perguntas P1 a PPNN_FINAL).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -24,10 +41,12 @@ Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - synthai/: o protótipo em módulos, uma função de Jung por arquivo (percepção, pensamento, intuição, sentimento,
     relação com o humano), os mundos, as réguas e as suítes de testes de unidade;
   - CLAUDE.md: as convenções do projeto (a P143 mede o tamanho dele);
-  - dados/: o dicionário WordNet 3.0 (Parte 30), em base64, com a licença de Princeton.
+  - dados/: o dicionário WordNet 3.0 (Parte 30) e o português da OpenWordNet-PT (Parte 39, CC BY 4.0), em base64, com as licenças;
+  - os textos que o código lê: os documentos das partes (ASI_AGI_*.md), o resultados.txt, e o diálogo Python <-> Java inteiro
+    (dialogo/: as rodadas em Python, que as funções importam, e em Java, como texto; o DIALOGO.md).
 
 Como rodar (só biblioteca padrão do Python 3):
-  python3 SYNTHAI_completo.py              todas as partes (leva ~45 minutos) e a unificação
+  python3 SYNTHAI_completo.py              todas as partes (leva horas: melhor em blocos, como abaixo) e a unificação
   python3 SYNTHAI_completo.py 22 26        só as partes pedidas, e a unificação
   python3 SYNTHAI_completo.py --demo       a mesma SYNTHAI em três tipos de tarefa
   python3 SYNTHAI_completo.py --testes     os testes de unidade do pacote
@@ -93,7 +112,11 @@ def literal(texto):
 
 
 def gerar(saida="SYNTHAI_completo.py"):
-    partes = [CABECALHO]
+    import re
+    codigo = open(os.path.join(RAIZ, "calculos.py"), encoding="utf-8").read()
+    pnn = max(int(n) for n in re.findall(r"^def p(\d+)_", codigo, re.M))
+    parte = max(int(n) for n in re.findall(r"^def _parte_(\d+)\(", codigo, re.M))
+    partes = [CABECALHO.replace("PARTE_FINAL", str(parte)).replace("PNN_FINAL", str(pnn))]
     for nome in FONTES:
         texto = open(os.path.join(RAIZ, nome), encoding="utf-8").read()
         partes.append(f"\n# {'=' * 100}\n# {nome}  ({texto.count(chr(10))} linhas)\n# {'=' * 100}\n"
