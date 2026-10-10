@@ -113,6 +113,9 @@ anterior, commit e push.
   funções têm um "+"). Um verificador só vale com um caso de controle de cada lado: um defeito plantado que ele tem de achar e um caso limpo que ele tem de passar (o "provador de Gödel" do texto
   recebido aprovou 849 de 849 funções, inclusive as 366 que a mutação quebra; o meu auditor da Parte 72 acusou a Parte 1 sem defeito). Entre duas linguagens, ler o byte exato que um lado escreve e o
   outro procura (o espaço depois dos dois-pontos do json.dumps decidia o laço inteiro).
+  Parte 76: o que em Python se herda por import, em Java se copia: uma correção numa rodada vem com a busca do mesmo cálculo nos arquivos das DUAS linguagens, no mesmo commit (a cópia Java
+  da 26 ficou com o Math.log). Toda função de auditoria tem um teste com um defeito plantado e um caso limpo (`p1722` olha as duas linguagens; a `p1638` olhava um lado e deixou 4 rodadas).
+  Rodadas abertas na fronteira da Parte 52: 09 e 14 (o log do Python mora em peças medidas; corrigir = reescrever o lado Python da rodada com funções exatas próprias).
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
