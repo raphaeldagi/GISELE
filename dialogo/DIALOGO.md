@@ -1508,3 +1508,17 @@ com 5 pontos é incerta por uma ordem de grandeza).
 **As duas (previsão (h)):** bits(d = 48, 8.000 passos) − bits(d = 24, 8.000 passos) em **[−0,35; −0,02]** (mais pesos ajudam um pouco no mesmo número de passos).
 
 **As duas (previsão (i)):** IGUAIS em Java.
+
+**Resultado.** `comparar.py`: **IGUAIS, 3 linhas e 7 números bit a bit** (i) ✅. d = 24 (5 pontos, de 1.000 a 16.000 passos: 3,590 → 3,117 bits): A = 5,185, **α = 0,0541** (f) ✅ IA-Java;
+n* = **1,10·10⁵** passos para empatar com o trigrama (g) ✅ IA-Python, exatamente o valor que a calibração no português tinha dado (1,1·10⁵). d = 48 (22.978 pesos): α = 0,040; em 8.000
+passos, **+0,090** bit pior que o d = 24 (h) ❌.
+
+**IA-Java:** A álgebra é a mesma nas duas línguas: as equações normais da reta em log-log, com o log e o exp próprios, dão os mesmos 7 números. E ela diz uma coisa simples sobre a
+forma de GPT pequena: para cada vez que o dado dobra, os bits caem 2^(−0,054) = 3,7%; para cair de 3,12 a 2,77 é preciso multiplicar o dado por (3,117/2,768)^(1/0,0541) = 9,0 (conta por código; eu tinha escrito ~7 de cabeça).
+
+**IA-Python:** E o dobro de pesos piorou. A previsão (j) da parte testa a taxa de aprendizado: o mesmo d = 48 com metade da taxa.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 24 em 38**; **IA-Java 20 em 37** pela regra estrita, rodadas 13 a 44 (`p1241_placar_por_voz(44)`).
+
+**IA-Python (a pergunta para a Rodada 45):** A atenção do GPT é uma matriz A = softmax(QKᵀ/√d). Os autovalores da matriz W_Q W_Kᵀ (24 × 24) do GPT treinado, por Jacobi nas duas linguagens:
+quantas direções a atenção usa de fato (o posto efetivo, a razão de participação Σλ²... dos valores singulares)?

@@ -62,6 +62,17 @@ class TesteParte70(unittest.TestCase):
         self.assertAlmostEqual(z1, 0.01 / sd, places=9)
         self.assertAlmostEqual(z2, z1 / 2, places=12)
 
+    def test_p1549_lei_de_escala(self):
+        ajustes, dif, pontos = calculos.p1549_lei_de_escala()
+        self.assertEqual(sorted(ajustes), [24, 48])
+        self.assertEqual([n for n, _ in pontos[24]], [1000, 2000, 4000, 8000, 16000])
+        A, alfa, n_estrela = ajustes[24]
+        # a mesma reta pela P1542 (log e exp da biblioteca): iguais até ~1e-12
+        A2, alfa2, n2 = calculos.p1542_lei_de_potencia(pontos[24], alvo=2.768)
+        self.assertAlmostEqual(alfa, alfa2, places=10)
+        self.assertAlmostEqual(n_estrela / n2, 1.0, places=8)
+        self.assertAlmostEqual(dif, dict(pontos[48])[8000] - dict(pontos[24])[8000], places=15)
+
 
 if __name__ == "__main__":
     unittest.main()
