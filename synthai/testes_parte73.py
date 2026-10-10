@@ -57,5 +57,10 @@ class TesteParte73(unittest.TestCase):
         self.assertLess(mts, mtv)
 
 
+    def test_p1642_heranca_multipla(self):
+        # no Mini, só a pulga (3) tem dois hiperônimos: 1 de 5
+        self.assertEqual(calculos.p1642_heranca_multipla(Mini()), (1, 5, 0.2))
+
+
 if __name__ == "__main__":
     unittest.main()

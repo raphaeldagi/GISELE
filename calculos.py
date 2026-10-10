@@ -11291,6 +11291,17 @@ def p1639_rodada47():
             sum(voi[i] for i in tv) / 200, sum(voi[i] for i in ts) / 200)
 
 
+def p1642_heranca_multipla(d=None):
+    """(P1642) Os sinsets de substantivo com mais de um hiperônimo substantivo (as "colas" entre ramos da árvore). Devolve (com herança múltipla,
+    substantivos, fração)."""
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    ns = [s for s in d.sinsets if s[0] == "n"]
+    m = sum(1 for s in ns if sum(1 for h in s[2] if h.startswith("n:")) > 1)
+    return m, len(ns), m / len(ns)
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -11949,6 +11960,7 @@ def _parte_73():
     print(f"P1636 'toda ave voa': fecho de bird {tam}; contraexemplos {len(contra)}: {contra}")
     print(f"P1637 polissemia dos substantivos (lemas, polissemicos, fracao): {p1637_polissemia(d)}")
     print(f"P1638 rodadas com funcoes da libm: {p1638_rodadas_com_libm()}")
+    print(f"P1642 heranca multipla (sinsets, substantivos, fracao): {p1642_heranca_multipla(d)}")
     total, sem = p1092_pnn_sem_teste(1631, 1660)
     print(f"P1092 pNN novas (P1631-P1660) sem teste: {len(sem)} de {total}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 73: {p974_previsoes_sem_largura(range(73, 74))}")
