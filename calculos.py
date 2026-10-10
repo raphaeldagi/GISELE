@@ -7477,6 +7477,7 @@ def testes_de_regressao():
         "P1393": p1393_periodo_hex()[3] == 8363 and p1391_o_que_nao_e_divisor()[0][1] == 48,
         "P1423": p1427_bases_29_a_34((29,))[0][1] == 1610 and p1421_endereco_da_falta()[0]["d0"][1] == 11,
         "P1455": len(p1455_automorficos(12, 6)[0]) == 11 and len(p1452_minhas_previsoes(range(53, 67))) == 97,
+        "P1493": len(p1493_palindromos_duplos()[0]) == 18 and p1491_densidade_da_conta()[0][5][1] == 9592,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9495,6 +9496,7 @@ ERROS_P1389, TESTES_P1389 = 184, 535
 ERROS_P1419, TESTES_P1419 = 186, 544
 ERROS_P1449, TESTES_P1449 = 189, 553
 ERROS_P1479, TESTES_P1479 = 189, 559
+ERROS_P1509, TESTES_P1509 = 189, 565
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -10378,6 +10380,75 @@ def p1482_engenharia_por_tipo(previsoes=None):
     return saida
 
 
+def p1491_densidade_da_conta():
+    """Rodada 42 (P1491): R_b = π(b⁵)/(Li(b⁵) − Li(2)) nas bases 5 a 40, a conta C corrigida por R_b e a inclinação de z antes e depois
+    (dialogo/rodada42.py, IGUAL em Java). Devolve ([(b, π, R_b)], inclinação antes, depois, maior |R_b − 1| nas bases 10 a 40)."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada42", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada42.py"))
+    r42 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r42)
+    c = r42.crivo(40 ** 5)
+    li2 = r42.li(2)
+    linhas, antes, depois, maior = [], [], [], 0.0
+    for b in range(5, 41):
+        x = b ** 5
+        pi = c[:x].count(1)
+        R = pi / (r42.li(x) - li2)
+        if b >= 10:
+            maior = max(maior, abs(R - 1.0))
+        N, div, corr, ex, med, conta, var = r42.base(b, c)
+        m = ex + med[3] + med[5]
+        s = sqrt(var)
+        antes.append((float(b), (m - (ex + conta[3] + conta[5])) / s))
+        depois.append((float(b), (m - (ex + (conta[3] + conta[5]) * R)) / (s * sqrt(R))))
+        linhas.append((b, pi, R))
+    return linhas, r42.reta(antes)[0], r42.reta(depois)[0], maior
+
+
+def p1492_folhas(d=None):
+    """As folhas da taxonomia (P1492): a fração dos sinsets de cada classe que não são hiperônimo de nenhum outro sinset. Devolve
+    {classe: (fração, sinsets)}."""
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    pais = set()
+    for _, _, hip, _ in d.sinsets:
+        for h in hip:
+            if h in d.indice:
+                pais.add(d.indice[h])
+    por = {}
+    for i, (pos, _, _, _) in enumerate(d.sinsets):
+        a, b = por.get(pos, (0, 0))
+        por[pos] = (a + (i not in pais), b + 1)
+    return {c: (a / b, b) for c, (a, b) in sorted(por.items())}
+
+
+def p1493_palindromos_duplos(ate=16 ** 4, b1=16, b2=10):
+    """Os palíndromos duplos (P1493): n de 1 a ate − 1 palíndromo nas bases b1 e b2; e a conta com independência, Σ b1^(−⌊L1/2⌋)·b2^(−⌊L2/2⌋).
+    Devolve (lista, conta)."""
+    achados, conta = [], 0.0
+    for n in range(1, ate):
+        d1, d2 = _digitos_base(n, b1), _digitos_base(n, b2)
+        conta += b1 ** (-(len(d1) // 2)) * b2 ** (-(len(d2) // 2))
+        if d1 == d1[::-1] and d2 == d2[::-1]:
+            achados.append(n)
+    return achados, conta
+
+
+def p1499_previsoes_sobre_previsoes_v2(parte=68):
+    """O placar das previsões sobre as minhas previsões, versão 2 (P1499; lido pela P1481, com os tipos): (m1) o número de previsões do
+    mundo, (m2) o número de faixas que cruzam o zero, (m3) a mediana de w das que não cruzam, (m4) a fração de acertos, (m5) o número de
+    faixas que não cruzam o zero com w > 0,6. Devolve (medidas, ws das que não cruzam)."""
+    prev = p1481_minhas_previsoes_v2(range(parte, parte + 1))
+    nz = [x for x in prev if x[5] not in (None, "zero")]
+    ws = sorted((x[3] - x[2]) / (abs(x[2]) + abs(x[3])) for x in nz)
+    n = len(ws)
+    med = (ws[n // 2] if n % 2 else (ws[n // 2 - 1] + ws[n // 2]) / 2) if n else None
+    return ({"m1": len(prev), "m2": sum(1 for x in prev if x[5] == "zero"), "m3": med,
+             "m4": sum(x[4] for x in prev) / len(prev) if prev else None, "m5": sum(1 for w in ws if w > 0.6)}, ws)
+
+
 def p1459_previsoes_sobre_previsoes(parte=67, historico=range(53, 67)):
     """O placar das previsões sobre as minhas previsões (P1459): para a parte, lida pela P1452, (m1) a mediana de w das faixas, (m2) o
     número de previsões do mundo, (m3) a fração de acertos, (m4) a fração das faixas com w a menos de 0,05 de 1/3, (m5) o erro médio
@@ -10865,6 +10936,29 @@ def _parte_67():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1479, testes=TESTES_P1479)
     print(f"P1479 minha taxa de erro ({ERROS_P1479}/{TESTES_P1479}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_68():
+    print("--- Parte 68 (0x44: o tipo da quantidade) ---")
+    prev = p1481_minhas_previsoes_v2(range(53, 68))
+    print(f"P1481 previsoes do mundo (Partes 53-67): {len(prev)}; com faixa: {sum(1 for x in prev if x[2] is not None)}")
+    for tipo, (n, ac, med, est, lar) in p1482_engenharia_por_tipo(prev).items():
+        extra = f"; w mediana {med:.4f}; acerto das estreitas {est:.4f}, das largas {lar:.4f}" if med is not None else ""
+        print(f"P1482 tipo {tipo}: {n} previsoes; acerto {ac:.4f}{extra}")
+    m, ws = p1499_previsoes_sobre_previsoes_v2(68)
+    print(f"P1499 previsoes sobre as minhas previsoes da Parte 68: {m}; ws (sem as do zero) {[round(w, 4) for w in ws]}")
+    linhas, antes, depois, maior = p1491_densidade_da_conta()
+    print(f"P1491 R_b = pi(b^5)/(Li(b^5) - Li(2)): {[(b, round(R, 5)) for b, _, R in linhas if b in (5, 10, 20, 30, 40)]}; maior |R - 1| (10-40) {maior:.5f}")
+    print(f"P1491 inclinacao de z: antes {antes:.5f}; com a conta corrigida {depois:.5f}; mudanca {abs(depois - antes):.5f}")
+    for c_, (f, n) in p1492_folhas().items():
+        print(f"P1492 folhas na classe {c_}: {f:.4f} de {n}")
+    for ate, b1, b2 in ((16 ** 4, 16, 10), (8 ** 5, 8, 10)):
+        ach, conta = p1493_palindromos_duplos(ate, b1, b2)
+        print(f"P1493 palindromos nas bases {b1} e {b2} ate {ate}: {len(ach)}; conta {conta:.3f}; razao {len(ach) / conta:.4f}; {ach}")
+    total, sem = p1092_pnn_sem_teste(1481, 1510)
+    print(f"P1092 pNN novas (P1481-P1510) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 68: {p974_previsoes_sem_largura(range(68, 69))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1509, testes=TESTES_P1509)
+    print(f"P1509 minha taxa de erro ({ERROS_P1509}/{TESTES_P1509}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -10901,7 +10995,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68}
 
 
 if __name__ == "__main__":

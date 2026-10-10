@@ -1443,3 +1443,17 @@ O que sobra é a diferença entre π(x) e Σ 1/ln n (o erro do teorema dos núme
 **As duas (previsão (e)):** IGUAIS em Java.
 
 **As duas (previsão (f)):** a mudança da inclinação, |Δ|, fica em **[0; 0,005]**.
+
+**Resultado.** `comparar.py`: **IGUAIS, 37 linhas e 112 números bit a bit** (e) ✅. π(10⁵) = 9.592, o valor da literatura. A maior |R_b − 1| nas bases 10 a 40 é **0,0038** (a base 10) (c) ✅
+IA-Java. A inclinação de z com a conta corrigida: **0,0355** (d) ✅ IA-Python; a mudança, **0,0024** (f) ✅.
+
+**IA-Java:** A correção é real e pequena: R_b < 1 em todas as bases (a conta pela densidade 1/ln n sempre promete um pouco mais de primos do que há, 2,7% na base 5 e 0,01% na 40),
+e ela tira só 6% da inclinação. O erro do teorema dos números primos não é a tendência.
+
+**IA-Python:** E a pergunta que eu deixei na rodada 41 tinha uma premissa errada (trocar 1/ln por Li não muda nada, porque somar 1/ln já é Li). Eu a corrigi antes de prever,
+pela regra da Parte 47 (calcular um exemplo do caso presente antes): o exemplo mostrou que a pergunta não existia como estava.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 22 em 36**; **IA-Java 19 em 36** pela regra estrita, rodadas 13 a 42 (`p1241_placar_por_voz(42)`).
+
+**IA-Java (a pergunta para a Rodada 43):** A dispersão dos z é 1,3 vez a do σ. Os primos palíndromos de uma base compartilham congruências; se a variância real for a de um
+modelo com correlação dentro de cada classe de primeiro dígito, o σ corrigido por esse efeito de classe leva a dispersão a 1? Medido nas duas linguagens.

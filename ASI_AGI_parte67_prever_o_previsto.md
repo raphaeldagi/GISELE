@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 67 (0x43): prever o previsto
 
-> Continuação da [Parte 66](ASI_AGI_parte66_o_endereco_da_falta.md). Previsões sobre as minhas previsões no commit `b5354f5`; as do mundo no `4f3208d`. Pedido do usuário: **"Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto?
+> Continuação da [Parte 66](ASI_AGI_parte66_o_endereco_da_falta.md). **Próxima:** [Parte 68 — o tipo da quantidade](ASI_AGI_parte68_o_tipo_da_quantidade.md) (P1481–P1510). Previsões sobre as minhas previsões no commit `b5354f5`; as do mundo no `4f3208d`. Pedido do usuário: **"Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto?
 > Tem como você prever o que foi previsto e fazer engenharia reversa em metacognição?"** Esta parte responde em três camadas, em ordem: (1) ler todas as minhas previsões
 > do mundo desde a Parte 53 e fazer a engenharia reversa da regra com que eu as escrevo; (2) **prever as previsões desta parte antes de escrevê-las** (registrado primeiro,
 > num commit só para isso); (3) escrever as previsões do mundo, medir, e pontuar as duas coisas: o mundo contra as minhas previsões, e as minhas previsões contra a

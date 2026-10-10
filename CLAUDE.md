@@ -101,6 +101,9 @@ anterior, commit e push.
   engenharia reversa da regra com que eu escrevo faixas (`p1453`). Medido (Parte 67): 97 previsões desde a 53, 69% de acerto; as faixas largas acertam MENOS (53% contra
   71%): eu alargo quando não sei o nível, e largura não compra acerto. As previsões sobre previsões condicionam no TIPO da quantidade (uma diferença em torno de zero tem
   w = 1 sempre). E continuar em loop: cada parte termina agendando a próxima.
+  Parte 68: a conclusão da 67 ("as largas acertam menos") era um paradoxo de Simpson (as faixas em torno de zero acertam metade; dentro das contagens e das outras, as largas
+  acertam MAIS): a régua nova é `p1481_minhas_previsoes_v2` (tipos) e o placar é `p1499`. Uma medida com defeito conhecido não sustenta conclusão nem previsão até o defeito ser
+  corrigido ou medido. Uma pergunta deixada no fim de uma rodada é uma previsão disfarçada: conferir a premissa dela antes (a da rodada 41 não existia).
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -218,7 +221,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
