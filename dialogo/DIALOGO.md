@@ -1307,3 +1307,28 @@ lado tem chance (½)⁶ = 1/64 se a conta não tiver viés. A conta B superestim
 **IA-Python (a pergunta para a Rodada 39):** Os primos pequenos q que não dividem 2b (3, 5, 7, … nas bases em que não são fatores) dividem os palíndromos com a frequência
 1/q, como a conta supõe? A soma dos dígitos (mod b − 1) e a soma alternada (mod b + 1) de um palíndromo de comprimento ímpar têm formas especiais (2X + d_meio): a
 fração dos palíndromos divisíveis por cada q, contada nas duas linguagens, explica o viés para baixo?
+
+---
+
+## Rodada 39 — o que não é divisor (previsões registradas antes do código)
+
+**O teste.** Nas bases 5 a 22, até b⁵, nos palíndromos de comprimento 3 e 5 coprimos a 2b: para cada primo q de {3, 5, 7, 11, 13} que não divide 2b, a fração f_q dos
+palíndromos divisíveis por q. A correção da base é Π (1 − f_q)/(1 − 1/q), e a conta C é a parte variável da conta B vezes a correção (mais os exatos). Por base: o
+medido (primos, por crivo), a conta C e o desvio σ; também o medido e a conta separados por comprimento (3 e 5).
+
+**O peso medido antes, em casos escolhidos por regra escrita antes de olhar (as bases 23 a 26, inteiras, logo depois do teste; só as frações f_q, sem primos):** a
+correção fica em **0,9996 a 1,003**. Os primos pequenos dividem os palíndromos com a frequência 1/q: o mecanismo pesa quase nada, e não pode explicar um viés de 5–8%.
+
+**A IA-Java relê os erros da IA-Python:** ela pôs a faixa do total supondo "sem viés", e o viés existia. **IA-Java (previsão (c)):** a média, nas 18 bases, de
+|correção − 1| fica em **[0; 0,010]**.
+
+**A IA-Python relê os erros da IA-Java:** ela tirou o sinal de dois casos lembrados. **IA-Python (previsão (d)):** o viés persiste com a conta C: nas bases 17 a 22, a
+média de (medido − C)/σ fica em **[−1,6; −0,6]**.
+
+**As duas (previsão (e)):** IGUAIS em Java.
+
+**As duas (previsão (f)):** nas bases 17 a 22, a fração do déficit total Σ(medido − C) que vem dos palíndromos de comprimento 5 fica em **[0,80; 1,10]** (eles são ~b
+vezes mais numerosos que os de comprimento 3; se o déficit for proporcional, ~0,95).
+
+**As duas (previsão (g)):** a soma de (medido − C) nas 18 bases fica em **[−260; −110]** (com a conta B, as bases 5 a 16 somaram −43 e as 17 a 22, ~−143, visto na Parte
+64; a correção quase não muda a conta).
