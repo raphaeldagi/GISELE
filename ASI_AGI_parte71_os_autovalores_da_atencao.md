@@ -56,3 +56,17 @@ Planejadas: as 6 previsões do mundo abaixo, (a) a (f), e 5 funções novas (p15
 - (c) os gêmeos de grau 15 em **[180; 300]** (a conta × razão de 1,24 a 2,06)
 
 **P1571–P1572, rodada 45:** no `dialogo/DIALOGO.md` (previsões (d) a (f)).
+
+### Previsão nova, nascida de um resultado inesperado (registrada antes de medir o grau 17)
+
+Os gêmeos de grau 15 deram 224, **1,54** vez a conta ingênua (145,3). A conta que explica o excesso, feita depois de ver os números (por isso só vira evidência num mundo novo): a série singular
+de Hardy–Littlewood em F₂[x] (`p1579`). Para cada irredutível p de grau k, multiplicar pela chance de p não dividir nenhum dos dois, dividida pela chance se fossem independentes,
+(1 − ν_p/2^k)/(1 − 1/2^k)²:
+- p = x e p = x + 1: x + x² ≡ 0 (ν = 1), então f e o vizinho têm o mesmo resto: fator (1/2)/(1/4) = **2** cada (o termo constante e a paridade).
+- p = x² + x + 1: x + x² ≡ 1, então os restos proibidos são 0 e 1 (ν = 2): fator (2/4)/(9/16) = **8/9**.
+- todos os outros: ν = 2, fatores um pouco abaixo de 1.
+
+A série vale S = **3,3315**, e a conta é N²/2^g · S/2. Contra a medida: grau 11, 28 contra 28,1 (razão **0,995**); grau 13, 76 contra 80,7 (**0,942**); grau 15, 224 contra 242,0 (**0,926**).
+A razão cai devagar com o grau.
+
+- **(g)** os gêmeos (f, f ⊕ x ⊕ x²) de grau 17 em **[642; 756]**: a conta de 755,5 vezes uma razão de 0,85 a 1,00 (continuação da queda, de 0,926 para ~0,91, com folga dos dois lados).

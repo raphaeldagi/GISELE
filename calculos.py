@@ -10815,6 +10815,31 @@ def p1574_irredutiveis_gf2(grau=15, mascara=6):
     return len(conj), gauss, gemeos, len(conj) ** 2 / 2 ** (grau - 1) / 2
 
 
+def p1579_serie_singular_gf2(grau, ate=40):
+    """A conta dos gêmeos (f, f ⊕ x ⊕ x²) pela série singular (a heurística de Hardy–Littlewood/Bateman–Horn em F₂[x]) (P1579): para cada irredutível p
+    de grau k, a chance de p não dividir nenhum dos dois, dividida pela chance se fossem independentes: (1 − ν_p/2^k)/(1 − 1/2^k)², com ν_p = 1 quando
+    x + x² ≡ 0 mod p (p = x e p = x + 1: fator 2 cada, a paridade e o termo constante) e ν_p = 2 nos outros (p = x² + x + 1: fator 8/9). O número de
+    irredutíveis de cada grau k vem da fórmula de Gauss. Devolve (S, a conta N²/2^grau · S/2 com N de Gauss)."""
+    def mobius(n):
+        r, k, q = 1, n, 2
+        while q * q <= k:
+            if k % q == 0:
+                k //= q
+                if k % q == 0:
+                    return 0
+                r = -r
+            q += 1
+        return -r if k > 1 else r
+
+    def gauss(n):
+        return sum(mobius(dd) * 2 ** (n // dd) for dd in range(1, n + 1) if n % dd == 0) // n
+    serie = 2.0 * 2.0
+    for k in range(2, ate + 1):
+        serie *= ((1 - 2 / 2 ** k) / (1 - 1 / 2 ** k) ** 2) ** gauss(k)
+    n = gauss(grau)
+    return serie, n * n / 2 ** grau * serie / 2
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
