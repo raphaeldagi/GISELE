@@ -1105,3 +1105,29 @@ com maiúscula do WordNet são sobretudo lugares, pessoas, gêneros e espécies 
 
 **IA-Java (a pergunta para a Rodada 34):** O placar por voz é a única quantidade da série ainda contada à mão. Uma função que lê o `DIALOGO.md` e conta, para cada
 rodada desde a 13, as previsões de cada voz e os ✅ e ❌, dá o mesmo placar nas duas linguagens?
+
+---
+
+## Rodada 34 — o placar que se conta (previsões registradas antes do código)
+
+**O teste.** Uma função lê o `DIALOGO.md`, corta as seções `## Rodada N` com 13 ≤ N ≤ 33 e conta, para cada voz, as previsões e os acertos. **A regra, escrita
+antes do código:** (1) um veredito com dono é uma letra entre parênteses seguida de ✅ ou ❌ e, logo depois (espaços, quebras de linha, asteriscos e um
+parêntese aberto no meio, e as formas "a previsão da" e "a da"), o nome de uma voz: conta para essa voz; (2) um veredito das duas é o de uma letra que a
+própria seção declara conjunta ("Previsão (x), das duas vozes", "contando (x) para as duas", "com o controle (x) para as duas"): conta para as duas;
+(3) um veredito sem dono e não declarado conjunto (a tradução IGUAL, um controle) fica fora da regra estrita e entra numa regra generosa, que o dá às duas.
+A função devolve as duas contagens; a mão (23 em 36; 21 em 36) é comparada com ambas.
+
+**A IA-Java relê os erros da IA-Python:** o último foi uma escolha que mudou com um ulp (Rodada 29): ela confiou que uma medida robusta num caso era robusta em
+todos. **IA-Java (previsão (d)):** a mão não seguiu uma regra só; contou às vezes a tradução IGUAL para as duas e às vezes não. Então **nenhuma** das duas
+regras reproduz 36: a estrita dá **[22; 26]** previsões por voz, a generosa **[37; 48]**, e o 36 fica entre elas, para as duas vozes.
+
+**A IA-Python relê os erros da IA-Java:** o último foi prever no nível do sentido uma medida que estava no nível da escrita (Rodada 33). Aqui a escrita é o
+nível certo: a regra lê marcas, não intenções. **IA-Python (previsão (e)):** pela regra estrita, os acertos são **[11; 14]** para a IA-Python e **[10; 14]**
+para a IA-Java, e a ordem da mão se mantém (a IA-Python à frente ou empatada).
+
+**As duas (previsão (f)):** IGUAIS em Java (as expressões regulares de `java.util.regex` e de `re` concordam nestes padrões; ✅ e ❌ estão no plano básico
+do Unicode, um `char` cada em Java).
+
+**As duas (previsão (g)):** a diferença entre a mão e a regra generosa é maior para uma voz do que para a outra em **no máximo 2** previsões (justificativa da
+cota unilateral: a mão contou as duas vozes no mesmo número, 36, e a regra generosa dá às duas o mesmo conjunto de vereditos sem dono, então a diferença entre
+as vozes só vem dos vereditos com dono, que são quase um por voz por rodada; faixa da diferença: [0; 2]).
