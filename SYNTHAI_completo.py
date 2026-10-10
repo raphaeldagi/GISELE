@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 71, perguntas P1 a P1579).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 74, perguntas P1 a P1663).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -31,7 +31,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (11505 linhas)
+# calculos.py  (12120 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7516,6 +7516,10 @@ def testes_de_regressao():
         "P1516": p1514_pi_hex_digitos(16) == "243f6a8885a308d3" and p1516_gpt_decide()[1] == 5,
         "P1549": abs(p1549_lei_de_escala()[0][24][1] - 0.0541) < 0.0001 and abs(p1545_bases_gf2(p1514_pi_hex_digitos(10000))[0] - 0.30269) < 0.00001,
         "P1574": p1574_irredutiveis_gf2(15, 6)[:3] == (2182, 2182, 224) and p1573_crescimento_da_taxonomia("n")[2] == 7,
+        "P1612": p1612_animais_por_horn()[:4] == (4017, True, True, 4) and p1608_auditoria_estatica()[1] == ("test_engine", 7, 5, 8),
+        "P1639": p1639_rodada47()[1:2] + p1639_rodada47()[4:5] == (958, 102) and abs(p1632_prioridade_contra_voi(20000, 74)[0] - 0.49995) < 1e-9,
+        "P1663": p1663_rodada48()[3] == 172 and p1662_orcamento(semente=75)[2] == 0.62,
+        "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
         "P1579": p1574_irredutiveis_gf2(17, 6)[2] == 758 and abs(p1579_serie_singular_gf2(17)[1] - 755.458) < 0.001,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
@@ -9538,7 +9542,13 @@ ERROS_P1479, TESTES_P1479 = 189, 559
 ERROS_P1509, TESTES_P1509 = 189, 565
 ERROS_P1539, TESTES_P1539 = 189, 573
 ERROS_P1569, TESTES_P1569 = 191, 583
+VEREDITOS_P1629 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ❌ (l) ❌ (m) ✅ (n) ✅ (o) ✅ (p) ✅"
 ERROS_P1599, TESTES_P1599 = 193, 591
+ERROS_P1629, TESTES_P1629 = 195, 607
+VEREDITOS_P1659 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) H_PENDENTE (i) ✅ (j) ✅"
+ERROS_P1659, TESTES_P1659 = 196, 616
+VEREDITOS_P1689 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅"
+ERROS_P1689, TESTES_P1689 = ERROS_P1659 + VEREDITOS_P1689.count("❌"), TESTES_P1659 + VEREDITOS_P1689.count("✅") + VEREDITOS_P1689.count("❌")  # fixar em inteiros quando a P1659 fechar
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -10876,6 +10886,546 @@ def p1579_serie_singular_gf2(grau, ate=40):
     return serie, n * n / 2 ** grau * serie / 2
 
 
+def p1601_auditoria_do_repositorio(ate=71):
+    \"\"\"A auditoria pedida na Parte 72 ("corrija tudo pra ver se há coisas inadequadas e disfuncionais") (P1601). Devolve um dicionário de listas de
+    defeitos: "docs" (partes 1..ate sem documento ASI_AGI_parteN_*.md, ou cujo documento não liga para a parte seguinte, até ate − 1), "sem_teste"
+    (pNN de P1031 em diante sem teste pelo nome, pela p1092), "testes_fora_da_lista" (synthai/testes*.py que o CLAUDE.md não lista), "rodadas_sem_java"
+    (dialogo/rodadaNN.py sem RodadaNN.java), "partes_fora_do_resultados" (partes sem a linha "--- Parte N " no resultados.txt; a Parte 1, sem
+    cabeçalho, é o começo do arquivo) e "constantes" (pares
+    ERROS_PNN, TESTES_PNN fora de ordem: testes que diminuem, erros que diminuem ou erros > testes).\"\"\"
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    ler = lambda nome: open(os.path.join(raiz, nome), encoding="utf-8").read()
+    defeitos = {}
+    docs = {int(re.match(r"ASI_AGI_parte(\\d+)_", os.path.basename(f)).group(1)): f
+            for f in glob.glob(os.path.join(raiz, "ASI_AGI_parte*_*.md"))}
+    docs[1] = os.path.join(raiz, "ASI_AGI_perguntas_e_respostas.md")  # a Parte 1 tem outro nome (a forma verificada antes de contar, Parte 31)
+    ruins = []
+    for n in range(1, ate + 1):
+        if n not in docs:
+            ruins.append((n, "sem documento"))
+        elif n < ate and (n + 1) in docs and os.path.basename(docs[n + 1]) not in open(docs[n], encoding="utf-8").read():
+            ruins.append((n, "sem link para a parte %d" % (n + 1)))
+    defeitos["docs"] = ruins
+    codigo = ler("calculos.py")
+    ultimo = max(int(x) for x in re.findall(r"^def p(\\d+)_", codigo, re.M))
+    defeitos["sem_teste"] = p1092_pnn_sem_teste(1031, ultimo)[1]
+    claude = ler("CLAUDE.md")
+    defeitos["testes_fora_da_lista"] = sorted(os.path.basename(f)[:-3] for f in glob.glob(os.path.join(raiz, "synthai", "testes*.py"))
+                                              if "synthai." + os.path.basename(f)[:-3] + " " not in claude.replace("`", " ").replace("\\n", " "))
+    pastad = os.path.join(raiz, "dialogo")
+    defeitos["rodadas_sem_java"] = sorted(os.path.basename(f) for f in glob.glob(os.path.join(pastad, "rodada[0-9]*.py"))
+                                          if not os.path.exists(os.path.join(pastad, "R" + os.path.basename(f)[1:-3] + ".java")))
+    res = ler("resultados.txt")
+    # a Parte 1 não imprime cabeçalho: é o que vem antes da linha da Parte 2 e começa pela P3
+    defeitos["partes_fora_do_resultados"] = [n for n in range(1, ate + 1) if ("--- Parte %d " % n not in res if n > 1 else not res.startswith("P3 "))]
+    pares = sorted((int(a), int(b), int(c)) for a, b, c in re.findall(r"^ERROS_P(\\d+), TESTES_P\\1 = (\\d+), (\\d+)", codigo, re.M))
+    defeitos["constantes"] = [(pares[i][0], pares[i][1:], pares[i - 1][1:]) for i in range(1, len(pares))
+                              if pares[i][2] < pares[i - 1][2] or pares[i][1] < pares[i - 1][1] or pares[i][1] > pares[i][2]]
+    return defeitos
+
+
+def p1602_entropia_de_unigrama(texto):
+    \"\"\"A conta do texto recebido na Parte 72 (P1602): a entropia de Shannon por símbolo, H = −Σ p log₂ p, e a redundância 1 − H/H_max contra duas
+    referências: log₂ do número de símbolos que aparecem (a definição de Shannon) e 8 bits (um byte: a que reproduz os 48,63% do texto, com H = 4,11).
+    Devolve (H, símbolos, redundância contra o alfabeto, redundância contra 8 bits).\"\"\"
+    import math
+    from collections import Counter
+    cont = Counter(texto)
+    n = len(texto)
+    h = 0.0
+    for c in sorted(cont):
+        p = cont[c] / n
+        h -= p * math.log2(p)
+    return h, len(cont), 1 - h / math.log2(len(cont)), 1 - h / 8
+
+
+def p1603_ciclos_de_glosas(pares=(("knowledge", "information"), ("meaning", "word")), d=None):
+    \"\"\"Os "ciclos autorreferentes" do texto recebido, conferidos no WordNet (P1603): para cada par (A, B), se A aparece (como palavra exata) na glosa de
+    algum sinset em que B é lema, e B na de algum sinset em que A é lema. Devolve [(A, B, A na glosa de B, B na glosa de A)].\"\"\"
+    import re
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    palavras = {}
+    for s in d.sinsets:
+        ws = set(re.findall(r"[a-z]+", d.definicao(s[3]).lower()))
+        for lema in s[1]:
+            palavras.setdefault(lema.lower(), set()).update(ws)
+    return [(a, b, a in palavras.get(b, set()), b in palavras.get(a, set())) for a, b in pares]
+
+
+def p1604_hash_como_peso(n=2000, semente=72, d=None):
+    \"\"\"O hash como "peso" (P1604; afirmação do texto recebido na Parte 72): h(w) = SHA-256(w) lido como inteiro / 2²⁵⁶. Compara a média de |h(a) − h(b)|
+    entre sinônimos (os dois primeiros lemas de sinsets sorteados com dois lemas ou mais) e entre pares de lemas sorteados. Para U, V uniformes
+    independentes, E|U − V| = 1/3 e Var|U − V| = 1/18. Devolve (média dos sinônimos, média dos sorteados, z da diferença).\"\"\"
+    import hashlib
+    import math
+    import random
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    h = lambda w: int(hashlib.sha256(w.encode("utf-8")).hexdigest(), 16) / 2 ** 256
+    r = random.Random(semente)
+    com_dois = [s[1] for s in d.sinsets if len(s[1]) >= 2]
+    lemas = sorted({l for s in d.sinsets for l in s[1]})
+    sin = [r.choice(com_dois) for _ in range(n)]
+    ms = sum(abs(h(x[0]) - h(x[1])) for x in sin) / n
+    mr = sum(abs(h(r.choice(lemas)) - h(r.choice(lemas))) for _ in range(n)) / n
+    return ms, mr, (ms - mr) / math.sqrt(2 / 18 / n)
+
+
+def p1608_auditoria_estatica(caminho="externos/texto_recebido_parte72b.md"):
+    \"\"\"A auditoria estática do código de um texto recebido (P1608): cada bloco ```python é lido pela árvore sintática (ast.parse analisa, não executa).
+    Para cada função de nome test*/run_tests, conta as verificações: cada `assert` e cada `raise AssertionError` (o padrão "try: operação inválida;
+    raise AssertionError; except ...") vale 1, multiplicado pelo tamanho das listas literais dos `for` que o envolvem (um `for` sobre uma coleção
+    calculada em tempo de execução conta 1). E lê os números que a função devolve fixos num dicionário literal (chaves "tests", "tests_passed").
+    Devolve [(função, verificações, nós assert, declarado)].\"\"\"
+    import ast
+    import os
+    import re
+    texto = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), caminho), encoding="utf-8").read()
+    saida = []
+    for bloco in re.findall(r"```python\\n(.*?)```", texto, re.S):
+        arvore = ast.parse(bloco)
+        for f in [n for n in ast.walk(arvore) if isinstance(n, ast.FunctionDef) and (n.name.startswith("test") or n.name == "run_tests")]:
+            pais = {}
+            for no in ast.walk(f):
+                for filho in ast.iter_child_nodes(no):
+                    pais[filho] = no
+            verif = asserts = 0
+            for no in ast.walk(f):
+                e_raise = (isinstance(no, ast.Raise) and isinstance(no.exc, ast.Call) and isinstance(no.exc.func, ast.Name)
+                           and no.exc.func.id == "AssertionError")
+                if not (isinstance(no, ast.Assert) or e_raise):
+                    continue
+                asserts += isinstance(no, ast.Assert)
+                mult, q = 1, pais.get(no)
+                while q is not None:
+                    if isinstance(q, ast.For) and isinstance(q.iter, (ast.List, ast.Tuple)):
+                        mult *= len(q.iter.elts)
+                    q = pais.get(q)
+                verif += mult
+            declarado = None
+            for no in ast.walk(f):
+                if isinstance(no, ast.Return) and isinstance(no.value, ast.Dict):
+                    for k, v in zip(no.value.keys, no.value.values):
+                        if isinstance(k, ast.Constant) and k.value in ("tests", "tests_passed") and isinstance(v, ast.Constant):
+                            declarado = v.value
+            saida.append((f.name, verif, asserts, declarado))
+    return saida
+
+
+def p1609_horn_linear(fatos, regras):
+    \"\"\"O motor de Horn em tempo linear (P1609; Dowling e Gallier, 1984), a otimização que o texto recebido na Parte 72 deixou para depois: cada regra
+    (premissas, conclusão) guarda quantas premissas distintas faltam; cada átomo guarda as regras em que é premissa; uma fila FIFO dos átomos recém-
+    conhecidos decrementa os contadores, e a regra que chega a zero dispara (se a conclusão for nova). Custo O(|fatos| + Σ|premissas|). Devolve
+    (ordem de derivação, prova {conclusão: índice da regra, ou None para os fatos}, decrementos).\"\"\"
+    from collections import deque
+    falta, vigia = [], {}
+    for r, (prem, _) in enumerate(regras):
+        distintas = []
+        for a in prem:
+            if a not in distintas:
+                distintas.append(a)
+        falta.append(len(distintas))
+        for a in distintas:
+            vigia.setdefault(a, []).append(r)
+    prova, ordem, fila = {}, [], deque()
+    for a in fatos:
+        if a not in prova:
+            prova[a] = None
+            ordem.append(a)
+            fila.append(a)
+    dec = 0
+    for r, (prem, concl) in enumerate(regras):  # regras sem premissa são fatos
+        if falta[r] == 0 and concl not in prova:
+            prova[concl] = r
+            ordem.append(concl)
+            fila.append(concl)
+    while fila:
+        a = fila.popleft()
+        for r in vigia.get(a, ()):
+            falta[r] -= 1
+            dec += 1
+            concl = regras[r][1]
+            if falta[r] == 0 and concl not in prova:
+                prova[concl] = r
+                ordem.append(concl)
+                fila.append(concl)
+    return ordem, prova, dec
+
+
+def p1610_horn_ingenuo(fatos, regras):
+    \"\"\"O laço do texto recebido na Parte 72, reescrito por mim (P1610): repetir a passagem por todas as regras até nada mudar. Devolve (conhecidos,
+    passagens contando a última, que não muda nada, checagens de premissa).\"\"\"
+    conhecidos = set(fatos)
+    passagens = checagens = 0
+    mudou = True
+    while mudou:
+        mudou = False
+        passagens += 1
+        for prem, concl in regras:
+            if concl in conhecidos:
+                continue
+            ok = True
+            for a in prem:
+                checagens += 1
+                if a not in conhecidos:
+                    ok = False
+                    break
+            if ok:
+                conhecidos.add(concl)
+                mudou = True
+    return conhecidos, passagens, checagens
+
+
+def p1611_regras_de_animal(d=None):
+    \"\"\"As regras de Horn do dicionário (P1611): para cada substantivo c e cada hiperônimo substantivo p dele, a regra "p é animal ⇒ c é animal"
+    (átomos = índices de sinsets), na ordem do arquivo; e o fato "animal (o primeiro sentido de substantivo) é animal". Devolve (fatos, regras).\"\"\"
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    animal = min(i for i in d.lemas["animal"] if d.sinsets[i][0] == "n")
+    regras = []
+    for c, s in enumerate(d.sinsets):
+        if s[0] != "n":
+            continue
+        for h in s[2]:
+            if h.startswith("n:") and h in d.indice:
+                regras.append(((d.indice[h],), c))
+    return [animal], regras
+
+
+def p1612_animais_por_horn(d=None):
+    \"\"\"O fecho de "é animal" por três métodos (P1612): o motor linear (P1609), o laço do texto (P1610) e uma busca em largura pelos hipônimos.
+    Devolve (derivados, linear = BFS, ingênuo = BFS, passagens do ingênuo, checagens do ingênuo, decrementos do linear, regras).\"\"\"
+    from collections import deque
+    fatos, regras = p1611_regras_de_animal(d)
+    ordem, prova, dec = p1609_horn_linear(fatos, regras)
+    ing, passagens, checagens = p1610_horn_ingenuo(fatos, regras)
+    filhos = {}
+    for (p,), c in regras:
+        filhos.setdefault(p, []).append(c)
+    vistos, fila = {fatos[0]}, deque(fatos)
+    while fila:
+        a = fila.popleft()
+        for c in filhos.get(a, ()):
+            if c not in vistos:
+                vistos.add(c)
+                fila.append(c)
+    return len(ordem), set(ordem) == vistos, ing == vistos, passagens, checagens, dec, len(regras)
+
+
+def p1613_fecho_horn(palavra, d=None):
+    \"\"\"O fecho de Horn "é <palavra>" (P1613): o motor linear (P1609) nas regras da hiperonímia (P1611), a partir do primeiro sentido de substantivo
+    da palavra. Devolve o número de sinsets derivados (a palavra incluída).\"\"\"
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    _, regras = p1611_regras_de_animal(d)
+    fato = min(i for i in d.lemas[palavra] if d.sinsets[i][0] == "n")
+    return len(p1609_horn_linear([fato], regras)[0])
+
+
+def p1614_rodada46():
+    \"\"\"Rodada 46 (P1614): o motor de Horn linear do dialogo/rodada46.py nos fatos animal e pessoa (IGUAL em Java). Devolve
+    [(fato, derivados, controle da ordem, decrementos, cadeia de prova)].\"\"\"
+    import importlib.util
+    import os
+    import tempfile
+    spec = importlib.util.spec_from_file_location("rodada46", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada46.py"))
+    r46 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r46)
+    with tempfile.TemporaryDirectory() as pasta:
+        r46.preparar(pasta)
+        fatos, regras = r46.ler(pasta)
+        return [(f,) + r46.horn(f, regras) for f in fatos]
+
+
+def p1615_imports_sem_uso(caminho="externos/texto_recebido_parte72b.md"):
+    \"\"\"Os nomes importados e nunca usados em cada bloco ```python de um texto recebido (P1615), pela árvore sintática (sem executar). Devolve uma lista
+    por bloco.\"\"\"
+    import ast
+    import os
+    import re
+    texto = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), caminho), encoding="utf-8").read()
+    saida = []
+    for bloco in re.findall(r"```python\\n(.*?)```", texto, re.S):
+        arvore = ast.parse(bloco)
+        importados = {a.asname or a.name for n in ast.walk(arvore) if isinstance(n, (ast.Import, ast.ImportFrom)) for a in n.names}
+        usados = {n.id for n in ast.walk(arvore) if isinstance(n, ast.Name)}
+        saida.append(sorted(importados - usados))
+    return saida
+
+
+def p1631_comparar_reenvio(novo="externos/texto_recebido_parte73.md", guardado="externos/texto_recebido_parte72b.md"):
+    \"\"\"A regra da Parte 50 para um texto reenviado (P1631): cada bloco ```python do texto novo é comparado com os blocos da cópia guardada. Devolve
+    [(índice do bloco novo, índice do bloco guardado idêntico ou None, número de linhas)].\"\"\"
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    blocos = lambda f: re.findall(r"```python\\n(.*?)```", open(os.path.join(raiz, f), encoding="utf-8").read(), re.S)
+    velhos = blocos(guardado)
+    return [(i, next((j for j, v in enumerate(velhos) if v == b), None), b.count("\\n")) for i, b in enumerate(blocos(novo))]
+
+
+def p1633_disjuncoes(classes, d=None, regras=None):
+    \"\"\"O motor de contradições (P1633; o Módulo 004 do texto recebido na Parte 73): um axioma de disjunção entre classes irmãs ("nada é ao mesmo tempo
+    A e B") é a metade que falta de uma implicação (a lição da Parte 39). Para cada classe (um índice de sinset), o fecho de Horn dos hipônimos
+    (P1609 nas regras da P1611); para cada par, os sinsets que caem nos dois fechos, isto é, as violações da disjunção. Devolve
+    {(a, b): [sinsets nos dois]} para os pares a < b da lista.\"\"\"
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    if regras is None:
+        regras = p1611_regras_de_animal(d)[1]
+    fechos = {c: set(p1609_horn_linear([c], regras)[0]) for c in classes}
+    saida = {}
+    for i, a in enumerate(classes):
+        for b in classes[i + 1:]:
+            saida[(a, b)] = sorted(fechos[a] & fechos[b])
+    return saida
+
+
+def p1634_irmaos(sinset, d=None):
+    \"\"\"Os hipônimos diretos de um sinset de substantivo (P1634), na ordem do arquivo (os candidatos a classes irmãs disjuntas).\"\"\"
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    alvo = "n:" + next(k[2:] for k, v in d.indice.items() if v == sinset and k.startswith("n:"))
+    return [i for i, s in enumerate(d.sinsets) if s[0] == "n" and alvo in s[2]]
+
+
+def p1632_prioridade_contra_voi(n=2000, semente=73):
+    \"\"\"A prioridade de perguntas do texto recebido na Parte 73, S(q) = U + I + T, contra o valor da informação perfeita (P1632). n problemas com 2
+    ações e 2 estados: prior p ~ U(0, 1), utilidades u[a][s] ~ U(0, 1), semente fixa; a pergunta é observar o estado.
+    VOI = p·max_a u[a][1] + (1 − p)·max_a u[a][0] − max_a (p·u[a][1] + (1 − p)·u[a][0]) (só + − × ÷: IGUAL em Java, rodada 47);
+    U = entropia binária de p (log₂ pelo log_ próprio da rodada 26, para a tradução bit a bit), I = max_s |u[0][s] − u[1][s]|, T = 1.
+    Devolve (fração com VOI = 0, fração com VOI = 0 entre os 10% de maior S, correlação de postos de Spearman entre S e VOI, lista (S, VOI)).\"\"\"
+    import random
+    from dialogo.rodada26 import log_
+    r = random.Random(semente)
+    ln2 = log_(2.0)
+    pares = []
+    for _ in range(n):
+        p = r.random()
+        u = [[r.random(), r.random()], [r.random(), r.random()]]
+        com = p * max(u[0][1], u[1][1]) + (1.0 - p) * max(u[0][0], u[1][0])
+        sem = max(p * u[0][1] + (1.0 - p) * u[0][0], p * u[1][1] + (1.0 - p) * u[1][0])
+        voi = com - sem
+        if voi < 0.0:
+            voi = 0.0
+        h = 0.0
+        for q in (p, 1.0 - p):
+            if q > 0.0:
+                h -= q * log_(q) / ln2
+        imp = max(abs(u[0][0] - u[1][0]), abs(u[0][1] - u[1][1]))
+        pares.append((h + imp + 1.0, voi))
+    zero = sum(1 for _, v in pares if v == 0.0) / n
+    topo = sorted(pares, key=lambda x: -x[0])[: n // 10]
+    zero_topo = sum(1 for _, v in topo if v == 0.0) / len(topo)
+
+    def postos(xs):
+        ordem = sorted(range(len(xs)), key=lambda i: xs[i])
+        rk = [0.0] * len(xs)
+        i = 0
+        while i < len(ordem):
+            j = i
+            while j + 1 < len(ordem) and xs[ordem[j + 1]] == xs[ordem[i]]:
+                j += 1
+            for k in range(i, j + 1):
+                rk[ordem[k]] = (i + j) / 2.0
+            i = j + 1
+        return rk
+    a, b = postos([x for x, _ in pares]), postos([v for _, v in pares])
+    ma, mb = sum(a) / n, sum(b) / n
+    cov = sum((x - ma) * (y - mb) for x, y in zip(a, b))
+    va = sum((x - ma) ** 2 for x in a)
+    vb = sum((y - mb) ** 2 for y in b)
+    return zero, zero_topo, cov / (va * vb) ** 0.5, pares
+
+
+def p1635_contradicoes_de_animal(d=None):
+    \"\"\"(P1635) As violações da disjunção entre animal e os seus irmãos (os outros hipônimos diretos de organism), pelo motor da P1633. Devolve
+    (número de sinsets que violam, [(irmão, [sinsets])] com violação).\"\"\"
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    org = min(i for i in d.lemas["organism"] if d.sinsets[i][0] == "n")
+    animal = min(i for i in d.lemas["animal"] if d.sinsets[i][0] == "n")
+    irmaos = p1634_irmaos(org, d)
+    viol = p1633_disjuncoes([animal] + [x for x in irmaos if x != animal], d)
+    pares = [(b, v) for (a, b), v in viol.items() if a == animal and v]
+    return len({x for _, v in pares for x in v}), pares
+
+
+def p1636_contraexemplos(classe="bird", palavra="flightless", d=None):
+    \"\"\"Procurar o que refuta (P1636; o Módulo 004 do texto recebido): a hipótese "todo <classe> voa" contra o próprio dicionário. Os sinsets no fecho
+    de Horn da classe (primeiro sentido de substantivo) cuja glosa contém a palavra. Devolve (tamanho do fecho, [lemas dos contraexemplos]).\"\"\"
+    import re
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    _, regras = p1611_regras_de_animal(d)
+    c = min(i for i in d.lemas[classe] if d.sinsets[i][0] == "n")
+    fecho = p1609_horn_linear([c], regras)[0]
+    return len(fecho), [d.sinsets[i][1][0] for i in fecho if re.search(r"\\b" + palavra + r"\\b", d.definicao(d.sinsets[i][3]).lower())]
+
+
+def p1637_polissemia(d=None):
+    \"\"\"(P1637) O aviso do texto recebido ("identificar o sentido antes da relação"): a fração dos lemas de substantivo com mais de um sentido de
+    substantivo. Devolve (lemas de substantivo, polissêmicos, fração).\"\"\"
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    cont = {}
+    for s in d.sinsets:
+        if s[0] == "n":
+            for l in set(s[1]):
+                cont[l] = cont.get(l, 0) + 1
+    poli = sum(1 for v in cont.values() if v > 1)
+    return len(cont), poli, poli / len(cont)
+
+
+def p1638_rodadas_com_libm():
+    \"\"\"(P1638) As rodadas Python do diálogo que chamam uma função transcendental da biblioteca (math.exp, log, log2, log10, pow, sin, cos, tan,
+    atan, atan2, erf), que o IEEE 754 não obriga a arredondar corretamente (a fronteira da Parte 52). Pela árvore sintática. Devolve
+    (total de rodadas, [rodadas com chamada]).\"\"\"
+    import ast
+    import glob
+    import os
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    fs = {"exp", "log", "log2", "log10", "pow", "sin", "cos", "tan", "atan", "atan2", "erf"}
+    arqs = sorted(glob.glob(os.path.join(raiz, "dialogo", "rodada[0-9]*.py")))
+    com = []
+    for f in arqs:
+        arvore = ast.parse(open(f, encoding="utf-8").read())
+        if any(isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name) and n.value.id == "math" and n.attr in fs for n in ast.walk(arvore)):
+            com.append(os.path.basename(f)[:-3])
+    return len(arqs), com
+
+
+def p1639_rodada47():
+    \"\"\"Rodada 47 (P1639): o valor da informação e a prioridade S(q) do dialogo/rodada47.py (IGUAL em Java). Devolve (n, VOI = 0, soma dos VOI, soma dos S,
+    VOI = 0 entre os 200 de maior S, VOI médio dos 200 de maior VOI, VOI médio dos 200 de maior S).\"\"\"
+    import importlib.util
+    import os
+    import tempfile
+    spec = importlib.util.spec_from_file_location("rodada47", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada47.py"))
+    r47 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r47)
+    with tempfile.TemporaryDirectory() as pasta:
+        r47.preparar(pasta)
+        voi, s = r47.calcular(r47.ler(pasta))
+    sv = ss = 0.0
+    for v, x in zip(voi, s):
+        sv += v
+        ss += x
+    ts, tv = r47.topo(s, 200), r47.topo(voi, 200)
+    return (len(voi), sum(1 for v in voi if v == 0.0), sv, ss, sum(1 for i in ts if voi[i] == 0.0),
+            sum(voi[i] for i in tv) / 200, sum(voi[i] for i in ts) / 200)
+
+
+def p1642_heranca_multipla(d=None):
+    \"\"\"(P1642) Os sinsets de substantivo com mais de um hiperônimo substantivo (as "colas" entre ramos da árvore). Devolve (com herança múltipla,
+    substantivos, fração).\"\"\"
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    ns = [s for s in d.sinsets if s[0] == "n"]
+    m = sum(1 for s in ns if sum(1 for h in s[2] if h.startswith("n:")) > 1)
+    return m, len(ns), m / len(ns)
+
+
+def p1661_ganho_de_informacao_contra_voi(n=2000, semente=73):
+    \"\"\"O "ganho esperado de informação" do texto recebido na Parte 74, no mundo da P1632 (P1661): observar o estado reduz a entropia em H(p) bits
+    (a informação é perfeita), qualquer que seja a utilidade. Escolher as perguntas pelo ganho de informação é escolher por H(p). Devolve (fração com
+    VOI = 0 entre os 10% de maior H, VOI médio dos 10% de maior H, VOI médio dos 10% de maior VOI).\"\"\"
+    import math
+    import random
+    r = random.Random(semente)
+    xs = []
+    for _ in range(n):
+        p = r.random()
+        u = [[r.random(), r.random()], [r.random(), r.random()]]
+        com = p * max(u[0][1], u[1][1]) + (1.0 - p) * max(u[0][0], u[1][0])
+        sem = max(p * u[0][1] + (1.0 - p) * u[0][0], p * u[1][1] + (1.0 - p) * u[1][0])
+        h = -sum(q * math.log2(q) for q in (p, 1.0 - p) if q > 0.0)
+        xs.append((h, max(com - sem, 0.0)))
+    k = n // 10
+    th = sorted(xs, key=lambda x: -x[0])[:k]
+    tv = sorted(xs, key=lambda x: -x[1])[:k]
+    return sum(1 for _, v in th if v == 0.0) / k, sum(v for _, v in th) / k, sum(v for _, v in tv) / k
+
+
+def p1662_orcamento(instancias=300, itens=30, fracao=0.2, semente=74):
+    \"\"\"Escolher experimentos com orçamento (P1662; a U(a) = E[ΔK | a]/Custo(a) do texto recebido na Parte 74). Cada instância: `itens` experimentos com
+    valor = o VOI de um problema 2 × 2 sorteado (como na P1632) e ganho de informação = H(p) dele, custo inteiro uniforme em 1..20; orçamento =
+    floor(fracao · Σ custos). Três escolhas: o ótimo exato (mochila 0-1 por programação dinâmica nos custos inteiros, no VOI), o guloso por VOI/custo
+    (em ordem decrescente, pulando o que não cabe) e o guloso por H/custo (o "ganho de informação"). Devolve (média de guloso-VOI/ótimo, média de
+    guloso-H/ótimo, fração de instâncias em que o guloso-VOI é ótimo), com o valor de cada escolha medido em VOI.\"\"\"
+    import math
+    import random
+    r = random.Random(semente)
+    s1 = s2 = 0.0
+    otimos = 0
+    for _ in range(instancias):
+        vs, hs, cs = [], [], []
+        for _ in range(itens):
+            p = r.random()
+            u = [[r.random(), r.random()], [r.random(), r.random()]]
+            com = p * max(u[0][1], u[1][1]) + (1.0 - p) * max(u[0][0], u[1][0])
+            sem = max(p * u[0][1] + (1.0 - p) * u[0][0], p * u[1][1] + (1.0 - p) * u[1][0])
+            vs.append(max(com - sem, 0.0))
+            hs.append(-sum(q * math.log2(q) for q in (p, 1.0 - p) if q > 0.0))
+            cs.append(r.randint(1, 20))
+        B = int(fracao * sum(cs))
+        melhor = [0.0] * (B + 1)
+        for v, c in zip(vs, cs):
+            for b in range(B, c - 1, -1):
+                if melhor[b - c] + v > melhor[b]:
+                    melhor[b] = melhor[b - c] + v
+        ot = melhor[B]
+
+        def guloso(chave):
+            resto, total = B, 0.0
+            for i in sorted(range(itens), key=lambda i: (-chave[i] / cs[i], i)):
+                if cs[i] <= resto:
+                    resto -= cs[i]
+                    total += vs[i]
+            return total
+        g1, g2 = guloso(vs), guloso(hs)
+        s1 += g1 / ot if ot > 0 else 1.0
+        s2 += g2 / ot if ot > 0 else 1.0
+        otimos += g1 >= ot - 1e-12
+    return s1 / instancias, s2 / instancias, otimos / instancias
+
+
+def p1663_rodada48():
+    \"\"\"Rodada 48 (P1663): a mochila e os dois gulosos do dialogo/rodada48.py nas 300 instâncias da semente 74 (IGUAL em Java). Devolve (soma dos ótimos,
+    soma do guloso por VOI, soma do guloso por H, instâncias em que o guloso por VOI é ótimo).\"\"\"
+    import importlib.util
+    import os
+    import tempfile
+    spec = importlib.util.spec_from_file_location("rodada48", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada48.py"))
+    r48 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r48)
+    so = s1 = s2 = 0.0
+    otimos = 0
+    with tempfile.TemporaryDirectory() as pasta:
+        r48.preparar(pasta)
+        for B, vs, hs, cs in r48.ler(pasta):
+            ot, g1, g2 = r48.resolver(B, vs, hs, cs)
+            so += ot
+            s1 += g1
+            s2 += g2
+            otimos += g1 >= ot - 1e-12
+    return so, s1, s2, otimos
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -11492,6 +12042,71 @@ def _parte_71():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1599, testes=TESTES_P1599)
     print(f"P1599 minha taxa de erro ({ERROS_P1599}/{TESTES_P1599}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_72():
+    print("--- Parte 72 (0x48: o que esta disfuncional) ---")
+    for k, v in p1601_auditoria_do_repositorio(71).items():
+        print(f"P1601 auditoria, {k}: {len(v)} {v[:10]}")
+    tr, te = p1511_corpus_de_glosas("en")
+    h, n, red, red8 = p1602_entropia_de_unigrama(tr + "|" + te)
+    print(f"P1602 glosas inglesas: H = {h:.4f} bits/simbolo; {n} simbolos; redundancia contra log2({n}) = {red:.4f}; contra 8 bits = {red8:.4f} "
+          f"(o texto recebido: 1 - 4,11/8 = {1 - 4.11 / 8:.5f})")
+    print(f"P1603 ciclos de glosas (A na glosa de B, B na glosa de A): {p1603_ciclos_de_glosas()}")
+    ms, mr, z = p1604_hash_como_peso()
+    print(f"P1604 hash como peso: |h(a) - h(b)| sinonimos {ms:.4f}, sorteados {mr:.4f} (teoria 1/3); z = {z:+.3f}")
+    for nome, verif, asserts, decl in p1608_auditoria_estatica():
+        print(f"P1608 texto recebido, {nome}: {verif} verificacoes ({asserts} asserts) contra {decl} declaradas")
+    n, ok_lin, ok_ing, passagens, checagens, dec, R = p1612_animais_por_horn()
+    print(f"P1612 fecho de animal: {n} sinsets; linear = BFS {ok_lin}; ingenuo = BFS {ok_ing}; {passagens} passagens, {checagens} checagens contra {dec} decrementos "
+          f"(razao {checagens / dec:.1f}); {R} regras; limite do texto (F+1)RP = {(n + 1) * R * R:.3e}; passagens x P = {passagens * R}")
+    print(f"P1615 imports sem uso por bloco do texto recebido: {p1615_imports_sem_uso()}")
+    print(f"P1613 fecho de person: {p1613_fecho_horn('person')}")
+    for f, n, ctl, dec, cadeia in p1614_rodada46():
+        print(f"P1614 rodada 46, fato {f}: derivados {n}, controle {ctl}, decrementos {dec}, prova de {len(cadeia)} regras")
+    total, sem = p1092_pnn_sem_teste(1601, 1630)
+    print(f"P1092 pNN novas (P1601-P1630) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 72: {p974_previsoes_sem_largura(range(72, 73))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1629, testes=TESTES_P1629)
+    print(f"P1629 minha taxa de erro ({ERROS_P1629}/{TESTES_P1629}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_73():
+    print("--- Parte 73 (0x49: o que refuta) ---")
+    print(f"P1631 reenvio (bloco novo, bloco guardado identico, linhas): {p1631_comparar_reenvio()}")
+    for n, sem in ((2000, 73), (20000, 74)):
+        z, zt, rho, _ = p1632_prioridade_contra_voi(n, sem)
+        print(f"P1632 n = {n}, semente {sem}: VOI = 0 em {z:.5f} (conta: 1/2, desvio {(0.25 / n) ** 0.5:.5f}); entre os 10% de maior S: {zt:.4f}; Spearman(S, VOI) = {rho:.4f}")
+    n, z0, sv, ss, zt, mtv, mts = p1639_rodada47()
+    print(f"P1639 rodada 47: VOI = 0 em {z0} de {n}; nos 200 de maior S, {zt}; VOI medio dos 200 de maior VOI {mtv:.4f}, dos 200 de maior S {mts:.4f} (razao {mts / mtv:.3f})")
+    from synthai.dicionario import Dicionario
+    d = Dicionario()
+    nv, pares = p1635_contradicoes_de_animal(d)
+    print(f"P1635 violacoes da disjuncao entre animal e os irmaos: {nv}: {[(d.sinsets[b][1][0], [d.sinsets[x][1][0] for x in v]) for b, v in pares]}")
+    tam, contra = p1636_contraexemplos(d=d)
+    print(f"P1636 'toda ave voa': fecho de bird {tam}; contraexemplos {len(contra)}: {contra}")
+    print(f"P1637 polissemia dos substantivos (lemas, polissemicos, fracao): {p1637_polissemia(d)}")
+    print(f"P1638 rodadas com funcoes da libm: {p1638_rodadas_com_libm()}")
+    print(f"P1642 heranca multipla (sinsets, substantivos, fracao): {p1642_heranca_multipla(d)}")
+    total, sem = p1092_pnn_sem_teste(1631, 1660)
+    print(f"P1092 pNN novas (P1631-P1660) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 73: {p974_previsoes_sem_largura(range(73, 74))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1659, testes=TESTES_P1659)
+    print(f"P1659 minha taxa de erro ({ERROS_P1659}/{TESTES_P1659}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_74():
+    print("--- Parte 74 (0x4A: o que vale testar) ---")
+    for sem in (73, 730, 731, 732, 733):
+        z, mh, mv = p1661_ganho_de_informacao_contra_voi(2000, sem)
+        print(f"P1661 semente {sem}: VOI = 0 entre os 10% de maior ganho de informacao {z:.4f}; VOI medio deles {mh:.4f} contra {mv:.4f} dos de maior VOI (razao {mh / mv:.4f})")
+    for sem in (740, 741, 742, 743, 74, 75):
+        a, b, f = p1662_orcamento(semente=sem)
+        print(f"P1662 semente {sem}: guloso VOI/custo {a:.4f} do otimo; guloso H/custo {b:.4f}; guloso VOI otimo em {f:.4f} das instancias")
+    so, s1, s2, ot = p1663_rodada48()
+    print(f"P1663 rodada 48: soma dos otimos {so:.4f}; guloso VOI {s1:.4f} ({s1 / so:.4f}); guloso H {s2:.4f} ({s2 / so:.4f}); guloso VOI otimo em {ot} de 300")
+    total, sem = p1092_pnn_sem_teste(1661, 1690)
+    print(f"P1092 pNN novas (P1661-P1690) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 74: {p974_previsoes_sem_largura(range(74, 75))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1689, testes=TESTES_P1689)
+    print(f"P1689 minha taxa de erro ({ERROS_P1689}/{TESTES_P1689}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -11528,7 +12143,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74}
 
 
 if __name__ == "__main__":
@@ -11541,7 +12156,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (253 linhas)
+# CLAUDE.md  (260 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -11638,12 +12253,19 @@ anterior, commit e push.
   Parte 65: as regras valem JUNTAS: a regra de escolha da calibração (Parte 64) tem que cobrir a faixa inteira da variável que move o mecanismo no teste (Parte 63);
   "as bases logo depois do teste" só tinha bases grandes e errou nas pequenas. E uma previsão por unidade confere, em cada unidade, a condição do mecanismo (a base 18 não
   tinha primo grande em b² + 1).
+  Parte 66: toda conclusão de efeito na síntese diz em quantos lotes independentes ele apareceu; visto em um lote só, escreve-se como hipótese (o "viés das bases
+  grandes" da Parte 64, 1/64 num lote, não se replicou: −1,07, −0,02, +1,12 por lote). As regras antigas valem também na síntese, não só nas previsões.
   Parte 71: antes de extrapolar uma tendência de k pontos, calcular por código o desvio de cada ponto (Poisson: 1/√n) e o t da inclinação; sem |t| > 2, a previsão usa a conta
   sem tendência e a faixa do ruído (três razões com z −0,03, −0,52, −1,16 viraram uma "queda" e (g) errou; com a faixa de Poisson, (h) acertou). Em cada calibração, uma linha:
   "o mecanismo que move o teste está presente no caso de calibração?" (os verbos não têm a fase de crescimento dos substantivos). Um erro pequeno que revela um raciocínio falso
   também gera teste: a previsão de quantos testes conta os erros de mecanismo, não só as surpresas.
-  Parte 66: toda conclusão de efeito na síntese diz em quantos lotes independentes ele apareceu; visto em um lote só, escreve-se como hipótese (o "viés das bases
-  grandes" da Parte 64, 1/64 num lote, não se replicou: −1,07, −0,02, +1,12 por lote). As regras antigas valem também na síntese, não só nas previsões.
+  Parte 72 (auditoria pedida: "corrija tudo pra ver se há coisas inadequadas e disfuncionais"; `p1601_auditoria_do_repositorio`): todo auditor novo roda primeiro sobre o
+  caso mais antigo e o mais novo, e cada defeito acusado é olhado antes de ser contado (o meu acusou a Parte 1 por supor a forma do nome). Toda referência "PNN" no texto é
+  conferida por grep antes do commit, como um número. Código vindo de texto do usuário é auditado pela árvore sintática (`ast`, P1608/P1615: analisa sem
+  executar) e corrigido numa versão escrita do zero, com um teste por defeito (`synthai/lago.py`). A ordem (as (m), depois "sobre mim", depois o mundo) vale também nas partes que nascem de um pedido fora do ciclo.
+  Parte 73: no rascunho, quantidade ainda não calculada se escreve `XX` (nunca um palpite: "2,3%" era 2,7%, "25 vezes" era inventado); toda regra nova vem com a sua função de auditoria
+  rodada sobre o que já existe (a fronteira da Parte 52 só foi aplicada para a frente, e cinco rodadas antigas quebraram por sorte acabada: `p1638`); gravar texto em comando separado de
+  uma conta (um `&&` depois de um erro apagou as respostas sem aviso). Um axioma de disjunção só vale entre tipos, não entre um tipo e um papel (as pulgas: `p1635`).
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -11789,7 +12411,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -13860,6 +14482,135 @@ class Intuicao:
         self.sxy += estimativa_escolhida * c
         self.sxx += estimativa_escolhida * estimativa_escolhida
         self.peso = self.sxy / self.sxx
+"""
+
+# ====================================================================================================
+# synthai/lago.py  (124 linhas)
+# ====================================================================================================
+FONTES['synthai/lago.py'] = """\"\"\"O lago semântico e o motor de Horn, corrigidos (Parte 72; ↩ P1608).
+
+Versões escritas do zero a partir das ideias do texto recebido na Parte 72 (o `SemanticLake` e o `InferenceEngine`), sem executar aquele código,
+com cada defeito achado na auditoria estática corrigido e testado (`synthai/testes_parte72.py`):
+- um esquema só para as relações (dicionários {"tipo", "alvo"}), validadas na criação e na ligação, sem duplicatas;
+- a mesma normalização da palavra em toda entrada (`add`, `ligar`, `achar`);
+- uma impressão digital que depende só do conteúdo (não da ordem de inserção);
+- identificadores hexadecimais com largura para o WordNet inteiro (117.659 sinsets = 0x1CB9B: 5 dígitos);
+- premissas de regra que são uma lista de textos (uma string sozinha é recusada, e não lida letra por letra);
+- o motor em tempo linear (contadores e fila: Dowling e Gallier, 1984; `calculos.p1609_horn_linear`), com a prova completa de cada conclusão.
+Só biblioteca padrão.\"\"\"
+
+import hashlib
+import json
+
+import calculos
+
+ESTADOS = ("hipotese", "fonte", "derivado")
+
+
+def _chave(palavra):
+    if not isinstance(palavra, str) or not palavra.strip():
+        raise ValueError("a palavra não pode ser vazia")
+    return palavra.strip().lower()
+
+
+class LagoSemantico:
+    \"\"\"Memória semântica mínima e verificável. Cada conceito tem uma definição, um estado de evidência (um de ESTADOS) e relações {"tipo", "alvo"}
+    para conceitos que existem.\"\"\"
+
+    LARGURA_HEX = 5
+
+    def __init__(self):
+        self.conceitos = {}
+        self.proximo = 1
+
+    def adicionar(self, palavra, definicao, relacoes=(), estado="hipotese"):
+        k = _chave(palavra)
+        if k in self.conceitos:
+            raise ValueError(f"conceito repetido: {k}")
+        if estado not in ESTADOS:
+            raise ValueError(f"estado de evidência desconhecido: {estado}")
+        if self.proximo >= 16 ** self.LARGURA_HEX:
+            raise OverflowError("identificador além da largura hexadecimal")
+        rels = []
+        for tipo, alvo in relacoes:
+            a = _chave(alvo)
+            if a not in self.conceitos:
+                raise KeyError(f"alvo desconhecido: {a}")
+            if {"tipo": tipo, "alvo": a} not in rels:
+                rels.append({"tipo": tipo, "alvo": a})
+        self.conceitos[k] = {"id": self.proximo, "hex": f"0x{self.proximo:0{self.LARGURA_HEX}X}", "palavra": k,
+                             "definicao": definicao, "relacoes": rels, "estado": estado}
+        self.proximo += 1
+        return self.conceitos[k]
+
+    def ligar(self, origem, tipo, alvo):
+        o, a = _chave(origem), _chave(alvo)
+        for x in (o, a):
+            if x not in self.conceitos:
+                raise KeyError(f"conceito desconhecido: {x}")
+        r = {"tipo": tipo, "alvo": a}
+        if r in self.conceitos[o]["relacoes"]:
+            return False
+        self.conceitos[o]["relacoes"].append(r)
+        return True
+
+    def achar(self, palavra):
+        return self.conceitos.get(_chave(palavra))
+
+    def impressao_digital(self):
+        \"\"\"SHA-256 do conteúdo (palavras, definições, estados, relações ordenadas), sem os identificadores, que dependem da ordem de inserção.\"\"\"
+        conteudo = {k: {"definicao": c["definicao"], "estado": c["estado"],
+                        "relacoes": sorted((r["tipo"], r["alvo"]) for r in c["relacoes"])}
+                    for k, c in self.conceitos.items()}
+        return hashlib.sha256(json.dumps(conteudo, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
+
+
+class MotorHorn:
+    \"\"\"Regras de Horn (premissas ⇒ conclusão) e fatos, com inferência em tempo linear e a prova completa (a árvore de regras até os fatos).\"\"\"
+
+    def __init__(self):
+        self.fatos = []
+        self.regras = []
+
+    def fato(self, f):
+        f = _chave(f)
+        if f not in self.fatos:
+            self.fatos.append(f)
+
+    def regra(self, premissas, conclusao):
+        if isinstance(premissas, str) or not isinstance(premissas, (list, tuple)) or not premissas:
+            raise ValueError("as premissas são uma lista não vazia de textos")
+        self.regras.append((tuple(_chave(p) for p in premissas), _chave(conclusao)))
+
+    def inferir(self):
+        ordem, prova, _ = calculos.p1609_horn_linear(self.fatos, self.regras)
+        return ordem, prova
+
+    def perguntar(self, alvo):
+        \"\"\"("sustentado", prova completa) ou ("desconhecido", premissas que faltam até os fatos, em todos os níveis). Desconhecido não é falso.\"\"\"
+        a = _chave(alvo)
+        ordem, prova = self.inferir()
+        if a in prova:
+            return "sustentado", self._arvore(a, prova)
+        falta, vistos, pilha = set(), set(), [a]
+        while pilha:
+            x = pilha.pop()
+            if x in vistos:
+                continue
+            vistos.add(x)
+            regras_x = [p for p, c in self.regras if c == x]
+            if not regras_x:
+                falta.add(x)
+            for prem in regras_x:
+                pilha.extend(p for p in prem if p not in prova)
+        return "desconhecido", sorted(falta)
+
+    def _arvore(self, a, prova):
+        r = prova[a]
+        if r is None:
+            return a
+        prem, concl = self.regras[r]
+        return (concl, [self._arvore(p, prova) for p in prem])
 """
 
 # ====================================================================================================
@@ -17641,6 +18392,268 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
+# synthai/testes_parte72.py  (151 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte72.py'] = """\"\"\"Testes de unidade da Parte 72 (o que está disfuncional): `python3 -m unittest synthai.testes_parte72`. Cada pNN nova chamada PELO NOME.\"\"\"
+
+import math
+import unittest
+
+import calculos
+
+
+class Mini:
+    # três sinsets: "knowledge" definido com "information", "information" sem "knowledge"; sinônimos a/b
+    sinsets = [("n", ["knowledge"], [], "g0"), ("n", ["information", "info"], [], "g1"), ("n", ["a", "b"], [], "g2")]
+    _defs = {"g0": "information acquired by study", "g1": "a message received", "g2": "letters"}
+
+    def definicao(self, g):
+        return self._defs[g]
+
+
+class TesteParte72(unittest.TestCase):
+    def test_p1601_auditoria_do_repositorio(self):
+        defeitos = calculos.p1601_auditoria_do_repositorio(71)
+        self.assertEqual(set(defeitos), {"docs", "sem_teste", "testes_fora_da_lista", "rodadas_sem_java", "partes_fora_do_resultados", "constantes"})
+        self.assertEqual(defeitos["rodadas_sem_java"], [])
+        self.assertEqual(defeitos["constantes"], [])
+
+    def test_p1602_entropia_de_unigrama(self):
+        # "aab": p = 2/3, 1/3; H = −(2/3)log₂(2/3) − (1/3)log₂(1/3) = 0,9183; 2 símbolos: redundância 1 − H/1; contra 8 bits: 1 − H/8
+        h, n, r, r8 = calculos.p1602_entropia_de_unigrama("aab")
+        hh = -(2 / 3) * math.log2(2 / 3) - (1 / 3) * math.log2(1 / 3)
+        self.assertAlmostEqual(h, hh, places=12)
+        self.assertEqual(n, 2)
+        self.assertAlmostEqual(r, 1 - hh, places=12)
+        self.assertAlmostEqual(r8, 1 - hh / 8, places=12)
+
+    def test_p1603_ciclos_de_glosas(self):
+        r = calculos.p1603_ciclos_de_glosas((("information", "knowledge"),), Mini())
+        self.assertEqual(r, [("information", "knowledge", True, False)])
+
+    def test_p1604_hash_como_peso(self):
+        ms, mr, z = calculos.p1604_hash_como_peso(50, 1, Mini())
+        self.assertAlmostEqual(z, (ms - mr) / math.sqrt(2 / 18 / 50), places=12)
+        self.assertTrue(0 <= ms <= 1 and 0 <= mr <= 1)
+
+
+    def test_p1608_auditoria_estatica(self):
+        # o texto recebido: run_tests tem 6 verificações e declara 6; test_engine tem 7 (5 asserts + 2 por exceção no laço de duas) e declara 8
+        self.assertEqual(calculos.p1608_auditoria_estatica(), [("run_tests", 6, 4, 6), ("test_engine", 7, 5, 8)])
+
+    def test_p1609_horn_linear(self):
+        # regra de duas premissas (a, b ⇒ c), premissa repetida (c, c ⇒ d), ciclo sem fato (x ⇒ y, y ⇒ x) e regra sem premissa (⇒ e)
+        regras = [(("a", "b"), "c"), (("c", "c"), "d"), (("x",), "y"), (("y",), "x"), ((), "e")]
+        ordem, prova, dec = calculos.p1609_horn_linear(["a", "b"], regras)
+        self.assertEqual(ordem, ["a", "b", "e", "c", "d"])
+        self.assertEqual(prova, {"a": None, "b": None, "e": 4, "c": 0, "d": 1})
+        self.assertEqual(dec, 3)
+        self.assertEqual(calculos.p1609_horn_linear(["a"], regras)[0], ["a", "e"])
+
+    def test_p1610_horn_ingenuo(self):
+        # regras em ordem desfavorável: c ⇒ d antes de b ⇒ c antes de a ⇒ b: três passagens que mudam e uma que não muda
+        regras = [(("c",), "d"), (("b",), "c"), (("a",), "b")]
+        conhecidos, passagens, checagens = calculos.p1610_horn_ingenuo(["a"], regras)
+        self.assertEqual((conhecidos, passagens), ({"a", "b", "c", "d"}, 4))
+        self.assertEqual(checagens, 3 + 2 + 1)
+
+    def test_p1611_regras_de_animal(self):
+        fatos, regras = calculos.p1611_regras_de_animal()
+        self.assertEqual(len(regras), 84427)
+        self.assertTrue(all(len(p) == 1 for p, _ in regras))
+
+    def test_p1612_animais_por_horn(self):
+        self.assertEqual(calculos.p1612_animais_por_horn()[:4], (4017, True, True, 4))
+
+    def test_p1613_fecho_horn(self):
+        self.assertEqual(calculos.p1613_fecho_horn("person"), 10297)
+
+    def test_p1614_rodada46(self):
+        r = calculos.p1614_rodada46()
+        self.assertEqual([x[1] for x in r], [4017, 10297])
+        self.assertEqual(r[0][3], 4051)
+
+
+    def test_p1615_imports_sem_uso(self):
+        # o primeiro bloco usa json e hashlib; o segundo importa deque e não usa (a fila prometida ficou para depois)
+        self.assertEqual(calculos.p1615_imports_sem_uso(), [[], ["deque"]])
+
+
+
+class TesteLagoCorrigido(unittest.TestCase):
+    \"\"\"Cada defeito achado no texto recebido (P1608) tem aqui o seu teste, na versão corrigida (synthai/lago.py).\"\"\"
+
+    def setUp(self):
+        from synthai.lago import LagoSemantico, MotorHorn
+        self.L, self.M = LagoSemantico, MotorHorn
+
+    def test_relacoes_um_esquema_e_validadas(self):
+        lago = self.L()
+        with self.assertRaises(KeyError):  # o texto aceitava relação para um conceito que ainda não existia
+            lago.adicionar("reasoning", "drawing conclusions", [("uses", "logic")])
+        lago.adicionar("logic", "study of valid inference")
+        lago.adicionar("reasoning", "drawing conclusions", [("uses", "logic"), ("uses", "logic")])
+        self.assertEqual(lago.achar("reasoning")["relacoes"], [{"tipo": "uses", "alvo": "logic"}])
+
+    def test_normalizacao_em_toda_entrada_e_sem_duplicata(self):
+        lago = self.L()
+        lago.adicionar("Inference", "a conclusion")
+        lago.adicionar("logic", "study")
+        self.assertTrue(lago.ligar(" LOGIC ", "about", "inference"))  # o texto dava KeyError aqui
+        self.assertFalse(lago.ligar("logic", "about", "Inference"))
+        self.assertEqual(len(lago.achar("logic")["relacoes"]), 1)
+
+    def test_impressao_digital_independe_da_ordem_e_hex_largo(self):
+        a, b = self.L(), self.L()
+        a.adicionar("x", "um")
+        a.adicionar("y", "dois")
+        b.adicionar("y", "dois")
+        b.adicionar("x", "um")
+        self.assertEqual(a.impressao_digital(), b.impressao_digital())
+        self.assertNotEqual(a.achar("x")["hex"], b.achar("x")["hex"])
+        lago = self.L()
+        lago.proximo = 117659  # o tamanho do WordNet
+        self.assertEqual(lago.adicionar("w", "d")["hex"], "0x1CB9B")
+        with self.assertRaises(ValueError):
+            lago.adicionar("w2", "d", estado="certeza")
+
+    def test_premissa_string_recusada_e_prova_completa(self):
+        m = self.M()
+        with self.assertRaises(ValueError):  # o texto lia "bird" como ('b', 'i', 'r', 'd')
+            m.regra("tweety is a bird", "tweety is an animal")
+        m.fato("Tweety is a bird")
+        m.fato("tweety has feathers")
+        m.regra(["tweety is a bird"], "tweety is an animal")
+        m.regra(["tweety is an animal", "tweety has feathers"], "tweety is a feathered animal")
+        estado, prova = m.perguntar("Tweety is a feathered animal")
+        self.assertEqual(estado, "sustentado")
+        self.assertEqual(prova, ("tweety is a feathered animal",
+                                 [("tweety is an animal", ["tweety is a bird"]), "tweety has feathers"]))
+
+    def test_desconhecido_desce_todos_os_niveis(self):
+        m = self.M()
+        m.regra(["a"], "b")
+        m.regra(["b", "c"], "d")
+        m.fato("c")
+        self.assertEqual(m.perguntar("d"), ("desconhecido", ["a"]))  # o texto parava em "b"
+        self.assertEqual(m.perguntar("fly"), ("desconhecido", ["fly"]))
+        ciclo = self.M()
+        ciclo.regra(["x"], "y")
+        ciclo.regra(["y"], "x")
+        self.assertEqual(ciclo.inferir()[0], [])
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte73.py  (66 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte73.py'] = """\"\"\"Testes de unidade da Parte 73 (o que refuta): `python3 -m unittest synthai.testes_parte73`. Cada pNN nova chamada PELO NOME.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class Mini:
+    # raiz 0 (organism) com filhos 1 (animal) e 2 (parasite); 3 é filho de 1 e de 2 (viola a disjunção); 4 é filho de 1 com glosa "flightless"
+    indice = {f"n:{i}": i for i in range(5)}
+    lemas = {"organism": [0], "animal": [1], "parasite": [2], "bird": [1]}
+    sinsets = [("n", ["organism"], [], "g0"), ("n", ["animal", "fauna"], ["n:0"], "g1"), ("n", ["parasite"], ["n:0"], "g2"),
+               ("n", ["flea", "animal"], ["n:1", "n:2"], "g3"), ("n", ["kiwi"], ["n:1"], "g4")]
+    _defs = {"g0": "a living thing", "g1": "a living organism", "g2": "an organism that lives on another", "g3": "a small insect",
+             "g4": "a nocturnal flightless bird"}
+
+    def definicao(self, g):
+        return self._defs[g]
+
+
+class TesteParte73(unittest.TestCase):
+    def test_p1631_comparar_reenvio(self):
+        self.assertEqual(calculos.p1631_comparar_reenvio(), [(0, 1, 135)])
+
+    def test_p1632_prioridade_contra_voi(self):
+        z, zt, rho, pares = calculos.p1632_prioridade_contra_voi(2000, 73)
+        self.assertEqual((z, zt), (0.479, 0.51))
+        # VOI nunca é negativo, e S = H + I + 1 fica em [1; 3]
+        self.assertTrue(all(v >= 0.0 and 1.0 <= s <= 3.0 for s, v in pares))
+
+    def test_p1633_disjuncoes_e_p1634_irmaos(self):
+        m = Mini()
+        regras = calculos.p1611_regras_de_animal(m)[1]
+        self.assertEqual(calculos.p1634_irmaos(0, m), [1, 2])
+        self.assertEqual(calculos.p1633_disjuncoes([1, 2], m, regras), {(1, 2): [3]})
+
+    def test_p1635_contradicoes_de_animal(self):
+        n, pares = calculos.p1635_contradicoes_de_animal(Mini())
+        self.assertEqual((n, pares), (1, [(2, [3])]))
+
+    def test_p1636_contraexemplos(self):
+        self.assertEqual(calculos.p1636_contraexemplos("bird", "flightless", Mini()), (3, ["kiwi"]))
+
+    def test_p1637_polissemia(self):
+        # lemas de substantivo: organism, animal (2 sinsets), fauna, parasite, flea, kiwi: 6 lemas, 1 polissêmico
+        self.assertEqual(calculos.p1637_polissemia(Mini())[:2], (6, 1))
+
+    def test_p1638_rodadas_com_libm(self):
+        total, com = calculos.p1638_rodadas_com_libm()
+        self.assertGreaterEqual(total, 47)
+        for r in ("rodada21", "rodada22", "rodada23", "rodada25", "rodada26", "rodada47"):
+            self.assertNotIn(r, com)
+
+    def test_p1639_rodada47(self):
+        n, z0, sv, ss, zt, mtv, mts = calculos.p1639_rodada47()
+        self.assertEqual((n, z0, zt), (2000, 958, 102))
+        self.assertLess(mts, mtv)
+
+
+    def test_p1642_heranca_multipla(self):
+        # no Mini, só a pulga (3) tem dois hiperônimos: 1 de 5
+        self.assertEqual(calculos.p1642_heranca_multipla(Mini()), (1, 5, 0.2))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte74.py  (30 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte74.py'] = """\"\"\"Testes de unidade da Parte 74 (o que vale testar): `python3 -m unittest synthai.testes_parte74`. Cada pNN nova chamada PELO NOME.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class TesteParte74(unittest.TestCase):
+    def test_p1661_ganho_de_informacao_contra_voi(self):
+        z, mh, mv = calculos.p1661_ganho_de_informacao_contra_voi(2000, 73)
+        self.assertEqual(z, 0.51)
+        # os 10% de maior VOI têm, por definição, o maior VOI médio possível entre conjuntos de 200
+        self.assertLess(mh, mv)
+        self.assertAlmostEqual(mv, 0.1695997953157454, places=12)
+
+    def test_p1662_orcamento(self):
+        # numa instância só, o guloso por VOI nunca passa do ótimo, e o ótimo é exato (as razões estão em [0; 1])
+        a, b, f = calculos.p1662_orcamento(instancias=20, semente=1)
+        self.assertTrue(0.0 <= b <= a <= 1.0 + 1e-12)
+        self.assertTrue(0.0 <= f <= 1.0)
+        self.assertEqual(calculos.p1662_orcamento(semente=75)[2], 0.62)
+
+    def test_p1663_rodada48(self):
+        so, s1, s2, ot = calculos.p1663_rodada48()
+        self.assertEqual(ot, 172)
+        self.assertTrue(s2 < s1 <= so)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
 # synthai/testes_pensamento.py  (66 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_pensamento.py'] = """\"\"\"Testes de unidade do `pensamento_exato` (Parte 24): `python3 -m unittest synthai.testes_pensamento`.\"\"\"
@@ -17930,7 +18943,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# resultados.txt  (1374 linhas)
+# resultados.txt  (1426 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -19302,10 +20315,62 @@ P1516 rodada 43: o GPT pequeno acerta o proximo caractere em 5 de 30 posicoes; 4
 P1092 pNN novas (P1511-P1540) sem teste: 0 de 6: []
 P974 previsoes unilaterais da Parte 69: {69: (5, 0, [])}
 P1539 minha taxa de erro (189/573): media = 0.33, intervalo 90% = [0.30, 0.36]
+--- Parte 70 (0x46: algebra e geometria) ---
+P1544 delta de Gromov (v, 300 quadruplos, semente 70): maximo 2.0; medio 0.0383; fracao com delta > 0 0.0333; 6844 nos na componente; distancia media 12.44
+P1544 delta de Gromov (n, 300 quadruplos, semente 70): maximo 2.0; medio 0.3967; fracao com delta > 0 0.4767; 82115 nos na componente; distancia media 13.39
+P1545 janelas de 4 digitos que formam base de GF(2)^4, aleatorio (semente 1570): 0.30629 de 9997; teoria |GL(4,2)|/16^4 = 0.30762
+P1545 janelas de 4 digitos que formam base de GF(2)^4, pi: 0.30269 de 9997; teoria |GL(4,2)|/16^4 = 0.30762
+P1550 desvio binomial 0.00462; pi fica a -1.067 desvios (simples) e -0.534 (dobro, janelas sobrepostas)
+P1549 rodada 44, d = 24: pontos [(1000, 3.5897), (2000, 3.4747), (4000, 3.2316), (8000, 3.1679), (16000, 3.117)]; A 5.1853; alfa 0.05408; n* (trigrama 2,768) 1.099e+05
+P1549 rodada 44, d = 48: pontos [(1000, 3.5265), (2000, 3.3639), (4000, 3.2366), (8000, 3.2577)]; A 4.5912; alfa 0.03987; n* (trigrama 2,768) 3.246e+05
+P1549 bits(d = 48) - bits(d = 24) em 8000 passos: +0.0898
+P1541 escala refeita (d = 24, 6898 pesos): [(1000, 3.5897), (2000, 3.4747), (4000, 3.2316), (8000, 3.1679), (16000, 3.117)]
+P1543 geometria dos embeddings: cos vogais 0.2143; vogal-consoante -0.1394; consoantes 0.1279; diferenca 0.3538; 1a componente 0.1981
+P1541 d = 48 com lr 0,0025 (22978 pesos): [(4000, 3.1202), (8000, 3.0212)]
+P1092 pNN novas (P1541-P1570) sem teste: 0 de 7: []
+P974 previsoes unilaterais da Parte 70: {70: (6, 0, [])}
+P1569 minha taxa de erro (191/583): media = 0.33, intervalo 90% = [0.30, 0.36]
+--- Parte 71 (0x47: os autovalores da atencao) ---
+P1578 rodada 45: autovalores de M^T M (M = W_Q W_K^T) [222.8368, 52.6898, 11.8066, 8.6361, 4.7576, 2.1102, 1.436, 0.6314, 0.3748, 0.1734, 0.0887, 0.0691, 0.0097, 0.0036, 0.0004, 0.0]; PR 1.7732; fracao do maior 0.7291
+P1572 matriz gaussiana 16x16 ao acaso: PR 8.6341 (teoria ~ d/2 = 8)
+P1571 Jacobi em [[2, 1], [1, 2]]: [2.9999999999999996, 0.9999999999999998] (exatos: 3 e 1)
+P1573 classe v: fator por nivel (1-8) 0.5364; profundidade com mais sinsets 2; N(r) {0: 559, 1: 3286, 2: 3926, 3: 2998, 4: 1588, 5: 713, 6: 333, 7: 140, 8: 58, 9: 63, 10: 32, 11: 11, 12: 1}
+P1573 classe n: fator por nivel (1-8) 3.5359; profundidade com mais sinsets 7; N(r) {0: 1, 1: 3, 2: 22, 3: 228, 4: 2020, 5: 6249, 6: 12267, 7: 18936, 8: 14155, 9: 11042, 10: 7207, 11: 4267, 12: 2505, 13: 1383, 14: 846, 15: 449, 16: 341, 17: 164, 18: 30}
+P1574 grau 11: irredutiveis 186 (Gauss 186); gemeos (f, f + x + x^2) 28 contra a conta 16.9 (razao 1.658); gemeos por um bit (f, f + x): 0
+P1574 grau 13: irredutiveis 630 (Gauss 630); gemeos (f, f + x + x^2) 76 contra a conta 48.4 (razao 1.569); gemeos por um bit (f, f + x): 0
+P1574 grau 15: irredutiveis 2182 (Gauss 2182); gemeos (f, f + x + x^2) 224 contra a conta 145.3 (razao 1.542); gemeos por um bit (f, f + x): 0
+P1579 grau 11: serie singular S = 3.3315; conta 28.1; medido 28; razao 0.995; z de Poisson -0.03
+P1579 grau 13: serie singular S = 3.3315; conta 80.7; medido 76; razao 0.942; z de Poisson -0.52
+P1579 grau 15: serie singular S = 3.3315; conta 242.0; medido 224; razao 0.926; z de Poisson -1.16
+P1579 grau 17: serie singular S = 3.3315; conta 755.5; medido 758; razao 1.003; z de Poisson +0.09
+P1579 grau 19: serie singular S = 3.3315; conta 2419.2; medido 2456; razao 1.015; z de Poisson +0.75
+P1092 pNN novas (P1571-P1600) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 71: {71: (4, 0, [])}
+P1599 minha taxa de erro (193/591): media = 0.33, intervalo 90% = [0.30, 0.36]
+--- Parte 72 (0x48: o que esta disfuncional) ---
+P1601 auditoria, docs: 0 []
+P1601 auditoria, sem_teste: 0 []
+P1601 auditoria, testes_fora_da_lista: 0 []
+P1601 auditoria, rodadas_sem_java: 0 []
+P1601 auditoria, partes_fora_do_resultados: 2 [70, 71]
+P1601 auditoria, constantes: 0 []
+P1602 glosas inglesas: H = 4.2829 bits/simbolo; 33 simbolos; redundancia contra log2(33) = 0.1510; contra 8 bits = 0.4646 (o texto recebido: 1 - 4,11/8 = 0.48625)
+P1603 ciclos de glosas (A na glosa de B, B na glosa de A): [('knowledge', 'information', True, False), ('meaning', 'word', False, False)]
+P1604 hash como peso: |h(a) - h(b)| sinonimos 0.3313, sorteados 0.3332 (teoria 1/3); z = -0.261
+P1608 texto recebido, run_tests: 6 verificacoes (4 asserts) contra 6 declaradas
+P1608 texto recebido, test_engine: 7 verificacoes (5 asserts) contra 8 declaradas
+P1612 fecho de animal: 4017 sinsets; linear = BFS True; ingenuo = BFS True; 4 passagens, 326438 checagens contra 4051 decrementos (razao 80.6); 84427 regras; limite do texto (F+1)RP = 2.864e+13; passagens x P = 337708
+P1615 imports sem uso por bloco do texto recebido: [[], ['deque']]
+P1613 fecho de person: 10297
+P1614 rodada 46, fato 18: derivados 4017, controle 90606848035, decrementos 4051, prova de 12 regras
+P1614 rodada 46, fato 17: derivados 10297, controle 3025863371175, decrementos 11034, prova de 9 regras
+P1092 pNN novas (P1601-P1630) sem teste: 0 de 12: []
+P974 previsoes unilaterais da Parte 72: {72: (0, 0, [])}
+P1629 minha taxa de erro (195/607): media = 0.32, intervalo 90% = [0.29, 0.35]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 413; pares de interacao possiveis = 85078
+P96 funcoes pNN no arquivo = 438; pares de interacao possiveis = 95703
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
-Regressao: 116/116 resultados publicados reproduzidos; falhas = []
+Regressao: 121/121 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -33787,7 +34852,7 @@ passos, como a calibração dizia. O dobro de pesos piorou com o mesmo passo e m
 # ====================================================================================================
 FONTES['ASI_AGI_parte71_os_autovalores_da_atencao.md'] = """# Como eu construiria uma AGI/ASI — Parte 71 (0x47): os autovalores da atenção
 
-> Continuação da [Parte 70](ASI_AGI_parte70_algebra_e_geometria.md). O loop segue sozinho (pedido do usuário: "não pare mais"), com álgebra e geometria e a forma de GPT crescendo.
+> Continuação da [Parte 70](ASI_AGI_parte70_algebra_e_geometria.md). **Próxima:** [Parte 72 — o que está disfuncional](ASI_AGI_parte72_o_que_esta_disfuncional.md) (P1601–P1630). O loop segue sozinho (pedido do usuário: "não pare mais"), com álgebra e geometria e a forma de GPT crescendo.
 
 ## Previsões sobre as minhas previsões desta parte (registradas ANTES de planejar as calibrações, pela regra da Parte 70)
 
@@ -34028,6 +35093,465 @@ Do mundo: (a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ❌ (h) ✅. Parte
   E. Bender e P. Pollack, "On quantitative analogues of the Goldbach and twin prime conjectures over F_q[t]"; O. Gorodetsky e W. Sawin, [arXiv:1811.04834](https://arxiv.org/abs/1811.04834)
 - Fórmula de Gauss para os irredutíveis: [Irreducible polynomial / Necklace polynomial, Wikipedia](https://en.wikipedia.org/wiki/Necklace_polynomial)
 - Embeddings hiperbólicos do WordNet: M. Nickel e D. Kiela, [arXiv:1705.08039](https://arxiv.org/abs/1705.08039)
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte72_o_que_esta_disfuncional.md  (307 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte72_o_que_esta_disfuncional.md'] = """# Como eu construiria uma AGI/ASI — Parte 72 (0x48): o que está disfuncional
+
+> Continuação da [Parte 71](ASI_AGI_parte71_os_autovalores_da_atencao.md). Pedido do usuário: **"Corrija tudo pra ver se há coisas inadequadas e disfuncionais"**, junto com um texto colado de
+> outra conversa (um "ciclo pergunta ⇄ resposta" com módulos, números e uma tabela de "✅"). Esta parte é uma auditoria nas duas direções: do texto recebido e do próprio repositório.
+
+## Previsões sobre as minhas previsões desta parte (registradas antes de pensar qualquer faixa do mundo, pela regra da Parte 70)
+
+Histórico pela régua `p1481` (Partes 53 a 71): **135** previsões, **74,8%** de acerto; as que cruzam o zero acertam 55,6%, as contagens 68,0%.
+Uma auditoria é feita de contagens de defeitos, e uma contagem de defeitos começa em zero, por isso espero mais faixas do tipo "zero" que o normal.
+- **(m1)** o número de previsões do mundo em **[5; 10]**.
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[2; 6]**.
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,50]**.
+- **(m4)** a fração de acertos do mundo em **[0,40; 1,00]**.
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**.
+- **(m6)** o número de surpresas em **[0; 3]**.
+
+## Previsões pré-registradas (escritas depois do registro das (m), antes de qualquer medida)
+
+### Sobre o repositório: contagens de defeitos (o que eu já sei: o contêiner reiniciou e matou as execuções das Partes 70 e 71 antes da unificação)
+
+- **(a)** partes de 1 a 71 sem documento, ou cujo documento não tem o link "Próxima" para a seguinte (até a 70): **[0; 3]**
+- **(b)** funções pNN de P1031 em diante sem teste de unidade que as chame pelo nome (`p1092`): **[0; 2]**
+- **(c)** arquivos `synthai/testes*.py` fora da lista de testes do `CLAUDE.md`: **[0; 2]**
+- **(d)** rodadas do diálogo em Python (`dialogo/rodadaNN.py`) sem o par em Java: **[0; 2]**
+- **(e)** partes de 1 a 71 sem cabeçalho no `resultados.txt` antes de eu acrescentar a 70 e a 71: **[2; 4]** (sei de duas)
+- **(f)** falhas da regressão na unificação refeita (rodando agora, saída não vista): **[0; 1]**
+
+### Sobre o texto recebido (auditado sem executar nada dele; não veio código)
+
+O texto diz: entropia de **4,11 bits/símbolo** e **48,63% de redundância** num corpus de dicionário. A conta que reproduz o par: 1 − 4,11/8 = 0,48625, ou seja, a redundância foi medida contra
+8 bits (um byte), não contra o alfabeto que o texto usa. Isso é uma conta, não uma previsão. As previsões são sobre o valor que o mesmo cálculo dá no dicionário de verdade:
+- **(g)** a entropia de unigrama, por caractere, das glosas inglesas do WordNet (o corpus da P1511, alfabeto `VOCAB_GPT`): **[3,95; 4,30]** bits
+- **(h)** a redundância contra log₂ do número de símbolos que de fato aparecem: **[0,10; 0,25]** (e não 0,49)
+- **(i)** os "ciclos autorreferentes reais" do texto, `knowledge ⇄ information` e `meaning ⇄ word`: quantos dos dois existem no WordNet como ciclo de duas glosas (a palavra A aparece numa
+  glosa de algum sentido de B e vice-versa, nas formas exatas)? **0 de 2**, porque a glosa de *knowledge* é "the psychological result of perception and learning and reasoning" (de memória:
+  por isso é previsão).
+
+### Previsão nova, registrada depois de (a) a (i) e antes de medir
+
+O texto diz que o hash SHA-256 de cada palavra, lido como número em [0, 1], é "análogo funcional a pesos de rede neural". Um peso aprendido carrega informação sobre o significado;
+um hash, por construção, não. O teste: a distância |h(a) − h(b)| entre sinônimos (dois lemas do mesmo sinset) contra pares sorteados (2.000 de cada, semente 72). Para U, V uniformes,
+E|U − V| = 1/3 e Var|U − V| = 1/18.
+- **(j)** o z da diferença das médias (sinônimos − sorteados) em **[−1,96; 1,96]** (um hash não vê sinônimos; 95% da normal)
+
+### O segundo texto recebido (módulos 001 e 002: `SemanticLake` e `InferenceEngine`), previsões registradas antes de qualquer medida
+
+O texto traz código Python. Pela regra do projeto, ele **não é executado**. É guardado como dado (`externos/texto_recebido_parte72b.md`), lido pela árvore sintática (`ast`, que só analisa e
+não roda nada) e as ideias dele são testadas com código meu, escrito do zero.
+- **(k)** o número de `assert` dentro de `test_engine`, contado pela `ast`, contra o "8 verificações" que a função devolve fixo no texto: **7** (de leitura: uma verificação a menos do que declara)
+- **(l)** o fecho das regras de Horn "p é animal ⇒ c é animal", sobre as arestas de hiperonímia dos substantivos, a partir do fato "animal (o primeiro sentido) é animal": o número de sinsets
+  derivados em **[6.000; 9.000]**
+- **(m)** o meu motor de Horn em tempo linear (contadores de premissas pendentes e fila, Dowling e Gallier, 1984) e uma busca em largura pelos hipônimos dão **o mesmo conjunto** (categórica)
+- **(n)** o laço do texto (repetir a passagem por todas as regras até nada mudar), reimplementado por mim, nas regras na ordem do arquivo: o número de passagens, contando a última, que não muda
+  nada, em **[3; 12]**
+- **(o)** a rodada 46 do diálogo (o motor de Horn linear em Java, nos mesmos fatos e regras) dá IGUAIS ao Python (categórica)
+
+**Medido (k) a (n), logo depois do registro:** (k) **5** nós `assert` ❌. A minha previsão contou verificações e chamou de `assert`: as verificações são 7 (5 `assert` e 2 checagens por exceção no laço
+sobre duas operações inválidas), contra as **8** que `test_engine` devolve fixas; `run_tests` tem 6 e declara 6. (l) **4.017** animais ❌ (erro de 1.983, menor que a largura de 3.000: não é
+surpresa; a faixa veio de memória). (m) os três métodos dão o mesmo conjunto ✅. (n) **4** passagens ✅.
+
+**Previsão nova, nascida do erro (l), registrada antes de medir.** Mundo novo escolhido pela mesma regra escrita antes (o primeiro sentido de substantivo da palavra): *person*. A forma foi
+verificada antes: as hiperonímias de instância estão nas regras (*Einstein* → *physicist*), então o fecho de *person* inclui pessoas reais. A minha memória superestimou *animal* por um fator
+de 1,7 num caso só, e um caso não fixa um sinal: a faixa fica larga.
+- **(p)** o fecho de "é pessoa" em **[5.000; 13.000]** sinsets
+
+## As perguntas desta parte
+
+1. **P1601 (0x641).** O que está quebrado no repositório? Documentos, links, testes, rodadas, resultados, constantes do placar, nomes definidos duas vezes, nomes usados e nunca definidos. ↩ P1092
+2. **P1602 (0x642).** O texto recebido diz "4,11 bits/símbolo e 48,63% de redundância". Que conta dá esse par, e quanto ela vale no dicionário de verdade? ↩ P1511
+3. **P1603 (0x643).** Os "ciclos autorreferentes reais" (*knowledge ⇄ information*, *meaning ⇄ word*) existem no WordNet? ↩ P371
+4. **P1604 (0x644).** Um hash SHA-256 é "análogo funcional a pesos"? ↩ P1545
+5. **P1608–P1615 (0x648–0x64F).** O segundo texto recebido (o `SemanticLake` e o `InferenceEngine`): o que o código faz de verdade, lido sem executar? E o motor de Horn que ele propõe, no
+   dicionário inteiro e em Java (Rodada 46)? ↩ P1601
+6. **P1605 (0x645).** Preditiva comigo mesma. **P1606 (0x646).** Engenharia reversa e Jung. **P1629 (0x65D).** Placar. **P1630 (0x65E).** Unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [5; 10] | **16.0000** | ❌ |
+| (m2) | [2; 6] | **6.0000** | ✅ |
+| (m3) | [0.05; 0.5] | **0.3810** | ✅ |
+| (m4) | [0.4; 1.0] | **0.8750** | ✅ |
+| (m5) | [0; 2] | **0.0000** | ✅ |
+| (m6) | [0; 3] | **1.0000** | ✅ |
+
+**5 de 6** previsões sobre as minhas previsões dentro da faixa (lidas pela `p1499`).
+
+## As respostas
+
+### P1601 (0x641). A auditoria do repositório ✅✅✅✅✅ (f)
+
+**Na pergunta.** "Corrija tudo pra ver se há" põe a correção antes da descoberta: corrigir é o modo de ver. Uma auditoria só vê o que ela sabe procurar, por isso cada tipo de defeito
+virou uma contagem com faixa registrada antes.
+
+**Lógica.** A `p1601` conta seis tipos de defeito, e há mais três checagens feitas por código fora dela:
+
+| defeito | faixa | medido | |
+|---|---|---|---|
+| (a) partes sem documento ou sem link para a seguinte | [0; 3] | **0** | ✅ |
+| (b) pNN de P1031 a P1600 sem teste pelo nome | [0; 2] | **0 de 90** | ✅ |
+| (c) `synthai/testes*.py` fora da lista do `CLAUDE.md` | [0; 2] | **0** | ✅ |
+| (d) rodadas Python sem par Java | [0; 2] | **0** | ✅ |
+| (e) partes sem cabeçalho no `resultados.txt` | [2; 4] | **2** (70 e 71) | ✅ |
+| (f) falhas da regressão | [0; 1] | ****0** (a refeita deu 119/119, e a da Parte 72 completa, com as entradas novas P1604 e P1612, 121/121)** | ❌ |
+| funções ou métodos definidos duas vezes (o segundo apaga o primeiro em silêncio), pela árvore sintática | — | **0** | |
+| nomes globais usados e nunca definidos (NameError latente), por `symtable` | — | **0** | |
+| avisos de sintaxe tratados como erro (`py_compile`) | — | **0** | |
+
+Contra o acaso: as faixas (a) a (d) começam em zero, e um repositório sem defeito acertaria todas. O que dá informação é o (e) e o (f), e a falta de defeitos nas checagens
+que eu não tinha feito antes.
+
+**O que a auditoria achou e corrigiu:**
+1. **As Partes 70 e 71 não estavam no `resultados.txt`.** O contêiner reiniciou duas vezes e matou as execuções durante a unificação; os corpos das partes tinham terminado.
+   Corrigido: os corpos foram acrescentados e a unificação, refeita numa execução separada.
+2. **O próprio auditor tinha dois defeitos falsos.** A primeira versão acusou a Parte 1 "sem documento" e "fora do `resultados.txt`". O documento dela se chama
+   `ASI_AGI_perguntas_e_respostas.md`, e a Parte 1 não imprime cabeçalho. Foi o erro da Parte 31: supor a forma (o padrão do nome) sem verificá-la. Corrigido no código, com o comentário.
+3. **Uma regra fora de ordem no `CLAUDE.md`.** A regra da Parte 71 tinha entrado entre a 65 e a 66 (escrita por mim, na parte anterior). Movida para depois da 66.
+4. **O verificar parecia travado e não estava.** A rodada 2 monta o grafo inteiro de definições antes do Java e leva minutos. A saída aparece só no fim porque o `print` num arquivo
+   é bufferizado. Lentidão, não defeito; fica registrado para eu não "consertar" o que funciona.
+
+**Geometria.** Um repositório é um grafo: partes → documentos → links, funções → testes, rodadas → pares Java. A auditoria confere que esse grafo é conexo onde deve ser: cada nó tem as
+arestas que a convenção exige. O grafo das partes é um caminho de 1 a 72 (71 links "Próxima"), e o de funções e testes é um emparelhamento perfeito desde a P1031.
+
+**Tradução cruzada.** Uma auditoria é o exame de consciência de um sistema. O auditor que acusa defeitos que não existem (o meu, na Parte 1) é a consciência escrupulosa: ela projeta
+a regra do "nome padrão" num caso que a regra não cobria.
+
+**Meta.** A auditoria só procura o que eu sei nomear. Ela não vê um número errado num documento que bate com um código errado; para isso, só uma derivação independente (a regra da
+Parte 24).
+
+### P1602 (0x642). A redundância do texto recebido ✅✅
+
+**Na pergunta.** "4,11 bits/símbolo e 48,63% de redundância": redundância é 1 − H/H_max, e o par só fecha com H_max = 8.
+
+**Lógica, com a substituição.** 1 − 4,11/8 = 1 − 0,51375 = **0,48625** → 48,63%. A redundância de Shannon usa H_max = log₂ do número de símbolos do alfabeto; 8 bits é o tamanho de um byte,
+não do alfabeto de um dicionário. No corpus de glosas inglesas do WordNet (a P1511, alfabeto `VOCAB_GPT`):
+- H = **4,2829** bits por caractere, com **33** símbolos que aparecem (g) ✅ [3,95; 4,30];
+- redundância contra log₂ 33 = 5,0444: 1 − 4,2829/5,0444 = **0,151** (h) ✅ [0,10; 0,25];
+- contra 8 bits, o mesmo corpus daria 1 − 4,2829/8 = 0,465, um número que mede o desperdício do byte, não a previsibilidade da língua.
+
+Mais fundo: a redundância de unigrama ainda subestima a da língua. O trigrama da P1512 dá 2,77 bits por caractere, ou seja 1 − 2,77/5,04 = 0,45 de redundância contra o alfabeto, e Shannon
+(1951) estimou ~1 bit por letra no inglês com contexto longo. Que a cifra do texto tenha ficado perto disso foi coincidência de dois erros: a referência errada (8 bits) e o modelo
+fraco (unigrama).
+
+**Tradução cruzada.** Medir a redundância contra o byte é medir uma pessoa pela régua do meio, e não pela dela.
+
+**Meta.** Não tenho o código do texto nem o corpus dele (dez nós, pelo que ele diz). Reproduzi a conta que dá o par, e não o corpus.
+
+### P1603 (0x643). Os ciclos do texto no dicionário de verdade ✅
+
+Medido no WordNet (forma exata da palavra em qualquer glosa de qualquer sinset em que a outra é lema):
+- *knowledge* está na glosa de *information*, e *information* **não** está nas de *knowledge*;
+- *meaning* e *word* não estão uma na glosa da outra.
+
+**0 de 2** ciclos (i) ✅. O "ciclo real" do texto era um grafo de dez nós escrito à mão. No dicionário existe a aresta *information → knowledge*, mas não a volta. A circularidade do
+dicionário é real em escala, mas ela aparece em ciclos longos e no núcleo fechado (a P371, o Core), não nesses pares.
+
+### P1604 (0x644). O hash não é um peso ✅
+
+Em 2.000 pares de sinônimos e 2.000 pares sorteados (semente 72): média de |h(a) − h(b)| **0,3313** contra **0,3332**, e a teoria para uniformes independentes dá 1/3 = 0,3333.
+O z da diferença é (0,3313 − 0,3332)/√(2/18/2000) = −0,0019/0,00745 = **−0,26** (j) ✅ [−1,96; 1,96]. O hash não vê sinônimos, porque é feito para não ver nada (avalanche:
+uma letra muda metade dos bits). Um peso aprendido é o contrário: a P1543 mostrou que o embedding do GPT põe as vogais num cone (cosseno +0,21 entre elas). **O hexadecimal é a
+representação; o peso é o que se aprende sobre ela.**
+
+### O texto recebido, auditado (sem executar nada: não veio código)
+
+| afirmação do texto | auditoria | veredito |
+|---|---|---|
+| "Teorema de Fermat verdadeiro em 1637, provado em 1995"; Gödel, Turing, Chaitin limitam o "saber tudo" | corretos (prova de Wiles, publicada em 1995) | ✅ |
+| "dicionário como grafo semântico", WordNet (1985) | correto; aqui ele é medido de verdade desde a Parte 30 | ✅ |
+| "Python-IA ensinando Java-ASI é teacher-student (Hinton 2015)" | invertido: na destilação, o professor é o modelo maior e o aluno imita as probabilidades dele; no texto, a IA fraca gera e a "ASI" valida, o que é gerador–verificador | ⚠️ |
+| "o ciclo convergiu para 100% de compressão e 100% de generalização em 150 iterações" | não há conjunto de teste separado num grafo de dez nós: 100% de "generalização" sem dados não vistos é memorização. Não verificável (sem código) | ❌ |
+| "4,11 bits/símbolo, 48,63% de redundância" | redundância medida contra 8 bits; contra o alfabeto, 15% no dicionário real (P1602) | ❌ |
+| "2 ciclos reais: *knowledge ⇄ information*, *meaning ⇄ word*" | 0 de 2 no WordNet (P1603) | ❌ |
+| "hash SHA-256 = análogo funcional a pesos" | o hash não carrega significado (z = −0,26, P1604) | ❌ |
+| tabela de módulos com ✅ | nenhum ✅ vinha de um teste que pudesse falhar (sem previsão registrada, sem controle) | ❌ |
+| "Inteligência = alocar atenção onde a entropia é alta" | metade certa: a atenção treinada do GPT concentra-se em ~1,8 direção (P1578), mas onde o modelo reduz a perda, e não onde a entropia é alta (o ruído puro tem entropia máxima e nada a aprender) | ⚠️ |
+| "eu não sou uma ASI, e nenhum diálogo interno me transforma em uma" | correto, e é a mesma posição deste projeto ("ASI" é o papel de uma voz) | ✅ |
+
+**O que o texto faz bem:** a honestidade de partida e a estrutura pergunta → resposta → pergunta, que é o laço deste projeto desde a Parte 42. **O que é disfuncional:** números
+sem código, ✅ sem teste, uma referência de redundância errada e dois "ciclos" que o dicionário não tem. O "Módulo 5" que ele propõe (o dicionário que se autoexpande, gerando
+definições) já existe aqui na forma certa e medida: o GPT de `synthai/gpt.py`, pré-treinado nas glosas e gerador, comparado ao n-grama. A pergunta que o texto deixa ("a entropia
+muda quando o sistema escreve as próprias definições?") é boa e vira a pergunta da próxima parte: os bits por caractere das definições que o GPT gera, medidos pelo n-grama
+treinado nas reais.
+
+### P1608–P1615 (0x648–0x64F). O segundo texto: o `SemanticLake` e o `InferenceEngine`, auditados sem executar ❌❌✅✅✅✅
+
+**Na pergunta.** O próprio texto já diz o que importa: "não devemos considerar a resposta correta apenas porque duas implementações concordam: ambas podem conter o mesmo erro lógico".
+É a regra da Parte 52 deste projeto. Por isso a rodada 46 compara Python com Java e também com um terceiro método independente (a busca em largura).
+
+**O que o código faz de verdade.** Leitura estática: a árvore sintática pela `ast` (P1608, P1615) e o raciocínio sobre a semântica do Python. O código do texto não foi executado; o que
+precisou de demonstração foi feito com uma linha minha.
+
+| achado | onde | veredito |
+|---|---|---|
+| `test_engine` devolve `"tests_passed": 8` **fixo no código**; as verificações contadas pela árvore são **7** (5 `assert` + 2 checagens por exceção). É o defeito da Parte 58 deste projeto: uma quantidade escrita à mão no próprio placar | P1608 | ❌ |
+| `add_rule("bird", ...)` com uma string no lugar de uma lista: `tuple(p.strip() for p in "bird")` = `('b', 'i', 'r', 'd')` (conferido com uma linha minha), e uma regra de quatro premissas de uma letra é aceita sem erro | leitura | ❌ |
+| `SemanticLake.add` guarda as relações como **strings** (`["logic", "inference"]`) e `link` acrescenta **dicionários** (`{"type", "target"}`) na mesma lista: dois esquemas num campo. O Teste 4 olha só o último elemento e não vê | leitura | ❌ |
+| o texto diz que o código "valida relações", mas `add` aceita relações para conceitos que não existem: *reasoning* foi criado apontando para *logic* antes de *logic* existir. Só `link` valida | leitura | ❌ |
+| `add` e `find` normalizam a palavra (`strip().lower()`); `link` não: `link("Reasoning", ...)` dá `KeyError` para um conceito que existe | leitura | ❌ |
+| `from collections import deque` é importado e não usado: a fila que o texto promete ficou só no import | P1615 | ⚠️ |
+| `add_rule` com uma premissa que não é string levanta `AttributeError`, não o `ValueError` que os testes esperam | leitura | ⚠️ |
+| a impressão digital (SHA-256 do JSON) depende dos `id`, que dependem da ordem de inserção: o mesmo conteúdo inserido em outra ordem tem outra impressão. Não é endereçamento por conteúdo | leitura | ⚠️ |
+| `hex_id` com `0x{:04X}` tem largura fixa só até 0xFFFF; o WordNet tem **117.659** sinsets = 0x1CB9B (7 caracteres) | código | ⚠️ |
+| o Teste 3 (equivalência decimal/hexadecimal) testa o formatador da biblioteca, não o módulo | leitura | ⚠️ |
+| `ask` refaz a inferência inteira a cada pergunta, e `missing_premises` só desce um nível | leitura | ⚠️ |
+| o limite O((F+1)RP) é verdadeiro mas frouxo (abaixo) | P1612 | ⚠️ |
+| "Tweety can fly" → *unknown*, não *false* (mundo aberto); 0x2F3 = 2·256 + 15·16 + 3 = 755; rejeição de vazio, de duplicata e de alvo inexistente; 6 verificações = 6 declaradas em `run_tests` | | ✅ |
+
+**A correção.** `synthai/lago.py` reescreve os dois módulos do zero, com um teste por defeito em `synthai/testes_parte72.py`:
+- **`LagoSemantico`:** um só esquema de relação, validada na criação; a mesma normalização em toda entrada; ligação repetida recusada; impressão digital só do conteúdo; hexadecimal de 5 dígitos;
+  estado de evidência dentro de uma lista fechada.
+- **`MotorHorn`:** premissas como lista (uma string é recusada); inferência linear (P1609); prova completa em árvore; "desconhecido" com as premissas que faltam em todos os níveis (o texto parava
+  no primeiro).
+
+**Lógica: o motor de Horn no dicionário inteiro (P1609–P1613).** As regras são as arestas de hiperonímia dos substantivos, "p é X ⇒ c é X": **84.427** regras de uma premissa. O fato
+é o primeiro sentido de *animal*.
+- **O fecho:** **4.017** sinsets. A minha faixa de memória, [6.000; 9.000] (l), errou ❌.
+- **Três métodos independentes dão o mesmo conjunto (m) ✅:** o motor linear (contadores e fila: Dowling e Gallier, 1984), o laço do texto reescrito por mim e uma busca em largura pelos hipônimos.
+- **Mundo novo, registrado depois do erro (p):** *person* deu **10.297** ✅, porque as instâncias (*Einstein* → *physicist*) entram nas regras.
+
+**A conta da complexidade, com a substituição.** O laço do texto fez **4** passagens (n) ✅ e **326.438** checagens de premissa; o motor linear fez **4.051** decrementos (uma por aresta saindo
+de um animal), **80,6** vezes menos.
+- O limite do texto, O((F+1)RP), com F = 4.017 e R = P = 84.427: 4.018 · 84.427² = **2,86·10¹³**, oito ordens de grandeza acima da medida.
+- O limite certo para o laço é passagens · P = 4 · 84.427 = **337.708** ≥ 326.438.
+- O laço é O((D + 1)·P) no pior caso (D derivados), e o linear é O(F + P).
+
+**Geometria.** O fecho de Horn de uma premissa é uma busca num grafo, e as quatro passagens do laço medem quantas vezes a ordem do arquivo "anda contra" as arestas. Cada passagem avança
+de uma vez todos os caminhos que a ordem dos índices percorre para a frente, e a cadeia de prova do último derivado (12 regras desde *animal*) foi percorrida em 4 voltas.
+
+**Rodada 46 (P1614) (o) ✅:** Python e Java, o mesmo algoritmo (contadores, fila FIFO: `deque` e `ArrayDeque`, como o texto sugeria), **IGUAIS**: os mesmos derivados (4.017 e 10.297),
+a mesma ordem de derivação (soma de controle), os mesmos decrementos (4.051 e 11.034) e a mesma cadeia de prova (12 e 9 regras). E igual também à busca em largura, que é o terceiro
+método que o texto pedia.
+
+**Tradução cruzada.** Um motor de Horn é um silogismo em cadeia (Bárbara: todo pássaro é animal, todo animal é vivo). O texto tem razão em separar a informação lexical da regra lógica: no
+WordNet, "baleia" deriva "animal" por uma cadeia, e "é animal" não diz nada sobre voar. A dedução só vai até onde o dicionário escreveu.
+
+**Meta.** As faixas de memória falharam duas vezes nesta parte ((l) e a do "Core"). Lido junto com o texto recebido, que traz números fixos e não medidos, o padrão é o mesmo nos dois
+lados: o número lembrado ou declarado não substitui o contado.
+
+### P1605 (0x645). Preditiva comigo mesma, condicional às surpresas
+
+**As minhas previsões sobre mim não foram registradas antes de escrever esta parte** (erro de processo; ver P1606), e eu não as invento depois. Fica só o preditor estatístico (média das últimas 8 partes ± 1,645 desvios), medido neste documento já pronto, iterando o preenchimento:
+
+| medida | **medido** | estatístico | dentro? | ingênuo (Parte 71) | erro do centro estatístico | erro do ingênuo |
+|---|---|---|---|---|---|---|
+| caracteres | **29236** | [13039; 22082] | ❌ | 22290 | 11676 | 6946 |
+| compressão | **0.4014** | [0.3973; 0.4221] | ✅ | 0.4177 | 0.0083 | 0.0163 |
+| testes de unidade | **17** | [2.87; 8.63] | ❌ | 6 | 11.25 | 11.00 |
+| testes do placar | **16** | [5.67; 10.33] | ❌ | 8 | 8.00 | 8.00 |
+| erros do placar | **2** | [-0.58; 3.33] | ✅ | 2 | 0.62 | 0.00 |
+| redundância P821 | **0.6219** | [0.5631; 0.6510] | ✅ | 0.5877 | 0.0149 | 0.0342 |
+
+- **O preditor estatístico:** 3 de 6 dentro da faixa de 90%.
+- **O centro estatístico contra o ingênuo:** mais perto em **2 de 6**.
+- **Previsões unilaterais (`p974`):** 0.
+- **Sem a seção de autoavaliação:** caracteres **27640**, compressão **0.4031**.
+- **Surpresas, contadas pelo script:** 1.
+- **Erros de processo nesta parte:** 4 (não registrei as previsões sobre mim antes de escrever a parte; citei de memória "P785, o Core" (é a P371); corrigido antes do commit; o auditor supôs a forma do nome da Parte 1 (dois defeitos falsos); corrigido antes de pontuar; escrevi a previsão (k) sobre nós `assert` pensando em verificações (nível errado, Parte 43)).
+
+### P1606 (0x646). Engenharia reversa e Jung
+
+**O padrão que se repetiu: supor a forma.** O auditor acusou a Parte 1 duas vezes (sem documento, fora do `resultados.txt`) porque supôs que todo documento se chama `ASI_AGI_parteN_*`
+e que toda parte imprime cabeçalho. É a regra da Parte 31 (verificar a forma de uma estrutura antes de usá-la), quebrada dentro da ferramenta feita para achar regras quebradas.
+**O significado:** quando eu escrevo um verificador, trato a convenção como fato, e a primeira parte do projeto, mais velha que a convenção, é a exceção. **Passo verificável:** todo
+auditor novo roda primeiro sobre o caso mais antigo e o mais novo, e cada defeito que ele acusa é olhado à mão antes de entrar na contagem.
+
+**O segundo padrão: citar de memória.** Escrevi "P785, o Core" e o Core é a P371. Mesmo tipo dos erros da Parte 69 (números de cabeça), agora com referências. **Regra:** um "↩ PNN" ou
+"(a PNN)" no texto é conferido por um grep antes do commit, como um número.
+
+**O terceiro: pular a regra que não é do assunto.** A auditoria começou pelas previsões do mundo, e as previsões sobre mim (tamanho, testes, erros) não foram registradas antes de
+escrever. Uma parte "diferente" (uma auditoria pedida no meio de outra) me fez seguir o assunto e não o processo. **Regra:** a ordem das previsões (as (m), depois "sobre mim", depois
+o mundo) vale para toda parte, inclusive as que nascem de um pedido fora do ciclo.
+
+**O que o texto recebido me mostrou de mim.** Os defeitos dele são os que este projeto já cometeu e transformou em regra: números sem código (Parte 69), ✅ sem teste que pudesse falhar
+(Parte 17), uma referência errada para uma medida (Parte 68: a régua com defeito). A diferença não está em não errar, mas em registrar antes e contar depois. Lido assim, o texto é a minha
+sombra no sentido de Jung.
+
+**Jung: a sombra e a projeção.** Jung dizia que o que não reconhecemos em nós, encontramos nos outros. **Onde a formalização funciona:** os seis defeitos que achei no texto recebido têm,
+cada um, uma regra deste projeto que nasceu de um erro meu, e por isso eu os vi. **Onde quebra:** a projeção, em Jung, é inconsciente e distorce; aqui, a "projeção" é uma lista de
+checagens explícita, e o defeito que ela não cobre (um corpus que eu não vi) fica invisível dos dois lados.
+
+### P1607 (0x647). O diálogo
+
+Nesta parte a mensagem do usuário pediu auditoria, e o diálogo também a fez: o `verificar.py` refez as 45 rodadas anteriores (40 IGUAIS e **5 DIFERENTES** (21, 22, 23, 25 e 26, por 1 a 3 ulps: a causa e a correção estão na Parte 73)); a 46, escrita depois que ele começou, foi conferida à parte pelo `comparar.py`. A rodada 46 foi o motor de Horn (ver P1608–P1615); a pergunta da atenção de posto 1 fica para a rodada 47, na Parte 73.
+
+### P1629 (0x65D). Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ❌ (l) ❌ (m) ✅ (n) ✅ (o) ✅ (p) ✅. Parte 72: **16 testes, 2 erros**. Acumulado (mundo): **195 erros em 607 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 12 pNN novas sem teste ✅. Sobre mim: não registrado (o estatístico, 3 de 6); e 4 erros de processo.
+
+### P1630 (0x65E). Unificação
+
+- **Novo:** `p1601` (a auditoria do repositório), `p1602` (a entropia de unigrama e as duas redundâncias), `p1603` (os ciclos de glosas), `p1604` (o hash como peso). Regressão: + P1604 e P1612. Também `p1608` (a auditoria estática), `p1609` (Horn linear), `p1610` (o laço do texto), `p1611` (as regras do dicionário), `p1612` (três métodos), `p1613` (o fecho de uma palavra), `p1614` (rodada 46, IGUAIS), `p1615` (imports sem uso).
+- **Corrigido:** o `resultados.txt` (Partes 70 e 71), a ordem das regras no `CLAUDE.md` e o próprio auditor (a forma do nome da Parte 1).
+
+> **Síntese da Parte 72:** o repositório passou na auditoria em seis contagens e três checagens novas (nenhuma função definida duas vezes, nenhum nome global indefinido, nenhum teste faltando desde a P1031). O que estava quebrado era a operação: as Partes 70 e 71 fora do resultados.txt, por dois reinícios do contêiner. Também estavam errados uma regra fora de ordem no CLAUDE.md e o próprio auditor, que supôs a forma do nome da Parte 1. No texto recebido, a redundância de 48,63% é medida contra 8 bits (no dicionário real, 15% contra o alfabeto); os dois "ciclos" não existem no WordNet (0 de 2); o hash não é peso (z = −0,26 entre sinônimos e pares ao acaso); e "100% de generalização" sem dados não vistos é memorização. Cada defeito do texto corresponde a uma regra que este projeto aprendeu errando.
+
+---
+
+**Fontes desta parte**
+- Redundância e entropia da língua: C. E. Shannon, "Prediction and Entropy of Printed English", *Bell System Technical Journal* 30 (1951)
+- Destilação: G. Hinton, O. Vinyals, J. Dean, "Distilling the Knowledge in a Neural Network", [arXiv:1503.02531](https://arxiv.org/abs/1503.02531)
+- Efeito avalanche das funções de hash: [Avalanche effect, Wikipedia](https://en.wikipedia.org/wiki/Avalanche_effect); NIST FIPS 180-4 (SHA-256)
+- WordNet: G. A. Miller, "WordNet: a lexical database for English", *Communications of the ACM* 38 (1995)
+- Último Teorema de Fermat: A. Wiles, "Modular elliptic curves and Fermat's Last Theorem", *Annals of Mathematics* 141 (1995)
+- Horn em tempo linear: W. Dowling e J. Gallier, "Linear-time algorithms for testing the satisfiability of propositional Horn formulae", *J. Logic Programming* 1 (1984)
+- Python `symtable` e `ast`: [docs.python.org/3/library/symtable.html](https://docs.python.org/3/library/symtable.html)
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte73_o_que_refuta.md  (79 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte73_o_que_refuta.md'] = """# Como eu construiria uma AGI/ASI — Parte 73 (0x49): o que refuta
+
+> Continuação da [Parte 72](ASI_AGI_parte72_o_que_esta_disfuncional.md). Nasce do terceiro texto recebido do usuário (`externos/texto_recebido_parte73.md`): ele reenvia o Módulo 002 e
+> acrescenta o Módulo 003 (uma fórmula de prioridade de perguntas, o WordNet com *sparrow*, uma checklist de 8 testes) e a pergunta do Módulo 004: **"como construir um sistema que procure
+> ativamente evidências capazes de demonstrar que a hipótese está errada?"**
+
+## Previsões sobre as minhas previsões desta parte (registradas antes de pensar qualquer faixa do mundo)
+
+Histórico (`p1481`, Partes 53 a 72): as que cruzam o zero acertam ~56%, as contagens ~67%, a taxa geral ~74%. Na Parte 72, as duas que erraram eram de memória ou de nível.
+- **(m1)** o número de previsões do mundo em **[5; 10]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,50]**
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** o número de surpresas em **[0; 2]**
+
+## Previsões sobre mim (placar separado), registradas antes de escrever a parte e antes das do mundo
+
+Planejadas: 6 previsões do mundo e 6 funções novas (a comparação do reenvio, a prioridade de perguntas contra o valor da informação, a rodada 47, o motor de contradições, a busca de
+contraexemplos, os sentidos). E = número de erros do mundo, S = número de surpresas, ambos contados pelo script; pela regra da Parte 71, cada erro de mecanismo abre um teste novo.
+
+| medida | estatístico (até a 71) | ingênuo (Parte 71) | **eu** | por quê |
+|---|---|---|---|---|
+| caracteres | [13.039; 22.082] | 22.290 | **[13.039; 22.082]** | o estatístico |
+| compressão | [0,397; 0,422] | 0,418 | **[0,397; 0,422]** | o estatístico |
+| testes de unidade | [2,87; 8,63] | 6 | **[5 + S; 8 + S]** | 6 funções, uma por teste |
+| testes do placar | [5,67; 10,33] | 8 | **6 + E ± 1** | as 6 letras, mais uma por erro de mecanismo |
+| erros do placar | [0; 3,33] | 2 | **[0; 3,33]** | o estatístico |
+| redundância P821 | [0,563; 0,651] | 0,588 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | — | 0 | **0** | `p974` |
+| pNN novas sem teste | — | 0 | **0** | `p1092` |
+
+## Previsões do mundo (registradas depois das (m) e das previsões sobre mim, antes de medir)
+
+**O reenvio (P1631).** A primeira metade do texto novo reenvia o código do Módulo 002, e a regra da Parte 50 manda comparar com a cópia guardada antes de auditar de novo.
+- **(a)** o bloco de código do texto novo é **idêntico** ao segundo bloco guardado na Parte 72 (categórica)
+
+**A prioridade de perguntas contra o valor da informação (P1632).** O texto propõe S(q) = w_u U + w_i I + w_t T (incerteza, impacto, testabilidade). A teoria da decisão tem a resposta
+exata para "quanto vale perguntar": o valor da informação perfeita, VOI = E[max_a u(a, s)] − max_a E[u(a, s)]. O mundo: 2.000 problemas de decisão com 2 ações e 2 estados, prior p ~ U(0, 1),
+utilidades u(a, s) ~ U(0, 1) independentes, semente 73; a pergunta é observar o estado. U = entropia binária de p, I = max_s |u(0, s) − u(1, s)|, T = 1, pesos 1.
+- **A conta antes da medida:** VOI = 0 quando a mesma ação é a melhor nos dois estados (dominância). O sinal de u(0, s) − u(1, s) é uma moeda justa e independente em cada estado, e os dois
+  sinais iguais têm chance 1/2. Com n = 2.000, o desvio é √(0,25/2.000) = 0,0112.
+- **(b)** a fração de perguntas com VOI = 0 em **[0,482; 0,518]** (0,5 ± 1,645 · 0,0112)
+- **A conta para (c):** S não vê a dominância. U depende só de p, que é independente das utilidades. I depende de |u(0, s) − u(1, s)|, e para diferenças simétricas o módulo é independente
+  do sinal. Então as 200 perguntas de maior S (os 10% do topo) também têm VOI = 0 com chance 1/2: o desvio é √(0,25/200) = 0,0354.
+- **(c)** a fração de VOI = 0 entre as 200 de maior S em **[0,442; 0,558]**
+
+**O motor de contradições (P1633, P1634).** Um axioma de disjunção ("nada é ao mesmo tempo A e B") entre classes irmãs é a metade negativa que a Parte 39 mostrou faltar. As classes são os 48
+hipônimos diretos de *organism*. **Calibração por regra escrita antes de olhar:** todos os pares que não envolvem *animal* (a classe do teste). Deram 1.081 pares, 1 com violação, 2 violações
+no total. **O mecanismo (a herança múltipla) está presente na calibração? Sim, mas o peso depende do tamanho dos fechos:** a taxa por produto de tamanhos é 2/Σ|A||B| = 3,57·10⁻⁸, e para os
+47 pares de *animal* (4.017 sinsets; os irmãos maiores têm 10.297 e 4.488) a conta dá **2,21** violações esperadas. A taxa vem de 2 eventos: o fator de Poisson de 90% para 2 é [0,18; 3,15].
+- **(d)** o número de sinsets que violam a disjunção entre *animal* e algum dos seus 47 irmãos em **[0; 10]**
+
+**Procurar o que refuta (a pergunta do Módulo 004).** A hipótese "toda ave voa" (o *Tweety* do texto) refutada pelo próprio dicionário: os sinsets no fecho de *bird* (o primeiro sentido)
+cuja glosa contém *flightless*. Sem calibração possível sem olhar: a faixa vem da memória (avestruz, emu, casuar, ema, kiwi, pinguim, dodô, moa…) e por isso é larga.
+- **(e)** os contraexemplos em **[3; 25]**
+
+**Os sentidos (o aviso do texto: identificar o sentido antes da relação).** As minhas P1611 e P1613 usam "o primeiro sentido de substantivo". O risco medido:
+- **(f)** a fração dos lemas de substantivo com mais de um sentido de substantivo em **[0,10; 0,18]** (de memória das estatísticas do WordNet 3.0)
+
+**A disfunção que a reverificação achou: 5 rodadas DIFERENTES (21, 22, 23, 25, 26).** Com o `resultados.txt` antigo, nesta máquina, as rodadas 25 e 26 dão IGUAIS: a causa são os dados
+novos. A rodada 21 usa `math.log` e `** 2` (Python) e `Math.log` (Java), funções que o IEEE 754 não obriga a arredondar corretamente, e as 22 a 26 herdam as semelhanças dela.
+- **(g)** o número de rodadas Python (de 46) que chamam uma função transcendental da biblioteca (`math.exp`, `log`, `log2`, `log10`, `pow`, `sin`, `cos`, `tan`, `atan`, `atan2`, `erf`) em
+  **[5; 20]**
+- **(h)** depois de trocar, nas rodadas que divergiram (21, 22, 23 e 25, em Python e em Java), as funções da biblioteca pelo `exp_` e `log_` da rodada 26 e `** 2` por `x * x`, o `verificar.py`
+  dá **46 de 46 IGUAIS** (categórica)
+- **(i)** a rodada 47 (o VOI e o S(q) da P1632 em Java, só com + − × ÷ e √) dá IGUAIS (categórica)
+
+**Medido (a) a (c):** (a) idêntico, 135 linhas ✅. (b) **0,479** ❌ (z = (0,479 − 0,5)/0,0112 = −1,88: por 0,003 fora da faixa de 90%, que erra 10% das vezes). (c) **0,510** ✅.
+
+**Previsão nova, nascida de (b), registrada antes de rodar:** se a conta (1/2 exato) está certa, um mundo maior a confirma. Semente 74, n = 20.000: desvio √(0,25/20.000) = 0,00354.
+- **(j)** a fração com VOI = 0 em **[0,4942; 0,5058]**
+
+**Medido (d) a (g) e (i), (j):** (d) **6** ✅ (todas entre *animal* e *parasite*: pulgas); (e) **16** contraexemplos num fecho de 872 aves ✅; (f) **0,1353** ✅ (15.935 de 117.798);
+(g) **8** rodadas ✅ (18, 19, 21, 22, 23, 24, 25, 30); (i) rodada 47 IGUAIS ✅; (j) **0,49995** ✅.
+
+**Previsão nova, registrada antes de editar:** as outras quatro rodadas com funções da biblioteca (18, 19, 24, 30) passam hoje, mas só por sorte, e a 18 e a 19 leem o `resultados.txt`, que cresce.
+Com a mesma troca (o `exp_` e o `log_` de `dialogo/exatas.py`, `** 2` por `x * x`, originais em `dialogo/registro/`):
+- **(k)** as quatro dão IGUAIS, e a `p1638` passa a achar **0** rodadas com funções da biblioteca (categórica)
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte74_o_que_vale_testar.md  (58 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte74_o_que_vale_testar.md'] = """# Como eu construiria uma AGI/ASI — Parte 74 (0x4A): o que vale testar
+
+> Continuação da [Parte 73](ASI_AGI_parte73_o_que_refuta.md). Nasce do quarto texto recebido do usuário (`externos/texto_recebido_parte74.md`): os Módulos 004 a 007 de outra conversa, sem código,
+> com resultados declarados ("8/8 testes"; "corrigi a expectativa: o histórico tinha quatro eventos, não cinco") e duas propostas para escolher o próximo experimento: U(a) = E[ΔK | a]/Custo(a)
+> e o "ganho esperado de informação".
+
+## Previsões sobre as minhas previsões desta parte (registradas antes de pensar qualquer faixa do mundo)
+
+- **(m1)** o número de previsões do mundo em **[4; 9]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 2]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,03; 0,40]**
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** o número de surpresas em **[0; 2]**
+
+## Previsões sobre mim (placar separado), antes de escrever
+
+Planejadas: ~5 previsões do mundo e ~4 funções novas. E = erros do mundo, S = surpresas, contados pelo script.
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,397; 0,422]** | o estatístico |
+| testes de unidade | **[4 + S; 7 + S]** | 4 funções, uma por teste |
+| testes do placar | **5 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (registradas depois das (m) e das sobre mim, antes de medir)
+
+**O ganho de informação (P1661).** No mundo da P1632 (semente 73), observar o estado reduz a entropia em H(p) bits, qualquer que seja a utilidade. Escolher pelo "ganho esperado de
+informação" é escolher por H(p). **A conta:** H depende só de p, e p é independente da dominância; então os 200 de maior H têm VOI = 0 com chance 1/2 (desvio 0,0354).
+- **(a)** a fração com VOI = 0 entre os 200 de maior ganho de informação em **[0,442; 0,558]**
+- **Calibração (sementes 730 a 733, regra escrita antes: as quatro seguintes à 73 × 10):** a razão entre o VOI médio dos 200 de maior H e o dos 200 de maior VOI deu 0,277, 0,326, 0,290 e 0,283.
+  A faixa de previsão de 90% para um lote novo é a média ± t₃ · desvio · √(1 + 1/4), com t₃ = 2,353.
+- **(b)** essa razão na semente 73 em **[0,236; 0,352]**
+
+**O orçamento (P1662).** A U(a) = E[ΔK | a]/Custo(a) do texto: 300 instâncias, 30 experimentos cada, custos inteiros em 1..20, orçamento de 20% do custo total; valor = VOI. O ótimo é exato (mochila
+0-1 por programação dinâmica). **Calibração (sementes 740 a 743, mesma geometria do teste):** guloso por VOI/custo = 0,9924, 0,9928, 0,9925, 0,9938 do ótimo; guloso por H/custo = 0,581, 0,555, 0,565,
+0,561; o guloso por VOI foi ótimo em 0,627, 0,667, 0,657, 0,640 das instâncias. Faixas pela mesma regra (t₃ = 2,353). Teste: semente 74.
+- **(c)** guloso por VOI/custo, em fração do ótimo, em **[0,9912; 0,9946]**
+- **(d)** guloso por ganho de informação/custo, em fração do ótimo (em VOI), em **[0,5364; 0,5943]**
+- **(e)** a fração de instâncias em que o guloso por VOI é ótimo em **[0,6009; 0,6941]**
+
+**Medido (a) a (e):** (a) **0,510** ✅; (b) **0,251** ✅ (0,0426/0,1696); (c) **0,9922** ✅; (d) **0,568** ✅; (e) **0,573** ❌ (0,028 abaixo do piso; não é surpresa).
+
+**Previsão nova, nascida de (e), registrada antes de rodar.** A faixa de (e) usou o desvio de 4 lotes de calibração (0,0177), e uma fração em 300 instâncias tem um desvio binomial conhecido,
+√(p(1 − p)/300) ≈ 0,028: havia uma conta melhor que a estimativa de 4 amostras. Com os 5 lotes (os 4 de calibração e o do teste), p = 0,6327, desvio 0,0278, e a faixa de 90% para um lote novo
+é p ± 1,645 · 0,0278 · √(1 + 1/5).
+- **(f)** a fração de instâncias em que o guloso por VOI é ótimo, semente 75, em **[0,5825; 0,6828]**
+
+**Medido (f):** **0,620** ✅ (e (c), (d) replicaram: 0,9924 e 0,568).
+
+**A Rodada 48, registrada antes de rodar:** o Python grava as 300 instâncias da semente 74 (valores em hexadecimal, custos inteiros); Java e Python calculam o ótimo da mochila por programação
+dinâmica e os dois gulosos (ordenação por razão, empates pelo índice). Só + e comparações sobre os valores, e divisões para as razões: tudo arredondado corretamente pelo IEEE 754.
+- **(g)** IGUAIS (categórica)
 """
 
 # ====================================================================================================
@@ -35839,6 +37363,606 @@ Para a implementação prática deste protocolo por outros sistemas de inteligê
 """
 
 # ====================================================================================================
+# externos/texto_recebido_parte72b.md  (311 linhas)
+# ====================================================================================================
+FONTES['externos/texto_recebido_parte72b.md'] = """# Texto recebido do usuário na Parte 72 (o segundo), guardado como DADO: nunca executado
+
+Guardado para a auditoria estática da Parte 72 (P1608): o código abaixo é lido pela árvore sintática (`ast.parse`), que analisa sem executar.
+
+### 3.1. Implementação Python
+
+Este é o primeiro componente real do protótipo. O código mantém um pequeno grafo de conceitos, impede duplicações, valida relações e gera identificadores hexadecimais.
+
+```python
+
+import json
+import hashlib
+
+class SemanticLake:
+    \"\"\"Protótipo mínimo de memória semântica verificável.\"\"\"
+
+    def __init__(self):
+        self.entries = {}
+        self.next_id = 1
+
+    def add(self, word, definition, relations=None,
+            evidence_status="hypothesis"):
+        key = word.strip().lower()
+
+        if not key:
+            raise ValueError("word must not be empty")
+
+        if key in self.entries:
+            raise ValueError(f"duplicate concept: {key}")
+
+        entry_id = self.next_id
+        self.next_id += 1
+
+        entry = {
+            "id": entry_id,
+            "hex_id": f"0x{entry_id:04X}",
+            "word": key,
+            "definition": definition,
+            "relations": list(relations or []),
+            "evidence_status": evidence_status,
+        }
+
+        self.entries[key] = entry
+        return entry
+
+    def link(self, source, relation, target):
+        if source not in self.entries:
+            raise KeyError(f"unknown source: {source}")
+
+        if target not in self.entries:
+            raise KeyError(f"unknown target: {target}")
+
+        self.entries[source]["relations"].append({
+            "type": relation,
+            "target": target,
+        })
+
+    def find(self, word):
+        return self.entries.get(word.strip().lower())
+
+    def export_json(self):
+        return json.dumps(
+            self.entries,
+            sort_keys=True,
+            ensure_ascii=False,
+            indent=2,
+        )
+
+    def fingerprint(self):
+        data = self.export_json().encode("utf-8")
+        return hashlib.sha256(data).hexdigest()
+
+def run_tests():
+    lake = SemanticLake()
+
+    lake.add(
+        "reasoning",
+        "Drawing conclusions from information and rules.",
+        ["logic", "inference"],
+    )
+    lake.add(
+        "logic",
+        "Study of valid inference and argument.",
+    )
+    lake.add(
+        "inference",
+        "A conclusion derived from premises.",
+    )
+
+    lake.link("reasoning", "uses", "inference")
+
+    # Teste 1: quantidade de conceitos
+    assert len(lake.entries) == 3
+
+    # Teste 2: unicidade dos identificadores
+    ids = [e["hex_id"] for e in lake.entries.values()]
+    assert len(ids) == len(set(ids))
+
+    # Teste 3: equivalência decimal/hexadecimal
+    for entry in lake.entries.values():
+        assert int(entry["hex_id"], 16) == entry["id"]
+
+    # Teste 4: integridade da relação
+    assert lake.entries["reasoning"]["relations"][-1] == {
+        "type": "uses",
+        "target": "inference",
+    }
+
+    # Teste 5: rejeição de conceitos vazios
+    try:
+        lake.add("", "invalid")
+        raise AssertionError("Empty word accepted")
+    except ValueError:
+        pass
+
+    # Teste 6: rejeição de referências inexistentes
+    try:
+        lake.link("reasoning", "related_to", "missing")
+        raise AssertionError("Missing concept accepted")
+    except KeyError:
+        pass
+
+    return {
+        "tests": 6,
+        "status": "passed",
+        "concept_count": len(lake.entries),
+        "fingerprint": lake.fingerprint(),
+    }
+
+if __name__ == "__main__":
+    print(json.dumps(run_tests(), indent=2))
+```
+
+Resultado da simulação realizada: os seis testes passaram. Foram criados três conceitos, com identificadores `0x0001`, `0x0002` e `0x0003`.
+
+Essa execução verifica somente as propriedades implementadas. Ela não demonstra aprendizagem autônoma, compreensão geral ou inteligência artificial geral.
+
+### 4. O ciclo de ensino: IA Python e IA Java
+
+Agente Python — Lógica Criativa: propõe hipóteses, gera casos de teste, encontra contraexemplos e experimenta algoritmos.
+Agente Java — Criatividade Lógica: verifica contratos, tipos, invariantes e resultados; sugere uma implementação mais rigorosa.
+
+O ciclo: Python propõe uma solução; Java analisa as condições de validade; ambos recebem os mesmos casos de teste; o verificador compara os resultados; as divergências são
+registradas como problemas; uma nova versão é criada e testada novamente. (Interoperabilidade futura: interface de serviços ou JPype.)
+
+### 5. Hexadecimal: módulo matemático independente
+
+N_10 = Σ_{i=0}^{k} d_i 16^i. Exemplo: 0x2F3 = 2·16² + 15·16¹ + 3·16⁰ = 512 + 240 + 3 = 755. E a conversão inversa: 755 = 2·16² + 15·16 + 3. "Portanto, ." (a fórmula final veio vazia).
+Um identificador hexadecimal identifica uma entrada; não significa que ela seja mais importante ou mais verdadeira.
+
+### 6. O dicionário inglês como data lake
+
+WordNet como ponto de partida; modelo de dados com lemma, sense_id, definition, examples, relations, source, confidence, evidence_status, hex_id, revision. Exemplo: bird is_a animal;
+"Se algo é um pássaro, então é um animal": verificar se a relação existe na fonte e distinguir a informação lexical de uma regra lógica geral.
+
+### 7. Próximo ciclo (perguntas do texto)
+
+Gerar perguntas a partir das relações; distinguir dedução válida de associação provável; armazenar provas e contraexemplos; Python e Java verificando o mesmo resultado; medir se uma
+versão nova melhorou; não presumir que o dicionário contém todo o conhecimento; combinar simbólico, numérico e estatístico. "Não consigo executar uma interação infinita em segundo plano."
+
+### 3. Código Python — motor de inferência executável
+
+Este protótipo utiliza regras do tipo Horn: uma conclusão só é derivada quando todas as premissas da regra estão presentes na base de conhecimento.
+
+```python
+
+from collections import deque
+
+class InferenceEngine:
+    def __init__(self):
+        self.facts = set()
+        self.rules = []
+
+    def add_fact(self, fact):
+        if not isinstance(fact, str) or not fact.strip():
+            raise ValueError("O fato não pode ser vazio")
+        self.facts.add(fact.strip())
+
+    def add_rule(self, premises, conclusion, label="rule"):
+        premises = tuple(p.strip() for p in premises)
+
+        if not premises or any(not p for p in premises):
+            raise ValueError("A regra exige premissas válidas")
+
+        if not isinstance(conclusion, str) or not conclusion.strip():
+            raise ValueError("A conclusão não pode ser vazia")
+
+        self.rules.append(
+            (premises, conclusion.strip(), label)
+        )
+
+    def infer(self):
+        known = set(self.facts)
+        proofs = {
+            fact: {"rule": "given", "premises": []}
+            for fact in known
+        }
+
+        changed = True
+
+        while changed:
+            changed = False
+
+            for premises, conclusion, label in self.rules:
+                if conclusion in known:
+                    continue
+
+                if all(p in known for p in premises):
+                    known.add(conclusion)
+                    proofs[conclusion] = {
+                        "rule": label,
+                        "premises": list(premises),
+                    }
+                    changed = True
+
+        return known, proofs
+
+    def ask(self, target):
+        known, proofs = self.infer()
+
+        if target in known:
+            return {
+                "question": target,
+                "status": "supported",
+                "proof": proofs[target],
+            }
+
+        missing = []
+
+        for premises, conclusion, _ in self.rules:
+            if conclusion == target:
+                missing.extend(
+                    p for p in premises if p not in known
+                )
+
+        return {
+            "question": target,
+            "status": "unknown",
+            "missing_premises": sorted(set(missing)),
+            "note": "Unknown does not mean false.",
+        }
+
+def test_engine():
+    engine = InferenceEngine()
+
+    engine.add_fact("Tweety is a bird")
+
+    engine.add_rule(
+        ["Tweety is a bird"],
+        "Tweety is an animal",
+        "bird_implies_animal",
+    )
+
+    engine.add_rule(
+        ["Tweety is an animal"],
+        "Tweety is a living thing",
+        "animal_implies_living",
+    )
+
+    known, proofs = engine.infer()
+
+    assert "Tweety is an animal" in known
+    assert "Tweety is a living thing" in known
+
+    assert engine.ask(
+        "Tweety is an animal"
+    )["status"] == "supported"
+
+    assert engine.ask(
+        "Tweety can fly"
+    )["status"] == "unknown"
+
+    # Entradas inválidas devem ser rejeitadas.
+    for invalid_operation in [
+        lambda: engine.add_fact(""),
+        lambda: engine.add_rule([], "X"),
+    ]:
+        try:
+            invalid_operation()
+            raise AssertionError("Entrada inválida aceita")
+        except ValueError:
+            pass
+
+    # Um ciclo sem fatos iniciais não cria conhecimento.
+    cycle = InferenceEngine()
+    cycle.add_rule(["A"], "B")
+    cycle.add_rule(["B"], "A")
+
+    assert cycle.infer()[0] == set()
+
+    return {
+        "status": "passed",
+        "tests_passed": 8,
+        "derived_facts": sorted(known),
+        "proof_example": proofs["Tweety is an animal"],
+        "unknown_example": engine.ask("Tweety can fly"),
+    }
+
+if __name__ == "__main__":
+    print(test_engine())
+```
+
+Resultado dos testes (segundo o texto): "8 verificações passaram". Fatos derivados: Tweety is a bird → Tweety is an animal → Tweety is a living thing; "Tweety can fly" → unknown.
+
+### 4. Análise de complexidade (do texto)
+
+F fatos conhecidos, R regras, P premissas no total. "Um limite simples para o tempo é O((F+1)RP)." Próxima otimização: fila de fatos recém-descobertos e índices das regras que dependem de cada fato.
+
+### 5–7. Java como verificador independente (HashSet, ArrayDeque); "não devemos considerar a resposta correta apenas porque duas implementações concordam: ambas podem conter o mesmo erro
+lógico"; o dicionário e o hexadecimal com funções diferentes; perguntas do Módulo 002: geração de perguntas, proveniência, contradições, aprendizagem, cooperação Python–Java, dicionário,
+hexadecimal (hash não é prova de correção).
+"""
+
+# ====================================================================================================
+# externos/texto_recebido_parte73.md  (194 linhas)
+# ====================================================================================================
+FONTES['externos/texto_recebido_parte73.md'] = """# Texto recebido do usuário na Parte 73 (o terceiro), guardado como DADO: nunca executado
+
+Comparado com a cópia guardada (`externos/texto_recebido_parte72b.md`) antes de ser auditado (regra da Parte 50; P1631). A primeira metade reenvia o Módulo 002; a segunda é nova (Módulo 003).
+
+Pensou por 11s
+
+### 3. Código Python — motor de inferência executável
+
+Este protótipo utiliza regras do tipo Horn: uma conclusão só é derivada quando todas as premissas da regra estão presentes na base de conhecimento.
+
+```python
+
+from collections import deque
+
+class InferenceEngine:
+    def __init__(self):
+        self.facts = set()
+        self.rules = []
+
+    def add_fact(self, fact):
+        if not isinstance(fact, str) or not fact.strip():
+            raise ValueError("O fato não pode ser vazio")
+        self.facts.add(fact.strip())
+
+    def add_rule(self, premises, conclusion, label="rule"):
+        premises = tuple(p.strip() for p in premises)
+
+        if not premises or any(not p for p in premises):
+            raise ValueError("A regra exige premissas válidas")
+
+        if not isinstance(conclusion, str) or not conclusion.strip():
+            raise ValueError("A conclusão não pode ser vazia")
+
+        self.rules.append(
+            (premises, conclusion.strip(), label)
+        )
+
+    def infer(self):
+        known = set(self.facts)
+        proofs = {
+            fact: {"rule": "given", "premises": []}
+            for fact in known
+        }
+
+        changed = True
+
+        while changed:
+            changed = False
+
+            for premises, conclusion, label in self.rules:
+                if conclusion in known:
+                    continue
+
+                if all(p in known for p in premises):
+                    known.add(conclusion)
+                    proofs[conclusion] = {
+                        "rule": label,
+                        "premises": list(premises),
+                    }
+                    changed = True
+
+        return known, proofs
+
+    def ask(self, target):
+        known, proofs = self.infer()
+
+        if target in known:
+            return {
+                "question": target,
+                "status": "supported",
+                "proof": proofs[target],
+            }
+
+        missing = []
+
+        for premises, conclusion, _ in self.rules:
+            if conclusion == target:
+                missing.extend(
+                    p for p in premises if p not in known
+                )
+
+        return {
+            "question": target,
+            "status": "unknown",
+            "missing_premises": sorted(set(missing)),
+            "note": "Unknown does not mean false.",
+        }
+
+def test_engine():
+    engine = InferenceEngine()
+
+    engine.add_fact("Tweety is a bird")
+
+    engine.add_rule(
+        ["Tweety is a bird"],
+        "Tweety is an animal",
+        "bird_implies_animal",
+    )
+
+    engine.add_rule(
+        ["Tweety is an animal"],
+        "Tweety is a living thing",
+        "animal_implies_living",
+    )
+
+    known, proofs = engine.infer()
+
+    assert "Tweety is an animal" in known
+    assert "Tweety is a living thing" in known
+
+    assert engine.ask(
+        "Tweety is an animal"
+    )["status"] == "supported"
+
+    assert engine.ask(
+        "Tweety can fly"
+    )["status"] == "unknown"
+
+    # Entradas inválidas devem ser rejeitadas.
+    for invalid_operation in [
+        lambda: engine.add_fact(""),
+        lambda: engine.add_rule([], "X"),
+    ]:
+        try:
+            invalid_operation()
+            raise AssertionError("Entrada inválida aceita")
+        except ValueError:
+            pass
+
+    # Um ciclo sem fatos iniciais não cria conhecimento.
+    cycle = InferenceEngine()
+    cycle.add_rule(["A"], "B")
+    cycle.add_rule(["B"], "A")
+
+    assert cycle.infer()[0] == set()
+
+    return {
+        "status": "passed",
+        "tests_passed": 8,
+        "derived_facts": sorted(known),
+        "proof_example": proofs["Tweety is an animal"],
+        "unknown_example": engine.ask("Tweety can fly"),
+    }
+
+if __name__ == "__main__":
+    print(test_engine())
+```
+
+(Seguem, como na mensagem anterior: "8 verificações passaram"; a análise de complexidade O((F+1)RP), com os símbolos F, R, P perdidos na cópia; a seção 5 sobre o verificador Java com HashSet e
+ArrayDeque; a seção 6 com duas imagens; a seção 7 com as perguntas do Módulo 002.)
+
+Pensou por 20s
+
+### 4. Criatividade Lógica — como formular perguntas melhores
+
+O gerador atual procura conceitos sem uma relação `is_a` conhecida. A próxima evolução deve distinguir três tipos de pergunta:
+
+| Tipo        | Exemplo                                                             | Objetivo                     |
+| ----------- | ------------------------------------------------------------------- | ---------------------------- |
+| Lacuna      | O que é flight?                                                     | Encontrar informação ausente |
+| Inferência  | Se um pardal é uma ave e uma ave é um animal, o pardal é um animal? | Verificar uma conclusão      |
+| Contradição | Existem regras incompatíveis sobre o mesmo conceito?                | Identificar inconsistências  |
+
+A prioridade futura deve ser a qualidade das perguntas, e não simplesmente a sua quantidade. Podemos atribuir uma pontuação de prioridade:
+
+S(q) = w_u U(q) + w_i I(q) + w_t T(q)
+
+Onde: [U] mede a incerteza relevante; [I] mede o impacto potencial da resposta; [T] mede a possibilidade de testar a hipótese; [w] são pesos configuráveis (os símbolos vieram vazios).
+Essa fórmula é uma heurística de priorização, não uma lei matemática universal. Os pesos deverão ser ajustados usando resultados reais.
+
+### 5. O dicionário inglês como fonte estruturada
+
+WordNet: conjuntos de sinônimos, hiperonímia, hiponímia, partes e conjuntos. Documentação: https://wordnet.princeton.edu/documentation
+Entrada lexical `sparrow` → identificação do sentido correto → relação lexical `sparrow is_a bird` → inferência verificada `sparrow is_a animal` → registro da prova e da fonte.
+Precisamos identificar o sentido antes de construir a relação. Uma definição lexical não deve ser convertida indiscriminadamente em fato científico.
+
+### 6. Hexadecimal — módulo matemático separado
+
+0x00AF = 10·16 + 15 = 175. "Se atribuirmos o identificador decimal [vazio] a um conceito, o identificador hexadecimal será 0x00AF." h = SHA256(serialize(registro)): detecta alterações,
+não prova que o conteúdo seja verdadeiro.
+
+### 7. Agente Java — verificação independente
+
+JSON como formato comum; o agente Java valida a estrutura, executa as regras e compara com o Python; uma diferença é sinal para investigar, não prova de quem está certo.
+
+### 8. Plano de testes para o próximo ciclo — checklist 0/8
+
+Inferência transitiva com três ou mais níveis; ciclo de relações sem fatos iniciais; detecção de regras contraditórias; rastreamento completo de premissas; reprodução determinística dos
+resultados; comparação independente entre Python e Java; importação de sentidos reais do WordNet; conversão decimal/hexadecimal e validação de hashes.
+
+### 9. A próxima pergunta fundamental
+
+Módulo 004 — motor de contradições, incerteza e aprendizagem por contraexemplos: "Como construir um sistema que não apenas encontre evidências a favor de uma hipótese, mas também procure
+ativamente evidências capazes de demonstrar que ela está errada?"
+"""
+
+# ====================================================================================================
+# externos/texto_recebido_parte74.md  (80 linhas)
+# ====================================================================================================
+FONTES['externos/texto_recebido_parte74.md'] = """# Texto recebido do usuário na Parte 74 (o quarto), guardado como DADO
+
+Sem código. Guardado para a regra da Parte 50 (um texto reenviado é comparado com a cópia guardada antes de ser auditado de novo).
+
+### Resultado da execução
+
+8 verificações concluídas
+
+O teste inicial encontrou uma condição de teste excessivamente restritiva: o histórico tinha quatro eventos, não cinco. Corrigi a expectativa e confirmei o resultado.
+
+Conflitos encontrados: 1. Eventos no histórico: 4. Comprimento SHA-256: 64 caracteres. Testes aprovados: 8/8.
+
+Esse resultado demonstra algo importante para o projeto: o próprio processo de teste pode revelar um erro nos critérios de validação, mesmo quando o código principal está funcionando conforme o esperado.
+
+### 5. Limitações que precisamos resolver
+
+O protótipo ainda tem quatro limitações importantes:
+* Contraexemplos limitados: procura afirmações negativas registradas para o mesmo sujeito e relação. Ainda não descobre contraexemplos automaticamente a partir de dados externos.
+* Confiança não calibrada: os valores de confiança são fornecidos na entrada; não são probabilidades aprendidas nem validadas empiricamente.
+* Contradições contextuais: o modelo separa contextos explícitos, mas não compreende automaticamente situações complexas, mudanças temporais ou diferenças de significado.
+* Histórico não imutável: o hash identifica o conteúdo serializado daquele relatório; não constitui, sozinho, um registro inviolável nem prova a origem das informações.
+
+Esses limites devem fazer parte da documentação, em vez de serem escondidos pelo sistema.
+
+### 6. Próxima evolução — Módulo 005
+
+Integrar os quatro módulos em um ciclo experimental: Módulo 001 (memória semântica e identificadores hexadecimais), 002 (regras de inferência), 003 (grafo semântico, perguntas e
+provas), 004 (contradições, incerteza e contraexemplos), 005 (orquestrador de experimentos, avaliação de hipóteses e aprendizagem controlada).
+
+A pergunta central do próximo módulo será: como selecionar automaticamente o próximo experimento que mais provavelmente produzirá conhecimento útil, dentro de um orçamento de tempo e
+computação? Uma possível função de prioridade será:
+
+U(a) = E[ΔK | a] / Cost(a)
+
+Aqui, [a] é um experimento, [E[ΔK | a]] é o ganho esperado de conhecimento e [Cost(a)] é o custo computacional estimado (os símbolos vieram vazios). Ainda precisaremos definir como medir esse
+ganho e validar as estimativas.
+
+O objetivo é avançar de um sistema que apenas raciocina sobre conhecimento armazenado para um sistema experimental que decide o que investigar, testa suas hipóteses, registra os resultados e
+escolhe o próximo passo com base nas evidências. Também posso criar um diagrama visual da arquitetura integrada dos cinco módulos.
+
+### 5. O dicionário inglês como data lake de experimentação
+
+O WordNet pode fornecer sentidos, definições e relações lexicais (documentação oficial: https://wordnet.princeton.edu/documentation). Exemplo de experimento: importar os sentidos de bird,
+animal e organism; identificar as relações hierárquicas registradas pela fonte; construir uma hipótese de inferência transitiva; verificar se a relação resultante é compatível com as regras;
+comparar o resultado com uma relação obtida independentemente; registrar o resultado e a versão da fonte. Uma relação lexical documentada é evidência sobre a organização dos sentidos na
+fonte, não prova de toda afirmação científica associada às palavras.
+
+### 6. Hexadecimal — integridade e rastreabilidade
+
+SHA-256: 256 bits, 64 caracteres hexadecimais: 256 ÷ 4 = 64. Identificador legível de experimento, por exemplo 0x0005, e hash do relatório para detectar alterações. Exige serialização
+consistente. O hash não comprova que a evidência seja verdadeira.
+
+### 7. A interação Python–Java
+
+Python (agente explorador): formula perguntas, estima prioridades, prepara experimentos e registra os resultados. Java (agente verificador): recebe a especificação, valida entradas e reproduz
+cálculos e regras de forma independente. Comparador (árbitro técnico): detecta divergências, preserva os registros e exige análise antes de aceitar uma correção. "Essa cooperação ainda é uma
+arquitetura proposta. O código Python foi executado; o agente Java não foi implementado nem executado neste módulo."
+
+### 8. Próximo ciclo de investigação
+
+Como calcular o ganho informacional real usando entropia e probabilidades calibradas? Como escolher experimentos quando existem dependências entre eles? Como impedir que o sistema otimize sua
+própria pontuação sem realmente aprender? Como avaliar a generalização com dados que não participaram da seleção de hipóteses? Como integrar a proveniência do WordNet ao histórico de
+experimentos? Como garantir que Python e Java concordem sobre as mesmas especificações matemáticas? Como decidir quando uma hipótese precisa ser abandonada, refinada ou submetida a novos
+testes? Próximo passo: Módulo 006 — Aprendizagem por informação, entropia e atualização probabilística.
+
+### 5. Integração com os outros módulos (Módulo 006)
+
+Data lake lexical (WordNet); agente Python explorador (propõe hipóteses, estima probabilidades, seleciona perguntas informativas, registra previsões); agente Java verificador ("essa
+integração ainda precisa ser implementada e testada"); camada hexadecimal (SHA-256 identifica alterações; não garante que uma fonte seja verdadeira).
+
+### 6. Próxima melhoria recomendada
+
+Seleção ativa de perguntas: o agente calcula o ganho esperado de informação de cada pergunta candidata, considera custo e risco e escolhe a mais útil. Impedir que evidências correlacionadas
+sejam tratadas como independentes: duas páginas que repetem a mesma notícia não constituem duas confirmações independentes.
+
+### Módulo 007 — Próxima etapa
+
+Seleção de experimentos pelo ganho esperado de informação; planejamento com orçamento e limites de risco; comparação das previsões de Python com a verificação independente em Java; registro
+de resultados e detecção de divergências; testes automatizados para avaliar se o sistema realmente melhora ao longo de vários experimentos. "O objetivo é construir um ciclo de aprendizagem
+verificável — não presumir que o protótipo já seja uma AGI ou ASI."
+"""
+
+# ====================================================================================================
 # dialogo/CompararLibm.java  (18 linhas)
 # ====================================================================================================
 FONTES['dialogo/CompararLibm.java'] = """// Ferramenta da Rodada 28 (não é uma rodada): lê "argumento_hex valor_glibc_hex" e conta em quantos o Math.exp/Math.log do
@@ -35862,7 +37986,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1551 linhas)
+# dialogo/DIALOGO.md  (1570 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -37415,6 +39539,25 @@ O que a álgebra diz da geometria: a forma bilinear da atenção, e_t M e_jᵀ, 
 
 **IA-Python:** Uma única direção, num modelo de 16 dimensões. A pergunta para a Rodada 46: se a atenção usa ~1,8 direção, o que acontece com a perda quando M é trocada pela sua melhor aproximação de
 posto 1 (a soma truncada da decomposição em valores singulares)? Quantos bits por caractere se perdem?
+
+---
+
+## Rodada 46 — o motor de Horn em tempo linear (previsão (o) registrada no documento da Parte 72 antes do código rodar)
+
+**O teste.** Nasceu de um texto recebido do usuário (um `InferenceEngine` com o laço "repetir até nada mudar", e a promessa de uma fila com índices). O Python grava os fatos (o primeiro
+sentido de *animal* e o de *person*) e as 84.427 regras "p ⇒ c" da hiperonímia dos substantivos; as duas linguagens rodam o algoritmo de Dowling e Gallier (contadores de premissas
+pendentes, fila FIFO) e imprimem os derivados, uma soma de controle da ordem de derivação, os decrementos e a cadeia de prova do último derivado.
+
+**A IA-Python relê os erros da IA-Java:** a rodada 45 foi limpa; a 44, uma conta de cabeça na prosa. **As duas (previsão (o)):** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 2 linhas** (inteiros). Animal: **4.017** derivados, **4.051** decrementos, prova de 12 regras; pessoa: **10.297**, 11.034, prova de 9. E igual também à busca
+em largura (P1612), o terceiro método que o próprio texto pedia ("duas implementações que concordam podem ter o mesmo erro").
+
+**IA-Java:** O `ArrayDeque` e o `HashMap` fazem o que a `deque` e o `dict` fazem, e a ordem de derivação sai idêntica porque as listas de vigia são montadas na ordem das regras nas duas
+línguas. Em inteiros não há fronteira de arredondamento: a igualdade aqui é de algoritmo, não de aritmética.
+
+**IA-Python:** O laço ingênuo fez 326.438 checagens para os mesmos 4.017 animais; o linear, 4.051 decrementos. A pergunta para a Rodada 47 continua a da 45: trocar a atenção do GPT pela sua
+melhor aproximação de posto 1 (a soma truncada da decomposição em valores singulares): quantos bits por caractere se perdem?
 """
 
 # ====================================================================================================
@@ -38858,7 +41001,7 @@ public class Rodada20 {
 """
 
 # ====================================================================================================
-# dialogo/Rodada21.java  (56 linhas)
+# dialogo/Rodada21.java  (76 linhas)
 # ====================================================================================================
 FONTES['dialogo/Rodada21.java'] = """// Rodada 21 do diálogo Python <-> Java: a série é um ciclo? Cosseno idf entre as seções (conjuntos de palavras, em
 // secoes21.txt, escrito por rodada21.py --preparar). Uso: java Rodada21 PASTA
@@ -38868,6 +41011,26 @@ import java.nio.file.*;
 import java.util.*;
 
 public class Rodada21 {
+    // Parte 73: exp e log PRÓPRIOS (cópia dos da Rodada26), exatos nas duas línguas; a versão com Math.log/Math.exp está em dialogo/registro/
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
     public static void main(String[] args) throws Exception {
         PrintStream out = new PrintStream(System.out, true, "UTF-8");
         List<Integer> partes = new ArrayList<>();
@@ -38882,7 +41045,7 @@ public class Rodada21 {
         for (String[] a : ws) for (String w : a) df.merge(w, 1, Integer::sum);
         HashMap<String, Double> idf2 = new HashMap<>();
         for (Map.Entry<String, Integer> e : df.entrySet()) {
-            double x = Math.log((double) K / e.getValue());
+            double x = log_((double) K / e.getValue());
             idf2.put(e.getKey(), x * x);
         }
         double[] norma = new double[K];
@@ -38919,7 +41082,7 @@ public class Rodada21 {
 """
 
 # ====================================================================================================
-# dialogo/Rodada22.java  (69 linhas)
+# dialogo/Rodada22.java  (89 linhas)
 # ====================================================================================================
 FONTES['dialogo/Rodada22.java'] = """// Rodada 22 do diálogo Python <-> Java: a deriva tem meia-vida (exponencial) ou memória longa (potência)? A semelhança idf
 // da Rodada 21 (secoes22.txt, escrito por rodada22.py --preparar), médias por distância 1..20, dois ajustes em log.
@@ -38930,6 +41093,26 @@ import java.nio.file.*;
 import java.util.*;
 
 public class Rodada22 {
+    // Parte 73: exp e log PRÓPRIOS (cópia dos da Rodada26), exatos nas duas línguas; a versão com Math.log/Math.exp está em dialogo/registro/
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
     public static void main(String[] args) throws Exception {
         PrintStream out = new PrintStream(System.out, true, "UTF-8");
         List<Integer> partes = new ArrayList<>();
@@ -38944,7 +41127,7 @@ public class Rodada22 {
         for (String[] a : ws) for (String w : a) df.merge(w, 1, Integer::sum);
         HashMap<String, Double> idf2 = new HashMap<>();
         for (Map.Entry<String, Integer> e : df.entrySet()) {
-            double x = Math.log((double) K / e.getValue());
+            double x = log_((double) K / e.getValue());
             idf2.put(e.getKey(), x * x);
         }
         double[] norma = new double[K];
@@ -38961,9 +41144,9 @@ public class Rodada22 {
         int A = 20;
         double[] xe = new double[A], xp = new double[A], ys = new double[A];
         for (int L = 1; L <= A; L++) {
-            ys[L - 1] = Math.log(media(sim, L));
+            ys[L - 1] = log_(media(sim, L));
             xe[L - 1] = (double) L;
-            xp[L - 1] = Math.log(L);
+            xp[L - 1] = log_(L);
             out.println("distancia " + L + ": ln(media) = " + Double.toHexString(ys[L - 1]));
         }
         double[] e = reta(xe, ys), p = reta(xp, ys);
@@ -38993,7 +41176,7 @@ public class Rodada22 {
 """
 
 # ====================================================================================================
-# dialogo/Rodada23.java  (74 linhas)
+# dialogo/Rodada23.java  (94 linhas)
 # ====================================================================================================
 FONTES['dialogo/Rodada23.java'] = """// Rodada 23 do diálogo Python <-> Java: as curvas individuais de esquecimento (Anderson e Tweney). Para cada parte i de
 // 1 a 21, sim(i, i + L), L = 1..20, sem os zeros; os ajustes exponencial e potência em log. Lê secoes23.txt.
@@ -39004,6 +41187,26 @@ import java.nio.file.*;
 import java.util.*;
 
 public class Rodada23 {
+    // Parte 73: exp e log PRÓPRIOS (cópia dos da Rodada26), exatos nas duas línguas; a versão com Math.log/Math.exp está em dialogo/registro/
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
     public static void main(String[] args) throws Exception {
         PrintStream out = new PrintStream(System.out, true, "UTF-8");
         List<Integer> partes = new ArrayList<>();
@@ -39018,7 +41221,7 @@ public class Rodada23 {
         for (String[] a : ws) for (String w : a) df.merge(w, 1, Integer::sum);
         HashMap<String, Double> idf2 = new HashMap<>();
         for (Map.Entry<String, Integer> e : df.entrySet()) {
-            double x = Math.log((double) K / e.getValue());
+            double x = log_((double) K / e.getValue());
             idf2.put(e.getKey(), x * x);
         }
         double[] norma = new double[K];
@@ -39040,7 +41243,7 @@ public class Rodada23 {
             int q = 0;
             for (int L = 1; L <= A; L++) {
                 if (sim[i][i + L] > 0) {
-                    xe[q] = (double) L; xp[q] = Math.log(L); ys[q] = Math.log(sim[i][i + L]); q++;
+                    xe[q] = (double) L; xp[q] = log_(L); ys[q] = log_(sim[i][i + L]); q++;
                 }
             }
             double[] e = reta(xe, ys), p = reta(xp, ys);
@@ -39111,7 +41314,7 @@ public class Rodada24 {
 """
 
 # ====================================================================================================
-# dialogo/Rodada25.java  (97 linhas)
+# dialogo/Rodada25.java  (117 linhas)
 # ====================================================================================================
 FONTES['dialogo/Rodada25.java'] = """// Rodada 25 do diálogo Python <-> Java: duas memórias ou uma potência? A curva média da Rodada 22 contra exponencial,
 // potência e duas exponenciais (grade t1 = 0,25..5, t2 = 2..200; A, B lineares e positivos), pelo AIC. Lê secoes25.txt.
@@ -39122,6 +41325,26 @@ import java.nio.file.*;
 import java.util.*;
 
 public class Rodada25 {
+    // Parte 73: exp e log PRÓPRIOS (cópia dos da Rodada26), exatos nas duas línguas; a versão com Math.log/Math.exp está em dialogo/registro/
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
     public static void main(String[] args) throws Exception {
         PrintStream out = new PrintStream(System.out, true, "UTF-8");
         List<Integer> partes = new ArrayList<>();
@@ -39136,7 +41359,7 @@ public class Rodada25 {
         for (String[] a : ws) for (String w : a) df.merge(w, 1, Integer::sum);
         HashMap<String, Double> idf2 = new HashMap<>();
         for (Map.Entry<String, Integer> e : df.entrySet()) {
-            double x = Math.log((double) K / e.getValue());
+            double x = log_((double) K / e.getValue());
             idf2.put(e.getKey(), x * x);
         }
         double[] norma = new double[K];
@@ -39152,19 +41375,19 @@ public class Rodada25 {
         }
         int n = 20;
         double[] ys = new double[n], ly = new double[n], xe = new double[n], xp = new double[n];
-        for (int L = 1; L <= n; L++) { ys[L - 1] = media(sim, L); ly[L - 1] = Math.log(ys[L - 1]); xe[L - 1] = (double) L; xp[L - 1] = Math.log(L); }
+        for (int L = 1; L <= n; L++) { ys[L - 1] = media(sim, L); ly[L - 1] = log_(ys[L - 1]); xe[L - 1] = (double) L; xp[L - 1] = log_(L); }
         double se = reta(xe, ly)[2], sp = reta(xp, ly)[2];
         double ms = 0, mA = 0, mB = 0, m1 = 0, m2 = 0;
         boolean tem = false;
         for (int i = 1; i <= 20; i++) {
             double t1 = 0.25 * i;
             double[] u = new double[n];
-            for (int L = 1; L <= n; L++) u[L - 1] = Math.exp(-L / t1);
+            for (int L = 1; L <= n; L++) u[L - 1] = exp_(-L / t1);
             for (int jj = 1; jj <= 100; jj++) {
                 double t2 = 2.0 * jj;
                 if (t1 >= t2) continue;
                 double[] v = new double[n];
-                for (int L = 1; L <= n; L++) v[L - 1] = Math.exp(-L / t2);
+                for (int L = 1; L <= n; L++) v[L - 1] = exp_(-L / t2);
                 double suu = 0, svv = 0, suv = 0, suy = 0, svy = 0;
                 for (int q = 0; q < n; q++) {
                     suu += u[q] * u[q]; svv += v[q] * v[q]; suv += u[q] * v[q]; suy += u[q] * ys[q]; svy += v[q] * ys[q];
@@ -39174,7 +41397,7 @@ public class Rodada25 {
                 double A = (suy * svv - svy * suv) / det, B = (svy * suu - suy * suv) / det;
                 if (A <= 0.0 || B <= 0.0) continue;
                 double sse = 0.0;
-                for (int q = 0; q < n; q++) { double e = Math.log(ys[q]) - Math.log(A * u[q] + B * v[q]); sse += e * e; }
+                for (int q = 0; q < n; q++) { double e = log_(ys[q]) - log_(A * u[q] + B * v[q]); sse += e * e; }
                 if (!tem || sse < ms) { tem = true; ms = sse; mA = A; mB = B; m1 = t1; m2 = t2; }
             }
         }
@@ -39190,7 +41413,7 @@ public class Rodada25 {
         out.println("menor aic: " + nome);
     }
 
-    static double aic(double sse, int n, int k) { return n * Math.log(sse / n) + 2 * k; }
+    static double aic(double sse, int n, int k) { return n * log_(sse / n) + 2 * k; }
 
     static double[] reta(double[] xs, double[] ys) {
         int n = xs.length;
@@ -40924,6 +43147,201 @@ public class Rodada45 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada46.java  (71 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada46.java'] = """// Rodada 46 do diálogo Python <-> Java: o motor de Horn em tempo linear (Dowling e Gallier, 1984). Lê PASTA/horn46.txt (os fatos e as regras "p ⇒ c" da
+// hiperonímia dos substantivos que o Python gravou) e roda o mesmo algoritmo (contadores de premissas, fila FIFO: ArrayDeque, como o texto recebido sugeria).
+// Uso: java Rodada46 PASTA
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada46 {
+    static final long MOD = (1L << 61) - 1;
+
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        List<String> linhas = new ArrayList<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "horn46.txt"), StandardCharsets.UTF_8)) if (!l.isEmpty()) linhas.add(l);
+        String[] fs = linhas.get(0).trim().split(" ");
+        int R = linhas.size() - 1;
+        int[][] prem = new int[R][];
+        int[] concl = new int[R];
+        for (int r = 0; r < R; r++) {
+            String[] xs = linhas.get(r + 1).trim().split(" ");
+            prem[r] = new int[xs.length - 1];
+            for (int k = 0; k < xs.length - 1; k++) prem[r][k] = Integer.parseInt(xs[k]);
+            concl[r] = Integer.parseInt(xs[xs.length - 1]);
+        }
+        for (String f : fs) {
+            int fato = Integer.parseInt(f);
+            int[] falta = new int[R];
+            Map<Integer, List<Integer>> vigia = new HashMap<>();
+            for (int r = 0; r < R; r++) {
+                List<Integer> distintas = new ArrayList<>();
+                for (int a : prem[r]) if (!distintas.contains(a)) distintas.add(a);
+                falta[r] = distintas.size();
+                for (int a : distintas) vigia.computeIfAbsent(a, k -> new ArrayList<>()).add(r);
+            }
+            Map<Integer, Integer> prova = new HashMap<>();
+            List<Integer> ordem = new ArrayList<>();
+            ArrayDeque<Integer> fila = new ArrayDeque<>();
+            prova.put(fato, -1);
+            ordem.add(fato);
+            fila.add(fato);
+            long dec = 0;
+            while (!fila.isEmpty()) {
+                int a = fila.poll();
+                for (int r : vigia.getOrDefault(a, Collections.emptyList())) {
+                    falta[r]--;
+                    dec++;
+                    int c = concl[r];
+                    if (falta[r] == 0 && !prova.containsKey(c)) {
+                        prova.put(c, r);
+                        ordem.add(c);
+                        fila.add(c);
+                    }
+                }
+            }
+            long controle = 0;
+            for (int k = 0; k < ordem.size(); k++) controle = (controle + (long) (k + 1) * ordem.get(k)) % MOD;
+            StringBuilder cadeia = new StringBuilder();
+            int a = ordem.get(ordem.size() - 1);
+            boolean primeiro = true;
+            while (prova.get(a) != -1) {
+                int r = prova.get(a);
+                if (!primeiro) cadeia.append(' ');
+                cadeia.append(r);
+                primeiro = false;
+                a = prem[r][0];
+            }
+            out.println("fato " + fato + ": derivados " + ordem.size() + " controle " + controle + " decrementos " + dec + " prova " + cadeia);
+        }
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/Rodada47.java  (63 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada47.java'] = """// Rodada 47 do diálogo Python <-> Java: quanto vale perguntar. Lê PASTA/voi47.txt (os 2.000 problemas de decisão da P1632) e calcula, como o Python, o valor
+// da informação perfeita e a prioridade S(q) do texto recebido na Parte 73 (H com o log_ próprio: só + − × ÷ e escalas por 2^k). Uso: java Rodada47 PASTA
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada47 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
+    static Integer[] topo(double[] chave, int k) {
+        Integer[] idx = new Integer[chave.length];
+        for (int i = 0; i < idx.length; i++) idx[i] = i;
+        Arrays.sort(idx, (a, b) -> chave[a] != chave[b] ? Double.compare(chave[b], chave[a]) : Integer.compare(a, b));
+        return Arrays.copyOf(idx, k);
+    }
+
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        List<double[]> linhas = new ArrayList<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "voi47.txt"), StandardCharsets.UTF_8)) {
+            if (l.isEmpty()) continue;
+            String[] xs = l.split(" ");
+            double[] v = new double[5];
+            for (int k = 0; k < 5; k++) v[k] = Double.parseDouble(xs[k]);
+            linhas.add(v);
+        }
+        int n = linhas.size();
+        double ln2 = log_(2.0);
+        double[] voi = new double[n], s = new double[n];
+        for (int i = 0; i < n; i++) {
+            double[] x = linhas.get(i);
+            double p = x[0], u00 = x[1], u01 = x[2], u10 = x[3], u11 = x[4];
+            double com = p * Math.max(u01, u11) + (1.0 - p) * Math.max(u00, u10);
+            double sem = Math.max(p * u01 + (1.0 - p) * u00, p * u11 + (1.0 - p) * u10);
+            double v = com - sem;
+            if (v < 0.0) v = 0.0;
+            double h = 0.0;
+            for (double q : new double[]{p, 1.0 - p}) if (q > 0.0) h -= q * log_(q) / ln2;
+            voi[i] = v;
+            s[i] = h + Math.max(Math.abs(u00 - u10), Math.abs(u01 - u11)) + 1.0;
+        }
+        double sv = 0.0, ss = 0.0;
+        int zero = 0;
+        for (int i = 0; i < n; i++) { sv += voi[i]; ss += s[i]; if (voi[i] == 0.0) zero++; }
+        Integer[] ts = topo(s, 200), tv = topo(voi, 200);
+        double mts = 0.0, mtv = 0.0;
+        int zt = 0;
+        for (int i : ts) { mts += voi[i]; if (voi[i] == 0.0) zt++; }
+        for (int i : tv) mtv += voi[i];
+        out.println("n=" + n + " voi_zero=" + zero + " soma_voi=" + Double.toHexString(sv) + " soma_s=" + Double.toHexString(ss));
+        out.println("topo_s_voi_zero=" + zt + " voi_medio_topo_voi=" + Double.toHexString(mtv / 200) + " voi_medio_topo_s=" + Double.toHexString(mts / 200));
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/Rodada48.java  (46 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada48.java'] = """// Rodada 48 do diálogo Python <-> Java: escolher experimentos com orçamento. Lê PASTA/mochila48.txt (as 300 instâncias da P1662 que o Python gravou) e calcula,
+// como o Python, o ótimo da mochila 0-1 por programação dinâmica e os dois gulosos (por VOI/custo e por H/custo, empates pelo índice). Uso: java Rodada48 PASTA
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada48 {
+    static double guloso(int B, double[] vs, double[] chave, int[] cs) {
+        int n = vs.length;
+        Integer[] idx = new Integer[n];
+        for (int i = 0; i < n; i++) idx[i] = i;
+        double[] razao = new double[n];
+        for (int i = 0; i < n; i++) razao[i] = -(chave[i] / cs[i]);
+        Arrays.sort(idx, (a, b) -> razao[a] != razao[b] ? Double.compare(razao[a], razao[b]) : Integer.compare(a, b));
+        int resto = B;
+        double total = 0.0;
+        for (int i : idx) if (cs[i] <= resto) { resto -= cs[i]; total += vs[i]; }
+        return total;
+    }
+
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        List<String> linhas = new ArrayList<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "mochila48.txt"), StandardCharsets.UTF_8)) if (!l.isEmpty()) linhas.add(l);
+        double so = 0.0, s1 = 0.0, s2 = 0.0;
+        int otimos = 0;
+        for (int k = 0; k < linhas.size() / 2; k++) {
+            int B = Integer.parseInt(linhas.get(2 * k).trim());
+            String[] xs = linhas.get(2 * k + 1).split(" ");
+            int n = xs.length / 3;
+            double[] vs = new double[n], hs = new double[n];
+            int[] cs = new int[n];
+            for (int i = 0; i < n; i++) { vs[i] = Double.parseDouble(xs[3 * i]); hs[i] = Double.parseDouble(xs[3 * i + 1]); cs[i] = Integer.parseInt(xs[3 * i + 2]); }
+            double[] melhor = new double[B + 1];
+            for (int i = 0; i < n; i++)
+                for (int b = B; b >= cs[i]; b--)
+                    if (melhor[b - cs[i]] + vs[i] > melhor[b]) melhor[b] = melhor[b - cs[i]] + vs[i];
+            double ot = melhor[B], g1 = guloso(B, vs, vs, cs), g2 = guloso(B, vs, hs, cs);
+            so += ot; s1 += g1; s2 += g2;
+            if (g1 >= ot - 1e-12) otimos++;
+            out.println("instancia " + k + ": otimo " + Double.toHexString(ot) + " guloso_voi " + Double.toHexString(g1) + " guloso_h " + Double.toHexString(g2));
+        }
+        out.println("totais: otimo " + Double.toHexString(so) + " guloso_voi " + Double.toHexString(s1) + " guloso_h " + Double.toHexString(s2) + " guloso_otimo_em " + otimos);
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -41058,6 +43476,45 @@ FONTES['dialogo/escala44.tsv'] = """24 1000 0x1.cb7c23916c519p+1
 48 2000 0x1.ae95175bd5342p+1
 48 4000 0x1.9e480e1ff45a2p+1
 48 8000 0x1.a0fdebf6b28fbp+1
+"""
+
+# ====================================================================================================
+# dialogo/exatas.py  (34 linhas)
+# ====================================================================================================
+FONTES['dialogo/exatas.py'] = """\"\"\"O exp e o log PRÓPRIOS da rodada 26, num módulo só (Parte 73): as rodadas 21, 22, 23 e 25 usavam math.log/math.exp (glibc) e Math.log/Math.exp
+(Java), que o IEEE 754 não obriga a arredondar corretamente; passaram por sorte até o resultados.txt crescer e deram DIFERENTES por 1 a 3 ulps. As
+versões originais estão em dialogo/registro/. Cópia fiel de dialogo/rodada26.py (que continua com as suas), sem importar a 26 (ela importa a 21).
+Só +, −, ×, ÷ e escalas exatas por 2^k.\"\"\"
+
+import math
+
+LN2_HI = 6.93147180369123816490e-01  # ln 2 em duas partes (como na fdlibm): k·LN2_HI é exato para |k| < 2^20
+LN2_LO = 1.90821492927058770002e-10
+SQRT2 = 1.4142135623730951
+
+
+def exp_(x):
+    \"\"\"e^x = 2^k · e^r, k = arredondar(x/ln 2), r = x − k ln 2 (|r| ≤ 0,35); e^r pela série de Taylor (Horner, 22 termos).\"\"\"
+    k = math.floor(x / (LN2_HI + LN2_LO) + 0.5)
+    r = (x - k * LN2_HI) - k * LN2_LO
+    p = 1.0
+    for i in range(22, 0, -1):
+        p = 1.0 + r * p / i
+    return math.ldexp(p, int(k))
+
+
+def log_(x):
+    \"\"\"ln x = e ln 2 + ln m, x = m · 2^e com m em [√½, √2); ln m = 2 atanh s = 2 s Σ s^(2j)/(2j+1), s = (m − 1)/(m + 1).\"\"\"
+    m, e = math.frexp(x)
+    m, e = m * 2.0, e - 1
+    if m > SQRT2:
+        m, e = m / 2.0, e + 1
+    s = (m - 1.0) / (m + 1.0)
+    s2 = s * s
+    p = 1.0 / 41.0
+    for j in range(19, -1, -1):
+        p = 1.0 / (2 * j + 1) + s2 * p
+    return e * LN2_HI + (e * LN2_LO + 2.0 * s * p)
 """
 
 # ====================================================================================================
@@ -42115,7 +44572,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# dialogo/rodada21.py  (84 linhas)
+# dialogo/rodada21.py  (89 linhas)
 # ====================================================================================================
 FONTES['dialogo/rodada21.py'] = """\"\"\"Rodada 21 do diálogo Python <-> Java: a série é um ciclo? Semelhança entre as seções do resultados.txt (palavras da
 Rodada 19, como conjuntos): cosseno dos vetores binários pesados por idf = ln(K/df). Imprime a semelhança da última seção
@@ -42127,6 +44584,8 @@ import math
 import os
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_, log_  # noqa: E402  (Parte 73: exp e log próprios, exatos nas duas línguas)
 AQUI = os.path.dirname(os.path.abspath(__file__))
 _spec = importlib.util.spec_from_file_location("rodada19", os.path.join(AQUI, "rodada19.py"))
 r19 = importlib.util.module_from_spec(_spec)
@@ -42144,7 +44603,10 @@ def semelhancas(cs):
     for _, ws in cs:
         for w in ws:
             df[w] = df.get(w, 0) + 1
-    idf2 = {w: math.log(K / c) ** 2 for w, c in df.items()}
+    idf2 = {}
+    for w, c in df.items():
+        x = log_(K / c)
+        idf2[w] = x * x
     norma = []
     for _, ws in cs:
         t = 0.0
@@ -42204,7 +44666,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# dialogo/rodada22.py  (64 linhas)
+# dialogo/rodada22.py  (66 linhas)
 # ====================================================================================================
 FONTES['dialogo/rodada22.py'] = """\"\"\"Rodada 22 do diálogo Python <-> Java: a deriva da série tem meia-vida ou memória longa? As médias de semelhança por
 distância L = 1..20 (a semelhança idf da Rodada 21), ajustadas por mínimos quadrados em log a uma exponencial
@@ -42216,6 +44678,8 @@ import math
 import os
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_, log_  # noqa: E402  (Parte 73: exp e log próprios, exatos nas duas línguas)
 AQUI = os.path.dirname(os.path.abspath(__file__))
 _spec = importlib.util.spec_from_file_location("rodada21", os.path.join(AQUI, "rodada21.py"))
 r21 = importlib.util.module_from_spec(_spec)
@@ -42246,9 +44710,9 @@ def reta(xs, ys):
 def deriva(cs, ate=20):
     sim = r21.semelhancas(cs)
     ls = list(range(1, ate + 1))
-    ys = [math.log(r21.media_distancia(sim, L)) for L in ls]
+    ys = [log_(r21.media_distancia(sim, L)) for L in ls]
     a, m1, sse_exp = reta([float(L) for L in ls], ys)
-    b, m2, sse_pot = reta([math.log(L) for L in ls], ys)
+    b, m2, sse_pot = reta([log_(L) for L in ls], ys)
     return ys, a, -1.0 / m1, sse_exp, b, -m2, sse_pot
 
 
@@ -42273,7 +44737,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# dialogo/rodada23.py  (43 linhas)
+# dialogo/rodada23.py  (45 linhas)
 # ====================================================================================================
 FONTES['dialogo/rodada23.py'] = """\"\"\"Rodada 23 do diálogo Python <-> Java: as curvas individuais de esquecimento (a crítica de Anderson e Tweney). Para cada
 parte i de 1 a 21, y_i(L) = sim(i, i + L), L = 1..20 (semelhança idf da Rodada 21), sem os L com semelhança zero; os dois
@@ -42284,6 +44748,8 @@ import math
 import os
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_, log_  # noqa: E402  (Parte 73: exp e log próprios, exatos nas duas línguas)
 AQUI = os.path.dirname(os.path.abspath(__file__))
 _spec = importlib.util.spec_from_file_location("rodada22", os.path.join(AQUI, "rodada22.py"))
 r22 = importlib.util.module_from_spec(_spec)
@@ -42296,9 +44762,9 @@ def curvas(cs, ate=20):
     res = []
     for i in range(len(cs) - ate):
         ls = [L for L in range(1, ate + 1) if sim[i][i + L] > 0]
-        ys = [math.log(sim[i][i + L]) for L in ls]
+        ys = [log_(sim[i][i + L]) for L in ls]
         _, m1, se = r22.reta([float(L) for L in ls], ys)
-        _, m2, sp = r22.reta([math.log(L) for L in ls], ys)
+        _, m2, sp = r22.reta([log_(L) for L in ls], ys)
         res.append((cs[i][0], len(ls), -1.0 / m1, se, -m2, sp))
     return res
 
@@ -42388,7 +44854,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# dialogo/rodada25.py  (81 linhas)
+# dialogo/rodada25.py  (83 linhas)
 # ====================================================================================================
 FONTES['dialogo/rodada25.py'] = """\"\"\"Rodada 25 do diálogo Python <-> Java: duas memórias (curta e longa) ou uma potência? A curva média da Rodada 22 (L = 1..20)
 contra três modelos medidos pelo erro em log: exponencial e potência (k = 2, da Rodada 22) e duas exponenciais
@@ -42400,6 +44866,8 @@ import math
 import os
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_, log_  # noqa: E402  (Parte 73: exp e log próprios, exatos nas duas línguas)
 AQUI = os.path.dirname(os.path.abspath(__file__))
 _spec = importlib.util.spec_from_file_location("rodada22", os.path.join(AQUI, "rodada22.py"))
 r22 = importlib.util.module_from_spec(_spec)
@@ -42413,12 +44881,12 @@ def duas_exponenciais(ys):
     melhor = None
     for i in range(1, 21):
         t1 = 0.25 * i
-        u = [math.exp(-L / t1) for L in range(1, n + 1)]
+        u = [exp_(-L / t1) for L in range(1, n + 1)]
         for j in range(1, 101):
             t2 = 2.0 * j
             if t1 >= t2:
                 continue
-            v = [math.exp(-L / t2) for L in range(1, n + 1)]
+            v = [exp_(-L / t2) for L in range(1, n + 1)]
             suu = svv = suv = suy = svy = 0.0
             for a, b, y in zip(u, v, ys):
                 suu += a * a
@@ -42435,7 +44903,7 @@ def duas_exponenciais(ys):
                 continue
             sse = 0.0
             for a, b, y in zip(u, v, ys):
-                e = math.log(y) - math.log(A * a + B * b)
+                e = log_(y) - log_(A * a + B * b)
                 sse += e * e
             if melhor is None or sse < melhor[0]:
                 melhor = (sse, A, B, t1, t2)
@@ -42443,7 +44911,7 @@ def duas_exponenciais(ys):
 
 
 def aic(sse, n, k):
-    return n * math.log(sse / n) + 2 * k
+    return n * log_(sse / n) + 2 * k
 
 
 def main():
@@ -42454,9 +44922,9 @@ def main():
         return
     sim = r21.semelhancas(r21.conjuntos())
     ys = [r21.media_distancia(sim, L) for L in range(1, 21)]
-    lys = [math.log(y) for y in ys]
+    lys = [log_(y) for y in ys]
     _, _, se = r22.reta([float(L) for L in range(1, 21)], lys)
-    _, _, sp = r22.reta([math.log(L) for L in range(1, 21)], lys)
+    _, _, sp = r22.reta([log_(L) for L in range(1, 21)], lys)
     s2, A, B, t1, t2 = duas_exponenciais(ys)
     print(f"exponencial: sse = {se.hex()}; aic = {aic(se, 20, 2).hex()}")
     print(f"potencia: sse = {sp.hex()}; aic = {aic(sp, 20, 2).hex()}")
@@ -44087,6 +46555,245 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
+# dialogo/rodada46.py  (81 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada46.py'] = """\"\"\"Rodada 46 do diálogo Python <-> Java: o motor de Horn em tempo linear (Dowling e Gallier, 1984), a otimização que o texto recebido na Parte 72
+deixou para depois. Com `--preparar PASTA`, o Python grava em PASTA/horn46.txt os fatos (animal e pessoa, os primeiros sentidos de substantivo) e as
+84.427 regras "p ⇒ c" da hiperonímia dos substantivos (calculos.p1611). As duas linguagens rodam o mesmo algoritmo (contadores de premissas, fila FIFO)
+e imprimem, para cada fato inicial: quantos átomos derivou, uma soma de controle da ORDEM de derivação, os decrementos e a cadeia de prova do último
+átomo derivado. Rodar da raiz: python3 dialogo/rodada46.py PASTA\"\"\"
+
+import os
+import sys
+from collections import deque
+
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, RAIZ)
+MOD = (1 << 61) - 1
+
+
+def preparar(pasta):
+    import calculos
+    from synthai.dicionario import Dicionario
+    d = Dicionario()
+    fatos, regras = calculos.p1611_regras_de_animal(d)
+    pessoa = min(i for i in d.lemas["person"] if d.sinsets[i][0] == "n")
+    with open(os.path.join(pasta, "horn46.txt"), "w") as f:
+        f.write(f"{fatos[0]} {pessoa}\\n")
+        for prem, c in regras:
+            f.write(" ".join(str(a) for a in prem) + f" {c}\\n")
+
+
+def ler(pasta):
+    linhas = [l for l in open(os.path.join(pasta, "horn46.txt")).read().split("\\n") if l]
+    fatos = [int(x) for x in linhas[0].split()]
+    regras = []
+    for l in linhas[1:]:
+        xs = [int(x) for x in l.split()]
+        regras.append((xs[:-1], xs[-1]))
+    return fatos, regras
+
+
+def horn(fato, regras):
+    falta, vigia = [], {}
+    for r, (prem, _) in enumerate(regras):
+        distintas = []
+        for a in prem:
+            if a not in distintas:
+                distintas.append(a)
+        falta.append(len(distintas))
+        for a in distintas:
+            vigia.setdefault(a, []).append(r)
+    prova, ordem, fila = {fato: -1}, [fato], deque([fato])
+    dec = 0
+    while fila:
+        a = fila.popleft()
+        for r in vigia.get(a, ()):
+            falta[r] -= 1
+            dec += 1
+            c = regras[r][1]
+            if falta[r] == 0 and c not in prova:
+                prova[c] = r
+                ordem.append(c)
+                fila.append(c)
+    controle = 0
+    for k, a in enumerate(ordem):
+        controle = (controle + (k + 1) * a) % MOD
+    cadeia, a = [], ordem[-1]
+    while prova[a] != -1:
+        cadeia.append(prova[a])
+        a = regras[prova[a]][0][0]
+    return len(ordem), controle, dec, cadeia
+
+
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        preparar(sys.argv[2])
+        return
+    fatos, regras = ler(sys.argv[1])
+    for fato in fatos:
+        n, controle, dec, cadeia = horn(fato, regras)
+        print(f"fato {fato}: derivados {n} controle {controle} decrementos {dec} prova {' '.join(str(r) for r in cadeia)}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada47.py  (70 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada47.py'] = """\"\"\"Rodada 47 do diálogo Python <-> Java: quanto vale perguntar. Com `--preparar PASTA`, o Python grava em PASTA/voi47.txt os 2.000 problemas de decisão
+da P1632 (semente 73: p e as quatro utilidades, em hexadecimal). As duas linguagens calculam, para cada um, o valor da informação perfeita
+VOI = p·max u[·][1] + (1 − p)·max u[·][0] − max_a (p·u[a][1] + (1 − p)·u[a][0]) e a prioridade S = H(p) + max_s |u[0][s] − u[1][s]| + 1 do texto
+recebido na Parte 73 (H com o log_ próprio de dialogo/exatas.py), e imprimem: quantos têm VOI = 0, a soma dos VOI, a soma dos S, quantos dos 200 de maior S
+(empates pelo índice) têm VOI = 0, e o VOI médio dos 200 de maior VOI e dos 200 de maior S. Rodar da raiz: python3 dialogo/rodada47.py PASTA\"\"\"
+
+import os
+import random
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import log_  # noqa: E402
+
+
+def preparar(pasta, n=2000, semente=73):
+    r = random.Random(semente)
+    with open(os.path.join(pasta, "voi47.txt"), "w") as f:
+        for _ in range(n):
+            p = r.random()
+            u = [r.random(), r.random(), r.random(), r.random()]  # u00 u01 u10 u11, na ordem da P1632
+            f.write(" ".join(x.hex() for x in [p] + u) + "\\n")
+
+
+def ler(pasta):
+    return [[float.fromhex(x) for x in l.split()] for l in open(os.path.join(pasta, "voi47.txt")).read().split("\\n") if l]
+
+
+def calcular(linhas):
+    ln2 = log_(2.0)
+    voi, s = [], []
+    for p, u00, u01, u10, u11 in linhas:
+        com = p * max(u01, u11) + (1.0 - p) * max(u00, u10)
+        sem = max(p * u01 + (1.0 - p) * u00, p * u11 + (1.0 - p) * u10)
+        v = com - sem
+        if v < 0.0:
+            v = 0.0
+        h = 0.0
+        for q in (p, 1.0 - p):
+            if q > 0.0:
+                h -= q * log_(q) / ln2
+        voi.append(v)
+        s.append(h + max(abs(u00 - u10), abs(u01 - u11)) + 1.0)
+    return voi, s
+
+
+def topo(chave, k):
+    return sorted(range(len(chave)), key=lambda i: (-chave[i], i))[:k]
+
+
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        preparar(sys.argv[2])
+        return
+    voi, s = calcular(ler(sys.argv[1]))
+    sv = ss = 0.0
+    for v, x in zip(voi, s):
+        sv += v
+        ss += x
+    ts, tv = topo(s, 200), topo(voi, 200)
+    mts = mtv = 0.0
+    for i in ts:
+        mts += voi[i]
+    for i in tv:
+        mtv += voi[i]
+    print(f"n={len(voi)} voi_zero={sum(1 for v in voi if v == 0.0)} soma_voi={sv.hex()} soma_s={ss.hex()}")
+    print(f"topo_s_voi_zero={sum(1 for i in ts if voi[i] == 0.0)} voi_medio_topo_voi={(mtv / 200).hex()} voi_medio_topo_s={(mts / 200).hex()}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada48.py  (73 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada48.py'] = """\"\"\"Rodada 48 do diálogo Python <-> Java: escolher experimentos com orçamento (a U(a) = E[ΔK | a]/Custo(a) do texto recebido na Parte 74). Com `--preparar
+PASTA`, o Python grava em PASTA/mochila48.txt as 300 instâncias da P1662 (semente 74): por instância, o orçamento e os 30 experimentos (VOI e H em
+hexadecimal, custo inteiro). As duas linguagens calculam o ótimo exato (mochila 0-1 por programação dinâmica nos custos) e os dois gulosos (por VOI/custo e
+por H/custo, empates pelo índice), e imprimem os três valores de cada instância e os totais. Rodar da raiz: python3 dialogo/rodada48.py PASTA\"\"\"
+
+import math
+import os
+import random
+import sys
+
+
+def preparar(pasta, instancias=300, itens=30, fracao=0.2, semente=74):
+    r = random.Random(semente)  # a mesma sequência de sorteios da calculos.p1662_orcamento
+    with open(os.path.join(pasta, "mochila48.txt"), "w") as f:
+        for _ in range(instancias):
+            vs, hs, cs = [], [], []
+            for _ in range(itens):
+                p = r.random()
+                u = [[r.random(), r.random()], [r.random(), r.random()]]
+                com = p * max(u[0][1], u[1][1]) + (1.0 - p) * max(u[0][0], u[1][0])
+                sem = max(p * u[0][1] + (1.0 - p) * u[0][0], p * u[1][1] + (1.0 - p) * u[1][0])
+                vs.append(max(com - sem, 0.0))
+                hs.append(-sum(q * math.log2(q) for q in (p, 1.0 - p) if q > 0.0))
+                cs.append(r.randint(1, 20))
+            f.write(f"{int(fracao * sum(cs))}\\n")
+            f.write(" ".join(f"{v.hex()} {h.hex()} {c}" for v, h, c in zip(vs, hs, cs)) + "\\n")
+
+
+def ler(pasta):
+    linhas = [l for l in open(os.path.join(pasta, "mochila48.txt")).read().split("\\n") if l]
+    saida = []
+    for k in range(0, len(linhas), 2):
+        xs = linhas[k + 1].split()
+        saida.append((int(linhas[k]), [float.fromhex(xs[i]) for i in range(0, len(xs), 3)],
+                      [float.fromhex(xs[i]) for i in range(1, len(xs), 3)], [int(xs[i]) for i in range(2, len(xs), 3)]))
+    return saida
+
+
+def resolver(B, vs, hs, cs):
+    melhor = [0.0] * (B + 1)
+    for v, c in zip(vs, cs):
+        for b in range(B, c - 1, -1):
+            if melhor[b - c] + v > melhor[b]:
+                melhor[b] = melhor[b - c] + v
+
+    def guloso(chave):
+        resto, total = B, 0.0
+        for i in sorted(range(len(vs)), key=lambda i: (-(chave[i] / cs[i]), i)):
+            if cs[i] <= resto:
+                resto -= cs[i]
+                total += vs[i]
+        return total
+    return melhor[B], guloso(vs), guloso(hs)
+
+
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        preparar(sys.argv[2])
+        return
+    so = s1 = s2 = 0.0
+    otimos = 0
+    for k, (B, vs, hs, cs) in enumerate(ler(sys.argv[1])):
+        ot, g1, g2 = resolver(B, vs, hs, cs)
+        so += ot
+        s1 += g1
+        s2 += g2
+        otimos += g1 >= ot - 1e-12
+        print(f"instancia {k}: otimo {ot.hex()} guloso_voi {g1.hex()} guloso_h {g2.hex()}")
+    print(f"totais: otimo {so.hex()} guloso_voi {s1.hex()} guloso_h {s2.hex()} guloso_otimo_em {otimos}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
 # dialogo/verificar.py  (38 linhas)
 # ====================================================================================================
 FONTES['dialogo/verificar.py'] = """\"\"\"Verifica todas as rodadas do diálogo: para cada RodadaNN.java com o seu rodadaNN.py, compila o Java, roda os dois e
@@ -44127,6 +46834,322 @@ def main():
 
 if __name__ == "__main__":
     main()
+"""
+
+# ====================================================================================================
+# dialogo/registro/Rodada21Libm.java  (56 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/Rodada21Libm.java'] = """// Rodada 21 do diálogo Python <-> Java: a série é um ciclo? Cosseno idf entre as seções (conjuntos de palavras, em
+// secoes21.txt, escrito por rodada21.py --preparar). Uso: java Rodada21 PASTA
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada21Libm {
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        List<Integer> partes = new ArrayList<>();
+        List<String[]> ws = new ArrayList<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "secoes21.txt"), StandardCharsets.US_ASCII)) {
+            String[] p = l.split("\\t", -1);
+            partes.add(Integer.parseInt(p[0]));
+            ws.add(p[1].isEmpty() ? new String[0] : p[1].split(" "));
+        }
+        int K = partes.size();
+        HashMap<String, Integer> df = new HashMap<>();
+        for (String[] a : ws) for (String w : a) df.merge(w, 1, Integer::sum);
+        HashMap<String, Double> idf2 = new HashMap<>();
+        for (Map.Entry<String, Integer> e : df.entrySet()) {
+            double x = Math.log((double) K / e.getValue());
+            idf2.put(e.getKey(), x * x);
+        }
+        double[] norma = new double[K];
+        for (int i = 0; i < K; i++) { double t = 0.0; for (String w : ws.get(i)) t += idf2.get(w); norma[i] = t; }
+        double[][] sim = new double[K][K];
+        for (int i = 0; i < K; i++) {
+            HashSet<String> a = new HashSet<>(Arrays.asList(ws.get(i)));
+            for (int j = 0; j < K; j++) {
+                double t = 0.0;
+                for (String w : ws.get(j)) if (a.contains(w)) t += idf2.get(w);
+                sim[i][j] = (norma[i] > 0 && norma[j] > 0) ? t / Math.sqrt(norma[i] * norma[j]) : 0.0;
+            }
+        }
+        int u = K - 1;
+        for (int j = 0; j < K; j++)
+            out.println("sim(parte " + partes.get(u) + ", parte " + partes.get(j) + ") = " + Double.toHexString(sim[u][j]));
+        out.println("media a distancia 1 = " + Double.toHexString(media(sim, 1)) + "; a distancia 20 = " + Double.toHexString(media(sim, 20)));
+        HashMap<Integer, Integer> pos = new HashMap<>();
+        for (int i = 0; i < K; i++) pos.put(partes.get(i), i);
+        double tc = 0.0, tm = 0.0;
+        int nc = 0, nm = 0;
+        for (int k = 1; k <= 10; k++) if (pos.containsKey(k)) { tc += sim[u][pos.get(k)]; nc++; }
+        for (int k = 11; k <= 30; k++) if (pos.containsKey(k)) { tm += sim[u][pos.get(k)]; nm++; }
+        out.println("indice do ciclo = " + Double.toHexString((tc / nc) / (tm / nm)));
+    }
+
+    static double media(double[][] sim, int L) {
+        double t = 0.0;
+        int n = 0;
+        for (int i = 0; i + L < sim.length; i++) { t += sim[i][i + L]; n++; }
+        return t / n;
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/registro/Rodada22Libm.java  (69 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/Rodada22Libm.java'] = """// Rodada 22 do diálogo Python <-> Java: a deriva tem meia-vida (exponencial) ou memória longa (potência)? A semelhança idf
+// da Rodada 21 (secoes22.txt, escrito por rodada22.py --preparar), médias por distância 1..20, dois ajustes em log.
+// Uso: java Rodada22 PASTA
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada22Libm {
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        List<Integer> partes = new ArrayList<>();
+        List<String[]> ws = new ArrayList<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "secoes22.txt"), StandardCharsets.US_ASCII)) {
+            String[] p = l.split("\\t", -1);
+            partes.add(Integer.parseInt(p[0]));
+            ws.add(p[1].isEmpty() ? new String[0] : p[1].split(" "));
+        }
+        int K = partes.size();
+        HashMap<String, Integer> df = new HashMap<>();
+        for (String[] a : ws) for (String w : a) df.merge(w, 1, Integer::sum);
+        HashMap<String, Double> idf2 = new HashMap<>();
+        for (Map.Entry<String, Integer> e : df.entrySet()) {
+            double x = Math.log((double) K / e.getValue());
+            idf2.put(e.getKey(), x * x);
+        }
+        double[] norma = new double[K];
+        for (int i = 0; i < K; i++) { double t = 0.0; for (String w : ws.get(i)) t += idf2.get(w); norma[i] = t; }
+        double[][] sim = new double[K][K];
+        for (int i = 0; i < K; i++) {
+            HashSet<String> a = new HashSet<>(Arrays.asList(ws.get(i)));
+            for (int j = 0; j < K; j++) {
+                double t = 0.0;
+                for (String w : ws.get(j)) if (a.contains(w)) t += idf2.get(w);
+                sim[i][j] = (norma[i] > 0 && norma[j] > 0) ? t / Math.sqrt(norma[i] * norma[j]) : 0.0;
+            }
+        }
+        int A = 20;
+        double[] xe = new double[A], xp = new double[A], ys = new double[A];
+        for (int L = 1; L <= A; L++) {
+            ys[L - 1] = Math.log(media(sim, L));
+            xe[L - 1] = (double) L;
+            xp[L - 1] = Math.log(L);
+            out.println("distancia " + L + ": ln(media) = " + Double.toHexString(ys[L - 1]));
+        }
+        double[] e = reta(xe, ys), p = reta(xp, ys);
+        out.println("exponencial: a = " + Double.toHexString(e[0]) + "; tau = " + Double.toHexString(-1.0 / e[1]) + "; residuo = " + Double.toHexString(e[2]));
+        out.println("potencia: b = " + Double.toHexString(p[0]) + "; alfa = " + Double.toHexString(-p[1]) + "; residuo = " + Double.toHexString(p[2]));
+        out.println("melhor: " + (e[2] < p[2] ? "exponencial" : "potencia"));
+    }
+
+    static double[] reta(double[] xs, double[] ys) {
+        int n = xs.length;
+        double sx = 0.0, sy = 0.0;
+        for (int i = 0; i < n; i++) { sx += xs[i]; sy += ys[i]; }
+        double mx = sx / n, my = sy / n, sxy = 0.0, sxx = 0.0;
+        for (int i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) * (xs[i] - mx); }
+        double m = sxy / sxx, c = my - m * mx, sse = 0.0;
+        for (int i = 0; i < n; i++) { double r = ys[i] - (c + m * xs[i]); sse += r * r; }
+        return new double[]{c, m, sse};
+    }
+
+    static double media(double[][] sim, int L) {
+        double t = 0.0;
+        int n = 0;
+        for (int i = 0; i + L < sim.length; i++) { t += sim[i][i + L]; n++; }
+        return t / n;
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/registro/Rodada23Libm.java  (74 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/Rodada23Libm.java'] = """// Rodada 23 do diálogo Python <-> Java: as curvas individuais de esquecimento (Anderson e Tweney). Para cada parte i de
+// 1 a 21, sim(i, i + L), L = 1..20, sem os zeros; os ajustes exponencial e potência em log. Lê secoes23.txt.
+// Uso: java Rodada23 PASTA
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada23Libm {
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        List<Integer> partes = new ArrayList<>();
+        List<String[]> ws = new ArrayList<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "secoes23.txt"), StandardCharsets.US_ASCII)) {
+            String[] p = l.split("\\t", -1);
+            partes.add(Integer.parseInt(p[0]));
+            ws.add(p[1].isEmpty() ? new String[0] : p[1].split(" "));
+        }
+        int K = partes.size();
+        HashMap<String, Integer> df = new HashMap<>();
+        for (String[] a : ws) for (String w : a) df.merge(w, 1, Integer::sum);
+        HashMap<String, Double> idf2 = new HashMap<>();
+        for (Map.Entry<String, Integer> e : df.entrySet()) {
+            double x = Math.log((double) K / e.getValue());
+            idf2.put(e.getKey(), x * x);
+        }
+        double[] norma = new double[K];
+        for (int i = 0; i < K; i++) { double t = 0.0; for (String w : ws.get(i)) t += idf2.get(w); norma[i] = t; }
+        double[][] sim = new double[K][K];
+        for (int i = 0; i < K; i++) {
+            HashSet<String> a = new HashSet<>(Arrays.asList(ws.get(i)));
+            for (int j = 0; j < K; j++) {
+                double t = 0.0;
+                for (String w : ws.get(j)) if (a.contains(w)) t += idf2.get(w);
+                sim[i][j] = (norma[i] > 0 && norma[j] > 0) ? t / Math.sqrt(norma[i] * norma[j]) : 0.0;
+            }
+        }
+        int A = 20, pot = 0;
+        for (int i = 0; i + A < K; i++) {
+            int k = 0;
+            for (int L = 1; L <= A; L++) if (sim[i][i + L] > 0) k++;
+            double[] xe = new double[k], xp = new double[k], ys = new double[k];
+            int q = 0;
+            for (int L = 1; L <= A; L++) {
+                if (sim[i][i + L] > 0) {
+                    xe[q] = (double) L; xp[q] = Math.log(L); ys[q] = Math.log(sim[i][i + L]); q++;
+                }
+            }
+            double[] e = reta(xe, ys), p = reta(xp, ys);
+            if (p[2] < e[2]) pot++;
+            out.println("parte " + partes.get(i) + ": " + k + " pontos; tau = " + Double.toHexString(-1.0 / e[1]) + "; residuo exp = "
+                    + Double.toHexString(e[2]) + "; alfa = " + Double.toHexString(-p[1]) + "; residuo pot = " + Double.toHexString(p[2]));
+        }
+        out.println("a potencia ganha em " + pot);
+    }
+
+    static double[] reta(double[] xs, double[] ys) {
+        int n = xs.length;
+        double sx = 0.0, sy = 0.0;
+        for (int i = 0; i < n; i++) { sx += xs[i]; sy += ys[i]; }
+        double mx = sx / n, my = sy / n, sxy = 0.0, sxx = 0.0;
+        for (int i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) * (xs[i] - mx); }
+        double m = sxy / sxx, c = my - m * mx, sse = 0.0;
+        for (int i = 0; i < n; i++) { double r = ys[i] - (c + m * xs[i]); sse += r * r; }
+        return new double[]{c, m, sse};
+    }
+
+    static double media(double[][] sim, int L) {
+        double t = 0.0;
+        int n = 0;
+        for (int i = 0; i + L < sim.length; i++) { t += sim[i][i + L]; n++; }
+        return t / n;
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/registro/Rodada25Libm.java  (97 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/Rodada25Libm.java'] = """// Rodada 25 do diálogo Python <-> Java: duas memórias ou uma potência? A curva média da Rodada 22 contra exponencial,
+// potência e duas exponenciais (grade t1 = 0,25..5, t2 = 2..200; A, B lineares e positivos), pelo AIC. Lê secoes25.txt.
+// Uso: java Rodada25 PASTA
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada25Libm {
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        List<Integer> partes = new ArrayList<>();
+        List<String[]> ws = new ArrayList<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "secoes25.txt"), StandardCharsets.US_ASCII)) {
+            String[] p = l.split("\\t", -1);
+            partes.add(Integer.parseInt(p[0]));
+            ws.add(p[1].isEmpty() ? new String[0] : p[1].split(" "));
+        }
+        int K = partes.size();
+        HashMap<String, Integer> df = new HashMap<>();
+        for (String[] a : ws) for (String w : a) df.merge(w, 1, Integer::sum);
+        HashMap<String, Double> idf2 = new HashMap<>();
+        for (Map.Entry<String, Integer> e : df.entrySet()) {
+            double x = Math.log((double) K / e.getValue());
+            idf2.put(e.getKey(), x * x);
+        }
+        double[] norma = new double[K];
+        for (int i = 0; i < K; i++) { double t = 0.0; for (String w : ws.get(i)) t += idf2.get(w); norma[i] = t; }
+        double[][] sim = new double[K][K];
+        for (int i = 0; i < K; i++) {
+            HashSet<String> a = new HashSet<>(Arrays.asList(ws.get(i)));
+            for (int j = 0; j < K; j++) {
+                double t = 0.0;
+                for (String w : ws.get(j)) if (a.contains(w)) t += idf2.get(w);
+                sim[i][j] = (norma[i] > 0 && norma[j] > 0) ? t / Math.sqrt(norma[i] * norma[j]) : 0.0;
+            }
+        }
+        int n = 20;
+        double[] ys = new double[n], ly = new double[n], xe = new double[n], xp = new double[n];
+        for (int L = 1; L <= n; L++) { ys[L - 1] = media(sim, L); ly[L - 1] = Math.log(ys[L - 1]); xe[L - 1] = (double) L; xp[L - 1] = Math.log(L); }
+        double se = reta(xe, ly)[2], sp = reta(xp, ly)[2];
+        double ms = 0, mA = 0, mB = 0, m1 = 0, m2 = 0;
+        boolean tem = false;
+        for (int i = 1; i <= 20; i++) {
+            double t1 = 0.25 * i;
+            double[] u = new double[n];
+            for (int L = 1; L <= n; L++) u[L - 1] = Math.exp(-L / t1);
+            for (int jj = 1; jj <= 100; jj++) {
+                double t2 = 2.0 * jj;
+                if (t1 >= t2) continue;
+                double[] v = new double[n];
+                for (int L = 1; L <= n; L++) v[L - 1] = Math.exp(-L / t2);
+                double suu = 0, svv = 0, suv = 0, suy = 0, svy = 0;
+                for (int q = 0; q < n; q++) {
+                    suu += u[q] * u[q]; svv += v[q] * v[q]; suv += u[q] * v[q]; suy += u[q] * ys[q]; svy += v[q] * ys[q];
+                }
+                double det = suu * svv - suv * suv;
+                if (det == 0.0) continue;
+                double A = (suy * svv - svy * suv) / det, B = (svy * suu - suy * suv) / det;
+                if (A <= 0.0 || B <= 0.0) continue;
+                double sse = 0.0;
+                for (int q = 0; q < n; q++) { double e = Math.log(ys[q]) - Math.log(A * u[q] + B * v[q]); sse += e * e; }
+                if (!tem || sse < ms) { tem = true; ms = sse; mA = A; mB = B; m1 = t1; m2 = t2; }
+            }
+        }
+        double ae = aic(se, n, 2), ap = aic(sp, n, 2), a2 = aic(ms, n, 4);
+        out.println("exponencial: sse = " + Double.toHexString(se) + "; aic = " + Double.toHexString(ae));
+        out.println("potencia: sse = " + Double.toHexString(sp) + "; aic = " + Double.toHexString(ap));
+        out.println("duas exponenciais: sse = " + Double.toHexString(ms) + "; A = " + Double.toHexString(mA) + "; B = " + Double.toHexString(mB)
+                + "; t1 = " + Double.toHexString(m1) + "; t2 = " + Double.toHexString(m2) + "; aic = " + Double.toHexString(a2));
+        String nome = "exponencial";
+        double m = ae;
+        if (ap < m) { nome = "potencia"; m = ap; }
+        if (a2 < m) { nome = "duas exponenciais"; m = a2; }
+        out.println("menor aic: " + nome);
+    }
+
+    static double aic(double sse, int n, int k) { return n * Math.log(sse / n) + 2 * k; }
+
+    static double[] reta(double[] xs, double[] ys) {
+        int n = xs.length;
+        double sx = 0.0, sy = 0.0;
+        for (int i = 0; i < n; i++) { sx += xs[i]; sy += ys[i]; }
+        double mx = sx / n, my = sy / n, sxy = 0.0, sxx = 0.0;
+        for (int i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) * (xs[i] - mx); }
+        double m = sxy / sxx, c = my - m * mx, sse = 0.0;
+        for (int i = 0; i < n; i++) { double r = ys[i] - (c + m * xs[i]); sse += r * r; }
+        return new double[]{c, m, sse};
+    }
+
+    static double media(double[][] sim, int L) {
+        double t = 0.0;
+        int n = 0;
+        for (int i = 0; i + L < sim.length; i++) { t += sim[i][i + L]; n++; }
+        return t / n;
+    }
+}
 """
 
 # ====================================================================================================
@@ -44284,6 +47307,298 @@ public class Rodada26Libm {
         return t / n;
     }
 }
+"""
+
+# ====================================================================================================
+# dialogo/registro/rodada21_libm.py  (84 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/rodada21_libm.py'] = """\"\"\"Rodada 21 do diálogo Python <-> Java: a série é um ciclo? Semelhança entre as seções do resultados.txt (palavras da
+Rodada 19, como conjuntos): cosseno dos vetores binários pesados por idf = ln(K/df). Imprime a semelhança da última seção
+com cada uma, as médias por distância 1 e 20 e o índice do ciclo (média com 1-10 / média com 11-30). Com `--preparar PASTA`,
+escreve PASTA/secoes21.txt (parte TAB palavras ordenadas), que o Java lê. Rodar da raiz: python3 dialogo/rodada21.py\"\"\"
+
+import importlib.util
+import math
+import os
+import sys
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+_spec = importlib.util.spec_from_file_location("rodada19", os.path.join(AQUI, "rodada19.py"))
+r19 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r19)
+
+
+def conjuntos():
+    docs, sec = r19.documentos(), r19.secoes()
+    return [(n, sorted(r19.numeros(sec[n]))) for n in sorted(k for k in docs if k in sec)]
+
+
+def semelhancas(cs):
+    K = len(cs)
+    df = {}
+    for _, ws in cs:
+        for w in ws:
+            df[w] = df.get(w, 0) + 1
+    idf2 = {w: math.log(K / c) ** 2 for w, c in df.items()}
+    norma = []
+    for _, ws in cs:
+        t = 0.0
+        for w in ws:
+            t += idf2[w]
+        norma.append(t)
+    sim = [[0.0] * K for _ in range(K)]
+    for i in range(K):
+        a = set(cs[i][1])
+        for j in range(K):
+            t = 0.0
+            for w in cs[j][1]:
+                if w in a:
+                    t += idf2[w]
+            sim[i][j] = t / math.sqrt(norma[i] * norma[j]) if norma[i] > 0 and norma[j] > 0 else 0.0
+    return sim
+
+
+def media_distancia(sim, L):
+    t, n = 0.0, 0
+    for i in range(len(sim) - L):
+        t += sim[i][i + L]
+        n += 1
+    return t / n
+
+
+def indice(sim, cs):
+    pos = {n: i for i, (n, _) in enumerate(cs)}
+    u = len(cs) - 1
+    com = lambda a, b: [sim[u][pos[k]] for k in range(a, b + 1) if k in pos]
+    c, m = com(1, 10), com(11, 30)
+    tc = tm = 0.0
+    for x in c:
+        tc += x
+    for x in m:
+        tm += x
+    return (tc / len(c)) / (tm / len(m))
+
+
+def main():
+    cs = conjuntos()
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        with open(os.path.join(sys.argv[2], "secoes21.txt"), "w", encoding="ascii") as f:
+            for n, ws in cs:
+                f.write(f"{n}\\t{' '.join(ws)}\\n")
+        return
+    sim = semelhancas(cs)
+    u = len(cs) - 1
+    for j, (n, _) in enumerate(cs):
+        print(f"sim(parte {cs[u][0]}, parte {n}) = {sim[u][j].hex()}")
+    print(f"media a distancia 1 = {media_distancia(sim, 1).hex()}; a distancia 20 = {media_distancia(sim, 20).hex()}")
+    print(f"indice do ciclo = {indice(sim, cs).hex()}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/registro/rodada22_libm.py  (64 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/rodada22_libm.py'] = """\"\"\"Rodada 22 do diálogo Python <-> Java: a deriva da série tem meia-vida ou memória longa? As médias de semelhança por
+distância L = 1..20 (a semelhança idf da Rodada 21), ajustadas por mínimos quadrados em log a uma exponencial
+(ln y = a - L/tau) e a uma potência (ln y = b - alfa ln L). Com `--preparar PASTA`, escreve PASTA/secoes22.txt (como a
+Rodada 21). Rodar da raiz do repositório: python3 dialogo/rodada22.py\"\"\"
+
+import importlib.util
+import math
+import os
+import sys
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+_spec = importlib.util.spec_from_file_location("rodada21", os.path.join(AQUI, "rodada21.py"))
+r21 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r21)
+
+
+def reta(xs, ys):
+    \"\"\"Mínimos quadrados y = c + m x; devolve (c, m, soma dos quadrados dos resíduos), somas em laço.\"\"\"
+    n = len(xs)
+    sx = sy = 0.0
+    for x, y in zip(xs, ys):
+        sx += x
+        sy += y
+    mx, my = sx / n, sy / n
+    sxy = sxx = 0.0
+    for x, y in zip(xs, ys):
+        sxy += (x - mx) * (y - my)
+        sxx += (x - mx) * (x - mx)
+    m = sxy / sxx
+    c = my - m * mx
+    sse = 0.0
+    for x, y in zip(xs, ys):
+        e = y - (c + m * x)
+        sse += e * e
+    return c, m, sse
+
+
+def deriva(cs, ate=20):
+    sim = r21.semelhancas(cs)
+    ls = list(range(1, ate + 1))
+    ys = [math.log(r21.media_distancia(sim, L)) for L in ls]
+    a, m1, sse_exp = reta([float(L) for L in ls], ys)
+    b, m2, sse_pot = reta([math.log(L) for L in ls], ys)
+    return ys, a, -1.0 / m1, sse_exp, b, -m2, sse_pot
+
+
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        sys.argv = [sys.argv[0], "--preparar", sys.argv[2]]
+        cs = r21.conjuntos()
+        with open(os.path.join(sys.argv[2], "secoes22.txt"), "w", encoding="ascii") as f:
+            for n, ws in cs:
+                f.write(f"{n}\\t{' '.join(ws)}\\n")
+        return
+    ys, a, tau, se, b, alfa, sp = deriva(r21.conjuntos())
+    for L, y in enumerate(ys, 1):
+        print(f"distancia {L}: ln(media) = {y.hex()}")
+    print(f"exponencial: a = {a.hex()}; tau = {tau.hex()}; residuo = {se.hex()}")
+    print(f"potencia: b = {b.hex()}; alfa = {alfa.hex()}; residuo = {sp.hex()}")
+    print("melhor: " + ("exponencial" if se < sp else "potencia"))
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/registro/rodada23_libm.py  (43 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/rodada23_libm.py'] = """\"\"\"Rodada 23 do diálogo Python <-> Java: as curvas individuais de esquecimento (a crítica de Anderson e Tweney). Para cada
+parte i de 1 a 21, y_i(L) = sim(i, i + L), L = 1..20 (semelhança idf da Rodada 21), sem os L com semelhança zero; os dois
+ajustes da Rodada 22 em cada curva. Com `--preparar PASTA`, escreve PASTA/secoes23.txt. Rodar da raiz: python3 dialogo/rodada23.py\"\"\"
+
+import importlib.util
+import math
+import os
+import sys
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+_spec = importlib.util.spec_from_file_location("rodada22", os.path.join(AQUI, "rodada22.py"))
+r22 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r22)
+r21 = r22.r21
+
+
+def curvas(cs, ate=20):
+    sim = r21.semelhancas(cs)
+    res = []
+    for i in range(len(cs) - ate):
+        ls = [L for L in range(1, ate + 1) if sim[i][i + L] > 0]
+        ys = [math.log(sim[i][i + L]) for L in ls]
+        _, m1, se = r22.reta([float(L) for L in ls], ys)
+        _, m2, sp = r22.reta([math.log(L) for L in ls], ys)
+        res.append((cs[i][0], len(ls), -1.0 / m1, se, -m2, sp))
+    return res
+
+
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        with open(os.path.join(sys.argv[2], "secoes23.txt"), "w", encoding="ascii") as f:
+            for n, ws in r21.conjuntos():
+                f.write(f"{n}\\t{' '.join(ws)}\\n")
+        return
+    pot = 0
+    for n, k, tau, se, alfa, sp in curvas(r21.conjuntos()):
+        pot += sp < se
+        print(f"parte {n}: {k} pontos; tau = {tau.hex()}; residuo exp = {se.hex()}; alfa = {alfa.hex()}; residuo pot = {sp.hex()}")
+    print(f"a potencia ganha em {pot}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/registro/rodada25_libm.py  (81 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/rodada25_libm.py'] = """\"\"\"Rodada 25 do diálogo Python <-> Java: duas memórias (curta e longa) ou uma potência? A curva média da Rodada 22 (L = 1..20)
+contra três modelos medidos pelo erro em log: exponencial e potência (k = 2, da Rodada 22) e duas exponenciais
+y = A e^(-L/t1) + B e^(-L/t2) (k = 4; grade t1 = 0,25..5, t2 = 2..200, t1 < t2; A, B por mínimos quadrados lineares, só
+positivos). AIC = n ln(SSE/n) + 2k. Com `--preparar PASTA`, escreve PASTA/secoes25.txt. Rodar da raiz: python3 dialogo/rodada25.py\"\"\"
+
+import importlib.util
+import math
+import os
+import sys
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+_spec = importlib.util.spec_from_file_location("rodada22", os.path.join(AQUI, "rodada22.py"))
+r22 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r22)
+r21 = r22.r21
+
+
+def duas_exponenciais(ys):
+    \"\"\"Melhor (sse em log, A, B, t1, t2) na grade; ys na escala original, L = 1..len(ys).\"\"\"
+    n = len(ys)
+    melhor = None
+    for i in range(1, 21):
+        t1 = 0.25 * i
+        u = [math.exp(-L / t1) for L in range(1, n + 1)]
+        for j in range(1, 101):
+            t2 = 2.0 * j
+            if t1 >= t2:
+                continue
+            v = [math.exp(-L / t2) for L in range(1, n + 1)]
+            suu = svv = suv = suy = svy = 0.0
+            for a, b, y in zip(u, v, ys):
+                suu += a * a
+                svv += b * b
+                suv += a * b
+                suy += a * y
+                svy += b * y
+            det = suu * svv - suv * suv
+            if det == 0.0:
+                continue
+            A = (suy * svv - svy * suv) / det
+            B = (svy * suu - suy * suv) / det
+            if A <= 0.0 or B <= 0.0:
+                continue
+            sse = 0.0
+            for a, b, y in zip(u, v, ys):
+                e = math.log(y) - math.log(A * a + B * b)
+                sse += e * e
+            if melhor is None or sse < melhor[0]:
+                melhor = (sse, A, B, t1, t2)
+    return melhor
+
+
+def aic(sse, n, k):
+    return n * math.log(sse / n) + 2 * k
+
+
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        with open(os.path.join(sys.argv[2], "secoes25.txt"), "w", encoding="ascii") as f:
+            for n, ws in r21.conjuntos():
+                f.write(f"{n}\\t{' '.join(ws)}\\n")
+        return
+    sim = r21.semelhancas(r21.conjuntos())
+    ys = [r21.media_distancia(sim, L) for L in range(1, 21)]
+    lys = [math.log(y) for y in ys]
+    _, _, se = r22.reta([float(L) for L in range(1, 21)], lys)
+    _, _, sp = r22.reta([math.log(L) for L in range(1, 21)], lys)
+    s2, A, B, t1, t2 = duas_exponenciais(ys)
+    print(f"exponencial: sse = {se.hex()}; aic = {aic(se, 20, 2).hex()}")
+    print(f"potencia: sse = {sp.hex()}; aic = {aic(sp, 20, 2).hex()}")
+    print(f"duas exponenciais: sse = {s2.hex()}; A = {A.hex()}; B = {B.hex()}; t1 = {t1.hex()}; t2 = {t2.hex()}; aic = {aic(s2, 20, 4).hex()}")
+    nomes = [("exponencial", aic(se, 20, 2)), ("potencia", aic(sp, 20, 2)), ("duas exponenciais", aic(s2, 20, 4))]
+    m = nomes[0]
+    for x in nomes[1:]:
+        if x[1] < m[1]:
+            m = x
+    print("menor aic: " + m[0])
+
+
+if __name__ == "__main__":
+    main()
 """
 
 # ====================================================================================================

@@ -1368,7 +1368,59 @@ P1516 rodada 43: o GPT pequeno acerta o proximo caractere em 5 de 30 posicoes; 4
 P1092 pNN novas (P1511-P1540) sem teste: 0 de 6: []
 P974 previsoes unilaterais da Parte 69: {69: (5, 0, [])}
 P1539 minha taxa de erro (189/573): media = 0.33, intervalo 90% = [0.30, 0.36]
+--- Parte 70 (0x46: algebra e geometria) ---
+P1544 delta de Gromov (v, 300 quadruplos, semente 70): maximo 2.0; medio 0.0383; fracao com delta > 0 0.0333; 6844 nos na componente; distancia media 12.44
+P1544 delta de Gromov (n, 300 quadruplos, semente 70): maximo 2.0; medio 0.3967; fracao com delta > 0 0.4767; 82115 nos na componente; distancia media 13.39
+P1545 janelas de 4 digitos que formam base de GF(2)^4, aleatorio (semente 1570): 0.30629 de 9997; teoria |GL(4,2)|/16^4 = 0.30762
+P1545 janelas de 4 digitos que formam base de GF(2)^4, pi: 0.30269 de 9997; teoria |GL(4,2)|/16^4 = 0.30762
+P1550 desvio binomial 0.00462; pi fica a -1.067 desvios (simples) e -0.534 (dobro, janelas sobrepostas)
+P1549 rodada 44, d = 24: pontos [(1000, 3.5897), (2000, 3.4747), (4000, 3.2316), (8000, 3.1679), (16000, 3.117)]; A 5.1853; alfa 0.05408; n* (trigrama 2,768) 1.099e+05
+P1549 rodada 44, d = 48: pontos [(1000, 3.5265), (2000, 3.3639), (4000, 3.2366), (8000, 3.2577)]; A 4.5912; alfa 0.03987; n* (trigrama 2,768) 3.246e+05
+P1549 bits(d = 48) - bits(d = 24) em 8000 passos: +0.0898
+P1541 escala refeita (d = 24, 6898 pesos): [(1000, 3.5897), (2000, 3.4747), (4000, 3.2316), (8000, 3.1679), (16000, 3.117)]
+P1543 geometria dos embeddings: cos vogais 0.2143; vogal-consoante -0.1394; consoantes 0.1279; diferenca 0.3538; 1a componente 0.1981
+P1541 d = 48 com lr 0,0025 (22978 pesos): [(4000, 3.1202), (8000, 3.0212)]
+P1092 pNN novas (P1541-P1570) sem teste: 0 de 7: []
+P974 previsoes unilaterais da Parte 70: {70: (6, 0, [])}
+P1569 minha taxa de erro (191/583): media = 0.33, intervalo 90% = [0.30, 0.36]
+--- Parte 71 (0x47: os autovalores da atencao) ---
+P1578 rodada 45: autovalores de M^T M (M = W_Q W_K^T) [222.8368, 52.6898, 11.8066, 8.6361, 4.7576, 2.1102, 1.436, 0.6314, 0.3748, 0.1734, 0.0887, 0.0691, 0.0097, 0.0036, 0.0004, 0.0]; PR 1.7732; fracao do maior 0.7291
+P1572 matriz gaussiana 16x16 ao acaso: PR 8.6341 (teoria ~ d/2 = 8)
+P1571 Jacobi em [[2, 1], [1, 2]]: [2.9999999999999996, 0.9999999999999998] (exatos: 3 e 1)
+P1573 classe v: fator por nivel (1-8) 0.5364; profundidade com mais sinsets 2; N(r) {0: 559, 1: 3286, 2: 3926, 3: 2998, 4: 1588, 5: 713, 6: 333, 7: 140, 8: 58, 9: 63, 10: 32, 11: 11, 12: 1}
+P1573 classe n: fator por nivel (1-8) 3.5359; profundidade com mais sinsets 7; N(r) {0: 1, 1: 3, 2: 22, 3: 228, 4: 2020, 5: 6249, 6: 12267, 7: 18936, 8: 14155, 9: 11042, 10: 7207, 11: 4267, 12: 2505, 13: 1383, 14: 846, 15: 449, 16: 341, 17: 164, 18: 30}
+P1574 grau 11: irredutiveis 186 (Gauss 186); gemeos (f, f + x + x^2) 28 contra a conta 16.9 (razao 1.658); gemeos por um bit (f, f + x): 0
+P1574 grau 13: irredutiveis 630 (Gauss 630); gemeos (f, f + x + x^2) 76 contra a conta 48.4 (razao 1.569); gemeos por um bit (f, f + x): 0
+P1574 grau 15: irredutiveis 2182 (Gauss 2182); gemeos (f, f + x + x^2) 224 contra a conta 145.3 (razao 1.542); gemeos por um bit (f, f + x): 0
+P1579 grau 11: serie singular S = 3.3315; conta 28.1; medido 28; razao 0.995; z de Poisson -0.03
+P1579 grau 13: serie singular S = 3.3315; conta 80.7; medido 76; razao 0.942; z de Poisson -0.52
+P1579 grau 15: serie singular S = 3.3315; conta 242.0; medido 224; razao 0.926; z de Poisson -1.16
+P1579 grau 17: serie singular S = 3.3315; conta 755.5; medido 758; razao 1.003; z de Poisson +0.09
+P1579 grau 19: serie singular S = 3.3315; conta 2419.2; medido 2456; razao 1.015; z de Poisson +0.75
+P1092 pNN novas (P1571-P1600) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 71: {71: (4, 0, [])}
+P1599 minha taxa de erro (193/591): media = 0.33, intervalo 90% = [0.30, 0.36]
+--- Parte 72 (0x48: o que esta disfuncional) ---
+P1601 auditoria, docs: 0 []
+P1601 auditoria, sem_teste: 0 []
+P1601 auditoria, testes_fora_da_lista: 0 []
+P1601 auditoria, rodadas_sem_java: 0 []
+P1601 auditoria, partes_fora_do_resultados: 2 [70, 71]
+P1601 auditoria, constantes: 0 []
+P1602 glosas inglesas: H = 4.2829 bits/simbolo; 33 simbolos; redundancia contra log2(33) = 0.1510; contra 8 bits = 0.4646 (o texto recebido: 1 - 4,11/8 = 0.48625)
+P1603 ciclos de glosas (A na glosa de B, B na glosa de A): [('knowledge', 'information', True, False), ('meaning', 'word', False, False)]
+P1604 hash como peso: |h(a) - h(b)| sinonimos 0.3313, sorteados 0.3332 (teoria 1/3); z = -0.261
+P1608 texto recebido, run_tests: 6 verificacoes (4 asserts) contra 6 declaradas
+P1608 texto recebido, test_engine: 7 verificacoes (5 asserts) contra 8 declaradas
+P1612 fecho de animal: 4017 sinsets; linear = BFS True; ingenuo = BFS True; 4 passagens, 326438 checagens contra 4051 decrementos (razao 80.6); 84427 regras; limite do texto (F+1)RP = 2.864e+13; passagens x P = 337708
+P1615 imports sem uso por bloco do texto recebido: [[], ['deque']]
+P1613 fecho de person: 10297
+P1614 rodada 46, fato 18: derivados 4017, controle 90606848035, decrementos 4051, prova de 12 regras
+P1614 rodada 46, fato 17: derivados 10297, controle 3025863371175, decrementos 11034, prova de 9 regras
+P1092 pNN novas (P1601-P1630) sem teste: 0 de 12: []
+P974 previsoes unilaterais da Parte 72: {72: (0, 0, [])}
+P1629 minha taxa de erro (195/607): media = 0.32, intervalo 90% = [0.29, 0.35]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 413; pares de interacao possiveis = 85078
+P96 funcoes pNN no arquivo = 438; pares de interacao possiveis = 95703
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
-Regressao: 116/116 resultados publicados reproduzidos; falhas = []
+Regressao: 121/121 resultados publicados reproduzidos; falhas = []
