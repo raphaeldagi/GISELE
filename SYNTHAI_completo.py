@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (10571 linhas)
+# calculos.py  (10841 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7508,6 +7508,8 @@ def testes_de_regressao():
         "P1333": p1333_primos_palindromos()[0] == 357 and p1331_fator_efetivo()[1:] == (84, 42),
         "P1363": p1363_quadrados_palindromos()[0] == 24 and p1361_fator_do_final()[7][1] == 196,
         "P1393": p1393_periodo_hex()[3] == 8363 and p1391_o_que_nao_e_divisor()[0][1] == 48,
+        "P1423": p1427_bases_29_a_34((29,))[0][1] == 1610 and p1421_endereco_da_falta()[0]["d0"][1] == 11,
+        "P1455": len(p1455_automorficos(12, 6)[0]) == 11 and len(p1452_minhas_previsoes(range(53, 67))) == 97,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9524,6 +9526,8 @@ ERROS_P1329, TESTES_P1329 = 181, 519
 ERROS_P1359, TESTES_P1359 = 182, 527
 ERROS_P1389, TESTES_P1389 = 184, 535
 ERROS_P1419, TESTES_P1419 = 186, 544
+ERROS_P1449, TESTES_P1449 = 189, 553
+ERROS_P1479, TESTES_P1479 = 189, 559
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -10186,6 +10190,223 @@ def p1393_periodo_hex(de=10 ** 4, ate=10 ** 5):
         n += 1
     return s16 / n, s2 / n, maximo / n, n
 
+
+def p1421_endereco_da_falta():
+    \"\"\"Rodada 40 (P1421): o endereço da falta de primos palíndromos da base 21 (por primeiro dígito e por dígito do meio, contra a
+    conta C reescalada) e as bases 23 a 28 com a conta C (dialogo/rodada40.py, IGUAL em Java). Devolve ({'d0': (qui², gl), 'd2':
+    (qui², gl)}, k, [(b, medido, C, σ, z)]).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada40", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada40.py"))
+    r40 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r40)
+    c = r40.crivo(28 ** 5)
+    cl = r40.classes(21, c)
+    quis, k = {}, None
+    for nome in ("d0", "d2"):
+        q, gl, k = r40.qui(cl[nome])
+        quis[nome] = (q, gl)
+    bases = []
+    for b in range(23, 29):
+        N, div, corr, ex, med, conta, var = r40.base(b, c)
+        m = ex + med[3] + med[5]
+        C = ex + conta[3] + conta[5]
+        sg = sqrt(var)
+        bases.append((b, m, C, sg, (m - C) / sg))
+    return quis, k, bases
+
+
+def p1422_sinonimos_por_classe(d=None):
+    \"\"\"Os sinônimos por classe (P1422): o tamanho médio do sinset (número de lemas) do WordNet por classe e a fração de sinsets de um
+    lema só. Devolve ({classe: (tamanho médio, fração de um lema, sinsets)}).\"\"\"
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    por = {}
+    for pos, lemas, _, _ in d.sinsets:
+        a, b, u = por.get(pos, (0, 0, 0))
+        por[pos] = (a + len(lemas), b + 1, u + (len(lemas) == 1))
+    return {c: (a / b, u / b, b) for c, (a, b, u) in sorted(por.items())}
+
+
+def p1423_mesma_soma_10_16(ate=16 ** 5):
+    \"\"\"A mesma soma em base 10 e em base 16 (P1423): a fração dos n de 1 a ate − 1 com s₁₀(n) = s₁₆(n), e a conta (3 vezes a chance de
+    duas somas independentes com as distribuições de 0 a ate − 1, porque s₁₀ ≡ n ≡ s₁₆ (mod 3)). Devolve (fração, conta).\"\"\"
+    s10 = [0] * ate
+    s16 = [0] * ate
+    for n in range(1, ate):
+        s10[n] = s10[n // 10] + n % 10
+        s16[n] = s16[n // 16] + n % 16
+    d10, d16 = {}, {}
+    for n in range(ate):
+        d10[s10[n]] = d10.get(s10[n], 0) + 1
+        d16[s16[n]] = d16.get(s16[n], 0) + 1
+    ind = sum(d10[k] * d16.get(k, 0) for k in d10) / ate / ate
+    iguais = sum(1 for n in range(1, ate) if s10[n] == s16[n])
+    return iguais / (ate - 1), 3 * ind
+
+
+def p1427_bases_29_a_34(bases=range(29, 35)):
+    \"\"\"Os primos palíndromos nas bases 29 a 34 com a conta C da rodada 39 (P1427): o terceiro lote, depois de 17 a 22 (abaixo) e 23 a
+    28 (sem viés). Devolve [(b, medido, C, σ, z)].\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada39", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada39.py"))
+    r39 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r39)
+    c = r39.crivo(max(bases) ** 5)
+    saida = []
+    for b in bases:
+        N, div, corr, ex, med, conta, var = r39.base(b, c)
+        m = ex + med[3] + med[5]
+        C = ex + conta[3] + conta[5]
+        sg = sqrt(var)
+        saida.append((b, m, C, sg, (m - C) / sg))
+    return saida
+
+
+def _numero_pt(x):
+    \"\"\"Um número escrito em português (vírgula decimal, ponto de milhar, sinal −, %) como float, ou None.\"\"\"
+    x = x.strip().replace("*", "").replace("−", "-").replace("%", "").replace(" ", "")
+    if "," in x:
+        x = x.replace(".", "").replace(",", ".")
+    elif x.count(".") >= 1 and len(x.split(".")[-1]) == 3 and x.replace(".", "").lstrip("-").isdigit():
+        x = x.replace(".", "")
+    try:
+        return float(x)
+    except ValueError:
+        return None
+
+
+def p1452_minhas_previsoes(partes=range(53, 67)):
+    \"\"\"As minhas previsões do mundo, lidas dos documentos (P1452): para cada parte, os vereditos da linha "Do mundo: (a) ✅ (b) ❌ …"
+    e, para cada letra, a primeira faixa "**[a; b]**" escrita depois da letra no documento da parte ou na rodada do diálogo dela
+    (rodada = parte − 26). Devolve [(parte, letra, a, b, acerto)] com a e b None quando a previsão não tem faixa numérica.\"\"\"
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    dialogo = open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8").read()
+    faixa = re.compile(r"\\(([a-z])\\)[^\\n]*?\\*\\*\\[([^\\];]+?);\\s*([^\\]]+?)\\]\\*\\*")
+    saida = []
+    for parte in partes:
+        arq = glob.glob(os.path.join(raiz, f"ASI_AGI_parte{parte}_*.md"))
+        if not arq:
+            continue
+        texto = open(arq[0], encoding="utf-8").read()
+        m = re.search(r"Do mundo: ((?:\\([a-z]\\) [✅❌] ?)+)", texto)
+        if not m:
+            continue
+        vered = re.findall(r"\\(([a-z])\\) ([✅❌])", m.group(1))
+        cab = re.search(rf"## Rodada {parte - 26} [^\\n]*\\n(.*?)(?=\\n## |\\Z)", dialogo, re.S)
+        rodada = cab.group(1) if cab else ""
+        corpo = texto.split("## As respostas")[0]
+        faixas = {}
+        for fonte in (corpo, rodada.split("**Resultado")[0]):
+            for letra, a, b in faixa.findall(fonte):
+                if letra not in faixas and _numero_pt(a) is not None and _numero_pt(b) is not None:
+                    faixas[letra] = (_numero_pt(a), _numero_pt(b))
+        for letra, v in vered:
+            a, b = faixas.get(letra, (None, None))
+            saida.append((parte, letra, a, b, v == "✅"))
+    return saida
+
+
+def p1453_engenharia_das_previsoes(previsoes=None):
+    \"\"\"A engenharia reversa das minhas previsões (P1453), sobre as lidas pela P1452: a largura relativa de cada faixa,
+    w = (b − a)/(|a| + |b|), a taxa de acerto por tipo (com faixa, sem faixa) e por terço de w, e um preditor de w (a mediana das
+    outras, deixando uma de fora) contra o ingênuo (o w da previsão anterior). Devolve um dicionário.\"\"\"
+    prev = previsoes if previsoes is not None else p1452_minhas_previsoes()
+    com = [x for x in prev if x[2] is not None and abs(x[2]) + abs(x[3]) > 0]
+    sem = [x for x in prev if x[2] is None]
+    ws = [(x[3] - x[2]) / (abs(x[2]) + abs(x[3])) for x in com]
+
+    def mediana(v):
+        v = sorted(v)
+        n = len(v)
+        return v[n // 2] if n % 2 else (v[n // 2 - 1] + v[n // 2]) / 2
+    ordem = sorted(range(len(ws)), key=lambda i: (ws[i], i))
+    tercos = [ordem[:len(ordem) // 3], ordem[len(ordem) // 3:2 * len(ordem) // 3], ordem[2 * len(ordem) // 3:]]
+    por_terco = [(mediana([ws[i] for i in t]), sum(com[i][4] for i in t) / len(t)) for t in tercos]
+    erro_loo = sum(abs(ws[i] - mediana(ws[:i] + ws[i + 1:])) for i in range(len(ws))) / len(ws)
+    erro_ing = sum(abs(ws[i] - ws[i - 1]) for i in range(1, len(ws))) / (len(ws) - 1)
+    q = sorted(ws)
+    return {"previsoes": len(prev), "com_faixa": len(com), "acerto": sum(x[4] for x in prev) / len(prev),
+            "acerto_com_faixa": sum(x[4] for x in com) / len(com), "acerto_sem_faixa": sum(x[4] for x in sem) / len(sem),
+            "w_mediana": mediana(ws), "w_q25": q[len(q) // 4], "w_q75": q[3 * len(q) // 4], "por_terco": por_terco,
+            "erro_loo": erro_loo, "erro_ingenuo": erro_ing,
+            "por_parte": {pa: sum(1 for x in prev if x[0] == pa) for pa in sorted({x[0] for x in prev})}}
+
+
+def p1459_previsoes_sobre_previsoes(parte=67, historico=range(53, 67)):
+    \"\"\"O placar das previsões sobre as minhas previsões (P1459): para a parte, lida pela P1452, (m1) a mediana de w das faixas, (m2) o
+    número de previsões do mundo, (m3) a fração de acertos, (m4) a fração das faixas com w a menos de 0,05 de 1/3, (m5) o erro médio
+    do preditor "mediana histórica" (P1453) para o w de cada faixa. Devolve (medidas, mediana histórica, ws da parte).\"\"\"
+    prev = p1452_minhas_previsoes(range(parte, parte + 1))
+    hist = p1453_engenharia_das_previsoes(p1452_minhas_previsoes(historico))
+    com = [x for x in prev if x[2] is not None and abs(x[2]) + abs(x[3]) > 0]
+    ws = [(x[3] - x[2]) / (abs(x[2]) + abs(x[3])) for x in com]
+    v = sorted(ws)
+    n = len(v)
+    med = (v[n // 2] if n % 2 else (v[n // 2 - 1] + v[n // 2]) / 2) if n else None
+    m = {"m1": med, "m2": len(prev), "m3": sum(x[4] for x in prev) / len(prev) if prev else None,
+         "m4": sum(1 for w in ws if abs(w - 1 / 3) <= 0.05) / n if n else None,
+         "m5": sum(abs(w - hist["w_mediana"]) for w in ws) / n if n else None}
+    return m, hist["w_mediana"], ws
+
+
+def p1451_tendencia_ou_dispersao():
+    \"\"\"Rodada 41 (P1451): o z dos primos palíndromos nas bases 5 a 40 (conta C da rodada 39), a reta de z contra b e a média e o
+    desvio-padrão dos z das bases 35 a 40 (dialogo/rodada41.py, IGUAL em Java). Devolve ([(b, medido, z)], (inclinação, intercepto,
+    erro-padrão), (média, dp) das novas, (média, dp) de todas).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada41", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada41.py"))
+    r41 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r41)
+    todos = r41.zs(range(5, 41), r41.crivo(40 ** 5))
+    return (todos, r41.reta([(float(b), z) for b, _, z in todos]), r41.media_dp([z for b, _, z in todos if b >= 35]),
+            r41.media_dp([z for _, _, z in todos]))
+
+
+def p1454_heranca_multipla(d=None):
+    \"\"\"A herança múltipla (P1454): a fração dos sinsets de cada classe com dois ou mais hiperônimos, e 5 exemplos de substantivos.
+    Devolve ({classe: (fração, sinsets)}, exemplos).\"\"\"
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    por, ex = {}, []
+    for pos, lemas, hip, _ in d.sinsets:
+        a, b = por.get(pos, (0, 0))
+        por[pos] = (a + (len(hip) >= 2), b + 1)
+        if pos == "n" and len(hip) >= 2 and len(ex) < 5:
+            ex.append(lemas[0])
+    return {c: (a / b, b) for c, (a, b) in sorted(por.items())}, ex
+
+
+def p1455_automorficos(base=12, kmax=6):
+    \"\"\"Os números automórficos numa base (P1455): n ≥ 2 de 1 a kmax dígitos com n² ≡ n (mod b^k), k = dígitos de n; e a conta
+    (2^ω − 2 soluções não triviais módulo b^k, ω = número de primos de b, vezes a chance (b − 1)/b de o dígito inicial não ser 0, somada
+    em k). Devolve (lista, conta).\"\"\"
+    primos, m, q = [], base, 2
+    while q * q <= m:
+        if m % q == 0:
+            primos.append(q)
+            while m % q == 0:
+                m //= q
+        q += 1
+    if m > 1:
+        primos.append(m)
+    achados = []
+    for k in range(1, kmax + 1):
+        mod = base ** k
+        for n in range(max(2, base ** (k - 1)), mod):
+            if (n * n - n) % mod == 0:
+                achados.append(n)
+    conta = (2 ** len(primos) - 2) * kmax * (base - 1) / base
+    return achados, conta
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -10556,6 +10777,55 @@ def _parte_65():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1419, testes=TESTES_P1419)
     print(f"P1419 minha taxa de erro ({ERROS_P1419}/{TESTES_P1419}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_66():
+    print("--- Parte 66 (0x42: o endereco da falta) ---")
+    quis, k, bases = p1421_endereco_da_falta()
+    for nome, (q, gl) in quis.items():
+        print(f"P1421 base 21, classes por {nome}: qui2 {q:.3f} com {gl} graus de liberdade (qui2/gl {q / gl:.4f}); fator global k = {k:.4f}")
+    for b, m, C, sg, z in bases:
+        print(f"P1421 base {b}: medido {m}; conta C {C:.2f}; sigma {sg:.2f}; z {z:+.2f}")
+    print(f"P1421 bases 23-28: media z {sum(x[4] for x in bases) / len(bases):+.4f}; negativos {sum(1 for x in bases if x[4] < 0)}")
+    novas = p1427_bases_29_a_34()
+    for b, m, C, sg, z in novas:
+        print(f"P1427 base {b}: medido {m}; conta C {C:.2f}; sigma {sg:.2f}; z {z:+.2f}")
+    print(f"P1427 bases 29-34: media z {sum(x[4] for x in novas) / len(novas):+.4f}")
+    r = p1422_sinonimos_por_classe()
+    print(f"P1422 sinsets por classe (tamanho medio, fracao de um lema, sinsets): {({c: (round(a, 4), round(u, 4), n) for c, (a, u, n) in r.items()})}; "
+          f"verbos/substantivos = {r['v'][0] / r['n'][0]:.4f}")
+    for ate in (10 ** 4, 10 ** 5, 16 ** 5):
+        frac, conta = p1423_mesma_soma_10_16(ate)
+        print(f"P1423 s10 = s16 para n < {ate}: {frac:.5f}; conta (3 x independencia) {conta:.5f}; razao {frac / conta:.4f}")
+    total, sem = p1092_pnn_sem_teste(1421, 1450)
+    print(f"P1092 pNN novas (P1421-P1450) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 66: {p974_previsoes_sem_largura(range(66, 67))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1449, testes=TESTES_P1449)
+    print(f"P1449 minha taxa de erro ({ERROS_P1449}/{TESTES_P1449}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_67():
+    print("--- Parte 67 (0x43: prever o previsto) ---")
+    prev = p1452_minhas_previsoes(range(53, 67))
+    r = p1453_engenharia_das_previsoes(prev)
+    print(f"P1452 previsoes do mundo lidas (Partes 53-66): {r['previsoes']}; com faixa numerica: {r['com_faixa']}; por parte {r['por_parte']}")
+    print(f"P1453 acerto {r['acerto']:.4f} (com faixa {r['acerto_com_faixa']:.4f}; sem faixa {r['acerto_sem_faixa']:.4f}); w mediana {r['w_mediana']:.4f} "
+          f"(quartis {r['w_q25']:.4f}, {r['w_q75']:.4f}); por terco de w (w mediano, acerto): {[(round(a, 4), round(b, 4)) for a, b in r['por_terco']]}; "
+          f"erro do preditor de w: mediana das outras {r['erro_loo']:.4f}, ingenuo {r['erro_ingenuo']:.4f}")
+    m, mediana, ws = p1459_previsoes_sobre_previsoes(67, range(53, 67))
+    print(f"P1459 previsoes sobre as minhas previsoes da Parte 67: m1 (mediana de w) {m['m1']:.4f}; m2 (previsoes) {m['m2']}; m3 (acerto) {m['m3']:.4f}; "
+          f"m4 (perto de 1/3) {m['m4']:.4f}; m5 (erro da mediana historica {mediana:.4f}) {m['m5']:.4f}; ws {[round(w, 4) for w in ws]}")
+    todos, (beta, alfa, ep), (mn, dpn), (mt, dpt) = p1451_tendencia_ou_dispersao()
+    print(f"P1451 bases 35-40: z {[(b, round(z, 3)) for b, _, z in todos if b >= 35]}; media {mn:+.4f}; dp {dpn:.4f}")
+    print(f"P1451 reta de z contra b (5-40): inclinacao {beta:.5f} (ep {ep:.5f}; t {beta / ep:.3f}); intercepto {alfa:.4f}; todas: media {mt:+.4f}, dp {dpt:.4f}")
+    por, ex = p1454_heranca_multipla()
+    print(f"P1454 sinsets com 2+ hiperonimos: {({c: (round(f, 5), n) for c, (f, n) in por.items()})}; exemplos {ex}")
+    for b, k in ((12, 6), (10, 6), (16, 6)):
+        ach, conta = p1455_automorficos(b, k)
+        print(f"P1455 automorficos base {b} ate {b}^{k}: {len(ach)} (conta {conta:.2f}); {ach}")
+    total, sem = p1092_pnn_sem_teste(1451, 1480)
+    print(f"P1092 pNN novas (P1451-P1480) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 67: {p974_previsoes_sem_largura(range(67, 68))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1479, testes=TESTES_P1479)
+    print(f"P1479 minha taxa de erro ({ERROS_P1479}/{TESTES_P1479}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -10592,7 +10862,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67}
 
 
 if __name__ == "__main__":
@@ -10605,7 +10875,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (219 linhas)
+# CLAUDE.md  (227 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -10702,6 +10972,14 @@ anterior, commit e push.
   Parte 65: as regras valem JUNTAS: a regra de escolha da calibração (Parte 64) tem que cobrir a faixa inteira da variável que move o mecanismo no teste (Parte 63);
   "as bases logo depois do teste" só tinha bases grandes e errou nas pequenas. E uma previsão por unidade confere, em cada unidade, a condição do mecanismo (a base 18 não
   tinha primo grande em b² + 1).
+  Parte 66: toda conclusão de efeito na síntese diz em quantos lotes independentes ele apareceu; visto em um lote só, escreve-se como hipótese (o "viés das bases
+  grandes" da Parte 64, 1/64 num lote, não se replicou: −1,07, −0,02, +1,12 por lote). As regras antigas valem também na síntese, não só nas previsões.
+- PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
+  metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
+  só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
+  engenharia reversa da regra com que eu escrevo faixas (`p1453`). Medido (Parte 67): 97 previsões desde a 53, 69% de acerto; as faixas largas acertam MENOS (53% contra
+  71%): eu alargo quando não sei o nível, e largura não compra acerto. As previsões sobre previsões condicionam no TIPO da quantidade (uma diferença em torno de zero tem
+  w = 1 sempre). E continuar em loop: cada parte termina agendando a próxima.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -10819,7 +11097,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -15985,6 +16263,118 @@ class TesteParte65(unittest.TestCase):
         self.assertAlmostEqual(a, m16, places=12)
         self.assertAlmostEqual(b, m2, places=12)
         self.assertAlmostEqual(c, mx, places=12)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte66.py  (47 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte66.py'] = """\"\"\"Testes de unidade da Parte 66: `python3 -m unittest synthai.testes_parte66`. Cada pNN nova com o seu teste, chamada PELO NOME.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class DicionarioFalso:
+    sinsets = [("n", ["dog", "domestic_dog"], [], ""), ("n", ["cat"], [], ""), ("v", ["run", "go", "move"], [], "")]
+
+
+def soma(n, b):
+    t = 0
+    while n:
+        n, r = divmod(n, b)
+        t += r
+    return t
+
+
+class TesteParte66(unittest.TestCase):
+    def test_p1421_endereco_da_falta(self):
+        quis, k, bases = calculos.p1421_endereco_da_falta()
+        self.assertEqual((quis["d0"][1], quis["d2"][1]), (11, 9))  # 12 primeiros dígitos coprimos a 21; 10 dígitos do meio ímpares
+        self.assertEqual([x[0] for x in bases], list(range(23, 29)))
+        self.assertEqual(bases[0][1], 874)
+        self.assertLess(k, 1.0)
+
+    def test_p1422_sinonimos_por_classe(self):
+        self.assertEqual(calculos.p1422_sinonimos_por_classe(DicionarioFalso()), {"n": (1.5, 0.5, 2), "v": (3.0, 0.0, 1)})
+
+    def test_p1423_mesma_soma_10_16(self):
+        # n < 20: iguais só de 1 a 9 (9 de 19); a conta: 3 vezes Σ_k P(s10 = k) P(s16 = k) nos n de 0 a 19, por outra conta
+        frac, conta = calculos.p1423_mesma_soma_10_16(20)
+        self.assertAlmostEqual(frac, 9 / 19, places=12)
+        d10 = [soma(n, 10) for n in range(20)]
+        d16 = [soma(n, 16) for n in range(20)]
+        ind = sum(d10.count(k) * d16.count(k) for k in set(d10)) / 400
+        self.assertAlmostEqual(conta, 3 * ind, places=12)
+
+    def test_p1427_bases_29_a_34(self):
+        b, m, C, sg, z = calculos.p1427_bases_29_a_34((29,))[0]
+        self.assertEqual((b, m), (29, 1610))
+        self.assertAlmostEqual(z, (m - C) / sg, places=12)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte67.py  (55 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte67.py'] = """\"\"\"Testes de unidade da Parte 67: `python3 -m unittest synthai.testes_parte67`. Cada pNN nova com o seu teste, chamada PELO NOME.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class DicionarioFalso:
+    sinsets = [("n", ["president"], ["n:1", "n:2"], ""), ("n", ["dog"], ["n:3"], ""), ("v", ["run"], ["v:1"], "")]
+
+
+PREVISOES = [(1, "a", 1.0, 2.0, True), (1, "b", None, None, False), (1, "c", -1.0, 1.0, False), (1, "d", 2.0, 6.0, True)]
+
+
+class TesteParte67(unittest.TestCase):
+    def test_p1451_tendencia_ou_dispersao(self):
+        todos, (beta, alfa, ep), (m, dp), (mt, dpt) = calculos.p1451_tendencia_ou_dispersao()
+        self.assertEqual(len(todos), 36)
+        self.assertEqual(todos[-1][:2], (40, 3755))
+        self.assertAlmostEqual(beta, 0.0379, places=4)
+
+    def test_p1452_minhas_previsoes(self):
+        prev = calculos.p1452_minhas_previsoes((66,))
+        self.assertEqual(len(prev), 9)
+        self.assertEqual(prev[0], (66, "a", 0.95, 1.3, True))
+        self.assertEqual(prev[2], (66, "c", 0.063, 0.0715, True))
+
+    def test_p1453_engenharia_das_previsoes(self):
+        # w = 1/3, 1 e 1/2; mediana 1/2; deixando uma de fora: |1/3 − 3/4|, |1 − 5/12|, |1/2 − 2/3| (média 7/18); ingênuo: (2/3 + 1/2)/2
+        r = calculos.p1453_engenharia_das_previsoes(PREVISOES)
+        self.assertEqual((r["previsoes"], r["com_faixa"]), (4, 3))
+        self.assertAlmostEqual(r["w_mediana"], 0.5, places=12)
+        self.assertAlmostEqual(r["erro_loo"], 7 / 18, places=12)
+        self.assertAlmostEqual(r["erro_ingenuo"], 7 / 12, places=12)
+        self.assertAlmostEqual(r["acerto"], 0.5, places=12)
+
+    def test_p1454_heranca_multipla(self):
+        por, ex = calculos.p1454_heranca_multipla(DicionarioFalso())
+        self.assertEqual((por, ex), ({"n": (0.5, 2), "v": (0.0, 1)}, ["president"]))
+
+    def test_p1455_automorficos(self):
+        achados, conta = calculos.p1455_automorficos(10, 3)
+        self.assertEqual(achados, [5, 6, 25, 76, 376, 625])
+        self.assertAlmostEqual(conta, 2 * 3 * 0.9, places=12)
+        self.assertEqual(calculos.p1455_automorficos(16, 3)[0], [])  # 16 = 2⁴: só os triviais
+
+    def test_p1459_previsoes_sobre_previsoes(self):
+        m, mediana, ws = calculos.p1459_previsoes_sobre_previsoes(66, range(53, 66))
+        self.assertEqual(m["m2"], 9)
+        self.assertEqual(len(ws), 6)
+        self.assertAlmostEqual(m["m5"], sum(abs(w - mediana) for w in ws) / 6, places=12)
 
 
 if __name__ == "__main__":
