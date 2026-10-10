@@ -7484,6 +7484,7 @@ def testes_de_regressao():
         "P1612": p1612_animais_por_horn()[:4] == (4017, True, True, 4) and p1608_auditoria_estatica()[1] == ("test_engine", 7, 5, 8),
         "P1639": p1639_rodada47()[1:2] + p1639_rodada47()[4:5] == (958, 102) and abs(p1632_prioridade_contra_voi(20000, 74)[0] - 0.49995) < 1e-9,
         "P1663": p1663_rodada48()[3] == 172 and p1662_orcamento(semente=75)[2] == 0.62,
+        "P1692": p1692_godel_nas_funcoes()[1:3] == (584, 288) and p1691_laco_de_auto_modificacao(geracoes=2, separador_corrigido=True)[0][1:3] == (True, 2.8333333333333335),
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
         "P1579": p1574_irredutiveis_gf2(17, 6)[2] == 758 and abs(p1579_serie_singular_gf2(17)[1] - 755.458) < 0.001,
     }
@@ -9514,6 +9515,8 @@ VEREDITOS_P1659 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) H
 ERROS_P1659, TESTES_P1659 = 196, 616
 VEREDITOS_P1689 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅"
 ERROS_P1689, TESTES_P1689 = ERROS_P1659 + VEREDITOS_P1689.count("❌"), TESTES_P1659 + VEREDITOS_P1689.count("✅") + VEREDITOS_P1689.count("❌")  # fixar em inteiros quando a P1659 fechar
+VEREDITOS_P1719 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ❌ (g) ✅"
+ERROS_P1719, TESTES_P1719 = ERROS_P1689 + VEREDITOS_P1719.count("❌"), TESTES_P1689 + VEREDITOS_P1719.count("✅") + VEREDITOS_P1719.count("❌")  # fixar em inteiros quando a P1659 fechar
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -11473,6 +11476,51 @@ def p1692_godel_nas_funcoes():
     return len(funcs), aprov, mud, ambos
 
 
+def p1693_godel_no_pacote():
+    """A mesma "prova de utilidade" (P1692) nas funções e métodos dos arquivos synthai/*.py que não são testes (P1693), um mundo novo para a previsão
+    nascida do erro (e) da Parte 75. Nada é executado. Devolve (funções e métodos, aprovados, mudados pela mutação)."""
+    import ast
+    import glob
+    import os
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    n = aprov = mud = 0
+    for f in sorted(glob.glob(os.path.join(raiz, "synthai", "*.py"))):
+        if os.path.basename(f).startswith("testes"):
+            continue
+        fonte = open(f, encoding="utf-8").read()
+        for no in ast.walk(ast.parse(fonte)):
+            if isinstance(no, ast.FunctionDef):
+                mutado, trocas = _mutar_soma_em_produto(__import__("textwrap").dedent(ast.get_source_segment(fonte, no)))
+                a, _ = _nucleo_utilidade(mutado, "reasoning")
+                n += 1
+                aprov += a
+                mud += trocas > 0
+    return n, aprov, mud
+
+
+def p1694_verificador_do_texto():
+    """O Verifier.java do relatório do Módulo 007 (Parte 75), conferido por conta (P1694): score = ganho·(1 − risco)/custo para A (0,8; 0,1; 2),
+    B (0,5; 0; 1) e C (0,9; 0,2; 4); com orçamento 3, a ordem gulosa pelo score e o ótimo por enumeração dos 2³ subconjuntos (valor = ganho·(1 − risco)).
+    Devolve (scores, ordem gulosa escolhida, valor guloso, melhor subconjunto, valor ótimo)."""
+    from itertools import combinations
+    exp = {"A": (0.8, 0.1, 2), "B": (0.5, 0.0, 1), "C": (0.9, 0.2, 4)}
+    sc = {k: g * (1.0 - r) / c for k, (g, r, c) in exp.items()}
+    resto, ordem, valor = 3, [], 0.0
+    for k in sorted(exp, key=lambda k: -sc[k]):
+        if exp[k][2] <= resto:
+            resto -= exp[k][2]
+            ordem.append(k)
+            valor += exp[k][0] * (1.0 - exp[k][1])
+    melhor, vmax = (), 0.0
+    for t in range(1, 4):
+        for sub in combinations(sorted(exp), t):
+            if sum(exp[k][2] for k in sub) <= 3:
+                v = sum(exp[k][0] * (1.0 - exp[k][1]) for k in sub)
+                if v > vmax:
+                    melhor, vmax = sub, v
+    return sc, ordem, valor, melhor, vmax
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -12154,6 +12202,24 @@ def _parte_74():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1689, testes=TESTES_P1689)
     print(f"P1689 minha taxa de erro ({ERROS_P1689}/{TESTES_P1689}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_75():
+    print("--- Parte 75 (0x4B: o que se prova) ---")
+    for corr in (False, True):
+        h = p1691_laco_de_auto_modificacao(geracoes=5, separador_corrigido=corr)
+        print(f"P1691 separador corrigido = {corr}: campos achados {[x[0] for x in h]}; aprovados {[x[1] for x in h]}; delta {h[0][2]:.4f}; "
+              f"codigos distintos {len({x[3] for x in h})}: {h[-1][3]!r}")
+    n, a, m, am = p1692_godel_nas_funcoes()
+    print(f"P1692 calculos.py: {n} funcoes; aprovadas pelo nucleo {a} ({a / n:.4f}); mudadas pela mutacao {m} ({m / n:.4f}); aprovadas e mudadas {am}")
+    n, a, m = p1693_godel_no_pacote()
+    print(f"P1693 synthai/ (sem testes): {n} funcoes e metodos; aprovados {a} ({a / n:.4f}); mudados {m} ({m / n:.4f})")
+    sc, ordem, v, melhor, vmax = p1694_verificador_do_texto()
+    print(f"P1694 Verifier do texto: scores {[(k, round(x, 4)) for k, x in sc.items()]}; ordem gulosa {ordem} (valor {v:.4f}); otimo {melhor} ({vmax:.4f})")
+    total, sem = p1092_pnn_sem_teste(1691, 1720)
+    print(f"P1092 pNN novas (P1691-P1720) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 75: {p974_previsoes_sem_largura(range(75, 76))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1719, testes=TESTES_P1719)
+    print(f"P1719 minha taxa de erro ({ERROS_P1719}/{TESTES_P1719}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -12190,7 +12256,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75}
 
 
 if __name__ == "__main__":
