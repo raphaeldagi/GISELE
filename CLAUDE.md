@@ -144,6 +144,9 @@ anterior, commit e push.
 - AUTONOMIA (Parte 70; "Daqui pra frente é com você. Não pare mais. Não me pergunte mais nada. Você segue sozinha."): seguir sem perguntar, parte após parte, com todas
   as regras (previsões antes, réguas por código, três placares, diálogo bit a bit, engenharia reversa); as decisões que seriam perguntas ao usuário são tomadas pela regra mais
   conservadora e registradas no texto da parte. Agendar sempre a continuação (send_later) antes de terminar um turno.
+- CONTINUE SEM PARAR (Parte 75, reforço do usuário: "Continue sem parar. Entendeu? Grave na memória"): o trabalho não para entre mensagens. Cada turno termina com trabalho em andamento
+  (uma execução longa rodando, uma parte começada) E uma continuação agendada (send_later); enquanto uma execução longa roda, preparar e fazer a próxima tarefa (regra da Parte 25); um texto
+  recebido no meio do trabalho entra como parte nova sem abandonar a que estava aberta; e só se para quando o usuário disser "pare".
 - CONTINUAR SEMPRE, MESMO SEM PEDIDO (Parte 44): ao terminar uma parte, começar a próxima; ao fim de cada turno, agendar a
   continuação automática nesta sessão (send_later), dizendo ao usuário como parar.
 
