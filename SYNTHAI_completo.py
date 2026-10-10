@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (9924 linhas)
+# calculos.py  (10046 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7503,6 +7503,7 @@ def testes_de_regressao():
         "P1183": p1183_primeiro_digito_hex(2) == [0, 2500, 2500, 0, 2500, 0, 0, 0, 2500] + [0] * 7 and p1183_primeiro_digito_hex(3)[1] == 2506,
         "P1213": p1213_persistencia_hex(16 ** 4)[:2] == (7, 0x3DDE),
         "P1243": len(p1243_narcisistas_hex(8)) == 64 and p1249_fator_de_congruencia(9) == 15,
+        "P1273": p1273_niven(16 ** 5)[0] == 93788 and p1278_familias_narcisistas()[:2] == (175, 157),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9514,6 +9515,7 @@ def p1181_primeira_diferenca():
 
 ERROS_P1239, TESTES_P1239 = 171, 492
 ERROS_P1269, TESTES_P1269 = 175, 503
+ERROS_P1299, TESTES_P1299 = 178, 511
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -9680,6 +9682,98 @@ def p1251_conta_contra_medida(casos=((16, 9), (8, 8), (10, 7), (6, 13), (12, 11)
             l0 += m * log(e0) - e0 - lgamma(m + 1)
             l1 += m * log(e1) - e1 - lgamma(m + 1)
     return linhas, l0, l1
+
+
+def p1271_rodadas_verificadas():
+    \"\"\"Quantas rodadas o dialogo/verificar.py confere (P1271): os pares RodadaNN.java / rodadaNN.py. Devolve (pares, números).\"\"\"
+    import glob
+    import os
+    aqui = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo")
+    nums = sorted(int(os.path.basename(j)[6:-5]) for j in glob.glob(os.path.join(aqui, "Rodada*.java"))
+                  if os.path.exists(os.path.join(aqui, "r" + os.path.basename(j)[1:-5] + ".py")))
+    return len(nums), nums
+
+
+NEGACOES = ("not ", "lacking", "without", "devoid", "free of", "free from", "having no ")
+PREFIXOS_NEGATIVOS = ("un", "in", "im", "il", "ir", "non", "dis")
+
+
+def p1272_adjetivos_negativos(d=None):
+    \"\"\"Os adjetivos definidos pela negação (P1272): dos sinsets de adjetivo, a fração cuja definição começa por "not",
+    "lacking", "without", "devoid", "free of/from" ou "having no"; e, entre esses, a fração com algum lema de prefixo negativo.
+    Devolve (fração negativa, adjetivos, fração com prefixo entre os negativos, 5 exemplos).\"\"\"
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    n, neg, pre, ex = 0, 0, 0, []
+    for pos, lemas, _, glosa in d.sinsets:
+        if pos != "a":
+            continue
+        n += 1
+        g = d.definicao(glosa).strip().lower()
+        if g.startswith(NEGACOES):
+            neg += 1
+            pre += any(w.lower().startswith(PREFIXOS_NEGATIVOS) for w in lemas)
+            if len(ex) < 5:
+                ex.append((lemas[0], g[:60]))
+    return neg / n, n, (pre / neg if neg else 0.0), ex
+
+
+def p1273_niven(ate=16 ** 5, base=16):
+    \"\"\"Os números de Niven numa base (P1273): quantos n de 1 a ate são divisíveis pela soma dos seus dígitos; e a conta de
+    De Koninck, Doyon e Kátai, eta·x/ln x com eta = (2 ln q)/(q − 1)²·Σ_{j=1}^{q−1} mdc(j, q − 1). Devolve (contagem, conta).\"\"\"
+    from math import gcd, log
+    soma = [0] * (ate + 1)
+    k = 0
+    for n in range(1, ate + 1):
+        soma[n] = soma[n // base] + n % base
+        k += n % soma[n] == 0
+    eta = 2 * log(base) / (base - 1) ** 2 * sum(gcd(j, base - 1) for j in range(1, base))
+    return k, eta * ate / log(ate)
+
+
+def p1274_narcisistas_14_bases():
+    \"\"\"Rodada 35 (P1274): os narcisistas das bases 3 a 16, k de 2 a 7, contra a conta com o fator de congruência
+    (dialogo/rodada35.py, IGUAL em Java). Devolve (células [((b, k), (medido, num, den, g, interruptor, conta))], grupos
+    [(nome, medido, conta)]).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada35", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada35.py"))
+    r35 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r35)
+    celulas = [((b, k), r35.celula(b, k)) for b in r35.BASES for k in r35.KS]
+    return celulas, r35.grupos(celulas)
+
+
+def p1278_familias_narcisistas(kmax=7, bases=range(3, 17)):
+    \"\"\"As famílias dos narcisistas (P1278): o interruptor (1, 0) existe em toda base, então cada solução terminada em 0 traz
+    n + 1. Juntando cada par {n terminado em 0, n + 1, ambos soluções} numa família, conta, nas células (b, k ≥ 2) sem outro
+    interruptor (P1247), as soluções, os pares e a conta com o fator (P1250). Devolve (soluções, famílias, conta, pares).\"\"\"
+    sol = fam = pares = 0
+    conta = 0.0
+    for b in bases:
+        nums = set(p1243_narcisistas_hex(kmax, b))
+        por_k = {}
+        for n in nums:
+            por_k.setdefault(len(_digitos_base(n, b)), []).append(n)
+        for k in range(2, kmax + 1):
+            if len(p1247_interruptores(k, b)) > 1:
+                continue
+            ns = por_k.get(k, [])
+            p = sum(1 for n in ns if n % b == 0 and n + 1 in nums)
+            sol += len(ns)
+            pares += p
+            fam += len(ns) - p
+            conta += p1250_esperado_narcisistas(k, b)[1]
+    return sol, fam, conta, pares
+
+
+def _digitos_base(n, b):
+    ds = []
+    while n:
+        n, r = divmod(n, b)
+        ds.append(r)
+    return ds
 
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
@@ -9909,6 +10003,34 @@ def _parte_60():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1269, testes=TESTES_P1269)
     print(f"P1269 minha taxa de erro ({ERROS_P1269}/{TESTES_P1269}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_61():
+    print("--- Parte 61 (0x3D: o dobro) ---")
+    n, nums = p1271_rodadas_verificadas()
+    print(f"P1271 rodadas conferidas pelo verificar.py: {n} ({nums[0]} a {nums[-1]})")
+    neg, na, pre, ex = p1272_adjetivos_negativos()
+    print(f"P1272 adjetivos definidos pela negacao: {neg:.4f} de {na}; com prefixo negativo entre eles: {pre:.4f}; {ex[:3]}")
+    for ate, base in ((10 ** 6, 10), (16 ** 5, 16)):
+        k, conta = p1273_niven(ate, base)
+        print(f"P1273 Niven base {base} ate {ate}: {k}; conta de De Koninck-Doyon-Katai {conta:.1f}; razao {k / conta:.4f}")
+    celulas, grupos = p1274_narcisistas_14_bases()
+    for nome, m, e in grupos:
+        print(f"P1274 {nome}: medido {m}; conta {e:.3f}; razao {m / e:.4f}")
+    for b in range(3, 17):
+        m = sum(c[0] for (bb, k), c in celulas if bb == b and not c[4])
+        e = 0.0
+        for (bb, k), c in celulas:
+            if bb == b and not c[4]:
+                e += c[5]
+        print(f"P1274 base {b:2d} sem interruptor: medido {m:2d}; conta {e:.3f}; razao {m / e:.3f}")
+    sol, fam, conta, pares = p1278_familias_narcisistas()
+    print(f"P1278 sem outro interruptor: solucoes {sol}; pares (n terminado em 0, n + 1) {pares}; familias {fam}; conta {conta:.3f}; "
+          f"familias/conta {fam / conta:.4f}")
+    total, sem = p1092_pnn_sem_teste(1271, 1300)
+    print(f"P1092 pNN novas (P1271-P1300) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 61: {p974_previsoes_sem_largura(range(61, 62))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1299, testes=TESTES_P1299)
+    print(f"P1299 minha taxa de erro ({ERROS_P1299}/{TESTES_P1299}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -9945,7 +10067,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61}
 
 
 if __name__ == "__main__":
@@ -9958,7 +10080,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (204 linhas)
+# CLAUDE.md  (207 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -10042,6 +10164,9 @@ anterior, commit e push.
   Parte 60: o placar por voz do diálogo agora é `p1241_placar_por_voz` (a mão não seguia regra nenhuma: 36 ficou entre a regra estrita, 27, e a generosa, 44).
   O que vem em par, eu leio como um: nenhum centro de previsão sai de contagem por leitura, nem sobre dados passados (uma linha de código conta antes). E as
   minhas regras têm custo: ao prever quantos testes a parte terá, somar ~2 por erro esperado (cada erro gera previsões novas num mundo novo).
+  Parte 61: o custo de um erro depende do seu TAMANHO (um erro de fator 2 abriu quatro testes; erros por pouco, nenhum): condicionar a previsão sobre mim às
+  surpresas, não à contagem de erros. E um efeito visto num subconjunto se testa unidade por unidade antes de ganhar mecanismo (o "dobro" das bases pares
+  era a base 8).
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -10157,7 +10282,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -15046,6 +15171,63 @@ class TesteParte60(unittest.TestCase):
         linhas, l0, l1 = calculos.p1251_conta_contra_medida(((3, 3),))
         self.assertEqual([x[:3] for x in linhas], [(3, 2, 2), (3, 3, 1)])
         self.assertGreater(l1, l0)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte61.py  (52 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte61.py'] = """\"\"\"Testes de unidade da Parte 61: `python3 -m unittest synthai.testes_parte61`. Cada pNN nova com o seu teste, chamada PELO NOME.\"\"\"
+
+import math
+import unittest
+
+import calculos
+
+
+class DicionarioFalso:
+    # dois adjetivos negativos (um com prefixo), um positivo; o substantivo fica fora
+    sinsets = [("a", ["nonliving"], [], "not endowed with life"), ("a", ["rare"], [], "not widely distributed"),
+               ("a", ["happy"], [], "enjoying well-being"), ("n", ["x"], [], "not a thing")]
+
+    @staticmethod
+    def definicao(glosa):
+        return glosa
+
+
+class TesteParte61(unittest.TestCase):
+    def test_p1271_rodadas_verificadas(self):
+        n, nums = calculos.p1271_rodadas_verificadas()
+        self.assertEqual(nums, list(range(1, n + 1)))
+        self.assertEqual(nums[:35], list(range(1, 36)))
+
+    def test_p1272_adjetivos_negativos(self):
+        neg, n, pre, ex = calculos.p1272_adjetivos_negativos(DicionarioFalso())
+        self.assertEqual(n, 3)
+        self.assertAlmostEqual(neg, 2 / 3, places=12)
+        self.assertAlmostEqual(pre, 0.5, places=12)
+        self.assertEqual(ex[0][0], "nonliving")
+
+    def test_p1273_niven(self):
+        # base 10 até 20: 1..10, 12, 18, 20 (conferido por código); eta_10 = 2 ln 10 · 21 / 81
+        k, conta = calculos.p1273_niven(20, 10)
+        self.assertEqual(k, 13)
+        self.assertAlmostEqual(conta, 2 * math.log(10) * 21 / 81 * 20 / math.log(20), places=12)
+
+    def test_p1274_narcisistas_14_bases(self):
+        celulas, grupos = calculos.p1274_narcisistas_14_bases()
+        self.assertEqual(len(celulas), 84)
+        self.assertEqual(dict(celulas)[(10, 3)][0], 4)  # 153, 370, 371, 407
+        self.assertEqual(grupos[3][:2], ("sem interruptor", 175))
+
+    def test_p1278_familias_narcisistas(self):
+        # base 10, k = 2 e 3: soluções 153, 370, 371, 407; um par (370, 371): 3 famílias
+        sol, fam, conta, pares = calculos.p1278_familias_narcisistas(3, (10,))
+        self.assertEqual((sol, fam, pares), (4, 3, 1))
+        self.assertAlmostEqual(conta, calculos.p1250_esperado_narcisistas(2, 10)[1] + calculos.p1250_esperado_narcisistas(3, 10)[1], places=12)
 
 
 if __name__ == "__main__":

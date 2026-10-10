@@ -1163,7 +1163,35 @@ P1251 total (k >= 2, 5 bases): medido 140; conta sem o fator 31.8; com o fator 8
 P1092 pNN novas (P1241-P1270) sem teste: 0 de 8: []
 P974 previsoes unilaterais da Parte 60: {60: (7, 0, [])}
 P1269 minha taxa de erro (175/503): media = 0.35, intervalo 90% = [0.31, 0.38]
+--- Parte 61 (0x3D: o dobro) ---
+P1271 rodadas conferidas pelo verificar.py: 35 (1 a 35)
+P1272 adjetivos definidos pela negacao: 0.1143 de 18156; com prefixo negativo entre eles: 0.6758; [('direct', 'lacking compromising or mitigating elements'), ('nonabsorbent', 'not capable of absorbing or soaking up (liquids)'), ('nonadsorbent', 'lacking a capacity to adsorb or cause to accumulate on a sur')]
+P1273 Niven base 10 ate 1000000: 95428; conta de De Koninck-Doyon-Katai 86419.8; razao 1.1042
+P1273 Niven base 16 ate 1048576: 93788; conta de De Koninck-Doyon-Katai 83886.1; razao 1.1180
+P1274 sem interruptor, impares: medido 117; conta 84.662; razao 1.3820
+P1274 sem interruptor, pares: medido 58; conta 32.152; razao 1.8039
+P1274 sem interruptor, bases novas: medido 123; conta 90.986; razao 1.3518
+P1274 sem interruptor: medido 175; conta 116.814; razao 1.4981
+P1274 com interruptor: medido 67; conta 31.828; razao 2.1051
+P1274 base  3 sem interruptor: medido  3; conta 4.534; razao 0.662
+P1274 base  4 sem interruptor: medido  2; conta 1.949; razao 1.026
+P1274 base  5 sem interruptor: medido 10; conta 8.639; razao 1.157
+P1274 base  6 sem interruptor: medido 10; conta 7.441; razao 1.344
+P1274 base  7 sem interruptor: medido 20; conta 17.516; razao 1.142
+P1274 base  8 sem interruptor: medido 13; conta 2.983; razao 4.358
+P1274 base  9 sem interruptor: medido  3; conta 4.443; razao 0.675
+P1274 base 10 sem interruptor: medido 15; conta 8.822; razao 1.700
+P1274 base 11 sem interruptor: medido 27; conta 14.598; razao 1.850
+P1274 base 12 sem interruptor: medido 11; conta 4.376; razao 2.514
+P1274 base 13 sem interruptor: medido 29; conta 17.566; razao 1.651
+P1274 base 14 sem interruptor: medido  4; conta 4.376; razao 0.914
+P1274 base 15 sem interruptor: medido 25; conta 17.366; razao 1.440
+P1274 base 16 sem interruptor: medido  3; conta 2.206; razao 1.360
+P1278 sem outro interruptor: solucoes 175; pares (n terminado em 0, n + 1) 18; familias 157; conta 116.814; familias/conta 1.3440
+P1092 pNN novas (P1271-P1300) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 61: {61: (4, 0, [])}
+P1299 minha taxa de erro (178/511): media = 0.35, intervalo 90% = [0.31, 0.38]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 368; pares de interacao possiveis = 67528
+P96 funcoes pNN no arquivo = 373; pares de interacao possiveis = 69378
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
-Regressao: 107/107 resultados publicados reproduzidos; falhas = []
+Regressao: 108/108 resultados publicados reproduzidos; falhas = []
