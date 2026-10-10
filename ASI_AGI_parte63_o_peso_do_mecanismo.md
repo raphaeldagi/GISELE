@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 63 (0x3F): o peso do mecanismo
 
-> Continuação da [Parte 62](ASI_AGI_parte62_o_ultimo_digito.md). Previsões nos commits `fb55f1b` ((a) a (g)) e `abbb6da` ((h)). **Previsões registradas antes de qualquer execução que mostre os números medidos e antes de
+> Continuação da [Parte 62](ASI_AGI_parte62_o_ultimo_digito.md). **Próxima:** [Parte 64 — o fator do final](ASI_AGI_parte64_o_fator_do_final.md) (P1361–P1390). Previsões nos commits `fb55f1b` ((a) a (g)) e `abbb6da` ((h)). **Previsões registradas antes de qualquer execução que mostre os números medidos e antes de
 > escrever o resto deste documento.** A Parte 62 pediu uma regra: todo mecanismo deduzido ganha uma conta do seu peso num caso fora do teste, antes do registro.
 > Esta parte é a primeira com essa regra. Pergunta se o fator de congruência efetivo explica a base 8, quanto a glosa portuguesa é mais longa que a inglesa,
 > e quantos primos palíndromos há em hexadecimal.

@@ -7473,6 +7473,7 @@ def testes_de_regressao():
         "P1273": p1273_niven(16 ** 5)[0] == 93788 and p1278_familias_narcisistas()[:2] == (175, 157),
         "P1303": p1303_autonumeros()[1] == 64999 and p1307_terminacoes_iguais()[1][0] == ("al", 434),
         "P1333": p1333_primos_palindromos()[0] == 357 and p1331_fator_efetivo()[1:] == (84, 42),
+        "P1363": p1363_quadrados_palindromos()[0] == 24 and p1361_fator_do_final()[7][1] == 196,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9487,6 +9488,7 @@ ERROS_P1269, TESTES_P1269 = 175, 503
 ERROS_P1299, TESTES_P1299 = 178, 511
 ERROS_P1329, TESTES_P1329 = 181, 519
 ERROS_P1359, TESTES_P1359 = 182, 527
+ERROS_P1389, TESTES_P1389 = 184, 535
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -10019,6 +10021,24 @@ def p1363_quadrados_palindromos(ate=16 ** 4, base=16):
             ns.append(n)
     return len(ns), conta, ns
 
+
+def p1367_bases_novas_palindromos(bases=range(17, 23)):
+    """Os primos palíndromos em bases novas (P1367), com a conta B e o σ da rodada 38 (dialogo/rodada38.base), até b⁵. Devolve
+    [(b, medido, conta B, σ, z = (medido − B)/σ)]."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada38", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada38.py"))
+    r38 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r38)
+    c = r38.crivo(max(bases) ** 5)
+    saida = []
+    for b in bases:
+        m, a, bb, var = r38.base(b, c)
+        s = sqrt(var)
+        saida.append((b, m, bb, s, (m - bb) / s))
+    return saida
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -10328,6 +10348,34 @@ def _parte_63():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1359, testes=TESTES_P1359)
     print(f"P1359 minha taxa de erro ({ERROS_P1359}/{TESTES_P1359}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_64():
+    print("--- Parte 64 (0x40: o fator do final) ---")
+    linhas = p1361_fator_do_final()
+    perto, absrel, soma = 0, 0.0, 0.0
+    for b, m, a, bb, sg in linhas:
+        perto += abs(m - bb) < 2 * sg
+        absrel += abs(m - bb) / bb
+        soma += m - bb
+        print(f"P1361 base {b:2d}: medido {m:3d}; conta A {a:.2f}; conta B {bb:.2f} (razao {m / bb:.4f}); sigma {sg:.2f}; z {(m - bb) / sg:+.2f}")
+    print(f"P1361 bases a menos de 2 sigma: {perto} de {len(linhas)}; media |medido - B|/B = {absrel / len(linhas):.4f}; soma medido - B = {soma:.2f}")
+    novas = p1367_bases_novas_palindromos()
+    for b, m, bb, sg, z in novas:
+        print(f"P1367 base {b}: medido {m}; conta B {bb:.2f}; sigma {sg:.2f}; z {z:+.2f}")
+    print(f"P1367 fora de 2 sigma: {sum(1 for x in novas if abs(x[4]) >= 2)} de {len(novas)}; media z {sum(x[4] for x in novas) / len(novas):+.4f}; "
+          f"z negativos: {sum(1 for x in novas if x[4] < 0)}")
+    rho, n, mono, por = p1362_brevidade_e_sentidos()
+    print(f"P1362 Spearman comprimento x sentidos: {rho:.4f} ({n} lemas; monossemicos {mono:.4f}); sentidos medios por comprimento "
+          f"{({L: round(v, 3) for L, v in por.items()})}")
+    k, conta, ns = p1363_quadrados_palindromos()
+    k10, conta10, _ = p1363_quadrados_palindromos(10 ** 4, 10)
+    print(f"P1363 quadrados palindromos base 16 (n < 16^4): {k}; conta {conta:.2f}; razao {k / conta:.3f}; n = {[hex(x) for x in ns]}")
+    print(f"P1363 calibracao base 10 (n < 10^4): {k10}; conta {conta10:.2f}; razao {k10 / conta10:.3f}")
+    total, sem = p1092_pnn_sem_teste(1361, 1390)
+    print(f"P1092 pNN novas (P1361-P1390) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 64: {p974_previsoes_sem_largura(range(64, 65))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1389, testes=TESTES_P1389)
+    print(f"P1389 minha taxa de erro ({ERROS_P1389}/{TESTES_P1389}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -10364,7 +10412,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64}
 
 
 if __name__ == "__main__":

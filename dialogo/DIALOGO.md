@@ -1291,3 +1291,19 @@ medido/conta B da base 12 fica em **[1,05; 1,15]** (o fator não muda nada que i
 
 **As duas (previsão (g)):** a soma, nas 12 bases, de (medido − conta B), em **[0; 80]** (a conta tende a ficar abaixo: na base 10 até 10⁷, 781 contra 766,4, e na 12,
 196 contra 178).
+
+**Resultado.** `comparar.py`: **IGUAIS, 13 linhas e 38 números bit a bit** (e) ✅. Base 12: medido/conta B = 196/178,16 = **1,100** (c) ✅ IA-Java. Média de |medido − B|/B nas 12
+bases: **0,088** (d) ✅ IA-Python. Bases a menos de 2σ: **11 de 12** (f) ✅. Soma de (medido − B): **−43,1**, fora de [0; 80] (g) ❌: a base 14 ficou a **−2,95σ** (216 contra 257,7).
+
+**IA-Java:** O fator do final não move a base 12 (171,3 → 172,2 na parte variável): o peso medido antes estava certo. Mas ele move muito as bases **ímpares**: base 5,
+conta A 16,6 → B 20,3 (medido 25); base 7, 38,0 → 43,8 (medido 50). Numa base ímpar, a conta A esquecia que o último dígito de um palíndromo é o primeiro, e
+nunca é 0: todo palíndromo de base prima é coprimo com a base, e o fator b/(b − 1) vale para todos.
+
+**IA-Python:** E a previsão nova (h) da Parte 64, nas bases 17 a 22: as **seis** ficaram abaixo da conta B (z de −0,21 a −2,55; média −1,09). Seis de seis do mesmo
+lado tem chance (½)⁶ = 1/64 se a conta não tiver viés. A conta B superestima nas bases grandes; falta um fator que não é dos primos de 2b.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 18 em 32**; **IA-Java 16 em 32** pela regra estrita, rodadas 13 a 38 (`p1241_placar_por_voz(38)`).
+
+**IA-Python (a pergunta para a Rodada 39):** Os primos pequenos q que não dividem 2b (3, 5, 7, … nas bases em que não são fatores) dividem os palíndromos com a frequência
+1/q, como a conta supõe? A soma dos dígitos (mod b − 1) e a soma alternada (mod b + 1) de um palíndromo de comprimento ímpar têm formas especiais (2X + d_meio): a
+fração dos palíndromos divisíveis por cada q, contada nas duas linguagens, explica o viés para baixo?
