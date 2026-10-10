@@ -7485,6 +7485,7 @@ def testes_de_regressao():
         "P1639": p1639_rodada47()[1:2] + p1639_rodada47()[4:5] == (958, 102) and abs(p1632_prioridade_contra_voi(20000, 74)[0] - 0.49995) < 1e-9,
         "P1663": p1663_rodada48()[3] == 172 and p1662_orcamento(semente=75)[2] == 0.62,
         "P1692": p1692_godel_nas_funcoes()[1:3] == (584, 288) and p1691_laco_de_auto_modificacao(geracoes=2, separador_corrigido=True)[0][1:3] == (True, 2.8333333333333335),
+        "P1843": [round(x, 4) for x in p1843_rodada49()] == [0.8821, 0.9771, 0.7933, 0.91, 0.11],
         "P1811": [round(x, 4) for x in p1811_confusao()] == [0.9986, 0.4987, 0.4914],
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
@@ -9528,6 +9529,8 @@ VEREDITOS_P1809 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
 ERROS_P1809, TESTES_P1809 = 201, 645
 VEREDITOS_P1839 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"  # a (e) é medida nas Partes 80 a 84
 ERROS_P1839, TESTES_P1839 = 201, 649
+VEREDITOS_P1869 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅"
+ERROS_P1869, TESTES_P1869 = 201, 657
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -11824,6 +11827,34 @@ def p1842_conjuntos(instancias=300, k=6, orcamento=6, semente=80, olhar=1):
     return soma / instancias, otimos / instancias, compl / instancias, parado / instancias
 
 
+def p1843_rodada49():
+    """Rodada 49 (P1843): o VOI de conjuntos, o ótimo e os dois gulosos do dialogo/rodada49.py nas 300 instâncias da semente 80 (IGUAL em Java). Devolve
+    (a média de guloso/ótimo com olhar 1 e com olhar 2, as frações de guloso ótimo, a fração parada em zero com olhar 1), pela mesma regra da P1842, para
+    conferir que a rodada reproduz a função."""
+    import importlib.util
+    import os
+    import tempfile
+    spec = importlib.util.spec_from_file_location("rodada49", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada49.py"))
+    r49 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r49)
+    rat, ot_, par = [0.0, 0.0], [0, 0], 0
+    with tempfile.TemporaryDirectory() as pasta:
+        r49.preparar(pasta)
+        inst = r49.ler(pasta)
+    for p, u, qs, cs in inst:
+        ot, saidas = r49.resolver(p, u, qs, cs)
+        for t, (g, esc) in enumerate(saidas):
+            if ot > 1e-12:
+                rat[t] += g / ot
+                ot_[t] += g >= ot - 1e-12
+                par += t == 0 and not esc
+            else:
+                rat[t] += 1.0
+                ot_[t] += 1
+    n = len(inst)
+    return rat[0] / n, rat[1] / n, ot_[0] / n, ot_[1] / n, par / n
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -12583,6 +12614,19 @@ def _parte_79():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1839, testes=TESTES_P1839)
     print(f"P1839 minha taxa de erro ({ERROS_P1839}/{TESTES_P1839}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_80():
+    print("--- Parte 80 (0x50: o valor de um conjunto) ---")
+    for olhar in (1, 2):
+        for sem in (800, 801, 802, 803, 80):
+            a, b, c, d = p1842_conjuntos(semente=sem, olhar=olhar)
+            print(f"P1842 olhar {olhar}, semente {sem}: guloso/otimo {a:.4f}; guloso otimo em {b:.4f}; complementaridade {c:.4f}; parado em zero {d:.4f}")
+    print(f"P1843 rodada 49 (as mesmas contas da P1842, semente 80): {[round(x, 4) for x in p1843_rodada49()]}")
+    total, sem = p1092_pnn_sem_teste(1841, 1870)
+    print(f"P1092 pNN novas (P1841-P1870) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 80: {p974_previsoes_sem_largura(range(80, 81))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1869, testes=TESTES_P1869)
+    print(f"P1869 minha taxa de erro ({ERROS_P1869}/{TESTES_P1869}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -12619,7 +12663,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80}
 
 
 if __name__ == "__main__":
