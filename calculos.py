@@ -9835,6 +9835,101 @@ def p1308_chance_de_spearman(rho, n=14, vezes=20000, semente=1301):
         k += sum((x - mx) * (y - mx) for x, y in zip(xs, ys)) / sxx >= rho
     return k / vezes
 
+
+def p1331_fator_efetivo():
+    """Rodada 37 (P1331): o fator de congruência efetivo F dos narcisistas (dialogo/rodada37.py, IGUAL em Java). Devolve
+    ([(b, medido, conta com g, conta com F)] nas células sem interruptor, células com candidatos, células com F a mais de 10%
+    de g)."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada37", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada37.py"))
+    r37 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r37)
+    linhas, com, longe = [], 0, 0
+    for b in r37.BASES:
+        m, cg, cf = 0, 0.0, 0.0
+        for k in r37.KS:
+            cand, ig, med, num, den, g, inter = r37.celula(b, k)
+            if cand == 0:
+                continue
+            f = ((b - 1) * ig) / cand
+            com += 1
+            longe += abs(f - g) > 0.1 * g
+            if inter:
+                continue
+            m += med
+            cg += (num / den) * g
+            cf += (num / den) * f
+        linhas.append((b, m, cg, cf))
+    return linhas, com, longe
+
+
+def p1332_glosa_pt_e_en(d=None, pt=None):
+    """A glosa portuguesa contra a inglesa (P1332): nos sinsets com glosa na OpenWordNet-PT, a razão (palavras da glosa
+    portuguesa)/(palavras da definição inglesa sem os exemplos). Devolve (mediana, fração com a portuguesa mais longa, pares,
+    média)."""
+    from synthai.dicionario import Dicionario, DicionarioPT
+    d = d or Dicionario()
+    pt = pt or DicionarioPT()
+    razoes, mais = [], 0
+    for chave, i in sorted(d.indice.items()):
+        pos, desloc = chave.split(":")
+        g = pt.glosas.get(f"{desloc}-{pos}") or (pt.glosas.get(f"{desloc}-s") if pos == "a" else None)
+        if not g:
+            continue
+        ne, np_ = len(d.definicao(d.sinsets[i][3]).split()), len(g.split())
+        if ne == 0:
+            continue
+        razoes.append(np_ / ne)
+        mais += np_ > ne
+    razoes.sort()
+    n = len(razoes)
+    med = razoes[n // 2] if n % 2 else (razoes[n // 2 - 1] + razoes[n // 2]) / 2
+    return med, mais / n, n, sum(razoes) / n
+
+
+def p1333_primos_palindromos(ate=16 ** 5, base=16):
+    """Os primos palíndromos numa base (P1333): n < ate primo cujos dígitos na base formam um palíndromo; e a conta (os primos
+    de 1 dígito e os palíndromos pares exatos; nos de comprimento ímpar ≥ 3, Σ 2/ln n sobre os ímpares). Devolve (quantidade,
+    conta, por comprimento)."""
+    from math import log
+    crivo = bytearray([1]) * ate
+    crivo[0] = crivo[1] = 0
+    for i in range(2, int(ate ** 0.5) + 1):
+        if crivo[i]:
+            crivo[i * i::i] = bytearray(len(range(i * i, ate, i)))
+    k, conta, por = 0, 0.0, {}
+    for n in range(1, ate):
+        ds = _digitos_base(n, base)
+        if ds != ds[::-1]:
+            continue
+        L = len(ds)
+        if crivo[n]:
+            k += 1
+            por[L] = por.get(L, 0) + 1
+        if L == 1 or L % 2 == 0:
+            conta += crivo[n]  # exatos: os de 1 dígito e os pares (múltiplos de base + 1)
+        elif n % 2:
+            conta += 2 / log(n)
+    return k, conta, dict(sorted(por.items()))
+
+
+def p1337_conta_palindromos(ate, base):
+    """Só a conta dos primos palíndromos (P1337), sem contar os primos de comprimento ímpar ≥ 3: os primos de 1 dígito (exatos,
+    por divisão), o base + 1 se for primo (o único palíndromo de comprimento par que pode ser primo: todos são múltiplos de
+    base + 1) e Σ 2/ln n sobre os palíndromos ímpares de comprimento ímpar ≥ 3 abaixo de ate. Devolve a conta."""
+    from math import log
+
+    def primo(n):
+        return n > 1 and all(n % q for q in range(2, int(n ** 0.5) + 1))
+    conta = sum(1 for n in range(2, base) if primo(n)) + (1 if primo(base + 1) and base + 1 < ate else 0)
+    for n in range(base, ate):
+        ds = _digitos_base(n, base)
+        if len(ds) % 2 == 1 and ds == ds[::-1] and n % 2:
+            conta += 2 / log(n)
+    return conta
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()

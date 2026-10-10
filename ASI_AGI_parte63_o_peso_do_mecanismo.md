@@ -52,3 +52,12 @@ inglesa, sem os exemplos), e a sua mediana.
 - (c) quantidade em **[320; 400]** (a conta ± ~11%: a densidade 2/ln n é a do teorema dos números primos, e os palíndromos de 3 dígitos são pequenos)
 
 **P1331, rodada 37:** no `dialogo/DIALOGO.md` (previsões (d) a (g)).
+
+### Previsão nova num mundo novo (registrada antes de contar)
+
+**Resultado de (c), antes desta seção:** **357** primos palíndromos em base 16 contra a conta de **357,5**: 0,1% de erro. Uma conta que acerta assim num mundo
+pede outro mundo. `p1337_conta_palindromos` calcula só a conta, sem contar os primos de comprimento ímpar ≥ 3 (calculada antes deste registro):
+- (h) **Base 12**, até 12⁵ = 248.832 (o 13 = 0x11 em base 12 divide todo palíndromo de comprimento par; os dígitos finais 3 e 9 são múltiplos de 3, e a média
+  sobre os finais ímpares continua 2/ln n): conta **177,3**; previsão: quantidade em **[156; 199]** (± 12%).
+- (controle, fora do placar) **Base 10**, até 10⁷: conta **768,5**. Eu lembro o valor da literatura (OEIS A050251: 781 primos palíndromos abaixo de 10⁷); por
+  isso este não é um teste cego e não entra no placar: só confere a função contra a fonte.
