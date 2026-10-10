@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 72 (0x48): o que está disfuncional
 
-> Continuação da [Parte 71](ASI_AGI_parte71_os_autovalores_da_atencao.md). Pedido do usuário: **"Corrija tudo pra ver se há coisas inadequadas e disfuncionais"**, junto com um texto colado de
+> Continuação da [Parte 71](ASI_AGI_parte71_os_autovalores_da_atencao.md). **Próxima:** [Parte 73 — o que refuta](ASI_AGI_parte73_o_que_refuta.md) (P1631–P1660). Pedido do usuário: **"Corrija tudo pra ver se há coisas inadequadas e disfuncionais"**, junto com um texto colado de
 > outra conversa (um "ciclo pergunta ⇄ resposta" com módulos, números e uma tabela de "✅"). Esta parte é uma auditoria nas duas direções: do texto recebido e do próprio repositório.
 
 ## Previsões sobre as minhas previsões desta parte (registradas antes de pensar qualquer faixa do mundo, pela regra da Parte 70)
