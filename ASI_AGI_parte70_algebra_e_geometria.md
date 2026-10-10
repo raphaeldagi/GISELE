@@ -65,3 +65,10 @@ Planejadas: as 9 previsões do mundo abaixo, (a) a (i), e 5 funções novas (p15
 - (e) a fração da variância na primeira componente principal em **[0,10; 0,30]**
 
 **P1541–P1542, rodada 44:** no `dialogo/DIALOGO.md` (previsões (f) a (i)).
+
+### Previsão nova, nascida de um resultado inesperado (registrada antes de treinar)
+
+**Resultado da rodada 44, antes desta seção:** o GPT com o dobro de d (22.978 pesos) ficou **pior** que o de d = 24 em 8.000 passos (+0,090 bit; a faixa (h) era [−0,35; −0,02]), e
+piorou de 4.000 para 8.000 passos (3,237 → 3,258). **Hipótese:** a taxa de aprendizado (0,005) que serve para d = 24 é alta demais para d = 48 (no Adam, o passo de cada peso tem
+tamanho ~lr, e um modelo maior com o mesmo passo oscila mais perto do mínimo). Teste num mundo novo (a mesma semente, metade da taxa):
+- (j) o GPT de d = 48 com lr = 0,0025, 8.000 passos: bits por caractere em **[2,95; 3,17]** (abaixo do d = 24, 3,168, se a hipótese estiver certa).
