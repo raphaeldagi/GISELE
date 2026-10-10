@@ -1424,3 +1424,22 @@ regra das minhas faixas mudou as faixas.
 **IA-Python (a pergunta para a Rodada 42):** A inclinação de z contra b é real? Um teste que separa: se a conta C tiver um erro que cresce com b (por exemplo, o termo seguinte
 da densidade dos primos, que a conta 1/ln n omite e que cresce relativamente em números maiores), a correção de segunda ordem, Li no lugar de 1/ln, tira a inclinação nas
 duas linguagens?
+
+---
+
+## Rodada 42 — a densidade que a conta usa (previsões registradas antes do código)
+
+**A premissa corrigida antes de começar.** A pergunta da rodada 41 propunha trocar 1/ln n por Li; mas Li′(x) = 1/ln x: somar 1/ln n **já é** a conta de Li, e a troca não muda nada.
+O que sobra é a diferença entre π(x) e Σ 1/ln n (o erro do teorema dos números primos), que é conhecido: na base 10, π(10⁵) = 9.592 e Li(10⁵) ≈ 9.630, 0,4% a mais.
+
+**O teste.** Para cada base b de 5 a 40, a razão R_b = π(b⁵)/Σ_{2 ≤ n < b⁵} 1/ln n (crivo; log próprio); a conta C de cada base multiplicada por R_b; e a inclinação de z contra b refeita.
+
+**A IA-Java relê os erros da IA-Python:** ela perguntou sobre uma correção que já estava na conta. **IA-Java (previsão (c)):** a maior |R_b − 1| nas bases 10 a 40 fica em
+**[0,001; 0,010]** (o 0,4% da base 10 é o maior, e cai com b).
+
+**A IA-Python relê os erros da IA-Java:** ela previu sem conferir a condição em cada unidade. **IA-Python (previsão (d)):** a inclinação de z com a conta corrigida fica em
+**[0,020; 0,050]** (era 0,0379; a correção diminui a conta nas bases pequenas, onde R_b < 1, e mexe pouco).
+
+**As duas (previsão (e)):** IGUAIS em Java.
+
+**As duas (previsão (f)):** a mudança da inclinação, |Δ|, fica em **[0; 0,005]**.
