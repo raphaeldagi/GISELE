@@ -43,3 +43,12 @@ class TesteParte58(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TesteP1181(unittest.TestCase):
+    """Acrescentado depois que a auditoria P1092 da própria Parte 58 achou p1181 sem teste pelo nome."""
+
+    def test_p1181(self):
+        pos, pares, inv, acento = calculos.p1181_primeira_diferenca()
+        self.assertEqual((pares, inv, acento), (37724, 3738, 9236))
+        self.assertAlmostEqual(pos, 207209 / 37724, places=12)

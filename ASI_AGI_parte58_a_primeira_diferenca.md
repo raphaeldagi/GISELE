@@ -120,7 +120,7 @@ Ver P1181. Placar por voz desde a Rodada 13: **IA-Python 21 em 34; IA-Java 20 em
 
 ### P1209 (0x4B9). Placar
 
-Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅. Parte 58: **7 testes, 1 erros**. Acumulado (mundo): **168 erros em 486 testes**. Sobre o meu código: 0 pNN novas sem teste ✅. Sobre mim (placar separado): **7 de 7** dentro da faixa; o estatístico, 6 de 6. PLACAR_58
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅. Parte 58: **7 testes, 1 erros**. Acumulado (mundo): **168 erros em 486 testes**. Sobre o meu código: **1 pNN nova sem teste ❌** (`p1181`: o teste exercitava a função da rodada, `r32.medir`, e não a pNN pelo nome; achado pela auditoria P1092 na execução da própria parte, depois do commit que a fechou; o teste foi acrescentado no commit seguinte, e a medida desta parte não foi refeita). Sobre mim (placar separado): **7 de 7** dentro da faixa; o estatístico, 6 de 6. PLACAR_58
 
 ### P1210 (0x4BA). Unificação
 
