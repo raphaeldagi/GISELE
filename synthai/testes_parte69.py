@@ -68,6 +68,12 @@ class TesteParte69(unittest.TestCase):
         self.assertLess(b, 1.0)
         self.assertEqual(n, sum(len(v) * len(v[0]) for v in g.p.values()))
 
+    def test_p1516_gpt_decide(self):
+        saida, acertos, bits = calculos.p1516_gpt_decide()
+        self.assertEqual((len(saida), acertos), (30, 5))
+        self.assertEqual(saida[11][1:3], ("mestic a", "n"))  # depois de "mestic a", o GPT pequeno aposta em "n" (de animal) e acerta
+        self.assertAlmostEqual(bits, 4.076562312714947, places=10)
+
 
 if __name__ == "__main__":
     unittest.main()

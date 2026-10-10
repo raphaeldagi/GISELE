@@ -7478,6 +7478,7 @@ def testes_de_regressao():
         "P1423": p1427_bases_29_a_34((29,))[0][1] == 1610 and p1421_endereco_da_falta()[0]["d0"][1] == 11,
         "P1455": len(p1455_automorficos(12, 6)[0]) == 11 and len(p1452_minhas_previsoes(range(53, 67))) == 97,
         "P1493": len(p1493_palindromos_duplos()[0]) == 18 and p1491_densidade_da_conta()[0][5][1] == 9592,
+        "P1516": p1514_pi_hex_digitos(16) == "243f6a8885a308d3" and p1516_gpt_decide()[1] == 5,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -10534,6 +10535,22 @@ def p1513_gpt_bits(treino, teste, passos=8000, T=24, d=24, h=48, lr=0.005, semen
     return g.bits_por_caractere(teste, janelas=janelas), n, sum(perdas[-200:]) / 200 / log(2), g
 
 
+def p1516_gpt_decide():
+    """Rodada 43 (P1516): o GPT pequeno pré-treinado (dialogo/rodada43.py) decide o próximo caractere da frase, com exp e log próprios (IGUAL em
+    Java). Devolve (decisões [(t, contexto, argmax, p do argmax, p do real)], acertos do argmax, bits por caractere)."""
+    import importlib.util
+    import os
+    import tempfile
+    spec = importlib.util.spec_from_file_location("rodada43", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada43.py"))
+    r43 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r43)
+    with tempfile.TemporaryDirectory() as pasta:
+        r43.preparar(pasta)
+        saida, bits = r43.decisoes(*r43.ler(pasta))
+    return saida, sum(1 for x in saida if x[3] == x[4]), bits / len(saida)
+
+
 def p1499_previsoes_sobre_previsoes_v2(parte=68):
     """O placar das previsões sobre as minhas previsões, versão 2 (P1499; lido pela P1481, com os tipos): (m1) o número de previsões do
     mundo, (m2) o número de faixas que cruzam o zero, (m3) a mediana de w das que não cruzam, (m4) a fração de acertos, (m5) o número de
@@ -11057,6 +11074,29 @@ def _parte_68():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1509, testes=TESTES_P1509)
     print(f"P1509 minha taxa de erro ({ERROS_P1509}/{TESTES_P1509}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_69():
+    print("--- Parte 69 (0x45: a forma de GPT) ---")
+    for lingua in ("en", "pt"):
+        treino, teste = p1511_corpus_de_glosas(lingua)
+        lim = 400 * 24 + 1
+        ng = {k: p1512_ngrama_bits(treino, teste, k, lim) for k in (1, 2, 3, 4, 5)}
+        print(f"P1511 corpus {lingua}: treino {len(treino)} caracteres, teste {len(teste)}")
+        print(f"P1512 n-grama {lingua} (bits por caractere, ordens 1-5): {({k: round(v, 4) for k, v in ng.items()})}")
+        b, n, perda, g = p1513_gpt_bits(treino, teste)
+        print(f"P1513 GPT {lingua} (T 24, d 24, h 48, 8000 passos): {b:.4f} bits por caractere; {n} parametros; perda final {perda:.4f} bits; "
+              f"GPT - trigrama = {b - ng[3]:+.4f}; gera: {g.gerar('a domestic ' if lingua == 'en' else 'o animal ', 50)!r}")
+    pi = p1514_pi_hex_digitos(10000)
+    print(f"P1514 pi em hexadecimal: 3,{pi[:16]}...")
+    print(f"P1515 bits por digito de pi (n-grama, 90% treino, 10% teste): {({k: round(p1515_bits_hex(pi, k), 4) for k in (1, 2, 3)})}")
+    saida, acertos, bits = p1516_gpt_decide()
+    print(f"P1516 rodada 43: o GPT pequeno acerta o proximo caractere em {acertos} de {len(saida)} posicoes; {bits:.4f} bits por caractere; "
+          f"decisoes {[(ctx, arg) for _, ctx, arg, _, _ in saida[:6]]}")
+    total, sem = p1092_pnn_sem_teste(1511, 1540)
+    print(f"P1092 pNN novas (P1511-P1540) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 69: {p974_previsoes_sem_largura(range(69, 70))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1539, testes=TESTES_P1539)
+    print(f"P1539 minha taxa de erro ({ERROS_P1539}/{TESTES_P1539}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -11093,7 +11133,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69}
 
 
 if __name__ == "__main__":

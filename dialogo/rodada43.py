@@ -43,17 +43,15 @@ def ler(pasta):
     return vocab, p
 
 
-def main():
-    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
-        preparar(sys.argv[2])
-        return
+def decisoes(vocab, p):
+    """[(t, contexto, argmax, p do argmax, p do real)] e o total de bits, com exp e log próprios."""
     from synthai.gpt import GPT
-    vocab, p = ler(sys.argv[1])
     T, d, h = FORMA
     g = GPT(vocab, T=T, d=d, h=h)
     g.p = p
     ids = g.codificar(FRASE)
     bits = 0.0
+    saida = []
     for t in range(len(ids) - 1):
         janela = ids[max(0, t + 1 - T):t + 1]
         pr = g.adiante(janela, exp=exp_)["probs"][-1]
@@ -62,7 +60,17 @@ def main():
             if pr[j] > pr[melhor]:
                 melhor = j
         bits -= log_(pr[ids[t + 1]]) / log_(2.0)
-        print(f"t={t} contexto={FRASE[max(0, t + 1 - T):t + 1]!r} argmax={vocab[melhor]!r} p={pr[melhor].hex()} p_real={pr[ids[t + 1]].hex()}")
+        saida.append((t, FRASE[max(0, t + 1 - T):t + 1], vocab[melhor], pr[melhor], pr[ids[t + 1]]))
+    return saida, bits
+
+
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        preparar(sys.argv[2])
+        return
+    saida, bits = decisoes(*ler(sys.argv[1]))
+    for t, ctx, arg, pa, pr in saida:
+        print(f"t={t} contexto={ctx!r} argmax={arg!r} p={pa.hex()} p_real={pr.hex()}")
     print(f"bits totais={bits.hex()}")
 
 
