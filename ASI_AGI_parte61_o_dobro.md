@@ -60,3 +60,11 @@ devolver o número; o teste a chama pelo nome.
 - (c) contagem de 1 a 16⁵ em **[86.000; 99.000]** (a razão de calibração ± 7%)
 
 **P1274, rodada 35:** no `dialogo/DIALOGO.md` (previsões (d) a (g)).
+
+### Previsão nova, nascida de um resultado inesperado (registrada antes de contar as famílias)
+
+**Resultado da rodada 35, antes desta seção:** sem interruptor, razão **1,50** no total; base 8 sozinha **4,36**. O "dobro" visto na Parte 60 era sobretudo das
+bases 8 e 12. **Um mecanismo esquecido:** o interruptor (1, 0) existe em **toda** base (1·b⁰ = 1ᵏ), e eu o tirei da definição de "com interruptor" na rodada
+35. Toda solução terminada em 0 traz n + 1 de graça; a conta trata as duas como independentes, cada uma com a chance p, e a segunda tem chance 1.
+- (h) Juntando cada par {n terminado em 0, n + 1} numa família só, a razão famílias/conta nas 84 células **sem outro interruptor** fica em **[0,8; 1,3]**
+  (conta: se uma fração f das soluções está em pares, as famílias são (1 − f/2) das soluções; para levar 1,50 a ~1,0, f ≈ 0,67).

@@ -9648,6 +9648,67 @@ def p1251_conta_contra_medida(casos=((16, 9), (8, 8), (10, 7), (6, 13), (12, 11)
             l1 += m * log(e1) - e1 - lgamma(m + 1)
     return linhas, l0, l1
 
+
+def p1271_rodadas_verificadas():
+    """Quantas rodadas o dialogo/verificar.py confere (P1271): os pares RodadaNN.java / rodadaNN.py. Devolve (pares, números)."""
+    import glob
+    import os
+    aqui = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo")
+    nums = sorted(int(os.path.basename(j)[6:-5]) for j in glob.glob(os.path.join(aqui, "Rodada*.java"))
+                  if os.path.exists(os.path.join(aqui, "r" + os.path.basename(j)[1:-5] + ".py")))
+    return len(nums), nums
+
+
+NEGACOES = ("not ", "lacking", "without", "devoid", "free of", "free from", "having no ")
+PREFIXOS_NEGATIVOS = ("un", "in", "im", "il", "ir", "non", "dis")
+
+
+def p1272_adjetivos_negativos(d=None):
+    """Os adjetivos definidos pela negação (P1272): dos sinsets de adjetivo, a fração cuja definição começa por "not",
+    "lacking", "without", "devoid", "free of/from" ou "having no"; e, entre esses, a fração com algum lema de prefixo negativo.
+    Devolve (fração negativa, adjetivos, fração com prefixo entre os negativos, 5 exemplos)."""
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    n, neg, pre, ex = 0, 0, 0, []
+    for pos, lemas, _, glosa in d.sinsets:
+        if pos != "a":
+            continue
+        n += 1
+        g = d.definicao(glosa).strip().lower()
+        if g.startswith(NEGACOES):
+            neg += 1
+            pre += any(w.lower().startswith(PREFIXOS_NEGATIVOS) for w in lemas)
+            if len(ex) < 5:
+                ex.append((lemas[0], g[:60]))
+    return neg / n, n, (pre / neg if neg else 0.0), ex
+
+
+def p1273_niven(ate=16 ** 5, base=16):
+    """Os números de Niven numa base (P1273): quantos n de 1 a ate são divisíveis pela soma dos seus dígitos; e a conta de
+    De Koninck, Doyon e Kátai, eta·x/ln x com eta = (2 ln q)/(q − 1)²·Σ_{j=1}^{q−1} mdc(j, q − 1). Devolve (contagem, conta)."""
+    from math import gcd, log
+    soma = [0] * (ate + 1)
+    k = 0
+    for n in range(1, ate + 1):
+        soma[n] = soma[n // base] + n % base
+        k += n % soma[n] == 0
+    eta = 2 * log(base) / (base - 1) ** 2 * sum(gcd(j, base - 1) for j in range(1, base))
+    return k, eta * ate / log(ate)
+
+
+def p1274_narcisistas_14_bases():
+    """Rodada 35 (P1274): os narcisistas das bases 3 a 16, k de 2 a 7, contra a conta com o fator de congruência
+    (dialogo/rodada35.py, IGUAL em Java). Devolve (células [((b, k), (medido, num, den, g, interruptor, conta))], grupos
+    [(nome, medido, conta)])."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada35", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada35.py"))
+    r35 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r35)
+    celulas = [((b, k), r35.celula(b, k)) for b in r35.BASES for k in r35.KS]
+    return celulas, r35.grupos(celulas)
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
