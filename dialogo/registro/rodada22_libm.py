@@ -8,8 +8,6 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from exatas import exp_, log_  # noqa: E402  (Parte 73: exp e log próprios, exatos nas duas línguas)
 AQUI = os.path.dirname(os.path.abspath(__file__))
 _spec = importlib.util.spec_from_file_location("rodada21", os.path.join(AQUI, "rodada21.py"))
 r21 = importlib.util.module_from_spec(_spec)
@@ -40,9 +38,9 @@ def reta(xs, ys):
 def deriva(cs, ate=20):
     sim = r21.semelhancas(cs)
     ls = list(range(1, ate + 1))
-    ys = [log_(r21.media_distancia(sim, L)) for L in ls]
+    ys = [math.log(r21.media_distancia(sim, L)) for L in ls]
     a, m1, sse_exp = reta([float(L) for L in ls], ys)
-    b, m2, sse_pot = reta([log_(L) for L in ls], ys)
+    b, m2, sse_pot = reta([math.log(L) for L in ls], ys)
     return ys, a, -1.0 / m1, sse_exp, b, -m2, sse_pot
 
 

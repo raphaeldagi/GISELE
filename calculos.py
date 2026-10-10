@@ -11207,6 +11207,66 @@ def p1632_prioridade_contra_voi(n=2000, semente=73):
     return zero, zero_topo, cov / (va * vb) ** 0.5, pares
 
 
+def p1635_contradicoes_de_animal(d=None):
+    """(P1635) As violações da disjunção entre animal e os seus irmãos (os outros hipônimos diretos de organism), pelo motor da P1633. Devolve
+    (número de sinsets que violam, [(irmão, [sinsets])] com violação)."""
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    org = min(i for i in d.lemas["organism"] if d.sinsets[i][0] == "n")
+    animal = min(i for i in d.lemas["animal"] if d.sinsets[i][0] == "n")
+    irmaos = p1634_irmaos(org, d)
+    viol = p1633_disjuncoes([animal] + [x for x in irmaos if x != animal], d)
+    pares = [(b, v) for (a, b), v in viol.items() if a == animal and v]
+    return len({x for _, v in pares for x in v}), pares
+
+
+def p1636_contraexemplos(classe="bird", palavra="flightless", d=None):
+    """Procurar o que refuta (P1636; o Módulo 004 do texto recebido): a hipótese "todo <classe> voa" contra o próprio dicionário. Os sinsets no fecho
+    de Horn da classe (primeiro sentido de substantivo) cuja glosa contém a palavra. Devolve (tamanho do fecho, [lemas dos contraexemplos])."""
+    import re
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    _, regras = p1611_regras_de_animal(d)
+    c = min(i for i in d.lemas[classe] if d.sinsets[i][0] == "n")
+    fecho = p1609_horn_linear([c], regras)[0]
+    return len(fecho), [d.sinsets[i][1][0] for i in fecho if re.search(r"\b" + palavra + r"\b", d.definicao(d.sinsets[i][3]).lower())]
+
+
+def p1637_polissemia(d=None):
+    """(P1637) O aviso do texto recebido ("identificar o sentido antes da relação"): a fração dos lemas de substantivo com mais de um sentido de
+    substantivo. Devolve (lemas de substantivo, polissêmicos, fração)."""
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    cont = {}
+    for s in d.sinsets:
+        if s[0] == "n":
+            for l in set(s[1]):
+                cont[l] = cont.get(l, 0) + 1
+    poli = sum(1 for v in cont.values() if v > 1)
+    return len(cont), poli, poli / len(cont)
+
+
+def p1638_rodadas_com_libm():
+    """(P1638) As rodadas Python do diálogo que chamam uma função transcendental da biblioteca (math.exp, log, log2, log10, pow, sin, cos, tan,
+    atan, atan2, erf), que o IEEE 754 não obriga a arredondar corretamente (a fronteira da Parte 52). Pela árvore sintática. Devolve
+    (total de rodadas, [rodadas com chamada])."""
+    import ast
+    import glob
+    import os
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    fs = {"exp", "log", "log2", "log10", "pow", "sin", "cos", "tan", "atan", "atan2", "erf"}
+    arqs = sorted(glob.glob(os.path.join(raiz, "dialogo", "rodada[0-9]*.py")))
+    com = []
+    for f in arqs:
+        arvore = ast.parse(open(f, encoding="utf-8").read())
+        if any(isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name) and n.value.id == "math" and n.attr in fs for n in ast.walk(arvore)):
+            com.append(os.path.basename(f)[:-3])
+    return len(arqs), com
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""

@@ -7,8 +7,6 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from exatas import exp_, log_  # noqa: E402  (Parte 73: exp e log próprios, exatos nas duas línguas)
 AQUI = os.path.dirname(os.path.abspath(__file__))
 _spec = importlib.util.spec_from_file_location("rodada22", os.path.join(AQUI, "rodada22.py"))
 r22 = importlib.util.module_from_spec(_spec)
@@ -21,9 +19,9 @@ def curvas(cs, ate=20):
     res = []
     for i in range(len(cs) - ate):
         ls = [L for L in range(1, ate + 1) if sim[i][i + L] > 0]
-        ys = [log_(sim[i][i + L]) for L in ls]
+        ys = [math.log(sim[i][i + L]) for L in ls]
         _, m1, se = r22.reta([float(L) for L in ls], ys)
-        _, m2, sp = r22.reta([log_(L) for L in ls], ys)
+        _, m2, sp = r22.reta([math.log(L) for L in ls], ys)
         res.append((cs[i][0], len(ls), -1.0 / m1, se, -m2, sp))
     return res
 

@@ -8,8 +8,6 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from exatas import exp_, log_  # noqa: E402  (Parte 73: exp e log próprios, exatos nas duas línguas)
 AQUI = os.path.dirname(os.path.abspath(__file__))
 _spec = importlib.util.spec_from_file_location("rodada19", os.path.join(AQUI, "rodada19.py"))
 r19 = importlib.util.module_from_spec(_spec)
@@ -27,10 +25,7 @@ def semelhancas(cs):
     for _, ws in cs:
         for w in ws:
             df[w] = df.get(w, 0) + 1
-    idf2 = {}
-    for w, c in df.items():
-        x = log_(K / c)
-        idf2[w] = x * x
+    idf2 = {w: math.log(K / c) ** 2 for w, c in df.items()}
     norma = []
     for _, ws in cs:
         t = 0.0

@@ -8,8 +8,6 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from exatas import exp_, log_  # noqa: E402  (Parte 73: exp e log próprios, exatos nas duas línguas)
 AQUI = os.path.dirname(os.path.abspath(__file__))
 _spec = importlib.util.spec_from_file_location("rodada22", os.path.join(AQUI, "rodada22.py"))
 r22 = importlib.util.module_from_spec(_spec)
@@ -23,12 +21,12 @@ def duas_exponenciais(ys):
     melhor = None
     for i in range(1, 21):
         t1 = 0.25 * i
-        u = [exp_(-L / t1) for L in range(1, n + 1)]
+        u = [math.exp(-L / t1) for L in range(1, n + 1)]
         for j in range(1, 101):
             t2 = 2.0 * j
             if t1 >= t2:
                 continue
-            v = [exp_(-L / t2) for L in range(1, n + 1)]
+            v = [math.exp(-L / t2) for L in range(1, n + 1)]
             suu = svv = suv = suy = svy = 0.0
             for a, b, y in zip(u, v, ys):
                 suu += a * a
@@ -45,7 +43,7 @@ def duas_exponenciais(ys):
                 continue
             sse = 0.0
             for a, b, y in zip(u, v, ys):
-                e = log_(y) - log_(A * a + B * b)
+                e = math.log(y) - math.log(A * a + B * b)
                 sse += e * e
             if melhor is None or sse < melhor[0]:
                 melhor = (sse, A, B, t1, t2)
@@ -53,7 +51,7 @@ def duas_exponenciais(ys):
 
 
 def aic(sse, n, k):
-    return n * log_(sse / n) + 2 * k
+    return n * math.log(sse / n) + 2 * k
 
 
 def main():
@@ -64,9 +62,9 @@ def main():
         return
     sim = r21.semelhancas(r21.conjuntos())
     ys = [r21.media_distancia(sim, L) for L in range(1, 21)]
-    lys = [log_(y) for y in ys]
+    lys = [math.log(y) for y in ys]
     _, _, se = r22.reta([float(L) for L in range(1, 21)], lys)
-    _, _, sp = r22.reta([log_(L) for L in range(1, 21)], lys)
+    _, _, sp = r22.reta([math.log(L) for L in range(1, 21)], lys)
     s2, A, B, t1, t2 = duas_exponenciais(ys)
     print(f"exponencial: sse = {se.hex()}; aic = {aic(se, 20, 2).hex()}")
     print(f"potencia: sse = {sp.hex()}; aic = {aic(sp, 20, 2).hex()}")

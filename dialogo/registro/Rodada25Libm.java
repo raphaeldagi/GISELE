@@ -6,27 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 
-public class Rodada25 {
-    // Parte 73: exp e log PRÓPRIOS (cópia dos da Rodada26), exatos nas duas línguas; a versão com Math.log/Math.exp está em dialogo/registro/
-    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
-
-    static double exp_(double x) {
-        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
-        double r = (x - k * LN2_HI) - k * LN2_LO;
-        double p = 1.0;
-        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
-        return Math.scalb(p, (int) k);
-    }
-
-    static double log_(double x) {
-        int e = Math.getExponent(x);
-        double m = Math.scalb(x, -e);
-        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
-        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
-        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
-        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
-    }
-
+public class Rodada25Libm {
     public static void main(String[] args) throws Exception {
         PrintStream out = new PrintStream(System.out, true, "UTF-8");
         List<Integer> partes = new ArrayList<>();
@@ -41,7 +21,7 @@ public class Rodada25 {
         for (String[] a : ws) for (String w : a) df.merge(w, 1, Integer::sum);
         HashMap<String, Double> idf2 = new HashMap<>();
         for (Map.Entry<String, Integer> e : df.entrySet()) {
-            double x = log_((double) K / e.getValue());
+            double x = Math.log((double) K / e.getValue());
             idf2.put(e.getKey(), x * x);
         }
         double[] norma = new double[K];
@@ -57,19 +37,19 @@ public class Rodada25 {
         }
         int n = 20;
         double[] ys = new double[n], ly = new double[n], xe = new double[n], xp = new double[n];
-        for (int L = 1; L <= n; L++) { ys[L - 1] = media(sim, L); ly[L - 1] = log_(ys[L - 1]); xe[L - 1] = (double) L; xp[L - 1] = log_(L); }
+        for (int L = 1; L <= n; L++) { ys[L - 1] = media(sim, L); ly[L - 1] = Math.log(ys[L - 1]); xe[L - 1] = (double) L; xp[L - 1] = Math.log(L); }
         double se = reta(xe, ly)[2], sp = reta(xp, ly)[2];
         double ms = 0, mA = 0, mB = 0, m1 = 0, m2 = 0;
         boolean tem = false;
         for (int i = 1; i <= 20; i++) {
             double t1 = 0.25 * i;
             double[] u = new double[n];
-            for (int L = 1; L <= n; L++) u[L - 1] = exp_(-L / t1);
+            for (int L = 1; L <= n; L++) u[L - 1] = Math.exp(-L / t1);
             for (int jj = 1; jj <= 100; jj++) {
                 double t2 = 2.0 * jj;
                 if (t1 >= t2) continue;
                 double[] v = new double[n];
-                for (int L = 1; L <= n; L++) v[L - 1] = exp_(-L / t2);
+                for (int L = 1; L <= n; L++) v[L - 1] = Math.exp(-L / t2);
                 double suu = 0, svv = 0, suv = 0, suy = 0, svy = 0;
                 for (int q = 0; q < n; q++) {
                     suu += u[q] * u[q]; svv += v[q] * v[q]; suv += u[q] * v[q]; suy += u[q] * ys[q]; svy += v[q] * ys[q];
@@ -79,7 +59,7 @@ public class Rodada25 {
                 double A = (suy * svv - svy * suv) / det, B = (svy * suu - suy * suv) / det;
                 if (A <= 0.0 || B <= 0.0) continue;
                 double sse = 0.0;
-                for (int q = 0; q < n; q++) { double e = log_(ys[q]) - log_(A * u[q] + B * v[q]); sse += e * e; }
+                for (int q = 0; q < n; q++) { double e = Math.log(ys[q]) - Math.log(A * u[q] + B * v[q]); sse += e * e; }
                 if (!tem || sse < ms) { tem = true; ms = sse; mA = A; mB = B; m1 = t1; m2 = t2; }
             }
         }
@@ -95,7 +75,7 @@ public class Rodada25 {
         out.println("menor aic: " + nome);
     }
 
-    static double aic(double sse, int n, int k) { return n * log_(sse / n) + 2 * k; }
+    static double aic(double sse, int n, int k) { return n * Math.log(sse / n) + 2 * k; }
 
     static double[] reta(double[] xs, double[] ys) {
         int n = xs.length;
