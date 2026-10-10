@@ -9505,9 +9505,9 @@ ERROS_P1479, TESTES_P1479 = 189, 559
 ERROS_P1509, TESTES_P1509 = 189, 565
 ERROS_P1539, TESTES_P1539 = 189, 573
 ERROS_P1569, TESTES_P1569 = 191, 583
-VEREDITOS_P1629 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) F_PENDENTE (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ❌ (l) ❌ (m) ✅ (n) ✅ (o) ✅ (p) ✅"
+VEREDITOS_P1629 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ❌ (l) ❌ (m) ✅ (n) ✅ (o) ✅ (p) ✅"
 ERROS_P1599, TESTES_P1599 = 193, 591
-ERROS_P1629, TESTES_P1629 = VEREDITOS_P1629.count("\u274c") + 193, VEREDITOS_P1629.count("\u2705") + VEREDITOS_P1629.count("\u274c") + 591
+ERROS_P1629, TESTES_P1629 = 195, 607
 
 
 def p1212_palavras_que_nao_definem(d=None):
