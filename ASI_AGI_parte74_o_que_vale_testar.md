@@ -27,3 +27,19 @@ Planejadas: ~5 previsões do mundo e ~4 funções novas. E = erros do mundo, S =
 | redundância P821 | **[0,563; 0,651]** | o estatístico |
 | previsões unilaterais | **0** | `p974` |
 | pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (registradas depois das (m) e das sobre mim, antes de medir)
+
+**O ganho de informação (P1661).** No mundo da P1632 (semente 73), observar o estado reduz a entropia em H(p) bits, qualquer que seja a utilidade. Escolher pelo "ganho esperado de
+informação" é escolher por H(p). **A conta:** H depende só de p, e p é independente da dominância; então os 200 de maior H têm VOI = 0 com chance 1/2 (desvio 0,0354).
+- **(a)** a fração com VOI = 0 entre os 200 de maior ganho de informação em **[0,442; 0,558]**
+- **Calibração (sementes 730 a 733, regra escrita antes: as quatro seguintes à 73 × 10):** a razão entre o VOI médio dos 200 de maior H e o dos 200 de maior VOI deu 0,277, 0,326, 0,290 e 0,283.
+  A faixa de previsão de 90% para um lote novo é a média ± t₃ · desvio · √(1 + 1/4), com t₃ = 2,353.
+- **(b)** essa razão na semente 73 em **[0,236; 0,352]**
+
+**O orçamento (P1662).** A U(a) = E[ΔK | a]/Custo(a) do texto: 300 instâncias, 30 experimentos cada, custos inteiros em 1..20, orçamento de 20% do custo total; valor = VOI. O ótimo é exato (mochila
+0-1 por programação dinâmica). **Calibração (sementes 740 a 743, mesma geometria do teste):** guloso por VOI/custo = 0,9924, 0,9928, 0,9925, 0,9938 do ótimo; guloso por H/custo = 0,581, 0,555, 0,565,
+0,561; o guloso por VOI foi ótimo em 0,627, 0,667, 0,657, 0,640 das instâncias. Faixas pela mesma regra (t₃ = 2,353). Teste: semente 74.
+- **(c)** guloso por VOI/custo, em fração do ótimo, em **[0,9912; 0,9946]**
+- **(d)** guloso por ganho de informação/custo, em fração do ótimo (em VOI), em **[0,5364; 0,5943]**
+- **(e)** a fração de instâncias em que o guloso por VOI é ótimo em **[0,6009; 0,6941]**

@@ -11302,6 +11302,70 @@ def p1642_heranca_multipla(d=None):
     return m, len(ns), m / len(ns)
 
 
+def p1661_ganho_de_informacao_contra_voi(n=2000, semente=73):
+    """O "ganho esperado de informação" do texto recebido na Parte 74, no mundo da P1632 (P1661): observar o estado reduz a entropia em H(p) bits
+    (a informação é perfeita), qualquer que seja a utilidade. Escolher as perguntas pelo ganho de informação é escolher por H(p). Devolve (fração com
+    VOI = 0 entre os 10% de maior H, VOI médio dos 10% de maior H, VOI médio dos 10% de maior VOI)."""
+    import math
+    import random
+    r = random.Random(semente)
+    xs = []
+    for _ in range(n):
+        p = r.random()
+        u = [[r.random(), r.random()], [r.random(), r.random()]]
+        com = p * max(u[0][1], u[1][1]) + (1.0 - p) * max(u[0][0], u[1][0])
+        sem = max(p * u[0][1] + (1.0 - p) * u[0][0], p * u[1][1] + (1.0 - p) * u[1][0])
+        h = -sum(q * math.log2(q) for q in (p, 1.0 - p) if q > 0.0)
+        xs.append((h, max(com - sem, 0.0)))
+    k = n // 10
+    th = sorted(xs, key=lambda x: -x[0])[:k]
+    tv = sorted(xs, key=lambda x: -x[1])[:k]
+    return sum(1 for _, v in th if v == 0.0) / k, sum(v for _, v in th) / k, sum(v for _, v in tv) / k
+
+
+def p1662_orcamento(instancias=300, itens=30, fracao=0.2, semente=74):
+    """Escolher experimentos com orçamento (P1662; a U(a) = E[ΔK | a]/Custo(a) do texto recebido na Parte 74). Cada instância: `itens` experimentos com
+    valor = o VOI de um problema 2 × 2 sorteado (como na P1632) e ganho de informação = H(p) dele, custo inteiro uniforme em 1..20; orçamento =
+    floor(fracao · Σ custos). Três escolhas: o ótimo exato (mochila 0-1 por programação dinâmica nos custos inteiros, no VOI), o guloso por VOI/custo
+    (em ordem decrescente, pulando o que não cabe) e o guloso por H/custo (o "ganho de informação"). Devolve (média de guloso-VOI/ótimo, média de
+    guloso-H/ótimo, fração de instâncias em que o guloso-VOI é ótimo), com o valor de cada escolha medido em VOI."""
+    import math
+    import random
+    r = random.Random(semente)
+    s1 = s2 = 0.0
+    otimos = 0
+    for _ in range(instancias):
+        vs, hs, cs = [], [], []
+        for _ in range(itens):
+            p = r.random()
+            u = [[r.random(), r.random()], [r.random(), r.random()]]
+            com = p * max(u[0][1], u[1][1]) + (1.0 - p) * max(u[0][0], u[1][0])
+            sem = max(p * u[0][1] + (1.0 - p) * u[0][0], p * u[1][1] + (1.0 - p) * u[1][0])
+            vs.append(max(com - sem, 0.0))
+            hs.append(-sum(q * math.log2(q) for q in (p, 1.0 - p) if q > 0.0))
+            cs.append(r.randint(1, 20))
+        B = int(fracao * sum(cs))
+        melhor = [0.0] * (B + 1)
+        for v, c in zip(vs, cs):
+            for b in range(B, c - 1, -1):
+                if melhor[b - c] + v > melhor[b]:
+                    melhor[b] = melhor[b - c] + v
+        ot = melhor[B]
+
+        def guloso(chave):
+            resto, total = B, 0.0
+            for i in sorted(range(itens), key=lambda i: (-chave[i] / cs[i], i)):
+                if cs[i] <= resto:
+                    resto -= cs[i]
+                    total += vs[i]
+            return total
+        g1, g2 = guloso(vs), guloso(hs)
+        s1 += g1 / ot if ot > 0 else 1.0
+        s2 += g2 / ot if ot > 0 else 1.0
+        otimos += g1 >= ot - 1e-12
+    return s1 / instancias, s2 / instancias, otimos / instancias
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
