@@ -1265,3 +1265,29 @@ medido (1,33) pelo mesmo motivo: F muda mais nos k pequenos.
 **IA-Java (a pergunta para a Rodada 38):** Os primos palíndromos de base 16 caíram a 0,1% da conta, e os de base 12 a 10%. O que separa as duas? A conta em base 12
 promedia os finais ímpares (os coprimos a 12 têm densidade 3/ln n, os outros 0); se a conta usar o fator exato por final, b/φ(b) nos finais coprimos, a base 12
 chega perto de 196?
+
+---
+
+## Rodada 38 — o fator do final (previsões registradas antes do código)
+
+**O teste.** Para cada base b de 5 a 16, até b⁵: os primos palíndromos (contados por crivo), a conta A da Parte 63 (2/ln n nos palíndromos ímpares de comprimento
+ímpar ≥ 3, mais os exatos de 1 e 2 dígitos) e a conta B (o fator exato dos primos que dividem 2b: Π p/(p − 1) nos palíndromos coprimos a 2b, sobre ln n). Os
+logaritmos são os próprios da rodada 26 (`log_`), para as duas linguagens darem os mesmos bits.
+
+**O peso medido fora do teste antes deste registro (base 10 até 10⁷, perto do teste na variável que move o mecanismo: os primos que dividem 2b, {2, 5}, como {2, 3}
+na base 12):** a conta B difere da A em **+0,4%** (763,5 contra 766,4); na base 12, 171,3 contra 172,2. O fator exato do final pesa pouco: ele não pode levar a base 12
+de 177 a 196.
+
+**A IA-Java relê os erros da IA-Python:** ela chutou o centro (1,45) longe do medido porque o caso de fora não parecia o de dentro. **IA-Java (previsão (c)):** a razão
+medido/conta B da base 12 fica em **[1,05; 1,15]** (o fator não muda nada que importe; o excesso de 10% é de outra coisa).
+
+**A IA-Python relê os erros da IA-Java:** ela deduziu "F não explica a base 8" com o peso medido e acertou. **IA-Python (previsão (d)):** nas 12 bases, a média de
+|medido − conta B|/conta B fica em **[0,03; 0,10]**.
+
+**As duas (previsão (e)):** IGUAIS em Java (o crivo e as contagens são inteiros; os logaritmos, próprios).
+
+**As duas (previsão (f)):** o desvio de cada base sob a conta, σ = √(Σ p(1 − p)), e o número de bases (das 12) em que o medido fica a menos de 2σ da conta B, em
+**[8; 12]**.
+
+**As duas (previsão (g)):** a soma, nas 12 bases, de (medido − conta B), em **[0; 80]** (a conta tende a ficar abaixo: na base 10 até 10⁷, 781 contra 766,4, e na 12,
+196 contra 178).
