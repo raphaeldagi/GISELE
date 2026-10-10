@@ -29,3 +29,39 @@ contraexemplos, os sentidos). E = número de erros do mundo, S = número de surp
 | redundância P821 | [0,563; 0,651] | 0,588 | **[0,563; 0,651]** | o estatístico |
 | previsões unilaterais | — | 0 | **0** | `p974` |
 | pNN novas sem teste | — | 0 | **0** | `p1092` |
+
+## Previsões do mundo (registradas depois das (m) e das previsões sobre mim, antes de medir)
+
+**O reenvio (P1631).** A primeira metade do texto novo reenvia o código do Módulo 002, e a regra da Parte 50 manda comparar com a cópia guardada antes de auditar de novo.
+- **(a)** o bloco de código do texto novo é **idêntico** ao segundo bloco guardado na Parte 72 (categórica)
+
+**A prioridade de perguntas contra o valor da informação (P1632).** O texto propõe S(q) = w_u U + w_i I + w_t T (incerteza, impacto, testabilidade). A teoria da decisão tem a resposta
+exata para "quanto vale perguntar": o valor da informação perfeita, VOI = E[max_a u(a, s)] − max_a E[u(a, s)]. O mundo: 2.000 problemas de decisão com 2 ações e 2 estados, prior p ~ U(0, 1),
+utilidades u(a, s) ~ U(0, 1) independentes, semente 73; a pergunta é observar o estado. U = entropia binária de p, I = max_s |u(0, s) − u(1, s)|, T = 1, pesos 1.
+- **A conta antes da medida:** VOI = 0 quando a mesma ação é a melhor nos dois estados (dominância). O sinal de u(0, s) − u(1, s) é uma moeda justa e independente em cada estado, e os dois
+  sinais iguais têm chance 1/2. Com n = 2.000, o desvio é √(0,25/2.000) = 0,0112.
+- **(b)** a fração de perguntas com VOI = 0 em **[0,482; 0,518]** (0,5 ± 1,645 · 0,0112)
+- **A conta para (c):** S não vê a dominância. U depende só de p, que é independente das utilidades. I depende de |u(0, s) − u(1, s)|, e para diferenças simétricas o módulo é independente
+  do sinal. Então as 200 perguntas de maior S (os 10% do topo) também têm VOI = 0 com chance 1/2: o desvio é √(0,25/200) = 0,0354.
+- **(c)** a fração de VOI = 0 entre as 200 de maior S em **[0,442; 0,558]**
+
+**O motor de contradições (P1633, P1634).** Um axioma de disjunção ("nada é ao mesmo tempo A e B") entre classes irmãs é a metade negativa que a Parte 39 mostrou faltar. As classes são os 48
+hipônimos diretos de *organism*. **Calibração por regra escrita antes de olhar:** todos os pares que não envolvem *animal* (a classe do teste). Deram 1.081 pares, 1 com violação, 2 violações
+no total. **O mecanismo (a herança múltipla) está presente na calibração? Sim, mas o peso depende do tamanho dos fechos:** a taxa por produto de tamanhos é 2/Σ|A||B| = 3,57·10⁻⁸, e para os
+47 pares de *animal* (4.017 sinsets; os irmãos maiores têm 10.297 e 4.488) a conta dá **2,21** violações esperadas. A taxa vem de 2 eventos: o fator de Poisson de 90% para 2 é [0,18; 3,15].
+- **(d)** o número de sinsets que violam a disjunção entre *animal* e algum dos seus 47 irmãos em **[0; 10]**
+
+**Procurar o que refuta (a pergunta do Módulo 004).** A hipótese "toda ave voa" (o *Tweety* do texto) refutada pelo próprio dicionário: os sinsets no fecho de *bird* (o primeiro sentido)
+cuja glosa contém *flightless*. Sem calibração possível sem olhar: a faixa vem da memória (avestruz, emu, casuar, ema, kiwi, pinguim, dodô, moa…) e por isso é larga.
+- **(e)** os contraexemplos em **[3; 25]**
+
+**Os sentidos (o aviso do texto: identificar o sentido antes da relação).** As minhas P1611 e P1613 usam "o primeiro sentido de substantivo". O risco medido:
+- **(f)** a fração dos lemas de substantivo com mais de um sentido de substantivo em **[0,10; 0,18]** (de memória das estatísticas do WordNet 3.0)
+
+**A disfunção que a reverificação achou: 5 rodadas DIFERENTES (21, 22, 23, 25, 26).** Com o `resultados.txt` antigo, nesta máquina, as rodadas 25 e 26 dão IGUAIS: a causa são os dados
+novos. A rodada 21 usa `math.log` e `** 2` (Python) e `Math.log` (Java), funções que o IEEE 754 não obriga a arredondar corretamente, e as 22 a 26 herdam as semelhanças dela.
+- **(g)** o número de rodadas Python (de 46) que chamam uma função transcendental da biblioteca (`math.exp`, `log`, `log2`, `log10`, `pow`, `sin`, `cos`, `tan`, `atan`, `atan2`, `erf`) em
+  **[5; 20]**
+- **(h)** depois de trocar, nas rodadas que divergiram (21, 22, 23 e 25, em Python e em Java), as funções da biblioteca pelo `exp_` e `log_` da rodada 26 e `** 2` por `x * x`, o `verificar.py`
+  dá **46 de 46 IGUAIS** (categórica)
+- **(i)** a rodada 47 (o VOI e o S(q) da P1632 em Java, só com + − × ÷ e √) dá IGUAIS (categórica)

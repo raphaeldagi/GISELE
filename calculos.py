@@ -11120,6 +11120,44 @@ def p1615_imports_sem_uso(caminho="externos/texto_recebido_parte72b.md"):
     return saida
 
 
+def p1631_comparar_reenvio(novo="externos/texto_recebido_parte73.md", guardado="externos/texto_recebido_parte72b.md"):
+    """A regra da Parte 50 para um texto reenviado (P1631): cada bloco ```python do texto novo é comparado com os blocos da cópia guardada. Devolve
+    [(índice do bloco novo, índice do bloco guardado idêntico ou None, número de linhas)]."""
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    blocos = lambda f: re.findall(r"```python\n(.*?)```", open(os.path.join(raiz, f), encoding="utf-8").read(), re.S)
+    velhos = blocos(guardado)
+    return [(i, next((j for j, v in enumerate(velhos) if v == b), None), b.count("\n")) for i, b in enumerate(blocos(novo))]
+
+
+def p1633_disjuncoes(classes, d=None, regras=None):
+    """O motor de contradições (P1633; o Módulo 004 do texto recebido na Parte 73): um axioma de disjunção entre classes irmãs ("nada é ao mesmo tempo
+    A e B") é a metade que falta de uma implicação (a lição da Parte 39). Para cada classe (um índice de sinset), o fecho de Horn dos hipônimos
+    (P1609 nas regras da P1611); para cada par, os sinsets que caem nos dois fechos, isto é, as violações da disjunção. Devolve
+    {(a, b): [sinsets nos dois]} para os pares a < b da lista."""
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    if regras is None:
+        regras = p1611_regras_de_animal(d)[1]
+    fechos = {c: set(p1609_horn_linear([c], regras)[0]) for c in classes}
+    saida = {}
+    for i, a in enumerate(classes):
+        for b in classes[i + 1:]:
+            saida[(a, b)] = sorted(fechos[a] & fechos[b])
+    return saida
+
+
+def p1634_irmaos(sinset, d=None):
+    """Os hipônimos diretos de um sinset de substantivo (P1634), na ordem do arquivo (os candidatos a classes irmãs disjuntas)."""
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    alvo = "n:" + next(k[2:] for k, v in d.indice.items() if v == sinset and k.startswith("n:"))
+    return [i for i, s in enumerate(d.sinsets) if s[0] == "n" and alvo in s[2]]
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
