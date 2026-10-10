@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 76 (0x4C): a forma do byte
 
-> Continuação da [Parte 75](ASI_AGI_parte75_o_que_se_prova.md). A Parte 75 deixou uma pergunta medível, tirada do texto recebido: o embedding de um caractere como o produto de Kronecker de
+> Continuação da [Parte 75](ASI_AGI_parte75_o_que_se_prova.md). **Próxima:** [Parte 77 — as duas abertas](ASI_AGI_parte77_as_duas_abertas.md) (P1751–P1780). A Parte 75 deixou uma pergunta medível, tirada do texto recebido: o embedding de um caractere como o produto de Kronecker de
 > dois fatores, um para cada nibble do byte (W₁[b ≫ 4] ⊗ W₂[b & 0x0F]), serve para a forma de GPT deste projeto? Pedido do usuário, gravado no `CLAUDE.md`: **"Continue sem parar."**
 
 ## Previsões sobre as minhas previsões desta parte (num commit só delas, antes de pensar qualquer faixa)
