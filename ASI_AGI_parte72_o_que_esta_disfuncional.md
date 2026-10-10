@@ -34,3 +34,10 @@ O texto diz: entropia de **4,11 bits/símbolo** e **48,63% de redundância** num
 - **(i)** os "ciclos autorreferentes reais" do texto, `knowledge ⇄ information` e `meaning ⇄ word`: quantos dos dois existem no WordNet como ciclo de duas glosas (a palavra A aparece numa
   glosa de algum sentido de B e vice-versa, nas formas exatas)? **0 de 2**, porque a glosa de *knowledge* é "the psychological result of perception and learning and reasoning" (de memória:
   por isso é previsão).
+
+### Previsão nova, registrada depois de (a) a (i) e antes de medir
+
+O texto diz que o hash SHA-256 de cada palavra, lido como número em [0, 1], é "análogo funcional a pesos de rede neural". Um peso aprendido carrega informação sobre o significado;
+um hash, por construção, não. O teste: a distância |h(a) − h(b)| entre sinônimos (dois lemas do mesmo sinset) contra pares sorteados (2.000 de cada, semente 72). Para U, V uniformes,
+E|U − V| = 1/3 e Var|U − V| = 1/18.
+- **(j)** o z da diferença das médias (sinônimos − sorteados) em **[−1,96; 1,96]** (um hash não vê sinônimos; 95% da normal)
