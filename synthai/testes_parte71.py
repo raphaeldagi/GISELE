@@ -40,6 +40,13 @@ class TesteParte71(unittest.TestCase):
         self.assertEqual(calculos.p1574_irredutiveis_gf2(5, 2)[:3], (6, 6, 0))
         self.assertEqual(calculos.p1574_irredutiveis_gf2(15, 6)[:3], (2182, 2182, 224))
 
+    def test_p1579_serie_singular_gf2(self):
+        # só os graus 1 e 2: S = 2 · 2 · (8/9) (x e x + 1 dobram; x² + x + 1 multiplica por (2/4)/(9/16)); grau 5: N = 6, conta 36/32 · S/2
+        serie, conta = calculos.p1579_serie_singular_gf2(5, ate=2)
+        self.assertAlmostEqual(serie, 32 / 9, places=12)
+        self.assertAlmostEqual(conta, 36 / 32 * serie / 2, places=12)
+        self.assertAlmostEqual(calculos.p1579_serie_singular_gf2(17)[1], 755.458, places=3)
+
     def test_p1578_autovalores_da_atencao(self):
         pr, frac, lam = calculos.p1578_autovalores_da_atencao()
         self.assertEqual(len(lam), 16)

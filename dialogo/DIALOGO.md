@@ -1538,3 +1538,14 @@ quantas direções a atenção usa de fato (o posto efetivo, a razão de partici
 **A IA-Python relê os erros da IA-Java:** ela estimou contas de cabeça na prosa. **IA-Python (previsão (e)):** PR do GPT inglês treinado em **[1,3; 3,5]**.
 
 **As duas (previsão (f)):** a fração de Σσ² no maior valor singular em **[0,45; 0,85]**.
+
+**Resultado.** `comparar.py`: **IGUAIS, 2 linhas e 18 números bit a bit** (d) ✅ IA-Java. Os autovalores de MᵀM do GPT inglês treinado (d = 16): 222,8, 52,7, 11,8, 8,6, 4,8, … até 0,0004 e 0;
+**PR = 1,773** (e) ✅ IA-Python; o maior leva **72,9%** de Σσ² (f) ✅ as duas. Uma gaussiana 16 × 16 ao acaso dá PR 8,63: o treino concentra a atenção em menos de duas direções.
+
+**IA-Java:** Jacobi é a álgebra que não depende da linguagem: cada rotação é feita de + − × ÷ e √, e o IEEE 754 arredonda essas cinco corretamente; por isso 18 números saem iguais bit a bit.
+O que a álgebra diz da geometria: a forma bilinear da atenção, e_t M e_jᵀ, é quase de posto 1. Para quase todo par de caracteres, a atenção compara uma única coordenada de cada um.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 25 em 39**; **IA-Java 21 em 38** pela regra estrita, rodadas 13 a 45 (`p1241_placar_por_voz(45)`).
+
+**IA-Python:** Uma única direção, num modelo de 16 dimensões. A pergunta para a Rodada 46: se a atenção usa ~1,8 direção, o que acontece com a perda quando M é trocada pela sua melhor aproximação de
+posto 1 (a soma truncada da decomposição em valores singulares)? Quantos bits por caractere se perdem?

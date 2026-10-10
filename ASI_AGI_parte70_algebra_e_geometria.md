@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 70 (0x46): álgebra e geometria
 
-> Continuação da [Parte 69](ASI_AGI_parte69_a_forma_de_gpt.md). Previsões no commit `bb89374` ((a) a (i) e as (m)) e no `a7cef31` ((j)). Pedido do usuário, gravado no `CLAUDE.md`: **"Continue ao máximo que puder! Use álgebra e geometria! Grave na
+> Continuação da [Parte 69](ASI_AGI_parte69_a_forma_de_gpt.md). **Próxima:** [Parte 71 — os autovalores da atenção](ASI_AGI_parte71_os_autovalores_da_atencao.md) (P1571–P1600). Previsões no commit `bb89374` ((a) a (i) e as (m)) e no `a7cef31` ((j)). Pedido do usuário, gravado no `CLAUDE.md`: **"Continue ao máximo que puder! Use álgebra e geometria! Grave na
 > memória!"** Esta parte lê a forma de GPT e o dicionário como geometria e os resolve por álgebra: a lei de escala do GPT por mínimos quadrados em forma fechada; a geometria dos
 > embeddings (ângulos entre letras, a componente principal por iteração de potência); a taxonomia do WordNet como espaço hiperbólico (o δ de Gromov); e os dígitos hexadecimais
 > como vetores de GF(2)⁴.

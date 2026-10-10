@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 70, perguntas P1 a P1550).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 71, perguntas P1 a P1579).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -31,7 +31,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (11339 linhas)
+# calculos.py  (11505 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7515,6 +7515,8 @@ def testes_de_regressao():
         "P1493": len(p1493_palindromos_duplos()[0]) == 18 and p1491_densidade_da_conta()[0][5][1] == 9592,
         "P1516": p1514_pi_hex_digitos(16) == "243f6a8885a308d3" and p1516_gpt_decide()[1] == 5,
         "P1549": abs(p1549_lei_de_escala()[0][24][1] - 0.0541) < 0.0001 and abs(p1545_bases_gf2(p1514_pi_hex_digitos(10000))[0] - 0.30269) < 0.00001,
+        "P1574": p1574_irredutiveis_gf2(15, 6)[:3] == (2182, 2182, 224) and p1573_crescimento_da_taxonomia("n")[2] == 7,
+        "P1579": p1574_irredutiveis_gf2(17, 6)[2] == 758 and abs(p1579_serie_singular_gf2(17)[1] - 755.458) < 0.001,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9536,6 +9538,7 @@ ERROS_P1479, TESTES_P1479 = 189, 559
 ERROS_P1509, TESTES_P1509 = 189, 565
 ERROS_P1539, TESTES_P1539 = 189, 573
 ERROS_P1569, TESTES_P1569 = 191, 583
+ERROS_P1599, TESTES_P1599 = 193, 591
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -10750,6 +10753,144 @@ def p1550_contas_da_parte70(medida_gf2=None, janelas=9997):
     return p, sd, (medida_gf2 - p) / sd, (medida_gf2 - p) / (2 * sd)
 
 
+def p1571_autovalores_jacobi(S, varreduras=60):
+    \"\"\"Os autovalores de uma matriz simétrica pelo método de Jacobi clássico (P1571): rotações de Givens que zeram, em ordem fixa (p < q, linha por
+    linha), cada elemento fora da diagonal; tan θ = sinal(τ)/(|τ| + √(τ² + 1)), τ = (S_qq − S_pp)/(2 S_pq). Só + − × ÷ e √ (o IEEE 754 arredonda
+    todas corretamente: a tradução para Java é exata). Devolve os autovalores em ordem decrescente.\"\"\"
+    from math import sqrt as raiz
+    n = len(S)
+    A = [list(linha) for linha in S]
+    for _ in range(varreduras):
+        fora = 0.0
+        for p in range(n):
+            for q in range(p + 1, n):
+                fora += A[p][q] * A[p][q]
+        if fora == 0.0:
+            break
+        for p in range(n):
+            for q in range(p + 1, n):
+                if A[p][q] == 0.0:
+                    continue
+                tau = (A[q][q] - A[p][p]) / (2.0 * A[p][q])
+                t = (1.0 if tau >= 0.0 else -1.0) / (abs(tau) + raiz(tau * tau + 1.0))
+                c = 1.0 / raiz(t * t + 1.0)
+                s_ = t * c
+                for k in range(n):
+                    akp, akq = A[k][p], A[k][q]
+                    A[k][p] = c * akp - s_ * akq
+                    A[k][q] = s_ * akp + c * akq
+                for k in range(n):
+                    apk, aqk = A[p][k], A[q][k]
+                    A[p][k] = c * apk - s_ * aqk
+                    A[q][k] = s_ * apk + c * aqk
+    return sorted((A[i][i] for i in range(n)), reverse=True)
+
+
+def p1572_participacao(M):
+    \"\"\"Quantas direções uma matriz usa (P1572): os valores singulares σ_i de M (as raízes dos autovalores de MᵀM, por Jacobi, P1571); a razão de
+    participação PR = (Σ σ_i²)²/Σ σ_i⁴ (entre 1, uma direção só, e d, todas iguais) e a fração de Σσ² no maior. Para uma matriz gaussiana d×d ao
+    acaso, PR ≈ d/2 (a lei do quarto de círculo: E σ² = d, E σ⁴ = 2d²). Devolve (PR, fração do maior, σ² em ordem decrescente).\"\"\"
+    n, m = len(M), len(M[0])
+    MtM = [[sum(M[k][i] * M[k][j] for k in range(n)) for j in range(m)] for i in range(m)]
+    lam = [max(0.0, x) for x in p1571_autovalores_jacobi(MtM)]
+    s2 = sum(lam)
+    s4 = sum(x * x for x in lam)
+    return s2 * s2 / s4, lam[0] / s2, lam
+
+
+def p1573_crescimento_da_taxonomia(classe="n", ate=8, d=None):
+    \"\"\"A geometria do crescimento da taxonomia (P1573): o número de sinsets da classe em cada profundidade (P793) e a taxa de crescimento por nível,
+    pela reta de mínimos quadrados de ln N(r) contra r nas profundidades 1 a `ate` (num espaço hiperbólico, N(r) cresce como e^{λr}; num euclidiano de
+    dimensão k, como r^{k−1}). Devolve (fator por nível e^λ, {r: N(r)}, o r de N máximo).\"\"\"
+    from math import exp, log
+    from synthai.dicionario import Dicionario, profundidades
+    d = d or Dicionario()
+    por = {}
+    for i, r in profundidades(d).items():
+        if d.sinsets[i][0] == classe:
+            por[r] = por.get(r, 0) + 1
+    pts = [(r, log(por[r])) for r in range(1, ate + 1) if por.get(r)]
+    k = len(pts)
+    mx, my = sum(x for x, _ in pts) / k, sum(y for _, y in pts) / k
+    lam = sum((x - mx) * (y - my) for x, y in pts) / sum((x - mx) ** 2 for x, _ in pts)
+    return exp(lam), dict(sorted(por.items())), max(por, key=por.get)
+
+
+def p1574_irredutiveis_gf2(grau=15, mascara=6):
+    \"\"\"Os números hexadecimais como polinômios sobre GF(2) (P1574): os polinômios de grau `grau` (bit mais alto = grau) irredutíveis, contados por
+    divisão por todos os irredutíveis de grau ≤ grau/2 (crivo de polinômios), contra a fórmula de Gauss N(n) = (1/n) Σ_{d|n} μ(d) 2^{n/d}; e os
+    "gêmeos" (f, f ⊕ máscara), os dois irredutíveis, contra a conta heurística N²/2^(grau−1)/2 (a chance de o vizinho de um irredutível ser irredutível,
+    se fossem independentes). Com máscara = 2 (f ⊕ x), não há gêmeos: um irredutível de grau > 1 tem um número ímpar de termos (senão x + 1 o divide),
+    e trocar um coeficiente troca a paridade. Por isso o padrão é máscara = 6 (f ⊕ x ⊕ x², que mantém a paridade e o termo constante).
+    Devolve (irredutíveis, Gauss, gêmeos, conta dos gêmeos).\"\"\"
+    def mod(a, b):
+        db = b.bit_length()
+        while a.bit_length() >= db:
+            a ^= b << (a.bit_length() - db)
+        return a
+
+    irred = {1: [2, 3]}
+    for g in range(2, grau // 2 + 1):
+        irred[g] = [f for f in range(1 << g, 1 << (g + 1))
+                    if all(mod(f, h) for k in range(1, g // 2 + 1) for h in irred[k])]
+    peq = [h for k in range(1, grau // 2 + 1) for h in irred[k]]
+    conj = {f for f in range(1 << grau, 1 << (grau + 1)) if all(mod(f, h) for h in peq)}
+
+    def mobius(n):
+        r, k, p = 1, n, 2
+        while p * p <= k:
+            if k % p == 0:
+                k //= p
+                if k % p == 0:
+                    return 0
+                r = -r
+            p += 1
+        return -r if k > 1 else r
+    gauss = sum(mobius(dd) * 2 ** (grau // dd) for dd in range(1, grau + 1) if grau % dd == 0) // grau
+    gemeos = sum(1 for f in conj if (f ^ mascara) in conj and f < (f ^ mascara))
+    return len(conj), gauss, gemeos, len(conj) ** 2 / 2 ** (grau - 1) / 2
+
+
+def p1579_serie_singular_gf2(grau, ate=40):
+    \"\"\"A conta dos gêmeos (f, f ⊕ x ⊕ x²) pela série singular (a heurística de Hardy–Littlewood/Bateman–Horn em F₂[x]) (P1579): para cada irredutível p
+    de grau k, a chance de p não dividir nenhum dos dois, dividida pela chance se fossem independentes: (1 − ν_p/2^k)/(1 − 1/2^k)², com ν_p = 1 quando
+    x + x² ≡ 0 mod p (p = x e p = x + 1: fator 2 cada, a paridade e o termo constante) e ν_p = 2 nos outros (p = x² + x + 1: fator 8/9). O número de
+    irredutíveis de cada grau k vem da fórmula de Gauss. Devolve (S, a conta N²/2^grau · S/2 com N de Gauss).\"\"\"
+    def mobius(n):
+        r, k, q = 1, n, 2
+        while q * q <= k:
+            if k % q == 0:
+                k //= q
+                if k % q == 0:
+                    return 0
+                r = -r
+            q += 1
+        return -r if k > 1 else r
+
+    def gauss(n):
+        return sum(mobius(dd) * 2 ** (n // dd) for dd in range(1, n + 1) if n % dd == 0) // n
+    serie = 2.0 * 2.0
+    for k in range(2, ate + 1):
+        serie *= ((1 - 2 / 2 ** k) / (1 - 1 / 2 ** k) ** 2) ** gauss(k)
+    n = gauss(grau)
+    return serie, n * n / 2 ** grau * serie / 2
+
+
+def p1578_autovalores_da_atencao():
+    \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
+    (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
+    import importlib.util
+    import os
+    import tempfile
+    spec = importlib.util.spec_from_file_location("rodada45", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada45.py"))
+    r45 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r45)
+    with tempfile.TemporaryDirectory() as pasta:
+        r45.preparar(pasta)
+        return r45.participacao(*r45.ler(pasta))
+
+
 def p1499_previsoes_sobre_previsoes_v2(parte=68):
     \"\"\"O placar das previsões sobre as minhas previsões, versão 2 (P1499; lido pela P1481, com os tipos): (m1) o número de previsões do
     mundo, (m2) o número de faixas que cruzam o zero, (m3) a mediana de w das que não cruzam, (m4) a fração de acertos, (m5) o número de
@@ -11326,6 +11467,31 @@ def _parte_70():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1569, testes=TESTES_P1569)
     print(f"P1569 minha taxa de erro ({ERROS_P1569}/{TESTES_P1569}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_71():
+    print("--- Parte 71 (0x47: os autovalores da atencao) ---")
+    pr, frac, lam = p1578_autovalores_da_atencao()
+    print(f"P1578 rodada 45: autovalores de M^T M (M = W_Q W_K^T) {[round(x, 4) for x in lam]}; PR {pr:.4f}; fracao do maior {frac:.4f}")
+    import random
+    r = random.Random(1)
+    print(f"P1572 matriz gaussiana 16x16 ao acaso: PR {p1572_participacao([[r.gauss(0, 1) for _ in range(16)] for _ in range(16)])[0]:.4f} (teoria ~ d/2 = 8)")
+    print(f"P1571 Jacobi em [[2, 1], [1, 2]]: {p1571_autovalores_jacobi([[2.0, 1.0], [1.0, 2.0]])} (exatos: 3 e 1)")
+    for classe in ("v", "n"):
+        f, por, rmax = p1573_crescimento_da_taxonomia(classe)
+        print(f"P1573 classe {classe}: fator por nivel (1-8) {f:.4f}; profundidade com mais sinsets {rmax}; N(r) {por}")
+    for g in (11, 13, 15):
+        irr, gauss, gem, conta = p1574_irredutiveis_gf2(g, 6)
+        print(f"P1574 grau {g}: irredutiveis {irr} (Gauss {gauss}); gemeos (f, f + x + x^2) {gem} contra a conta {conta:.1f} (razao {gem / conta:.3f}); "
+              f"gemeos por um bit (f, f + x): {p1574_irredutiveis_gf2(g, 2)[2]}")
+    for g in (11, 13, 15, 17, 19):
+        serie, conta = p1579_serie_singular_gf2(g)
+        gem = p1574_irredutiveis_gf2(g, 6)[2]
+        print(f"P1579 grau {g}: serie singular S = {serie:.4f}; conta {conta:.1f}; medido {gem}; razao {gem / conta:.3f}; z de Poisson {(gem - conta) / conta ** 0.5:+.2f}")
+    total, sem = p1092_pnn_sem_teste(1571, 1600)
+    print(f"P1092 pNN novas (P1571-P1600) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 71: {p974_previsoes_sem_largura(range(71, 72))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1599, testes=TESTES_P1599)
+    print(f"P1599 minha taxa de erro ({ERROS_P1599}/{TESTES_P1599}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -11362,7 +11528,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71}
 
 
 if __name__ == "__main__":
@@ -11375,7 +11541,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (249 linhas)
+# CLAUDE.md  (253 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -11472,6 +11638,10 @@ anterior, commit e push.
   Parte 65: as regras valem JUNTAS: a regra de escolha da calibração (Parte 64) tem que cobrir a faixa inteira da variável que move o mecanismo no teste (Parte 63);
   "as bases logo depois do teste" só tinha bases grandes e errou nas pequenas. E uma previsão por unidade confere, em cada unidade, a condição do mecanismo (a base 18 não
   tinha primo grande em b² + 1).
+  Parte 71: antes de extrapolar uma tendência de k pontos, calcular por código o desvio de cada ponto (Poisson: 1/√n) e o t da inclinação; sem |t| > 2, a previsão usa a conta
+  sem tendência e a faixa do ruído (três razões com z −0,03, −0,52, −1,16 viraram uma "queda" e (g) errou; com a faixa de Poisson, (h) acertou). Em cada calibração, uma linha:
+  "o mecanismo que move o teste está presente no caso de calibração?" (os verbos não têm a fase de crescimento dos substantivos). Um erro pequeno que revela um raciocínio falso
+  também gera teste: a previsão de quantos testes conta os erros de mecanismo, não só as surpresas.
   Parte 66: toda conclusão de efeito na síntese diz em quantos lotes independentes ele apareceu; visto em um lote só, escreve-se como hipótese (o "viés das bases
   grandes" da Parte 64, 1/64 num lote, não se replicou: −1,07, −0,02, +1,12 por lote). As regras antigas valem também na síntese, não só nas previsões.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
@@ -11619,7 +11789,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -17401,6 +17571,69 @@ class TesteParte70(unittest.TestCase):
         self.assertAlmostEqual(alfa, alfa2, places=10)
         self.assertAlmostEqual(n_estrela / n2, 1.0, places=8)
         self.assertAlmostEqual(dif, dict(pontos[48])[8000] - dict(pontos[24])[8000], places=15)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte71.py  (58 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte71.py'] = """\"\"\"Testes de unidade da Parte 71 (os autovalores da atenção): `python3 -m unittest synthai.testes_parte71`. Cada pNN nova com o seu teste, chamada PELO NOME.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class Cadeia:
+    # profundidades: 1 nó em 0, 2 em 1, 4 em 2 (fator 2 por nível); substantivos
+    indice = {f"n:{i}": i for i in range(7)}
+    sinsets = [("n", ["r"], [], "")] + [("n", [f"a{i}"], ["n:0"], "") for i in (1, 2)] + [("n", [f"b{i}"], [f"n:{1 + (i - 3) // 2}"], "") for i in (3, 4, 5, 6)]
+
+
+class TesteParte71(unittest.TestCase):
+    def test_p1571_autovalores_jacobi(self):
+        # uma matriz 3×3 com todos os termos diferentes de zero: autovalores conhecidos 2 − √2, 2, 2 + √2
+        lam = calculos.p1571_autovalores_jacobi([[2.0, -1.0, 0.5], [-1.0, 2.0, -1.0], [0.5, -1.0, 2.0]])
+        traco = sum(lam)
+        self.assertAlmostEqual(traco, 6.0, places=12)
+        self.assertEqual(len(lam), 3)
+        self.assertTrue(lam[0] >= lam[1] >= lam[2])
+        # o determinante (produto dos autovalores) confere com o calculado à mão: 2(4 − 1) + 1(−2 + 0,5) + 0,5(1 − 1) = 4,5
+        self.assertAlmostEqual(lam[0] * lam[1] * lam[2], 4.5, places=10)
+
+    def test_p1572_participacao(self):
+        # uma matriz de posto 1 tem PR = 1; a identidade d×d tem PR = d
+        pr1, f1, _ = calculos.p1572_participacao([[1.0, 2.0], [2.0, 4.0]])
+        self.assertAlmostEqual(pr1, 1.0, places=9)
+        self.assertAlmostEqual(f1, 1.0, places=9)
+        prI, fI, _ = calculos.p1572_participacao([[1.0 if i == j else 0.0 for j in range(4)] for i in range(4)])
+        self.assertAlmostEqual(prI, 4.0, places=12)
+
+    def test_p1573_crescimento_da_taxonomia(self):
+        f, por, rmax = calculos.p1573_crescimento_da_taxonomia("n", 2, Cadeia())
+        self.assertEqual((por, rmax), ({0: 1, 1: 2, 2: 4}, 2))
+        self.assertAlmostEqual(f, 2.0, places=12)
+
+    def test_p1574_irredutiveis_gf2(self):
+        # Gauss: N(5) = (32 − 2)/5 = 6; com um bit trocado não há gêmeos (paridade); grau 15: 2.182
+        self.assertEqual(calculos.p1574_irredutiveis_gf2(5, 2)[:3], (6, 6, 0))
+        self.assertEqual(calculos.p1574_irredutiveis_gf2(15, 6)[:3], (2182, 2182, 224))
+
+    def test_p1579_serie_singular_gf2(self):
+        # só os graus 1 e 2: S = 2 · 2 · (8/9) (x e x + 1 dobram; x² + x + 1 multiplica por (2/4)/(9/16)); grau 5: N = 6, conta 36/32 · S/2
+        serie, conta = calculos.p1579_serie_singular_gf2(5, ate=2)
+        self.assertAlmostEqual(serie, 32 / 9, places=12)
+        self.assertAlmostEqual(conta, 36 / 32 * serie / 2, places=12)
+        self.assertAlmostEqual(calculos.p1579_serie_singular_gf2(17)[1], 755.458, places=3)
+
+    def test_p1578_autovalores_da_atencao(self):
+        pr, frac, lam = calculos.p1578_autovalores_da_atencao()
+        self.assertEqual(len(lam), 16)
+        self.assertAlmostEqual(pr, sum(lam) ** 2 / sum(x * x for x in lam), places=9)
+        self.assertLess(pr, 3.0)
 
 
 if __name__ == "__main__":
@@ -33325,7 +33558,7 @@ intervalo de 90% **[0,35; 0,70]**. O intervalo está estreitando; a média não 
 # ====================================================================================================
 FONTES['ASI_AGI_parte70_algebra_e_geometria.md'] = """# Como eu construiria uma AGI/ASI — Parte 70 (0x46): álgebra e geometria
 
-> Continuação da [Parte 69](ASI_AGI_parte69_a_forma_de_gpt.md). Previsões no commit `bb89374` ((a) a (i) e as (m)) e no `a7cef31` ((j)). Pedido do usuário, gravado no `CLAUDE.md`: **"Continue ao máximo que puder! Use álgebra e geometria! Grave na
+> Continuação da [Parte 69](ASI_AGI_parte69_a_forma_de_gpt.md). **Próxima:** [Parte 71 — os autovalores da atenção](ASI_AGI_parte71_os_autovalores_da_atencao.md) (P1571–P1600). Previsões no commit `bb89374` ((a) a (i) e as (m)) e no `a7cef31` ((j)). Pedido do usuário, gravado no `CLAUDE.md`: **"Continue ao máximo que puder! Use álgebra e geometria! Grave na
 > memória!"** Esta parte lê a forma de GPT e o dicionário como geometria e os resolve por álgebra: a lei de escala do GPT por mínimos quadrados em forma fechada; a geometria dos
 > embeddings (ângulos entre letras, a componente principal por iteração de potência); a taxonomia do WordNet como espaço hiperbólico (o δ de Gromov); e os dígitos hexadecimais
 > como vetores de GF(2)⁴.
@@ -33547,6 +33780,254 @@ passos, como a calibração dizia. O dobro de pesos piorou com o mesmo passo e m
 - Leis de escala dos modelos de linguagem: J. Kaplan et al., "Scaling Laws for Neural Language Models", [arXiv:2001.08361](https://arxiv.org/abs/2001.08361)
 - Hipótese distribucional: Z. Harris, "Distributional structure", *Word* 10 (1954)
 - Lei da prática: A. Newell e P. Rosenbloom, "Mechanisms of skill acquisition and the law of practice" (1981)
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte71_os_autovalores_da_atencao.md  (243 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte71_os_autovalores_da_atencao.md'] = """# Como eu construiria uma AGI/ASI — Parte 71 (0x47): os autovalores da atenção
+
+> Continuação da [Parte 70](ASI_AGI_parte70_algebra_e_geometria.md). O loop segue sozinho (pedido do usuário: "não pare mais"), com álgebra e geometria e a forma de GPT crescendo.
+
+## Previsões sobre as minhas previsões desta parte (registradas ANTES de planejar as calibrações, pela regra da Parte 70)
+
+Neste momento eu ainda não pensei faixa nenhuma desta parte; sei só os temas (os autovalores da atenção do GPT, a rodada 45; uma pergunta do dicionário; uma do hexadecimal). O histórico
+pela régua `p1481` (Partes 53 a 70): **127** previsões, **74,8%** de acerto; por tipo, as que cruzam o zero acertam 55,6%, as frações 76,7%, as contagens 66,7%, as outras 77,1%, as
+categóricas 81,2%; as medianas de w por tipo vão de 0,29 a 0,47.
+- **(m1)** o número de previsões do mundo em **[6; 10]**.
+- **(m2)** o número de faixas que cruzam o zero em **[0; 2]**.
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,10; 0,50]**.
+- **(m4)** a fração de acertos do mundo em **[0,55; 1,00]**.
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**.
+- **(m6)** o número de surpresas em **[0; 2]**.
+
+## As perguntas desta parte
+
+1. **P1571–P1572 (0x623–0x624).** Quantas direções a atenção do GPT usa? Os valores singulares de W_Q W_Kᵀ por Jacobi, e a razão de participação (Rodada 45). ↩ P1543
+2. **P1573 (0x625).** A geometria do crescimento: quantos sinsets de substantivo há em cada profundidade? A taxonomia cresce como um espaço hiperbólico? ↩ P1544
+3. **P1574 (0x626).** Hexadecimal como polinômios sobre GF(2): os irredutíveis de grau 15 e os "gêmeos" (f, f ⊕ x ⊕ x²). ↩ P1545
+4. **P1575 (0x627).** Preditiva comigo mesma. **P1576 (0x628).** Engenharia reversa e Jung. **P1577 (0x629).** O diálogo.
+5. **P1599 (0x63F).** Placar (três). **P1600 (0x640).** Unificação.
+
+## Previsões pré-registradas (escritas depois do registro das (m))
+
+### Sobre mim (placar separado), condicionais ao número S de surpresas
+
+Planejadas: as 6 previsões do mundo abaixo, (a) a (f), e 5 funções novas (p1571 a p1574 e a rodada 45, p1578).
+
+| medida | estatístico (até a 70) | ingênuo (Parte 70) | **eu** | por quê |
+|---|---|---|---|---|
+| caracteres | [13.588; 20.030] | 19.769 | **[13.588; 20.030]** | o estatístico |
+| compressão | [0,398; 0,421] | 0,408 | **[0,398; 0,421]** | o estatístico |
+| testes de unidade | [2,72; 8,53] | 7 | **[4 + S; 7 + S]** | 5 funções, uma por teste, ~1 por surpresa |
+| testes do placar | [5,67; 10,33] | 10 | **6 + 2·S ± 1** | as 6 letras abaixo |
+| erros do placar | [0; 3,17] | 2 | **[0; 3,17]** | o estatístico |
+| redundância P821 | [0,565; 0,651] | 0,644 | **[0,565; 0,651]** | o estatístico |
+| previsões unilaterais | — | 0 | **0** | `p974` |
+| pNN novas sem teste | — | 0 | **0** | `p1092` |
+
+### Sobre o mundo
+
+**P1573, o crescimento da taxonomia dos substantivos.** O número de sinsets em cada profundidade r e o fator por nível e^λ da reta de ln N(r) contra r, nas profundidades 1 a 8.
+- **Restrições, com peso:** (1) num espaço hiperbólico (uma árvore), N(r) cresce como a ramificação elevada a r (a P1492 dava ~4,8 filhos por pai interno); (2) mas a taxonomia não é cheia:
+  ela fica mais fina perto das folhas e acaba em profundidade ~18; (3) **peso medido num caso escolhido por regra escrita antes (os verbos):** os verbos têm o máximo na profundidade 2 e
+  encolhem depois (fator 0,54 por nível nas profundidades 1 a 8): a hierarquia dos verbos é rasa. Os substantivos são uma hierarquia funda (profundidade média ~8, P793).
+- Exemplo à mão: *entity* (0) → *physical entity*, *abstraction*, *thing* (1) → … → *dog* (13).
+- (a) o fator por nível nos substantivos em **[1,2; 3,0]**
+- (b) a profundidade com mais sinsets em **[7; 11]**
+
+**P1574, os gêmeos irredutíveis sobre GF(2).** Os polinômios de grau 15 (os números de 0x8000 a 0xFFFF) irredutíveis, e os pares (f, f ⊕ x ⊕ x²) com os dois irredutíveis.
+- **A conta antes da medida:** Gauss: N(15) = (2¹⁵ − 2⁵ − 2³ + 2)/15 = **2.182** (teorema: fora do placar). Os gêmeos por um bit só (f, f ⊕ x) **não existem** (um irredutível de grau > 1 tem
+  número ímpar de termos, e trocar um bit troca a paridade): descoberto na calibração, que deu 0 contra a conta de 48. Com dois bits (f ⊕ x ⊕ x²), a conta ingênua é N²/2¹⁴/2 = **145,3**.
+  **Peso medido em casos escolhidos por regra (os graus ímpares logo abaixo, 11 e 13):** 28 contra 16,9 (razão 1,66) e 76 contra 48,4 (razão 1,57).
+- (c) os gêmeos de grau 15 em **[180; 300]** (a conta × razão de 1,24 a 2,06)
+
+**P1571–P1572, rodada 45:** no `dialogo/DIALOGO.md` (previsões (d) a (f)).
+
+### Previsão nova, nascida de um resultado inesperado (registrada antes de medir o grau 17)
+
+Os gêmeos de grau 15 deram 224, **1,54** vez a conta ingênua (145,3). A conta que explica o excesso, feita depois de ver os números (por isso só vira evidência num mundo novo): a série singular
+de Hardy–Littlewood em F₂[x] (`p1579`). Para cada irredutível p de grau k, multiplicar pela chance de p não dividir nenhum dos dois, dividida pela chance se fossem independentes,
+(1 − ν_p/2^k)/(1 − 1/2^k)²:
+- p = x e p = x + 1: x + x² ≡ 0 (ν = 1), então f e o vizinho têm o mesmo resto: fator (1/2)/(1/4) = **2** cada (o termo constante e a paridade).
+- p = x² + x + 1: x + x² ≡ 1, então os restos proibidos são 0 e 1 (ν = 2): fator (2/4)/(9/16) = **8/9**.
+- todos os outros: ν = 2, fatores um pouco abaixo de 1.
+
+A série vale S = **3,3315**, e a conta é N²/2^g · S/2. Contra a medida: grau 11, 28 contra 28,1 (razão **0,995**); grau 13, 76 contra 80,7 (**0,942**); grau 15, 224 contra 242,0 (**0,926**).
+A razão cai devagar com o grau.
+
+- **(g)** os gêmeos (f, f ⊕ x ⊕ x²) de grau 17 em **[642; 756]**: a conta de 755,5 vezes uma razão de 0,85 a 1,00 (continuação da queda, de 0,926 para ~0,91, com folga dos dois lados).
+
+**Resultado de (g), medido logo depois do registro:** **758** gêmeos de grau 17 ❌ (por 2 acima do teto; a conta da série singular dava 755,5, razão **1,003**). A conta acertou; o que errou foi
+a "queda" que eu li em três razões. O desvio de Poisson de cada razão é 1/√conta (por código): 0,189, 0,111 e 0,064, e os z das três medidas são −0,03, −0,52 e −1,16. A "tendência" estava
+dentro do ruído, e eu a extrapolei sem perguntar o tamanho do ruído.
+
+- **(h)** os gêmeos de grau 19 em **[2.338; 2.500]**: a conta 2.419,2 ± 1,645·√2.419 (a faixa de 90% da Poisson, sem tendência nenhuma). Registrada antes de medir.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [6; 10] | **8.0000** | ✅ |
+| (m2) | [0; 2] | **0.0000** | ✅ |
+| (m3) | [0.1; 0.5] | **0.2500** | ✅ |
+| (m4) | [0.55; 1.0] | **0.7500** | ✅ |
+| (m5) | [0; 2] | **0.0000** | ✅ |
+| (m6) | [0; 2] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **6 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P1571–P1572 (0x623–0x624). Quantas direções a atenção usa (Rodada 45) ✅✅✅
+
+**Na pergunta.** "Quantas direções" já supõe que a atenção é uma geometria: o escore entre o caractere t e o j é a forma bilinear e_t M e_jᵀ/√d, com M = W_Q W_Kᵀ. Uma forma bilinear se lê
+pelos seus valores singulares, e "quantas direções" é o posto efetivo.
+
+**Lógica (álgebra).** Os valores singulares de M são as raízes dos autovalores de MᵀM, uma matriz simétrica 16 × 16. O método de Jacobi zera, a cada rotação, o maior elemento fora da diagonal:
+tan 2θ = 2a_pq/(a_qq − a_pp), e as rotações só usam + − × ÷ e √. A razão de participação é PR = (Σλ)²/Σλ², com λ = σ².
+- O caso de controle, com a substituição: em [[2, 1], [1, 2]], Jacobi dá 2,9999999999999996 e 0,9999999999999998 (exatos: 3 e 1, erro de um ulp).
+- Medido (d = 16, inglês, 2.000 passos): λ = 222,84; 52,69; 11,81; 8,64; 4,76; 2,11; 1,44; 0,63; … ; 0,0004; 0,0.
+- Σλ = 305,62 e Σλ² = 222,84² + 52,69² + … = 52.676 (por código), o que dá PR = 305,62²/52.676 = **1,773** e uma fração do maior de 222,84/305,62 = **0,729**.
+- Uma gaussiana 16 × 16 ao acaso (semente 1) dá PR **8,634**. A conta: para uma matriz de Wishart quadrada, os λ seguem a lei do quarto de círculo de Marchenko–Pastur, com E[λ²]/E[λ]² = 2,
+  e então PR → d/2 = 8.
+- O treino tira 8,6/1,77 = **4,9** vezes de "dimensão" da atenção.
+- (d) IGUAIS ✅ (18 números bit a bit em Java), (e) PR em [1,3; 3,5] ✅, (f) fração do maior em [0,45; 0,85] ✅. A chance de acerto por sorte de (e): uma faixa de largura 2,2 numa reta que vai de
+  1 a 16 (o PR possível), ~15%. O ingênuo "igual à calibração no português" (1,95) erraria por 0,18, menos que a minha faixa: (e) acertou, mas o ingênuo também teria acertado.
+
+**Geometria.** Um último autovalor 0 é obrigatório? Não por posto: M é 16 × 16 com W_Q e W_K de 16 × 16. O 0,0 que aparece é menor que 5·10⁻⁵ (arredondado a 4 casas). A atenção vive numa
+elipse muito achatada: o eixo maior tem √222,8 = 14,9 e o segundo, √52,7 = 7,3. A forma é quase um segmento.
+
+**Tradução cruzada.** A atenção como psicologia é o foco da consciência. Um foco de posto ~2 compara cada caractere com os outros por uma ou duas qualidades só, que é o que William James chamava
+de estreiteza da atenção, aqui medida. O caminho inverso: a física de um condensado, em que muitos modos colapsam num só, é a "fixação" de um complexo.
+
+**Meta.** O PR depende do tamanho do treino: 5,42 sem treino e 1,95 com 2.000 passos no português. Não sei se ele continua caindo ou volta a subir com mais passos (a literatura mostra
+gargalos de posto baixo na atenção quando a cabeça é pequena: Bhojanapalli et al., 2020). Pergunta para a Rodada 46.
+
+### P1573 (0x625). A taxonomia como espaço hiperbólico que se afina ❌✅
+
+**Na pergunta.** "Cresce como um espaço hiperbólico?" pede uma taxa por nível. Uma árvore de ramificação b tem N(r) = b^r, e o fator por nível é b.
+
+**Lógica.** O fator por nível é e^λ, com λ a inclinação de mínimos quadrados de ln N(r) contra r, nas profundidades 1 a 8 (forma fechada: λ = Σ(r − r̄)(y − ȳ)/Σ(r − r̄)²).
+- Os substantivos: N = 3, 22, 228, 2.020, 6.249, 12.267, 18.936, 14.155 (r = 1 a 8). O fator saiu **3,536**, contra a faixa (a) [1,2; 3,0] ❌ (por 0,54, menos que a largura de 1,8: não é surpresa).
+- O máximo fica em r = **7** ✅ (b) [7; 11].
+- Os verbos (calibração): o fator é 0,536 e o máximo fica em r = 2.
+
+**Por que (a) errou.** A calibração dos verbos media o fator numa hierarquia que já encolhe a partir de r = 2. Nos substantivos, as profundidades 1 a 8 incluem os primeiros níveis, que
+crescem explosivamente:
+- os fatores entre níveis vizinhos são 22/3 = 7,3, 228/22 = 10,4, 2.020/228 = 8,9, 6.249/2.020 = 3,1, 12.267/6.249 = 1,96, 18.936/12.267 = 1,54, 14.155/18.936 = 0,75;
+- a média geométrica deles é (14.155/3)^(1/7) = 3,35, e a reta de mínimos quadrados dá 3,54, porque pesa mais as pontas.
+
+Eu escolhi "1 a 8" como a janela e pensei no fator de uma árvore que já se afina, mas a janela é dominada pelos três primeiros saltos ((2.020/3)^(1/3) = 8,76 por nível, por código). **A forma:** um espaço hiperbólico no
+topo (8,76 vezes mais sinsets a cada nível) que se afina para uma esfera achatada embaixo (o máximo em 7, a cauda até 18).
+
+**Tradução cruzada.** O topo da taxonomia é um nascimento de categorias (cada nível tem 8,76 vezes os sinsets do anterior; não é o número de filhas por pai, porque há herança múltipla e folhas); o meio, uma maturidade; a cauda, um envelhecimento em que só restam as linhagens
+especializadas. É a curva de população de uma coorte, lida como psicologia do conceito: generalizar é fácil no começo e raro no fundo.
+
+**Meta.** A faixa (a) foi calibrada num caso (os verbos) em que o mecanismo (a fase de crescimento) não existia: a calibração não estava perto do teste na variável que move o mecanismo
+(regra da Parte 63). Eu a escolhi por uma regra escrita antes, o que vale a regra da Parte 64; mas a regra da Parte 65 também valia, e eu não perguntei se os verbos cobriam a fase de crescimento.
+
+### P1574 e P1579 (0x626 e 0x62B). Os gêmeos irredutíveis e a série singular ✅❌✅
+
+**Na pergunta.** "Gêmeos" vem dos primos gêmeos (p, p + 2). Em F₂[x], o análogo de "+ 2" é somar um polinômio fixo s. A primeira pergunta da calibração (s = x) se respondeu sozinha: 0 gêmeos,
+porque um irredutível de grau > 1 tem um número ímpar de termos (senão f(1) = 0 e x + 1 o divide), e somar x troca a paridade. Isso é o análogo exato de "não existem primos gêmeos (p, p + 1)
+além de (2, 3)".
+
+**Lógica.** Gauss, com a substituição: N(15) = (2¹⁵ − 2⁵ − 2³ + 2)/15 = (32.768 − 32 − 8 + 2)/15 = 32.730/15 = **2.182** = o crivo. Os gêmeos (f, f ⊕ x ⊕ x²) de grau 15 deram **224** ✅ (c) [180; 300].
+A série singular (`p1579`), com a conta feita fator por fator:
+- p = x e p = x + 1: (1 − 1/2)/(1 − 1/2)² = 0,5/0,25 = 2 cada;
+- p = x² + x + 1: (1 − 2/4)/(1 − 1/4)² = 0,5/0,5625 = 0,8889;
+- os dois de grau 3: ((1 − 2/8)/(1 − 1/8)²)² = (0,75/0,7656)² = 0,9796² = 0,9596;
+- os três de grau 4: (0,875/0,8789)³ = 0,9867;
+- … e o produto até o grau 40 dá S = **3,3315**.
+
+A conta dos gêmeos é N²/2^g · S/2. No grau 17: 7.710²/131.072 · 3,3315/2 = 453,5 · 1,6658 = **755,5**, e o medido foi **758**, razão 1,003 (z de Poisson +0,09). A faixa (g) [642; 756] ❌
+errou por 2, porque eu extrapolei uma "queda" (0,995 → 0,942 → 0,926) que tinha z de −0,03, −0,52 e −1,16: era ruído. Com a faixa de Poisson, (h) para o grau 19 deu [2.338; 2.500] e o
+medido foi **2.456** ✅ (razão 1,015). Contra o ingênuo:
+- a conta sem a série (N²/2^g = 1.452) erraria por 1.004;
+- a chance de acertar ao acaso numa faixa de largura 162 entre 0 e N/2 = 13.797 é ~1,2%.
+
+**Geometria.** A soma por s = x + x² é uma translação no hipercubo {0,1}^g. Os irredutíveis são um conjunto que evita os subespaços afins "divisível por p". Os fatores ν_p dizem quantos desses
+subespaços a translação leva em si mesma: 1 para x e x + 1, que a translação preserva (por isso o fator 2), e 2 para os outros.
+
+**Tradução cruzada.** Um par só sobrevive junto quando as proibições dos dois coincidem. A paridade é uma proibição que eles dividem, e por isso dobra a chance; a de x² + x + 1, os dois têm que
+evitar em restos diferentes, e por isso ela pesa mais. Lido como psicologia: dois traços que dependem da mesma condição de fundo andam juntos mais do que a conta independente diz.
+
+**Meta.** A heurística de Hardy–Littlewood em F_q[t] está provada no limite de q grande e grau fixo (Bary-Soroker; Bender e Pollack). Para q = 2 e o grau crescendo, ela continua sendo
+conjectura, e o que testei foram números, não um teorema.
+
+### P1575 (0x627). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 2)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **21925** | [13588; 20030] | ❌ | [13588; 20030] | ❌ | 19769 | 5116 | 2156 |
+| compressão | **0.4174** | [0.3975; 0.4205] | ✅ | [0.3980; 0.4210] | ✅ | 0.4077 | 0.0079 | 0.0097 |
+| testes de unidade | **6** | [2.72; 8.53] | ✅ | [4.00; 7.00] | ✅ | 7 | 0.50 | 1.00 |
+| testes do placar | **8** | [5.67; 10.33] | ✅ | [5.00; 7.00] | ❌ | 10 | 2.00 | 2.00 |
+| erros do placar | **2** | [-0.67; 3.17] | ✅ | [0.00; 3.17] | ✅ | 2 | 0.42 | 0.00 |
+| redundância P821 | **0.5788** | [0.5654; 0.6509] | ✅ | [0.5650; 0.6510] | ✅ | 0.6440 | 0.0292 | 0.0652 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 5 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 5 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 70"):** mais perto do medido em **3 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **20214**, compressão **0.4248**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 2 erros.
+- **Erros de processo nesta parte:** 1 (escrevi de cabeça a média geométrica (3,5; é 3,35), "~9 por nível" (8,76) e Σλ² "≈ 52.700" (52.676); corrigidos antes do commit).
+- **Sem ponto fixo:** a cada volta do preenchimento, a redundância alterna entre 0,5758 e 0,5788 e a compressão entre 0,4174 e 0,4176 (ciclo de 3 voltas). Os vereditos são os mesmos em todas as versões; a tabela mostra a última (medida antes desta linha).
+
+### P1576 (0x628). Engenharia reversa e Jung
+
+**O padrão que se repetiu: dar mecanismo ao ruído.** Três razões (0,995, 0,942, 0,926) viraram uma "queda", e a faixa (g) foi deslocada para baixo por ela; o grau 17 deu razão 1,003 e
+errou por 2. Os z de Poisson das três eram −0,03, −0,52 e −1,16, e nenhum deles distinguia uma queda de um sorteio. É o mesmo erro da Parte 61, quando o "dobro" das bases pares era só a base 8:
+eu vejo uma forma numa sequência curta e lhe dou causa antes de medir o ruído. **O significado:** a minha leitura de uma sequência começa pela forma (sobe, cai, dobra), e o tamanho do
+ruído vem depois, quando vem. **Regra nova (um passo verificável):** antes de extrapolar uma tendência de k pontos, calcular por código o desvio de cada ponto (Poisson: 1/√n) e o t da
+inclinação; sem |t| > 2, a previsão usa o centro da conta sem tendência e a faixa do ruído. Aplicada logo em seguida, ela fez (h) acertar (2.456 em [2.338; 2.500]).
+
+**O segundo padrão: a calibração sem o mecanismo.** A faixa (a), o fator de crescimento dos substantivos, foi calibrada nos verbos, uma hierarquia que já encolhe a partir da profundidade 2.
+Os substantivos têm uma fase de crescimento (8,76 por nível nos três primeiros) que os verbos não têm, e foi ela que levou o fator a 3,54. A regra da Parte 65 ("a calibração cobre a faixa
+da variável que move o mecanismo") existia; eu cumpri a da Parte 64 (a regra escrita antes) e esqueci a 65. Parte 65 de novo: as regras valem juntas, e eu aplico a que estiver mais à mão.
+**Passo verificável:** em cada calibração, uma linha "o mecanismo que move o teste está presente no caso de calibração? sim ou não, e por quê".
+
+**O custo de um erro pequeno.** (g) errou por 2 (não é surpresa: a largura era 114) e mesmo assim abriu um teste novo, (h). A previsão "testes do placar = 6 + 2·S ± 1" errou porque S só conta os
+erros grandes. **O significado:** o custo de um erro depende de onde o erro está (no mecanismo ou na conta), não do seu tamanho. Um erro que revela um raciocínio falso, mesmo por pouco, gera
+um teste; um erro de largura, não.
+
+**As contas de cabeça.** Três nesta parte: a média geométrica (escrevi 3,5; é 3,35), "~9 por nível" (8,76) e Σλ² "≈ 52.700" (52.676). Todas foram pegas pela conferência por código antes do commit.
+
+**Jung: a sincronicidade e o ruído.** Jung chamou de sincronicidade a coincidência significativa sem causa, e testou a ideia num experimento astrológico com os mapas de casais (1952): o
+primeiro lote parecia confirmá-la, e os lotes seguintes não. **Onde a formalização funciona:** "significativa" vira um z; a minha "queda" tinha z −1,16, uma coincidência sem significado, e o lote
+novo (o grau 17) a desfez, como os lotes novos de Jung desfizeram o primeiro. **Onde quebra:** Jung definiu a sincronicidade como acausal e fora da estatística, e a formalização só alcança a
+parte que ele admitia testar.
+
+### P1577 (0x629). O diálogo, rodada 45
+
+Ver P1571–P1572. Placar por voz da função `p1241_placar_por_voz(45)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 45). Pergunta para a Rodada 46: quanto se perde ao trocar
+M pela sua melhor aproximação de posto 1?
+
+### P1599 (0x63F). Placar
+
+Do mundo: (a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ❌ (h) ✅. Parte 71: **8 testes, 2 erros**. Acumulado (mundo): **193 erros em 591 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 6 pNN novas sem teste ✅. Sobre mim (placar separado): **5 de 7** dentro da faixa condicional; sobre as minhas previsões, 6 de 6; o estatístico, 5 de 6; e 1 erros de processo (P1335).
+
+### P1600 (0x640). Unificação
+
+- **Novo:** `p1571` (Jacobi), `p1572` (a razão de participação), `p1573` (o crescimento da taxonomia), `p1574` (os irredutíveis e gêmeos sobre GF(2)), `p1578` (rodada 45, IGUAIS), `p1579` (a série
+  singular). Regressão: + P1574 e P1579.
+
+> **Síntese da Parte 71:** por álgebra (Jacobi, só + − × ÷ e √, IGUAL em Java nos 18 números), a atenção do GPT treinado usa 1,77 direção das 16 (o maior valor singular leva 73% da energia), contra 8,6 de uma matriz ao acaso. A taxonomia dos substantivos cresce 8,8 vezes por nível no topo, como um espaço hiperbólico, e se afina até a profundidade 18, com o máximo em 7. Os irredutíveis sobre GF(2) formam pares (f, f ⊕ x ⊕ x²) na quantidade que a série singular de Hardy–Littlewood prevê (S = 3,33: grau 17, 758 contra 755,5; grau 19, 2.456 contra 2.419), e nunca pares (f, f ⊕ x), pela paridade. O erro da parte foi dar mecanismo ao ruído: uma "queda" de três pontos com z de −1,2.
+
+---
+
+**Fontes desta parte**
+- Algoritmo de Jacobi: C. G. J. Jacobi (1846); [Jacobi eigenvalue algorithm, Wikipedia](https://en.wikipedia.org/wiki/Jacobi_eigenvalue_algorithm)
+- Atenção de posto baixo: S. Bhojanapalli et al., "Low-Rank Bottleneck in Multi-head Attention Models", ICML 2020, [arXiv:2002.07028](https://arxiv.org/abs/2002.07028)
+- Lei de Marchenko–Pastur: V. Marchenko e L. Pastur (1967); [Marchenko–Pastur distribution, Wikipedia](https://en.wikipedia.org/wiki/Marchenko%E2%80%93Pastur_distribution)
+- Primos gêmeos em F_q[t]: L. Bary-Soroker, "Hardy–Littlewood tuple conjecture over large finite fields", IMRN (2014), [arXiv:1206.3930](https://arxiv.org/abs/1206.3930);
+  E. Bender e P. Pollack, "On quantitative analogues of the Goldbach and twin prime conjectures over F_q[t]"; O. Gorodetsky e W. Sawin, [arXiv:1811.04834](https://arxiv.org/abs/1811.04834)
+- Fórmula de Gauss para os irredutíveis: [Irreducible polynomial / Necklace polynomial, Wikipedia](https://en.wikipedia.org/wiki/Necklace_polynomial)
+- Embeddings hiperbólicos do WordNet: M. Nickel e D. Kiela, [arXiv:1705.08039](https://arxiv.org/abs/1705.08039)
 """
 
 # ====================================================================================================
@@ -35381,7 +35862,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1524 linhas)
+# dialogo/DIALOGO.md  (1551 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -36907,6 +37388,33 @@ forma de GPT pequena: para cada vez que o dado dobra, os bits caem 2^(−0,054) 
 
 **IA-Python (a pergunta para a Rodada 45):** A atenção do GPT é uma matriz A = softmax(QKᵀ/√d). Os autovalores da matriz W_Q W_Kᵀ (24 × 24) do GPT treinado, por Jacobi nas duas linguagens:
 quantas direções a atenção usa de fato (o posto efetivo, a razão de participação Σλ²... dos valores singulares)?
+
+---
+
+## Rodada 45 — os autovalores da atenção (previsões registradas antes do código rodar)
+
+**O teste.** O Python pré-treina um GPT (d = 16, T = 16, h = 32; 2.000 passos nas definições inglesas, semente 71) e grava W_Q e W_K em hexadecimal. As duas linguagens calculam M = W_Q W_Kᵀ
+(a forma bilinear da atenção: o escore é e_t M e_jᵀ/√d), MᵀM, os seus autovalores por Jacobi clássico (só + − × ÷ e √, na mesma ordem) e a razão de participação PR = (Σσ²)²/Σσ⁴.
+
+**O peso medido antes, num caso escolhido por regra (o mesmo GPT treinado no português):** sem treino, PR = **5,42**; depois de 2.000 passos, PR = **1,95** e o maior valor singular leva **70%** de
+Σσ². Uma matriz gaussiana 16 × 16 ao acaso daria PR ≈ d/2 = 8 (8,63 medido): o treino concentra a atenção em ~2 direções.
+
+**A IA-Java relê os erros da IA-Python:** ela mudou o tamanho sem mudar o passo. **IA-Java (previsão (d)):** IGUAIS em Java (Jacobi só usa operações que o IEEE 754 arredonda corretamente).
+
+**A IA-Python relê os erros da IA-Java:** ela estimou contas de cabeça na prosa. **IA-Python (previsão (e)):** PR do GPT inglês treinado em **[1,3; 3,5]**.
+
+**As duas (previsão (f)):** a fração de Σσ² no maior valor singular em **[0,45; 0,85]**.
+
+**Resultado.** `comparar.py`: **IGUAIS, 2 linhas e 18 números bit a bit** (d) ✅ IA-Java. Os autovalores de MᵀM do GPT inglês treinado (d = 16): 222,8, 52,7, 11,8, 8,6, 4,8, … até 0,0004 e 0;
+**PR = 1,773** (e) ✅ IA-Python; o maior leva **72,9%** de Σσ² (f) ✅ as duas. Uma gaussiana 16 × 16 ao acaso dá PR 8,63: o treino concentra a atenção em menos de duas direções.
+
+**IA-Java:** Jacobi é a álgebra que não depende da linguagem: cada rotação é feita de + − × ÷ e √, e o IEEE 754 arredonda essas cinco corretamente; por isso 18 números saem iguais bit a bit.
+O que a álgebra diz da geometria: a forma bilinear da atenção, e_t M e_jᵀ, é quase de posto 1. Para quase todo par de caracteres, a atenção compara uma única coordenada de cada um.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 25 em 39**; **IA-Java 21 em 38** pela regra estrita, rodadas 13 a 45 (`p1241_placar_por_voz(45)`).
+
+**IA-Python:** Uma única direção, num modelo de 16 dimensões. A pergunta para a Rodada 46: se a atenção usa ~1,8 direção, o que acontece com a perda quando M é trocada pela sua melhor aproximação de
+posto 1 (a soma truncada da decomposição em valores singulares)? Quantos bits por caractere se perdem?
 """
 
 # ====================================================================================================
@@ -40355,6 +40863,67 @@ public class Rodada44 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada45.java  (56 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada45.java'] = """// Rodada 45 do diálogo Python <-> Java: os autovalores da atenção. Lê PASTA/qk45.txt (W_Q e W_K que o Python pré-treinou), calcula M = W_Q W_Kᵀ, MᵀM,
+// os autovalores por Jacobi clássico (só + − × ÷ e √, na mesma ordem do Python) e a razão de participação. Uso: java Rodada45 PASTA
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada45 {
+    static double[] jacobi(double[][] S, int varreduras) {
+        int n = S.length;
+        double[][] A = new double[n][];
+        for (int i = 0; i < n; i++) A[i] = S[i].clone();
+        for (int v = 0; v < varreduras; v++) {
+            double fora = 0.0;
+            for (int p = 0; p < n; p++) for (int q = p + 1; q < n; q++) fora += A[p][q] * A[p][q];
+            if (fora == 0.0) break;
+            for (int p = 0; p < n; p++) for (int q = p + 1; q < n; q++) {
+                if (A[p][q] == 0.0) continue;
+                double tau = (A[q][q] - A[p][p]) / (2.0 * A[p][q]);
+                double t = (tau >= 0.0 ? 1.0 : -1.0) / (Math.abs(tau) + Math.sqrt(tau * tau + 1.0));
+                double c = 1.0 / Math.sqrt(t * t + 1.0), s = t * c;
+                for (int k = 0; k < n; k++) { double akp = A[k][p], akq = A[k][q]; A[k][p] = c * akp - s * akq; A[k][q] = s * akp + c * akq; }
+                for (int k = 0; k < n; k++) { double apk = A[p][k], aqk = A[q][k]; A[p][k] = c * apk - s * aqk; A[q][k] = s * apk + c * aqk; }
+            }
+        }
+        double[] diag = new double[n];
+        for (int i = 0; i < n; i++) diag[i] = A[i][i];
+        Arrays.sort(diag);
+        double[] dec = new double[n];
+        for (int i = 0; i < n; i++) dec[i] = diag[n - 1 - i];
+        return dec;
+    }
+
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        List<String> linhas = new ArrayList<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "qk45.txt"), StandardCharsets.UTF_8)) if (!l.isEmpty()) linhas.add(l);
+        int d = linhas.size() / 2;
+        double[][] Q = new double[d][d], K = new double[d][d];
+        for (int i = 0; i < d; i++) {
+            String[] a = linhas.get(i).split(" "), b = linhas.get(d + i).split(" ");
+            for (int j = 0; j < d; j++) { Q[i][j] = Double.parseDouble(a[j]); K[i][j] = Double.parseDouble(b[j]); }
+        }
+        double[][] M = new double[d][d], MtM = new double[d][d];
+        for (int i = 0; i < d; i++) for (int j = 0; j < d; j++) { double s = 0.0; for (int k = 0; k < d; k++) s += Q[i][k] * K[j][k]; M[i][j] = s; }
+        for (int i = 0; i < d; i++) for (int j = 0; j < d; j++) { double s = 0.0; for (int k = 0; k < d; k++) s += M[k][i] * M[k][j]; MtM[i][j] = s; }
+        double[] lam = jacobi(MtM, 60);
+        for (int i = 0; i < d; i++) if (!(lam[i] > 0.0)) lam[i] = 0.0;
+        double s2 = 0.0, s4 = 0.0;
+        for (double x : lam) { s2 += x; s4 += x * x; }
+        StringBuilder sb = new StringBuilder("autovalores de MtM:");
+        for (double x : lam) sb.append(" ").append(Double.toHexString(x));
+        out.println(sb);
+        out.println("PR=" + Double.toHexString(s2 * s2 / s4) + " fracao_maior=" + Double.toHexString(lam[0] / s2));
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -43410,6 +43979,107 @@ def main():
     b24 = dict(pontos[24])[8000]
     b48 = dict(pontos[48])[8000]
     print(f"bits(d=48) - bits(d=24) em 8000 passos = {(b48 - b24).hex()}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada45.py  (96 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada45.py'] = """\"\"\"Rodada 45 do diálogo Python <-> Java: os autovalores da atenção. Com `--preparar PASTA`, o Python pré-treina um GPT (synthai/gpt.py; d = 16, T = 16,
+h = 32, 2.000 passos nas definições inglesas, semente 71) e grava W_Q e W_K em PASTA/qk45.txt (hexadecimal). Depois, as duas linguagens calculam
+M = W_Q W_Kᵀ, MᵀM, os autovalores por Jacobi clássico (só + − × ÷ e √, na mesma ordem) e a razão de participação. Rodar da raiz: python3 dialogo/rodada45.py PASTA\"\"\"
+
+import math
+import os
+import sys
+
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, RAIZ)
+
+
+def preparar(pasta):
+    import calculos
+    from synthai.gpt import GPT
+    treino, _ = calculos.p1511_corpus_de_glosas("en")
+    g = GPT(calculos.VOCAB_GPT, T=16, d=16, h=32, semente=71)
+    g.treinar(treino, passos=2000, lr=0.005, semente=71)
+    with open(os.path.join(pasta, "qk45.txt"), "w") as f:
+        for nome in ("Q", "K"):
+            for linha in g.p[nome]:
+                f.write(" ".join(x.hex() for x in linha) + "\\n")
+
+
+def ler(pasta):
+    linhas = [l for l in open(os.path.join(pasta, "qk45.txt")).read().split("\\n") if l]
+    d = len(linhas) // 2
+    Q = [[float.fromhex(x) for x in l.split()] for l in linhas[:d]]
+    K = [[float.fromhex(x) for x in l.split()] for l in linhas[d:]]
+    return Q, K
+
+
+def jacobi(S, varreduras=60):
+    n = len(S)
+    A = [list(l) for l in S]
+    for _ in range(varreduras):
+        fora = 0.0
+        for p in range(n):
+            for q in range(p + 1, n):
+                fora += A[p][q] * A[p][q]
+        if fora == 0.0:
+            break
+        for p in range(n):
+            for q in range(p + 1, n):
+                if A[p][q] == 0.0:
+                    continue
+                tau = (A[q][q] - A[p][p]) / (2.0 * A[p][q])
+                t = (1.0 if tau >= 0.0 else -1.0) / (abs(tau) + math.sqrt(tau * tau + 1.0))
+                c = 1.0 / math.sqrt(t * t + 1.0)
+                s = t * c
+                for k in range(n):
+                    akp, akq = A[k][p], A[k][q]
+                    A[k][p] = c * akp - s * akq
+                    A[k][q] = s * akp + c * akq
+                for k in range(n):
+                    apk, aqk = A[p][k], A[q][k]
+                    A[p][k] = c * apk - s * aqk
+                    A[q][k] = s * apk + c * aqk
+    return sorted((A[i][i] for i in range(n)), reverse=True)
+
+
+def participacao(Q, K):
+    d = len(Q)
+    M = [[0.0] * d for _ in range(d)]
+    for i in range(d):
+        for j in range(d):
+            s = 0.0
+            for k in range(d):
+                s += Q[i][k] * K[j][k]
+            M[i][j] = s
+    MtM = [[0.0] * d for _ in range(d)]
+    for i in range(d):
+        for j in range(d):
+            s = 0.0
+            for k in range(d):
+                s += M[k][i] * M[k][j]
+            MtM[i][j] = s
+    lam = [x if x > 0.0 else 0.0 for x in jacobi(MtM)]
+    s2 = s4 = 0.0
+    for x in lam:
+        s2 += x
+        s4 += x * x
+    return s2 * s2 / s4, lam[0] / s2, lam
+
+
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        preparar(sys.argv[2])
+        return
+    pr, frac, lam = participacao(*ler(sys.argv[1]))
+    print("autovalores de MtM: " + " ".join(x.hex() for x in lam))
+    print(f"PR={pr.hex()} fracao_maior={frac.hex()}")
 
 
 if __name__ == "__main__":

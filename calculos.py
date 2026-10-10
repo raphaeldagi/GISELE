@@ -7481,6 +7481,7 @@ def testes_de_regressao():
         "P1516": p1514_pi_hex_digitos(16) == "243f6a8885a308d3" and p1516_gpt_decide()[1] == 5,
         "P1549": abs(p1549_lei_de_escala()[0][24][1] - 0.0541) < 0.0001 and abs(p1545_bases_gf2(p1514_pi_hex_digitos(10000))[0] - 0.30269) < 0.00001,
         "P1574": p1574_irredutiveis_gf2(15, 6)[:3] == (2182, 2182, 224) and p1573_crescimento_da_taxonomia("n")[2] == 7,
+        "P1579": p1574_irredutiveis_gf2(17, 6)[2] == 758 and abs(p1579_serie_singular_gf2(17)[1] - 755.458) < 0.001,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9502,7 +9503,7 @@ ERROS_P1479, TESTES_P1479 = 189, 559
 ERROS_P1509, TESTES_P1509 = 189, 565
 ERROS_P1539, TESTES_P1539 = 189, 573
 ERROS_P1569, TESTES_P1569 = 191, 583
-ERROS_P1599, TESTES_P1599 = 192, 589
+ERROS_P1599, TESTES_P1599 = 193, 591
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -11446,6 +11447,10 @@ def _parte_71():
         irr, gauss, gem, conta = p1574_irredutiveis_gf2(g, 6)
         print(f"P1574 grau {g}: irredutiveis {irr} (Gauss {gauss}); gemeos (f, f + x + x^2) {gem} contra a conta {conta:.1f} (razao {gem / conta:.3f}); "
               f"gemeos por um bit (f, f + x): {p1574_irredutiveis_gf2(g, 2)[2]}")
+    for g in (11, 13, 15, 17, 19):
+        serie, conta = p1579_serie_singular_gf2(g)
+        gem = p1574_irredutiveis_gf2(g, 6)[2]
+        print(f"P1579 grau {g}: serie singular S = {serie:.4f}; conta {conta:.1f}; medido {gem}; razao {gem / conta:.3f}; z de Poisson {(gem - conta) / conta ** 0.5:+.2f}")
     total, sem = p1092_pnn_sem_teste(1571, 1600)
     print(f"P1092 pNN novas (P1571-P1600) sem teste: {len(sem)} de {total}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 71: {p974_previsoes_sem_largura(range(71, 72))}")
