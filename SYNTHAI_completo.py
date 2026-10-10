@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (10424 linhas)
+# calculos.py  (10571 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7507,6 +7507,7 @@ def testes_de_regressao():
         "P1303": p1303_autonumeros()[1] == 64999 and p1307_terminacoes_iguais()[1][0] == ("al", 434),
         "P1333": p1333_primos_palindromos()[0] == 357 and p1331_fator_efetivo()[1:] == (84, 42),
         "P1363": p1363_quadrados_palindromos()[0] == 24 and p1361_fator_do_final()[7][1] == 196,
+        "P1393": p1393_periodo_hex()[3] == 8363 and p1391_o_que_nao_e_divisor()[0][1] == 48,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9522,6 +9523,7 @@ ERROS_P1299, TESTES_P1299 = 178, 511
 ERROS_P1329, TESTES_P1329 = 181, 519
 ERROS_P1359, TESTES_P1359 = 182, 527
 ERROS_P1389, TESTES_P1389 = 184, 535
+ERROS_P1419, TESTES_P1419 = 186, 544
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -10072,6 +10074,118 @@ def p1367_bases_novas_palindromos(bases=range(17, 23)):
         saida.append((b, m, bb, s, (m - bb) / s))
     return saida
 
+
+def p1391_o_que_nao_e_divisor():
+    \"\"\"Rodada 39 (P1391): a correção dos primos pequenos q ∤ 2b nos palíndromos (dialogo/rodada39.py, IGUAL em Java). Devolve
+    [(b, N, correção, medido, conta C, σ, medido de comprimento 5, conta C de comprimento 5)] nas bases 5 a 22.\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada39", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada39.py"))
+    r39 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r39)
+    c = r39.crivo(22 ** 5)
+    saida = []
+    for b in r39.BASES:
+        N, div, corr, ex, med, conta, var = r39.base(b, c)
+        saida.append((b, N, corr, ex + med[3] + med[5], ex + conta[3] + conta[5], sqrt(var), med[5], conta[5]))
+    return saida
+
+
+def p1397_correcao_b2_mais_1(bases=range(17, 23)):
+    \"\"\"A correção dos primos r > 13 que dividem (b² + 1)(b⁴ + 1) e não dividem 2b (P1397): nos palíndromos de comprimento 3 e 5
+    coprimos a 2b, a fração f_r divisível por r e a correção Π (1 − f_r)/(1 − 1/r); aplicada à parte variável da conta C da
+    rodada 39. Devolve [(b, [(r, f_r·r)], correção_r, medido, conta corrigida, σ corrigido, z)].\"\"\"
+    import importlib.util
+    import os
+    aqui = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo")
+    spec = importlib.util.spec_from_file_location("rodada39", os.path.join(aqui, "rodada39.py"))
+    r39 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r39)
+    c = r39.crivo(max(bases) ** 5)
+    saida = []
+    for b in bases:
+        N, div, corr, ex, med, conta, var = r39.base(b, c)
+        ps = r39.primos_de(2 * b)
+        rs = sorted({r for r in r39.primos_de(b * b + 1) + r39.primos_de(b ** 4 + 1) if r not in ps and r > 13})
+        ns = [n for L in (3, 5) for n in r39.palindromos(b, L) if all(n % p for p in ps)]
+        cr, det = 1.0, []
+        for r in rs:
+            k = sum(1 for n in ns if n % r == 0)
+            cr = cr * (((len(ns) - k) * r) / (len(ns) * (r - 1)))
+            det.append((r, k * r / len(ns)))
+        m = ex + med[3] + med[5]
+        cc = ex + (conta[3] + conta[5]) * cr
+        sg = sqrt(var) * sqrt(cr)
+        saida.append((b, det, cr, m, cc, sg, (m - cc) / sg))
+    return saida
+
+
+def p1392_profundidade_e_definicao(d=None, classe="n"):
+    \"\"\"A profundidade e o tamanho da definição (P1392): nos sinsets da classe com profundidade (P793), o Spearman entre a
+    profundidade e o número de palavras da definição (sem os exemplos). Devolve (Spearman, sinsets, {profundidade: média de
+    palavras} para as profundidades com pelo menos 100 sinsets).\"\"\"
+    import importlib.util
+    import os
+    from synthai.dicionario import Dicionario, profundidades
+    d = d or Dicionario()
+    spec = importlib.util.spec_from_file_location("rodada36", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada36.py"))
+    r36 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r36)
+    xs, ys, por = [], [], {}
+    for i, prof in sorted(profundidades(d).items()):
+        if d.sinsets[i][0] != classe:
+            continue
+        n = len(d.definicao(d.sinsets[i][3]).split())
+        xs.append(float(prof))
+        ys.append(float(n))
+        a, b = por.get(prof, (0, 0))
+        por[prof] = (a + n, b + 1)
+    rho = r36.pearson(r36.postos(xs), r36.postos(ys))
+    return rho, len(xs), {p: a / b for p, (a, b) in sorted(por.items()) if b >= 100}
+
+
+def p1393_periodo_hex(de=10 ** 4, ate=10 ** 5):
+    \"\"\"O período de 1/p em base 16 (P1393): para os primos p em [de, ate), a média de ord_p(16)/(p − 1) e a de ord_p(2)/(p − 1),
+    e a fração com ord_p(16) = (p − 1)/mdc(p − 1, 4) (o maior possível para um quarto poder). ord_p(16) = ord_p(2)/mdc(ord_p(2), 4).
+    Devolve (média 16, média 2, fração máxima, primos).\"\"\"
+    from math import gcd
+
+    def ordem2(p):
+        # ord_p(2): o menor divisor e de p − 1 com 2^e ≡ 1 (mod p)
+        m, fatores, x = p - 1, [], p - 1
+        q = 2
+        while q * q <= x:
+            if x % q == 0:
+                fatores.append(q)
+                while x % q == 0:
+                    x //= q
+            q += 1
+        if x > 1:
+            fatores.append(x)
+        for q in fatores:
+            while m % q == 0 and pow(2, m // q, p) == 1:
+                m //= q
+        return m
+    crivo = bytearray([1]) * ate
+    crivo[0] = crivo[1] = 0
+    for i in range(2, int(ate ** 0.5) + 1):
+        if crivo[i]:
+            crivo[i * i::i] = bytearray(len(range(i * i, ate, i)))
+    s16 = s2 = 0.0
+    maximo = n = 0
+    for p in range(max(de, 3), ate):
+        if not crivo[p]:
+            continue
+        o2 = ordem2(p)
+        o16 = o2 // gcd(o2, 4)
+        s16 += o16 / (p - 1)
+        s2 += o2 / (p - 1)
+        maximo += o16 == (p - 1) // gcd(p - 1, 4)
+        n += 1
+    return s16 / n, s2 / n, maximo / n, n
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -10409,6 +10523,39 @@ def _parte_64():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1389, testes=TESTES_P1389)
     print(f"P1389 minha taxa de erro ({ERROS_P1389}/{TESTES_P1389}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_65():
+    print("--- Parte 65 (0x41: o que nao e divisor) ---")
+    linhas = p1391_o_que_nao_e_divisor()
+    soma = 0.0
+    zs = def5 = deft = 0.0
+    for b, N, corr, m, C, sg, m5, c5 in linhas:
+        soma += abs(corr - 1.0)
+        if b >= 17:
+            zs += (m - C) / sg
+            def5 += m5 - c5
+            deft += m - C
+        print(f"P1391 base {b:2d}: N {N:4d}; correcao {corr:.4f}; medido {m:3d}; conta C {C:.2f}; sigma {sg:.2f}; z {(m - C) / sg:+.2f}; "
+              f"comprimento 5: {m5} contra {c5:.2f}")
+    print(f"P1391 media |correcao - 1| = {soma / len(linhas):.4f}; media z (17-22) = {zs / 6:+.4f}; fracao do deficit em L = 5: {def5 / deft:.4f}; "
+          f"soma medido - C = {sum(x[3] - x[4] for x in linhas):.2f}")
+    novas = p1397_correcao_b2_mais_1()
+    for b, det, cr, m, cc, sg, z in novas:
+        print(f"P1397 base {b}: primos r {[(r, round(v, 2)) for r, v in det]}; correcao_r {cr:.4f}; medido {m}; conta {cc:.2f}; z {z:+.2f}")
+    print(f"P1397 media z (17-22) com a correcao_r: {sum(x[6] for x in novas) / len(novas):+.4f}; sinais (correcao_r - 1): "
+          f"{[(x[0], '-' if x[2] < 1 else '+') for x in novas]}")
+    rho, n, por = p1392_profundidade_e_definicao()
+    rho_v, n_v, _ = p1392_profundidade_e_definicao(classe="v")
+    print(f"P1392 Spearman profundidade x palavras da definicao: substantivos {rho:.4f} ({n}); verbos (calibracao) {rho_v:.4f} ({n_v}); "
+          f"media por profundidade {({k: round(v, 2) for k, v in por.items()})}")
+    for de, ate in ((3, 10 ** 4), (10 ** 4, 10 ** 5)):
+        m16, m2, mx, np_ = p1393_periodo_hex(de, ate)
+        print(f"P1393 primos em [{de}, {ate}) ({np_}): media ord16/(p-1) {m16:.4f}; ord2/(p-1) {m2:.4f}; razao {m16 / m2:.4f}; periodo maximo {mx:.4f}")
+    total, sem = p1092_pnn_sem_teste(1391, 1420)
+    print(f"P1092 pNN novas (P1391-P1420) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 65: {p974_previsoes_sem_largura(range(65, 66))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1419, testes=TESTES_P1419)
+    print(f"P1419 minha taxa de erro ({ERROS_P1419}/{TESTES_P1419}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -10445,7 +10592,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65}
 
 
 if __name__ == "__main__":
@@ -10458,7 +10605,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (216 linhas)
+# CLAUDE.md  (219 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -10552,6 +10699,9 @@ anterior, commit e push.
   fator 2).
   Parte 64: os casos de calibração são escolhidos por uma regra escrita antes de olhar (um intervalo inteiro, ou um sorteio com semente), não pelos que eu lembro
   (a minha memória é uma amostra enviesada: o sinal tirado da base 10 e da 12 era o oposto do das bases 14 a 22). Dois casos não fixam um sinal.
+  Parte 65: as regras valem JUNTAS: a regra de escolha da calibração (Parte 64) tem que cobrir a faixa inteira da variável que move o mecanismo no teste (Parte 63);
+  "as bases logo depois do teste" só tinha bases grandes e errou nas pequenas. E uma previsão por unidade confere, em cada unidade, a condição do mecanismo (a base 18 não
+  tinha primo grande em b² + 1).
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -10669,7 +10819,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -15772,6 +15922,69 @@ class TesteParte64(unittest.TestCase):
         self.assertEqual((b, m), (5, 25))
         self.assertAlmostEqual(bb, calculos.p1361_fator_do_final()[0][3], places=12)
         self.assertAlmostEqual(z, (m - bb) / s, places=12)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte65.py  (58 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte65.py'] = """\"\"\"Testes de unidade da Parte 65: `python3 -m unittest synthai.testes_parte65`. Cada pNN nova com o seu teste, chamada PELO NOME.\"\"\"
+
+from math import gcd
+import unittest
+
+import calculos
+
+
+class DicionarioFalso:
+    # uma cadeia a → b → c (profundidades 0, 1, 2) com definições de 2, 3 e 4 palavras: Spearman 1
+    indice = {"n:1": 0, "n:2": 1, "n:3": 2}
+    sinsets = [("n", ["a"], [], "x y"), ("n", ["b"], ["n:1"], "x y z"), ("n", ["c"], ["n:2"], "x y z w")]
+
+    @staticmethod
+    def definicao(glosa):
+        return glosa
+
+
+def ordem_bruta(a, p):
+    k, x = 1, a % p
+    while x != 1:
+        x = x * a % p
+        k += 1
+    return k
+
+
+class TesteParte65(unittest.TestCase):
+    def test_p1391_o_que_nao_e_divisor(self):
+        linhas = calculos.p1391_o_que_nao_e_divisor()
+        self.assertEqual(len(linhas), 18)
+        self.assertEqual((linhas[0][0], linhas[0][1]), (5, 48))
+        self.assertEqual((linhas[11][0], linhas[11][3]), (16, 357))
+
+    def test_p1397_correcao_b2_mais_1(self):
+        b, det, cr, m, cc, sg, z = calculos.p1397_correcao_b2_mais_1((20,))[0]
+        self.assertEqual((b, m, [r for r, _ in det]), (20, 584, [401, 160001]))
+        self.assertLess(cr, 1.0)  # base par: a divisibilidade por 401 é ~10 vezes 1/401
+        self.assertAlmostEqual(z, (m - cc) / sg, places=12)
+
+    def test_p1392_profundidade_e_definicao(self):
+        rho, n, por = calculos.p1392_profundidade_e_definicao(DicionarioFalso())
+        self.assertEqual((n, por), (3, {}))
+        self.assertAlmostEqual(rho, 1.0, places=12)
+
+    def test_p1393_periodo_hex(self):
+        ps = [p for p in range(3, 60) if all(p % q for q in range(2, p))]
+        m16 = sum(ordem_bruta(16, p) / (p - 1) for p in ps) / len(ps)
+        m2 = sum(ordem_bruta(2, p) / (p - 1) for p in ps) / len(ps)
+        mx = sum(ordem_bruta(16, p) == (p - 1) // gcd(p - 1, 4) for p in ps) / len(ps)
+        a, b, c, n = calculos.p1393_periodo_hex(3, 60)
+        self.assertEqual(n, len(ps))
+        self.assertAlmostEqual(a, m16, places=12)
+        self.assertAlmostEqual(b, m2, places=12)
+        self.assertAlmostEqual(c, mx, places=12)
 
 
 if __name__ == "__main__":
