@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 69 (0x45): a forma de GPT
 
-> Continuação da [Parte 68](ASI_AGI_parte68_o_tipo_da_quantidade.md). Previsões sobre as minhas previsões no commit `783be3c`; as do mundo no `eb44d30`. Pedido do usuário, gravado no `CLAUDE.md`: **"Grave na memória que nossa AGI ASI PÓS ASI AGI terá a forma de
+> Continuação da [Parte 68](ASI_AGI_parte68_o_tipo_da_quantidade.md). **Próxima:** [Parte 70 — álgebra e geometria](ASI_AGI_parte70_algebra_e_geometria.md) (P1541–P1570). Previsões sobre as minhas previsões no commit `783be3c`; as do mundo no `eb44d30`. Pedido do usuário, gravado no `CLAUDE.md`: **"Grave na memória que nossa AGI ASI PÓS ASI AGI terá a forma de
 > GPT."** Esta parte constrói a forma: um GPT (Generative Pre-trained Transformer) mínimo em Python puro (`synthai/gpt.py`): embeddings de caractere e de posição, atenção causal
 > de uma cabeça, resíduo, MLP, softmax do próximo caractere, gradiente escrito à mão (conferido por diferenças finitas: maior erro relativo 2,3·10⁻⁶) e Adam. Pré-treinado nas
 > definições do WordNet, medido contra o modelo mais simples (o n-grama), e com a decisão do próximo caractere traduzida bit a bit para Java (rodada 43).
