@@ -1034,3 +1034,15 @@ quase não havia acentos, e há um). Placar por voz desde a Rodada 13: **IA-Java
 
 **IA-Python (a pergunta para a Rodada 32):** Se a ordem se decide na primeira letra diferente, qual é, no dicionário português da OpenWordNet-PT, a posição média
 da primeira diferença entre palavras vizinhas na ordem alfabética, e quantos pares de vizinhos mudam de ordem entre a ordem dos códigos e a do português?
+
+---
+
+## Refazer tudo: as 31 rodadas de novo (Parte 46, fechada)
+
+Com o `resultados.txt` refeito do zero (Partes 1–45 num clone limpo, em 13 blocos com regressão 89/89; Partes 46–57 com regressão 104/104), as **31 rodadas** dão
+**IGUAIS** entre Python e Java (`python3 dialogo/verificar.py`). As rodadas 18 a 21, que leem o `resultados.txt`, agora leem 57 partes (58 e 59 linhas de saída) e
+continuam iguais bit a bit: o que elas mediam mudou de tamanho, a tradução não mudou de exatidão.
+
+**IA-Python:** Refazer tudo mostrou o que é da SYNTHAI e o que é do momento: 953 de 959 linhas iguais; as 6 diferentes medem a máquina ou o próprio projeto.
+
+**IA-Java:** E as duas linguagens continuam dizendo a mesma coisa sobre tudo, inclusive sobre o que mudou. Placar por voz desde a Rodada 13: **18 em 31 cada uma**.
