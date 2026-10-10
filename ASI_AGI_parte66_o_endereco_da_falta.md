@@ -49,3 +49,11 @@ Planejadas: 7 previsões do mundo ((a) a (g)) e 3 funções (p1421, p1422, p1423
 - (c) a fração em **[0,0630; 0,0715]** (a conta × [0,95; 1,08])
 
 **P1421, rodada 40:** no `dialogo/DIALOGO.md` (previsões (d) a (h)).
+
+### Previsão nova, nascida da réplica que falhou (registrada antes de rodar as bases 29 a 34)
+
+**Resultado da rodada 40, antes desta seção:** a falta da base 21 não tem endereço (qui²/gl = 1,01 por primeiro dígito, 0,96 por dígito do meio): ela é um fator global
+(k = 0,915). E nas bases 23 a 28 o viés **sumiu**: média de z = −0,02, três bases negativas de seis ((g) ❌, (h) ❌). O "1/64" das bases 17 a 22 não se replicou. Duas
+leituras: (1) acaso nas bases 17 a 22; (2) um efeito que existe em algumas faixas de bases e não em outras. Um terceiro lote separa as duas:
+- (i) nas **bases 29 a 34**, com a mesma conta C, a média de z fica em **[−0,8; 0,8]** (a hipótese do acaso: a média de 6 z independentes tem desvio 1/√6 = 0,41, e a
+  faixa é ±1,96 desvio).

@@ -10153,6 +10153,61 @@ def p1393_periodo_hex(de=10 ** 4, ate=10 ** 5):
         n += 1
     return s16 / n, s2 / n, maximo / n, n
 
+
+def p1421_endereco_da_falta():
+    """Rodada 40 (P1421): o endereço da falta de primos palíndromos da base 21 (por primeiro dígito e por dígito do meio, contra a
+    conta C reescalada) e as bases 23 a 28 com a conta C (dialogo/rodada40.py, IGUAL em Java). Devolve ({'d0': (qui², gl), 'd2':
+    (qui², gl)}, k, [(b, medido, C, σ, z)])."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada40", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada40.py"))
+    r40 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r40)
+    c = r40.crivo(28 ** 5)
+    cl = r40.classes(21, c)
+    quis, k = {}, None
+    for nome in ("d0", "d2"):
+        q, gl, k = r40.qui(cl[nome])
+        quis[nome] = (q, gl)
+    bases = []
+    for b in range(23, 29):
+        N, div, corr, ex, med, conta, var = r40.base(b, c)
+        m = ex + med[3] + med[5]
+        C = ex + conta[3] + conta[5]
+        sg = sqrt(var)
+        bases.append((b, m, C, sg, (m - C) / sg))
+    return quis, k, bases
+
+
+def p1422_sinonimos_por_classe(d=None):
+    """Os sinônimos por classe (P1422): o tamanho médio do sinset (número de lemas) do WordNet por classe e a fração de sinsets de um
+    lema só. Devolve ({classe: (tamanho médio, fração de um lema, sinsets)})."""
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    por = {}
+    for pos, lemas, _, _ in d.sinsets:
+        a, b, u = por.get(pos, (0, 0, 0))
+        por[pos] = (a + len(lemas), b + 1, u + (len(lemas) == 1))
+    return {c: (a / b, u / b, b) for c, (a, b, u) in sorted(por.items())}
+
+
+def p1423_mesma_soma_10_16(ate=16 ** 5):
+    """A mesma soma em base 10 e em base 16 (P1423): a fração dos n de 1 a ate − 1 com s₁₀(n) = s₁₆(n), e a conta (3 vezes a chance de
+    duas somas independentes com as distribuições de 0 a ate − 1, porque s₁₀ ≡ n ≡ s₁₆ (mod 3)). Devolve (fração, conta)."""
+    s10 = [0] * ate
+    s16 = [0] * ate
+    for n in range(1, ate):
+        s10[n] = s10[n // 10] + n % 10
+        s16[n] = s16[n // 16] + n % 16
+    d10, d16 = {}, {}
+    for n in range(ate):
+        d10[s10[n]] = d10.get(s10[n], 0) + 1
+        d16[s16[n]] = d16.get(s16[n], 0) + 1
+    ind = sum(d10[k] * d16.get(k, 0) for k in d10) / ate / ate
+    iguais = sum(1 for n in range(1, ate) if s10[n] == s16[n])
+    return iguais / (ate - 1), 3 * ind
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
