@@ -1046,3 +1046,23 @@ continuam iguais bit a bit: o que elas mediam mudou de tamanho, a tradução nã
 **IA-Python:** Refazer tudo mostrou o que é da SYNTHAI e o que é do momento: 953 de 959 linhas iguais; as 6 diferentes medem a máquina ou o próprio projeto.
 
 **IA-Java:** E as duas linguagens continuam dizendo a mesma coisa sobre tudo, inclusive sobre o que mudou. Placar por voz desde a Rodada 13: **18 em 31 cada uma**.
+
+---
+
+## Rodada 32 — a primeira diferença no dicionário português (previsões registradas antes do código)
+
+**O teste.** Os 37.725 lemas portugueses de uma palavra só, em ordem de pontos de código (a do Python e a do Java com comparação por pontos de código).
+(1) A posição média da primeira letra diferente entre vizinhos. (2) Quantos pares de vizinhos ficam **invertidos** pela chave portuguesa (sem acentos e
+minúscula, depois a original). As duas linguagens contam.
+
+**A conta comum, para (1):** para N cadeias ao acaso sobre um alfabeto efetivo A, vizinhos dividem ~log_A N letras: ln 37.725 / 2,937 = 10,538 / 2,937 = 3,59, e a
+primeira diferença fica em ~4,6; a restrição (2) da parte (prefixos de derivação) puxa para cima. **(f), das duas vozes:** posição média em **[4,3; 7,0]**.
+
+**A IA-Python relê os erros da IA-Java (ela contou acentos sem perguntar onde ficam):** quase toda palavra com acento é deslocada pela ordem dos códigos, mas
+palavras acentuadas vizinhas formam blocos que se deslocam juntos, e só a entrada de cada bloco inverte. **IA-Python (previsão (d)):** inversões entre vizinhos
+em **[2.700; 8.000]** (metade dos 9.236 acentuados, ×1,72).
+
+**A IA-Java relê os erros da IA-Python (ela acertou pela razão errada):** um acento empurra a palavra para depois de **todas** as irmãs sem acento, e cada
+deslocamento cria uma inversão na entrada e quase sempre outra na saída do bloco. **IA-Java (previsão (e)):** inversões em **[5.000; 9.500]**.
+
+**As duas (previsão (g)):** IGUAIS em Java.
