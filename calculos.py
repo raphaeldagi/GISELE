@@ -7480,6 +7480,7 @@ def testes_de_regressao():
         "P1493": len(p1493_palindromos_duplos()[0]) == 18 and p1491_densidade_da_conta()[0][5][1] == 9592,
         "P1516": p1514_pi_hex_digitos(16) == "243f6a8885a308d3" and p1516_gpt_decide()[1] == 5,
         "P1549": abs(p1549_lei_de_escala()[0][24][1] - 0.0541) < 0.0001 and abs(p1545_bases_gf2(p1514_pi_hex_digitos(10000))[0] - 0.30269) < 0.00001,
+        "P1574": p1574_irredutiveis_gf2(15, 6)[:3] == (2182, 2182, 224) and p1573_crescimento_da_taxonomia("n")[2] == 7,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9501,6 +9502,7 @@ ERROS_P1479, TESTES_P1479 = 189, 559
 ERROS_P1509, TESTES_P1509 = 189, 565
 ERROS_P1539, TESTES_P1539 = 189, 573
 ERROS_P1569, TESTES_P1569 = 191, 583
+ERROS_P1599, TESTES_P1599 = 192, 589
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -10813,6 +10815,21 @@ def p1574_irredutiveis_gf2(grau=15, mascara=6):
     return len(conj), gauss, gemeos, len(conj) ** 2 / 2 ** (grau - 1) / 2
 
 
+def p1578_autovalores_da_atencao():
+    """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
+    (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
+    import importlib.util
+    import os
+    import tempfile
+    spec = importlib.util.spec_from_file_location("rodada45", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada45.py"))
+    r45 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r45)
+    with tempfile.TemporaryDirectory() as pasta:
+        r45.preparar(pasta)
+        return r45.participacao(*r45.ler(pasta))
+
+
 def p1499_previsoes_sobre_previsoes_v2(parte=68):
     """O placar das previsões sobre as minhas previsões, versão 2 (P1499; lido pela P1481, com os tipos): (m1) o número de previsões do
     mundo, (m2) o número de faixas que cruzam o zero, (m3) a mediana de w das que não cruzam, (m4) a fração de acertos, (m5) o número de
@@ -11389,6 +11406,27 @@ def _parte_70():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1569, testes=TESTES_P1569)
     print(f"P1569 minha taxa de erro ({ERROS_P1569}/{TESTES_P1569}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_71():
+    print("--- Parte 71 (0x47: os autovalores da atencao) ---")
+    pr, frac, lam = p1578_autovalores_da_atencao()
+    print(f"P1578 rodada 45: autovalores de M^T M (M = W_Q W_K^T) {[round(x, 4) for x in lam]}; PR {pr:.4f}; fracao do maior {frac:.4f}")
+    import random
+    r = random.Random(1)
+    print(f"P1572 matriz gaussiana 16x16 ao acaso: PR {p1572_participacao([[r.gauss(0, 1) for _ in range(16)] for _ in range(16)])[0]:.4f} (teoria ~ d/2 = 8)")
+    print(f"P1571 Jacobi em [[2, 1], [1, 2]]: {p1571_autovalores_jacobi([[2.0, 1.0], [1.0, 2.0]])} (exatos: 3 e 1)")
+    for classe in ("v", "n"):
+        f, por, rmax = p1573_crescimento_da_taxonomia(classe)
+        print(f"P1573 classe {classe}: fator por nivel (1-8) {f:.4f}; profundidade com mais sinsets {rmax}; N(r) {por}")
+    for g in (11, 13, 15):
+        irr, gauss, gem, conta = p1574_irredutiveis_gf2(g, 6)
+        print(f"P1574 grau {g}: irredutiveis {irr} (Gauss {gauss}); gemeos (f, f + x + x^2) {gem} contra a conta {conta:.1f} (razao {gem / conta:.3f}); "
+              f"gemeos por um bit (f, f + x): {p1574_irredutiveis_gf2(g, 2)[2]}")
+    total, sem = p1092_pnn_sem_teste(1571, 1600)
+    print(f"P1092 pNN novas (P1571-P1600) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 71: {p974_previsoes_sem_largura(range(71, 72))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1599, testes=TESTES_P1599)
+    print(f"P1599 minha taxa de erro ({ERROS_P1599}/{TESTES_P1599}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -11425,7 +11463,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71}
 
 
 if __name__ == "__main__":
