@@ -101,7 +101,8 @@ anterior, commit e push.
   também gera teste: a previsão de quantos testes conta os erros de mecanismo, não só as surpresas.
   Parte 72 (auditoria pedida: "corrija tudo pra ver se há coisas inadequadas e disfuncionais"; `p1601_auditoria_do_repositorio`): todo auditor novo roda primeiro sobre o
   caso mais antigo e o mais novo, e cada defeito acusado é olhado antes de ser contado (o meu acusou a Parte 1 por supor a forma do nome). Toda referência "PNN" no texto é
-  conferida por grep antes do commit, como um número. A ordem (as (m), depois "sobre mim", depois o mundo) vale também nas partes que nascem de um pedido fora do ciclo.
+  conferida por grep antes do commit, como um número. Código vindo de texto do usuário é auditado pela árvore sintática (`ast`, P1608/P1615: analisa sem
+  executar) e corrigido numa versão escrita do zero, com um teste por defeito (`synthai/lago.py`). A ordem (as (m), depois "sobre mim", depois o mundo) vale também nas partes que nascem de um pedido fora do ciclo.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a

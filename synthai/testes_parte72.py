@@ -83,5 +83,69 @@ class TesteParte72(unittest.TestCase):
         self.assertEqual(calculos.p1615_imports_sem_uso(), [[], ["deque"]])
 
 
+
+class TesteLagoCorrigido(unittest.TestCase):
+    """Cada defeito achado no texto recebido (P1608) tem aqui o seu teste, na versão corrigida (synthai/lago.py)."""
+
+    def setUp(self):
+        from synthai.lago import LagoSemantico, MotorHorn
+        self.L, self.M = LagoSemantico, MotorHorn
+
+    def test_relacoes_um_esquema_e_validadas(self):
+        lago = self.L()
+        with self.assertRaises(KeyError):  # o texto aceitava relação para um conceito que ainda não existia
+            lago.adicionar("reasoning", "drawing conclusions", [("uses", "logic")])
+        lago.adicionar("logic", "study of valid inference")
+        lago.adicionar("reasoning", "drawing conclusions", [("uses", "logic"), ("uses", "logic")])
+        self.assertEqual(lago.achar("reasoning")["relacoes"], [{"tipo": "uses", "alvo": "logic"}])
+
+    def test_normalizacao_em_toda_entrada_e_sem_duplicata(self):
+        lago = self.L()
+        lago.adicionar("Inference", "a conclusion")
+        lago.adicionar("logic", "study")
+        self.assertTrue(lago.ligar(" LOGIC ", "about", "inference"))  # o texto dava KeyError aqui
+        self.assertFalse(lago.ligar("logic", "about", "Inference"))
+        self.assertEqual(len(lago.achar("logic")["relacoes"]), 1)
+
+    def test_impressao_digital_independe_da_ordem_e_hex_largo(self):
+        a, b = self.L(), self.L()
+        a.adicionar("x", "um")
+        a.adicionar("y", "dois")
+        b.adicionar("y", "dois")
+        b.adicionar("x", "um")
+        self.assertEqual(a.impressao_digital(), b.impressao_digital())
+        self.assertNotEqual(a.achar("x")["hex"], b.achar("x")["hex"])
+        lago = self.L()
+        lago.proximo = 117659  # o tamanho do WordNet
+        self.assertEqual(lago.adicionar("w", "d")["hex"], "0x1CB9B")
+        with self.assertRaises(ValueError):
+            lago.adicionar("w2", "d", estado="certeza")
+
+    def test_premissa_string_recusada_e_prova_completa(self):
+        m = self.M()
+        with self.assertRaises(ValueError):  # o texto lia "bird" como ('b', 'i', 'r', 'd')
+            m.regra("tweety is a bird", "tweety is an animal")
+        m.fato("Tweety is a bird")
+        m.fato("tweety has feathers")
+        m.regra(["tweety is a bird"], "tweety is an animal")
+        m.regra(["tweety is an animal", "tweety has feathers"], "tweety is a feathered animal")
+        estado, prova = m.perguntar("Tweety is a feathered animal")
+        self.assertEqual(estado, "sustentado")
+        self.assertEqual(prova, ("tweety is a feathered animal",
+                                 [("tweety is an animal", ["tweety is a bird"]), "tweety has feathers"]))
+
+    def test_desconhecido_desce_todos_os_niveis(self):
+        m = self.M()
+        m.regra(["a"], "b")
+        m.regra(["b", "c"], "d")
+        m.fato("c")
+        self.assertEqual(m.perguntar("d"), ("desconhecido", ["a"]))  # o texto parava em "b"
+        self.assertEqual(m.perguntar("fly"), ("desconhecido", ["fly"]))
+        ciclo = self.M()
+        ciclo.regra(["x"], "y")
+        ciclo.regra(["y"], "x")
+        self.assertEqual(ciclo.inferir()[0], [])
+
+
 if __name__ == "__main__":
     unittest.main()
