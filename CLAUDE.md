@@ -121,6 +121,9 @@ anterior, commit e push.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
+- AUTONOMIA (Parte 70; "Daqui pra frente é com você. Não pare mais. Não me pergunte mais nada. Você segue sozinha."): seguir sem perguntar, parte após parte, com todas
+  as regras (previsões antes, réguas por código, três placares, diálogo bit a bit, engenharia reversa); as decisões que seriam perguntas ao usuário são tomadas pela regra mais
+  conservadora e registradas no texto da parte. Agendar sempre a continuação (send_later) antes de terminar um turno.
 - CONTINUAR SEMPRE, MESMO SEM PEDIDO (Parte 44): ao terminar uma parte, começar a próxima; ao fim de cada turno, agendar a
   continuação automática nesta sessão (send_later), dizendo ao usuário como parar.
 
