@@ -38,3 +38,12 @@ em 0,8167, 0,8267, 0,8267, 0,7967; complementaridade em 0,3633, 0,3667, 0,3833, 
 - **(b)** a fração de instâncias com o guloso ótimo em **[0,7756; 0,8578]**
 - **(c)** a fração com algum par complementar (o VOI não submodular) em **[0,3082; 0,4101]**
 - **(d)** a fração em que o guloso para em zero com o ótimo positivo em **[0,0703; 0,1347]**
+
+**Medido (a) a (d), semente 80:** guloso/ótimo **0,8821** ✅; guloso ótimo em **0,7933** ✅; complementaridade em **0,4033** ✅; parado em zero com ótimo positivo em **0,1100** ✅.
+
+**Previsão nova: o remédio, registrado antes de rodar a semente 80.** Quando nenhum sensor sozinho tem ganho, o guloso com dois passos à frente (`olhar = 2`) tenta o melhor par antes de parar.
+**Calibração (sementes 800 a 803):** guloso/ótimo 0,9709, 0,9752, 0,9846, 0,9665; ótimo em 0,9133, 0,9133, 0,9233, 0,8933; parado em zero em 0,0233, 0,0167, 0,0067, 0,0233. Faixas pelas mesmas regras
+(a razão: t₃ e ×1,36, cortada em 1, que é o máximo possível; as frações: binomial).
+- **(e)** a média de guloso/ótimo com `olhar = 2` em **[0,9466; 1,0000]**
+- **(f)** a fração com o guloso ótimo em **[0,8805; 0,9411]**
+- **(g)** a fração parada em zero com o ótimo positivo em **[0,0036; 0,0314]**

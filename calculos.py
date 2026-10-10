@@ -11768,12 +11768,13 @@ def p1841_voi_conjunto(p, u, qs, conj):
     return max(total - sem, 0.0)
 
 
-def p1842_conjuntos(instancias=300, k=6, orcamento=6, semente=80):
+def p1842_conjuntos(instancias=300, k=6, orcamento=6, semente=80, olhar=1):
     """Escolher um conjunto de experimentos dependentes (P1842; a pendência da Parte 74). Cada instância: prior p ~ U(0, 1), utilidades U(0, 1), k
     sensores com acurácia U(0,55; 0,95) e custo inteiro em 1..5. O ótimo: o melhor subconjunto dentro do orçamento (enumeração dos 2^k). O guloso: em cada
     passo, o sensor de maior ganho marginal de VOI por custo que ainda cabe, e para quando nenhum ganho é positivo. A complementaridade: algum par
     (i, j) com VOI({i, j}) − VOI({i}) > VOI({j}) − VOI(∅) + 1e-12 (o VOI não é submodular). Devolve (média de guloso/ótimo, fração com guloso ótimo,
-    fração com complementaridade, fração em que o guloso para em zero com o ótimo positivo)."""
+    fração com complementaridade, fração em que o guloso para em zero com o ótimo positivo). Com olhar = 2, quando nenhum sensor sozinho tem ganho
+    positivo, o guloso tenta o melhor par antes de parar."""
     import random
     r = random.Random(semente)
     soma = otimos = compl = parado = 0
@@ -11795,8 +11796,19 @@ def p1842_conjuntos(instancias=300, k=6, orcamento=6, semente=80):
         while True:
             cand = [(voi(esc + [i]) - voi(esc)) / cs[i] for i in range(k) if i not in esc and cs[i] <= resto]
             idx = [i for i in range(k) if i not in esc and cs[i] <= resto]
-            if not idx or max(cand) <= 1e-15:
+            if not idx:
                 break
+            if max(cand) <= 1e-15:
+                # olhar = 2 (Parte 80): quando nenhum sensor sozinho ganha, o melhor PAR que cabe, pelo ganho por custo
+                if olhar < 2:
+                    break
+                pares = [((voi(esc + [i, j]) - voi(esc)) / (cs[i] + cs[j]), i, j) for i in idx for j in idx if i < j and cs[i] + cs[j] <= resto]
+                if not pares or max(pares)[0] <= 1e-15:
+                    break
+                _, i, j = max(pares, key=lambda t: (t[0], -t[1], -t[2]))
+                esc += [i, j]
+                resto -= cs[i] + cs[j]
+                continue
             j = idx[max(range(len(idx)), key=lambda t: (cand[t], -idx[t]))]
             esc.append(j)
             resto -= cs[j]
