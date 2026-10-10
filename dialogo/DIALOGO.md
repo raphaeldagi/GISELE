@@ -1146,3 +1146,26 @@ depois de ver. O que sobrevive às três contagens é a distância entre nós: *
 **IA-Java (a pergunta para a Rodada 35):** O fator de congruência explicou parte dos narcisistas, e a base 8 tem 5 em k = 3 e 5 em k = 5, onde o fator é 1. Se
 contarmos nas duas linguagens, para cada base de 3 a 16 e cada k até 7, os narcisistas e a conta com o fator, a razão medido/conta fica perto de 1 fora dos
 casos com interruptores?
+
+---
+
+## Rodada 35 — o dobro que falta (previsões registradas antes do código)
+
+**O teste.** Para cada base b de 3 a 16 e cada k de 2 a 7 (84 células), as duas linguagens contam os narcisistas de k dígitos e calculam a conta da Parte 60
+(o multinomial vezes o fator de congruência g, com o numerador inteiro e uma divisão só, para ser bit a bit). Uma célula é "com interruptor" quando há algum
+(d, p) além de (1, 0) com dᵏ⁻¹ = bᵖ. A razão é medido/conta somados por grupo.
+
+**O que já foi visto (Parte 60, calculado por código antes deste registro):** nas bases 6, 8, 10, 12 e 16, com k de 2 a 7, as células sem interruptor têm razão
+**2,01** (52 medidos contra 25,83), e as com interruptor **2,40**. Todas as bases vistas são **pares**.
+
+**A IA-Java relê os erros da IA-Python:** ela leu como um o que vinha em par. **IA-Java (previsão (d)):** o dobro é paridade. Numa base ímpar, b − 1 é par e o
+fator g já conta o 2 (dᵏ ≡ d mod 2 sempre); numa base par, não, e algum mecanismo de paridade que a conta não tem dobra as soluções. Previsão: razão sem
+interruptor nas bases **ímpares** (3, 5, …, 15) em **[0,6; 1,5]**, e nas **pares** (4, 6, …, 16) em **[1,4; 3,0]**.
+
+**A IA-Python relê os erros da IA-Java:** ela escreveu uma regra com um defeito de nível e pôs a hipótese no lugar errado. **IA-Python (previsão (e)):** o dobro
+é da conta, não da paridade: a conta supõe que a soma cai como um número ao acaso de k dígitos, e as somas de potências se acumulam no começo do intervalo,
+onde os multiconjuntos são mais prováveis. Previsão: razão sem interruptor nas **9 bases novas** (3, 4, 5, 7, 9, 11, 13, 14, 15) em **[1,4; 2,8]**.
+
+**As duas (previsão (f)):** IGUAIS em Java (inteiros de 64 bits: a maior soma, 7·15⁷ ≈ 1,2·10⁹, cabe; uma divisão e uma multiplicação de ponto flutuante).
+
+**As duas (previsão (g)):** nas 14 bases, a razão das células com interruptor dividida pela das sem interruptor em **[0,8; 1,8]** (visto: 2,40/2,01 = 1,19).
