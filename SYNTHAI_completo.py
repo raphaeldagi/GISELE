@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (9648 linhas)
+# calculos.py  (9714 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7500,6 +7500,7 @@ def testes_de_regressao():
         "P1094": round(p1094_ulp_em_hexadecimal()[0], 4) == 1.0341 and round(p1094_ulp_mantissa_uniforme()[0], 4) == 1.0667,
         "P1123": p1123_mesma_soma()[1] == 431 and p1123_mesma_soma(65535)[1] == 5161,
         "P1153": p1153_duplos_palindromos()[0] == 27,
+        "P1183": p1183_primeiro_digito_hex(2) == [0, 2500, 2500, 0, 2500, 0, 0, 0, 2500] + [0] * 7 and p1183_primeiro_digito_hex(3)[1] == 2506,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9458,6 +9459,56 @@ def p1151_alfabeto_portugues():
     _, _, trocas = r31.reordenar(gs)
     return trocas, sum(1 for g, _, _ in gs if r31.chave_pt(g) != g.lower())
 
+
+ERROS_P1209, TESTES_P1209 = 168, 486
+
+
+def p1182_portugues_contra_ingles(d=None, pt=None):
+    \"\"\"Português contra inglês (P1182): nos sinsets com lema português e inglês de uma palavra só (o primeiro alfabético de
+    cada), a razão média tamanho(pt)/tamanho(en). Devolve (razão média, pares, fração em que o português é mais longo).\"\"\"
+    from synthai.dicionario import Dicionario, DicionarioPT
+    d = d or Dicionario()
+    pt = pt or DicionarioPT()
+    razoes, maior = [], 0
+    for chave, i in d.indice.items():
+        pos, desloc = chave.split(":")
+        sid = f"{desloc}-{pos}"
+        if sid not in pt.lemas:
+            continue
+        en = [w for w in d.sinsets[i][1] if w.isalpha()]
+        po = [w for w in pt.lemas[sid] if w.isalpha()]
+        if not en or not po:
+            continue
+        a, b = min(po), min(en)
+        razoes.append(len(a) / len(b))
+        maior += len(a) > len(b)
+    return sum(razoes) / len(razoes), len(razoes), maior / len(razoes)
+
+
+def p1183_primeiro_digito_hex(base_pot, n=10000):
+    \"\"\"O primeiro dígito hexadecimal de base_pot^k, k = 1..n (P1183), em inteiros exatos. Devolve as 16 contagens.\"\"\"
+    cont = [0] * 16
+    x = 1
+    for _ in range(n):
+        x *= base_pot
+        cont[int(format(x, "x")[0], 16)] += 1
+    return cont
+
+
+def p1181_primeira_diferenca():
+    \"\"\"Rodada 32 (P1181): nos lemas portugueses em ordem de pontos de código, a posição média da primeira diferença entre
+    vizinhos e os vizinhos invertidos pela chave portuguesa (dialogo/rodada32.py, IGUAL em Java). Devolve (posição média,
+    pares, inversões, palavras com acento).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada32", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada32.py"))
+    r32 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r32)
+    ws = r32.lemas()
+    soma, pares, inv = r32.medir(ws)
+    return soma / pares, pares, inv, sum(1 for w in ws if r32.chave_pt(w) != w.lower())
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -9633,6 +9684,21 @@ def _parte_57():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1179, testes=TESTES_P1179)
     print(f"P1179 minha taxa de erro ({ERROS_P1179}/{TESTES_P1179}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_58():
+    print("--- Parte 58 (0x3A: a primeira diferenca) ---")
+    pos, pares, inv, acento = p1181_primeira_diferenca()
+    print(f"P1181 lemas portugueses: primeira diferenca media na posicao {pos:.4f} ({pares} pares); invertidos pela ordem portuguesa: {inv} "
+          f"({inv / acento:.3f} por palavra acentuada, {acento} acentuadas)")
+    razao, n, maior = p1182_portugues_contra_ingles()
+    print(f"P1182 tamanho pt/en: razao media {razao:.4f} em {n} pares; o portugues e mais longo em {maior:.4f} deles")
+    d2, d3 = p1183_primeiro_digito_hex(2), p1183_primeiro_digito_hex(3)
+    print(f"P1183 primeiro digito hexadecimal (n = 1..10000): 2^n {d2}; 3^n {d3} (digito 1: {d3[1] / 10000:.4f}; Benford 0,25)")
+    total, sem = p1092_pnn_sem_teste(1181, 1210)
+    print(f"P1092 pNN novas (P1181-P1210) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 58: {p974_previsoes_sem_largura(range(58, 59))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1209, testes=TESTES_P1209)
+    print(f"P1209 minha taxa de erro ({ERROS_P1209}/{TESTES_P1209}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -9669,7 +9735,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58}
 
 
 if __name__ == "__main__":
@@ -9874,7 +9940,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -14574,6 +14640,56 @@ class TesteParte57(unittest.TestCase):
         self.assertEqual([g for g, _, _ in pt], ["ábaco", "zebra"])
         self.assertEqual(trocas, [("zebra", "ábaco")])
         self.assertEqual(calculos.p1151_alfabeto_portugues(), ([], 2))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte58.py  (45 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte58.py'] = """\"\"\"Testes de unidade da Parte 58: `python3 -m unittest synthai.testes_parte58`. Cada pNN nova com o seu teste.\"\"\"
+
+import importlib.util
+import os
+import unittest
+
+import calculos
+
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+class DicionariosFalsos:
+    # sinset n:1 -> en 'dog', pt 'cão' (3/3); n:2 -> en 'nation', pt 'nação' (5/6); n:3 só em inglês
+    sinsets = [("n", ["dog"], [], ""), ("n", ["nation"], [], ""), ("n", ["cat"], [], "")]
+    indice = {"n:1": 0, "n:2": 1, "n:3": 2}
+    lemas = {"1-n": ["cão"], "2-n": ["nação"]}
+
+
+class TesteParte58(unittest.TestCase):
+    def test_primeiro_digito_hex(self):
+        # conferido por código: 2^1..2^8 = 2, 4, 8, 0x10, 0x20, 0x40, 0x80, 0x100 -> 1, 2, 4, 8 duas vezes cada
+        self.assertEqual(calculos.p1183_primeiro_digito_hex(2, 8), [0, 2, 2, 0, 2, 0, 0, 0, 2] + [0] * 7)
+        # 3, 9, 27 = 0x1B, 81 = 0x51, 243 = 0xF3 -> 3, 9, 1, 5, F
+        c = calculos.p1183_primeiro_digito_hex(3, 5)
+        self.assertEqual([i for i, x in enumerate(c) if x], [1, 3, 5, 9, 15])
+
+    def test_portugues_contra_ingles(self):
+        d = DicionariosFalsos()
+        razao, n, maior = calculos.p1182_portugues_contra_ingles(d, d)
+        self.assertEqual((n, maior), (2, 0.0))
+        self.assertAlmostEqual(razao, (1.0 + 5 / 6) / 2, places=12)
+
+    def test_primeira_diferenca(self):
+        spec = importlib.util.spec_from_file_location("rodada32", os.path.join(RAIZ, "dialogo", "rodada32.py"))
+        r32 = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(r32)
+        # ordem de códigos: 'pe' < 'peixe' < 'pé'; primeiras diferenças: 3 ('pe' é prefixo, tamanho 2 + 1), 2 ('i' contra 'é');
+        # pela chave portuguesa 'pé' -> 'pe' vem antes de 'peixe': o par (peixe, pé) inverte
+        ws = sorted(["pe", "peixe", "pé"])
+        self.assertEqual(ws, ["pe", "peixe", "pé"])
+        self.assertEqual(r32.medir(ws), (5, 2, 1))
 
 
 if __name__ == "__main__":
