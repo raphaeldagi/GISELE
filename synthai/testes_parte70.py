@@ -56,6 +56,12 @@ class TesteParte70(unittest.TestCase):
         self.assertEqual(n, sum(len(v) * len(v[0]) for v in g.p.values()))
         self.assertTrue(all(0 < b < 10 for _, b in pontos))
 
+    def test_p1550_contas_da_parte70(self):
+        p, sd, z1, z2 = calculos.p1550_contas_da_parte70(20160 / 65536 + 0.01, 10000)
+        self.assertAlmostEqual(sd, math.sqrt(p * (1 - p) / 10000), places=15)
+        self.assertAlmostEqual(z1, 0.01 / sd, places=9)
+        self.assertAlmostEqual(z2, z1 / 2, places=12)
+
 
 if __name__ == "__main__":
     unittest.main()

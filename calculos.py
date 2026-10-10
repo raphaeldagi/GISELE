@@ -10690,6 +10690,29 @@ def p1545_bases_gf2(texto):
     return bases / janelas, (15 * 14 * 12 * 8) / 16 ** 4, janelas
 
 
+def p1549_lei_de_escala():
+    """Rodada 44 (P1549): a lei de escala da forma de GPT por mínimos quadrados em forma fechada (dialogo/rodada44.py, IGUAL em Java), lida dos pontos
+    medidos e guardados em dialogo/escala44.tsv. Devolve ({d: (A, α, n*)}, bits(d=48) − bits(d=24) em 8.000 passos, os pontos)."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada44", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada44.py"))
+    r44 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r44)
+    pontos = r44.ler()
+    return {d: r44.ajuste(pontos[d]) for d in sorted(pontos)}, dict(pontos[48])[8000] - dict(pontos[24])[8000], pontos
+
+
+def p1550_contas_da_parte70(medida_gf2=None, janelas=9997):
+    """As contas auxiliares da Parte 70 (P1550): o desvio binomial de uma proporção p = |GL(4,2)|/16⁴ com `janelas` janelas, e quantos desvios a medida
+    de π (P1545) fica da teoria (com o desvio simples e com o dobro, pelas janelas sobrepostas). Devolve (p, desvio, z simples, z com o dobro)."""
+    if medida_gf2 is None:
+        medida_gf2 = p1545_bases_gf2(p1514_pi_hex_digitos(10000))[0]
+    p = 20160 / 65536
+    sd = sqrt(p * (1 - p) / janelas)
+    return p, sd, (medida_gf2 - p) / sd, (medida_gf2 - p) / (2 * sd)
+
+
 def p1499_previsoes_sobre_previsoes_v2(parte=68):
     """O placar das previsões sobre as minhas previsões, versão 2 (P1499; lido pela P1481, com os tipos): (m1) o número de previsões do
     mundo, (m2) o número de faixas que cruzam o zero, (m3) a mediana de w das que não cruzam, (m4) a fração de acertos, (m5) o número de
