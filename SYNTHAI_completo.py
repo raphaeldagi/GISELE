@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (9780 linhas)
+# calculos.py  (9924 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7502,6 +7502,7 @@ def testes_de_regressao():
         "P1153": p1153_duplos_palindromos()[0] == 27,
         "P1183": p1183_primeiro_digito_hex(2) == [0, 2500, 2500, 0, 2500, 0, 0, 0, 2500] + [0] * 7 and p1183_primeiro_digito_hex(3)[1] == 2506,
         "P1213": p1213_persistencia_hex(16 ** 4)[:2] == (7, 0x3DDE),
+        "P1243": len(p1243_narcisistas_hex(8)) == 64 and p1249_fator_de_congruencia(9) == 15,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9512,6 +9513,7 @@ def p1181_primeira_diferenca():
 
 
 ERROS_P1239, TESTES_P1239 = 171, 492
+ERROS_P1269, TESTES_P1269 = 175, 503
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -9560,6 +9562,124 @@ def p1211_nome_e_palavra():
     r33 = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(r33)
     return r33.irmas(r33.lemas())
+
+
+def p1241_placar_por_voz(ate=33):
+    \"\"\"Rodada 34 (P1241): o placar por voz do diálogo contado por uma função que lê dialogo/DIALOGO.md (rodadas 13 a ate), IGUAL
+    em Java (dialogo/Rodada34.java). Devolve ({voz: [previsões estritas, acertos estritos, previsões generosas, acertos
+    generosos]}, linhas por rodada).\"\"\"
+    import importlib.util
+    import os
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    spec = importlib.util.spec_from_file_location("rodada34", os.path.join(raiz, "dialogo", "rodada34.py"))
+    r34 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r34)
+    with open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8") as f:
+        return r34.placar(f.read(), 13, ate)
+
+
+def p1242_definicao_propria(d=None):
+    \"\"\"As definições que usam a própria palavra (P1242): dos sinsets com pelo menos um lema de uma palavra só, a fração cuja
+    definição lematizada (morphy) contém um desses lemas. Devolve (fração, sinsets considerados, fração por classe, 5 exemplos).\"\"\"
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    n, k, por, ex = 0, 0, {}, []
+    for pos, lemas, _, glosa in d.sinsets:
+        simples = {w.lower() for w in lemas if "_" not in w and "-" not in w}
+        if not simples:
+            continue
+        sim = any(x in simples for x in d.palavras_da_definicao(glosa))
+        n += 1
+        k += sim
+        a, b = por.get(pos, (0, 0))
+        por[pos] = (a + sim, b + 1)
+        if sim and len(ex) < 5:
+            ex.append((lemas[0], glosa))
+    return k / n, n, {c: a / b for c, (a, b) in sorted(por.items())}, ex
+
+
+def p1243_narcisistas_hex(kmax=8, base=16):
+    \"\"\"Números narcisistas numa base (P1243): n com k dígitos igual à soma dos dígitos elevados a k, para k de 1 a kmax. Como
+    a soma só depende do multiconjunto de dígitos, percorre os multiconjuntos (C(k + base − 1, k) por k). Devolve a lista
+    ordenada.\"\"\"
+    from itertools import combinations_with_replacement
+    achados = []
+    for k in range(1, kmax + 1):
+        pot = [x ** k for x in range(base)]
+        for ds in combinations_with_replacement(range(base), k):
+            s = sum(pot[x] for x in ds)
+            if s == 0 or not base ** (k - 1) <= s < base ** k:
+                continue
+            dig, x = [], s
+            while x:
+                x, r = divmod(x, base)
+                dig.append(r)
+            if sorted(dig) == list(ds):
+                achados.append(s)
+    return sorted(achados)
+
+
+def p1247_interruptores(k, base=16):
+    \"\"\"Os interruptores dos narcisistas (P1247): pares (d, p) com d ≥ 1 e p < k tais que d^(k−1) = base^p, isto é,
+    d·base^p = d^k: trocar um 0 na posição p por d soma o mesmo ao número e à soma das potências. Devolve a lista ordenada.\"\"\"
+    return [(d, q) for d in range(1, base) for q in range(k) if d ** (k - 1) == base ** q]
+
+
+def p1248_por_comprimento(nums, base=16):
+    \"\"\"Quantos números de cada comprimento (em dígitos da base) há numa lista (P1248). Devolve {k: quantos}.\"\"\"
+    por = {}
+    for n in nums:
+        k, x = 0, n
+        while x:
+            x //= base
+            k += 1
+        por[k] = por.get(k, 0) + 1
+    return dict(sorted(por.items()))
+
+
+def p1249_fator_de_congruencia(k, base=16):
+    \"\"\"O fator de congruência dos narcisistas (P1249): o maior divisor g de base − 1 com d^k ≡ d (mod g) para todo dígito d.
+    Como n ≡ soma dos dígitos (mod base − 1), com esse g a congruência n ≡ soma das potências (mod g) vale sozinha, e a chance de
+    um candidato acertar sobe g vezes. Devolve g.\"\"\"
+    return max(g for g in range(1, base) if (base - 1) % g == 0 and all((d ** k - d) % g == 0 for d in range(base)))
+
+
+def p1250_esperado_narcisistas(k, base=16):
+    \"\"\"A conta do número esperado de narcisistas com k dígitos (P1250): soma, sobre os multiconjuntos de dígitos cuja soma de
+    potências tem k dígitos, da chance de um número de k dígitos ao acaso ter aquele multiconjunto (multinomial, sem zero à
+    esquerda); depois multiplica pelo fator de congruência (P1249). Devolve (sem o fator, com o fator).\"\"\"
+    from itertools import combinations_with_replacement
+    from math import factorial
+    pot = [x ** k for x in range(base)]
+    e = 0
+    for ds in combinations_with_replacement(range(base), k):
+        s = sum(pot[x] for x in ds)
+        if not base ** (k - 1) <= s < base ** k:
+            continue
+        m = factorial(k)
+        for x in set(ds):
+            m //= factorial(ds.count(x))
+        z = ds.count(0)
+        e += m * (k - z) // k if z else m
+    e = e / ((base - 1) * base ** (k - 1))
+    return e, e * p1249_fator_de_congruencia(k, base)
+
+
+def p1251_conta_contra_medida(casos=((16, 9), (8, 8), (10, 7), (6, 13), (12, 11))):
+    \"\"\"A conta dos narcisistas contra a medida (P1251): para cada base e cada k de 2 a kmax, o número medido (P1243, P1248) e
+    o esperado sem e com o fator de congruência (P1250). Devolve (linhas (base, k, medido, sem, com), log-verossimilhança de
+    Poisson sem o fator, com o fator).\"\"\"
+    from math import lgamma, log
+    linhas, l0, l1 = [], 0.0, 0.0
+    for base, kmax in casos:
+        por = p1248_por_comprimento(p1243_narcisistas_hex(kmax, base), base)
+        for k in range(2, kmax + 1):
+            m = por.get(k, 0)
+            e0, e1 = p1250_esperado_narcisistas(k, base)
+            linhas.append((base, k, m, e0, e1))
+            l0 += m * log(e0) - e0 - lgamma(m + 1)
+            l1 += m * log(e1) - e1 - lgamma(m + 1)
+    return linhas, l0, l1
 
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
@@ -9765,6 +9885,30 @@ def _parte_59():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1239, testes=TESTES_P1239)
     print(f"P1239 minha taxa de erro ({ERROS_P1239}/{TESTES_P1239}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_60():
+    print("--- Parte 60 (0x3C: o placar que se conta) ---")
+    tot, linhas = p1241_placar_por_voz()
+    for v, (a, b, c, e) in tot.items():
+        print(f"P1241 {v}: estrita {b} em {a}; generosa {e} em {c} (a mao: IA-Python 23 em 36, IA-Java 21 em 36)")
+    frac, n, por, ex = p1242_definicao_propria()
+    print(f"P1242 definicoes que usam um dos proprios lemas: {frac:.4f} de {n} sinsets; por classe {({c: round(f, 4) for c, f in por.items()})}; {ex[:3]}")
+    nar = p1243_narcisistas_hex()
+    print(f"P1243 narcisistas em base 16 (1 a 8 digitos): {len(nar)}; de 2 a 8 digitos: {[hex(x) for x in nar if x >= 16]}")
+    print(f"P1248 por comprimento (base 16, ate 9 digitos): {p1248_por_comprimento(p1243_narcisistas_hex(9))}")
+    print(f"P1247 interruptores d^(k-1) = 16^p: {({k: p1247_interruptores(k) for k in range(3, 10)})}")
+    print(f"P1249 fator de congruencia em base 16, k = 1..9: {[p1249_fator_de_congruencia(k) for k in range(1, 10)]}")
+    linhas, l0, l1 = p1251_conta_contra_medida()
+    for base, k, m, e0, e1 in linhas:
+        print(f"P1251 base {base:2d}, k = {k:2d}: medido {m:2d}; conta sem o fator {e0:.3f}; com o fator {e1:.3f}")
+    print(f"P1251 log-verossimilhanca de Poisson: sem o fator {l0:.2f}; com o fator {l1:.2f}; diferenca {l1 - l0:.2f} nats")
+    print(f"P1251 total (k >= 2, 5 bases): medido {sum(x[2] for x in linhas)}; conta sem o fator {sum(x[3] for x in linhas):.1f}; "
+          f"com o fator {sum(x[4] for x in linhas):.1f}")
+    total, sem = p1092_pnn_sem_teste(1241, 1270)
+    print(f"P1092 pNN novas (P1241-P1270) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 60: {p974_previsoes_sem_largura(range(60, 61))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1269, testes=TESTES_P1269)
+    print(f"P1269 minha taxa de erro ({ERROS_P1269}/{TESTES_P1269}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -9801,7 +9945,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60}
 
 
 if __name__ == "__main__":
@@ -9814,7 +9958,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (201 linhas)
+# CLAUDE.md  (204 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -9895,6 +10039,9 @@ anterior, commit e push.
   pelo nome). O placar chama as funções de auditoria (`p1092_pnn_sem_teste`, `p974_previsoes_sem_largura`); e o teste de uma pNN a chama PELO NOME.
   Parte 59: nomear uma restrição não basta, é preciso medir o seu peso antes de prever (listei 16 = 2⁴ e errei a persistência). E a regra de não contar à
   mão vale também para a regressão e para o placar por voz do diálogo (as duas vezes em que contei de cabeça, errei por um).
+  Parte 60: o placar por voz do diálogo agora é `p1241_placar_por_voz` (a mão não seguia regra nenhuma: 36 ficou entre a regra estrita, 27, e a generosa, 44).
+  O que vem em par, eu leio como um: nenhum centro de previsão sai de contagem por leitura, nem sobre dados passados (uma linha de código conta antes). E as
+  minhas regras têm custo: ao prever quantos testes a parte terá, somar ~2 por erro esperado (cada erro gera previsões novas num mundo novo).
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -10010,7 +10157,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -14808,6 +14955,97 @@ class TesteParte59(unittest.TestCase):
         n, k, ex = calculos.p1211_nome_e_palavra()
         self.assertEqual((n, k), (9176, 1805))
         self.assertIn("Abril", ex)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte60.py  (86 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte60.py'] = """\"\"\"Testes de unidade da Parte 60: `python3 -m unittest synthai.testes_parte60`. Cada pNN nova com o seu teste, chamada PELO NOME.\"\"\"
+
+import os
+import sys
+import unittest
+
+import calculos
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "dialogo"))
+import rodada34  # noqa: E402
+
+
+class DicionarioFalso:
+    # walk se define por si; run/jog não; big_cat só tem lema composto e fica fora
+    sinsets = [("n", ["walk"], [], "the walk"), ("v", ["run", "jog"], [], "move fast"), ("n", ["big_cat"], [], "cat")]
+
+    @staticmethod
+    def palavras_da_definicao(glosa):
+        return [w for w in glosa.split() if w != "the"]
+
+
+TEXTO = \"\"\"## Rodada 12 — fora
+(a) ✅ IA-Python
+## Rodada 13 — dentro
+(a) ✅ (IA-Python), (b) ❌
+**IA-Java**. Previsão (c), das duas vozes. Resultado (c) ✅. Controle (d) ❌. De novo (a) ❌ IA-Java.
+## Rodada 14 — dentro
+(e) ✅ (a da IA-Java). (f) ✅
+---
+## Refazer
+(g) ✅ IA-Python
+\"\"\"
+
+
+class TesteParte60(unittest.TestCase):
+    def test_regra_da_rodada34(self):
+        # rodada 13: dono (a, Python) ✅, (b, Java) ❌, (a, Java) ❌ [a letra já vista, mas o dono é outro]; conjunta c ✅; sem dono d ❌
+        # rodada 14: dono (e, Java) ✅; sem dono f ✅
+        tot, linhas = rodada34.placar(TEXTO)
+        self.assertEqual(tot["IA-Python"], [2, 2, 4, 3])
+        self.assertEqual(tot["IA-Java"], [4, 2, 6, 3])
+        self.assertEqual(len(linhas), 2)
+
+    def test_p1241_placar_por_voz(self):
+        tot, linhas = calculos.p1241_placar_por_voz(33)
+        self.assertEqual(len(linhas), 21)
+        self.assertEqual(tot["IA-Python"], [27, 15, 44, 31])
+        self.assertEqual(tot["IA-Java"], [27, 13, 44, 29])
+
+    def test_p1242_definicao_propria(self):
+        frac, n, por, ex = calculos.p1242_definicao_propria(DicionarioFalso())
+        self.assertEqual((n, por), (2, {"n": 1.0, "v": 0.0}))
+        self.assertAlmostEqual(frac, 0.5, places=12)
+        self.assertEqual(ex, [("walk", "the walk")])
+
+    def test_p1243_narcisistas_hex(self):
+        self.assertEqual(calculos.p1243_narcisistas_hex(3, 10), list(range(1, 10)) + [153, 370, 371, 407])
+        self.assertIn(0x156, calculos.p1243_narcisistas_hex(3))  # 1³ + 5³ + 6³ = 342 = 0x156
+
+    def test_p1247_interruptores(self):
+        self.assertEqual(calculos.p1247_interruptores(5), [(1, 0), (2, 1), (4, 2), (8, 3)])
+        self.assertEqual(calculos.p1247_interruptores(4), [(1, 0)])
+
+    def test_p1248_por_comprimento(self):
+        self.assertEqual(calculos.p1248_por_comprimento([0x156, 0xB8D2, 5]), {1: 1, 3: 1, 4: 1})
+
+    def test_p1249_fator_de_congruencia(self):
+        self.assertEqual([calculos.p1249_fator_de_congruencia(k) for k in (3, 4, 5)], [3, 1, 15])
+        self.assertEqual(calculos.p1249_fator_de_congruencia(3, 10), 3)  # 9 não é livre de quadrados: 3³ ≢ 3 (mod 9)
+
+    def test_p1250_esperado_narcisistas(self):
+        # base 3, k = 2: somas 4 (0,2: 1 número sem zero à esquerda), 5 (1,2: 2 números), 8 (2,2: 1) caem em [3; 8]: 4/(2·3) = 2/3; g = 2
+        e0, e1 = calculos.p1250_esperado_narcisistas(2, 3)
+        self.assertAlmostEqual(e0, 2 / 3, places=12)
+        self.assertAlmostEqual(e1, 4 / 3, places=12)
+
+    def test_p1251_conta_contra_medida(self):
+        # base 3: 5 = 12, 8 = 22 (2 dígitos), 17 = 122 (3 dígitos), conferidos à mão: 1 + 4, 4 + 4, 1 + 8 + 8
+        self.assertEqual(calculos.p1243_narcisistas_hex(3, 3), [1, 2, 5, 8, 17])
+        linhas, l0, l1 = calculos.p1251_conta_contra_medida(((3, 3),))
+        self.assertEqual([x[:3] for x in linhas], [(3, 2, 2), (3, 3, 1)])
+        self.assertGreater(l1, l0)
 
 
 if __name__ == "__main__":
