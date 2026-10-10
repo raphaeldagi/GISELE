@@ -39,3 +39,11 @@ X e Z (o ajuste pela porta dos fundos de Pearl) tem desvio √(1/(20.000·Var(X 
 **A prévia do Módulo 010: a minha própria calibração.** O texto pede "confiança declarada contra precisão observada". As minhas faixas são, em sua maioria, faixas de 90%. A régua `p1481` lê todas as
 previsões do mundo das Partes 53 a 78:
 - **(d)** a fração de acertos em **[0,70; 0,80]** (era 0,748 nas Partes 53 a 71): abaixo dos 90% declarados, isto é, **excesso de confiança**
+
+**Medido (a) a (d):** ingênua **0,9986** ✅; ajustada **0,4987** ✅; intervenção **0,4914** ✅; a minha taxa de acerto **0,773** (143 de 185) ✅.
+
+**Previsão nova, sobre o futuro, nascida de (d) (registrada agora, medida nas Partes 80 a 84).** 77,3% de acerto contra 90% declarados é excesso de confiança, e não ruído: o desvio binomial de uma taxa
+de 90% em 185 previsões é √(0,9·0,1/185) = 0,022, e a medida está a z = (0,773 − 0,9)/0,022 = **−5,76**. Supondo erros normais, uma faixa de ±1,645 desvios supostos que cobre 77,3% corresponde a ±1,208
+desvios reais (`p1813`): **o desvio real é 1,645/1,208 = 1,36 vez o suposto**. A regra nova: a partir da Parte 80, a meia-largura de toda faixa numérica que não vem de uma conta fechada com variância
+conhecida é multiplicada por 1,36.
+- **(e)** a fração de acertos das previsões do mundo das Partes 80 a 84 (régua `p1481`) em **[0,81; 0,99]** (0,90 ± 1,645 · √(0,9·0,1/30), para ~30 previsões)

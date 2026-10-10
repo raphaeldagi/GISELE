@@ -11690,6 +11690,62 @@ def p1783_bits_por_posto(lingua="en", semente=71, postos=(1, 2, 4, 16), passos=2
     return g.bits_por_caractere(te, janelas=300), {r: p1782_atencao_de_posto(g, r).bits_por_caractere(te, janelas=300) for r in postos}, sig
 
 
+def p1811_confusao(n=20000, semente=79, beta=0.5, gama=1.0, a=1.0):
+    """O diagrama causal do texto recebido na Parte 79 (Z → X, Z → Y, X → Y), simulado (P1811): Z ~ N(0, 1), X = a·Z + ε_X, Y = β·X + γ·Z + ε_Y. Três
+    estimativas do efeito de X sobre Y: a inclinação ingênua (mínimos quadrados de Y em X), a ajustada por Z (mínimos quadrados de Y em X e Z, pelas
+    equações normais 2 × 2 dos centrados) e a sob intervenção (X sorteado com a mesma variância, sem depender de Z). Devolve (ingênua, ajustada,
+    intervenção)."""
+    import random
+    r = random.Random(semente)
+
+    def amostra(intervir):
+        xs, ys, zs = [], [], []
+        for _ in range(n):
+            z = r.gauss(0.0, 1.0)
+            x = r.gauss(0.0, (a * a + 1.0) ** 0.5) if intervir else a * z + r.gauss(0.0, 1.0)
+            xs.append(x)
+            zs.append(z)
+            ys.append(beta * x + gama * z + r.gauss(0.0, 1.0))
+        return xs, ys, zs
+
+    def centrar(v):
+        m = sum(v) / len(v)
+        return [x - m for x in v]
+
+    xs, ys, zs = (centrar(v) for v in amostra(False))
+    sxx = sum(x * x for x in xs)
+    sxy = sum(x * y for x, y in zip(xs, ys))
+    szz = sum(z * z for z in zs)
+    sxz = sum(x * z for x, z in zip(xs, zs))
+    szy = sum(z * y for z, y in zip(zs, ys))
+    ingenua = sxy / sxx
+    ajustada = (szz * sxy - sxz * szy) / (sxx * szz - sxz * sxz)
+    xi, yi, _ = (centrar(v) for v in amostra(True))
+    intervencao = sum(x * y for x, y in zip(xi, yi)) / sum(x * x for x in xi)
+    return ingenua, ajustada, intervencao
+
+
+def p1812_minha_calibracao(partes=range(53, 79)):
+    """A prévia do Módulo 010 do texto recebido na Parte 79 (P1812): a fração das minhas previsões do mundo que acertaram (régua p1481), por tipo, contra
+    os 90% que a maioria das faixas declara. Devolve (previsões, fração de acertos, {tipo: (n, fração)})."""
+    prev = p1481_minhas_previsoes_v2(partes)
+    por = {}
+    for x in prev:
+        por.setdefault(x[5], []).append(x[4])
+    return len(prev), sum(x[4] for x in prev) / len(prev), {k: (len(v), sum(v) / len(v)) for k, v in por.items()}
+
+
+def p1813_fator_de_alargamento(acerto, nominal=0.9):
+    """Quanto alargar faixas que acertam `acerto` quando declaram `nominal` (P1813), supondo erros normais em torno do centro: uma faixa de ± z·σ_suposto
+    cobre a fração 2Φ(z·σ_suposto/σ_real) − 1; igualar ao acerto observado dá σ_real/σ_suposto = z(nominal)/z(acerto), com z(p) = Φ⁻¹((1 + p)/2).
+    Devolve (z nominal, z observado, fator, desvio binomial do acerto se fosse o nominal, z do acerto observado contra o nominal) para n = 185."""
+    from statistics import NormalDist
+    nd = NormalDist()
+    zn, zo = nd.inv_cdf((1 + nominal) / 2), nd.inv_cdf((1 + acerto) / 2)
+    sd = (nominal * (1 - nominal) / 185) ** 0.5
+    return zn, zo, zn / zo, sd, (acerto - nominal) / sd
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
