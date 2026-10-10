@@ -9742,6 +9742,57 @@ def _digitos_base(n, b):
         ds.append(r)
     return ds
 
+
+def p1301_ultimo_digito():
+    """Rodada 36 (P1301): o teste do último dígito dos narcisistas, por base (3 a 16, k de 2 a 7, células sem interruptor), IGUAL
+    em Java (dialogo/rodada36.py). Devolve ([(b, excesso, razão medido/conta, medido, conta, conta corrigida)], Spearman)."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada36", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada36.py"))
+    r36 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r36)
+    linhas = r36.por_base()
+    return linhas, r36.pearson(r36.postos([x[1] for x in linhas]), r36.postos([x[2] for x in linhas]))
+
+
+def p1302_iguais_nas_duas_linguas(d=None, pt=None):
+    """As palavras iguais nas duas línguas (P1302): dos sinsets com lema na OpenWordNet-PT, a fração em que um lema português de
+    uma palavra só (minúsculas) é idêntico a um lema inglês do mesmo sinset. Devolve (fração, sinsets, {classe: fração}, 8 exemplos)."""
+    from synthai.dicionario import Dicionario, DicionarioPT
+    d = d or Dicionario()
+    pt = pt or DicionarioPT()
+    n, k, por, ex = 0, 0, {}, []
+    for chave, i in sorted(d.indice.items()):
+        pos, desloc = chave.split(":")
+        pts = pt.lemas.get(f"{desloc}-{pos}") or (pt.lemas.get(f"{desloc}-s") if pos == "a" else None)
+        if not pts:
+            continue
+        ing = {w.lower() for w in d.sinsets[i][1] if "_" not in w}
+        por_ = {w.lower() for w in pts if " " not in w and "_" not in w}
+        sim = bool(ing & por_)
+        n += 1
+        k += sim
+        a, b = por.get(pos, (0, 0))
+        por[pos] = (a + sim, b + 1)
+        if sim and len(ex) < 8:
+            ex.append(sorted(ing & por_)[0])
+    return k / n, n, {c: a / b for c, (a, b) in sorted(por.items())}, ex
+
+
+def p1303_autonumeros(ate=16 ** 5, base=16):
+    """Os autonúmeros de Kaprekar numa base (P1303): m de 1 a ate que não é n + s(n) para nenhum n (s, a soma dos dígitos na
+    base). Devolve (densidade, contagem, os 8 primeiros)."""
+    alcancado = bytearray(ate + 1)
+    soma = [0] * (ate + 1)
+    for n in range(1, ate + 1):
+        soma[n] = soma[n // base] + n % base
+        m = n + soma[n]
+        if m <= ate:
+            alcancado[m] = 1
+    auto = [m for m in range(1, ate + 1) if not alcancado[m]]
+    return len(auto) / ate, len(auto), auto[:8]
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()

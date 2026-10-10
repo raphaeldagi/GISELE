@@ -52,3 +52,12 @@ em minúsculas) idêntico a um lema inglês do mesmo sinset?
 - (c) densidade dos autonúmeros de 1 a 16⁵ em **[0,06; 0,13]** (centro na base 10; a base maior tem vai-uns mais raros, o que pode mover para qualquer lado)
 
 **P1301, rodada 36:** no `dialogo/DIALOGO.md` (previsões (d) a (g)).
+
+### Previsão nova, nascida de uma surpresa (registrada antes de olhar as terminações)
+
+**Resultado de (b), antes desta seção:** a fração dos substantivos com palavra igual é **431 vezes** a dos verbos (a faixa era [3; 15]): uma surpresa (o erro é
+muitas vezes a largura da faixa). Os verbos quase nunca coincidem: o português marca o infinitivo (-ar, -er, -ir) e o inglês não marca nada. **O mecanismo,
+generalizado:** a igualdade exata só acontece quando as duas línguas terminam a palavra do mesmo jeito; nos adjetivos, o sufixo latino **-al** (*natural*,
+*ideal*, *artificial*) é o mesmo nas duas.
+- (h) entre os sinsets de adjetivo com palavra igual, a fração em que a palavra igual termina em **-al** fica em **[0,40; 0,80]** (outras terminações comuns às
+  duas: *-ar* em *similar*, *-or* em *superior*, *-il* em *fértil*/*fertile*, que não coincide; e as palavras curtas sem sufixo).
