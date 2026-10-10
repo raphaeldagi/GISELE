@@ -10554,7 +10554,7 @@ def p1516_gpt_decide():
 
 def p1541_escala_gpt(lingua="en", d=24, marcos=(1000, 2000, 4000, 8000, 16000), T=24, lr=0.005, semente=70, janelas=400):
     """A curva de escala da forma de GPT (P1541): um GPT (T, d, h = 2d) treinado em etapas, com os bits por caractere no teste medidos em cada
-    marco de passos (cada etapa sorteia janelas com a semente + o número da etapa; o estado do Adam continua). Devolve ([(passos, bits)], pesos)."""
+    marco de passos (cada etapa sorteia janelas com a semente + o número da etapa; o estado do Adam continua). Devolve ([(passos, bits)], pesos, o modelo)."""
     from synthai.gpt import GPT
     treino, teste = p1511_corpus_de_glosas(lingua)
     g = GPT(VOCAB_GPT, T=T, d=d, h=2 * d, semente=semente)
@@ -10563,7 +10563,7 @@ def p1541_escala_gpt(lingua="en", d=24, marcos=(1000, 2000, 4000, 8000, 16000), 
         g.treinar(treino, passos=m - feitos, lr=lr, semente=semente + k)
         feitos = m
         pontos.append((m, g.bits_por_caractere(teste, janelas=janelas)))
-    return pontos, sum(len(v) * len(v[0]) for v in g.p.values())
+    return pontos, sum(len(v) * len(v[0]) for v in g.p.values()), g
 
 
 def p1542_lei_de_potencia(pontos, alvo=None):
