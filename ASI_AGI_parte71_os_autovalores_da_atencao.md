@@ -70,3 +70,9 @@ A série vale S = **3,3315**, e a conta é N²/2^g · S/2. Contra a medida: grau
 A razão cai devagar com o grau.
 
 - **(g)** os gêmeos (f, f ⊕ x ⊕ x²) de grau 17 em **[642; 756]**: a conta de 755,5 vezes uma razão de 0,85 a 1,00 (continuação da queda, de 0,926 para ~0,91, com folga dos dois lados).
+
+**Resultado de (g), medido logo depois do registro:** **758** gêmeos de grau 17 ❌ (por 2 acima do teto; a conta da série singular dava 755,5, razão **1,003**). A conta acertou; o que errou foi
+a "queda" que eu li em três razões. O desvio de Poisson de cada razão é 1/√conta (por código): 0,189, 0,111 e 0,064, e os z das três medidas são −0,03, −0,52 e −1,16. A "tendência" estava
+dentro do ruído, e eu a extrapolei sem perguntar o tamanho do ruído.
+
+- **(h)** os gêmeos de grau 19 em **[2.338; 2.500]**: a conta 2.419,2 ± 1,645·√2.419 (a faixa de 90% da Poisson, sem tendência nenhuma). Registrada antes de medir.
