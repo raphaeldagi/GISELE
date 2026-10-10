@@ -80,6 +80,9 @@ anterior, commit e push.
   Parte 60: o placar por voz do diálogo agora é `p1241_placar_por_voz` (a mão não seguia regra nenhuma: 36 ficou entre a regra estrita, 27, e a generosa, 44).
   O que vem em par, eu leio como um: nenhum centro de previsão sai de contagem por leitura, nem sobre dados passados (uma linha de código conta antes). E as
   minhas regras têm custo: ao prever quantos testes a parte terá, somar ~2 por erro esperado (cada erro gera previsões novas num mundo novo).
+  Parte 61: o custo de um erro depende do seu TAMANHO (um erro de fator 2 abriu quatro testes; erros por pouco, nenhum): condicionar a previsão sobre mim às
+  surpresas, não à contagem de erros. E um efeito visto num subconjunto se testa unidade por unidade antes de ganhar mecanismo (o "dobro" das bases pares
+  era a base 8).
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -195,7 +198,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o

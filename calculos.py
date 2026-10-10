@@ -7470,6 +7470,7 @@ def testes_de_regressao():
         "P1183": p1183_primeiro_digito_hex(2) == [0, 2500, 2500, 0, 2500, 0, 0, 0, 2500] + [0] * 7 and p1183_primeiro_digito_hex(3)[1] == 2506,
         "P1213": p1213_persistencia_hex(16 ** 4)[:2] == (7, 0x3DDE),
         "P1243": len(p1243_narcisistas_hex(8)) == 64 and p1249_fator_de_congruencia(9) == 15,
+        "P1273": p1273_niven(16 ** 5)[0] == 93788 and p1278_familias_narcisistas()[:2] == (175, 157),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9481,6 +9482,7 @@ def p1181_primeira_diferenca():
 
 ERROS_P1239, TESTES_P1239 = 171, 492
 ERROS_P1269, TESTES_P1269 = 175, 503
+ERROS_P1299, TESTES_P1299 = 178, 511
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -9708,6 +9710,37 @@ def p1274_narcisistas_14_bases():
     spec.loader.exec_module(r35)
     celulas = [((b, k), r35.celula(b, k)) for b in r35.BASES for k in r35.KS]
     return celulas, r35.grupos(celulas)
+
+
+def p1278_familias_narcisistas(kmax=7, bases=range(3, 17)):
+    """As famílias dos narcisistas (P1278): o interruptor (1, 0) existe em toda base, então cada solução terminada em 0 traz
+    n + 1. Juntando cada par {n terminado em 0, n + 1, ambos soluções} numa família, conta, nas células (b, k ≥ 2) sem outro
+    interruptor (P1247), as soluções, os pares e a conta com o fator (P1250). Devolve (soluções, famílias, conta, pares)."""
+    sol = fam = pares = 0
+    conta = 0.0
+    for b in bases:
+        nums = set(p1243_narcisistas_hex(kmax, b))
+        por_k = {}
+        for n in nums:
+            por_k.setdefault(len(_digitos_base(n, b)), []).append(n)
+        for k in range(2, kmax + 1):
+            if len(p1247_interruptores(k, b)) > 1:
+                continue
+            ns = por_k.get(k, [])
+            p = sum(1 for n in ns if n % b == 0 and n + 1 in nums)
+            sol += len(ns)
+            pares += p
+            fam += len(ns) - p
+            conta += p1250_esperado_narcisistas(k, b)[1]
+    return sol, fam, conta, pares
+
+
+def _digitos_base(n, b):
+    ds = []
+    while n:
+        n, r = divmod(n, b)
+        ds.append(r)
+    return ds
 
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
@@ -9937,6 +9970,34 @@ def _parte_60():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1269, testes=TESTES_P1269)
     print(f"P1269 minha taxa de erro ({ERROS_P1269}/{TESTES_P1269}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_61():
+    print("--- Parte 61 (0x3D: o dobro) ---")
+    n, nums = p1271_rodadas_verificadas()
+    print(f"P1271 rodadas conferidas pelo verificar.py: {n} ({nums[0]} a {nums[-1]})")
+    neg, na, pre, ex = p1272_adjetivos_negativos()
+    print(f"P1272 adjetivos definidos pela negacao: {neg:.4f} de {na}; com prefixo negativo entre eles: {pre:.4f}; {ex[:3]}")
+    for ate, base in ((10 ** 6, 10), (16 ** 5, 16)):
+        k, conta = p1273_niven(ate, base)
+        print(f"P1273 Niven base {base} ate {ate}: {k}; conta de De Koninck-Doyon-Katai {conta:.1f}; razao {k / conta:.4f}")
+    celulas, grupos = p1274_narcisistas_14_bases()
+    for nome, m, e in grupos:
+        print(f"P1274 {nome}: medido {m}; conta {e:.3f}; razao {m / e:.4f}")
+    for b in range(3, 17):
+        m = sum(c[0] for (bb, k), c in celulas if bb == b and not c[4])
+        e = 0.0
+        for (bb, k), c in celulas:
+            if bb == b and not c[4]:
+                e += c[5]
+        print(f"P1274 base {b:2d} sem interruptor: medido {m:2d}; conta {e:.3f}; razao {m / e:.3f}")
+    sol, fam, conta, pares = p1278_familias_narcisistas()
+    print(f"P1278 sem outro interruptor: solucoes {sol}; pares (n terminado em 0, n + 1) {pares}; familias {fam}; conta {conta:.3f}; "
+          f"familias/conta {fam / conta:.4f}")
+    total, sem = p1092_pnn_sem_teste(1271, 1300)
+    print(f"P1092 pNN novas (P1271-P1300) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 61: {p974_previsoes_sem_largura(range(61, 62))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1299, testes=TESTES_P1299)
+    print(f"P1299 minha taxa de erro ({ERROS_P1299}/{TESTES_P1299}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -9973,7 +10034,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61}
 
 
 if __name__ == "__main__":

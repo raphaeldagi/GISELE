@@ -1169,3 +1169,22 @@ onde os multiconjuntos são mais prováveis. Previsão: razão sem interruptor n
 **As duas (previsão (f)):** IGUAIS em Java (inteiros de 64 bits: a maior soma, 7·15⁷ ≈ 1,2·10⁹, cabe; uma divisão e uma multiplicação de ponto flutuante).
 
 **As duas (previsão (g)):** nas 14 bases, a razão das células com interruptor dividida pela das sem interruptor em **[0,8; 1,8]** (visto: 2,40/2,01 = 1,19).
+
+**Resultado.** `comparar.py`: **IGUAIS, 90 linhas e 95 números bit a bit** (f) ✅. Sem interruptor: bases ímpares, razão **1,382** (117 medidos contra a conta 84,66);
+pares, **1,804** (58 contra 32,15): (d) ✅ IA-Java. Bases novas: **1,352** (123 contra 90,99), fora de [1,4; 2,8] por 0,05: (e) ❌ IA-Python. Com interruptor
+sobre sem interruptor: **1,405** (g) ✅.
+
+**IA-Python:** Errei por pouco, e o meu mecanismo (as somas se acumulam no começo do intervalo) nem foi testado: a faixa errou pelo nível, não pela forma.
+
+**IA-Java:** E eu acertei pela letra, não pelo mecanismo. Base por base (P1274), as pares não são uniformes: a base 8 tem razão **4,36** e as bases 4, 14 e 16 ficam
+perto de 1 (1,03; 0,91; 1,36); entre as ímpares, 11 e 13 passam de 1,6. A paridade não explica: uma base explica. O "dobro" da Parte 60 era a base 8 e a 12
+dentro de um total que, com 14 bases, fica em **1,50**.
+
+**IA-Python:** E o interruptor que nós dois esquecemos, o 1 na posição 0, que existe em toda base, explica pouco (P1278): só 18 das 175 soluções sem outro
+interruptor vêm em par, e as famílias ficam em 1,34 da conta.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 15 em 29**; **IA-Java 14 em 29** pela regra estrita, rodadas 13 a 35 (`p1241_placar_por_voz(35)`).
+
+**IA-Java (a pergunta para a Rodada 36):** O que a base 8 tem? Em base 8, para k ímpar, todo dígito ímpar satisfaz dᵏ ≡ d (mod 8) e todo par dá 0 a partir de k = 3:
+a soma das potências módulo 8 só depende dos dígitos ímpares, e n módulo 8 é o último dígito. Contando nas duas linguagens, para cada base, a fração dos
+candidatos que já passam no teste do último dígito (soma das potências ≡ último dígito mod b), a base 8 se destaca?

@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 60 (0x3C): o placar que se conta
 
-> Continuação da [Parte 59](ASI_AGI_parte59_o_nome_e_a_coisa.md). **Previsões registradas antes de qualquer execução e antes de escrever o resto deste
+> Continuação da [Parte 59](ASI_AGI_parte59_o_nome_e_a_coisa.md). **Próxima:** [Parte 61 — o dobro](ASI_AGI_parte61_o_dobro.md) (P1271–P1300). **Previsões registradas antes de qualquer execução e antes de escrever o resto deste
 > documento** (commits `b55a751`, (a) a (g); `5a07a02`, (h) e (i); `d77b0e0`, (j) e (k)). A Parte 59 trocou a última quantidade escrita à mão do script de autoavaliação por uma chamada de
 > função. Sobrou uma: o placar por voz do diálogo, contado à mão a cada rodada. Esta parte o transforma em função e pergunta se a função reproduz a mão.
 > E pergunta, no dicionário, quantas definições usam a própria palavra que definem; e, no hexadecimal, quantos números são iguais à soma das potências
