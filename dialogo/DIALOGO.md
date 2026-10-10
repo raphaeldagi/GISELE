@@ -1079,3 +1079,18 @@ com *é*, vem a primeira palavra com o prefixo seguinte, que é maior nas duas o
 
 **IA-Python (a pergunta para a Rodada 33):** As palavras com maiúscula (9.176) formam um bloco no começo pela ordem dos códigos. Quantas delas têm uma "irmã"
 minúscula com a mesma grafia (*Brasil*/*brasil*?, *Rosa*/*rosa*), isto é, quantos nomes próprios do dicionário português também são palavras comuns?
+
+---
+
+## Rodada 33 — o nome próprio e a palavra comum (previsões registradas antes do código)
+
+**O teste.** Dos 9.176 lemas portugueses de uma palavra só que começam com maiúscula, quantos têm uma irmã minúscula com a mesma grafia (*Rosa*/*rosa*,
+*Lua*/*lua*)? Comparação exata das cadeias minúsculas; as duas linguagens contam.
+
+**A IA-Java relê os erros da IA-Python:** ela errou poucas vezes; a última foi confiar numa conta sem a restrição de posição. **IA-Java (previsão (d)):** os nomes
+com maiúscula do WordNet são sobretudo lugares, pessoas, gêneros e espécies (*Brasil*, *Canis*), que não são palavras comuns: **3% a 12%** têm irmã minúscula.
+
+**A IA-Python relê os erros da IA-Java:** ela errou ao contar um efeito a mais. **IA-Python (previsão (e)):** o português usa muita palavra comum como nome
+(cidades com nome de santo e de coisa, astros, festas, gêneros botânicos que são palavras: *Rosa*, *Natal*, *Terra*, *Sol*): **12% a 30%**.
+
+**As duas (previsão (f)):** IGUAIS em Java (`toLowerCase(Locale.ROOT)` e `str.lower()` coincidem no português).

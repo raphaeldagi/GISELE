@@ -73,6 +73,8 @@ anterior, commit e push.
   fixo (oscilou em ciclo de dois): dar a medida da versão final e contar o caminho, sem escolher a versão favorável.
   Parte 57: listar as restrições ANTES de cada conta (a lista funcionou: os erros sumiram onde ela foi feita; o que eu nomeio antes, eu não erro).
   Toda afirmação de quantidade, inclusive no diálogo, sai de uma função.
+  Parte 58: nenhuma quantidade escrita à mão no script de autoavaliação (o "0 pNN sem teste" estava fixo no texto e era falso: p1181 não tinha teste
+  pelo nome). O placar chama as funções de auditoria (`p1092_pnn_sem_teste`, `p974_previsoes_sem_largura`); e o teste de uma pNN a chama PELO NOME.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
