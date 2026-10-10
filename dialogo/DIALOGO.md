@@ -973,3 +973,20 @@ nesses argumentos, não porque a escolha era robusta. Placar por voz desde a Rod
 
 **IA-Python (a pergunta para a Rodada 30):** Quantos empates exatos existem nas escolhas das rodadas antigas? Um empate é uma escolha que depende do último
 bit; contamos, em cada ordenação e cada argmax das rodadas, os pares de candidatos com o mesmo valor, e a regra de desempate de cada linguagem.
+
+---
+
+## Rodada 30 — os empates nas escolhas (previsões registradas antes do código)
+
+**O teste.** Nas rodadas que **escolhem** (ordenam ou tomam o máximo) a partir de valores calculados: 12 (os 4-gramas mais frequentes), 14 (os trigramas
+mais "animais"), 18 e 19 (o documento escolhido por cada seção), 20 (a época prevista), 24 (o documento escolhido pelo texto). Para cada uma, recalculam-se
+os valores e conta-se se a escolha **impressa** depende de um empate exato (dois candidatos com o mesmo valor bit a bit, um dentro e outro na fronteira da
+escolha, ou empatados entre si dentro da lista ordenada). A contagem dos empates (a partir dos valores exportados) é traduzida para Java.
+
+**A IA-Java relê os erros da IA-Python:** ela errou ao confiar que nenhuma escolha mudaria. **IA-Java (previsão (c)):** contagens inteiras empatam muito (os
+4-gramas contados em documentos; as razões de chances das mesmas contagens): **3 a 5** das 6 rodadas têm empate na escolha impressa.
+
+**A IA-Python relê os erros da IA-Java:** ela errou ao superestimar a amplificação. **IA-Python (previsão (d)):** só as escolhas feitas sobre contagens
+inteiras empatam (a 12 e a 14); as somas de logs (18, 19, 20, 24) quase nunca: **1 a 2** das 6.
+
+**As duas (previsão (e)):** IGUAIS em Java.
