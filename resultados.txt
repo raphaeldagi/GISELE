@@ -1215,7 +1215,31 @@ P1303 autonumeros base 16 ate 1048576: 64999 (densidade 0.0620); os primeiros [1
 P1092 pNN novas (P1301-P1330) sem teste: 0 de 5: []
 P974 previsoes unilaterais da Parte 62: {62: (4, 0, [])}
 P1329 minha taxa de erro (181/519): media = 0.35, intervalo 90% = [0.32, 0.38]
+--- Parte 63 (0x3F: o peso do mecanismo) ---
+P1331 base  3: medido  3; conta com g 4.534 (razao 0.662); com F 4.534 (razao 0.662)
+P1331 base  4: medido  2; conta com g 1.949 (razao 1.026); com F 2.581 (razao 0.775)
+P1331 base  5: medido 10; conta com g 8.639 (razao 1.157); com F 10.279 (razao 0.973)
+P1331 base  6: medido 10; conta com g 7.441 (razao 1.344); com F 8.398 (razao 1.191)
+P1331 base  7: medido 20; conta com g 17.516 (razao 1.142); com F 18.627 (razao 1.074)
+P1331 base  8: medido 13; conta com g 2.983 (razao 4.358); com F 3.762 (razao 3.455)
+P1331 base  9: medido  3; conta com g 4.443 (razao 0.675); com F 4.430 (razao 0.677)
+P1331 base 10: medido 15; conta com g 8.822 (razao 1.700); com F 10.118 (razao 1.482)
+P1331 base 11: medido 27; conta com g 14.598 (razao 1.850); com F 16.094 (razao 1.678)
+P1331 base 12: medido 11; conta com g 4.376 (razao 2.514); com F 4.787 (razao 2.298)
+P1331 base 13: medido 29; conta com g 17.566 (razao 1.651); com F 20.453 (razao 1.418)
+P1331 base 14: medido  4; conta com g 4.376 (razao 0.914); com F 4.962 (razao 0.806)
+P1331 base 15: medido 25; conta com g 17.366 (razao 1.440); com F 19.639 (razao 1.273)
+P1331 base 16: medido  3; conta com g 2.206 (razao 1.360); com F 2.494 (razao 1.203)
+P1331 total: medido 175; razao com g 1.4981; com F 1.3343; celulas com F a mais de 10% de g: 42 de 84 (0.5000)
+P1332 glosas portuguesas (7945): razao de palavras PT/EN mediana 1.0000, media 1.6341; portuguesa mais longa em 0.4312
+P1333 primos palindromos base 16 ate 1048576: 357; conta 357.5 (P1337 sozinha: 357.5); erro -0.0014; por comprimento {1: 6, 2: 1, 3: 36, 5: 314}
+P1333 primos palindromos base 12 ate 248832: 196; conta 177.3 (P1337 sozinha: 177.3); erro +0.0953; por comprimento {1: 5, 2: 1, 3: 20, 5: 170}
+P1333 primos palindromos base 10 ate 10000000: 781; conta 768.5 (P1337 sozinha: 768.5); erro +0.0161; por comprimento {1: 4, 2: 1, 3: 15, 5: 93, 7: 668}
+P1338 Poisson(media 3.762) >= 13: 1.53e-04; desvio relativo da contagem sob a conta (base 16): 0.0478; ingenuo pi(16^5)/16^5 x 4350 palindromos = 340.3
+P1092 pNN novas (P1331-P1360) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 63: {63: (4, 0, [])}
+P1359 minha taxa de erro (182/527): media = 0.35, intervalo 90% = [0.31, 0.38]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 378; pares de interacao possiveis = 71253
+P96 funcoes pNN no arquivo = 383; pares de interacao possiveis = 73153
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
-Regressao: 109/109 resultados publicados reproduzidos; falhas = []
+Regressao: 110/110 resultados publicados reproduzidos; falhas = []

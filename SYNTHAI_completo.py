@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (10166 linhas)
+# calculos.py  (10321 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7505,6 +7505,7 @@ def testes_de_regressao():
         "P1243": len(p1243_narcisistas_hex(8)) == 64 and p1249_fator_de_congruencia(9) == 15,
         "P1273": p1273_niven(16 ** 5)[0] == 93788 and p1278_familias_narcisistas()[:2] == (175, 157),
         "P1303": p1303_autonumeros()[1] == 64999 and p1307_terminacoes_iguais()[1][0] == ("al", 434),
+        "P1333": p1333_primos_palindromos()[0] == 357 and p1331_fator_efetivo()[1:] == (84, 42),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9518,6 +9519,7 @@ ERROS_P1239, TESTES_P1239 = 171, 492
 ERROS_P1269, TESTES_P1269 = 175, 503
 ERROS_P1299, TESTES_P1299 = 178, 511
 ERROS_P1329, TESTES_P1329 = 181, 519
+ERROS_P1359, TESTES_P1359 = 182, 527
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -9868,6 +9870,133 @@ def p1308_chance_de_spearman(rho, n=14, vezes=20000, semente=1301):
         k += sum((x - mx) * (y - mx) for x, y in zip(xs, ys)) / sxx >= rho
     return k / vezes
 
+
+def p1331_fator_efetivo():
+    \"\"\"Rodada 37 (P1331): o fator de congruência efetivo F dos narcisistas (dialogo/rodada37.py, IGUAL em Java). Devolve
+    ([(b, medido, conta com g, conta com F)] nas células sem interruptor, células com candidatos, células com F a mais de 10%
+    de g).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada37", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada37.py"))
+    r37 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r37)
+    linhas, com, longe = [], 0, 0
+    for b in r37.BASES:
+        m, cg, cf = 0, 0.0, 0.0
+        for k in r37.KS:
+            cand, ig, med, num, den, g, inter = r37.celula(b, k)
+            if cand == 0:
+                continue
+            f = ((b - 1) * ig) / cand
+            com += 1
+            longe += abs(f - g) > 0.1 * g
+            if inter:
+                continue
+            m += med
+            cg += (num / den) * g
+            cf += (num / den) * f
+        linhas.append((b, m, cg, cf))
+    return linhas, com, longe
+
+
+def p1332_glosa_pt_e_en(d=None, pt=None):
+    \"\"\"A glosa portuguesa contra a inglesa (P1332): nos sinsets com glosa na OpenWordNet-PT, a razão (palavras da glosa
+    portuguesa)/(palavras da definição inglesa sem os exemplos). Devolve (mediana, fração com a portuguesa mais longa, pares,
+    média).\"\"\"
+    from synthai.dicionario import Dicionario, DicionarioPT
+    d = d or Dicionario()
+    pt = pt or DicionarioPT()
+    razoes, mais = [], 0
+    for chave, i in sorted(d.indice.items()):
+        pos, desloc = chave.split(":")
+        g = pt.glosas.get(f"{desloc}-{pos}") or (pt.glosas.get(f"{desloc}-s") if pos == "a" else None)
+        if not g:
+            continue
+        ne, np_ = len(d.definicao(d.sinsets[i][3]).split()), len(g.split())
+        if ne == 0:
+            continue
+        razoes.append(np_ / ne)
+        mais += np_ > ne
+    razoes.sort()
+    n = len(razoes)
+    med = razoes[n // 2] if n % 2 else (razoes[n // 2 - 1] + razoes[n // 2]) / 2
+    return med, mais / n, n, sum(razoes) / n
+
+
+def p1333_primos_palindromos(ate=16 ** 5, base=16):
+    \"\"\"Os primos palíndromos numa base (P1333): n < ate primo cujos dígitos na base formam um palíndromo; e a conta (os primos
+    de 1 dígito e os palíndromos pares exatos; nos de comprimento ímpar ≥ 3, Σ 2/ln n sobre os ímpares). Devolve (quantidade,
+    conta, por comprimento).\"\"\"
+    from math import log
+    crivo = bytearray([1]) * ate
+    crivo[0] = crivo[1] = 0
+    for i in range(2, int(ate ** 0.5) + 1):
+        if crivo[i]:
+            crivo[i * i::i] = bytearray(len(range(i * i, ate, i)))
+    k, conta, por = 0, 0.0, {}
+    for n in range(1, ate):
+        ds = _digitos_base(n, base)
+        if ds != ds[::-1]:
+            continue
+        L = len(ds)
+        if crivo[n]:
+            k += 1
+            por[L] = por.get(L, 0) + 1
+        if L == 1 or L % 2 == 0:
+            conta += crivo[n]  # exatos: os de 1 dígito e os pares (múltiplos de base + 1)
+        elif n % 2:
+            conta += 2 / log(n)
+    return k, conta, dict(sorted(por.items()))
+
+
+def p1337_conta_palindromos(ate, base):
+    \"\"\"Só a conta dos primos palíndromos (P1337), sem contar os primos de comprimento ímpar ≥ 3: os primos de 1 dígito (exatos,
+    por divisão), o base + 1 se for primo (o único palíndromo de comprimento par que pode ser primo: todos são múltiplos de
+    base + 1) e Σ 2/ln n sobre os palíndromos ímpares de comprimento ímpar ≥ 3 abaixo de ate. Devolve a conta.\"\"\"
+    from math import log
+
+    def primo(n):
+        return n > 1 and all(n % q for q in range(2, int(n ** 0.5) + 1))
+    conta = sum(1 for n in range(2, base) if primo(n)) + (1 if primo(base + 1) and base + 1 < ate else 0)
+    for n in range(base, ate):
+        ds = _digitos_base(n, base)
+        if len(ds) % 2 == 1 and ds == ds[::-1] and n % 2:
+            conta += 2 / log(n)
+    return conta
+
+
+def p1338_contas_da_parte63(media_base8=None):
+    \"\"\"As contas auxiliares da Parte 63 (P1338): (1) a chance de Poisson de 13 ou mais narcisistas na base 8 com a média da conta
+    com F (P1331); (2) o desvio da contagem dos primos palíndromos em base 16 sob a conta (Σ p(1 − p) nos de comprimento ímpar
+    ≥ 3, p = 2/ln n), relativo à conta; (3) o ingênuo "fração dos primos até 16⁵ vezes o número de palíndromos". Devolve
+    (cauda de Poisson, desvio relativo, ingênuo, palíndromos, média usada).\"\"\"
+    from math import exp, log, sqrt
+    if media_base8 is None:
+        media_base8 = next(x[3] for x in p1331_fator_efetivo()[0] if x[0] == 8)
+    termo, cdf = exp(-media_base8), 0.0
+    for j in range(13):
+        cdf += termo
+        termo *= media_base8 / (j + 1)
+    ate = 16 ** 5
+    var, npal = 0.0, 0
+    for n in range(1, ate):
+        ds = _digitos_base(n, 16)
+        if ds != ds[::-1]:
+            continue
+        npal += 1
+        if len(ds) >= 3 and len(ds) % 2 and n % 2:
+            q = 2 / log(n)
+            var += q * (1 - q)
+    k, conta, _ = p1333_primos_palindromos()
+    crivo = bytearray([1]) * ate
+    crivo[0] = crivo[1] = 0
+    for i in range(2, int(ate ** 0.5) + 1):
+        if crivo[i]:
+            crivo[i * i::i] = bytearray(len(range(i * i, ate, i)))
+    ingenuo = sum(crivo) / ate * npal
+    return 1 - cdf, sqrt(var) / conta, ingenuo, npal, media_base8
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -10151,6 +10280,32 @@ def _parte_62():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1329, testes=TESTES_P1329)
     print(f"P1329 minha taxa de erro ({ERROS_P1329}/{TESTES_P1329}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_63():
+    print("--- Parte 63 (0x3F: o peso do mecanismo) ---")
+    linhas, com, longe = p1331_fator_efetivo()
+    for b, m, cg, cf in linhas:
+        print(f"P1331 base {b:2d}: medido {m:2d}; conta com g {cg:.3f} (razao {m / cg:.3f}); com F {cf:.3f} (razao {m / cf:.3f})")
+    tm = sum(x[1] for x in linhas)
+    tg = tf = 0.0
+    for x in linhas:
+        tg += x[2]
+        tf += x[3]
+    print(f"P1331 total: medido {tm}; razao com g {tm / tg:.4f}; com F {tm / tf:.4f}; celulas com F a mais de 10% de g: {longe} de {com} ({longe / com:.4f})")
+    med, mais, n, media = p1332_glosa_pt_e_en()
+    print(f"P1332 glosas portuguesas ({n}): razao de palavras PT/EN mediana {med:.4f}, media {media:.4f}; portuguesa mais longa em {mais:.4f}")
+    for ate, base in ((16 ** 5, 16), (12 ** 5, 12), (10 ** 7, 10)):
+        k, conta, por = p1333_primos_palindromos(ate, base)
+        print(f"P1333 primos palindromos base {base} ate {ate}: {k}; conta {conta:.1f} (P1337 sozinha: {p1337_conta_palindromos(ate, base):.1f}); "
+              f"erro {(k - conta) / k:+.4f}; por comprimento {por}")
+    cauda, desvio, ingenuo, npal, mb8 = p1338_contas_da_parte63()
+    print(f"P1338 Poisson(media {mb8:.3f}) >= 13: {cauda:.2e}; desvio relativo da contagem sob a conta (base 16): {desvio:.4f}; "
+          f"ingenuo pi(16^5)/16^5 x {npal} palindromos = {ingenuo:.1f}")
+    total, sem = p1092_pnn_sem_teste(1331, 1360)
+    print(f"P1092 pNN novas (P1331-P1360) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 63: {p974_previsoes_sem_largura(range(63, 64))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1359, testes=TESTES_P1359)
+    print(f"P1359 minha taxa de erro ({ERROS_P1359}/{TESTES_P1359}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -10187,7 +10342,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63}
 
 
 if __name__ == "__main__":
@@ -10200,7 +10355,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (210 linhas)
+# CLAUDE.md  (214 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -10289,6 +10444,9 @@ anterior, commit e push.
   era a base 8).
   Parte 62: um mecanismo deduzido antes de prever ganha uma conta do seu PESO num caso fora do teste (outra base, outro k), por código, antes do registro;
   sem ela, a faixa é a do estatístico (acertei a direção e chutei o tamanho duas vezes). Surpresa = erro maior que a largura da faixa, contada pelo script.
+  Parte 63 (a regra do peso deu 7 de 8): o caso de calibração precisa estar PERTO do teste na variável que move o mecanismo (k = 8 tem milhares de candidatos por
+  célula; os k pequenos, poucos: a única previsão errada foi essa). Estimativas de cabeça no texto são previsões: trocar por código antes do commit (`p1338` pegou um
+  fator 2).
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -10377,7 +10535,8 @@ anterior, commit e push.
   porque eu esqueço custos. Ao deduzir quanto tempo a evidência leva, calcular a KL entre as previsões das hipóteses no
   caso em questão (uma crença errada e modesta, perto da ignorância, quase não é desmentida).
 - Nunca usar `pkill -f` nem `pgrep -f` (num laço com `kill`) com um padrão que apareça na própria linha de comando: mata o shell (três vezes; a terceira
-  com `pgrep`, Parte 62). Buscar processos com a classe de caracteres: `ps aux | grep "[c]alculos"`.
+  com `pgrep`, Parte 62). Buscar processos com a classe de caracteres: `ps aux | grep "[c]alculos"`; e matar e reiniciar em comandos SEPARADOS (Parte 63:
+  a linha do shell continha o texto do reinício e casou com o padrão; quarta vez).
 - Execuções longas em blocos retomáveis (Parte 46): o contêiner reinicia e mata processos em segundo plano (a execução única das 45 partes morreu
   duas vezes). Um processo por bloco de partes, cada um no seu arquivo, com marca de concluído (`python3 calculos.py 15 16 17 18`).
 - Antes de prever, calcular à mão um exemplo do caso presente (Parte 47): 5 de 6 erros vieram de responder à pergunta anterior (a rodada passada, um
@@ -10405,7 +10564,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -15401,6 +15560,68 @@ class TesteParte62(unittest.TestCase):
         # com n = 3 há 6 permutações; só a identidade dá correlação 1: chance ~1/6
         self.assertAlmostEqual(calculos.p1308_chance_de_spearman(0.99, 3, 6000, 7), 1 / 6, delta=0.02)
         self.assertEqual(calculos.p1308_chance_de_spearman(-1.01, 5, 100), 1.0)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte63.py  (57 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte63.py'] = """\"\"\"Testes de unidade da Parte 63: `python3 -m unittest synthai.testes_parte63`. Cada pNN nova com o seu teste, chamada PELO NOME.\"\"\"
+
+import math
+import unittest
+
+import calculos
+
+
+class DicionarioFalso:
+    indice = {"n:001": 0, "v:002": 1}
+    sinsets = [("n", ["animal"], [], 'a living organism; "the dog"'), ("v", ["run"], [], "move fast")]
+
+    @staticmethod
+    def definicao(glosa):
+        return glosa.split(";")[0]
+
+
+class PortuguesFalso:
+    # 5 palavras contra 3 (1,667) e 1 contra 2 (0,5): mediana 1,0833; metade mais longa
+    glosas = {"001-n": "organismo vivo que se move", "002-v": "correr"}
+
+
+class TesteParte63(unittest.TestCase):
+    def test_p1331_fator_efetivo(self):
+        linhas, com, longe = calculos.p1331_fator_efetivo()
+        self.assertEqual((com, longe), (84, 42))
+        self.assertEqual(linhas[5][:2], (8, 13))
+        self.assertAlmostEqual(13 / linhas[5][3], 3.4553, places=3)
+
+    def test_p1332_glosa_pt_e_en(self):
+        med, mais, n, media = calculos.p1332_glosa_pt_e_en(DicionarioFalso(), PortuguesFalso())
+        self.assertEqual((n, mais), (2, 0.5))
+        self.assertAlmostEqual(med, (5 / 3 + 0.5) / 2, places=12)
+        self.assertAlmostEqual(media, med, places=12)
+
+    def test_p1333_primos_palindromos(self):
+        # base 10 até 1000: 2, 3, 5, 7, 11 e 15 de 3 dígitos (101, 131, 151, 181, 191, 313, ...)
+        k, conta, por = calculos.p1333_primos_palindromos(1000, 10)
+        self.assertEqual((k, por), (20, {1: 4, 2: 1, 3: 15}))
+        self.assertEqual(calculos.p1333_primos_palindromos(10 ** 7, 10)[0], 781)  # OEIS A050251
+
+    def test_p1337_conta_palindromos(self):
+        # base 10 até 200: 4 primos de 1 dígito, o 11, e 2/ln n nos dez palíndromos 1m1
+        esperado = 4 + 1 + sum(2 / math.log(100 + 10 * m + 1) for m in range(10))
+        self.assertAlmostEqual(calculos.p1337_conta_palindromos(200, 10), esperado, places=12)
+        self.assertAlmostEqual(calculos.p1337_conta_palindromos(16 ** 5, 16), calculos.p1333_primos_palindromos()[1], places=9)
+
+    def test_p1338_contas_da_parte63(self):
+        cauda, desvio, ingenuo, npal, media = calculos.p1338_contas_da_parte63(1.0)
+        # Poisson(1) >= 13: 1 - sum e^-1/j! (j < 13), conferido por outra conta
+        self.assertAlmostEqual(cauda, 1 - sum(math.exp(-1) / math.factorial(j) for j in range(13)), places=12)
+        self.assertEqual((npal, media), (4350, 1.0))
+        self.assertTrue(0 < desvio < 0.2 and 200 < ingenuo < 500)
 
 
 if __name__ == "__main__":
