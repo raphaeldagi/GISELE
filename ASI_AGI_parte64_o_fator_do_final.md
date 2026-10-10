@@ -50,3 +50,11 @@ número de sinsets em que o lema aparece.
 - (b) quantidade em **[17; 40]** (a conta × razão de 1,1 a 2,7)
 
 **P1361, rodada 38:** no `dialogo/DIALOGO.md` (previsões (c) a (g)).
+
+### Previsão nova, nascida de um resultado inesperado (registrada antes de rodar as bases 17 a 22)
+
+**Resultado da rodada 38, antes desta seção:** a base 14 ficou **3σ abaixo** da conta B (216 contra 257,7, σ = 14,1), e a soma das 12 bases ficou negativa (−43,1),
+fora de [0; 80]. Duas leituras: (1) acaso (uma base em 12 a 3σ tem chance de alguns por cento); (2) um viés da conta para baixo do medido nas bases grandes, ou para
+cima, que eu não conheço. Um teste em bases novas separa as duas:
+- (h) nas **bases 17 a 22**, até b⁵, com a mesma conta B: o número de bases (das 6) com |medido − conta B| ≥ 2σ fica em **[0; 2]**, e a média de (medido − conta B)/σ
+  fica em **[−1,0; 1,0]** (as duas condições juntas; se o desvio da base 14 for um viés sistemático, a média sai abaixo de −1).

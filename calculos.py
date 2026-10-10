@@ -9964,6 +9964,61 @@ def p1338_contas_da_parte63(media_base8=None):
     ingenuo = sum(crivo) / ate * npal
     return 1 - cdf, sqrt(var) / conta, ingenuo, npal, media_base8
 
+
+def p1361_fator_do_final():
+    """Rodada 38 (P1361): os primos palíndromos das bases 5 a 16 contra a conta A (2/ln n nos ímpares) e a conta B (o fator exato
+    dos primos de 2b), com o log próprio (dialogo/rodada38.py, IGUAL em Java). Devolve [(b, medido, conta A, conta B, σ)]."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada38", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada38.py"))
+    r38 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r38)
+    c = r38.crivo(16 ** 5)
+    linhas = []
+    for b in r38.BASES:
+        m, a, bb, var = r38.base(b, c)
+        linhas.append((b, m, a, bb, sqrt(var)))
+    return linhas
+
+
+def p1362_brevidade_e_sentidos(d=None):
+    """A brevidade e o significado (P1362): nos lemas de uma palavra só do WordNet (minúsculas, só letras), a correlação de
+    postos entre o comprimento em letras e o número de sinsets. Devolve (Spearman, lemas, fração monossêmica, média de sentidos
+    por comprimento {L: média} para L de 2 a 12)."""
+    import importlib.util
+    import os
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    spec = importlib.util.spec_from_file_location("rodada36", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada36.py"))
+    r36 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r36)
+    cont = {}
+    for _, lemas, _, _ in d.sinsets:
+        for w in lemas:
+            if w.isalpha():
+                cont[w.lower()] = cont.get(w.lower(), 0) + 1
+    ws = sorted(cont)
+    rho = r36.pearson(r36.postos([float(len(w)) for w in ws]), r36.postos([float(cont[w]) for w in ws]))
+    por = {}
+    for w in ws:
+        a, b = por.get(len(w), (0, 0))
+        por[len(w)] = (a + cont[w], b + 1)
+    return rho, len(ws), sum(1 for w in ws if cont[w] == 1) / len(ws), {L: por[L][0] / por[L][1] for L in range(2, 13) if L in por}
+
+
+def p1363_quadrados_palindromos(ate=16 ** 4, base=16):
+    """Os quadrados palíndromos numa base (P1363): n de 1 a ate − 1 com n² palíndromo; e a conta (Σ base^(−⌊L/2⌋), L = dígitos de
+    n²). Devolve (quantidade, conta, os n em ordem)."""
+    ns, conta = [], 0.0
+    for n in range(1, ate):
+        ds = _digitos_base(n * n, base)
+        conta += base ** (-(len(ds) // 2))
+        if ds == ds[::-1]:
+            ns.append(n)
+    return len(ns), conta, ns
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
