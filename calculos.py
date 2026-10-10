@@ -7483,6 +7483,7 @@ def testes_de_regressao():
         "P1574": p1574_irredutiveis_gf2(15, 6)[:3] == (2182, 2182, 224) and p1573_crescimento_da_taxonomia("n")[2] == 7,
         "P1612": p1612_animais_por_horn()[:4] == (4017, True, True, 4) and p1608_auditoria_estatica()[1] == ("test_engine", 7, 5, 8),
         "P1639": p1639_rodada47()[1:2] + p1639_rodada47()[4:5] == (958, 102) and abs(p1632_prioridade_contra_voi(20000, 74)[0] - 0.49995) < 1e-9,
+        "P1663": p1663_rodada48()[3] == 172 and p1662_orcamento(semente=75)[2] == 0.62,
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
         "P1579": p1574_irredutiveis_gf2(17, 6)[2] == 758 and abs(p1579_serie_singular_gf2(17)[1] - 755.458) < 0.001,
     }
@@ -9511,6 +9512,8 @@ ERROS_P1599, TESTES_P1599 = 193, 591
 ERROS_P1629, TESTES_P1629 = 195, 607
 VEREDITOS_P1659 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) H_PENDENTE (i) ✅ (j) ✅"
 ERROS_P1659, TESTES_P1659 = 196, 616
+VEREDITOS_P1689 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅"
+ERROS_P1689, TESTES_P1689 = ERROS_P1659 + VEREDITOS_P1689.count("❌"), TESTES_P1659 + VEREDITOS_P1689.count("✅") + VEREDITOS_P1689.count("❌")  # fixar em inteiros quando a P1659 fechar
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -11366,6 +11369,28 @@ def p1662_orcamento(instancias=300, itens=30, fracao=0.2, semente=74):
     return s1 / instancias, s2 / instancias, otimos / instancias
 
 
+def p1663_rodada48():
+    """Rodada 48 (P1663): a mochila e os dois gulosos do dialogo/rodada48.py nas 300 instâncias da semente 74 (IGUAL em Java). Devolve (soma dos ótimos,
+    soma do guloso por VOI, soma do guloso por H, instâncias em que o guloso por VOI é ótimo)."""
+    import importlib.util
+    import os
+    import tempfile
+    spec = importlib.util.spec_from_file_location("rodada48", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada48.py"))
+    r48 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r48)
+    so = s1 = s2 = 0.0
+    otimos = 0
+    with tempfile.TemporaryDirectory() as pasta:
+        r48.preparar(pasta)
+        for B, vs, hs, cs in r48.ler(pasta):
+            ot, g1, g2 = r48.resolver(B, vs, hs, cs)
+            so += ot
+            s1 += g1
+            s2 += g2
+            otimos += g1 >= ot - 1e-12
+    return so, s1, s2, otimos
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -12031,6 +12056,22 @@ def _parte_73():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1659, testes=TESTES_P1659)
     print(f"P1659 minha taxa de erro ({ERROS_P1659}/{TESTES_P1659}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_74():
+    print("--- Parte 74 (0x4A: o que vale testar) ---")
+    for sem in (73, 730, 731, 732, 733):
+        z, mh, mv = p1661_ganho_de_informacao_contra_voi(2000, sem)
+        print(f"P1661 semente {sem}: VOI = 0 entre os 10% de maior ganho de informacao {z:.4f}; VOI medio deles {mh:.4f} contra {mv:.4f} dos de maior VOI (razao {mh / mv:.4f})")
+    for sem in (740, 741, 742, 743, 74, 75):
+        a, b, f = p1662_orcamento(semente=sem)
+        print(f"P1662 semente {sem}: guloso VOI/custo {a:.4f} do otimo; guloso H/custo {b:.4f}; guloso VOI otimo em {f:.4f} das instancias")
+    so, s1, s2, ot = p1663_rodada48()
+    print(f"P1663 rodada 48: soma dos otimos {so:.4f}; guloso VOI {s1:.4f} ({s1 / so:.4f}); guloso H {s2:.4f} ({s2 / so:.4f}); guloso VOI otimo em {ot} de 300")
+    total, sem = p1092_pnn_sem_teste(1661, 1690)
+    print(f"P1092 pNN novas (P1661-P1690) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 74: {p974_previsoes_sem_largura(range(74, 75))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1689, testes=TESTES_P1689)
+    print(f"P1689 minha taxa de erro ({ERROS_P1689}/{TESTES_P1689}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -12067,7 +12108,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74}
 
 
 if __name__ == "__main__":
