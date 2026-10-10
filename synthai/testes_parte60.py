@@ -57,6 +57,30 @@ class TesteParte60(unittest.TestCase):
         self.assertEqual(calculos.p1243_narcisistas_hex(3, 10), list(range(1, 10)) + [153, 370, 371, 407])
         self.assertIn(0x156, calculos.p1243_narcisistas_hex(3))  # 1³ + 5³ + 6³ = 342 = 0x156
 
+    def test_p1247_interruptores(self):
+        self.assertEqual(calculos.p1247_interruptores(5), [(1, 0), (2, 1), (4, 2), (8, 3)])
+        self.assertEqual(calculos.p1247_interruptores(4), [(1, 0)])
+
+    def test_p1248_por_comprimento(self):
+        self.assertEqual(calculos.p1248_por_comprimento([0x156, 0xB8D2, 5]), {1: 1, 3: 1, 4: 1})
+
+    def test_p1249_fator_de_congruencia(self):
+        self.assertEqual([calculos.p1249_fator_de_congruencia(k) for k in (3, 4, 5)], [3, 1, 15])
+        self.assertEqual(calculos.p1249_fator_de_congruencia(3, 10), 3)  # 9 não é livre de quadrados: 3³ ≢ 3 (mod 9)
+
+    def test_p1250_esperado_narcisistas(self):
+        # base 3, k = 2: somas 4 (0,2: 1 número sem zero à esquerda), 5 (1,2: 2 números), 8 (2,2: 1) caem em [3; 8]: 4/(2·3) = 2/3; g = 2
+        e0, e1 = calculos.p1250_esperado_narcisistas(2, 3)
+        self.assertAlmostEqual(e0, 2 / 3, places=12)
+        self.assertAlmostEqual(e1, 4 / 3, places=12)
+
+    def test_p1251_conta_contra_medida(self):
+        # base 3: 5 = 12, 8 = 22 (2 dígitos), 17 = 122 (3 dígitos), conferidos à mão: 1 + 4, 4 + 4, 1 + 8 + 8
+        self.assertEqual(calculos.p1243_narcisistas_hex(3, 3), [1, 2, 5, 8, 17])
+        linhas, l0, l1 = calculos.p1251_conta_contra_medida(((3, 3),))
+        self.assertEqual([x[:3] for x in linhas], [(3, 2, 2), (3, 3, 1)])
+        self.assertGreater(l1, l0)
+
 
 if __name__ == "__main__":
     unittest.main()

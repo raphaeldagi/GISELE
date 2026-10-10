@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 59 (0x3B): o nome e a coisa
 
-> Continuação da [Parte 58](ASI_AGI_parte58_a_primeira_diferenca.md). **Previsões no commit `72a844b`, antes de qualquer execução e antes de escrever o resto deste
+> Continuação da [Parte 58](ASI_AGI_parte58_a_primeira_diferenca.md). **Próxima:** [Parte 60 — o placar que se conta](ASI_AGI_parte60_o_placar_que_se_conta.md) (P1241–P1270). **Previsões no commit `72a844b`, antes de qualquer execução e antes de escrever o resto deste
 > documento.** A Parte 58 achou o bloco de palavras com maiúscula no começo da ordem dos códigos e um erro meu: uma quantidade escrita à mão no script de
 > autoavaliação (a regra nova está no `CLAUDE.md`). Esta parte pergunta quantos nomes próprios do português também são palavras comuns, quantas palavras do
 > inglês nunca servem para definir outra, e quanto dura a persistência multiplicativa em base 16.

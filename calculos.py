@@ -7469,6 +7469,7 @@ def testes_de_regressao():
         "P1153": p1153_duplos_palindromos()[0] == 27,
         "P1183": p1183_primeiro_digito_hex(2) == [0, 2500, 2500, 0, 2500, 0, 0, 0, 2500] + [0] * 7 and p1183_primeiro_digito_hex(3)[1] == 2506,
         "P1213": p1213_persistencia_hex(16 ** 4)[:2] == (7, 0x3DDE),
+        "P1243": len(p1243_narcisistas_hex(8)) == 64 and p1249_fator_de_congruencia(9) == 15,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9479,6 +9480,7 @@ def p1181_primeira_diferenca():
 
 
 ERROS_P1239, TESTES_P1239 = 171, 492
+ERROS_P1269, TESTES_P1269 = 175, 503
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -9628,6 +9630,23 @@ def p1250_esperado_narcisistas(k, base=16):
         e += m * (k - z) // k if z else m
     e = e / ((base - 1) * base ** (k - 1))
     return e, e * p1249_fator_de_congruencia(k, base)
+
+
+def p1251_conta_contra_medida(casos=((16, 9), (8, 8), (10, 7), (6, 13), (12, 11))):
+    """A conta dos narcisistas contra a medida (P1251): para cada base e cada k de 2 a kmax, o número medido (P1243, P1248) e
+    o esperado sem e com o fator de congruência (P1250). Devolve (linhas (base, k, medido, sem, com), log-verossimilhança de
+    Poisson sem o fator, com o fator)."""
+    from math import lgamma, log
+    linhas, l0, l1 = [], 0.0, 0.0
+    for base, kmax in casos:
+        por = p1248_por_comprimento(p1243_narcisistas_hex(kmax, base), base)
+        for k in range(2, kmax + 1):
+            m = por.get(k, 0)
+            e0, e1 = p1250_esperado_narcisistas(k, base)
+            linhas.append((base, k, m, e0, e1))
+            l0 += m * log(e0) - e0 - lgamma(m + 1)
+            l1 += m * log(e1) - e1 - lgamma(m + 1)
+    return linhas, l0, l1
 
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
@@ -9842,9 +9861,20 @@ def _parte_60():
     print(f"P1242 definicoes que usam um dos proprios lemas: {frac:.4f} de {n} sinsets; por classe {({c: round(f, 4) for c, f in por.items()})}; {ex[:3]}")
     nar = p1243_narcisistas_hex()
     print(f"P1243 narcisistas em base 16 (1 a 8 digitos): {len(nar)}; de 2 a 8 digitos: {[hex(x) for x in nar if x >= 16]}")
+    print(f"P1248 por comprimento (base 16, ate 9 digitos): {p1248_por_comprimento(p1243_narcisistas_hex(9))}")
+    print(f"P1247 interruptores d^(k-1) = 16^p: {({k: p1247_interruptores(k) for k in range(3, 10)})}")
+    print(f"P1249 fator de congruencia em base 16, k = 1..9: {[p1249_fator_de_congruencia(k) for k in range(1, 10)]}")
+    linhas, l0, l1 = p1251_conta_contra_medida()
+    for base, k, m, e0, e1 in linhas:
+        print(f"P1251 base {base:2d}, k = {k:2d}: medido {m:2d}; conta sem o fator {e0:.3f}; com o fator {e1:.3f}")
+    print(f"P1251 log-verossimilhanca de Poisson: sem o fator {l0:.2f}; com o fator {l1:.2f}; diferenca {l1 - l0:.2f} nats")
+    print(f"P1251 total (k >= 2, 5 bases): medido {sum(x[2] for x in linhas)}; conta sem o fator {sum(x[3] for x in linhas):.1f}; "
+          f"com o fator {sum(x[4] for x in linhas):.1f}")
     total, sem = p1092_pnn_sem_teste(1241, 1270)
     print(f"P1092 pNN novas (P1241-P1270) sem teste: {len(sem)} de {total}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 60: {p974_previsoes_sem_largura(range(60, 61))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1269, testes=TESTES_P1269)
+    print(f"P1269 minha taxa de erro ({ERROS_P1269}/{TESTES_P1269}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
