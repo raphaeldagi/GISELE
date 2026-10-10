@@ -43,5 +43,21 @@ class TesteGPTKronecker(unittest.TestCase):
         self.assertLess(sum(perdas[-10:]) / 10, sum(perdas[:10]) / 10)
 
 
+
+class TesteParte76(unittest.TestCase):
+    def test_p1721_kronecker_contra_cheio(self):
+        # poucos passos: o teste confere a forma da saída e o controle (sem o cheio)
+        ch, kr = calculos.p1721_kronecker_contra_cheio("pt", 76, passos=20)
+        self.assertTrue(ch > 0 and kr > 0)
+        nada, emb = calculos.p1721_kronecker_contra_cheio("pt", 76, embaralhar=True, passos=20)
+        self.assertIsNone(nada)
+        self.assertNotEqual(emb, kr)
+
+    def test_p1722_libm_nas_duas_linguagens(self):
+        r = calculos.p1722_libm_nas_duas_linguagens()
+        self.assertEqual(sorted(r), ["09", "14", "48"])
+        self.assertEqual(r["48"], (["log2"], True, []))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -7,19 +7,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.util.*;
 
-public class Rodada06 {
-    // Parte 76: log PRÓPRIO (cópia do da Rodada26), exato nas duas línguas; a versão com Math.log está em dialogo/registro/
-    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
-
-    static double log_(double x) {
-        int e = Math.getExponent(x);
-        double m = Math.scalb(x, -e);
-        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
-        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
-        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
-        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
-    }
-
+public class Rodada06Libm {
     public static void main(String[] args) throws Exception {
         TreeMap<String, HashMap<String, Integer>> cont = new TreeMap<>();
         HashMap<String, Integer> total = new HashMap<>(), ncls = new HashMap<>();
@@ -48,10 +36,10 @@ public class Rodada06 {
             String melhorCl = null;
             double melhor = 0;
             for (String cl : cont.keySet()) {  // TreeMap: ordem alfabética, como o sorted() do Python
-                double s = log_((double) ncls.get(cl) / n);
+                double s = Math.log((double) ncls.get(cl) / n);
                 HashMap<String, Integer> c = cont.get(cl);
                 int t = total.get(cl);
-                for (String w : x) s += log_((c.getOrDefault(w, 0) + 1.0) / (t + 1.0 * v));
+                for (String w : x) s += Math.log((c.getOrDefault(w, 0) + 1.0) / (t + 1.0 * v));
                 esc.append(' ').append(Double.toHexString(s));
                 if (melhorCl == null || s > melhor) { melhor = s; melhorCl = cl; }
             }

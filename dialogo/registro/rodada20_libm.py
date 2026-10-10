@@ -6,10 +6,8 @@ o Java lê. Rodar da raiz do repositório: python3 dialogo/rodada20.py"""
 import importlib.util
 import os
 import sys
-
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from exatas import log_  # noqa: E402  (Parte 76: log próprio, exato nas duas línguas)
 import unicodedata
+from math import log
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(AQUI))
@@ -35,10 +33,10 @@ def escore(nb, cl, ps):
     """O escore de uma classe, como em NaiveBayesContagens.prever."""
     n = sum(nb.ncls.values())
     v = len(nb.vocab) or 1
-    sc = log_(nb.ncls[cl] / n)
+    sc = log(nb.ncls[cl] / n)
     c, t = nb.cont[cl], nb.total[cl]
     for w in ps:
-        sc += log_((c.get(w, 0) + nb.alfa) / (t + nb.alfa * v))
+        sc += log((c.get(w, 0) + nb.alfa) / (t + nb.alfa * v))
     return sc
 
 

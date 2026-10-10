@@ -7485,6 +7485,7 @@ def testes_de_regressao():
         "P1639": p1639_rodada47()[1:2] + p1639_rodada47()[4:5] == (958, 102) and abs(p1632_prioridade_contra_voi(20000, 74)[0] - 0.49995) < 1e-9,
         "P1663": p1663_rodada48()[3] == 172 and p1662_orcamento(semente=75)[2] == 0.62,
         "P1692": p1692_godel_nas_funcoes()[1:3] == (584, 288) and p1691_laco_de_auto_modificacao(geracoes=2, separador_corrigido=True)[0][1:3] == (True, 2.8333333333333335),
+        "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["09", "14", "48"],
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
         "P1579": p1574_irredutiveis_gf2(17, 6)[2] == 758 and abs(p1579_serie_singular_gf2(17)[1] - 755.458) < 0.001,
     }
@@ -9514,9 +9515,11 @@ ERROS_P1629, TESTES_P1629 = 195, 607
 VEREDITOS_P1659 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ❌ (i) ✅ (j) ✅ (k) ❌"
 ERROS_P1659, TESTES_P1659 = 198, 618
 VEREDITOS_P1689 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅"
-ERROS_P1689, TESTES_P1689 = ERROS_P1659 + VEREDITOS_P1689.count("❌"), TESTES_P1659 + VEREDITOS_P1689.count("✅") + VEREDITOS_P1689.count("❌")  # fixar em inteiros quando a P1659 fechar
+ERROS_P1689, TESTES_P1689 = 199, 625
 VEREDITOS_P1719 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ❌ (g) ✅"
-ERROS_P1719, TESTES_P1719 = ERROS_P1689 + VEREDITOS_P1719.count("❌"), TESTES_P1689 + VEREDITOS_P1719.count("✅") + VEREDITOS_P1719.count("❌")  # fixar em inteiros quando a P1659 fechar
+ERROS_P1719, TESTES_P1719 = 201, 632
+VEREDITOS_P1749 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
+ERROS_P1749, TESTES_P1749 = 201, 636
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12299,6 +12302,25 @@ def _parte_75():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1719, testes=TESTES_P1719)
     print(f"P1719 minha taxa de erro ({ERROS_P1719}/{TESTES_P1719}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_76():
+    print("--- Parte 76 (0x4C: a forma do byte) ---")
+    for lingua in ("pt", "en"):
+        for sem in (76, 77, 78, 79):
+            ch, kr = p1721_kronecker_contra_cheio(lingua, sem)
+            linha = f"P1721 {lingua} semente {sem}: cheio {ch:.4f}; Kronecker {kr:.4f}; diferenca {kr - ch:+.4f}"
+            if lingua == "en":
+                _, emb = p1721_kronecker_contra_cheio(lingua, sem, embaralhar=True)
+                linha += f"; Kronecker embaralhado {emb:.4f} (embaralhado - ASCII {emb - kr:+.4f})"
+            print(linha)
+    from synthai.gpt_kronecker import GPTKronecker
+    print(f"P1721 pesos de embedding (Kronecker, tabela cheia): {GPTKronecker(VOCAB_GPT, T=16, d1=4, d2=4, h=32, semente=76).pesos_de_embedding()}")
+    print(f"P1722 rodadas com funcoes da biblioteca (python, so na preparacao, java): {p1722_libm_nas_duas_linguagens()}")
+    total, sem = p1092_pnn_sem_teste(1721, 1750)
+    print(f"P1092 pNN novas (P1721-P1750) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 76: {p974_previsoes_sem_largura(range(76, 77))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1749, testes=TESTES_P1749)
+    print(f"P1749 minha taxa de erro ({ERROS_P1749}/{TESTES_P1749}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -12335,7 +12357,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76}
 
 
 if __name__ == "__main__":

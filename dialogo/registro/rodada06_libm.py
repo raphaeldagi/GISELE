@@ -6,9 +6,7 @@ classes nos 50 primeiros exemplos, em hexadecimal. Rodar da raiz do repositório
 import hashlib
 import os
 import sys
-
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from exatas import log_  # noqa: E402  (Parte 76: log próprio, exato nas duas línguas)
+from math import log
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -33,9 +31,9 @@ v = len(m.vocab)
 for i, (x, _) in enumerate(teste[:50]):
     esc = []
     for cl in sorted(m.ncls):
-        s = log_(m.ncls[cl] / n)
+        s = log(m.ncls[cl] / n)
         c, t = m.cont[cl], m.total[cl]
         for w in x:
-            s += log_((c.get(w, 0) + m.alfa) / (t + m.alfa * v))
+            s += log((c.get(w, 0) + m.alfa) / (t + m.alfa * v))
         esc.append(s.hex())
     print(f"{i}: " + " ".join(esc))
