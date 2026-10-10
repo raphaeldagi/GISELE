@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 71 (0x47): os autovalores da atenção
 
-> Continuação da [Parte 70](ASI_AGI_parte70_algebra_e_geometria.md). O loop segue sozinho (pedido do usuário: "não pare mais"), com álgebra e geometria e a forma de GPT crescendo.
+> Continuação da [Parte 70](ASI_AGI_parte70_algebra_e_geometria.md). **Próxima:** [Parte 72 — o que está disfuncional](ASI_AGI_parte72_o_que_esta_disfuncional.md) (P1601–P1630). O loop segue sozinho (pedido do usuário: "não pare mais"), com álgebra e geometria e a forma de GPT crescendo.
 
 ## Previsões sobre as minhas previsões desta parte (registradas ANTES de planejar as calibrações, pela regra da Parte 70)
 

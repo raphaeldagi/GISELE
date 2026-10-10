@@ -7481,6 +7481,7 @@ def testes_de_regressao():
         "P1516": p1514_pi_hex_digitos(16) == "243f6a8885a308d3" and p1516_gpt_decide()[1] == 5,
         "P1549": abs(p1549_lei_de_escala()[0][24][1] - 0.0541) < 0.0001 and abs(p1545_bases_gf2(p1514_pi_hex_digitos(10000))[0] - 0.30269) < 0.00001,
         "P1574": p1574_irredutiveis_gf2(15, 6)[:3] == (2182, 2182, 224) and p1573_crescimento_da_taxonomia("n")[2] == 7,
+        "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
         "P1579": p1574_irredutiveis_gf2(17, 6)[2] == 758 and abs(p1579_serie_singular_gf2(17)[1] - 755.458) < 0.001,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
@@ -9503,7 +9504,9 @@ ERROS_P1479, TESTES_P1479 = 189, 559
 ERROS_P1509, TESTES_P1509 = 189, 565
 ERROS_P1539, TESTES_P1539 = 189, 573
 ERROS_P1569, TESTES_P1569 = 191, 583
+VEREDITOS_P1629 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) F_PENDENTE (g) ✅ (h) ✅ (i) ✅ (j) ✅"
 ERROS_P1599, TESTES_P1599 = 193, 591
+ERROS_P1629, TESTES_P1629 = VEREDITOS_P1629.count("\u274c") + 193, VEREDITOS_P1629.count("\u2705") + VEREDITOS_P1629.count("\u274c") + 591
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -10841,6 +10844,97 @@ def p1579_serie_singular_gf2(grau, ate=40):
     return serie, n * n / 2 ** grau * serie / 2
 
 
+def p1601_auditoria_do_repositorio(ate=71):
+    """A auditoria pedida na Parte 72 ("corrija tudo pra ver se há coisas inadequadas e disfuncionais") (P1601). Devolve um dicionário de listas de
+    defeitos: "docs" (partes 1..ate sem documento ASI_AGI_parteN_*.md, ou cujo documento não liga para a parte seguinte, até ate − 1), "sem_teste"
+    (pNN de P1031 em diante sem teste pelo nome, pela p1092), "testes_fora_da_lista" (synthai/testes*.py que o CLAUDE.md não lista), "rodadas_sem_java"
+    (dialogo/rodadaNN.py sem RodadaNN.java), "partes_fora_do_resultados" (partes sem a linha "--- Parte N " no resultados.txt; a Parte 1, sem
+    cabeçalho, é o começo do arquivo) e "constantes" (pares
+    ERROS_PNN, TESTES_PNN fora de ordem: testes que diminuem, erros que diminuem ou erros > testes)."""
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    ler = lambda nome: open(os.path.join(raiz, nome), encoding="utf-8").read()
+    defeitos = {}
+    docs = {int(re.match(r"ASI_AGI_parte(\d+)_", os.path.basename(f)).group(1)): f
+            for f in glob.glob(os.path.join(raiz, "ASI_AGI_parte*_*.md"))}
+    docs[1] = os.path.join(raiz, "ASI_AGI_perguntas_e_respostas.md")  # a Parte 1 tem outro nome (a forma verificada antes de contar, Parte 31)
+    ruins = []
+    for n in range(1, ate + 1):
+        if n not in docs:
+            ruins.append((n, "sem documento"))
+        elif n < ate and (n + 1) in docs and os.path.basename(docs[n + 1]) not in open(docs[n], encoding="utf-8").read():
+            ruins.append((n, "sem link para a parte %d" % (n + 1)))
+    defeitos["docs"] = ruins
+    codigo = ler("calculos.py")
+    ultimo = max(int(x) for x in re.findall(r"^def p(\d+)_", codigo, re.M))
+    defeitos["sem_teste"] = p1092_pnn_sem_teste(1031, ultimo)[1]
+    claude = ler("CLAUDE.md")
+    defeitos["testes_fora_da_lista"] = sorted(os.path.basename(f)[:-3] for f in glob.glob(os.path.join(raiz, "synthai", "testes*.py"))
+                                              if "synthai." + os.path.basename(f)[:-3] + " " not in claude.replace("`", " ").replace("\n", " "))
+    pastad = os.path.join(raiz, "dialogo")
+    defeitos["rodadas_sem_java"] = sorted(os.path.basename(f) for f in glob.glob(os.path.join(pastad, "rodada[0-9]*.py"))
+                                          if not os.path.exists(os.path.join(pastad, "R" + os.path.basename(f)[1:-3] + ".java")))
+    res = ler("resultados.txt")
+    # a Parte 1 não imprime cabeçalho: é o que vem antes da linha da Parte 2 e começa pela P3
+    defeitos["partes_fora_do_resultados"] = [n for n in range(1, ate + 1) if ("--- Parte %d " % n not in res if n > 1 else not res.startswith("P3 "))]
+    pares = sorted((int(a), int(b), int(c)) for a, b, c in re.findall(r"^ERROS_P(\d+), TESTES_P\1 = (\d+), (\d+)", codigo, re.M))
+    defeitos["constantes"] = [(pares[i][0], pares[i][1:], pares[i - 1][1:]) for i in range(1, len(pares))
+                              if pares[i][2] < pares[i - 1][2] or pares[i][1] < pares[i - 1][1] or pares[i][1] > pares[i][2]]
+    return defeitos
+
+
+def p1602_entropia_de_unigrama(texto):
+    """A conta do texto recebido na Parte 72 (P1602): a entropia de Shannon por símbolo, H = −Σ p log₂ p, e a redundância 1 − H/H_max contra duas
+    referências: log₂ do número de símbolos que aparecem (a definição de Shannon) e 8 bits (um byte: a que reproduz os 48,63% do texto, com H = 4,11).
+    Devolve (H, símbolos, redundância contra o alfabeto, redundância contra 8 bits)."""
+    import math
+    from collections import Counter
+    cont = Counter(texto)
+    n = len(texto)
+    h = 0.0
+    for c in sorted(cont):
+        p = cont[c] / n
+        h -= p * math.log2(p)
+    return h, len(cont), 1 - h / math.log2(len(cont)), 1 - h / 8
+
+
+def p1603_ciclos_de_glosas(pares=(("knowledge", "information"), ("meaning", "word")), d=None):
+    """Os "ciclos autorreferentes" do texto recebido, conferidos no WordNet (P1603): para cada par (A, B), se A aparece (como palavra exata) na glosa de
+    algum sinset em que B é lema, e B na de algum sinset em que A é lema. Devolve [(A, B, A na glosa de B, B na glosa de A)]."""
+    import re
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    palavras = {}
+    for s in d.sinsets:
+        ws = set(re.findall(r"[a-z]+", d.definicao(s[3]).lower()))
+        for lema in s[1]:
+            palavras.setdefault(lema.lower(), set()).update(ws)
+    return [(a, b, a in palavras.get(b, set()), b in palavras.get(a, set())) for a, b in pares]
+
+
+def p1604_hash_como_peso(n=2000, semente=72, d=None):
+    """O hash como "peso" (P1604; afirmação do texto recebido na Parte 72): h(w) = SHA-256(w) lido como inteiro / 2²⁵⁶. Compara a média de |h(a) − h(b)|
+    entre sinônimos (os dois primeiros lemas de sinsets sorteados com dois lemas ou mais) e entre pares de lemas sorteados. Para U, V uniformes
+    independentes, E|U − V| = 1/3 e Var|U − V| = 1/18. Devolve (média dos sinônimos, média dos sorteados, z da diferença)."""
+    import hashlib
+    import math
+    import random
+    if d is None:
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+    h = lambda w: int(hashlib.sha256(w.encode("utf-8")).hexdigest(), 16) / 2 ** 256
+    r = random.Random(semente)
+    com_dois = [s[1] for s in d.sinsets if len(s[1]) >= 2]
+    lemas = sorted({l for s in d.sinsets for l in s[1]})
+    sin = [r.choice(com_dois) for _ in range(n)]
+    ms = sum(abs(h(x[0]) - h(x[1])) for x in sin) / n
+    mr = sum(abs(h(r.choice(lemas)) - h(r.choice(lemas))) for _ in range(n)) / n
+    return ms, mr, (ms - mr) / math.sqrt(2 / 18 / n)
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -11457,6 +11551,23 @@ def _parte_71():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1599, testes=TESTES_P1599)
     print(f"P1599 minha taxa de erro ({ERROS_P1599}/{TESTES_P1599}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_72():
+    print("--- Parte 72 (0x48: o que esta disfuncional) ---")
+    for k, v in p1601_auditoria_do_repositorio(71).items():
+        print(f"P1601 auditoria, {k}: {len(v)} {v[:10]}")
+    tr, te = p1511_corpus_de_glosas("en")
+    h, n, red, red8 = p1602_entropia_de_unigrama(tr + "|" + te)
+    print(f"P1602 glosas inglesas: H = {h:.4f} bits/simbolo; {n} simbolos; redundancia contra log2({n}) = {red:.4f}; contra 8 bits = {red8:.4f} "
+          f"(o texto recebido: 1 - 4,11/8 = {1 - 4.11 / 8:.5f})")
+    print(f"P1603 ciclos de glosas (A na glosa de B, B na glosa de A): {p1603_ciclos_de_glosas()}")
+    ms, mr, z = p1604_hash_como_peso()
+    print(f"P1604 hash como peso: |h(a) - h(b)| sinonimos {ms:.4f}, sorteados {mr:.4f} (teoria 1/3); z = {z:+.3f}")
+    total, sem = p1092_pnn_sem_teste(1601, 1630)
+    print(f"P1092 pNN novas (P1601-P1630) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 72: {p974_previsoes_sem_largura(range(72, 73))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1629, testes=TESTES_P1629)
+    print(f"P1629 minha taxa de erro ({ERROS_P1629}/{TESTES_P1629}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -11493,7 +11604,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72}
 
 
 if __name__ == "__main__":

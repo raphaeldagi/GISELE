@@ -93,12 +93,15 @@ anterior, commit e push.
   Parte 65: as regras valem JUNTAS: a regra de escolha da calibração (Parte 64) tem que cobrir a faixa inteira da variável que move o mecanismo no teste (Parte 63);
   "as bases logo depois do teste" só tinha bases grandes e errou nas pequenas. E uma previsão por unidade confere, em cada unidade, a condição do mecanismo (a base 18 não
   tinha primo grande em b² + 1).
+  Parte 66: toda conclusão de efeito na síntese diz em quantos lotes independentes ele apareceu; visto em um lote só, escreve-se como hipótese (o "viés das bases
+  grandes" da Parte 64, 1/64 num lote, não se replicou: −1,07, −0,02, +1,12 por lote). As regras antigas valem também na síntese, não só nas previsões.
   Parte 71: antes de extrapolar uma tendência de k pontos, calcular por código o desvio de cada ponto (Poisson: 1/√n) e o t da inclinação; sem |t| > 2, a previsão usa a conta
   sem tendência e a faixa do ruído (três razões com z −0,03, −0,52, −1,16 viraram uma "queda" e (g) errou; com a faixa de Poisson, (h) acertou). Em cada calibração, uma linha:
   "o mecanismo que move o teste está presente no caso de calibração?" (os verbos não têm a fase de crescimento dos substantivos). Um erro pequeno que revela um raciocínio falso
   também gera teste: a previsão de quantos testes conta os erros de mecanismo, não só as surpresas.
-  Parte 66: toda conclusão de efeito na síntese diz em quantos lotes independentes ele apareceu; visto em um lote só, escreve-se como hipótese (o "viés das bases
-  grandes" da Parte 64, 1/64 num lote, não se replicou: −1,07, −0,02, +1,12 por lote). As regras antigas valem também na síntese, não só nas previsões.
+  Parte 72 (auditoria pedida: "corrija tudo pra ver se há coisas inadequadas e disfuncionais"; `p1601_auditoria_do_repositorio`): todo auditor novo roda primeiro sobre o
+  caso mais antigo e o mais novo, e cada defeito acusado é olhado antes de ser contado (o meu acusou a Parte 1 por supor a forma do nome). Toda referência "PNN" no texto é
+  conferida por grep antes do commit, como um número. A ordem (as (m), depois "sobre mim", depois o mundo) vale também nas partes que nascem de um pedido fora do ciclo.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -244,7 +247,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
