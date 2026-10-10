@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (9714 linhas)
+# calculos.py  (9780 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7501,6 +7501,7 @@ def testes_de_regressao():
         "P1123": p1123_mesma_soma()[1] == 431 and p1123_mesma_soma(65535)[1] == 5161,
         "P1153": p1153_duplos_palindromos()[0] == 27,
         "P1183": p1183_primeiro_digito_hex(2) == [0, 2500, 2500, 0, 2500, 0, 0, 0, 2500] + [0] * 7 and p1183_primeiro_digito_hex(3)[1] == 2506,
+        "P1213": p1213_persistencia_hex(16 ** 4)[:2] == (7, 0x3DDE),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9509,6 +9510,57 @@ def p1181_primeira_diferenca():
     soma, pares, inv = r32.medir(ws)
     return soma / pares, pares, inv, sum(1 for w in ws if r32.chave_pt(w) != w.lower())
 
+
+ERROS_P1239, TESTES_P1239 = 171, 492
+
+
+def p1212_palavras_que_nao_definem(d=None):
+    \"\"\"As palavras que nunca aparecem na definição de outra (P1212): no grafo de definições, o grau de entrada zero.
+    Devolve (fração, palavras, as 5 que mais definem, com o grau).\"\"\"
+    from synthai.dicionario import Dicionario
+    g = (d or Dicionario()).grafo_de_definicoes()
+    grau = {w: 0 for w in g}
+    for u, vs in g.items():
+        for v in vs:
+            if v in grau:
+                grau[v] += 1
+    zero = sum(1 for x in grau.values() if x == 0)
+    top = sorted(grau, key=lambda w: (-grau[w], w))[:5]
+    return zero / len(grau), len(grau), [(w, grau[w]) for w in top]
+
+
+def p1213_persistencia_hex(ate=16 ** 5):
+    \"\"\"A persistência multiplicativa em base 16 (P1213), para n de 16 a ate − 1: quantas vezes se multiplicam os dígitos
+    hexadecimais até sobrar um dígito. Devolve (a maior, o primeiro número com ela, a média).\"\"\"
+    def prod(n):
+        p = 1
+        while n:
+            n, r = divmod(n, 16)
+            p *= r
+        return p
+    maior, quem, soma = 0, None, 0
+    for n in range(16, ate):
+        k, x = 0, n
+        while x >= 16:
+            x = prod(x)
+            k += 1
+        soma += k
+        if k > maior:
+            maior, quem = k, n
+    return maior, quem, soma / (ate - 16)
+
+
+def p1211_nome_e_palavra():
+    \"\"\"Rodada 33 (P1211): dos lemas portugueses com maiúscula, quantos têm irmã minúscula com a mesma grafia
+    (dialogo/rodada33.py, IGUAL em Java). Devolve (com maiúscula, com irmã, exemplos).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada33", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada33.py"))
+    r33 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r33)
+    return r33.irmas(r33.lemas())
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -9699,6 +9751,20 @@ def _parte_58():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1209, testes=TESTES_P1209)
     print(f"P1209 minha taxa de erro ({ERROS_P1209}/{TESTES_P1209}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_59():
+    print("--- Parte 59 (0x3B: o nome e a coisa) ---")
+    n, k, ex = p1211_nome_e_palavra()
+    print(f"P1211 lemas portugueses com maiuscula: {n}; com irma minuscula: {k} ({k / n:.4f}); {ex}")
+    frac, total, top = p1212_palavras_que_nao_definem()
+    print(f"P1212 palavras que nunca definem outra: {frac:.4f} de {total}; as que mais definem: {top}")
+    m, q, med = p1213_persistencia_hex()
+    print(f"P1213 persistencia multiplicativa em base 16 (16..16^5-1): maior = {m} (primeiro em {hex(q)}); media = {med:.4f}")
+    total, sem = p1092_pnn_sem_teste(1211, 1240)
+    print(f"P1092 pNN novas (P1211-P1240) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 59: {p974_previsoes_sem_largura(range(59, 60))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1239, testes=TESTES_P1239)
+    print(f"P1239 minha taxa de erro ({ERROS_P1239}/{TESTES_P1239}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -9735,7 +9801,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59}
 
 
 if __name__ == "__main__":
@@ -9748,7 +9814,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (197 linhas)
+# CLAUDE.md  (201 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -9825,6 +9891,10 @@ anterior, commit e push.
   fixo (oscilou em ciclo de dois): dar a medida da versão final e contar o caminho, sem escolher a versão favorável.
   Parte 57: listar as restrições ANTES de cada conta (a lista funcionou: os erros sumiram onde ela foi feita; o que eu nomeio antes, eu não erro).
   Toda afirmação de quantidade, inclusive no diálogo, sai de uma função.
+  Parte 58: nenhuma quantidade escrita à mão no script de autoavaliação (o "0 pNN sem teste" estava fixo no texto e era falso: p1181 não tinha teste
+  pelo nome). O placar chama as funções de auditoria (`p1092_pnn_sem_teste`, `p974_previsoes_sem_largura`); e o teste de uma pNN a chama PELO NOME.
+  Parte 59: nomear uma restrição não basta, é preciso medir o seu peso antes de prever (listei 16 = 2⁴ e errei a persistência). E a regra de não contar à
+  mão vale também para a regressão e para o placar por voz do diálogo (as duas vezes em que contei de cabeça, errei por um).
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -9940,7 +10010,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -14647,7 +14717,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# synthai/testes_parte58.py  (45 linhas)
+# synthai/testes_parte58.py  (54 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_parte58.py'] = """\"\"\"Testes de unidade da Parte 58: `python3 -m unittest synthai.testes_parte58`. Cada pNN nova com o seu teste.\"\"\"
 
@@ -14690,6 +14760,54 @@ class TesteParte58(unittest.TestCase):
         ws = sorted(["pe", "peixe", "pé"])
         self.assertEqual(ws, ["pe", "peixe", "pé"])
         self.assertEqual(r32.medir(ws), (5, 2, 1))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+class TesteP1181(unittest.TestCase):
+    \"\"\"Acrescentado depois que a auditoria P1092 da própria Parte 58 achou p1181 sem teste pelo nome.\"\"\"
+
+    def test_p1181(self):
+        pos, pares, inv, acento = calculos.p1181_primeira_diferenca()
+        self.assertEqual((pares, inv, acento), (37724, 3738, 9236))
+        self.assertAlmostEqual(pos, 207209 / 37724, places=12)
+"""
+
+# ====================================================================================================
+# synthai/testes_parte59.py  (34 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte59.py'] = """\"\"\"Testes de unidade da Parte 59: `python3 -m unittest synthai.testes_parte59`. Cada pNN nova com o seu teste, chamada PELO NOME.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class GrafoFalso:
+    @staticmethod
+    def grafo_de_definicoes():
+        # a é definida por b e c; b por c; c por a; d por c: c define 3, a define 1, b define 1, d não define nada
+        return {"a": {"b", "c"}, "b": {"c"}, "c": {"a"}, "d": {"c"}}
+
+
+class TesteParte59(unittest.TestCase):
+    def test_p1213_persistencia_hex(self):
+        # conferido por código: de 16 a 0x3F, a maior é 3 (primeiro em 62 = 0x3E: 3·14 = 0x2A, 2·10 = 0x14, 1·4 = 4), média 68/48
+        m, q, med = calculos.p1213_persistencia_hex(0x40)
+        self.assertEqual((m, q), (3, 62))
+        self.assertAlmostEqual(med, 1.4166666666666667, places=12)
+
+    def test_p1212_palavras_que_nao_definem(self):
+        frac, n, top = calculos.p1212_palavras_que_nao_definem(GrafoFalso())
+        self.assertEqual((n, top[0]), (4, ("c", 3)))
+        self.assertAlmostEqual(frac, 0.25, places=12)  # só 'd' não define
+
+    def test_p1211_nome_e_palavra(self):
+        n, k, ex = calculos.p1211_nome_e_palavra()
+        self.assertEqual((n, k), (9176, 1805))
+        self.assertIn("Abril", ex)
 
 
 if __name__ == "__main__":
