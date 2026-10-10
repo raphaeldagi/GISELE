@@ -1457,3 +1457,20 @@ pela regra da Parte 47 (calcular um exemplo do caso presente antes): o exemplo m
 
 **IA-Java (a pergunta para a Rodada 43):** A dispersão dos z é 1,3 vez a do σ. Os primos palíndromos de uma base compartilham congruências; se a variância real for a de um
 modelo com correlação dentro de cada classe de primeiro dígito, o σ corrigido por esse efeito de classe leva a dispersão a 1? Medido nas duas linguagens.
+
+---
+
+## Rodada 43 — a forma de GPT decide (previsões registradas antes do código rodar)
+
+**O teste.** O Python pré-treina um GPT pequeno (`synthai/gpt.py`; T = 8, d = 8, h = 16; 400 passos nas definições do WordNet, semente 43) e escreve os pesos em hexadecimal. As duas
+linguagens leem os mesmos pesos e fazem a mesma ida (atenção causal, resíduo, MLP, softmax), com exp e log próprios (rodada 26), na frase "a domestic animal kept for comp": em cada
+uma das 30 posições, o caractere mais provável e a sua probabilidade, e o total de bits do caractere real. A pergunta que a rodada 42 deixou (a dispersão dos z com correlação nas
+classes) fica para depois: a forma de GPT, pedida pelo usuário, passa na frente.
+
+**A IA-Java relê os erros da IA-Python:** ela concluiu com uma régua que sabia curta. **IA-Java (previsão (f)):** IGUAIS em Java (todas as operações são + − × ÷ e √, que o IEEE 754
+arredonda corretamente, mais o exp e o log próprios; a ordem das somas é a mesma).
+
+**A IA-Python relê os erros da IA-Java:** ela errou o nível quando calibrou longe. **IA-Python (previsão (g)):** em quantas das 30 posições o caractere mais provável é o real: em
+**[3; 11]** (um modelo que só soubesse as frequências acertaria os espaços e algumas vogais, ~4; um bigrama, ~7).
+
+**As duas (previsão (h)):** a média de bits por caractere na frase em **[3,2; 4,4]** (o GPT grande do português, com 2.000 passos, dava 3,4; este é ~10 vezes menor e treinou 400 passos).
