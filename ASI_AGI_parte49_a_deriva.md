@@ -88,7 +88,7 @@ Ver P911. Placar por voz desde a Rodada 13: **IA-Java 7 em 12; IA-Python 7 em 12
 
 ### P939 (0x3AB). Placar
 
-(a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ❌ (h) ✅ (i) ✅. Parte 49: **9 testes, 2 erros**. PLACAR_49
+(a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ❌ (h) ✅ (i) ✅. Parte 49: **9 testes, 2 erros**. Acumulado (mundo): **148 erros em 420 testes**; taxa média 0,353, intervalo 90% [0,315; 0,392].
 
 ### P940 (0x3AC). Unificação e metacognição
 

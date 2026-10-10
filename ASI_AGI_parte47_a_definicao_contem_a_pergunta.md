@@ -124,7 +124,7 @@ das de baixo.
 
 ### P879 (0x36F). Placar
 
-PLACAR_47
+(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ❌ (i) ✅; rodada 19: (f) ❌ (g) ✅ (h) ✅. Parte 47: **9 testes, 3 erros**. Acumulado (mundo): **141 erros em 399 testes**; taxa média 0,354, intervalo 90% [0,315; 0,394].
 
 ### P880 (0x370). Unificação e metacognição
 

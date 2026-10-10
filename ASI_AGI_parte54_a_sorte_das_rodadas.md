@@ -123,7 +123,7 @@ Ver P1061. Placar por voz desde a Rodada 13: **IA-Java 15 em 25; IA-Python 13 em
 
 ### P1089 (0x441). Placar
 
-Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ❌ (f) ✅ (g) ✅ (h) ✅. Parte 54: **8 testes, 2 erros**. Sobre mim (placar separado): **6 de 7** dentro da faixa; o estatístico, 5 de 6. PLACAR_54
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ❌ (f) ✅ (g) ✅ (h) ✅. Parte 54: **8 testes, 2 erros**. Sobre mim (placar separado): **6 de 7** dentro da faixa; o estatístico, 5 de 6. Acumulado (mundo): **159 erros em 462 testes**; taxa média 0,345, intervalo 90% [0,309; 0,381].
 
 ### P1090 (0x442). Unificação e metacognição
 

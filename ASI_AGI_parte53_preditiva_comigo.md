@@ -124,7 +124,7 @@ do `CLAUDE.md` evitaram uma diferença antes de ela acontecer). Placar das faixa
 
 ### P1059 (0x423). Placar
 
-Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ✅ (f) ✅. Parte 53: **6 testes, 1 erros**. Sobre mim (placar separado): **6 de 7** dentro da faixa. PLACAR_53
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ✅ (f) ✅. Parte 53: **6 testes, 1 erros**. Sobre mim (placar separado): **6 de 7** dentro da faixa. Acumulado (mundo): **157 erros em 454 testes**; taxa média 0,346, intervalo 90% [0,310; 0,383].
 
 ### P1060 (0x424). Unificação e metacognição
 

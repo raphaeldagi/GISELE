@@ -7200,7 +7200,7 @@ def p793_profundidade():
 # --- Parte 46 (0x2E): a resposta é a pergunta e a pergunta é a resposta; refazer tudo desde o começo ---
 
 # Placar acumulado ao fim da Parte 46 (atualizado quando os testes da parte terminam)
-ERROS_P849, TESTES_P849 = 0, 0
+ERROS_P849, TESTES_P849 = 138, 390
 
 
 def p821_inversao(partes=range(31, 46)):
@@ -7274,7 +7274,7 @@ def p825_cauda_binomial(n, p, k):
     return sum(comb(n, i) * p ** i * (1 - p) ** (n - i) for i in range(k, n + 1))
 
 
-ERROS_P879, TESTES_P879 = 0, 0
+ERROS_P879, TESTES_P879 = 141, 399
 
 
 def p851_genero_e_diferenca(d=None):
@@ -8559,7 +8559,7 @@ def p856_acaso_851(semente=851, d=None):
         inverso += contem(d.definicao(d.sinsets[k][3]).lower(), lemas)
     return direto / n, inverso / n
 
-ERROS_P909, TESTES_P909 = 0, 0
+ERROS_P909, TESTES_P909 = 146, 411
 
 
 def p881_epoca():
@@ -8679,7 +8679,7 @@ def p884_ciclo_da_serie(alvos=(41, 40, 39, 38)):
     return r21.media_distancia(sim, 1), r21.media_distancia(sim, 20), ind
 
 
-ERROS_P939, TESTES_P939 = 0, 0
+ERROS_P939, TESTES_P939 = 148, 420
 
 
 def p912_funis(d=None):
@@ -8746,7 +8746,7 @@ def p911_deriva(sementes=(911, 1, 2, 3, 4, 5)):
     return tau, se, alfa, sp, controle
 
 
-ERROS_P969, TESTES_P969 = 0, 0
+ERROS_P969, TESTES_P969 = 152, 433
 
 
 def p942_definicoes_mutuas(d=None):
@@ -8861,7 +8861,7 @@ def p948_pergunta_reconhece_resposta():
     return sorted(r24.pontuar(ds, texto), key=lambda x: (-x[1], x[0]))
 
 
-ERROS_P999, TESTES_P999 = 0, 0
+ERROS_P999, TESTES_P999 = 154, 440
 
 
 def p972_portugues_por_profundidade(d=None, pt=None):
@@ -8973,7 +8973,7 @@ def p974_previsoes_sem_largura(partes=range(46, 52)):
     return res
 
 
-ERROS_P1029, TESTES_P1029 = 0, 0
+ERROS_P1029, TESTES_P1029 = 156, 448
 
 
 def p1002_funis_pt(pt=None):
@@ -9051,7 +9051,7 @@ def p1001_duas_memorias_em_log():
     return s0, (r26.exp_(th[0]), r26.exp_(th[1]), th[2], th[3], sse), 20 * r26.log_(sse / 20) + 8, 0.3095 * r26.exp_(-0.2)
 
 
-ERROS_P1059, TESTES_P1059 = 0, 0
+ERROS_P1059, TESTES_P1059 = 157, 454
 
 
 def p1031_historico_de_mim(partes=range(31, 53)):
@@ -9172,7 +9172,7 @@ def p1034_pi_hexadecimal(n=1000):
     return sum(a == b for a, b in zip(pelo_bbp, exatos)), n, "".join(format(h, "X") for h in exatos[:8]), chi2
 
 
-ERROS_P1089, TESTES_P1089 = 0, 0
+ERROS_P1089, TESTES_P1089 = 159, 462
 
 
 def p1062_folhas(d=None):
@@ -9234,7 +9234,7 @@ def p1061_exatidao_ou_sorte():
     return chances, dif
 
 
-ERROS_P1119, TESTES_P1119 = 0, 0
+ERROS_P1119, TESTES_P1119 = 163, 468
 
 
 def p1092_pnn_sem_teste(desde=821, ate=1090):
@@ -9331,7 +9331,7 @@ def p1091_o_ulp_que_chega():
     return res
 
 
-ERROS_P1149, TESTES_P1149 = 0, 0
+ERROS_P1149, TESTES_P1149 = 166, 474
 
 
 def p1122_sinonimos_perfeitos(d=None):
@@ -9378,7 +9378,7 @@ def p1121_empates():
     return r30.contar(r30.grupos())
 
 
-ERROS_P1179, TESTES_P1179 = 0, 0
+ERROS_P1179, TESTES_P1179 = 167, 479
 
 
 def p1152_palindromos(d=None):

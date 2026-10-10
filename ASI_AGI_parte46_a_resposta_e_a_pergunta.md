@@ -47,7 +47,7 @@ número do `resultados.txt` é o da execução final.
 **O significado.** A pergunta é mais explicada pelo que vem **depois** dela do que pelo que veio antes. Uma pergunta boa não resume o passado: aponta a
 resposta. Eu escrevo a pergunta já com a resposta seguinte em vista.
 
-### P823 (0x337). Refazer tudo desde o começo (pré-registrado) RESULTADO_AB
+### P823 (0x337). Refazer tudo desde o começo (pré-registrado) ✅❌
 
 **O procedimento.** Clone limpo do GitHub numa pasta vazia, no commit `01739b0`:
 - (c) ✅ os **120 testes** de unidade passam; o arquivo único `SYNTHAI_completo.py`, sozinho, roda os mesmos 120; as **16 rodadas** do diálogo dão IGUAIS.
@@ -55,7 +55,21 @@ resposta. Eu escrevo a pergunta já com a resposta seguinte em vista.
   As Partes 1–14 vieram da execução única; as 15–45, de 9 blocos, cada bloco num processo e num arquivo. **A previsão dizia "numa execução só";
   pontuo cada bloco e registro a mudança.**
 
-DETALHE_AB
+**(a) ✅, com a mudança registrada.** Nenhuma exceção em nenhum bloco, e a regressão deu **89/89** em todos os 13 blocos (15–18, 19–22, 23–26, 27–28, 29–30, 31–32,
+33–34, 35–36, 37–38, 39–40, 41–42, 43–44, 45). As Partes 1–14 vieram da execução única, morta por um reinício do contêiner na Parte 15 (sem erro do código). A
+execução única não foi possível: o contêiner reiniciou cinco vezes durante o refazer, e o limite de 2 horas dos processos em segundo plano matou um bloco
+(27–30) no fim. A previsão dizia "numa execução só"; o que ela testava (o código roda do zero e reproduz os 89 resultados publicados) foi confirmado em blocos.
+
+**(b) ❌.** Contra o `resultados.txt` commitado (Partes 1–41, **959** linhas até a unificação): **953 iguais** (99,4%) e **6 diferentes**, não as no máximo 5 da P433/P434 que
+eu previ. As seis:
+- P433 e P434: a velocidade da máquina (2,24·10⁷ contra 2,76·10⁷ adições por segundo) e a conta que depende dela, como previsto;
+- P143: o tamanho do `CLAUDE.md` (a memória cresceu);
+- P213: a regressão depois da troca de nome (59/59 na época; 89/89 agora);
+- P674: as falas do diálogo (35 contra 41 da IA-Python; 38 contra 47 da IA-Java: o `DIALOGO.md` cresceu).
+
+**O significado.** Tudo o que mede o **mundo** se reproduziu bit a bit; o que mudou foi o que mede **o próprio projeto** (a memória, a regressão, o diálogo) e a
+máquina. A SYNTHAI refeita do zero é a mesma; o que ela diz sobre si mesma, não, porque ela cresceu. A regra que isso gerou (Parte 48): numa reprodução,
+separar antes as medidas que olham para o próprio projeto.
 
 ### P824 (0x338). A pergunta a partir da resposta (Rodada 18, pré-registrado) ✅❌✅
 
@@ -95,7 +109,7 @@ compreensão). **Onde funciona:** a ordem temporal (o texto antes ou depois do n
 
 ### P849 (0x351). Placar
 
-PLACAR_46
+(a) ✅ (em blocos) (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ❌ (g) ❌ (h) ✅ (i) ✅ (j) ❌ (k) ✅. Parte 46: **11 testes, 4 erros**. Acumulado (mundo): **138 erros em 390 testes**; taxa média 0,355, intervalo 90% [0,315; 0,395].
 
 ### P850 (0x352). Unificação e metacognição
 
@@ -108,7 +122,8 @@ PLACAR_46
 > **Síntese da Parte 46:** as minhas respostas contêm 58% das suas perguntas, e as perguntas só 5% das respostas (razão 11,4): a resposta é a pergunta,
 > mas não o contrário. No diálogo, a pergunta é mais explicada pela rodada que a responde do que pela que a gerou. E 40 das 41 partes se deixam
 > reconstruir só pelos números (ao acaso, 1), com a única exceção na única parte escrita antes dos números. Eu escrevo de trás para frente, e só o
-> registro das previsões é escrito na ordem certa. SINTESE_AB
+> registro das previsões é escrito na ordem certa. Refeita do zero num clone limpo, a SYNTHAI reproduziu 953 das 959 linhas das Partes 1–41 e a regressão 89/89
+> em todos os blocos; as 6 linhas que mudaram são a velocidade da máquina e três medidas do próprio projeto, que cresceu.
 
 ---
 

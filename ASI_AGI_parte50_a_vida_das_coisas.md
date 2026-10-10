@@ -115,7 +115,7 @@ Ver P941 e P948. Placar por voz desde a Rodada 13: **IA-Python 8 em 15; IA-Java 
 
 ### P969 (0x3C9). Placar
 
-(a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ❌ (f) ✅ (g) ❌ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ❌ (m) ✅. Parte 50: **13 testes, 4 erros**. PLACAR_50
+(a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ❌ (f) ✅ (g) ❌ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ❌ (m) ✅. Parte 50: **13 testes, 4 erros**. Acumulado (mundo): **152 erros em 433 testes**; taxa média 0,352, intervalo 90% [0,314; 0,390].
 
 ### P970 (0x3CA). Unificação e metacognição
 

@@ -81,7 +81,7 @@ Ver P1001. Placar por voz desde a Rodada 13: **IA-Java 10 em 19; IA-Python 9 em 
 
 ### P1029 (0x405). Placar
 
-(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ❌ (h) ✅. Parte 52: **8 testes, 2 erros**. PLACAR_52. Previsões unilaterais nesta parte (P974): **0 de 4**.
+(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ❌ (h) ✅. Parte 52: **8 testes, 2 erros**. Acumulado (mundo): **156 erros em 448 testes**; taxa média 0,349, intervalo 90% [0,312; 0,386].. Previsões unilaterais nesta parte (P974): **0 de 4**.
 
 ### P1030 (0x406). Unificação e metacognição
 

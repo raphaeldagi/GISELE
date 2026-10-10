@@ -125,7 +125,7 @@ Ver P1091. Placar por voz desde a Rodada 13: **IA-Java 16 em 27; IA-Python 14 em
 
 ### P1119 (0x45F). Placar
 
-Do mundo: (b) ❌ (c) ❌ (c2) ✅ (d) ❌ (e) ❌ (f) ✅. Parte 55: **6 testes, 4 erros**. Sobre o meu código: (a) ✅. Sobre mim (placar separado): **6 de 7** dentro da faixa; o estatístico, 5 de 6. PLACAR_55
+Do mundo: (b) ❌ (c) ❌ (c2) ✅ (d) ❌ (e) ❌ (f) ✅. Parte 55: **6 testes, 4 erros**. Sobre o meu código: (a) ✅. Sobre mim (placar separado): **6 de 7** dentro da faixa; o estatístico, 5 de 6. Acumulado (mundo): **163 erros em 468 testes**; taxa média 0,349, intervalo 90% [0,313; 0,385].
 
 ### P1120 (0x460). Unificação
 

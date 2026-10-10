@@ -97,7 +97,7 @@ a volta ao começo foi ruído. O dicionário é um sistema fechado de palavras q
 
 ### P909 (0x38D). Placar
 
-(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ❌ (g) ❌ (h) ✅ (i) ✅ (j) ❌ (k) ✅ (l) ❌. Parte 48: **12 testes, 5 erros**. PLACAR_48
+(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ❌ (g) ❌ (h) ✅ (i) ✅ (j) ❌ (k) ✅ (l) ❌. Parte 48: **12 testes, 5 erros**. Acumulado (mundo): **146 erros em 411 testes**; taxa média 0,356, intervalo 90% [0,318; 0,395].
 
 ### P910 (0x38E). Unificação e metacognição
 
