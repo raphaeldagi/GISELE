@@ -41,3 +41,15 @@ O texto diz que o hash SHA-256 de cada palavra, lido como número em [0, 1], é 
 um hash, por construção, não. O teste: a distância |h(a) − h(b)| entre sinônimos (dois lemas do mesmo sinset) contra pares sorteados (2.000 de cada, semente 72). Para U, V uniformes,
 E|U − V| = 1/3 e Var|U − V| = 1/18.
 - **(j)** o z da diferença das médias (sinônimos − sorteados) em **[−1,96; 1,96]** (um hash não vê sinônimos; 95% da normal)
+
+### O segundo texto recebido (módulos 001 e 002: `SemanticLake` e `InferenceEngine`), previsões registradas antes de qualquer medida
+
+O texto traz código Python. Pela regra do projeto, ele **não é executado**. É guardado como dado (`externos/texto_recebido_parte72b.md`), lido pela árvore sintática (`ast`, que só analisa e
+não roda nada) e as ideias dele são testadas com código meu, escrito do zero.
+- **(k)** o número de `assert` dentro de `test_engine`, contado pela `ast`, contra o "8 verificações" que a função devolve fixo no texto: **7** (de leitura: uma verificação a menos do que declara)
+- **(l)** o fecho das regras de Horn "p é animal ⇒ c é animal", sobre as arestas de hiperonímia dos substantivos, a partir do fato "animal (o primeiro sentido) é animal": o número de sinsets
+  derivados em **[6.000; 9.000]**
+- **(m)** o meu motor de Horn em tempo linear (contadores de premissas pendentes e fila, Dowling e Gallier, 1984) e uma busca em largura pelos hipônimos dão **o mesmo conjunto** (categórica)
+- **(n)** o laço do texto (repetir a passagem por todas as regras até nada mudar), reimplementado por mim, nas regras na ordem do arquivo: o número de passagens, contando a última, que não muda
+  nada, em **[3; 12]**
+- **(o)** a rodada 46 do diálogo (o motor de Horn linear em Java, nos mesmos fatos e regras) dá IGUAIS ao Python (categórica)
