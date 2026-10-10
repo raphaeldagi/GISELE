@@ -50,3 +50,9 @@ informação" é escolher por H(p). **A conta:** H depende só de p, e p é inde
 √(p(1 − p)/300) ≈ 0,028: havia uma conta melhor que a estimativa de 4 amostras. Com os 5 lotes (os 4 de calibração e o do teste), p = 0,6327, desvio 0,0278, e a faixa de 90% para um lote novo
 é p ± 1,645 · 0,0278 · √(1 + 1/5).
 - **(f)** a fração de instâncias em que o guloso por VOI é ótimo, semente 75, em **[0,5825; 0,6828]**
+
+**Medido (f):** **0,620** ✅ (e (c), (d) replicaram: 0,9924 e 0,568).
+
+**A Rodada 48, registrada antes de rodar:** o Python grava as 300 instâncias da semente 74 (valores em hexadecimal, custos inteiros); Java e Python calculam o ótimo da mochila por programação
+dinâmica e os dois gulosos (ordenação por razão, empates pelo índice). Só + e comparações sobre os valores, e divisões para as razões: tudo arredondado corretamente pelo IEEE 754.
+- **(g)** IGUAIS (categórica)
