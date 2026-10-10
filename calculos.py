@@ -10436,6 +10436,104 @@ def p1493_palindromos_duplos(ate=16 ** 4, b1=16, b2=10):
     return achados, conta
 
 
+VOCAB_GPT = list(" abcdefghijklmnopqrstuvwxyz,;()-|?")  # | separa as glosas; ? é qualquer outro caractere
+
+
+def p1511_corpus_de_glosas(lingua="en"):
+    """O corpus de pré-treino da forma de GPT (P1511): as definições do WordNet (en, sem os exemplos) ou as glosas da OpenWordNet-PT
+    (pt, sem acentos: NFD e só as letras de base), em minúsculas, com os caracteres fora do vocabulário trocados por '?', unidas por '|'.
+    Separação fixa: os sinsets de índice ≡ 0 (mod 10) no teste. Devolve (treino, teste)."""
+    import unicodedata
+    if lingua == "en":
+        from synthai.dicionario import Dicionario
+        d = Dicionario()
+        glosas = [d.definicao(g) for _, _, _, g in d.sinsets]
+    else:
+        from synthai.dicionario import DicionarioPT
+        pt = DicionarioPT()
+        glosas = [pt.glosas[k] for k in sorted(pt.glosas)]
+    ok = set(VOCAB_GPT)
+    treino, teste = [], []
+    for i, g in enumerate(glosas):
+        g = "".join(ch for ch in unicodedata.normalize("NFD", g.lower()) if not unicodedata.combining(ch))
+        g = "".join(ch if ch in ok and ch != "|" else "?" for ch in g.strip())
+        (teste if i % 10 == 0 else treino).append(g)
+    return "|".join(treino), "|".join(teste)
+
+
+def p1512_ngrama_bits(treino, teste, ordem=3, limite=None, V=None):
+    """O modelo mais simples (P1512): n-grama de caracteres com interpolação de Witten-Bell, contado em todo o treino; bits por
+    caractere no teste (os primeiros `limite` caracteres, ou todos). Devolve bits por caractere."""
+    from math import log2
+    V = V or len(VOCAB_GPT)  # o tamanho do alfabeto (a base da interpolação é 1/V)
+    cont = [{} for _ in range(ordem)]  # cont[k][contexto de k caracteres] = {caractere: contagem}
+    for i in range(len(treino)):
+        for k in range(ordem):
+            if i - k < 0:
+                break
+            ctx = treino[i - k:i]
+            tab = cont[k].setdefault(ctx, {})
+            tab[treino[i]] = tab.get(treino[i], 0) + 1
+    tot = {k: {c: (sum(t.values()), len(t)) for c, t in cont[k].items()} for k in range(ordem)}
+    texto = teste if limite is None else teste[:limite]
+    bits = 0.0
+    for i in range(len(texto)):
+        p = 1.0 / V
+        for k in range(ordem):
+            if i - k < 0:
+                break
+            ctx = texto[i - k:i]
+            if ctx not in cont[k]:
+                break
+            n, tipos = tot[k][ctx]
+            lam = n / (n + tipos)
+            p = lam * cont[k][ctx].get(texto[i], 0) / n + (1 - lam) * p
+        bits -= log2(p)
+    return bits / len(texto)
+
+
+def p1514_pi_hex_digitos(n=10000):
+    """Os n primeiros dígitos hexadecimais de π depois da vírgula, exatos (Machin em inteiros: π = 16 arctg(1/5) − 4 arctg(1/239)),
+    como texto '243f6a88…' (P1514)."""
+    bits = 4 * n + 64
+    um = 1 << bits
+
+    def arctg_inv(x):
+        soma, termo, k, sinal = 0, um // x, 1, 1
+        while termo:
+            soma += sinal * (termo // k)
+            termo //= x * x
+            k += 2
+            sinal = -sinal
+        return soma
+    frac = 16 * arctg_inv(5) - 4 * arctg_inv(239) - 3 * um
+    saida = []
+    for _ in range(n):
+        frac *= 16
+        saida.append("0123456789abcdef"[frac >> bits])
+        frac &= um - 1
+    return "".join(saida)
+
+
+def p1515_bits_hex(texto, ordem=3, corte=0.9):
+    """Bits por dígito de um n-grama (P1512, alfabeto de 16) treinado nos primeiros 90% de uma sequência hexadecimal e medido nos últimos 10%:
+    4 bits é o acaso; abaixo de 4, estrutura; acima, o custo de aprender o que não existe. Devolve bits por dígito."""
+    k = int(len(texto) * corte)
+    return p1512_ngrama_bits(texto[:k], texto[k:], ordem, V=16)
+
+
+def p1513_gpt_bits(treino, teste, passos=8000, T=24, d=24, h=48, lr=0.005, semente=69, janelas=400):
+    """A forma de GPT (P1513): o GPT mínimo de `synthai.gpt` pré-treinado no treino (janelas sorteadas, semente fixa) e medido no teste
+    (as primeiras `janelas` janelas de T caracteres). Devolve (bits por caractere no teste, parâmetros, média das últimas 200 perdas em bits,
+    o modelo)."""
+    from math import log
+    from synthai.gpt import GPT
+    g = GPT(VOCAB_GPT, T=T, d=d, h=h, semente=semente)
+    perdas = g.treinar(treino, passos=passos, lr=lr, semente=semente)
+    n = sum(len(v) * len(v[0]) for v in g.p.values())
+    return g.bits_por_caractere(teste, janelas=janelas), n, sum(perdas[-200:]) / 200 / log(2), g
+
+
 def p1499_previsoes_sobre_previsoes_v2(parte=68):
     """O placar das previsões sobre as minhas previsões, versão 2 (P1499; lido pela P1481, com os tipos): (m1) o número de previsões do
     mundo, (m2) o número de faixas que cruzam o zero, (m3) a mediana de w das que não cruzam, (m4) a fração de acertos, (m5) o número de
