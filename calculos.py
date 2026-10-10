@@ -11751,6 +11751,67 @@ def p1813_fator_de_alargamento(acerto, nominal=0.9):
     return zn, zo, zn / zo, sd, (acerto - nominal) / sd
 
 
+def p1841_voi_conjunto(p, u, qs, conj):
+    """O valor da informação de um CONJUNTO de sensores (P1841): estado binário com prior P(S = 1) = p, utilidades u[a][s] (2 ações), sensores que
+    acertam o estado com probabilidade qs[i], condicionalmente independentes dado o estado. VOI(conj) = Σ_respostas max_a Σ_s P(s, respostas)·u[a][s]
+    − max_a Σ_s P(s)·u[a][s], enumerando as 2^|conj| respostas. Devolve o VOI (≥ 0 pela desigualdade de Jensen)."""
+    sem = max(p * u[a][1] + (1 - p) * u[a][0] for a in (0, 1))
+    conj = list(conj)
+    total = 0.0
+    for m in range(1 << len(conj)):
+        l1, l0 = p, 1 - p
+        for b, i in enumerate(conj):
+            diz1 = (m >> b) & 1
+            l1 *= qs[i] if diz1 else 1 - qs[i]
+            l0 *= 1 - qs[i] if diz1 else qs[i]
+        total += max(l1 * u[a][1] + l0 * u[a][0] for a in (0, 1))
+    return max(total - sem, 0.0)
+
+
+def p1842_conjuntos(instancias=300, k=6, orcamento=6, semente=80):
+    """Escolher um conjunto de experimentos dependentes (P1842; a pendência da Parte 74). Cada instância: prior p ~ U(0, 1), utilidades U(0, 1), k
+    sensores com acurácia U(0,55; 0,95) e custo inteiro em 1..5. O ótimo: o melhor subconjunto dentro do orçamento (enumeração dos 2^k). O guloso: em cada
+    passo, o sensor de maior ganho marginal de VOI por custo que ainda cabe, e para quando nenhum ganho é positivo. A complementaridade: algum par
+    (i, j) com VOI({i, j}) − VOI({i}) > VOI({j}) − VOI(∅) + 1e-12 (o VOI não é submodular). Devolve (média de guloso/ótimo, fração com guloso ótimo,
+    fração com complementaridade, fração em que o guloso para em zero com o ótimo positivo)."""
+    import random
+    r = random.Random(semente)
+    soma = otimos = compl = parado = 0
+    for _ in range(instancias):
+        p = r.random()
+        u = [[r.random(), r.random()], [r.random(), r.random()]]
+        qs = [0.55 + 0.4 * r.random() for _ in range(k)]
+        cs = [r.randint(1, 5) for _ in range(k)]
+        memo = {}
+
+        def voi(c):
+            c = tuple(sorted(c))
+            if c not in memo:
+                memo[c] = p1841_voi_conjunto(p, u, qs, c)
+            return memo[c]
+        ot = max(voi([i for i in range(k) if m >> i & 1]) for m in range(1 << k)
+                 if sum(cs[i] for i in range(k) if m >> i & 1) <= orcamento)
+        esc, resto = [], orcamento
+        while True:
+            cand = [(voi(esc + [i]) - voi(esc)) / cs[i] for i in range(k) if i not in esc and cs[i] <= resto]
+            idx = [i for i in range(k) if i not in esc and cs[i] <= resto]
+            if not idx or max(cand) <= 1e-15:
+                break
+            j = idx[max(range(len(idx)), key=lambda t: (cand[t], -idx[t]))]
+            esc.append(j)
+            resto -= cs[j]
+        g = voi(esc)
+        if ot > 1e-12:  # um VOI de 1e-17 é zero com ruído de ponto flutuante (achado na calibração da Parte 80)
+            soma += g / ot
+            otimos += g >= ot - 1e-12
+            parado += (not esc)
+        else:
+            soma += 1.0
+            otimos += 1
+        compl += any(voi([i, j]) - voi([i]) > voi([j]) - voi([]) + 1e-12 for i in range(k) for j in range(i + 1, k))
+    return soma / instancias, otimos / instancias, compl / instancias, parado / instancias
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
