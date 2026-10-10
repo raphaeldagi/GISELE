@@ -1239,7 +1239,34 @@ P1338 Poisson(media 3.762) >= 13: 1.53e-04; desvio relativo da contagem sob a co
 P1092 pNN novas (P1331-P1360) sem teste: 0 de 5: []
 P974 previsoes unilaterais da Parte 63: {63: (4, 0, [])}
 P1359 minha taxa de erro (182/527): media = 0.35, intervalo 90% = [0.31, 0.38]
+--- Parte 64 (0x40: o fator do final) ---
+P1361 base  5: medido  25; conta A 16.61; conta B 20.26 (razao 1.2339); sigma 3.29; z +1.44
+P1361 base  6: medido  31; conta A 38.02; conta B 38.48 (razao 0.8057); sigma 4.38; z -1.71
+P1361 base  7: medido  50; conta A 37.99; conta B 43.82 (razao 1.1411); sigma 5.34; z +1.16
+P1361 base  8: medido  64; conta A 69.09; conta B 69.09 (razao 0.9263); sigma 7.04; z -0.72
+P1361 base  9: medido  81; conta A 71.35; conta B 80.09 (razao 1.0114); sigma 7.12; z +0.13
+P1361 base 10: medido 113; conta A 115.13; conta B 115.79 (razao 0.9759); sigma 9.02; z -0.31
+P1361 base 11: medido 131; conta A 117.97; conta B 129.36 (razao 1.0127); sigma 9.90; z +0.17
+P1361 base 12: medido 196; conta A 177.32; conta B 178.16 (razao 1.1002); sigma 11.07; z +1.61
+P1361 base 13: medido 202; conta A 182.01; conta B 196.76 (razao 1.0266); sigma 12.40; z +0.42
+P1361 base 14: medido 216; conta A 256.77; conta B 257.70 (razao 0.8382); sigma 14.12; z -2.95
+P1361 base 15: medido 263; conta A 264.58; conta B 285.06 (razao 0.9226); sigma 13.74; z -1.61
+P1361 base 16: medido 357; conta A 357.52; conta B 357.52 (razao 0.9986); sigma 17.09; z -0.03
+P1361 bases a menos de 2 sigma: 11 de 12; media |medido - B|/B = 0.0882; soma medido - B = -43.09
+P1367 base 17: medido 381; conta B 389.26; sigma 17.82; z -0.46
+P1367 base 18: medido 467; conta B 481.87; sigma 19.00; z -0.78
+P1367 base 19: medido 515; conta B 519.37; sigma 20.71; z -0.21
+P1367 base 20: medido 584; conta B 628.33; sigma 22.41; z -1.98
+P1367 base 21: medido 621; conta B 677.71; sigma 22.25; z -2.55
+P1367 base 22: medido 787; conta B 801.87; sigma 25.79; z -0.58
+P1367 fora de 2 sigma: 1 de 6; media z -1.0934; z negativos: 6
+P1362 Spearman comprimento x sentidos: -0.2254 (77503 lemas; monossemicos 0.6970); sentidos medios por comprimento {2: 2.111, 3: 2.939, 4: 3.574, 5: 2.609, 6: 1.995, 7: 1.724, 8: 1.541, 9: 1.466, 10: 1.412, 11: 1.353, 12: 1.277}
+P1363 quadrados palindromos base 16 (n < 16^4): 24; conta 15.00; razao 1.600; n = ['0x1', '0x2', '0x3', '0x11', '0x22', '0x101', '0x111', '0x121', '0x131', '0x13f', '0x202', '0x212', '0x222', '0x305', '0x561', '0x1001', '0x1111', '0x1221', '0x2002', '0x203e', '0x2112', '0x221e', '0x2356', '0xc9ad']
+P1363 calibracao base 10 (n < 10^4): 19; conta 12.18; razao 1.560
+P1092 pNN novas (P1361-P1390) sem teste: 0 de 4: []
+P974 previsoes unilaterais da Parte 64: {64: (3, 0, [])}
+P1389 minha taxa de erro (184/535): media = 0.34, intervalo 90% = [0.31, 0.38]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 383; pares de interacao possiveis = 73153
+P96 funcoes pNN no arquivo = 387; pares de interacao possiveis = 74691
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
-Regressao: 110/110 resultados publicados reproduzidos; falhas = []
+Regressao: 111/111 resultados publicados reproduzidos; falhas = []

@@ -29,7 +29,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (10321 linhas)
+# calculos.py  (10424 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7506,6 +7506,7 @@ def testes_de_regressao():
         "P1273": p1273_niven(16 ** 5)[0] == 93788 and p1278_familias_narcisistas()[:2] == (175, 157),
         "P1303": p1303_autonumeros()[1] == 64999 and p1307_terminacoes_iguais()[1][0] == ("al", 434),
         "P1333": p1333_primos_palindromos()[0] == 357 and p1331_fator_efetivo()[1:] == (84, 42),
+        "P1363": p1363_quadrados_palindromos()[0] == 24 and p1361_fator_do_final()[7][1] == 196,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9520,6 +9521,7 @@ ERROS_P1269, TESTES_P1269 = 175, 503
 ERROS_P1299, TESTES_P1299 = 178, 511
 ERROS_P1329, TESTES_P1329 = 181, 519
 ERROS_P1359, TESTES_P1359 = 182, 527
+ERROS_P1389, TESTES_P1389 = 184, 535
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -9997,6 +9999,79 @@ def p1338_contas_da_parte63(media_base8=None):
     ingenuo = sum(crivo) / ate * npal
     return 1 - cdf, sqrt(var) / conta, ingenuo, npal, media_base8
 
+
+def p1361_fator_do_final():
+    \"\"\"Rodada 38 (P1361): os primos palíndromos das bases 5 a 16 contra a conta A (2/ln n nos ímpares) e a conta B (o fator exato
+    dos primos de 2b), com o log próprio (dialogo/rodada38.py, IGUAL em Java). Devolve [(b, medido, conta A, conta B, σ)].\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada38", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada38.py"))
+    r38 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r38)
+    c = r38.crivo(16 ** 5)
+    linhas = []
+    for b in r38.BASES:
+        m, a, bb, var = r38.base(b, c)
+        linhas.append((b, m, a, bb, sqrt(var)))
+    return linhas
+
+
+def p1362_brevidade_e_sentidos(d=None):
+    \"\"\"A brevidade e o significado (P1362): nos lemas de uma palavra só do WordNet (minúsculas, só letras), a correlação de
+    postos entre o comprimento em letras e o número de sinsets. Devolve (Spearman, lemas, fração monossêmica, média de sentidos
+    por comprimento {L: média} para L de 2 a 12).\"\"\"
+    import importlib.util
+    import os
+    from synthai.dicionario import Dicionario
+    d = d or Dicionario()
+    spec = importlib.util.spec_from_file_location("rodada36", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada36.py"))
+    r36 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r36)
+    cont = {}
+    for _, lemas, _, _ in d.sinsets:
+        for w in lemas:
+            if w.isalpha():
+                cont[w.lower()] = cont.get(w.lower(), 0) + 1
+    ws = sorted(cont)
+    rho = r36.pearson(r36.postos([float(len(w)) for w in ws]), r36.postos([float(cont[w]) for w in ws]))
+    por = {}
+    for w in ws:
+        a, b = por.get(len(w), (0, 0))
+        por[len(w)] = (a + cont[w], b + 1)
+    return rho, len(ws), sum(1 for w in ws if cont[w] == 1) / len(ws), {L: por[L][0] / por[L][1] for L in range(2, 13) if L in por}
+
+
+def p1363_quadrados_palindromos(ate=16 ** 4, base=16):
+    \"\"\"Os quadrados palíndromos numa base (P1363): n de 1 a ate − 1 com n² palíndromo; e a conta (Σ base^(−⌊L/2⌋), L = dígitos de
+    n²). Devolve (quantidade, conta, os n em ordem).\"\"\"
+    ns, conta = [], 0.0
+    for n in range(1, ate):
+        ds = _digitos_base(n * n, base)
+        conta += base ** (-(len(ds) // 2))
+        if ds == ds[::-1]:
+            ns.append(n)
+    return len(ns), conta, ns
+
+
+def p1367_bases_novas_palindromos(bases=range(17, 23)):
+    \"\"\"Os primos palíndromos em bases novas (P1367), com a conta B e o σ da rodada 38 (dialogo/rodada38.base), até b⁵. Devolve
+    [(b, medido, conta B, σ, z = (medido − B)/σ)].\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada38", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                                           "dialogo", "rodada38.py"))
+    r38 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r38)
+    c = r38.crivo(max(bases) ** 5)
+    saida = []
+    for b in bases:
+        m, a, bb, var = r38.base(b, c)
+        s = sqrt(var)
+        saida.append((b, m, bb, s, (m - bb) / s))
+    return saida
+
 def _parte_47():
     print("--- Parte 47 (0x2F: a definicao contem a pergunta) ---")
     direto, inverso, pares, n = p851_genero_e_diferenca()
@@ -10306,6 +10381,34 @@ def _parte_63():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1359, testes=TESTES_P1359)
     print(f"P1359 minha taxa de erro ({ERROS_P1359}/{TESTES_P1359}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_64():
+    print("--- Parte 64 (0x40: o fator do final) ---")
+    linhas = p1361_fator_do_final()
+    perto, absrel, soma = 0, 0.0, 0.0
+    for b, m, a, bb, sg in linhas:
+        perto += abs(m - bb) < 2 * sg
+        absrel += abs(m - bb) / bb
+        soma += m - bb
+        print(f"P1361 base {b:2d}: medido {m:3d}; conta A {a:.2f}; conta B {bb:.2f} (razao {m / bb:.4f}); sigma {sg:.2f}; z {(m - bb) / sg:+.2f}")
+    print(f"P1361 bases a menos de 2 sigma: {perto} de {len(linhas)}; media |medido - B|/B = {absrel / len(linhas):.4f}; soma medido - B = {soma:.2f}")
+    novas = p1367_bases_novas_palindromos()
+    for b, m, bb, sg, z in novas:
+        print(f"P1367 base {b}: medido {m}; conta B {bb:.2f}; sigma {sg:.2f}; z {z:+.2f}")
+    print(f"P1367 fora de 2 sigma: {sum(1 for x in novas if abs(x[4]) >= 2)} de {len(novas)}; media z {sum(x[4] for x in novas) / len(novas):+.4f}; "
+          f"z negativos: {sum(1 for x in novas if x[4] < 0)}")
+    rho, n, mono, por = p1362_brevidade_e_sentidos()
+    print(f"P1362 Spearman comprimento x sentidos: {rho:.4f} ({n} lemas; monossemicos {mono:.4f}); sentidos medios por comprimento "
+          f"{({L: round(v, 3) for L, v in por.items()})}")
+    k, conta, ns = p1363_quadrados_palindromos()
+    k10, conta10, _ = p1363_quadrados_palindromos(10 ** 4, 10)
+    print(f"P1363 quadrados palindromos base 16 (n < 16^4): {k}; conta {conta:.2f}; razao {k / conta:.3f}; n = {[hex(x) for x in ns]}")
+    print(f"P1363 calibracao base 10 (n < 10^4): {k10}; conta {conta10:.2f}; razao {k10 / conta10:.3f}")
+    total, sem = p1092_pnn_sem_teste(1361, 1390)
+    print(f"P1092 pNN novas (P1361-P1390) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 64: {p974_previsoes_sem_largura(range(64, 65))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1389, testes=TESTES_P1389)
+    print(f"P1389 minha taxa de erro ({ERROS_P1389}/{TESTES_P1389}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -10342,7 +10445,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64}
 
 
 if __name__ == "__main__":
@@ -10355,7 +10458,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (214 linhas)
+# CLAUDE.md  (216 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -10447,6 +10550,8 @@ anterior, commit e push.
   Parte 63 (a regra do peso deu 7 de 8): o caso de calibração precisa estar PERTO do teste na variável que move o mecanismo (k = 8 tem milhares de candidatos por
   célula; os k pequenos, poucos: a única previsão errada foi essa). Estimativas de cabeça no texto são previsões: trocar por código antes do commit (`p1338` pegou um
   fator 2).
+  Parte 64: os casos de calibração são escolhidos por uma regra escrita antes de olhar (um intervalo inteiro, ou um sorteio com semente), não pelos que eu lembro
+  (a minha memória é uma amostra enviesada: o sinal tirado da base 10 e da 12 era o oposto do das bases 14 a 22). Dois casos não fixam um sinal.
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
@@ -10564,7 +10669,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
@@ -15622,6 +15727,51 @@ class TesteParte63(unittest.TestCase):
         self.assertAlmostEqual(cauda, 1 - sum(math.exp(-1) / math.factorial(j) for j in range(13)), places=12)
         self.assertEqual((npal, media), (4350, 1.0))
         self.assertTrue(0 < desvio < 0.2 and 200 < ingenuo < 500)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte64.py  (40 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte64.py'] = """\"\"\"Testes de unidade da Parte 64: `python3 -m unittest synthai.testes_parte64`. Cada pNN nova com o seu teste, chamada PELO NOME.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class DicionarioFalso:
+    # go (2 letras) em 3 sinsets, set (3) em 2, aardvark (8) em 1: Spearman −1; go_away não conta (não é só letras)
+    sinsets = [("n", ["set", "go"], [], ""), ("v", ["set", "go"], [], ""), ("v", ["go"], [], ""), ("n", ["aardvark"], [], ""),
+               ("n", ["go_away"], [], "")]
+
+
+class TesteParte64(unittest.TestCase):
+    def test_p1361_fator_do_final(self):
+        linhas = calculos.p1361_fator_do_final()
+        self.assertEqual([x[:2] for x in (linhas[0], linhas[7], linhas[11])], [(5, 25), (12, 196), (16, 357)])
+        self.assertAlmostEqual(linhas[11][2], linhas[11][3], places=12)  # base 16: o fator exato é o da paridade
+
+    def test_p1362_brevidade_e_sentidos(self):
+        rho, n, mono, por = calculos.p1362_brevidade_e_sentidos(DicionarioFalso())
+        self.assertEqual((n, por), (3, {2: 3.0, 3: 2.0, 8: 1.0}))
+        self.assertAlmostEqual(rho, -1.0, places=12)
+        self.assertAlmostEqual(mono, 1 / 3, places=12)
+
+    def test_p1363_quadrados_palindromos(self):
+        # base 10, n < 30: 1, 2, 3, 11, 22 e 26 (26² = 676); conta = Σ 10^(−⌊L/2⌋), conferida por código
+        k, conta, ns = calculos.p1363_quadrados_palindromos(30, 10)
+        self.assertEqual((k, ns), (6, [1, 2, 3, 11, 22, 26]))
+        self.assertAlmostEqual(conta, 3 * 1 + 6 * 0.1 + 20 * 0.1, places=12)
+
+    def test_p1367_bases_novas_palindromos(self):
+        b, m, bb, s, z = calculos.p1367_bases_novas_palindromos((5,))[0]
+        self.assertEqual((b, m), (5, 25))
+        self.assertAlmostEqual(bb, calculos.p1361_fator_do_final()[0][3], places=12)
+        self.assertAlmostEqual(z, (m - bb) / s, places=12)
 
 
 if __name__ == "__main__":
