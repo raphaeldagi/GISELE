@@ -1188,3 +1188,27 @@ interruptor vêm em par, e as famílias ficam em 1,34 da conta.
 **IA-Java (a pergunta para a Rodada 36):** O que a base 8 tem? Em base 8, para k ímpar, todo dígito ímpar satisfaz dᵏ ≡ d (mod 8) e todo par dá 0 a partir de k = 3:
 a soma das potências módulo 8 só depende dos dígitos ímpares, e n módulo 8 é o último dígito. Contando nas duas linguagens, para cada base, a fração dos
 candidatos que já passam no teste do último dígito (soma das potências ≡ último dígito mod b), a base 8 se destaca?
+
+---
+
+## Rodada 36 — o último dígito (previsões registradas antes do código)
+
+**O teste.** Para cada base b de 3 a 16 e k de 2 a 7, entre os candidatos (multiconjuntos de dígitos cuja soma das potências s tem k dígitos), a fração que passa
+no teste do último dígito: s mod b é um dos dígitos do multiconjunto (uma condição necessária para ser narcisista). Comparada com a fração esperada se s mod b
+fosse uniforme (a média, nos candidatos, de "dígitos distintos / b"). O **excesso** é a razão das duas. Por base, só as células sem interruptor.
+
+**Exemplo à mão:** base 8, k = 3, {1, 2, 4}: s = 1 + 8 + 64 = 73 = 0o111; o último dígito, 1, está no multiconjunto: passa; mas os dígitos de 73 são 1, 1, 1: não é
+narcisista. **A conta do mecanismo:** em base 8 com k ≥ 3 ímpar, todo dígito par dá dᵏ ≡ 0 (mod 8) e todo ímpar dᵏ ≡ d (mod 8); então s ≡ soma dos dígitos ímpares
+(mod 8), e um multiconjunto com **um só** dígito ímpar passa sempre.
+
+**A IA-Java relê os erros da IA-Python:** ela pôs a hipótese no nível da conta (as somas no começo do intervalo) e errou por 0,05. **IA-Java (previsão (d)):** o
+excesso do último dígito da base 8 é o maior das 14 bases, em **[1,3; 2,5]**.
+
+**A IA-Python relê os erros da IA-Java:** ela acertou pela letra e não pelo mecanismo (a paridade). **IA-Python (previsão (e)):** o teste vale unidade por unidade:
+a correlação de postos (Spearman) entre o excesso do último dígito e a razão medido/conta, nas 14 bases, fica em **[0,3; 0,9]** (ao acaso, com 14 bases, a
+chance de ρ ≥ 0,3 é de ~15%).
+
+**As duas (previsão (f)):** IGUAIS em Java.
+
+**As duas (previsão (g)):** a conta corrigida (a conta da Parte 60 vezes o excesso do último dígito, célula por célula) leva a razão total sem interruptor, que era
+1,498, a **[0,8; 1,25]**.
