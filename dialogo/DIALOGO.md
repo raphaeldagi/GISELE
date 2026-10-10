@@ -1387,3 +1387,24 @@ fixo; é uma **tendência** com a base, ou três sorteios de uma distribuição 
 
 **IA-Python (a pergunta para a Rodada 41):** O z das bases 5 a 34 contra b: a reta de mínimos quadrados tem inclinação diferente de zero? E a dispersão dos z é a de uma
 normal padrão (variância 1), ou maior (o σ da conta subestima a variância real, porque os palíndromos não são moedas independentes)?
+
+---
+
+## Rodada 41 — tendência ou dispersão (previsões registradas antes do código)
+
+**O teste.** O z = (medido − C)/σ dos primos palíndromos (conta C da rodada 39) nas bases 5 a 40: a reta de mínimos quadrados de z contra b, e o desvio-padrão dos z. As
+bases 35 a 40 são novas.
+
+**O peso medido antes, nos dados passados (as bases 5 a 34, todas):** inclinação **0,034** por base, com erro-padrão **0,027** (t = 1,3: sem tendência clara); desvio-padrão dos
+z **1,27**, não 1: o σ da conta subestima a dispersão (a variância real é ~1,6 vezes a da conta; a regra da Parte 32, palíndromos de uma base não são moedas independentes).
+A reta prevê, no meio das bases novas (b = 37,5), z = **0,54**.
+
+**A IA-Java relê os erros da IA-Python:** ela concluiu um viés a partir de um lote. **IA-Java (previsão (c)):** a dispersão maior que 1 continua: o desvio-padrão dos 6 z novos
+fica em **[0,8; 2,0]**.
+
+**A IA-Python relê os erros da IA-Java:** ela previu sinais por unidade sem a condição de cada unidade. **IA-Python (previsão (d)):** sem tendência além do acaso: a média dos
+6 z novos fica em **[−1,0; 1,0]** (o desvio da média de 6, com dispersão 1,27, é 0,52).
+
+**As duas (previsão (e)):** IGUAIS em Java.
+
+**As duas (previsão (f)):** a inclinação ajustada nas 36 bases (5 a 40) fica em **[−0,01; 0,07]**.
