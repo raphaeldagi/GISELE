@@ -55,7 +55,7 @@ class TesteParte76(unittest.TestCase):
 
     def test_p1722_libm_nas_duas_linguagens(self):
         r = calculos.p1722_libm_nas_duas_linguagens()
-        self.assertEqual(sorted(r), ["09", "14", "48"])
+        self.assertEqual(sorted(r), ["48"])  # a Parte 77 corrigiu a 09 e a 14
         self.assertEqual(r["48"], (["log2"], True, []))
 
 

@@ -39,3 +39,9 @@ classes dentro da rodada (laços de soma simples, `exp_` e `log_`), e o `synthai
 
 **A auditoria.**
 - **(e)** depois das duas, a `p1722` lista só a 48 (só na preparação) (categórica)
+
+**Medido:** (a) rodada 14 IGUAIS ✅; (b) as duas listas de 12 trigramas iguais às da versão com a biblioteca ✅; (c) rodada 09 IGUAIS (4 linhas, 13 números) ✅; (d) 6 dos 13 números mudaram, a maior
+diferença relativa é **1,1·10⁻¹³** ✅; (e) a `p1722` lista só a 48 ✅. **A fronteira da Parte 52 está fechada:** nenhuma rodada depende mais do arredondamento das bibliotecas entre as duas linguagens.
+
+**Uma suposição errada, pega antes de mexer:** eu tinha escrito que o `sum()` compensado do Python era uma segunda fronteira na rodada 09. Lendo o `Rodada09.java`, ele já reproduz a soma
+compensada ("tudo o que o Python soma com sum() é somado aqui com a soma compensada (rodada 5)"). A cópia Python manteve o `sum()`. A previsão (c) não dependia disso.

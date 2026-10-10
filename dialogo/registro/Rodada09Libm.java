@@ -3,27 +3,7 @@
 // compensada (rodada 5); exp e log são os da classe Math. Uso: java Rodada09
 import java.util.*;
 
-public class Rodada09 {
-    // Parte 77: exp e log PRÓPRIOS (cópia dos da Rodada26), exatos nas duas línguas; a versão com Math.exp/Math.log está em dialogo/registro/
-    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
-
-    static double exp_(double x) {
-        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
-        double r = (x - k * LN2_HI) - k * LN2_LO;
-        double p = 1.0;
-        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
-        return Math.scalb(p, (int) k);
-    }
-
-    static double log_(double x) {
-        int e = Math.getExponent(x);
-        double m = Math.scalb(x, -e);
-        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
-        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
-        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
-        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
-    }
-
+public class Rodada09Libm {
     static long x = 909L;
     static final long A = 6364136223846793005L, C = 1442695040888963407L;
 
@@ -83,7 +63,7 @@ public class Rodada09 {
         double m = logw[0];
         for (double v : logw) m = Math.max(m, v);
         double[] e = new double[logw.length];
-        for (int i = 0; i < e.length; i++) e[i] = exp_(logw[i] - m);
+        for (int i = 0; i < e.length; i++) e[i] = Math.exp(logw[i] - m);
         double t = soma(e);
         for (int i = 0; i < e.length; i++) e[i] /= t;
         return e;
@@ -116,8 +96,8 @@ public class Rodada09 {
             }
             double[] wp = new double[4];
             for (int m = 0; m < 4; m++) wp[m] = ws[m] * preds[m];
-            perdaMistura -= log_(soma(wp));
-            for (int m = 0; m < 4; m++) { logw[m] += log_(preds[m]); perda[m] -= log_(preds[m]); }
+            perdaMistura -= Math.log(soma(wp));
+            for (int m = 0; m < 4; m++) { logw[m] += Math.log(preds[m]); perda[m] -= Math.log(preds[m]); }
             for (int m = 0; m < 4; m++) atualizarBOCPD(modelos.get(m), riscos[m], br, r, n);
         }
         StringBuilder a = new StringBuilder("logw ="), b = new StringBuilder("perda ="), c = new StringBuilder("pesos =");
