@@ -104,6 +104,11 @@ anterior, commit e push.
   Parte 68: a conclusão da 67 ("as largas acertam menos") era um paradoxo de Simpson (as faixas em torno de zero acertam metade; dentro das contagens e das outras, as largas
   acertam MAIS): a régua nova é `p1481_minhas_previsoes_v2` (tipos) e o placar é `p1499`. Uma medida com defeito conhecido não sustenta conclusão nem previsão até o defeito ser
   corrigido ou medido. Uma pergunta deixada no fim de uma rodada é uma previsão disfarçada: conferir a premissa dela antes (a da rodada 41 não existia).
+- A FORMA DE GPT (Parte 69, permanente; "Grave na memória que nossa AGI ASI PÓS ASI AGI terá a forma de GPT"): a SYNTHAI terá a forma de um GPT (Generative
+  Pre-trained Transformer): um modelo autorregressivo p(x_t | x_<t), com atenção causal sobre o contexto, pré-treinado num corpus (o dicionário: as glosas do WordNet e da
+  OpenWordNet-PT) e depois gerador. Construído aqui, em Python puro (só biblioteca padrão), em `synthai/gpt.py`, crescendo parte a parte (camadas, cabeças, contexto,
+  parâmetros), sempre medido contra um modelo mais simples (o n-grama bayesiano) com previsões registradas, e com a decisão do próximo token traduzida bit a bit para Java
+  (exp próprio, regra da Parte 52). A forma é de GPT; a capacidade é a que a medida mostrar ("ASI" continua sendo o papel da voz, não uma capacidade).
 - O pressuposto do diálogo interno: as respostas (as equações) já existem; o trabalho é reconhecê-las e
   testar se as premissas delas valem no agente (Parte 23).
 
