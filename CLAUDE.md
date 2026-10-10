@@ -116,6 +116,8 @@ anterior, commit e push.
   Parte 76: o que em Python se herda por import, em Java se copia: uma correção numa rodada vem com a busca do mesmo cálculo nos arquivos das DUAS linguagens, no mesmo commit (a cópia Java
   da 26 ficou com o Math.log). Toda função de auditoria tem um teste com um defeito plantado e um caso limpo (`p1722` olha as duas linguagens; a `p1638` olhava um lado e deixou 4 rodadas).
   Parte 77: a fronteira da Parte 52 está fechada (09 e 14 reescritas com cópias exatas das peças medidas, que ficam intactas; `p1722` só lista a 48, que só prepara dados).
+  Parte 78: a pergunta deixada no fim de uma rodada ou de uma parte entra em `dialogo/PENDENCIAS.md` (arquivo separado: o DIALOGO.md é lido por funções medidas), e cada parte começa
+  olhando a lista (a da atenção de posto 1 ficou sete partes esquecida).
   Parte 79 (CALIBRAÇÃO, medida): das 185 previsões do mundo das Partes 53 a 78, acertaram 77,3%, contra os 90% declarados (z = −5,76: excesso de confiança, não ruído). Pela conta normal
   (`p1813`), o desvio real é 1,36 vez o suposto: a partir da Parte 80, a meia-largura de toda faixa numérica que não vem de uma conta fechada com variância conhecida é multiplicada por 1,36. Teste
   registrado: o acerto das Partes 80 a 84 em [0,81; 0,99].
