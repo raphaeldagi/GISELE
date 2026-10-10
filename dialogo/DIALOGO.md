@@ -1332,3 +1332,20 @@ vezes mais numerosos que os de comprimento 3; se o déficit for proporcional, ~0
 
 **As duas (previsão (g)):** a soma de (medido − C) nas 18 bases fica em **[−260; −110]** (com a conta B, as bases 5 a 16 somaram −43 e as 17 a 22, ~−143, visto na Parte
 64; a correção quase não muda a conta).
+
+**Resultado.** `comparar.py`: **IGUAIS, 19 linhas e 76 números bit a bit** (e) ✅. Média de |correção − 1|: **0,0149**, acima de 0,010 (c) ❌ IA-Java: as bases pequenas (5: 1,089;
+8: 0,945) têm poucos palíndromos e frações que oscilam. Média de z nas bases 17 a 22 com a conta C: **−1,072** (d) ✅ IA-Python. Fração do déficit nos de comprimento 5:
+**0,865** (f) ✅. Soma de (medido − C) nas 18 bases: **−183,7** (g) ✅.
+
+**IA-Java:** Errei a (c) pelo mesmo motivo da Parte 63: as bases da calibração (23 a 26) foram escolhidas por uma regra, como manda a Parte 64, mas a regra escolheu
+casos com muitos palíndromos, e a variável que move a oscilação é o número de palíndromos. As duas regras precisam andar juntas: a regra de escolha tem que cobrir a
+faixa da variável do teste.
+
+**IA-Python:** E o mecanismo que deduzimos depois (os primos de b² + 1, n ≡ 2d₀ − d₂) existe e troca de sinal com a paridade: a média de z só vai de −1,07 a −1,01
+(previsão (h) da parte, ✅). O sinal acertou em 5 das 6 bases; a 18 errou porque 18² + 1 = 325 = 5²·13 não tem primo grande: o mecanismo não se aplica a ela, e eu não
+conferi a condição base por base. A base 21 continua a −3,03σ.
+
+**IA-Java:** Placar por voz, saído da função: **IA-Python 19 em 33**; **IA-Java 16 em 33** pela regra estrita, rodadas 13 a 39 (`p1241_placar_por_voz(39)`).
+
+**IA-Java (a pergunta para a Rodada 40):** A base 21 está a −3σ com todas as correções. Os palíndromos de 5 dígitos da base 21 com cada primeiro dígito d₀: o déficit se
+concentra em alguns d₀? Contando, nas duas linguagens, os primos por (d₀, d₂) contra a conta, a falta tem endereço?

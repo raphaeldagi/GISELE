@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 64 (0x40): o fator do final
 
-> Continuação da [Parte 63](ASI_AGI_parte63_o_peso_do_mecanismo.md). Previsões nos commits `5c9c385` ((a) a (g)) e `e457ef7` ((h)). **Previsões registradas antes de qualquer execução que mostre os números medidos e antes de
+> Continuação da [Parte 63](ASI_AGI_parte63_o_peso_do_mecanismo.md). **Próxima:** [Parte 65 — o que não é divisor](ASI_AGI_parte65_o_que_nao_e_divisor.md) (P1391–P1420). Previsões nos commits `5c9c385` ((a) a (g)) e `e457ef7` ((h)). **Previsões registradas antes de qualquer execução que mostre os números medidos e antes de
 > escrever o resto deste documento.** A Parte 63 achou os primos palíndromos de base 16 a 0,1% da conta e os de base 12 a 10%. Esta parte pergunta se o fator exato
 > do dígito final explica a diferença, se as palavras curtas do inglês têm mais sentidos, e quantos quadrados são palíndromos em hexadecimal.
 
