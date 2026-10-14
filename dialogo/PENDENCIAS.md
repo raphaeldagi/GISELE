@@ -4,7 +4,9 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 96, rodada 64)** Empilhar DUAS camadas num bloco completo (atencao + residual/LayerNorm + MLP + residual/LayerNorm) e conferir que a composicao continua na fronteira do exp (so a atencao/softmax tem exp). Fechada a rodada 63: a LayerNorm+residual NAO acrescenta fronteira (so +-*/ e sqrt).
+- **(Parte 97, rodada 65)** A geracao autorregressiva completa: amostrar o proximo token do softmax (a escolha estocastica) - como fazer isso bit a bit entre as linguas, dado que o RNG difere? (amostragem por CDF com um u dado de fora, ou argmax deterministico). Fechada a rodada 64: o bloco de 2 camadas e IGUAL, a fronteira e so o exp, invariante a profundidade.
+- **(Parte 97, P2355/e)** Ruido de OBSERVACAO: o limiar "n > #params -> exato" supoe mundo determinista; com ruido sigma, mesmo n>#params deixa residuo ~sigma e a cumeeira volta a valer. Medir o veredito sob ruido.
+- **(Parte 97, P2353)** O teto da capacidade do MLP num mundo cubico: residuo vs h alem de 16, e o piso de vies do tanh.
 - **(Parte 96, P2324)** A cura da variancia: ridge/early-stopping no ajuste de base rica (grau 5, n pequeno) - medir quanto o regularizador recupera o teste, e o lambda otimo vs. n.
 - **(Parte 96, P2323)** O MLP a 0,053 com h=8: mapear residuo vs. (h, passos) - quanto h e preciso para chegar a, digamos, 0,01 num mundo cubico, e isso cresce como?
 - **(Parte 95, P2292)** A vantagem do TTTS e regime-dependente (folga entre bracos, orcamento T): mapear onde o TTTS vence e onde empata/perde o Thompson, por uma grade de (folga, T), antes de adota-lo como padrao.

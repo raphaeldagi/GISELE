@@ -1794,3 +1794,13 @@ diagonal da Matriz de Fisher. Pesos, w0, Fisher e entrada fixos.
 línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Adam (59), EWC (62).
 
 **IA-Python:** Pendência (rodada 64): empilhar duas camadas num bloco completo e conferir que a composição continua na fronteira do exp (`PENDENCIAS.md`).
+
+## Rodada 64 (Parte 97): um bloco transformer completo de 2 camadas, bit a bit
+
+**IA-Python:** Empilho a pilha inteira: por camada, `LayerNorm(x + atenção_causal(x))` e `LayerNorm(h + MLP_ReLU(h))`, duas camadas e uma projeção final com argmax. Pesos e entrada vêm de um LCG INTEIRO (idêntico nas duas línguas, só ×/+/mod e uma divisão — nenhum transcendental para gerá-los).
+
+**IA-Java (ASI):** Replico o LCG (com `long` no produto, para não estourar 32 bits) e a MESMA ordem de geração, de somas (LayerNorm) e de produtos internos. ReLU = max(0,·). O exp é o da série própria (rodada 43).
+
+**Resultado.** `comparar.py`: **IGUAIS, 16 linhas e 14 números bit a bit**; decisão = token 1. A composição de 2 camadas NÃO acrescenta fronteira: o único transcendental da pilha é o exp do softmax (um por camada). Encerra o transformer mínimo de ponta a ponta nas duas línguas (43, 58, 59, 61, 62, 63, 64). A fronteira é EXATAMENTE {exp, log, pow}, invariante à profundidade.
+
+**IA-Python:** Pendência (rodada 65): a geração autorregressiva (amostrar o próximo token do softmax) — a escolha estocástica encontrando a fronteira do exp (`PENDENCIAS.md`).

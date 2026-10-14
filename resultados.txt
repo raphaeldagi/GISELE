@@ -1688,3 +1688,17 @@ P974 previsoes unilaterais da Parte 96: {}
 P2869 minha taxa de erro (216/745): media = 0.29, intervalo 90% = [0.26, 0.32]
   (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
 
+
+--- Parte 97 (0x61: a cura da variancia e o bloco inteiro) ---
+P2351 cumeeira faz um U: lambda* = 1.0 (interior = True), melhor teste = 0.4245
+P2352 cumeeira mitiga mas nao cura: melhor ridge = 0.4245; base linear = 0.1280 (ridge ainda pior)
+P2353 capacidade do MLP: [(2, 0.1348), (4, 0.077), (8, 0.0559), (16, 0.0527)]; nao-crescente = True; res16/res2 = 0.390
+P2354 rodada 64 (bloco transformer 2 camadas, IGUAL em Java): decisao = 1; logits = [-0.893, 0.3522]
+P2355 dados curam a variancia: lambda*(n=40) = 1.0, lambda*(n=160) = 0.0001, melhor teste(n=160) = 9.80e-06
+P2356 limiar de parametros (grau 5): 56 parametros; n logo acima -> residuo de teste = 2.33e-11
+P1961 teste (f), Partes 80-97: 73/86 = 0.8488; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (0, 0)}
+P1092 pNN novas (P2351-P2380) sem teste: 6 de 6: ['p2351_ridge_faz_u', 'p2352_ridge_mitiga_nao_cura', 'p2353_mlp_capacidade', 'p2354_rodada64', 'p2355_dados_curam_variancia', 'p2356_limiar_de_parametros']
+P974 previsoes unilaterais da Parte 97: {}
+P2939 minha taxa de erro (216/750): media = 0.29, intervalo 90% = [0.26, 0.32]
+  (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
+

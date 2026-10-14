@@ -9588,6 +9588,8 @@ VEREDITOS_P2799 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P2799, TESTES_P2799 = 216, 740
 VEREDITOS_P2869 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P2869, TESTES_P2869 = 216, 745
+VEREDITOS_P2939 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅"
+ERROS_P2939, TESTES_P2939 = 217, 750
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12128,12 +12130,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12141,7 +12143,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\(g\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96):  # nas Partes 94, 95 e 96 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97):  # nas Partes 94-97 a letra da calibracao e a (f)
             txt = re.sub(r"\(f\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13077,6 +13079,77 @@ def p2326_menor_grau_exato(kappa=0.1, graus=(1, 2, 3)):
         if menor is None and r < 1e-8:
             menor = g
     return menor, res
+
+
+def p2351_ridge_faz_u(grau=5, n=40):
+    """A cumeeira faz uma curva em U no teste (P2351; Parte 97): varrendo lambda no ajuste de uma base rica (grau 5) com poucos dados,
+    o melhor lambda* e INTERIOR (nem 0, nem o maior testado): lambda=0 superajusta, lambda grande subajusta. Devolve (lambda*, melhor_teste, interior?)."""
+    from synthai.mundo import ridge_sweep
+    lams = (0.0, 1e-4, 1e-2, 1e-1, 1.0, 10.0)
+    linha, (ls, rt) = ridge_sweep(grau=grau, n=n, lams=lams)
+    interior = (ls != lams[0]) and (ls != lams[-1])
+    return ls, rt, interior
+
+
+def p2352_ridge_mitiga_nao_cura(grau=5, n=40):
+    """A cumeeira mitiga mas nao cura (P2352; Parte 97): o melhor residuo de teste (lambda*) ainda e PIOR que a base linear simples
+    (~0,12) - num regime com poucos dados, regularizar atenua a variancia mas nao substitui dados. Devolve (melhor_teste, residuo_linear)."""
+    from synthai.mundo import ridge_sweep, monomios, ajustar_features, residuo_features, gerar_transicoes_nl
+    _, (_, rt) = ridge_sweep(grau=grau, n=n, lams=(0.0, 1e-4, 1e-2, 1e-1, 1.0, 10.0))
+    Xtr, Utr, Ytr = gerar_transicoes_nl(0, n, 0.1)
+    Xte, Ute, Yte = gerar_transicoes_nl(777, 400, 0.1)
+    f1 = monomios(1)
+    rlin = residuo_features(ajustar_features(Xtr, Utr, Ytr, f1), Xte, Ute, Yte, f1)
+    return rt, rlin
+
+
+def p2353_mlp_capacidade():
+    """A capacidade do MLP (P2353; Parte 97): o residuo de teste e nao-crescente na largura h (retornos decrescentes), e o de h=16 e
+    menos da metade do de h=2. Devolve (lista (h, res), nao_crescente?, razao res16/res2)."""
+    from synthai.mundo import mlp_capacidade
+    cap = mlp_capacidade(hs=(2, 4, 8, 16))
+    res = [r for _, r in cap]
+    nao_cresce = all(res[i + 1] <= res[i] + 1e-9 for i in range(len(res) - 1))
+    return cap, nao_cresce, res[-1] / res[0]
+
+
+def _rodada64():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada64", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada64.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2354_rodada64():
+    """Rodada 64 (P2354; Parte 97): um bloco transformer completo de 2 camadas (atencao + residual/LayerNorm + MLP-ReLU + residual/LayerNorm),
+    IGUAL em Java bit a bit. Devolve (decisao, logits). O unico transcendental da pilha e o exp do softmax (a fronteira da Parte 52); o resto e +-*/ e sqrt."""
+    r = _rodada64()
+    _, logits, arg = r.rodar()
+    return arg, logits
+
+
+def p2355_dados_curam_variancia():
+    """Mais dados curam a variancia (P2355; Parte 97): o lambda* da base grau-5 cai quando n cresce (menos regularizacao precisa), e quando
+    n > numero de parametros a base rica recupera o EXATO. Devolve (lambda*(n=40), lambda*(n=160), melhor_teste(n=160))."""
+    from synthai.mundo import ridge_sweep
+    lams = (1e-4, 1e-2, 1e-1, 1.0, 10.0)
+    _, (l40, _) = ridge_sweep(grau=5, n=40, lams=lams)
+    _, (l160, r160) = ridge_sweep(grau=5, n=160, lams=lams)
+    return l40, l160, r160
+
+
+def p2356_limiar_de_parametros(grau=5):
+    """O limiar de parametros (P2356; Parte 97): a base de grau 5 tem C(grau+3,3) parametros; abaixo desse n ela e subdeterminada (overfit),
+    acima dela recupera o exato. Devolve (numero de parametros, residuo de teste com n logo ACIMA do limiar). n > n_params -> exato."""
+    from synthai.mundo import monomios, ajustar_features, residuo_features, gerar_transicoes_nl
+    f = monomios(grau)
+    n_params = f.m
+    n = n_params + 4  # logo acima do limiar
+    Xtr, Utr, Ytr = gerar_transicoes_nl(0, n, 0.1)
+    Xte, Ute, Yte = gerar_transicoes_nl(777, 400, 0.1)
+    return n_params, residuo_features(ajustar_features(Xtr, Utr, Ytr, f), Xte, Ute, Yte, f)
 
 
 def p1578_autovalores_da_atencao():
@@ -14092,13 +14165,35 @@ def _parte_96():
     print(f"P2325 rodada 63 (residual + LayerNorm, IGUAL em Java, sem transcendental): saida = {[round(x, 4) for x in out]}")
     menor, res = p2326_menor_grau_exato()
     print(f"P2326 menor grau que recupera o exato: {menor} (residuos por grau: {{{', '.join(f'{g}: {rr:.5f}' for g, rr in res.items())}}})")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96))
     print(f"P1961 teste (f), Partes 80-96: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2321, 2350)
     print(f"P1092 pNN novas (P2321-P2350) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 96: {p974_previsoes_sem_largura(range(96, 97))}")
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P2869, testes=TESTES_P2869)
     print(f"P2869 minha taxa de erro ({ERROS_P2869}/{TESTES_P2869}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+def _parte_97():
+    print("--- Parte 97 (0x61: a cura da variancia e o bloco inteiro) ---")
+    ls, rt, interior = p2351_ridge_faz_u()
+    print(f"P2351 cumeeira faz um U: lambda* = {ls} (interior = {interior}), melhor teste = {rt:.4f}")
+    best, rlin = p2352_ridge_mitiga_nao_cura()
+    print(f"P2352 cumeeira mitiga mas nao cura: melhor ridge = {best:.4f}; base linear = {rlin:.4f} (ridge ainda pior)")
+    cap, nao_cresce, razao = p2353_mlp_capacidade()
+    print(f"P2353 capacidade do MLP: {[(h, round(r, 4)) for h, r in cap]}; nao-crescente = {nao_cresce}; res16/res2 = {razao:.3f}")
+    arg, logits = p2354_rodada64()
+    print(f"P2354 rodada 64 (bloco transformer 2 camadas, IGUAL em Java): decisao = {arg}; logits = {[round(x, 4) for x in logits]}")
+    l40, l160, r160 = p2355_dados_curam_variancia()
+    print(f"P2355 dados curam a variancia: lambda*(n=40) = {l40}, lambda*(n=160) = {l160}, melhor teste(n=160) = {r160:.2e}")
+    npar, rlim = p2356_limiar_de_parametros()
+    print(f"P2356 limiar de parametros (grau 5): {npar} parametros; n logo acima -> residuo de teste = {rlim:.2e}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-97: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2351, 2380)
+    print(f"P1092 pNN novas (P2351-P2380) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 97: {p974_previsoes_sem_largura(range(97, 98))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P2939, testes=TESTES_P2939)
+    print(f"P2939 minha taxa de erro ({ERROS_P2939}/{TESTES_P2939}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -14136,7 +14231,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97}
 
 
 if __name__ == "__main__":
