@@ -109,3 +109,101 @@ def treinar_continuo(tarefas=20, d_in=10, d_oculta=20, amostras=40, passos=50, t
         if t == tarefas - 1:
             medir(X, "fim_")
     return medidas
+
+
+# ---- Parte 89: o substrato pulsado que aprende (STDP com competicao sinaptica) ----
+
+def stdp_integral(a_mais=0.1, a_menos=0.12, tau_mais=20.0, tau_menos=20.0):
+    """A integral da janela STDP: A+*tau+ - A-*tau- (a deriva esperada por par pre-pos, em taxas independentes). Forma fechada (Kempter/Gerstner/van Hemmen 1999)."""
+    return a_mais * tau_mais - a_menos * tau_menos
+
+
+def competicao_sinaptica(n_corr=10, n_ruido=40, ms=5000, dt=1.0, taxa_hz=20.0, w0=0.5, wmax=1.0,
+                         a_mais=0.008, a_menos=0.0088, tau=20.0, limiar=1.0, tau_m=20.0, semente=89):
+    """Um neuronio LIF com n_corr sinapses CORRELACIONADAS (disparam junto com um sinal comum) e n_ruido sinapses INDEPENDENTES (Poisson), com STDP de pares e
+    limites [0, wmax], depressao dominante (A-*tau- > A+*tau+). Resultado classico (Song-Miller-Abbott 2000): as correlacionadas vencem, as independentes decaem.
+    Devolve (peso medio final correlacionadas, peso medio final independentes). So biblioteca padrao."""
+    import math
+    import random
+    rng = random.Random(semente)
+    n = n_corr + n_ruido
+    w = [w0] * n
+    u = 0.0
+    beta = math.exp(-dt / tau_m)
+    p = taxa_hz * dt / 1000.0  # prob. de disparo por passo
+    ult_pre = [-1e9] * n       # ultimo disparo pre de cada sinapse
+    ult_pos = -1e9             # ultimo disparo pos
+    passos = int(ms / dt)
+    for k in range(passos):
+        t = k * dt
+        sinal = rng.random() < p   # o sinal comum das correlacionadas
+        pre = []
+        for i in range(n):
+            if i < n_corr:
+                disparou = sinal  # correlacionadas seguem o sinal comum
+            else:
+                disparou = rng.random() < p
+            if disparou:
+                pre.append(i)
+                ult_pre[i] = t
+        # integra as entradas ponderadas
+        entrada = sum(w[i] for i in pre)
+        u = beta * u + entrada
+        # STDP pre->pos (depressao: pre chega, olha o ultimo pos; se pos foi antes, Dt<0 deprime)
+        for i in pre:
+            dt_pp = ult_pos - t  # <= 0
+            if ult_pos > -1e8:
+                w[i] = max(0.0, w[i] - a_menos * math.exp(dt_pp / tau))
+        disparo_pos = u >= limiar
+        if disparo_pos:
+            ult_pos = t
+            u = 0.0
+            # STDP pos (potenciacao: para cada pre recente, Dt = t - ult_pre > 0 potencia)
+            for i in range(n):
+                d = t - ult_pre[i]
+                if 0 <= d < 5 * tau:
+                    w[i] = min(wmax, w[i] + a_mais * math.exp(-d / tau))
+    mc = sum(w[:n_corr]) / n_corr
+    mr = sum(w[n_corr:]) / n_ruido
+    return mc, mr
+
+
+def stdp_timing_controlado(dt_par=5.0, pares=200, w0=0.5, a_mais=0.01, a_menos=0.011, tau=20.0):
+    """A propriedade definidora da STDP (robusta, independente de regime): uma sinapse cujo pre precede o pos (dt=+dt_par) POTENCIA; cujo pre segue o pos
+    (dt=-dt_par) DEPRIME. Aplica `pares` pares com cada temporizacao e devolve (peso final 'pre antes', peso final 'pre depois'). Confere o sinal da janela."""
+    from synthai.pulsado import stdp_delta
+    w_antes = w0
+    w_depois = w0
+    for _ in range(pares):
+        w_antes += stdp_delta(dt_par, a_mais, a_menos, tau, tau)    # dt>0: potencia
+        w_depois += stdp_delta(-dt_par, a_mais, a_menos, tau, tau)  # dt<0: deprime
+    return w_antes, w_depois
+
+
+def stdp_deriva_taxas(r_pre=20.0, r_pos=20.0, ms=20000, dt=1.0, a_mais=0.1, a_menos=0.12, tau=20.0, semente=89):
+    """A deriva de um peso sob pre e pos de Poisson INDEPENDENTES, a taxas r_pre e r_pos (Hz). A conta (Kempter et al.): a deriva por par e proporcional a
+    A+*tau+ - A-*tau-, entao negativa quando a depressao domina. Devolve (soma de Delta w simulada, sinal da integral). So biblioteca padrao."""
+    import math
+    import random
+    rng = random.Random(semente)
+    p_pre = r_pre * dt / 1000.0
+    p_pos = r_pos * dt / 1000.0
+    pre_spikes = []
+    pos_spikes = []
+    passos = int(ms / dt)
+    for k in range(passos):
+        t = k * dt
+        if rng.random() < p_pre:
+            pre_spikes.append(t)
+        if rng.random() < p_pos:
+            pos_spikes.append(t)
+    # soma dos Delta w de todos os pares dentro de +-5 tau
+    total = 0.0
+    j0 = 0
+    for tpos in pos_spikes:
+        for tpre in pre_spikes:
+            d = tpos - tpre  # dt = t_pos - t_pre; d>0 => pre antes => potencia
+            if abs(d) < 5 * tau:
+                total += a_mais * math.exp(-d / tau) if d > 0 else -a_menos * math.exp(d / tau)
+    integral = a_mais * tau - a_menos * tau
+    return total, (1 if integral > 0 else -1 if integral < 0 else 0)
