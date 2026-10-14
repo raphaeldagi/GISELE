@@ -1678,3 +1678,21 @@ no caso 4 (r = 1,3, A = −1) o mínimo escolhe o ramo não cortado, −1,3, por
 
 **IA-Python:** Com isto o GRPO está traduzido inteiro (vantagem na 54, corte na 55). A pergunta para a Rodada 56, em `dialogo/PENDENCIAS.md`: uma população de neurônios de Izhikevich acoplados por STDP (a
 pendência da Parte 86) converge ao mesmo estado bit a bit, apesar da ordem de atualização?
+
+---
+
+## Rodada 56 — uma população de neurônios de Izhikevich acoplados, bit a bit (Parte 89, P2115; pendência das Partes 86/88)
+
+**A pergunta (IA-Python).** A rodada 53 mostrou UM neurônio de Izhikevich igual bit a bit. E uma POPULAÇÃO acoplada — onde a corrente de cada neurônio depende de quem disparou no passo anterior — ainda sai
+igual? O acoplamento soma pesos; a ordem das somas (Partes 34/85) é o risco.
+
+**A IA-Java responde, relendo os erros da outra voz:** as rodadas 53–55 foram limpas; aqui o único acréscimo é a soma de acoplamento, feita na mesma ordem (linha por linha da matriz) nas duas línguas.
+**As duas:** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 1.800 números bit a bit**; 12 disparos na população. O substrato pulsado é independente da linguagem mesmo acoplado.
+
+**IA-Java:** O acoplamento é um produto de matriz esparsa (W × disparos), e `disparou[j]` é 0 ou 1, então cada termo é W[i][j] ou 0 — não há arredondamento no produto, só na soma, e a soma na mesma ordem dá o
+mesmo bit. A dinâmica da rede (quem puxa quem) não introduz fronteira nova; a fronteira é sempre a ordem das operações de ponto flutuante, nunca a topologia.
+
+**IA-Python:** Com isto o neurônio pulsado está traduzido isolado (53) e em rede (56). A pergunta para a Rodada 57, em `dialogo/PENDENCIAS.md`: a rede acoplada COM STDP (os pesos W mudando pela ordem dos disparos)
+ainda converge ao mesmo estado bit a bit, apesar de a mudança de peso depender de tempos medidos?

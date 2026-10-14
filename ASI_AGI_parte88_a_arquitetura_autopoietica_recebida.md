@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 88 (0x58): a arquitetura autopoiética recebida
 
-> Continuação da [Parte 87](ASI_AGI_parte87_compressao_plasticidade_grpo.md). Pedido do usuário: um relatório "Arquitetura Cognitiva Autopoiética Recursiva" com um código (`asi_autopoietic_core.py`: LFI1
+> Continuação da [Parte 87](ASI_AGI_parte87_compressao_plasticidade_grpo.md). **Próxima:** [Parte 89 — o substrato que aprende](ASI_AGI_parte89_o_substrato_que_aprende.md). Pedido do usuário: um relatório "Arquitetura Cognitiva Autopoiética Recursiva" com um código (`asi_autopoietic_core.py`: LFI1
 > paraconsistente, cosseno duplicado, dez camadas verso/reverso, pilha adversarial de 7, delírio controlado, metacognição e probabilidade aninhadas). É o QUARTO relatório desta família (as Partes 83, 85 e
 > este pedido repetem cosseno duplicado, sete camadas adversariais, delírio, lógica dual). Parte de auditoria: o código é dado, não executado; reimplemento e meço só o que é NOVO em relação às Partes 83/85/87,
 > e aponto o que já foi medido.
