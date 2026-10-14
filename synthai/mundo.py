@@ -402,3 +402,41 @@ def mlp_capacidade(hs=(2, 4, 8, 16), kappa=0.1, passos=8000, lr=0.02, semente=97
         m = MLP1(h=h, semente=semente).treinar(Xtr, Utr, Ytr, passos=passos, lr=lr, semente=semente)
         out.append((h, m.residuo(Xte, Ute, Yte)))
     return out
+
+
+# --- Parte 98: ruído de observação (o limiar "n>#params -> exato" sob ruído) ---
+
+def gerar_transicoes_nl_ruido(semente, n, kappa=0.1, sigma=0.1):
+    """Como gerar_transicoes_nl, mas com ruído de observação gaussiano N(0, sigma) somado a cada coordenada da saída Y
+    (o mundo é determinista; o que tem ruído é a MEDIÇÃO). Devolve (X, U, Y_observado)."""
+    rng = random.Random(semente)
+    X, U, Y = [], [], []
+    for _ in range(n):
+        s = (rng.uniform(-2, 2), rng.uniform(-2, 2))
+        a = rng.uniform(-1, 1)
+        y = transicao_nl(s, a, kappa)
+        X.append(s)
+        U.append(a)
+        Y.append((y[0] + rng.gauss(0, sigma), y[1] + rng.gauss(0, sigma)))
+    return X, U, Y
+
+
+def residuo_vs_limpo(thetas, feat, semente_te=777, n_te=2000, kappa=0.1):
+    """RMS do erro do modelo contra as saídas LIMPAS (a dinâmica verdadeira), num conjunto de teste sem ruído. Isola o erro de
+    ESTIMAÇÃO dos pesos (a variância propagada do ruído de treino), separado do piso de ruído do próprio teste."""
+    Xte, Ute, Yte = gerar_transicoes_nl(semente_te, n_te, kappa)  # teste LIMPO
+    return residuo_features(thetas, Xte, Ute, Yte, feat)
+
+
+def ruido_floor(sigma=0.1, n=400, kappa=0.1, grau=3, semente_tr=0):
+    """Ajusta a base cúbica CERTA (não enviesada) em dados com ruído sigma e mede o erro de estimação contra o teste limpo.
+    Devolve (residuo medido vs limpo, a conta sigma*sqrt(p/n)) com p = número de parâmetros da base. A conta é a ordem de grandeza
+    do erro de OLS sob ruído: a variância do estimador propaga sigma^2 * p / n por coordenada."""
+    import math
+    Xtr, Utr, Ytr = gerar_transicoes_nl_ruido(semente_tr, n, kappa, sigma)
+    f = monomios(grau)
+    th = ajustar_features(Xtr, Utr, Ytr, f)
+    medido = residuo_vs_limpo(th, f)
+    p = f.m
+    conta = sigma * math.sqrt(p / n)
+    return medido, conta

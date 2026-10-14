@@ -166,3 +166,7 @@ seguinte (rodada 65): a geração autorregressiva completa (amostrar o próximo 
 - WordNet 3.0, Princeton (`dados/`); OpenWordNet-PT (CC BY 4.0). Carl Jung, base psicológica (Parte 6).
 - Regressão de cumeeira (ridge / Tikhonov): A. Tikhonov; Hoerl & Kennard (1970). Viés–variância e o papel de n.
 - Transformer (atenção + residual + LayerNorm + MLP): Vaswani et al. (2017); ReLU: Nair & Hinton (2010).
+
+---
+
+**Continua na [Parte 98](ASI_AGI_parte98_o_ruido_de_observacao.md): o ruído de observação — o "n>#params → exato" sob ruído, o piso ∝ σ, e a geração autorregressiva bit a bit.**
