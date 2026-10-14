@@ -151,3 +151,7 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅. Parte 92: **4 testes, 0 erros**. Acum
 - D. Kingma e J. Ba, "Adam: A Method for Stochastic Optimization" (2015): o otimizador e a correção de viés b₁ᵗ, b₂ᵗ
 - IEEE 754-2019, §9.2: funções recomendadas (pow) não têm arredondamento correto obrigatório
 - D. Goldberg, "What Every Computer Scientist Should Know About Floating-Point Arithmetic" (1991)
+
+---
+
+**Continua na [Parte 93](ASI_AGI_parte93_o_modelo_de_mundo_que_planeja.md): o modelo de mundo que planeja (MPC num modelo aprendido) — e a recusa da auto-operação autônoma.**

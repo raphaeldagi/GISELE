@@ -1,0 +1,1467 @@
+{
+  "formato": 1,
+  "projeto": "SYNTHAI consolidado",
+  "natureza": "protótipo em simuladores e laboratórios separados",
+  "arquivos": {
+    "AUTOPOIETICO_RESULTADO.json": {
+      "bytes": 203651,
+      "sha256": "15244d53456093a6325e50bf277acc1a129b098b2e299ebc144ca32dd87884e4"
+    },
+    "COMPRESSAO_CONTINUA_RESULTADO.json": {
+      "bytes": 847543,
+      "sha256": "0298584537ffeec8a41b6471ad1062e9d8518a2eb0383d8fe6119a10b91507e0"
+    },
+    "COMPRESSAO_RESULTADO.json": {
+      "bytes": 18257,
+      "sha256": "fe3d980a6c8fbb7bd2ac92a11e69111a3ba1a97e6b9a8c0d8d76b712462c16a5"
+    },
+    "CONTINUA_RESULTADO.json": {
+      "bytes": 39497,
+      "sha256": "6c6124c18ea82cbfc283f864509979eaf2738c75ed08a5c9284ee436249d980c"
+    },
+    "DOMESTICO_RESULTADO.json": {
+      "bytes": 5233,
+      "sha256": "beb5a3145d155af9b166a196c842e62cc2224afd241cd6b1e76f07627c1acb6f"
+    },
+    "ESTRESSE_AUTOPOIETICO_LIMITE.json": {
+      "bytes": 18096698,
+      "sha256": "87d2546483774b82a4c382aa0582faf231e5cad799b91ae5b2978fbfc19abab4"
+    },
+    "ESTRESSE_AUTOPOIETICO_RESULTADO.json": {
+      "bytes": 5839386,
+      "sha256": "f1902e91342cce6505395cae8acbc42e3614c892c09ea1816482743b24630518"
+    },
+    "GRADIENTES_INFERENCIAS_RESULTADO.json": {
+      "bytes": 226861,
+      "sha256": "556ceb802018a22a757b2dc9d0d446557cfdee1a0463e65181605c3d8e26b394"
+    },
+    "INOVACAO_RESULTADO.json": {
+      "bytes": 371363,
+      "sha256": "4fd1ea52196eeb7aef7eda4ff7c2bf6a4b85dd95c99c743e5e6b121d793a061a"
+    },
+    "META_ALGEBRA_GEOMETRIA_RESULTADO.json": {
+      "bytes": 80043,
+      "sha256": "88e7c0d0473469f7d93dcd2b78b5ca25b6304e4c335a0ce82a337c90bc2c3a9f"
+    },
+    "MODELO_MUNDO_RESULTADO.json": {
+      "bytes": 28840,
+      "sha256": "0ad2cb4c7880b80aee16099da84756900943351886ae2a1ecc23e4a9dedaf926"
+    },
+    "OTIMIZACAO_RESULTADO.json": {
+      "bytes": 74024,
+      "sha256": "756277b3962e8b69324de160390f2f217d44dcd2aa0108f1b51fc233627cbe9c"
+    },
+    "POLITICA_INOVACAO.json": {
+      "bytes": 457,
+      "sha256": "3905d0958c5a71e7bfa4edcb9172aacb37cb1e4ec186e0ad57379853414e7039"
+    },
+    "README.md": {
+      "bytes": 11825,
+      "sha256": "6e17626dfdf351643dbac25032e1b04d0549bcd6d140ce270a3ae5f01c766659"
+    },
+    "RECURSIVA_RESULTADO.json": {
+      "bytes": 121306,
+      "sha256": "8be30e12cb320e4b98689f18ff53138fa89181783d35797c47ae3f60b8b790ad"
+    },
+    "RL_GRUPOS_RESULTADO.json": {
+      "bytes": 9342,
+      "sha256": "8d79dd51345213aa0df2ac93e18a46e346af10db697ed36bcdfd080b360d44e4"
+    },
+    "SETE_CAMADAS_RESULTADO.json": {
+      "bytes": 19816,
+      "sha256": "c7cbfdfea9f339565fbe80c18bcbb22f9f7fa3429df60a39d1aa20ed06a92547"
+    },
+    "TRANSFERENCIA_RESULTADO.json": {
+      "bytes": 303062,
+      "sha256": "a80189255fa17016f7fb0d62ac9ba6b8e36e1fff03edf732e410751f642c7251"
+    },
+    "VALIDACAO.log": {
+      "bytes": 54156,
+      "sha256": "d657c26b29bdfc334905cd82df98c6a2a02574fe52de5123c5bf2e15999692fb"
+    },
+    "VERIFICACAO.json": {
+      "bytes": 1263,
+      "sha256": "7d12d158d87495336d64f1d55a189a6fe79a872eab6045dcadda28955b755046"
+    },
+    "aprendizagem_continua.py": {
+      "bytes": 18416,
+      "sha256": "acc7f4d0010ec9dd986e4efe8baa50675fd11db88903992e1b5749f98dabb005"
+    },
+    "asi_autopoietic_core.py": {
+      "bytes": 8999,
+      "sha256": "f220c8fed5ab11feb52883dfd065cc64b6750acf3890e7ea0e049e8c20bde75f"
+    },
+    "compressao_continua.py": {
+      "bytes": 14842,
+      "sha256": "a15f85598ad80453ca4118d9e8ea0031003e33f86e4f535448d8cc5d593e79b2"
+    },
+    "compressao_ml.py": {
+      "bytes": 18473,
+      "sha256": "69f60b07061d5755fd47b8b39ec0a37b294cb17f45d47d7ee44269ef4d233aea"
+    },
+    "documentacao/analise.md": {
+      "bytes": 11907,
+      "sha256": "895d9557f60391b2b04d5e2b8d84512c44c395b35291c9c103e19a352766123d"
+    },
+    "documentacao/auditoria_arquitetura_domestica.md": {
+      "bytes": 10432,
+      "sha256": "9a5f621f9b824756acb1a53d08e4aff68f56c8b010d6a9b6899c5485922ac934"
+    },
+    "documentacao/auditoria_otimizacao.md": {
+      "bytes": 11781,
+      "sha256": "0835c70a876301faf0f3cf9f6c269f001f87230f3533cd37dd02a5427e3c01a5"
+    },
+    "documentacao/auditoria_roteiro_meta.md": {
+      "bytes": 3779,
+      "sha256": "8771146ab6d644633ef2bfa92f521e7e1a5a121be6f4b0f588124a1c7ca73ecd"
+    },
+    "documentacao/autopoietico_core.md": {
+      "bytes": 4986,
+      "sha256": "ce5da5b83faee3747e69f89f6b0a5c54705cb727d9a1ebffcb7d30743a40ce7d"
+    },
+    "documentacao/compressao_continua.md": {
+      "bytes": 9013,
+      "sha256": "b436a9bac1ff93376b84ce7d1f37a141c0ac893cf3080e3963f5410525b4acd9"
+    },
+    "documentacao/contrato_abstencao.md": {
+      "bytes": 4257,
+      "sha256": "f1746e539b18bd65fd16fc97da6be4eb1a0ea3a1efb5a54bd950287725df384a"
+    },
+    "documentacao/contrato_aleatoriedade.md": {
+      "bytes": 7174,
+      "sha256": "61c2a9f4f5b9cef3a470c43c7c0ab52cc2ed88747e3cde66a3106cf9c8cba9cf"
+    },
+    "documentacao/contrato_avaliador.md": {
+      "bytes": 5974,
+      "sha256": "4237ad9ef819e1ef84aa2f4fe124bc8a4101a315784c4d46fc55314c4eae1aa0"
+    },
+    "documentacao/estresse_autopoietico.md": {
+      "bytes": 5038,
+      "sha256": "da9ba79b5ef19ac4be8f48ad09f0613c234ce77df3b9a2acb70a86d9f78c5018"
+    },
+    "documentacao/gradientes_inferencias.md": {
+      "bytes": 2492,
+      "sha256": "0b83bef6b914539d60ce430f8d22059ca41fd3bb367ee06baf7e8db5e8fbec20"
+    },
+    "documentacao/inovacao_guiada.md": {
+      "bytes": 9810,
+      "sha256": "9d0d22c9c654ffefac3b70ab7fc1bc8a3d1906c75f0cc52d5f0183c11d6f5926"
+    },
+    "documentacao/kit_domestico.md": {
+      "bytes": 5170,
+      "sha256": "b389a00fabec88221449c9c75a5b391b32b8c2ead7d7d68b6a368ecdddcfd539"
+    },
+    "documentacao/meta_algebra_geometria.md": {
+      "bytes": 3822,
+      "sha256": "5f4c350e041a0e91676dc8bf5645c129afd4fbb7ca16269933d7bc6b82787b8d"
+    },
+    "documentacao/modelo_mundo.md": {
+      "bytes": 3487,
+      "sha256": "e0b02774c70d6345e76a1eb50c4cc3df52e527a4905a1eba0ea22cc389aea1c9"
+    },
+    "documentacao/otimizacao_holistica.md": {
+      "bytes": 11988,
+      "sha256": "3c1cd3f232efba1b28291ed6d9891c21c82d8fbd9056bf79d3d28b80c136dc9a"
+    },
+    "documentacao/recursiva_paraconsistente.md": {
+      "bytes": 9154,
+      "sha256": "ed30de320451490c424bdd66dc130938942c4445be3b0c6997ee010940146f3e"
+    },
+    "documentacao/sete_camadas.md": {
+      "bytes": 5074,
+      "sha256": "a81ff297be131e9f1f0537d75cb07be75210c303c73acf7263ecbe431866f60e"
+    },
+    "documentacao/trabalho_continuo.md": {
+      "bytes": 3572,
+      "sha256": "04c8078779f83737cfd4960487cde506f7f4cee0fa83ddedfbbffb6de6584ba1"
+    },
+    "documentacao/transferencia_metacognitiva.md": {
+      "bytes": 8647,
+      "sha256": "0ff56bffcbeb3f7b40f06b39c73f888fba8ff82d24354f48776faf708f7d7290"
+    },
+    "domestico.py": {
+      "bytes": 16370,
+      "sha256": "8e65d211a4b416786f28e9fce565fd7c73c730a825dc57e3ed1bd4931afdca4c"
+    },
+    "estresse_autopoietico.py": {
+      "bytes": 8642,
+      "sha256": "621ef9c1046317d0274ac07d37d0fd92ec45cd07d86f93a1a5a6657b05996856"
+    },
+    "fontes/ASI_AGI_parte10_rumo_a_agi.md": {
+      "bytes": 14983,
+      "sha256": "7241fe16ee51a9549a5ade28935bb1d0a5b9d0f80242d4ff19ec475ded02dc5f"
+    },
+    "fontes/ASI_AGI_parte11_tivemos_avanco.md": {
+      "bytes": 13759,
+      "sha256": "4db06e79e1ab60e2b3a0a405dd551c6d7ccd0e06ccfb4d3481af5126226f7684"
+    },
+    "fontes/ASI_AGI_parte12_funcao_auxiliar.md": {
+      "bytes": 12332,
+      "sha256": "1393b4682a60686feabf3b0a81f24228bc1ad6e8daef268f88fdd792d86719f1"
+    },
+    "fontes/ASI_AGI_parte13_transferencia.md": {
+      "bytes": 11633,
+      "sha256": "9842cc9f23465433d571cc92a2665cd42064d097aed9850ac401dd2739fc3ae4"
+    },
+    "fontes/ASI_AGI_parte14_ultimo_passo.md": {
+      "bytes": 11240,
+      "sha256": "7b2d1b7b94d8a396adb3a33a1037d2051a2e633b9f20170aa10d565305b7e7f4"
+    },
+    "fontes/ASI_AGI_parte15_synthai.md": {
+      "bytes": 11346,
+      "sha256": "d0e779529cf8a17b1a581c536b58de3c11ad8c6f494341c17a1968679ab37262"
+    },
+    "fontes/ASI_AGI_parte16_sentido_novo.md": {
+      "bytes": 10748,
+      "sha256": "7acd6b7ebbe542d79f8d0bc6986d0341a8adcc6274a8f73a296470798f5bd591"
+    },
+    "fontes/ASI_AGI_parte17_quanto_vale_perceber.md": {
+      "bytes": 9911,
+      "sha256": "5c20bcd66707e49e287fe0420127e549fcdaf879ffee72c721518ce51d86231f"
+    },
+    "fontes/ASI_AGI_parte18_linguagem.md": {
+      "bytes": 10247,
+      "sha256": "cb8bc5dcad94ed009fb7288c125dab5d471262e0363f3fff74d4ff8a64ce6636"
+    },
+    "fontes/ASI_AGI_parte19_versao_principal.md": {
+      "bytes": 10576,
+      "sha256": "bf33fcc1177df1b500c99a71ccda1fc8142dccf905a9d5d537ea7c98dcddcb14"
+    },
+    "fontes/ASI_AGI_parte20_o_que_cada_funcao_vale.md": {
+      "bytes": 11517,
+      "sha256": "9a4bf117176ee005a31068a41cbe531c54e6ddd4bc1830c530767c6750c7ee56"
+    },
+    "fontes/ASI_AGI_parte21_intuicao_corrigida.md": {
+      "bytes": 10046,
+      "sha256": "c412ec48d316e07cd342118cdc5fa22a4738421a3f5f1bad6da858b52669b3c9"
+    },
+    "fontes/ASI_AGI_parte22_prototipo_em_modulos.md": {
+      "bytes": 22817,
+      "sha256": "e908eeec9910c789ee51b8b212ead7675010580b8ad5beca57661623e37038d2"
+    },
+    "fontes/ASI_AGI_parte23_o_que_ja_estava_resolvido.md": {
+      "bytes": 22774,
+      "sha256": "10699017c167c3af99713e1ae4b42159257bc3aa41e2d3c1c47cadbebdc6a9a3"
+    },
+    "fontes/ASI_AGI_parte24_pensamento_diferenciado.md": {
+      "bytes": 23338,
+      "sha256": "aa4d59fd2d8fee32f35ce42de92687f89a51f949d988ea5404e56ba8ec192314"
+    },
+    "fontes/ASI_AGI_parte25_o_limiar_de_cada_pensamento.md": {
+      "bytes": 17826,
+      "sha256": "e544690accc38defb3126d2c4bb1539580c96a8242d9e3b585a0ed4ddbf5bacc"
+    },
+    "fontes/ASI_AGI_parte26_a_constante_que_faltava.md": {
+      "bytes": 16102,
+      "sha256": "ca5df60aa22c42961a61d9da698ef658834fcea18dbf8e928d301d0179c0a989"
+    },
+    "fontes/ASI_AGI_parte27_autorregulacao.md": {
+      "bytes": 13261,
+      "sha256": "f9cf07bd07f0287d912c7f09c1d458b0731dcedca92ddfa9cf921d556f011dde"
+    },
+    "fontes/ASI_AGI_parte28_a_ancora.md": {
+      "bytes": 14260,
+      "sha256": "05ad5366e0c2220bae50824a48fd379cf416ad0f1c48cfc46dd5fe1e52536d72"
+    },
+    "fontes/ASI_AGI_parte29_compor_e_pesar.md": {
+      "bytes": 18692,
+      "sha256": "3020d2bbe094930b80140c88a7a57697a5d978ef4b3cc326363d8ac7ec4e61e7"
+    },
+    "fontes/ASI_AGI_parte2_mais_fundo.md": {
+      "bytes": 24973,
+      "sha256": "096a3f1a05517d8d97eb5e685eb8bceada0419dacb1636feeec9bdda0e637926"
+    },
+    "fontes/ASI_AGI_parte30_hexadecimal_e_dicionario.md": {
+      "bytes": 32170,
+      "sha256": "7a9de80888e4a6d6965be81b87ce9bdf6338941f68cfbb545b89326a33f5c5d9"
+    },
+    "fontes/ASI_AGI_parte31_curriculo_e_hipercubo.md": {
+      "bytes": 19406,
+      "sha256": "e125961121a41cce28fb587bb8cb008aebb09fa0b58fc6f3fb9f5a3dd77ac93e"
+    },
+    "fontes/ASI_AGI_parte32_decisao_exata_e_autopoiese.md": {
+      "bytes": 27950,
+      "sha256": "a612cfece33a10eb3c610b9076df7257fb88099a5a7de36599b5d1991cc19bc2"
+    },
+    "fontes/ASI_AGI_parte33_pos_asi_auditada.md": {
+      "bytes": 22153,
+      "sha256": "5b994099f0cca337cddf455b166afe936c305867a91134f885b950548f50a556"
+    },
+    "fontes/ASI_AGI_parte34_promessas_testadas.md": {
+      "bytes": 14667,
+      "sha256": "977adce70af844171e40525ce0a98f570fcaaa357ebe52dadfaa904e6fd5fc32"
+    },
+    "fontes/ASI_AGI_parte35_renovacao_dirigida.md": {
+      "bytes": 9150,
+      "sha256": "a21ce469b757443ebb4d652a0a53f87831dfd9cfd51203c22ccb00aa45501e43"
+    },
+    "fontes/ASI_AGI_parte36_exposicao_e_significado.md": {
+      "bytes": 11204,
+      "sha256": "e4cdff630aebc186d484e12fa3b41b06afb6c205ea87d122d751733d834b7058"
+    },
+    "fontes/ASI_AGI_parte37_mudanca_bayesiana.md": {
+      "bytes": 9228,
+      "sha256": "8f78d7c9022e915698d8e691bb8e5968e5c594e9ba6f84ad1ec03788b67c9603"
+    },
+    "fontes/ASI_AGI_parte38_aprender_a_suposicao.md": {
+      "bytes": 9420,
+      "sha256": "afa79a0935cc4bdec0a39d422d1e0d9a3271f4704118bbdaaed9b8f5bb1f1b4e"
+    },
+    "fontes/ASI_AGI_parte39_neurossimbolico_e_portugues.md": {
+      "bytes": 14061,
+      "sha256": "b9cd0c9792c898274ee2938b4bebf39aef6af2a78975c70c6785f3f579756f38"
+    },
+    "fontes/ASI_AGI_parte3_simulacoes.md": {
+      "bytes": 21365,
+      "sha256": "79c3e99e7aa26ec5f6be896a0ef33309f3a39f4076a98bafa75f8c8b26efebdc"
+    },
+    "fontes/ASI_AGI_parte40_portugues_em_portugues.md": {
+      "bytes": 9780,
+      "sha256": "881abe200491266aec4c45dfe67d61bcb1063e5ffacf65b886575de9e1af9458"
+    },
+    "fontes/ASI_AGI_parte41_engenharia_reversa_de_mim.md": {
+      "bytes": 17176,
+      "sha256": "912480b7633a44cae0db27b1c6d6c7d76d9808dd2d03d045c9f61f7b3b0364a4"
+    },
+    "fontes/ASI_AGI_parte42_significante_e_significado.md": {
+      "bytes": 16426,
+      "sha256": "df61a171f1fc37d1c699730bd10fadde49708e3fcf4e8ecd5f0011d19da231f4"
+    },
+    "fontes/ASI_AGI_parte43_niveis.md": {
+      "bytes": 12957,
+      "sha256": "dc1d0422d95a69b06f97223716dc3c37c4665c1596d5db3b0fbdd1480b2f35a7"
+    },
+    "fontes/ASI_AGI_parte44_o_nivel_certo.md": {
+      "bytes": 9524,
+      "sha256": "0bcdfa2e778ef1bef39dd001f41c19f17831aaae92d82635b95979c35ba5efcf"
+    },
+    "fontes/ASI_AGI_parte45_a_hipotese_mais_pesada.md": {
+      "bytes": 10758,
+      "sha256": "b47d593235a5c2ad860bb2546e3b0c7ffe52f28a15d8eaa35ab066054fbc155e"
+    },
+    "fontes/ASI_AGI_parte46_a_resposta_e_a_pergunta.md": {
+      "bytes": 11670,
+      "sha256": "c33415b88d9f2125a249c47b157f2398aaee95d85034fbe3253e6f47e0ee76f1"
+    },
+    "fontes/ASI_AGI_parte47_a_definicao_contem_a_pergunta.md": {
+      "bytes": 12476,
+      "sha256": "2592954798be4f00de06a8afd889c5837d8a6b93d25c826e24cb1deb7ac3ddec"
+    },
+    "fontes/ASI_AGI_parte48_o_ciclo.md": {
+      "bytes": 10256,
+      "sha256": "d0ce0d2dea5babc910dea29001ebc6da2d9af4bc830550383c2b13f8f2019630"
+    },
+    "fontes/ASI_AGI_parte49_a_deriva.md": {
+      "bytes": 9080,
+      "sha256": "21adc62a403fba4309f3b2712f04d833c3ed097346e16113c9d521b20df35af2"
+    },
+    "fontes/ASI_AGI_parte4_auditoria_e_agente.md": {
+      "bytes": 19587,
+      "sha256": "ea70bf5c0c01f24894b96c6a555cc86cee487392f1301ca4ba5a545461db57f3"
+    },
+    "fontes/ASI_AGI_parte50_a_vida_das_coisas.md": {
+      "bytes": 11799,
+      "sha256": "f3a4a3989d7ae8c79448c38877647ce8328e929c6655ee0a8c470c5dc7f33ace"
+    },
+    "fontes/ASI_AGI_parte51_curta_e_longa.md": {
+      "bytes": 8519,
+      "sha256": "42ad4bf69018f4cf4ee854814b2c2da44399e61e0c6893863a6d19c961ba3305"
+    },
+    "fontes/ASI_AGI_parte52_o_metodo_ou_a_serie.md": {
+      "bytes": 9146,
+      "sha256": "2e22a16d95cd97ac36ee53ea8bc8b0292c2dc40a788be64d80763ad2615ecaa0"
+    },
+    "fontes/ASI_AGI_parte53_preditiva_comigo.md": {
+      "bytes": 13223,
+      "sha256": "857b33733c61ddd401a29a300295135995eeb5599ccb670e4e53de074f20ab30"
+    },
+    "fontes/ASI_AGI_parte54_a_sorte_das_rodadas.md": {
+      "bytes": 11804,
+      "sha256": "17b4cbcce4022606d0d9a27a6650d4b2b62ea9dd56a7d0aea8d3e0613901929c"
+    },
+    "fontes/ASI_AGI_parte55_o_ulp_que_chega.md": {
+      "bytes": 12137,
+      "sha256": "c002c7fc11d35f082c5e2e354998919ece96f1850ec72628aa211acec294b626"
+    },
+    "fontes/ASI_AGI_parte56_empates.md": {
+      "bytes": 13133,
+      "sha256": "27349d12f8b99de210a4739169fc0e0d70b1e90f1b1075d288ee3f4b2b13bd17"
+    },
+    "fontes/ASI_AGI_parte57_as_restricoes.md": {
+      "bytes": 10803,
+      "sha256": "b598a5e7a831d332a06a8d79d48528fde076146d539fc837480946c7be722474"
+    },
+    "fontes/ASI_AGI_parte58_a_primeira_diferenca.md": {
+      "bytes": 12075,
+      "sha256": "292a8ec20251e5730f3cc6f434baf87d0f673314039eecd2bfae5b6d86024129"
+    },
+    "fontes/ASI_AGI_parte59_o_nome_e_a_coisa.md": {
+      "bytes": 11720,
+      "sha256": "e7e51f43d152b41cbf5723414b81b45e5407fa73784d8b70eef72a090ca1d2ef"
+    },
+    "fontes/ASI_AGI_parte5_a_pergunta_e_gisele.md": {
+      "bytes": 22734,
+      "sha256": "87e453b9eb8ac3df994d62f792690bdaa2bd5a97f707e09d98504959ddabb818"
+    },
+    "fontes/ASI_AGI_parte60_o_placar_que_se_conta.md": {
+      "bytes": 23230,
+      "sha256": "2e39039d0f82dc48bd8d12bd88edb3db6a6d30031b954e723b45eb4e0861f1d9"
+    },
+    "fontes/ASI_AGI_parte61_o_dobro.md": {
+      "bytes": 17613,
+      "sha256": "1960637e8a15f2883501991d40d150e136ea6e1b4ec890b351f728b32bc8f564"
+    },
+    "fontes/ASI_AGI_parte62_o_ultimo_digito.md": {
+      "bytes": 16077,
+      "sha256": "ebe3266d7927bfa86d8ae99bbf532adf099ecc452f09ae15d0fa954b8f377c82"
+    },
+    "fontes/ASI_AGI_parte63_o_peso_do_mecanismo.md": {
+      "bytes": 16904,
+      "sha256": "3f247e3329672c976889fdf504271b0ea2f7fb2fe5380e3f7ce90d425c7c9461"
+    },
+    "fontes/ASI_AGI_parte64_o_fator_do_final.md": {
+      "bytes": 15330,
+      "sha256": "a744528b42250b958409a88f76769f6a5740a4aed133d1c7d2d837efc5fff1c8"
+    },
+    "fontes/ASI_AGI_parte65_o_que_nao_e_divisor.md": {
+      "bytes": 16900,
+      "sha256": "ea21fd47a320561ad55fbfb5c2dd8447dcf372a2dcc594bca5ef1b4d468c8224"
+    },
+    "fontes/ASI_AGI_parte66_o_endereco_da_falta.md": {
+      "bytes": 15114,
+      "sha256": "624ee303dcbc8b1175e5cf964ed07c090e12bb066ce3706cd8a473c4427677fc"
+    },
+    "fontes/ASI_AGI_parte67_prever_o_previsto.md": {
+      "bytes": 20280,
+      "sha256": "a5c0c113b97a4fd5f67c26cd236ae93dd58ba85fc6ca433c3f2bc1cf42ccd458"
+    },
+    "fontes/ASI_AGI_parte68_o_tipo_da_quantidade.md": {
+      "bytes": 17193,
+      "sha256": "82bf65ee96636fa70ec91fa921f6988c793a9afe5ee035f0f852c6a868a99aa1"
+    },
+    "fontes/ASI_AGI_parte6_calcular_jung.md": {
+      "bytes": 24964,
+      "sha256": "fcd15588ca294fc86016048e6e1ef1450413ce7da8893e551af10e011d5a93cf"
+    },
+    "fontes/ASI_AGI_parte7_jung_segunda_ordem.md": {
+      "bytes": 19057,
+      "sha256": "9fbe4797025fd876cc982b63059c394d2652ba3eb1c906aff8ec6e4d7f35a311"
+    },
+    "fontes/ASI_AGI_parte8_si_mesmo_lento.md": {
+      "bytes": 18480,
+      "sha256": "35ab570ed0f0c27509d34892af80e1d1422bae1f4791f379592d5c2ed2409a5a"
+    },
+    "fontes/ASI_AGI_parte9_a_regua_do_ruido.md": {
+      "bytes": 18049,
+      "sha256": "8ac1ea50d77c3a52b4c00f5cb0f5ecf80f9ac00113ca8bd1fd95f045637bb3cc"
+    },
+    "fontes/ASI_AGI_perguntas_e_respostas.md": {
+      "bytes": 26107,
+      "sha256": "eddc035e0340b0704075cccc870f94d4a2bd955d9296ed4e260265fb32f1a709"
+    },
+    "fontes/CLAUDE.md": {
+      "bytes": 25285,
+      "sha256": "052fe6bb6227274ab4415c22a5ba81992fd73d06ba15823d441401d80349cfc4"
+    },
+    "fontes/calculos.py": {
+      "bytes": 551979,
+      "sha256": "66d1f38976ed9d220e3feb8ff71308d1ce0188f61bb0ecfe0ffe2ef59d933f8f"
+    },
+    "fontes/dialogo/CompararLibm.java": {
+      "bytes": 786,
+      "sha256": "1f8068af15d5e569a9b53e4d9143c297c85fd76ef59969d85d293d0672c70561"
+    },
+    "fontes/dialogo/DIALOGO.md": {
+      "bytes": 117155,
+      "sha256": "f8530701eb2801d56da44280e454718d0728c3fd1b968743483776bf5a2cf3f3"
+    },
+    "fontes/dialogo/Rodada01.java": {
+      "bytes": 2742,
+      "sha256": "d532c7e4079d0eb619f76b70c300cda9d996fe7e66a968d8c807ef106b954521"
+    },
+    "fontes/dialogo/Rodada02.java": {
+      "bytes": 5029,
+      "sha256": "f34d17b67f527e3eb198261b8c0797547660ce98b569b476f5446c8fa3fdd829"
+    },
+    "fontes/dialogo/Rodada03.java": {
+      "bytes": 4135,
+      "sha256": "56f76b5e2222557d19aed406d0de8f9b733d833f0b0afcf4c408125e6ea10307"
+    },
+    "fontes/dialogo/Rodada04.java": {
+      "bytes": 3544,
+      "sha256": "e5698a2e2dbbb89a971ca3f2a80890e84f301b45483a7b119de20a7f366ca809"
+    },
+    "fontes/dialogo/Rodada05.java": {
+      "bytes": 3435,
+      "sha256": "a1340a6b7f7f77eb47cf14e8e60db9cfa76f040a42a6c920c0906d6a0b829950"
+    },
+    "fontes/dialogo/Rodada06.java": {
+      "bytes": 3088,
+      "sha256": "5bf48194cc2114aac4e286b8a4d0cbe9b0f91d6f81aecbf3cd0ba1d5fdfd75ba"
+    },
+    "fontes/dialogo/Rodada07.java": {
+      "bytes": 2339,
+      "sha256": "4a267190c6c2e844a7397945218764b84077bfef2fde578032162cbf9214fb66"
+    },
+    "fontes/dialogo/Rodada08.java": {
+      "bytes": 2979,
+      "sha256": "adac4ce7411d7fee6ad4814b8bd907e4c0597555341cd2a305b33238fadda684"
+    },
+    "fontes/dialogo/Rodada09.java": {
+      "bytes": 4831,
+      "sha256": "973f183a511b9a00c1b3b33f15755b5a530e0e44ec425613a104e375a80ab01f"
+    },
+    "fontes/dialogo/Rodada10.java": {
+      "bytes": 3137,
+      "sha256": "219099ed12b4e21596371f25797d49e42fd0ec2254f1449c5820c70ab5376de5"
+    },
+    "fontes/dialogo/Rodada11.java": {
+      "bytes": 3462,
+      "sha256": "0493b9c7e4f738859824082ba7cffef887bbbab7ddd79ca67c1432f742c7cac9"
+    },
+    "fontes/dialogo/Rodada12.java": {
+      "bytes": 3822,
+      "sha256": "f81209ad71efce112008f8d4640eef81ea0b8c3ec44dce83104e2baab54d498b"
+    },
+    "fontes/dialogo/Rodada13.java": {
+      "bytes": 2745,
+      "sha256": "f06c8f6e6dfef3bf528d1f16e4d40fcd174e75d1bbefb8c87ab8ef714d1b7d32"
+    },
+    "fontes/dialogo/Rodada14.java": {
+      "bytes": 2554,
+      "sha256": "ce77df510f65c456d5644f51bd4094917cd533146756d7197f3ed7e7d78687fc"
+    },
+    "fontes/dialogo/Rodada15.java": {
+      "bytes": 2857,
+      "sha256": "88a3737e09a68f052d6e232ae0f6a67bf6c45e2b111a1a3296d7f86f6aa135a3"
+    },
+    "fontes/dialogo/Rodada16.java": {
+      "bytes": 3042,
+      "sha256": "2b812b9fd742fd564781b8762305ea1879ba266afbae5fd688ed816ee887ca37"
+    },
+    "fontes/dialogo/Rodada17.java": {
+      "bytes": 1362,
+      "sha256": "32252fb5099383691e0334266522e985cfe5f2979b77ccb612e409e0989ac747"
+    },
+    "fontes/dialogo/Rodada18.java": {
+      "bytes": 3305,
+      "sha256": "eb2b3fe8cbfce7d53cecf04496cf5a8ba72075bac33d9443b63e353cdae86827"
+    },
+    "fontes/dialogo/Rodada19.java": {
+      "bytes": 3321,
+      "sha256": "bcee63adff7584eacbdfba8ff86a7269f359008b04397a4d7a4e01d2dc7f9a9f"
+    },
+    "fontes/dialogo/Rodada20.java": {
+      "bytes": 2981,
+      "sha256": "6f2970b3b08a586b1874cbd20a27127558009c4776de0689ab5660967835861d"
+    },
+    "fontes/dialogo/Rodada21.java": {
+      "bytes": 2832,
+      "sha256": "75e020af3a10e812960f66bd333463e68e067f3953b7b1def029f122b2352899"
+    },
+    "fontes/dialogo/Rodada22.java": {
+      "bytes": 3468,
+      "sha256": "ff82e1df2ffb5161ba98976c8fd6fa915256f3166e1b1760f162c8d37a92b8b7"
+    },
+    "fontes/dialogo/Rodada23.java": {
+      "bytes": 3560,
+      "sha256": "a01b2a287728b046855b289547cc91e3c098fe96a2124ad26b0ce6fa72b00879"
+    },
+    "fontes/dialogo/Rodada24.java": {
+      "bytes": 1721,
+      "sha256": "7338cf633c5d462e5fa5082e0f4ba81d5de7cb6cf9b39c688ad135487fb5999f"
+    },
+    "fontes/dialogo/Rodada25.java": {
+      "bytes": 5139,
+      "sha256": "e77a1ab4ab53aad04cd4f9aa3095a127a70de7b691931a22638ba5d7ad2cdae3"
+    },
+    "fontes/dialogo/Rodada26.java": {
+      "bytes": 8433,
+      "sha256": "4d57a1648151ecc65d8847a4d22580171628a95009503f2331309664e92100e0"
+    },
+    "fontes/dialogo/Rodada27.java": {
+      "bytes": 1803,
+      "sha256": "03373f99c4dc033caedb47372ae87ebd331e4d8da8d8c982ecaf047bf0f573f5"
+    },
+    "fontes/dialogo/Rodada28.java": {
+      "bytes": 2048,
+      "sha256": "6592a67d86e9495dec29389bbc31d4c8d2d004651b6da3b0b5443caa30a28921"
+    },
+    "fontes/dialogo/Rodada29.java": {
+      "bytes": 2203,
+      "sha256": "57072d757b5617b8b1b2f581d8e2f0216d0508f936024a02d0ed8c0defdc0b2e"
+    },
+    "fontes/dialogo/Rodada30.java": {
+      "bytes": 1433,
+      "sha256": "9258b07c883f7536e584a163e436b8ebc28f157821c06e80540aff101fe0e1d9"
+    },
+    "fontes/dialogo/Rodada31.java": {
+      "bytes": 2595,
+      "sha256": "eafb95b64d8d643d8175a365547e9f5e7238f40dbbe1c6623102f6eac7a765e8"
+    },
+    "fontes/dialogo/Rodada32.java": {
+      "bytes": 2217,
+      "sha256": "235db43acbc4562f554b8c2b02627f407e703013e3a884098a8cc3ff6b83b20c"
+    },
+    "fontes/dialogo/Rodada33.java": {
+      "bytes": 1300,
+      "sha256": "52cc0979027a671f917403791c438c7606ca986ed5c7df2afadf5886de46753f"
+    },
+    "fontes/dialogo/Rodada34.java": {
+      "bytes": 4406,
+      "sha256": "e341eb4c9ab6bf8da76d363a9e8455aa3f70c1f4ee47df4362bb3dd9b20b261c"
+    },
+    "fontes/dialogo/Rodada35.java": {
+      "bytes": 3673,
+      "sha256": "489e3f2bd07e643d56dbac7dd10839bf12d5cdbadb925ce9270ee90bdd8db9a1"
+    },
+    "fontes/dialogo/Rodada36.java": {
+      "bytes": 5001,
+      "sha256": "c35ca0fefc61f2cac18263cb1586176e61d2710c034f19de50480025bb5e5394"
+    },
+    "fontes/dialogo/Rodada37.java": {
+      "bytes": 3773,
+      "sha256": "7f1b00250b8f826b84e7e89d32604796fb95c77eca2a44a1aed8ca6ce36e6bb5"
+    },
+    "fontes/dialogo/Rodada38.java": {
+      "bytes": 3195,
+      "sha256": "89937d36ab2b090ebb64c9a3f828537b1d823dd8164b8928794d6023685c8f04"
+    },
+    "fontes/dialogo/Rodada39.java": {
+      "bytes": 5176,
+      "sha256": "dd171932400a74329f4f8024aeae38bfe1c1c50cb9bf17737fd73aabb89376e4"
+    },
+    "fontes/dialogo/Rodada40.java": {
+      "bytes": 6481,
+      "sha256": "a307c3f4c94ce7f1309549ade2caa01508c504cb837743c5b863065d36f9d589"
+    },
+    "fontes/dialogo/Rodada41.java": {
+      "bytes": 5862,
+      "sha256": "fd6f8063190abf47402025dac7c45bfc4183b0d05c8552d727c2b277b2971ddb"
+    },
+    "fontes/dialogo/Rodada42.java": {
+      "bytes": 6090,
+      "sha256": "b91d90312f2ea54152664e52086027831b8e8623546594ea78b69942af6934e8"
+    },
+    "fontes/dialogo/comparar.py": {
+      "bytes": 1212,
+      "sha256": "0d978ec4a552b7742cbe952f21bb0141eb1ef1bc349abaa13ce5b592381a8558"
+    },
+    "fontes/dialogo/contagens28.tsv": {
+      "bytes": 439,
+      "sha256": "c9866e80971bbac3da73c6d32663aa042b3c967452d967777333b2c69fe5eaa3"
+    },
+    "fontes/dialogo/contar_libm.py": {
+      "bytes": 901,
+      "sha256": "e23cc335b9346b3c3d9fa4f93c8b84dda3f66446e922dce29f4e14aa83a94634"
+    },
+    "fontes/dialogo/diferencas28.tsv": {
+      "bytes": 243,
+      "sha256": "c2505539d160569be670e938e1d84737f1c71b2d9edae7f521e2b4fc5b26100b"
+    },
+    "fontes/dialogo/historico27.tsv": {
+      "bytes": 1235,
+      "sha256": "732ce7bd80b08401b7688360205db6bfffa973a8d67f60b2fc477c91d382e9b5"
+    },
+    "fontes/dialogo/perturbar_libm.py": {
+      "bytes": 647,
+      "sha256": "f2481b4c39aa02b3d2bf4e93de5c01fc310745603665208815daf110d0e82d71"
+    },
+    "fontes/dialogo/registrar_libm.py": {
+      "bytes": 911,
+      "sha256": "8f7cc9f5b98257803b192b867ae302f6ce7e0800c5d3504b17d17de043e26ec5"
+    },
+    "fontes/dialogo/registro/Rodada26Libm.java": {
+      "bytes": 7448,
+      "sha256": "ebe1f8b8f214668d3c72c38c986f1e40d8de04c478ecac04b9c48bb2a8095038"
+    },
+    "fontes/dialogo/registro/rodada26_libm.py": {
+      "bytes": 3531,
+      "sha256": "e5aac789512750b4bf3f47aee4d6e3b750d86682fee32cb0a3d930a16a295041"
+    },
+    "fontes/dialogo/rodada01.py": {
+      "bytes": 934,
+      "sha256": "c08f2268e9ac9b1aa8cef99d6d2123c658f1c2863d20be13eab3736fe025bb5b"
+    },
+    "fontes/dialogo/rodada02.py": {
+      "bytes": 2497,
+      "sha256": "050403f9b4197acbb0aa018951412184d709296aaa6b156cb5d83cdf24e7e69a"
+    },
+    "fontes/dialogo/rodada03.py": {
+      "bytes": 2011,
+      "sha256": "4be8d8e4657003f867d5589fd6a0a696e1a3f71bf71ba0cacf65e7e331885cc4"
+    },
+    "fontes/dialogo/rodada04.py": {
+      "bytes": 1008,
+      "sha256": "2857501a58e90ecdf17f9e1f7a43676c49affbd1970b088937cfaed9bed543c6"
+    },
+    "fontes/dialogo/rodada05.py": {
+      "bytes": 2360,
+      "sha256": "c8e435a9c70f986625b5a48bac420886279f0dda5307688e9ba16e7fcea33266"
+    },
+    "fontes/dialogo/rodada06.py": {
+      "bytes": 1686,
+      "sha256": "e3315f7aeaf00ae1518417956d2ac8604e54addca684b8293e6e95712eaa6861"
+    },
+    "fontes/dialogo/rodada07.py": {
+      "bytes": 1302,
+      "sha256": "10954ef82dfa02cf8ca377673745aeca58544fe06e22178013ae834e200c82d2"
+    },
+    "fontes/dialogo/rodada08.py": {
+      "bytes": 1140,
+      "sha256": "874a051848a34462fa9aa2642621d9c91b86642e4cd3db1ea987e065d2d5011a"
+    },
+    "fontes/dialogo/rodada09.py": {
+      "bytes": 1193,
+      "sha256": "6ee69bb51f3f15632b92787640e8ff2fd10ffe3fae96db941b6b3cd54683984d"
+    },
+    "fontes/dialogo/rodada10.py": {
+      "bytes": 1479,
+      "sha256": "8bee6bef53c2234976660d7cbea585eece5617ba63df1effb046e47bd9f514a9"
+    },
+    "fontes/dialogo/rodada11.py": {
+      "bytes": 1822,
+      "sha256": "62cdd61d175d6359a62c09aff4acea4cefa5a8f0b3e44095ce4d5b472cd63138"
+    },
+    "fontes/dialogo/rodada12.py": {
+      "bytes": 1015,
+      "sha256": "407eae93383456cc8ac632fa65c5dc699d2ce4aeb5b96207d6ab5cf82cce50ae"
+    },
+    "fontes/dialogo/rodada13.py": {
+      "bytes": 2282,
+      "sha256": "d66c80abe9a344714429e8a552e82ae3605f54d96b70b1a17e12268227b5b9b8"
+    },
+    "fontes/dialogo/rodada14.py": {
+      "bytes": 1122,
+      "sha256": "c3a7b39c194fae7945b553bf8e270a91c37d265afff5df5c2b3df670df56fa97"
+    },
+    "fontes/dialogo/rodada15.py": {
+      "bytes": 1323,
+      "sha256": "10779cce96569ab0be3dfca1e6b7ab14abf8d9eacc2b4b1518f49b4707b34162"
+    },
+    "fontes/dialogo/rodada16.py": {
+      "bytes": 1491,
+      "sha256": "43c091f3573635240f2366229ec4d157e9bd3dbb53884b36beaea4e19f9aac8d"
+    },
+    "fontes/dialogo/rodada17.py": {
+      "bytes": 1487,
+      "sha256": "810d7c597eaad75d145e6a61be147b9de03e42d1f13b1c2c5ddc8bcd64cb76a8"
+    },
+    "fontes/dialogo/rodada18.py": {
+      "bytes": 2797,
+      "sha256": "101c86f0afd5cc76e302992e0ba394307ed75a9e3080627830ece416d52c21c7"
+    },
+    "fontes/dialogo/rodada19.py": {
+      "bytes": 2822,
+      "sha256": "db0b3698e637b1508389fd6c3280110bffeea3c2a191337567bcff30b4325e37"
+    },
+    "fontes/dialogo/rodada20.py": {
+      "bytes": 2416,
+      "sha256": "2ca43f7b6d435755446b0774761398a062261e002a783e2fc69170f44d1e6ca0"
+    },
+    "fontes/dialogo/rodada21.py": {
+      "bytes": 2705,
+      "sha256": "5f34a4bb2e6249de5c3c0dd020a0aaaf7e62926f93ef14ef773e9033291621c1"
+    },
+    "fontes/dialogo/rodada22.py": {
+      "bytes": 2306,
+      "sha256": "7532f444272519a98a441fe80e14be1e88374a90e9380e3d117cd9b82fcd0ec2"
+    },
+    "fontes/dialogo/rodada23.py": {
+      "bytes": 1666,
+      "sha256": "0262c54797608082a9b232555c6b73b898503dbf777a662fae5c97aa08eff8ce"
+    },
+    "fontes/dialogo/rodada24.py": {
+      "bytes": 2110,
+      "sha256": "6175edc1cfea4d688db07eece60215479f326c8a0ebfedd4a89065f9dcc2ed2d"
+    },
+    "fontes/dialogo/rodada25.py": {
+      "bytes": 3169,
+      "sha256": "dd74ab19cf64be3fa4c07483f2500fdf87ce103a2dab37b68022f879e7e29405"
+    },
+    "fontes/dialogo/rodada26.py": {
+      "bytes": 5808,
+      "sha256": "39bc808a4d2ebbe16512236fddeedf5149e4f0de6e3422653230f7f46afbb357"
+    },
+    "fontes/dialogo/rodada27.py": {
+      "bytes": 1196,
+      "sha256": "dc1fc13b24fd272f74d078a1c4cf6e30fb519b13aa6861e6619c94bb318cbc3b"
+    },
+    "fontes/dialogo/rodada28.py": {
+      "bytes": 1381,
+      "sha256": "5c9be22f3fda3621a61749159c56be8a715969f6db09fd5601f687494f6bd4cb"
+    },
+    "fontes/dialogo/rodada29.py": {
+      "bytes": 1551,
+      "sha256": "9dea6948e0a52867255c7518fc9805eeded886f20dce00bf59c6ea318909a747"
+    },
+    "fontes/dialogo/rodada30.py": {
+      "bytes": 4757,
+      "sha256": "352352ae6406fdf293546bff60883ddb7276be7d29934a31b03d5c78e5e2b5c0"
+    },
+    "fontes/dialogo/rodada31.py": {
+      "bytes": 2242,
+      "sha256": "5c0d278048cea2915f1507e8b86834b034ee7c1dd42740f3f24192987c39ac98"
+    },
+    "fontes/dialogo/rodada32.py": {
+      "bytes": 2121,
+      "sha256": "2c522a423c2015212d1762d85fdd49ea4488020385896c509dead5cc9a959a60"
+    },
+    "fontes/dialogo/rodada33.py": {
+      "bytes": 1525,
+      "sha256": "dc7bd57bc7f33498ddca2d57007ab56821e158725c31d963dceca29c4e5cc638"
+    },
+    "fontes/dialogo/rodada34.py": {
+      "bytes": 3593,
+      "sha256": "8b1f1fb6097d7419e3dc7ca2d4fab1b8b88b60ddabf361c8278b425a2ba4cdcd"
+    },
+    "fontes/dialogo/rodada35.py": {
+      "bytes": 2810,
+      "sha256": "dd9a9a6fd677655c4e2dd79e28d2b1ea7759d02e09e10f21f0086d3c266fee11"
+    },
+    "fontes/dialogo/rodada36.py": {
+      "bytes": 3817,
+      "sha256": "93f421b528daf693600bb55cfd6c3ade43167649f08c5908ac012e6f21847ed0"
+    },
+    "fontes/dialogo/rodada37.py": {
+      "bytes": 2646,
+      "sha256": "070ad5ea09d8eb8b8c1e90a99c3a2793c02568716c8b18694a7fc7b568832f1c"
+    },
+    "fontes/dialogo/rodada38.py": {
+      "bytes": 2398,
+      "sha256": "ea02203aebcccdd791f62e04d32c1e990e1e0cacb3101ea833e23e1a95d28490"
+    },
+    "fontes/dialogo/rodada39.py": {
+      "bytes": 3141,
+      "sha256": "d33f1e701be575ee03dcb8eadf84e00dcb6dfda3b8aace0d5864bbdf9efa362c"
+    },
+    "fontes/dialogo/rodada40.py": {
+      "bytes": 2412,
+      "sha256": "e0a15bf1fe29d706c15a51bbc24ed1725ed43bd334a833f57caa59011a560675"
+    },
+    "fontes/dialogo/rodada41.py": {
+      "bytes": 2040,
+      "sha256": "635045e58be3bab163af67522b0d3632750087705248dbf5212685f68a951c81"
+    },
+    "fontes/dialogo/rodada42.py": {
+      "bytes": 1826,
+      "sha256": "741ed8119c3ab3e962c56f703ab64b856d7122c2187c91a17c2bda364a5ca4e9"
+    },
+    "fontes/dialogo/saidas29/normal06.txt": {
+      "bytes": 4687,
+      "sha256": "6a53c5e08597c04418f472f23c9dcee697ff0e8b980643e07436e430287e770d"
+    },
+    "fontes/dialogo/saidas29/normal09.txt": {
+      "bytes": 321,
+      "sha256": "5c0686ec7f2438f188f4dfa957cc26089481cf83c6809a758884455f84ca100a"
+    },
+    "fontes/dialogo/saidas29/normal14.txt": {
+      "bytes": 210,
+      "sha256": "7f0dd39ae738fbb1e696bac8f8f3a1e3326529c0d0fe1a694317fe37edce4b58"
+    },
+    "fontes/dialogo/saidas29/normal18.txt": {
+      "bytes": 2951,
+      "sha256": "cded385e7d054638e5c5c8ed7599bcada48da1970dedab99c41aedd00746a559"
+    },
+    "fontes/dialogo/saidas29/normal19.txt": {
+      "bytes": 2988,
+      "sha256": "a21e1fa352aa4313e4c988a984640b7d7b49768563e884121d7ae42661d7b068"
+    },
+    "fontes/dialogo/saidas29/normal20.txt": {
+      "bytes": 3138,
+      "sha256": "56d80f738024734d6ab060ccfb92969b28e57f7b93c91db9347b8740a74a325a"
+    },
+    "fontes/dialogo/saidas29/normal21.txt": {
+      "bytes": 2033,
+      "sha256": "ced4bbfbd82db099a8698fad4d14c1adc41edecc2be68a79cffd2c3587901419"
+    },
+    "fontes/dialogo/saidas29/normal22.txt": {
+      "bytes": 1164,
+      "sha256": "6ed19614bf4d240ea2ddd167fc6fe132db0df75c95757ce46dae44cbdbb30b1f"
+    },
+    "fontes/dialogo/saidas29/normal23.txt": {
+      "bytes": 3147,
+      "sha256": "868f1f32801293a948be3001ecbf7c80466a78b3d7371d66f1cc13444c89faec"
+    },
+    "fontes/dialogo/saidas29/normal24.txt": {
+      "bytes": 1978,
+      "sha256": "da28f438f62b84d53c7e0d577d058291206687ec67b9aabedac5961fffac8328"
+    },
+    "fontes/dialogo/saidas29/normal25.txt": {
+      "bytes": 336,
+      "sha256": "7f9c824febd5241327b5405e2d7a6f5c2db5e33c1f7156d5add77ae39c8631be"
+    },
+    "fontes/dialogo/saidas29/normal26.txt": {
+      "bytes": 259,
+      "sha256": "0572165eafdd2ec1b98f5c2187aabfc0c55ca19cfcac66c9aa0afd9aa6bed389"
+    },
+    "fontes/dialogo/saidas29/perturbada06.txt": {
+      "bytes": 4687,
+      "sha256": "19f75354f97981996084ab0e32d81ed9959c509782df2afdab750e38e1927f85"
+    },
+    "fontes/dialogo/saidas29/perturbada09.txt": {
+      "bytes": 321,
+      "sha256": "1a579c48426450a895606846705371ae227b27a73f0ef39f11aba26c8377cd97"
+    },
+    "fontes/dialogo/saidas29/perturbada14.txt": {
+      "bytes": 210,
+      "sha256": "0d3d9ce804d80164c592bac44075c6388db0eba3934fc353d62d21f51793ea9a"
+    },
+    "fontes/dialogo/saidas29/perturbada18.txt": {
+      "bytes": 2951,
+      "sha256": "f7c157c262ee3652f4ecfdd668e990589d8e2d88903f933a52c23f89c8279cb6"
+    },
+    "fontes/dialogo/saidas29/perturbada19.txt": {
+      "bytes": 2988,
+      "sha256": "134bb06891573e02ce6cbe0d69ee4bdaa030e591dc2bf9c3624e4126319389fc"
+    },
+    "fontes/dialogo/saidas29/perturbada20.txt": {
+      "bytes": 3138,
+      "sha256": "4518f9f68a60071b4272e2cdb874897bd752dd0118fb83d26c290ceffada6e2e"
+    },
+    "fontes/dialogo/saidas29/perturbada21.txt": {
+      "bytes": 2033,
+      "sha256": "aed0ab2f7f119d2073ac09d8db2c77baa1d9a6007f9eb6668a9be90e43f8aa6d"
+    },
+    "fontes/dialogo/saidas29/perturbada22.txt": {
+      "bytes": 1164,
+      "sha256": "0273f811905d7a81fa556da0950f391ad322112c39b6e732e01f3d2d91bddcb4"
+    },
+    "fontes/dialogo/saidas29/perturbada23.txt": {
+      "bytes": 3147,
+      "sha256": "159e7d2f2fd1082841e28f6e9417ee8555c16bd8f3833d58bbac0363f80b20a8"
+    },
+    "fontes/dialogo/saidas29/perturbada24.txt": {
+      "bytes": 1978,
+      "sha256": "4e0f58325050b7252bd72e71eee2853badeb94dd795181dbd645a4a16cd4049c"
+    },
+    "fontes/dialogo/saidas29/perturbada25.txt": {
+      "bytes": 336,
+      "sha256": "e9d5e0639ffce88850a5cb77a458a4b0ac5df1aec823b36e6f75c093ce18a4ec"
+    },
+    "fontes/dialogo/saidas29/perturbada26.txt": {
+      "bytes": 259,
+      "sha256": "3952020b5b73beb9fca1489d94e306f00be1b3888c4322fdbe598bdda425b7ae"
+    },
+    "fontes/dialogo/verificar.py": {
+      "bytes": 1759,
+      "sha256": "6be3d0446cf238d0690e7b753ba6bb44e0149c4d42ac51c741a648d2144ebf34"
+    },
+    "fontes/externos/arquitetura_pos_asi.py": {
+      "bytes": 4743,
+      "sha256": "a627e7e779bfc4a01cf93478e1732674b21394f4d6a5039fac824113580728f1"
+    },
+    "fontes/externos/pos_asi_texto_parte50.md": {
+      "bytes": 21940,
+      "sha256": "d02024cc0742ab6358e0ef4df2c7201ea3f8cd7d25770a676d811238e3867629"
+    },
+    "fontes/resultados.txt": {
+      "bytes": 129970,
+      "sha256": "572c87cbca6866bb2699ebb66479d223657f3980ea473721545a4f703df476bf"
+    },
+    "fontes/synthai/__init__.py": {
+      "bytes": 1893,
+      "sha256": "e06aaac10083523888e97b913d1f9eb3c63a74fa16de0d9d0f7a3dc785130cf6"
+    },
+    "fontes/synthai/__main__.py": {
+      "bytes": 1415,
+      "sha256": "4d5c4eb3828bcb37dd40484463b91522e66e47ec97935051926353396f97edf6"
+    },
+    "fontes/synthai/agente.py": {
+      "bytes": 3154,
+      "sha256": "c3066e51766bba616717f957674508661a9dca55f587e7cbe56f1eb3869bedc4"
+    },
+    "fontes/synthai/aleatoriedade.py": {
+      "bytes": 1522,
+      "sha256": "70245dcf6282a2e8c43b7ff8f1d1779b482ed1002aa91e5bdcb96d133ff72a98"
+    },
+    "fontes/synthai/ancora.py": {
+      "bytes": 2754,
+      "sha256": "120d9d13cb7a0a4b8f96a5390c3cdab8912547a4beee54f737a79ad7c1d17c1b"
+    },
+    "fontes/synthai/autorregulacao.py": {
+      "bytes": 6809,
+      "sha256": "a77f8ce29458dbc03e2ad70936da0256485a8669c302f54ffcfcebd1e4644f15"
+    },
+    "fontes/synthai/composta.py": {
+      "bytes": 2796,
+      "sha256": "8eebd693dc517ad27400c458577fa12adde4daf4d3aa98de2fecab512a01e140"
+    },
+    "fontes/synthai/decisao.py": {
+      "bytes": 23313,
+      "sha256": "0ac57d42f06bcea371886ce24eddf397adf878c59de27465462adb86226c72d4"
+    },
+    "fontes/synthai/dicionario.py": {
+      "bytes": 22736,
+      "sha256": "6c70df104351a587379bfa1ff84c29e534b4ce607a2f411a45edc1df206bc0ac"
+    },
+    "fontes/synthai/engenharia_reversa.py": {
+      "bytes": 3051,
+      "sha256": "a168f2da18199f2caf0f711df9237748f87f6cdfc2514c2378bd76957aca273d"
+    },
+    "fontes/synthai/hexadecimal.py": {
+      "bytes": 6197,
+      "sha256": "e18b735e0844289a8e3805f2d82e4381c3101acc70f5ba54a07e527efe8386cf"
+    },
+    "fontes/synthai/intuicao.py": {
+      "bytes": 1056,
+      "sha256": "2ec8998a96c9a3c8d7dcd2c23036fba11acb070bdd6949e1ca993af2507e95fd"
+    },
+    "fontes/synthai/limiar.py": {
+      "bytes": 2282,
+      "sha256": "20e773a5aea5bf43d7da616e25f576d0c743ccf94a0ae230c5bb1ff3588cb4a1"
+    },
+    "fontes/synthai/metacognicao.py": {
+      "bytes": 1867,
+      "sha256": "8d954d06c0b41197f622fbcd8ff7087194aaa5362e64f86a7d40535e4f1c47a3"
+    },
+    "fontes/synthai/mundos.py": {
+      "bytes": 16229,
+      "sha256": "8b2e09ee07b626eb5b12944f7567c244f55ceda9bc008a085c5284cbced3e2f4"
+    },
+    "fontes/synthai/neurossimbolico.py": {
+      "bytes": 2903,
+      "sha256": "b98f9a9a00fe1d552f8e06050dc3b40e142b05c13a9624ddba584d7bf3ea8e57"
+    },
+    "fontes/synthai/pensamento.py": {
+      "bytes": 1308,
+      "sha256": "b953626715fa9ceb457f8c2e234ca4d5af27bd068f5541d4e851cfc49d1aec28"
+    },
+    "fontes/synthai/pensamento_exato.py": {
+      "bytes": 4563,
+      "sha256": "37a1cc6f8d7af02840c031cf4c1fe4738d310e495438d41692dddfb08dbaed81"
+    },
+    "fontes/synthai/pensamento_rico.py": {
+      "bytes": 1795,
+      "sha256": "0017fe7937300c49398c6e0eb20d25cb1236581e349c018790b8999aeabcb1da"
+    },
+    "fontes/synthai/percepcao.py": {
+      "bytes": 722,
+      "sha256": "3fc86e235b5a1bbeafad0f2d9110a0cf06b8a369af7fe1bd2ca94144a9fbb9ec"
+    },
+    "fontes/synthai/reconhecimento.py": {
+      "bytes": 4707,
+      "sha256": "8ff4948f6bb858e4945e18901126f37bc6c5512856a179b5df099498aeecfc41"
+    },
+    "fontes/synthai/referencias.py": {
+      "bytes": 1211,
+      "sha256": "360f64773078bd71d17f295d987e0d1763080eb35eaade4d8c39b647abdc0db5"
+    },
+    "fontes/synthai/relacao.py": {
+      "bytes": 1713,
+      "sha256": "f2803fe1b426ba9768ac4bd4d7fecb8bda146be97ed9689a40cf9023c4c5b34c"
+    },
+    "fontes/synthai/rsi.py": {
+      "bytes": 14651,
+      "sha256": "165f536f2eb148d7519d4162b7a612839655bbcc429f1d1b9fbaf2b3b3fc7ad9"
+    },
+    "fontes/synthai/semiotica.py": {
+      "bytes": 2126,
+      "sha256": "97a528fcdf134d72eb4507c090ac5208cd4e2368a82fca1f0f2e0661059ff01b"
+    },
+    "fontes/synthai/sentimento.py": {
+      "bytes": 1042,
+      "sha256": "ca34dc08fa4d7dff96e5e94bcbbf4610894b7bf472f6e961a64c8dac152a2f16"
+    },
+    "fontes/synthai/testes.py": {
+      "bytes": 5178,
+      "sha256": "b99bf96c1ab6ce94de269966fb906c8052d97def9bb46c07548e6aed797a15a0"
+    },
+    "fontes/synthai/testes_abstencao_revisao.py": {
+      "bytes": 11392,
+      "sha256": "66482371e8a5a04aaf4f43229280100ba28e8b0a12547c47fad8490ef4141ba3"
+    },
+    "fontes/synthai/testes_aleatoriedade_revisao.py": {
+      "bytes": 14966,
+      "sha256": "0bcc7c5e5be2cf721a6145d701fefc65e123c18c1fb0ffdee8adde8b65dc9384"
+    },
+    "fontes/synthai/testes_ancora.py": {
+      "bytes": 1845,
+      "sha256": "275b7de659571740052afdafc3762ac91f48ae2bfc91cc2eacafb7c0c71da787"
+    },
+    "fontes/synthai/testes_autorregulacao.py": {
+      "bytes": 2893,
+      "sha256": "4800ecd2279e4c2180e07c67584d3ab41461983c5b6590324b4b8529e0a88ab5"
+    },
+    "fontes/synthai/testes_composta.py": {
+      "bytes": 2847,
+      "sha256": "864321c62102a15eaeb415889dc7de64cac766a2710021125cb5b7cd5bd8a0f9"
+    },
+    "fontes/synthai/testes_dicionario.py": {
+      "bytes": 2096,
+      "sha256": "e9c3ad18ddea2ff415b64961a7e6da78904dce19080d93f28d3ecefd103799b1"
+    },
+    "fontes/synthai/testes_hexadecimal.py": {
+      "bytes": 3170,
+      "sha256": "b7e972abef12d7cdea49772c3833b38aab02ffd7988b1fd742118329d0f3ec4f"
+    },
+    "fontes/synthai/testes_limiar.py": {
+      "bytes": 1308,
+      "sha256": "9fa39e81fc3dac909437084d7b5c5e4fe6d2f383df6a1e3bff7721eee68331b4"
+    },
+    "fontes/synthai/testes_metacognicao_revisao.py": {
+      "bytes": 1453,
+      "sha256": "8b5b44a07aed9669cc108bfbb4d948ea708feb0c1c4381f3e614cd3e2232de0e"
+    },
+    "fontes/synthai/testes_parte31.py": {
+      "bytes": 2235,
+      "sha256": "c66c8d1671062abc9c744a29ada72b6b32b7a52abad12d2f5634515a0488983b"
+    },
+    "fontes/synthai/testes_parte32.py": {
+      "bytes": 3444,
+      "sha256": "1f6049efa9cb92c14d1e544ae5173d15f122eb2ccfb3df212c1d59766e45ca3b"
+    },
+    "fontes/synthai/testes_parte33.py": {
+      "bytes": 2429,
+      "sha256": "ae21542f64f03f7642435425781672664ce819b69eb266121c37b8f4d1d20818"
+    },
+    "fontes/synthai/testes_parte34.py": {
+      "bytes": 1621,
+      "sha256": "c6fab30bf9f08c74892626ec59467b9aa5fa9df4dfe90d9e11a5eddc8cda6405"
+    },
+    "fontes/synthai/testes_parte35.py": {
+      "bytes": 965,
+      "sha256": "a2da6b339682b2f4f27005a1212c6bc9cd276770634f6088a4dbec58ed1159ad"
+    },
+    "fontes/synthai/testes_parte36.py": {
+      "bytes": 1223,
+      "sha256": "d14c0e4bec311ea6ce66f1bcdf5380bba3b21984edfd2160cddb6a24575fe637"
+    },
+    "fontes/synthai/testes_parte37.py": {
+      "bytes": 1381,
+      "sha256": "01e54a3506af44dd7aac2765057cff7199c8254f83fac08a837db73e3fbcfb29"
+    },
+    "fontes/synthai/testes_parte38.py": {
+      "bytes": 1105,
+      "sha256": "e583f91471a9a814374239be34a970bf664e6a54d9f328057b259005225019b7"
+    },
+    "fontes/synthai/testes_parte39.py": {
+      "bytes": 1695,
+      "sha256": "64d6fc068f5aa6cb54d09e67f098dbc7326caa210af7ed2ab30982407ff141bc"
+    },
+    "fontes/synthai/testes_parte40.py": {
+      "bytes": 1078,
+      "sha256": "6b8c790517c6903d4ccbcf193fb7aa1a1347c4ad4a5e5e6aac12a240e6bddf6b"
+    },
+    "fontes/synthai/testes_parte41.py": {
+      "bytes": 1538,
+      "sha256": "4f0eec86ee26b2d3bdf1b68afcb8daf1700fc90aed37b6f0685c2938368bc195"
+    },
+    "fontes/synthai/testes_parte42.py": {
+      "bytes": 1310,
+      "sha256": "a8d372cd6b3252d185e349bdba92e1517a40ef7cc8760ab7098963d472e6779c"
+    },
+    "fontes/synthai/testes_parte43.py": {
+      "bytes": 740,
+      "sha256": "6e2572c1809065804190728b8b5046a1fe2132dc6f356c5119e0a624de9ec1c4"
+    },
+    "fontes/synthai/testes_parte44.py": {
+      "bytes": 1250,
+      "sha256": "40c74bdf172b2b8f4fc6d1f8d4bdddfb04feacc8c3d4686d3d3b95e4544af9ac"
+    },
+    "fontes/synthai/testes_parte45.py": {
+      "bytes": 798,
+      "sha256": "62f945f755ebe68991a61433554a59cb719636bd5e7bd3ad6a02bee78cb593c3"
+    },
+    "fontes/synthai/testes_parte46.py": {
+      "bytes": 1621,
+      "sha256": "cd031ffa5899711a41dd9d23b885e2fd61769598f1e34fb01d5721431a746a25"
+    },
+    "fontes/synthai/testes_parte47.py": {
+      "bytes": 1754,
+      "sha256": "7f12e858f51194273d7881290b3cd570be413053f8e778354b8e739580daadbc"
+    },
+    "fontes/synthai/testes_parte48.py": {
+      "bytes": 1733,
+      "sha256": "f3ce59b35ad4b1bac6802fe3a5af7f35481742b860712c5be421de66a11bc1fe"
+    },
+    "fontes/synthai/testes_parte49.py": {
+      "bytes": 1970,
+      "sha256": "f5e6b8b5df5ba5550cc1eb641743c939145b7bba99d6ecc3ccf195111d70dff1"
+    },
+    "fontes/synthai/testes_parte50.py": {
+      "bytes": 2335,
+      "sha256": "8c50c544d00ac711bfdb8c02f7a94b62c1be289ab6f118099525e2818efe686e"
+    },
+    "fontes/synthai/testes_parte51.py": {
+      "bytes": 2582,
+      "sha256": "1c00e9545fd0fbc2137c44854a1fec122db8a72249b93b581a725a1c991678a0"
+    },
+    "fontes/synthai/testes_parte52.py": {
+      "bytes": 2475,
+      "sha256": "91eedcb0acbe5219c913ff3a38459119bf25e7f9ca5afb030b6f1ec7946d59a6"
+    },
+    "fontes/synthai/testes_parte53.py": {
+      "bytes": 2835,
+      "sha256": "f1bb7d7806148d8e241eb5f16281fd3f73d5f4b0264d33bdf38e7c731ae42fec"
+    },
+    "fontes/synthai/testes_parte54.py": {
+      "bytes": 1985,
+      "sha256": "6ca1185fef8d79efe66e59349185daa4f6fb3a954545d81b03c78324791a03a5"
+    },
+    "fontes/synthai/testes_parte55.py": {
+      "bytes": 2696,
+      "sha256": "52ba43e9058e3f8192febd4a10f82ba066ec2456239b8c0741967d4f085562c5"
+    },
+    "fontes/synthai/testes_parte56.py": {
+      "bytes": 1602,
+      "sha256": "88bbc282f32a2aa71d9eabaa516df8a234320cf38c2b52c5b9238b1bf581b688"
+    },
+    "fontes/synthai/testes_parte57.py": {
+      "bytes": 1927,
+      "sha256": "38e22e9b406ed78bdb5ef7b790c2f72807e551b5f5dcdd29e2f8c07da5e445e3"
+    },
+    "fontes/synthai/testes_parte58.py": {
+      "bytes": 2364,
+      "sha256": "05751d1258d4236760d7d26614e939bc3e2c32752912ba67edaf6574a11179f3"
+    },
+    "fontes/synthai/testes_parte59.py": {
+      "bytes": 1292,
+      "sha256": "81279d887918d2bb1efe30b986136d3b80df85fa776460de873cf7ca0eb0f6c4"
+    },
+    "fontes/synthai/testes_parte60.py": {
+      "bytes": 3684,
+      "sha256": "b05663110e53badec60b974dd5fd159cdea8b3934159ca5262a2f9fc4cbae181"
+    },
+    "fontes/synthai/testes_parte61.py": {
+      "bytes": 2199,
+      "sha256": "c93a3fb9ad8ff83cc46b26709820e56ce6220a9f7e16445674b4b30fa6520620"
+    },
+    "fontes/synthai/testes_parte62.py": {
+      "bytes": 2147,
+      "sha256": "237be4c16be5d04ca0637253a5e4e4b103c6ea8e8818914412a0f86c3dcca625"
+    },
+    "fontes/synthai/testes_parte63.py": {
+      "bytes": 2520,
+      "sha256": "ce9a396a9bce77286c3dbc5baf5f81fa9b6e3393511a7b031cc3637f37c9f257"
+    },
+    "fontes/synthai/testes_parte64.py": {
+      "bytes": 1875,
+      "sha256": "576a14b12542ebd4207cbc138571767c92404fdba59dc4caa28aa1efeffd1dee"
+    },
+    "fontes/synthai/testes_parte65.py": {
+      "bytes": 2173,
+      "sha256": "c8aefe94cca554702e08f5e8d0a62fab3e98e49ef1fd31dbc27bc3d45e9263ae"
+    },
+    "fontes/synthai/testes_parte66.py": {
+      "bytes": 1766,
+      "sha256": "6eabece18b56f81da11a43752c688b60650f92aa5659f13953126bf8d70ac9c9"
+    },
+    "fontes/synthai/testes_parte67.py": {
+      "bytes": 2481,
+      "sha256": "5ce92e0d6bddbdbbda20ad7bf2fa5db4125272880b8c022cc5c4193695fe0b96"
+    },
+    "fontes/synthai/testes_parte68.py": {
+      "bytes": 2733,
+      "sha256": "83a5269aa2b8b9b0edc12ffd27eb7d1fb40a98a3bbd1ac0cb9a72f281fcf78d3"
+    },
+    "fontes/synthai/testes_pensamento.py": {
+      "bytes": 2572,
+      "sha256": "858cb1164b82a4b167c069571436b4c1face259ea635d3f91eaa47513286c807"
+    },
+    "fontes/synthai/testes_reconhecimento.py": {
+      "bytes": 3284,
+      "sha256": "6e1fb7e4657b19d5d46fa21a9d040ebe2a27944a7515e3cbb6611ef7522b90d9"
+    },
+    "fontes/synthai/testes_selo_revisao.py": {
+      "bytes": 8528,
+      "sha256": "e4f8dad610ae0e361a55bb61ff2bd798196cc5786528db5e2dbffb35d9746381"
+    },
+    "gerar_distribuicao.py": {
+      "bytes": 8529,
+      "sha256": "53303711e4891fdeb4b80bf79b9d1c9e43b121f236af1ebc2b1538ccafdc59e1"
+    },
+    "gradientes_inferencias.py": {
+      "bytes": 6119,
+      "sha256": "18b467b3e16ab4e4151c0a8d593e220d2222673bd82fd7528ee5f9fe896ff869"
+    },
+    "inovacao_guiada.py": {
+      "bytes": 18506,
+      "sha256": "244c0ca226f25374d3fa007095ae1d479066bd60da45b74539545bb66f591b15"
+    },
+    "laboratorio/README.md": {
+      "bytes": 4632,
+      "sha256": "b75ed0c7f0dd296c966bae5ff4e3f4a1e5dc52ac2bc7e8a406f5cfc5b9ef0df2"
+    },
+    "laboratorio/evidencia.py": {
+      "bytes": 3427,
+      "sha256": "1eb02a1e0a13526a075abb874e0bfd0d3cb60622f2734025631a5d36d389c2ae"
+    },
+    "laboratorio/feedback.py": {
+      "bytes": 7104,
+      "sha256": "0dfe2f353a3340ae56383de771a26a3adececbc57f4d0c492c8470018c8c8a6c"
+    },
+    "laboratorio/resultado_testes.json": {
+      "bytes": 173,
+      "sha256": "3bedb79c5a97456ef5841052778c96ea9b93e2c15485bce3ff9be7be0d53851d"
+    },
+    "laboratorio/revisao.json": {
+      "bytes": 5361,
+      "sha256": "a1145dd5c5972e09d772712f6380c561819409abef4b5254b17c41b442487257"
+    },
+    "laboratorio/testar.py": {
+      "bytes": 10985,
+      "sha256": "0f119d162bdd3988a31cb9396d2caed25fd77144cfb11d4426d902fedf8cb832"
+    },
+    "laboratorio/testes.log": {
+      "bytes": 2587,
+      "sha256": "35f8a4455575a6b9412e514585bb69c32ae926f222ebb5feca76c38cae3309b4"
+    },
+    "metacognicao_algebra_geometria.py": {
+      "bytes": 8710,
+      "sha256": "b1969be30a75710dfa35e6c229737ff969dc02f75ace1cea8922cd688cfe436b"
+    },
+    "ml_nucleo.py": {
+      "bytes": 6609,
+      "sha256": "9fe40d58139efbc74e58bda1c3dee2fb30e136f817f6694fbddbc38dd178e706"
+    },
+    "modelo_mundo.py": {
+      "bytes": 13152,
+      "sha256": "699ad33248cb7be0b82a52bb09e4d2327a2e4e78b7e759545e8e040686542832"
+    },
+    "otimizacao_holistica.py": {
+      "bytes": 3633,
+      "sha256": "513a536d036665b8bf1d0bbaf9af0ae87c425122c5adb368a80b0f2f450b75bc"
+    },
+    "recursiva_paraconsistente.py": {
+      "bytes": 20616,
+      "sha256": "fad8a8c1910b97c1f51d60d2630760ffbafe85d94c7b368daeda174e44d61ab8"
+    },
+    "requirements.txt": {
+      "bytes": 15,
+      "sha256": "105a25c9a24a53a42b52ccc93f930e1ea4a88b42372d440ae7c1b82c3a8b2c64"
+    },
+    "revisao_compressao_continua.json": {
+      "bytes": 5623,
+      "sha256": "217acb127c4ff3ba3c7b9fd0c7ab7bd4b878c88ac702514399be83acaef35e25"
+    },
+    "revisao_domestico.json": {
+      "bytes": 4231,
+      "sha256": "06006f4fd769ef117a89f2f766498466cfb5665003552d25ab5dcf3331e9212b"
+    },
+    "revisao_estresse_autopoietico.json": {
+      "bytes": 91574,
+      "sha256": "43d39f7d4547244bb2b044103a5b06a1bd149afd14d00b92b78ecb3b7ff67806"
+    },
+    "revisao_inovacao.json": {
+      "bytes": 4455,
+      "sha256": "0987bb2dbd7716a072427642ff101cda40d43f5038529f45ea5b4b3ead1413c5"
+    },
+    "revisao_modelo_mundo.json": {
+      "bytes": 6121,
+      "sha256": "234a89cd53da1ea547bbebcb6ffc2576a9e6d1efc34268113d9640e88fd85fb8"
+    },
+    "revisao_otimizacao.json": {
+      "bytes": 9077,
+      "sha256": "61c2fc14786a1e6485ae2481a1cc0aee2eebf765d33e7c2e7ba8f88bafd30120"
+    },
+    "revisao_recursiva.json": {
+      "bytes": 4928,
+      "sha256": "1bd72572c048453be87e93f22465db4b6123a776c1ec19d36cd50251405724a9"
+    },
+    "revisao_sete_camadas.json": {
+      "bytes": 4065,
+      "sha256": "67beab04cad55842ea876c82d4b5b111888e092a8ab97fa136f277d21ea1e59f"
+    },
+    "revisao_trabalho_continuo.json": {
+      "bytes": 5539,
+      "sha256": "db9c1c98ee98fc10c458584f424be705f3096ddd336f04148f19628b7c0bc89c"
+    },
+    "revisao_transferencia.json": {
+      "bytes": 5647,
+      "sha256": "6c9c95992bc75750788701d997b6730f5e383be5a5ad775d3ce370d06ae4f154"
+    },
+    "rl_grupos.py": {
+      "bytes": 16235,
+      "sha256": "27cdc0b445ee62c86397095c3bc556a9188270a2324c0f721b6f8460354bcc54"
+    },
+    "sete_camadas.py": {
+      "bytes": 18902,
+      "sha256": "d6a8cd112e71357d86f8f86533a83f1fd0661cdd5d341790b11ccdd5b50aef70"
+    },
+    "synthai_cli.py": {
+      "bytes": 16048,
+      "sha256": "d7680183f7f148c0ba3738fb25323551ed611de5d2ec8a042ac54de13ab25ed5"
+    },
+    "testes_aprendizagem_continua.py": {
+      "bytes": 8658,
+      "sha256": "5543ed44283be2349e150703bec7faad552831af765e74759d31934645af59bf"
+    },
+    "testes_autopoietico_core.py": {
+      "bytes": 2643,
+      "sha256": "65b55f969e21deb1e0e0ceaeedb183281be857993c0efa65ee0383df4af415e4"
+    },
+    "testes_compressao_continua.py": {
+      "bytes": 8768,
+      "sha256": "65c30b25863f143217acd84da534f5f0868f08359e2426f39f8c88b44a8a12ee"
+    },
+    "testes_compressao_ml.py": {
+      "bytes": 10773,
+      "sha256": "e6eac96c8c86ff44e98855b7c117209b01953d85dcb267b4858cd56b549dcfca"
+    },
+    "testes_domestico.py": {
+      "bytes": 8508,
+      "sha256": "e0ab5e59b1a92ed8f3fd2f4704e38b4665e6b661d5832bf7cd945c6a921dfc03"
+    },
+    "testes_estresse_autopoietico.py": {
+      "bytes": 2817,
+      "sha256": "4c5e9283a10dbd9984f14e16186b825a74d03ccc01e107ea6ab702019ad8125e"
+    },
+    "testes_gradientes_inferencias.py": {
+      "bytes": 2646,
+      "sha256": "089d37b48bbcb8cb2eaf64443cbe49742d55a750ebde11a2ff308b18c62355fb"
+    },
+    "testes_inovacao_guiada.py": {
+      "bytes": 10865,
+      "sha256": "6b83a5c13e75bf0dfd762afae6112f8f5e12d23fcb239b938bf9a70ef3ebad6d"
+    },
+    "testes_meta_algebra_geometria.py": {
+      "bytes": 3842,
+      "sha256": "2215cde7bb16633d4f9b022d331e2067bf472568db68141f198017a9a63d94cc"
+    },
+    "testes_ml_nucleo.py": {
+      "bytes": 4500,
+      "sha256": "69d992805e966ac502001aeb57962d6ab1ce0be796e92458c5c6d7460a892e59"
+    },
+    "testes_modelo_mundo.py": {
+      "bytes": 6325,
+      "sha256": "a6541563181738a22118e1e4e34b2c58a409f2502b44f282f38f137e5e154b93"
+    },
+    "testes_otimizacao_holistica.py": {
+      "bytes": 1196,
+      "sha256": "b1cabadadd62f8098bfb56cc306b40b4d0185d5f469477ec5e199c38874da236"
+    },
+    "testes_recursiva_paraconsistente.py": {
+      "bytes": 12596,
+      "sha256": "d807af63642cd9923700ea54c7d8a0db13773b25d4f13d0db380bfd65eff49a0"
+    },
+    "testes_rl_grupos.py": {
+      "bytes": 9039,
+      "sha256": "c57cd51ca6e5bd8e3dab9a70bd745b416a2c5bc04a15e4aae5247d03641c7c1e"
+    },
+    "testes_sete_camadas.py": {
+      "bytes": 6782,
+      "sha256": "c9b83f8713a4a389449b43b1811ddfb7dcf468019d6903099b5685de1c5cf424"
+    },
+    "testes_trabalho_continuo.py": {
+      "bytes": 4322,
+      "sha256": "61253bc11c568f036b84d8e4dead6ba3cef0a2ce2d1280479e1b0733a8cb339d"
+    },
+    "testes_transferencia_metacognitiva.py": {
+      "bytes": 9840,
+      "sha256": "fcbb160641e45a40ff5c78014ca505c100c30fadff0a87a97b080104bb88aeec"
+    },
+    "trabalho_continuo.py": {
+      "bytes": 9256,
+      "sha256": "1df0ce5d61aa19423b078b41f74efd2b4881bb77c109a7a24a738bd2dad0672a"
+    },
+    "transferencia_metacognitiva.py": {
+      "bytes": 17632,
+      "sha256": "023f12cedfbe57f61b820b065d86ead76c9177086064bfd6c2cf906868b3f6e4"
+    },
+    "verificar.py": {
+      "bytes": 3573,
+      "sha256": "73a08ee9b8a04a1c349c325c9649c1c3f79eb65be742f7cfaacc86deec97a605"
+    }
+  }
+}

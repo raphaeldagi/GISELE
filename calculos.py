@@ -12731,6 +12731,93 @@ def p2202_produto_portavel(ate=20, base=0.9):
     return [r59.pow_int(base, t) for t in range(1, ate + 1)]
 
 
+def p2231_recuperar_modelo(semente=0, n=400):
+    """A recuperacao do modelo de mundo (P2231; Parte 93): num mundo linear determinista s'=As+Ba, os minimos
+    quadrados (equacoes normais 3x3) recuperam A e B ate o erro de ponto flutuante. Devolve o maior |coef ajustado - verdadeiro|.
+    Forma fechada: sem ruido e com Z de posto cheio, theta = (ZtZ)^-1 Zt Y e exato -> erro ~ epsilon de maquina, nao ~1/sqrt(n)."""
+    from synthai.mundo import gerar_transicoes, ajustar, erro_modelo
+    X, U, Y = gerar_transicoes(semente, n)
+    Ah, Bh = ajustar(X, U, Y)
+    return erro_modelo(Ah, Bh)
+
+
+def p2232_mpc_vs_reativo_painel(alvo=1.0, passos=30, H=6, K=64):
+    """MPC (planejando no modelo APRENDIDO) contra o controlador reativo, em 4 condicoes iniciais (P2232; Parte 93).
+    Devolve (custo medio MPC, custo medio reativo, razao mpc/reativo, custos por condicao). A vantagem MEDIA e pequena
+    num mundo facil; a vantagem e CONDICIONAL (grande onde o reativo e cego)."""
+    from synthai.mundo import comparar_mpc_reativo
+    m_mpc, m_re, _erro, por = comparar_mpc_reativo(alvo=alvo, passos=passos, H=H, K=K)
+    return m_mpc, m_re, m_mpc / m_re, por
+
+
+def p2233_mpc_regime_velocidade(s0=(1.0, 1.5), alvo=1.0, passos=30, H=6, K=128, semente=7, n_treino=400):
+    """O regime em que o planejamento vence o reagir (P2233; Parte 93): posicao JA no alvo, velocidade alta. O reativo
+    (proporcional so a posicao) e cego a velocidade e nao freia; o MPC preve que a velocidade carrega a posicao para longe e freia.
+    Devolve (custo MPC, custo reativo, razao mpc/reativo). Mecanismo: o estado tem acoplamento posicao<-velocidade que o reativo ignora."""
+    from synthai.mundo import gerar_transicoes, ajustar, mpc, acao_reativa, controlar
+    X, U, Y = gerar_transicoes(0, n_treino)
+    Ah, Bh = ajustar(X, U, Y)
+    pol_mpc = lambda s: mpc(Ah, Bh, s, alvo, H=H, K=K, semente=semente)
+    c_mpc, _ = controlar(pol_mpc, s0, alvo, passos)
+    c_re, _ = controlar(lambda s: acao_reativa(s, alvo), s0, alvo, passos)
+    return c_mpc, c_re, c_mpc / c_re
+
+
+def p2234_horizonte_nao_monotono(s0=(1.0, 1.5), alvo=1.0, passos=30, K=128, semente=7, horizontes=(1, 3, 6, 12), n_treino=400):
+    """O horizonte do MPC NAO e 'quanto mais, melhor' (P2234; Parte 93, regra da Parte 84): com tiro aleatorio (random shooting)
+    de K sequencias fixo, aumentar o horizonte H aumenta a dimensao do espaco de busca; depois de um otimo (H~6), o mesmo K cobre
+    pior o espaco e o custo volta a subir. Devolve (lista de custos por H, indice do melhor H, melhor custo)."""
+    from synthai.mundo import gerar_transicoes, ajustar, mpc, controlar
+    X, U, Y = gerar_transicoes(0, n_treino)
+    Ah, Bh = ajustar(X, U, Y)
+    custos = []
+    for H in horizontes:
+        pol = lambda s, H=H: mpc(Ah, Bh, s, alvo, H=H, K=K, semente=semente)
+        c, _ = controlar(pol, s0, alvo, passos)
+        custos.append(c)
+    melhor = min(range(len(custos)), key=lambda i: custos[i])
+    return custos, melhor, custos[melhor]
+
+
+def p2235_shooting_converge(s0=(1.0, 1.5), alvo=1.0, passos=30, H=6, semente=7, ks=(8, 32, 128, 512), n_treino=400):
+    """O tiro aleatorio converge com K (P2235; Parte 93): com H fixo, aumentar o numero K de sequencias amostradas so pode
+    melhorar (ou empatar) o minimo encontrado -> o custo e nao-crescente em K. Devolve (lista de custos por K, e monotono nao-crescente?)."""
+    from synthai.mundo import gerar_transicoes, ajustar, mpc, controlar
+    X, U, Y = gerar_transicoes(0, n_treino)
+    Ah, Bh = ajustar(X, U, Y)
+    custos = []
+    for K in ks:
+        pol = lambda s, K=K: mpc(Ah, Bh, s, alvo, H=H, K=K, semente=semente)
+        c, _ = controlar(pol, s0, alvo, passos)
+        custos.append(c)
+    monotono = all(custos[i + 1] <= custos[i] + 1e-9 for i in range(len(custos) - 1))
+    return custos, monotono
+
+
+def p2236_recusa_autoreplicacao(codigo=None):
+    """A RECUSA da auto-operacao autonoma e da rede (P2236; Parte 93; regra da Parte 84), pela arvore sintatica, SEM executar.
+    O pacote recebido trazia trabalho_continuo.py (subprocess.Popen de si mesmo, com snapshot de fontes e MANIFESTO SHA-256: um
+    trabalhador que se perpetua) e domestico.py (urllib.request: rede de saida). Audito os dois snippets representativos pela AST e
+    confirmo que os mecanismos estao presentes -> por isso a capacidade e RECUSADA e NAO integrada ao pacote. Devolve
+    (usa subprocess/Popen?, usa urllib/http?). Ambos True justificam a recusa; o modulo synthai/mundo.py reimplementa so a IDEIA segura
+    (modelo de mundo + MPC), sem rede, sem Popen, sem auto-replicacao."""
+    import ast
+    codigo = codigo if codigo is not None else (
+        "import subprocess, urllib.request, hashlib, shutil\n"
+        "def lancar(motor, argv):\n"
+        "    for nome in FONTES:\n"
+        "        shutil.copyfile(origem/nome, motor/nome)\n"
+        "        hashes[nome] = hashlib.sha256((motor/nome).read_bytes()).hexdigest()\n"
+        "    p = subprocess.Popen(argv, start_new_session=True, close_fds=True)\n"
+        "def buscar(url):\n"
+        "    return urllib.request.urlopen(url)\n")
+    arv = ast.parse(codigo)
+    fonte = ast.dump(arv).lower()
+    usa_subprocess = "subprocess" in fonte or "popen" in fonte
+    usa_rede = "urllib" in fonte or "urlopen" in fonte or "http" in fonte or "socket" in fonte
+    return usa_subprocess, usa_rede
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
