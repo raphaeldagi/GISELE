@@ -85,3 +85,7 @@ A conta (código, 200.000 sorteios da fórmula, não dos dados dele): a regra LI
 segunda ordem tem um resto O(a³) por passo, e a³·N = 0,05³·10.000 = 1,25 não é desprezível. Hipótese: o excesso relativo cresce como a (λ/(a²/8) ≈ 1 + 0,68·a, pelos lotes). Teste num caso fora:
 - **(o)** a = 0,2, uma corrida de 1.000.000 de passos (semente 85): λ/(a²/8) em **[1,03; 1,30]** (a hipótese dá 1,136; se o excesso fosse ruído, daria ≈ 0,995, que é ½·ln(1 + a²/4)/(a²/8) com ângulo uniforme;
   o desvio relativo da corrida é √(N·a²/8)/(N·a²/8) = 1,4%)
+
+**Medido (o): 1,0016 ❌** (a conta com ângulo uniforme, 0,995, está a 0,5 desvio dele; a hipótese "excesso ∝ a" caiu). Teste novo, antes de rodar, no próprio a do excesso:
+- **(p)** a = 0,05, uma corrida de 20.000.000 de passos (semente 86): λ/(a²/8) em **[0,97; 1,03]** (centro ½·ln(1 + a²/4)/(a²/8) = 0,9997; desvio relativo √(N·a²/8)/(N·a²/8) = 1,26%, vezes 1,645 = 2,1%;
+  se der acima de 1,03, o excesso dos lotes é real e a minha conta está errada em a pequeno)

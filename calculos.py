@@ -12057,6 +12057,23 @@ def p1935_sete_camadas_recebido():
     return json.loads(r.stdout.strip().split("\n")[-1]) if r.returncode == 0 else None
 
 
+def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
+    """O expoente de Lyapunov do jogo bilinear assíncrono por moeda (P1936), numa corrida longa, renormalizada a cada passo (o produto de cisalhamentos de
+    determinante 1). Devolve (λ por passo, λ/(a²/8), a conta com ângulo uniforme ½·ln(1 + a²/4)/(a²/8))."""
+    r = random.Random(semente)
+    t, p, soma = 1.0, 0.0, 0.0
+    for _ in range(passos):
+        if r.random() < 0.5:
+            t = t - a * p
+        else:
+            p = p + a * t
+        n = math.sqrt(t * t + p * p)
+        soma += math.log(n)
+        t, p = t / n, p / n
+    lam = soma / passos
+    return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
