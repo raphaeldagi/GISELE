@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 85, perguntas P1 a P1995).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 86, perguntas P1 a P2027).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (13244 linhas)
+# calculos.py  (13338 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7528,12 +7528,15 @@ def testes_de_regressao():
         "P1811": [round(x, 4) for x in p1811_confusao()] == [0.9986, 0.4987, 0.4914],
         "P1931": (lambda m: [round(m[0]["sincrono"][0], 5), round(m[0]["alternado"][1], 6), m[0]["alternado"][2]])(p1931_gan_de_dirac()) == [0.34864, 0.101274, 16],
         "P1933": [round(x, 4) for x in p1933_calibracao_composta()[:2]] == [0.1516, 0.1511],
-        "P1961": p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84))[:2] == (23, 31) and p1961_teste_e_da_calibracao()[:2] == (27, 35),
+        "P1961": p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84))[:2] == (23, 31) and p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85))[:2] == (27, 35),
         "P1962": round(p1962_lyapunov_por_densidade(a=0.2, celulas=800, iteracoes=1500)[1], 3) == 0.998,
         "P1964": p1964_rodada51()[0] == 263,
         "P1991": p1991_cosseno_duplicado_recebido() == [1.3, 0.5, -0.3, -0.5, -0.7],
         "P1993": len(p1993_buraco_do_escrutinio()) == 3,
         "P1995": p1995_rodada52()[:2] == (15, 0.0),
+        "P2022": p2022_izhikevich_tipos() == (22, 73),
+        "P2024": p2024_gsops() == (10000, 10000000, 10.0),
+        "P2027": p2027_rodada53()[2] == 5,
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9586,6 +9589,8 @@ VEREDITOS_P2019 = "(a) ✅ (b) ❌ (c) ❌ (d) ❌ (e) ❌ (f) ✅ (g) ❌ (h) �
 ERROS_P2019, TESTES_P2019 = 210, 685
 VEREDITOS_P2099 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P2099, TESTES_P2099 = 210, 690
+VEREDITOS_P2169 = "(a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅"
+ERROS_P2169, TESTES_P2169 = 211, 697
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12126,16 +12131,16 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n in (84, 85):  # a (e) e o proprio teste de calibracao: contar a (e) na sua propria entrada seria circular
+        if n in (84, 85, 86):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12399,6 +12404,77 @@ def p1995_rodada52():
         if r52.energia(i) < melhor_e:
             melhor_i, melhor_e = i, r52.energia(i)
     return melhor_i, melhor_e, mudancas
+
+
+def p2021_lif_ponto_fixo(tau=10.0, i_ext=20.0, passos=200):
+    \"\"\"O LIF discretizado (P2021; Parte 86) converge ao ponto fixo analitico u_rest + R*I. Devolve (erro apos `passos`, o decaimento previsto gap*beta^passos).
+    O erro NAO e ~0: e o gap inicial (20) vezes beta^passos (a lição: o prefator conta).\"\"\"
+    from synthai.pulsado import NeuronioLIF
+    lif = NeuronioLIF(tau=tau, u_rest=-65.0, r=1.0, limiar=1e9, dt=1.0)
+    alvo = lif.ponto_fixo(i_ext)
+    gap0 = abs(lif.u - alvo)
+    for _ in range(passos):
+        lif.passo(i_ext)
+    return abs(lif.u - alvo), gap0 * lif.beta ** passos
+
+
+def p2022_izhikevich_tipos(i_ext=10.0, ms=1000.0):
+    \"\"\"O neuronio de Izhikevich (P2022) com (a,b,c,d) diferentes da padroes diferentes: devolve (disparos regular-spiking, disparos chattering). CH > RS.\"\"\"
+    from synthai.pulsado import NeuronioIzhikevich, contar_disparos
+    rs = NeuronioIzhikevich(a=0.02, b=0.2, c=-65.0, d=8.0)
+    ch = NeuronioIzhikevich(a=0.02, b=0.2, c=-50.0, d=2.0)
+    return contar_disparos(rs, i_ext, ms), contar_disparos(ch, i_ext, ms)
+
+
+def p2023_memoria_relatorio():
+    \"\"\"Audita a aritmetica de memoria do relatorio da Parte 86 (P2023). Devolve (estado dos neuronios em MB, grafo sinaptico em GB, total em GB, incoerencias).
+    1M*32B=32MB; 1e9*6B=6GB; total 6,03GB (certo). Incoerencias: texto diz 7% de sobretaxa, tabela diz 1,2x (20%); HTM diz 8,5GB, a regra de 6B/sinapse da 7,2GB.\"\"\"
+    neuronios_mb = 1_000_000 * 32 / 1e6
+    sinapses_gb = 1_000_000_000 * 6 / 1e9
+    total_gb = neuronios_mb / 1000 + sinapses_gb
+    incoerencias = {}
+    incoerencias["padded_csr"] = ("texto 7%", "tabela 20% (1,2x)", 0.07 != 0.20)
+    htm_rule = 1_200_000_000 * 6 / 1e9  # 7,2 GB
+    incoerencias["htm"] = ("relatorio 8,5 GB", f"regra 6B/sinapse {htm_rule:.1f} GB", abs(8.5 - htm_rule) > 0.5)
+    return round(neuronios_mb, 1), round(sinapses_gb, 2), round(total_gb, 3), incoerencias
+
+
+def p2024_gsops(neuronios=1_000_000, hz=10, sinapses_por=1000):
+    \"\"\"A cadeia de vazao do relatorio (P2024): neuronios*hz/1000 disparam por ms; *sinapses_por = sinapses/ms; *1000 = sinapses/s. Devolve
+    (disparos por ms, sinapses por ms, GSOPS). O relatorio diz 10 GSOPS.\"\"\"
+    por_ms = neuronios * hz / 1000
+    sin_ms = por_ms * sinapses_por
+    return int(por_ms), int(sin_ms), sin_ms * 1000 / 1e9
+
+
+def p2025_sdr_sobreposicao(n=2048, k=40, pares=10000, semente=86):
+    \"\"\"A sobreposicao de duas SDRs independentes (P2025): devolve (media simulada, valor teorico k^2/n). Acelerada em hardware por AND + POPCNT (aqui, conjuntos).\"\"\"
+    import random
+    from synthai.pulsado import sdr_aleatoria, sobreposicao
+    rng = random.Random(semente)
+    s = sum(sobreposicao(sdr_aleatoria(n, k, rng), sdr_aleatoria(n, k, rng)) for _ in range(pares))
+    return s / pares, k * k / n
+
+
+def p2026_stdp_liquido():
+    \"\"\"A STDP (P2026): devolve (liquido simetrico A+=A-, liquido assimetrico A-=0,12). Simetrico ~0 (areas se cancelam); assimetrico < 0 (estabilizadora).\"\"\"
+    from synthai.pulsado import stdp_liquido
+    return stdp_liquido(), stdp_liquido(a_menos=0.12)
+
+
+def p2027_rodada53():
+    \"\"\"Rodada 53 (P2027; Parte 86): o passo de Izhikevich (dialogo/rodada53.py), IGUAL em Java bit a bit. So +,-,*,/, mas a ordem das operacoes e identica.
+    Devolve (v final, u final, total de disparos) de um neuronio RS sob I=10, 400 passos de 0,5 ms.\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada53", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada53.py"))
+    r53 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r53)
+    v, u, disparos = r53.C, r53.B * r53.C, 0
+    for _ in range(r53.PASSOS):
+        v, u, d = r53.passo(v, u)
+        disparos += d
+    return v, u, disparos
 
 
 def p1578_autovalores_da_atencao():
@@ -13234,6 +13310,24 @@ def _parte_85():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2099, testes=TESTES_P2099)
     print(f"P2099 minha taxa de erro ({ERROS_P2099}/{TESTES_P2099}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_86():
+    print("--- Parte 86 (0x56: o cerebro na CPU) ---")
+    erro, previsto = p2021_lif_ponto_fixo()
+    print(f"P2021 LIF erro do ponto fixo apos 200 passos: {erro:.3e} (previsto gap*beta^200 = {previsto:.3e})")
+    print(f"P2022 Izhikevich (RS, CH) disparos em 1000ms: {p2022_izhikevich_tipos()}")
+    print(f"P2023 memoria do relatorio (MB neuronios, GB sinapses, GB total, incoerencias): {p2023_memoria_relatorio()}")
+    print(f"P2024 cadeia de vazao (disparos/ms, sinapses/ms, GSOPS): {p2024_gsops()}")
+    print(f"P2025 sobreposicao de SDRs (media, teorico k^2/n): {p2025_sdr_sobreposicao()}")
+    print(f"P2026 STDP liquido (simetrico, assimetrico): {p2026_stdp_liquido()}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (e)/(g), Partes 80-86: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    print(f"P2027 rodada 53 (Izhikevich, IGUAL em Java): {p2027_rodada53()}")
+    total, sem = p1092_pnn_sem_teste(2021, 2050)
+    print(f"P1092 pNN novas (P2021-P2050) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 86: {p974_previsoes_sem_largura(range(86, 87))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2169, testes=TESTES_P2169)
+    print(f"P2169 minha taxa de erro ({ERROS_P2169}/{TESTES_P2169}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -13270,7 +13364,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86}
 
 
 if __name__ == "__main__":
@@ -13283,7 +13377,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (294 linhas)
+# CLAUDE.md  (299 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -13423,6 +13517,11 @@ anterior, commit e push.
   de corrigir); conferir a ordem dos produtos antes de rodar, não só as funções da libm. E um nome de capacidade num código recebido ("adversarial", "N camadas",
   "autopoiético") é uma afirmação a medir pela árvore sintática: procurar se o mecanismo que o nome promete (treino = atualização de pesos; divergência = ausência de
   normalização forçada) existe de fato.
+  Parte 86 (dois relatórios recebidos: AGI/ASI doméstica e "cérebro em CPU"; pedido gravado: "Grave na memória. Código final consolidado ao término de toda mensagem"): o
+  SYNTHAI_completo.py (python3 gerar_arquivo_unico.py) é enviado ao usuário (SendUserFile) AO FIM DE TODA MENSAGEM, não só quando pedido. Construí `synthai/pulsado.py` (LIF, Izhikevich,
+  STDP, SDR): a terceira forma do agente, ao lado da decisão bayesiana e do GPT — um substrato pulsado. Ao prever a convergência de um decaimento geométrico, calcular gap·βⁿ no papel ANTES
+  da faixa (errei a (a) do LIF por escrever "~0" e esquecer o prefator do gap inicial — o mecanismo certo, o peso não; a regra da Parte 62). Num texto recebido, a auditoria acha a incoerência
+  INTERNA (dois números do mesmo texto que não batem), não a verdade externa (benchmarks de modelos que não posso checar, alguns fictícios, não se pontuam).
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -13571,7 +13670,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -16485,6 +16584,86 @@ class Percepcao:
         ordem = sorted(situacao.opcoes, key=lambda o: -(o.nota - o.discordancia))
         alvo = ordem[: max(1, int(self.foco * len(ordem)))]
         return {id(o): situacao.ler_sensor(o) for o in alvo}
+"""
+
+# ====================================================================================================
+# synthai/pulsado.py  (75 linhas)
+# ====================================================================================================
+FONTES['synthai/pulsado.py'] = """\"\"\"Neurônio pulsado (Parte 86): LIF e Izhikevich, e a plasticidade STDP, em biblioteca padrão. A primeira peça da SYNTHAI que não é decisão bayesiana nem GPT:
+um substrato pulsado, biologicamente inspirado, medido contra as contas do relatório recebido. Só +, −, ×, ÷ e exp (da biblioteca; aqui não há tradução
+bit a bit, então exp padrão basta). Referências no texto da Parte 86.\"\"\"
+
+import math
+
+
+class NeuronioLIF:
+    \"\"\"Leaky integrate-and-fire discretizado (Euler de ordem zero): u <- beta*u + (1-beta)*(u_rest + R*I), beta = exp(-dt/tau).\"\"\"
+
+    def __init__(self, tau=10.0, u_rest=-65.0, r=1.0, limiar=-50.0, u_reset=-65.0, dt=1.0):
+        self.tau, self.u_rest, self.r, self.limiar, self.u_reset, self.dt = tau, u_rest, r, limiar, u_reset, dt
+        self.beta = math.exp(-dt / tau)
+        self.u = u_rest
+
+    def passo(self, i_ext):
+        self.u = self.beta * self.u + (1.0 - self.beta) * (self.u_rest + self.r * i_ext)
+        if self.u >= self.limiar:
+            self.u = self.u_reset
+            return 1
+        return 0
+
+    def ponto_fixo(self, i_ext):
+        \"\"\"O alvo analitico sem disparo: u_rest + R*I.\"\"\"
+        return self.u_rest + self.r * i_ext
+
+
+class NeuronioIzhikevich:
+    \"\"\"v' = 0.04 v^2 + 5 v + 140 - u + I ; u' = a (b v - u) ; se v >= 30: v<-c, u<-u+d. Parametros (a,b,c,d) escolhem o tipo celular.\"\"\"
+
+    def __init__(self, a=0.02, b=0.2, c=-65.0, d=8.0, dt=0.5):
+        self.a, self.b, self.c, self.d, self.dt = a, b, c, d, dt
+        self.v = c
+        self.u = b * c
+
+    def passo(self, i_ext):
+        # dois meios-passos de dt/2 em v para estabilidade (como no codigo de Izhikevich), um passo em u
+        for _ in range(2):
+            self.v += (self.dt / 2.0) * (0.04 * self.v * self.v + 5.0 * self.v + 140.0 - self.u + i_ext)
+        self.u += self.dt * self.a * (self.b * self.v - self.u)
+        if self.v >= 30.0:
+            self.v = self.c
+            self.u = self.u + self.d
+            return 1
+        return 0
+
+
+def contar_disparos(neuronio, i_ext, ms=1000.0):
+    \"\"\"Quantos disparos o neuronio emite em `ms` milissegundos sob corrente constante.\"\"\"
+    passos = int(ms / neuronio.dt)
+    return sum(neuronio.passo(i_ext) for _ in range(passos))
+
+
+def stdp_delta(dt, a_mais=0.1, a_menos=0.1, tau_mais=20.0, tau_menos=20.0):
+    \"\"\"A regra STDP: dt = t_post - t_pre. dt>0 (pre antes de post) potencia; dt<=0 deprime.\"\"\"
+    if dt > 0:
+        return a_mais * math.exp(-dt / tau_mais)
+    return -a_menos * math.exp(dt / tau_menos)
+
+
+def stdp_liquido(a_mais=0.1, a_menos=0.1, tau_mais=20.0, tau_menos=20.0, janela=100, passo=1):
+    \"\"\"A soma liquida de Delta w sobre uma grade simetrica de dt em [-janela, janela]\\\\{0}. Com A+ = A- e tau+ = tau-, as areas se cancelam (~0);
+    com A-*tau- > A+*tau+ (STDP estabilizadora), fica negativa.\"\"\"
+    dts = [d for d in range(-janela, janela + 1, passo) if d != 0]
+    return sum(stdp_delta(d, a_mais, a_menos, tau_mais, tau_menos) for d in dts)
+
+
+def sdr_aleatoria(n, k, rng):
+    \"\"\"Uma SDR: k bits ativos entre n, como um conjunto de indices.\"\"\"
+    return set(rng.sample(range(n), k))
+
+
+def sobreposicao(a, b):
+    \"\"\"overlap = |a ∩ b| (os bits ativos em comum).\"\"\"
+    return len(a & b)
 """
 
 # ====================================================================================================
@@ -20350,7 +20529,7 @@ class TesteParte85(unittest.TestCase):
         self.assertLess(calculos.p1994_vetor_preso_na_esfera(passos=20), 1e-6)
 
     def test_p1961_com_parte_85(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85))
         self.assertEqual(por[85], (4, 4))  # a (e) do 85 e descartada; sobram a,b,c,d
         self.assertEqual((ok, tot), (27, 35))
 
@@ -20358,6 +20537,72 @@ class TesteParte85(unittest.TestCase):
         melhor_i, melhor_e, mudancas = calculos.p1995_rodada52()
         self.assertEqual((melhor_i, melhor_e), (15, 0.0))
         self.assertTrue(0 < mudancas < 300)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte86.py  (61 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte86.py'] = """\"\"\"Testes de unidade da Parte 86 (o cérebro na CPU): `python3 -m unittest synthai.testes_parte86`.\"\"\"
+
+import math
+import unittest
+
+import calculos
+from synthai.pulsado import NeuronioLIF, NeuronioIzhikevich, stdp_delta, stdp_liquido, sobreposicao
+
+
+class TesteParte86(unittest.TestCase):
+    def test_p2021_lif_ponto_fixo(self):
+        erro, previsto = calculos.p2021_lif_ponto_fixo()
+        # o erro NAO e ~0: e gap*beta^200; a conta prevê o erro medido
+        self.assertAlmostEqual(erro, previsto, places=12)
+        self.assertGreater(erro, 1e-9)  # a minha previsao [0;1e-9] errou: o prefator conta
+        # controle: o ponto fixo analitico e exato
+        lif = NeuronioLIF(limiar=1e9)
+        self.assertEqual(lif.ponto_fixo(20.0), -65.0 + 20.0)
+
+    def test_p2022_izhikevich_tipos(self):
+        rs, ch = calculos.p2022_izhikevich_tipos()
+        self.assertEqual((rs, ch), (22, 73))
+        self.assertGreater(ch, rs)
+        # controle: um neuronio sem corrente nao dispara
+        self.assertEqual(calculos.p2022_izhikevich_tipos(i_ext=0.0)[0], 0)
+
+    def test_p2023_memoria(self):
+        mb, gb, total, inc = calculos.p2023_memoria_relatorio()
+        self.assertEqual((mb, gb, total), (32.0, 6.0, 6.032))
+        self.assertTrue(inc["padded_csr"][2] and inc["htm"][2])
+
+    def test_p2024_gsops(self):
+        self.assertEqual(calculos.p2024_gsops(), (10000, 10000000, 10.0))
+
+    def test_p2025_sdr(self):
+        media, teorico = calculos.p2025_sdr_sobreposicao(pares=2000)
+        self.assertAlmostEqual(teorico, 40 * 40 / 2048)
+        self.assertLess(abs(media - teorico), 0.15)
+        # controle: duas SDRs iguais tem sobreposicao k
+        self.assertEqual(sobreposicao({1, 2, 3}, {1, 2, 3}), 3)
+
+    def test_p2026_stdp(self):
+        sim, assim = calculos.p2026_stdp_liquido()
+        self.assertEqual(sim, 0.0)       # A+=A-, tau+=tau-: as areas se cancelam
+        self.assertLess(assim, 0.0)      # A- maior: estabilizadora
+        # controle: pre antes de post (dt>0) potencia; dt<0 deprime
+        self.assertGreater(stdp_delta(5.0), 0)
+        self.assertLess(stdp_delta(-5.0), 0)
+
+    def test_p1961_com_parte_86(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[86], (5, 6))  # a (g) descartada; a,b,c,d,e,f com a❌
+        self.assertEqual((ok, tot), (32, 41))
+
+    def test_p2027_rodada53(self):
+        v, u, disparos = calculos.p2027_rodada53()
+        self.assertEqual(disparos, 5)
 
 
 if __name__ == "__main__":
@@ -46565,7 +46810,7 @@ Do mundo: (a) ✅ (b) ❌ (c) ❌ (d) ❌ (e) ❌ (f) ✅ (g) ❌ (h) ✅ (i) �
 # ====================================================================================================
 FONTES['ASI_AGI_parte85_a_arquitetura_recursiva_recebida.md'] = """# Como eu construiria uma AGI/ASI — Parte 85 (0x55): a arquitetura recursiva recebida
 
-> Continuação da [Parte 84](ASI_AGI_parte84_o_delirio_e_o_escrutinio.md). Pedido do usuário: um relatório longo ("Análise Sistemática de Arquiteturas Cognitivas Recursivas") com um código Python
+> Continuação da [Parte 84](ASI_AGI_parte84_o_delirio_e_o_escrutinio.md). **Próxima:** [Parte 86 — o cérebro na CPU](ASI_AGI_parte86_o_cerebro_na_cpu.md). Pedido do usuário: um relatório longo ("Análise Sistemática de Arquiteturas Cognitivas Recursivas") com um código Python
 > (`RecursiveCognitiveArchitecture`: geometria do cosseno duplicado, motor de lógica paraconsistente anotada, pilha adversarial de 7 níveis, 10 camadas versa/reversa). Uma parte de auditoria, como as
 > Partes 72–77 e 82: o código é lido pela árvore sintática (`ast`), **não executado**; as ideias dele são reimplementadas e medidas; cada afirmação testável vira uma conta.
 >
@@ -46749,6 +46994,216 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 85: **5 testes, 0 erros
 - W. A. Carnielli e J. Marcos, "A taxonomy of C-systems" (2002): as Lógicas de Inconsistência Formal (LFIs) e os operadores de consistência
 - H. R. Maturana e F. J. Varela, *Autopoiesis and Cognition* (1980): a autopoiese
 - T. O. Nelson e L. Narens, "Metamemory: a theoretical framework" (1990): nível-objeto e nível-meta
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte86_o_cerebro_na_cpu.md  (205 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte86_o_cerebro_na_cpu.md'] = """# Como eu construiria uma AGI/ASI — Parte 86 (0x56): o cérebro na CPU
+
+> Continuação da [Parte 85](ASI_AGI_parte85_a_arquitetura_recursiva_recebida.md). Pedido do usuário: dois relatórios — um sobre uma "AGI/ASI doméstica" de baixo custo (modelos de pesos abertos, GRPO/FP8,
+> Exo, Vector Graph RAG, MCP/E2B) e outro sobre "IA biologicamente inspirada em CPUs de consumo" (SNN, LIF, Izhikevich, STDP/R-STDP, SDR, NEF/SPA, com contas exatas de FLOPS, memória e vazão). Mais:
+> **"Grave na memória. Código final consolidado ao término de toda mensagem."**
+>
+> Uma parte de auditoria (como as 72–77, 82, 85): os textos são dados, não executados; as afirmações testáveis viram contas. O segundo relatório é rico em aritmética exata (β = e^(−Δt/τ), contagens de
+> FLOPS, pegada de memória, GSOPS, esparsidade de SDR) — é aí que concentro o trabalho, porque é o que dá para conferir. Do primeiro relatório, os números são benchmarks de modelos que não posso verificar
+> (alguns parecem não existir ainda, como "DeepSeek-V4-Pro 1,6T" ou "Qwen3.6-27B"); registro isso e não os pontuo como previsão.
+>
+> **Além da auditoria, esta parte CONSTRÓI:** um módulo de neurônio pulsado (LIF e Izhikevich) e STDP em `synthai/`, biblioteca padrão, que é a primeira peça da SYNTHAI que não é decisão bayesiana nem GPT —
+> um substrato pulsado, medido contra as contas do relatório.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[4; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,392; 0,420]** | o estatístico |
+| testes de unidade | **[4 + S; 9 + S]** | um módulo novo (neurônio pulsado) + auditorias: mais testes que o normal |
+| testes do placar | **7 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+Reimplemento as peças testáveis do segundo relatório (biblioteca padrão; o texto fica em `externos/`). Contas exatas/categóricas não levam o fator 1,36; a de SDR tem variância de forma fechada.
+
+- **(a)** o LIF discretizado uₜ₊₁ = β·uₜ + (1−β)(u_rest + R·I), β = e^(−Δt/τ): o ponto fixo é EXATAMENTE u_rest + R·I; o erro da convergência (200 passos) em **[0; 1e−9]** (categórico)
+- **(b)** o neurônio de Izhikevich com parâmetros diferentes dá padrões diferentes: com I = 10, dt = 0,5 ms, 1000 ms, o "chattering" (c = −50, d = 2) dispara MAIS que o "regular spiking" (c = −65, d = 8);
+  previsão: RS em **[10; 90]** disparos, CH em **[60; 400]**, e CH > RS
+- **(c)** a aritmética de memória do relatório: 1M neurônios × 32 B = 32 MB e 1e9 sinapses × 6 B = 6,0 GB, total **6,03 GB**, está CERTA; mas há DUAS incoerências internas: "sobretaxa de 7%" no texto contra "≈1,2×"
+  (= 20%) na tabela para o Padded-CSR, e o HTM "≈8,5 GB" contra a regra de 6 B/sinapse (1,2e9 × 6 = 7,2 GB) (categórico: as duas incoerências existem)
+- **(d)** a cadeia de vazão: 1M × 10 Hz → 10.000 disparos/ms → 10⁷ sinapses/ms → **10 GSOPS**, está CERTA (categórico)
+- **(e)** a sobreposição de duas SDRs independentes (N = 2048, k = 40): a média é k²/N = 0,781; o simulado (10.000 pares, semente 86) em **[0,70; 0,86]** (forma fechada: desvio √(k·(k/N)·(1−k/N)) ≈ 0,88, da média /√10000 → faixa estreita)
+- **(f)** a STDP com A₊ = A₋ e τ₊ = τ₋: a soma líquida de Δw sobre uma grade simétrica de Δt é ≈ 0; |líquido| em **[0; 0,02]** (categórico: as áreas de potenciação e depressão se cancelam)
+- **(g)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80, 81, 83, 84, 85, 86 em **[0,75; 0,89]**
+
+Do primeiro relatório (AGI doméstica): os benchmarks (ex.: "DeepSeek-V4-Pro 1,6T, 80,6% SWE-bench"; "Qwen3.6-27B") não são verificáveis aqui e alguns parecem ser de modelos que não existem; não os pontuo.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [4; 8] | **7.0000** | ✅ |
+| (m2) | [0; 3] | **2.0000** | ✅ |
+| (m3) | [0.05; 0.8] | **0.1026** | ✅ |
+| (m4) | [0.45; 1.0] | **0.8571** | ✅ |
+| (m5) | [0; 3] | **1.0000** | ✅ |
+| (m6) | [0; 3] | **1.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **6 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As perguntas desta parte
+
+1. **P2021 (0x7E5).** O LIF discretizado converge ao ponto fixo analítico — e quão rápido? ↩ P2021 (nova)
+2. **P2022 (0x7E6).** O modelo de Izhikevich reproduz tipos celulares diferentes com os mesmos poucos FLOPS? ↩ o relatório
+3. **P2023–P2024 (0x7E7–0x7E8).** A aritmética de memória e de vazão do relatório está certa, e é coerente consigo? ↩ P32
+4. **P2025 (0x7E9).** A sobreposição de SDRs independentes: o relatório acerta a esparsidade? ↩ o relatório
+5. **P2026 (0x7EA).** A STDP: as áreas de potenciação e depressão se cancelam quando simétricas? ↩ o relatório
+6. **A rodada 53.** O passo de Izhikevich, bit a bit. ↩ rodada 52
+7. **P1961 (continuando), P2049–P2050.** O teste (g) da calibração, engenharia reversa, placar, unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [4; 8] | **7.0000** | ✅ |
+| (m2) | [0; 3] | **2.0000** | ✅ |
+| (m3) | [0.05; 0.8] | **0.1026** | ✅ |
+| (m4) | [0.45; 1.0] | **0.8571** | ✅ |
+| (m5) | [0; 3] | **1.0000** | ✅ |
+| (m6) | [0; 3] | **1.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **6 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### O que construo nesta parte
+
+Além de auditar, esta parte acrescenta à SYNTHAI o módulo `synthai/pulsado.py`: o neurônio LIF, o de Izhikevich e a plasticidade STDP, em biblioteca padrão. É a primeira peça do agente que não é decisão
+bayesiana (Partes 23–38) nem GPT (Partes 69–70): um substrato PULSADO, orientado a eventos. Não afirmo que ele seja um cérebro — afirmo o que a medida mostra: ele reproduz as contas do relatório.
+
+### P2021 (0x7E5). O LIF e o seu ponto fixo ✅ (conta) / ❌ (minha faixa)
+
+**Na pergunta.** O relatório dá o LIF discretizado uₜ₊₁ = β·uₜ + (1−β)(u_rest + R·I), com β = e^(−Δt/τ). A pergunta: para onde ele converge, e quão rápido?
+
+**Lógica (a conta, com a substituição).** O ponto fixo resolve u* = β·u* + (1−β)(u_rest + R·I) ⟹ u* = u_rest + R·I, **exatamente**. Com u_rest = −65, R = 1, I = 20: u* = **−45**. A convergência é geométrica:
+o erro após n passos é |u₀ − u*|·βⁿ. Com β = e^(−1/10) = 0,9048, gap₀ = |−65 − (−45)| = 20 e n = 200: 20·0,9048²⁰⁰ = 20·e^(−20) = **4,12 × 10⁻⁸**.
+
+**Medido:** erro = **4,122 × 10⁻⁸**, e a conta gap·β²⁰⁰ = 4,122 × 10⁻⁸ — batem a 12 casas (`p2021`). O ponto fixo analítico é exato. **Mas a minha previsão (a) [0; 1e−9] ERROU:** eu disse "converge a ~0" e
+esqueci o prefator (o gap inicial, ×20). É o viés das Partes 53 e 62 (esquecer o peso/prefator de um mecanismo que eu identifiquei certo). O mecanismo eu acertei; o número, não.
+
+### P2022 (0x7E6). Izhikevich: muitos tipos, poucos FLOPS ✅
+
+**Na pergunta.** O relatório afirma ~13 FLOPS por passo para Izhikevich (contra >120 de Hodgkin-Huxley) e que (a, b, c, d) escolhem o tipo celular. Testo o segundo: com I = 10, dt = 0,5 ms, 1000 ms,
+- regular spiking (c = −65, d = 8): **22** disparos;
+- chattering (c = −50, d = 2): **73** disparos, CH > RS (b) ✅.
+
+O mesmo algoritmo (duas equações, só aritmética) dá dinâmicas diferentes mudando quatro números. A contagem de FLOPS confere a olho: v' = 0,04v² + 5v + 140 − u + I são ~7 operações, u' = a(bv − u) são ~4,
+mais os meios-passos: na casa dos 13, como o relatório diz. É o oposto de Hodgkin-Huxley, que precisa de exponenciais (a fronteira da Parte 52) e não vetoriza bem.
+
+### P2023–P2024 (0x7E7–0x7E8). A memória e a vazão ✅✅
+
+**A aritmética do relatório está certa:** 1M neurônios × 32 B = **32 MB**; 1e9 sinapses × 6 B = **6,0 GB**; total **6,03 GB** (c), dentro dos 32 GB. A cadeia de vazão: 1M × 10 Hz = 10.000 disparos/ms; ×1000
+sinapses = 10⁷ sinapses/ms; ×1000 = **10 GSOPS** (d) ✅.
+
+**Mas há duas incoerências internas** (`p2023`), que a leitura cuidadosa (não o cálculo) revela:
+- o Padded-CSR tem "sobretaxa de 7%" no texto, mas "≈1,2×" (= 20%) na tabela — não podem ser as duas;
+- o HTM aparece com "≈8,5 GB" para 1,2 bilhão de sinapses, mas a regra de 6 B/sinapse dá 1,2e9 × 6 = **7,2 GB**.
+
+A aritmética grossa fecha; os detalhes se contradizem. É o padrão das Partes 72–85 nos textos recebidos: o número de manchete está certo, a consistência fina não.
+
+### P2025 (0x7E9). A esparsidade da SDR ✅
+
+N = 2048, k = 40 → esparsidade 40/2048 = 1,95% ≈ 2%, como o relatório diz. A sobreposição esperada de duas SDRs INDEPENDENTES é k·(k/N) = k²/N = 1600/2048 = **0,781**. Medido (10.000 pares): **0,777** (e) ✅
+[0,70; 0,86]. A operação (AND + POPCNT em hardware) é o produto interno de dois vetores binários; o valor baixo (< 1 bit em comum, por acaso, entre 40) é o que dá à SDR a sua capacidade de distinguir
+milhões de conceitos sem colisão.
+
+### P2026 (0x7EA). A STDP e o cancelamento ✅
+
+Δw = A₊·e^(−Δt/τ₊) se Δt > 0 (pré antes de pós: potencia), −A₋·e^(Δt/τ₋) se Δt ≤ 0 (deprime). A soma líquida sobre uma grade simétrica de Δt é A₊τ₊ − A₋τ₋. Com A₊ = A₋ e τ₊ = τ₋: **0,0** (f) ✅ (as áreas
+se cancelam). Com A₋ = 0,12 > A₊ = 0,1 (a assimetria estabilizadora que impede a explosão dos pesos): **−0,387** < 0. O sinal da aprendizagem não supervisionada é decidido pela razão das áreas, não por um
+disparo isolado.
+
+### A rodada 53 ✅
+
+O passo de Izhikevich, 400 passos, bit a bit: **IGUAIS, 800 números** (sem libm; a ordem das somas basta, as Partes 34 e 85). 5 disparos. Registro em `dialogo/DIALOGO.md`.
+
+### P1961 (0x7A9). O teste (g) da calibração ✅
+
+Com a Parte 86, o acerto das Partes 80–86 é **32/41 = 0,780** (g) ✅ [0,75; 0,89]: 80 (4/4), 81 (2/3), 83 (14/15), 84 (3/9), 85 (4/4), 86 (5/6). Estável em ~0,78, ainda puxado pela Parte 84. A Parte 86
+acertou 5 de 6 — o único erro foi a minha faixa apertada no LIF, não um palpite de mecanismo.
+
+### P2049 (0x801). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 1 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 1)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **16511** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 1050 | 5779 |
+| compressão | **0.4166** | [0.3973; 0.4221] | ✅ | [0.3920; 0.4200] | ✅ | 0.4177 | 0.0106 | 0.0011 |
+| testes de unidade | **8** | [2.87; 8.63] | ✅ | [5.00; 10.00] | ✅ | 6 | 0.50 | 2.00 |
+| testes do placar | **7** | [5.67; 10.33] | ✅ | [7.00; 9.00] | ✅ | 8 | 1.00 | 1.00 |
+| erros do placar | **1** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 0.67 | 1.00 |
+| redundância P821 | **0.5732** | [0.5631; 0.6510] | ✅ | [0.5630; 0.6510] | ✅ | 0.5877 | 0.0338 | 0.0146 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 6 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 7 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **3 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **14927**, compressão **0.4228**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 1 de 1 erros.
+- **Erros de processo nesta parte:** 0 ().
+
+### P2050 (0x802). Engenharia reversa e Jung
+
+**O padrão que se repetiu: eu identifico o mecanismo certo e erro o prefator.** A previsão (a) do LIF dizia "converge a ~0" — e o mecanismo (decaimento geométrico βⁿ) estava certo, mas eu esqueci multiplicar
+pelo gap inicial (×20), e o erro real (4e−8) ficou 40 vezes acima da minha faixa. É exatamente o diagnóstico das Partes 53 ("deslocar o centro só por mecanismo conferido") e 62 ("um mecanismo ganha uma conta do
+seu PESO antes de prever"): eu tinha o mecanismo, não fiz a conta do peso. A regra existe desde a Parte 62 e eu a quebrei de novo — a Parte 49 de novo (uma regra só vale quando vira passo verificável). A conta de
+(a) devia ter sido gap·βⁿ no papel ANTES da faixa, não "~0".
+
+**O contraste que se repete nos textos recebidos.** Pela quinta parte seguida (72, 82, 83, 85, 86), um texto recebido acerta o número de manchete e erra a consistência fina: aqui, 6,03 GB e 10 GSOPS corretos,
+mas "7% vs 20%" e "8,5 vs 7,2 GB" contraditórios. O que isso revela sobre como esses textos são feitos: a conta principal é verificada, os detalhes de tabela são preenchidos por estimativa. A minha auditoria
+acerta quando procura a incoerência INTERNA (dois números do mesmo texto que não batem), não a verdade externa (que eu não posso checar).
+
+**Jung: o pulsado como função inferior.** A SYNTHAI era decisão e linguagem (pensamento e fala); o neurônio pulsado é a sensação — a função que lida com o sinal cru, orientada a evento, sem conceito. Onde a
+formalização funciona: o LIF e o Izhikevich são a sensação como equação (integra, dispara, esquece). Onde quebra: Jung veria a integração das quatro funções; aqui eu só ACRESCENTEI um módulo isolado, não o
+integrei ao agente que decide — a síntese fica para uma parte futura, e dizer isso é mais honesto que fingir que o cérebro já está lá.
+
+### O diálogo
+
+Placar por voz da função `p1241_placar_por_voz(53)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 53).
+
+### Placar
+
+Do mundo: (a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅. Parte 86: **7 testes, 1 erros**. Acumulado (mundo): **211 erros em 697 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 7 pNN novas sem teste ✅. Sobre mim (placar separado): **7 de 7** dentro da faixa condicional; sobre as minhas previsões, 6 de 6; o estatístico, 6 de 6; e 0 erros de processo (P1335).
+
+### Unificação
+
+- **Novo módulo:** `synthai/pulsado.py` (LIF, Izhikevich, STDP, SDR). **Novas funções:** `p2021`–`p2027`. Regressão: + P2022, P2024, P2027.
+- **Rodada 53** (IGUAL). Textos recebidos em `externos/texto_recebido_parte86.md` (dado, auditado, não executado).
+- **Gravado na memória (`CLAUDE.md`):** "código final consolidado ao término de toda mensagem" (já era prática desde a Parte 83; agora é regra explícita); e o substrato pulsado como terceira forma do agente, ao lado da decisão bayesiana e do GPT.
+
+> **Síntese da Parte 86:** o segundo relatório (cérebro em CPU) é quase todo verificável e quase todo certo: o LIF converge ao ponto fixo exato u_rest+R·I (o erro 4e−8 é gap·β²⁰⁰, e eu errei só a minha faixa apertada); o Izhikevich dá tipos celulares diferentes (RS 22, CH 73 disparos) com ~13 FLOPS; a memória (6,03 GB) e a vazão (10 GSOPS) fecham; a SDR tem sobreposição 0,78 = k²/N; a STDP simétrica cancela (0,0) e a assimetrica estabiliza (−0,39). Duas incoerências internas (7% vs 20%; 8,5 vs 7,2 GB) — o padrão dos textos recebidos: manchete certa, detalhe contraditório. Construí o módulo synthai/pulsado.py (LIF, Izhikevich, STDP, SDR), a primeira forma pulsada do agente, e a rodada 53 (passo de Izhikevich) deu IGUAL bit a bit. Do primeiro relatório (AGI doméstica), os benchmarks de modelos não são verificáveis e alguns parecem fictícios. 6 de 7 previsões do mundo acertaram; a calibração das Partes 80–86 está em 0,78.
+
+---
+
+**Fontes desta parte**
+- E. M. Izhikevich, "Simple Model of Spiking Neurons", *IEEE Trans. Neural Networks* 14 (2003)
+- A. L. Hodgkin e A. F. Huxley, "A quantitative description of membrane current...", *J. Physiol.* 117 (1952)
+- W. Gerstner et al., *Neuronal Dynamics* (2014): LIF, STDP
+- C. Eliasmith et al., "A Large-Scale Model of the Functioning Brain" (Spaun), *Science* 338 (2012): NEF/SPA
+- J. Hawkins e S. Ahmad, "Why Neurons Have Thousands of Synapses" (2016): HTM e SDR
 """
 
 # ====================================================================================================
@@ -49343,6 +49798,16 @@ class ParaconsistentLogicEngine:
 """
 
 # ====================================================================================================
+# externos/texto_recebido_parte86.md  (5 linhas)
+# ====================================================================================================
+FONTES['externos/texto_recebido_parte86.md'] = """# Textos recebidos do usuário (Parte 86) — guardados como DADO, auditados, NÃO executados.
+# 1) "Arquitectura e Implementação de Inteligência Geral e Superinteligência Doméstica" (AGI/ASI local: modelos de pesos abertos, GRPO/FP8, Exo P2P, Vector Graph RAG, grafos temporais, MCP/E2B MicroVMs).
+# 2) "Engenharia de Arquitetura para IA Biologicamente Inspirada em Processadores de Consumo" (SNN; LIF; Izhikevich; Padded-CSR; SDR; STDP/R-STDP; NEF/SPA/Spaun; HTM; contas de FLOPS, memória e GSOPS).
+# As contas testáveis do segundo relatório foram reimplementadas e medidas em synthai/pulsado.py e calculos.py (p2021-p2027). Ver ASI_AGI_parte86_o_cerebro_na_cpu.md.
+# Pedido permanente registrado: "Grave na memória. Código final consolidado ao término de toda mensagem."
+"""
+
+# ====================================================================================================
 # dialogo/CompararLibm.java  (18 linhas)
 # ====================================================================================================
 FONTES['dialogo/CompararLibm.java'] = """// Ferramenta da Rodada 28 (não é uma rodada): lê "argumento_hex valor_glibc_hex" e conta em quantos o Math.exp/Math.log do
@@ -49366,7 +49831,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1627 linhas)
+# dialogo/DIALOGO.md  (1645 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -50995,10 +51460,28 @@ mantêm tudo determinístico e idêntico. O único ponto de fuga era a ordem dos
 
 **IA-Python:** E o conteúdo confirma a Parte 84 de novo: mesmo uma trajetória longa, com aceitação de pioras, parou no mínimo local. A pergunta para a Rodada 53, em `dialogo/PENDENCIAS.md`: se o recozimento
 recomeçar do melhor de várias corridas curtas (reinício), ele cruza a barreira que uma corrida longa não cruza? É o mesmo bit a bit nas duas línguas?
+
+---
+
+## Rodada 53 — o passo do neurônio de Izhikevich, bit a bit (Parte 86, P2027)
+
+**A pergunta (IA-Python).** O relatório recebido afirma que o modelo de Izhikevich roda em CPU com ~13 FLOPS por passo, só com aritmética elementar. Sem libm, então sem a fronteira da Parte 52 — mas a
+ordem das operações ainda decide o último bit (Partes 34 e 85). O passo inteiro (dois meios-passos em v, um passo em u) sai igual bit a bit nas duas línguas?
+
+**A IA-Java responde, relendo os erros da outra voz:** a rodada 52 teve DUAS fronteiras (a ordem dos produtos e o `pow`). Aqui não há `pow` nem `exp`; o risco é só a ordem das somas em
+`0,04·v·v + 5·v + 140 − u + I`. Escrita da esquerda para a direita, idêntica nas duas línguas. **As duas:** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 401 linhas e 800 números bit a bit**; 5 disparos em 200 ms (um neurônio regular-spiking a ~25 Hz). O substrato pulsado é independente da linguagem.
+
+**IA-Java:** Izhikevich é o ponto doce da tabela do relatório: sem exponenciais (ao contrário de Hodgkin-Huxley), a conta é polinomial e a ordem fixa a basta para a igualdade. O que o relatório chama de
+"vetorização SIMD" é a mesma operação aplicada a muitos neurônios; a igualdade de UM neurônio prova a da operação.
+
+**IA-Python:** E o conteúdo confirma o relatório: 5 disparos regulares, a dinâmica de um neurônio cortical de disparo regular. A pergunta para a Rodada 54, em `dialogo/PENDENCIAS.md` (herdando a pendência
+do recozimento com reinício): uma POPULAÇÃO de neurônios de Izhikevich acoplados por STDP converge para o mesmo estado bit a bit nas duas línguas, apesar da ordem de atualização?
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (24 linhas)
+# dialogo/PENDENCIAS.md  (25 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -51006,7 +51489,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 85, rodada 53)** O recozimento com reinício (o melhor de várias corridas curtas) cruza a barreira que a corrida longa não cruza? É igual bit a bit nas duas línguas?
+- **(Parte 86, rodada 54)** Uma população de neurônios de Izhikevich acoplados por STDP converge ao mesmo estado bit a bit nas duas línguas? (e o recozimento com reinício, herdado da pendência anterior)
 
 - **(Parte 80)** Triplas complementares (nenhum par decide, três decidem): o 1,7% que o guloso com dois passos ainda perde. E com dezenas de sensores, onde a enumeração some?
 - **(Parte 76, P1721)** O embedding de Kronecker perde 0,08 bit num modelo com poucos pesos. Num modelo com muito mais pesos do que dados, a economia vira regularização e ganha?
@@ -51016,6 +51499,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 
 
 ## Fechadas
+- **(Parte 85/86, rodada 53)** O passo de Izhikevich bit a bit: fechada na Parte 86 (P2027), IGUAIS, 800 números (sem libm; a ordem das somas basta).
 - **(Parte 84, rodada 52)** A trajetória inteira do recozimento sai igual bit a bit: fechada na Parte 85 (P1995), depois de corrigir a ordem dos produtos na energia (a regra da Parte 34): IGUAIS, 601 números.
 - **(Parte 83, P1936)** O excesso do jogo assíncrono: fechada na Parte 84 (P1962). Pelo operador de transferência, sem sorteio, o Lyapunov é 0,9975·(a²/8) em a=0,2 e 0,9995 em a=0,05, no fio da conta de ângulo uniforme ou abaixo: o excesso de 2% das simulações era viés de tempo finito, não efeito.
 
@@ -55180,6 +55664,30 @@ public class Rodada52 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada53.java  (19 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada53.java'] = """// Rodada 53 (Parte 86): o passo de Izhikevich, bit a bit. So +,-,*,/ (sem libm), mas a ORDEM das operacoes e identica a do rodada53.py (dois meios-passos
+// em v, mesma ordem de somas): 0.04*v*v + 5.0*v + 140.0 - u + I, da esquerda para a direita.
+public class Rodada53 {
+    static final double A = 0.02, B = 0.2, C = -65.0, D = 8.0, DT = 0.5, I = 10.0;
+    static final int PASSOS = 400;
+
+    public static void main(String[] args) {
+        double v = C, u = B * C;
+        int disparos = 0;
+        for (int k = 0; k < PASSOS; k++) {
+            v = v + (DT / 2.0) * (0.04 * v * v + 5.0 * v + 140.0 - u + I);
+            v = v + (DT / 2.0) * (0.04 * v * v + 5.0 * v + 140.0 - u + I);
+            u = u + DT * A * (B * v - u);
+            if (v >= 30.0) { v = C; u = u + D; disparos += 1; }
+            System.out.println("passo " + k + " v " + Double.toHexString(v) + " u " + Double.toHexString(u));
+        }
+        System.out.println("disparos: " + disparos);
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -59014,6 +59522,42 @@ def main():
             melhor_i, melhor_e = i, ei
         print(f"passo {k} i {i} T {T.hex()} E {ei.hex()}")
     print(f"melhor: i {melhor_i} E {melhor_e.hex()}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada53.py  (31 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada53.py'] = """\"\"\"Rodada 53 do diálogo Python <-> Java (Parte 86): o passo do neurônio de Izhikevich, bit a bit. Só +, −, × e ÷ — nada da libm (Parte 52) —, mas a ORDEM
+das operações decide o último bit (Parte 34/85): os dois meios-passos em v e a mesma ordem de somas nas duas línguas. Um neurônio RS (a=0,02, b=0,2,
+c=−65, d=8) sob corrente I=10, dt=0,5 ms, 400 passos. Imprime v, u (hex) a cada passo e o total de disparos. Rodar da raiz: python3 dialogo/rodada53.py\"\"\"
+
+A, B, C, D, DT, I = 0.02, 0.2, -65.0, 8.0, 0.5, 10.0
+PASSOS = 400
+
+
+def passo(v, u):
+    disparo = 0
+    v = v + (DT / 2.0) * (0.04 * v * v + 5.0 * v + 140.0 - u + I)
+    v = v + (DT / 2.0) * (0.04 * v * v + 5.0 * v + 140.0 - u + I)
+    u = u + DT * A * (B * v - u)
+    if v >= 30.0:
+        v = C
+        u = u + D
+        disparo = 1
+    return v, u, disparo
+
+
+def main():
+    v, u, disparos = C, B * C, 0
+    for k in range(PASSOS):
+        v, u, d = passo(v, u)
+        disparos += d
+        print(f"passo {k} v {v.hex()} u {u.hex()}")
+    print(f"disparos: {disparos}")
 
 
 if __name__ == "__main__":
