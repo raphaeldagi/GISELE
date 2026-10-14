@@ -1696,3 +1696,21 @@ mesmo bit. A dinâmica da rede (quem puxa quem) não introduz fronteira nova; a 
 
 **IA-Python:** Com isto o neurônio pulsado está traduzido isolado (53) e em rede (56). A pergunta para a Rodada 57, em `dialogo/PENDENCIAS.md`: a rede acoplada COM STDP (os pesos W mudando pela ordem dos disparos)
 ainda converge ao mesmo estado bit a bit, apesar de a mudança de peso depender de tempos medidos?
+
+---
+
+## Rodada 57 — a rede de Izhikevich que aprende por STDP, bit a bit (Parte 90, P2141; pendência da Parte 89)
+
+**A pergunta (IA-Python).** A rodada 56 deu uma rede de pesos FIXOS igual bit a bit. E se os pesos MUDAREM pela STDP enquanto a rede roda — um laço onde um bit errado num peso muda todos os disparos seguintes?
+A STDP usa exp; então é a fronteira da Parte 52.
+
+**A IA-Java responde, relendo os erros da outra voz:** as rodadas 52 e 55 ensinaram que a fronteira é o exp (use o próprio) e a ordem das somas. Aqui a STDP usa o exp próprio e atualiza W na mesma ordem (pós
+primeiro potencia os pré recentes, depois deprime os pós recentes). **As duas:** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 1.808 números bit a bit** — a trajetória E a matriz de pesos aprendida; 12 disparos, soma dos pesos de 2,6 para 2,582. O aprendizado não quebra a igualdade.
+
+**IA-Java:** Este é o teste mais duro, e passou: o peso é lido no passo seguinte para formar a corrente, então um único bit de diferença num peso se propagaria para sempre. Como não propagou, a prova é forte — o
+substrato pulsado é independente de linguagem até com realimentação. A fronteira (Parte 52) nunca foi a dinâmica; foi sempre o exp e a ordem das operações.
+
+**IA-Python:** Fecha a família das rodadas pulsadas (53 neurônio, 56 população, 57 rede que aprende). A pergunta para a Rodada 58, em `dialogo/PENDENCIAS.md`: o GPT da Parte 69 (a forma que a SYNTHAI vai ter)
+decide o próximo caractere bit a bit depois de um passo de TREINO (os pesos do GPT mudando por gradiente), e não só na inferência congelada (rodada 43)?

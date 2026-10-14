@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 89 (0x59): o substrato que aprende
 
-> Continuação da [Parte 88](ASI_AGI_parte88_a_arquitetura_autopoietica_recebida.md). Sem texto novo do usuário: sigo o ciclo (Parte 44/75). A Parte 86 construiu o neurônio pulsado (LIF, Izhikevich) e a regra
+> Continuação da [Parte 88](ASI_AGI_parte88_a_arquitetura_autopoietica_recebida.md). **Próxima:** [Parte 90 — a rede que aprende igual](ASI_AGI_parte90_a_rede_que_aprende_igual.md). Sem texto novo do usuário: sigo o ciclo (Parte 44/75). A Parte 86 construiu o neurônio pulsado (LIF, Izhikevich) e a regra
 > STDP, mas só mediu neurônios isolados. Aqui faço o substrato **aprender**: a STDP não supervisionada muda os pesos, e a pergunta é se ela faz o que a literatura afirma — tornar uma sinapse seletiva à
 > correlação — e se o faz no meu regime pequeno (a lição das Partes 84 e 87: um efeito famoso pode não aparecer fora da sua escala, então a conta vem antes).
 >

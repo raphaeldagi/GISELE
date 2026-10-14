@@ -7508,6 +7508,8 @@ def testes_de_regressao():
         "P2111": p2111_stdp_integral() == (0.0, -0.3999999999999999),
         "P2113": (lambda t: t[0] > 0.5 > t[1])(p2113_stdp_timing()),
         "P2115": p2115_rodada56() == 12,
+        "P2141": (lambda r: r[0] == 12 and r[1] < r[2])(p2141_rede_stdp()),
+        "P2143": p2143_disparos_aprendiz_vs_fixo() == (12, 12, True),
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9568,6 +9570,8 @@ VEREDITOS_P2309 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P2309, TESTES_P2309 = 215, 708
 VEREDITOS_P2379 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P2379, TESTES_P2379 = 215, 713
+VEREDITOS_P2449 = "(a) ✅ (b) ✅ (c) ✅"
+ERROS_P2449, TESTES_P2449 = 215, 716
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12108,16 +12112,16 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n in (84, 85, 86, 87, 88, 89):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
+        if n in (84, 85, 86, 87, 88, 89, 90):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12591,6 +12595,36 @@ def p2115_rodada56():
     r56 = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(r56)
     return r56.simular(imprimir=False)
+
+
+def p2141_rede_stdp(imprimir=False):
+    """Rodada 57 (P2141; Parte 90): a rede de Izhikevich acoplada que APRENDE por STDP (dialogo/rodada57.py, exp proprio), IGUAL em Java bit a bit. Devolve
+    (total de disparos, soma dos pesos final, soma dos pesos inicial)."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada57", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada57.py"))
+    r57 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r57)
+    return r57.simular(imprimir=imprimir)
+
+
+def p2142_delta_peso():
+    """A STDP da rede (P2142) e de depressao dominante: a soma dos pesos cai. Devolve (ΔW_total = soma final - soma inicial). Negativa (A- > A+)."""
+    total, sw, sw0 = p2141_rede_stdp()
+    return sw - sw0
+
+
+def p2143_disparos_aprendiz_vs_fixo():
+    """Mesmo com STDP ativa, em 300 passos o aprendizado e lento demais para mudar o padrao (P2143): a rede que aprende (rodada 57) da o mesmo numero de
+    disparos que a de pesos fixos (rodada 56). Devolve (disparos com STDP, disparos fixos, iguais?)."""
+    aprendiz = p2141_rede_stdp()[0]
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada56", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada56.py"))
+    r56 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r56)
+    fixo = r56.simular(imprimir=False)
+    return aprendiz, fixo, aprendiz == fixo
 
 
 def p1578_autovalores_da_atencao():
@@ -13490,6 +13524,20 @@ def _parte_89():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2379, testes=TESTES_P2379)
     print(f"P2379 minha taxa de erro ({ERROS_P2379}/{TESTES_P2379}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_90():
+    print("--- Parte 90 (0x5A: a rede que aprende igual) ---")
+    total, sw, sw0 = p2141_rede_stdp()
+    print(f"P2141 rede Izhikevich+STDP (rodada 57, IGUAL em Java): {total} disparos, soma W {sw:.5f} (de {sw0})")
+    print(f"P2142 ΔW_total (depressao dominante, negativo): {p2142_delta_peso():.5f}")
+    print(f"P2143 disparos aprendiz vs fixo: {p2143_disparos_aprendiz_vs_fixo()}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (d), Partes 80-90: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2141, 2170)
+    print(f"P1092 pNN novas (P2141-P2170) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 90: {p974_previsoes_sem_largura(range(90, 91))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2449, testes=TESTES_P2449)
+    print(f"P2449 minha taxa de erro ({ERROS_P2449}/{TESTES_P2449}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -13526,7 +13574,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90}
 
 
 if __name__ == "__main__":
