@@ -1,0 +1,85 @@
+{
+  "revisor": "/root/revisao_laboratorio",
+  "data_utc": "2026-10-12T12:55:44.763297+00:00",
+  "escopo": "Revisão delimitada de evidencia.py, feedback.py e testar.py, duas implementações isoladas de laboratório; não certificação do SYNTHAI, de AGI/ASI ou do conjunto de módulos.",
+  "arquivos_sha256": {
+    "evidencia.py": "1eb02a1e0a13526a075abb874e0bfd0d3cb60622f2734025631a5d36d389c2ae",
+    "feedback.py": "0dfe2f353a3340ae56383de771a26a3adececbc57f4d0c492c8470018c8c8a6c",
+    "testar.py": "0f119d162bdd3988a31cb9396d2caed25fd77144cfb11d4426d902fedf8cb832"
+  },
+  "verificacoes": {
+    "testes_executados_pelo_revisor": 27,
+    "falhas": 0,
+    "erros": 0,
+    "execucao": "Suite unittest importada; resultado_testes.json e testes.log não foram alterados pelo revisor.",
+    "reproducao_inicial": "Antes da correção, commit de outra conexão entre consultas de resumo() produziu total antigo, decisão aplicada e contagem de recibos nova. Reprodução realizada em banco temporário fora da entrega.",
+    "confirmacao_correcao": "Revisão de BEGIN de leitura e execução do teste test_auditoria_le_snapshot_coerente, que preserva as três consultas no estado anterior e permite observar o commit na leitura seguinte."
+  },
+  "achados": [
+    {
+      "id": "AUDITORIA_SNAPSHOT",
+      "gravidade": "material para alegação de auditoria coerente",
+      "arquivo": "feedback.py",
+      "linha_original": 124,
+      "linha_atual": 124,
+      "descricao": "Três SELECTs sem transação de leitura comum permitiam um relatório composto por estados confirmados diferentes.",
+      "estado": "corrigido e verificado",
+      "correcao": "resumo() usa _transacao(imediata=False), com BEGIN antes da primeira consulta e COMMIT após as três. Em WAL, o snapshot estabelecido pela primeira leitura é mantido apesar de commits de outro escritor.",
+      "teste_regressao": {
+        "arquivo": "testar.py",
+        "linha": 212,
+        "nome": "test_auditoria_le_snapshot_coerente"
+      }
+    }
+  ],
+  "avaliacao_matematica": {
+    "estado": "alegação condicional correta",
+    "arquivo": "evidencia.py",
+    "linha": 35,
+    "fundamento": "Para X_t em {0,1}, lambda_t previsível no intervalo [0,1/p0] e E[X_t|F_(t-1)] <= p0, os fatores são não negativos e têm esperança condicional <=1. O produto iniciado em1 é supermartingal não negativa; a desigualdade de Ville fornece P(sup_t E_t >=1/alpha) <=alpha.",
+    "evidencia_dos_testes": "Enumeração finita verifica políticas e horizontes definidos; sustenta essas verificações e não substitui a demonstração geral nem verifica as premissas sobre dados externos."
+  },
+  "limites": [
+    {
+      "arquivo": "evidencia.py",
+      "linha": 59,
+      "descricao": "A ordem apostar/observar não prova previsibilidade: o chamador pode conhecer o resultado antecipadamente. Seleção favorável, filtragem ou reutilização de dados podem invalidar a nulidade condicional."
+    },
+    {
+      "arquivo": "evidencia.py",
+      "linha": 14,
+      "descricao": "OrcamentoErro limita as alocações nele registradas, mas não vincula cada alocação a uma única instância de EvidenciaBernoulli. A garantia por união exige contabilizar todas as tentativas e garantir validade condicional para o mecanismo de seleção adotado."
+    },
+    {
+      "arquivo": "feedback.py",
+      "linha": 88,
+      "descricao": "A garantia é no máximo uma atualização local por decisão, persistindo a aplicação e o recibo na mesma transação. Aplicação eventual depende de entrega válida, repetição e compatibilidade. Não garante execução externa exatamente uma vez."
+    },
+    {
+      "arquivo": "feedback.py",
+      "linha": 64,
+      "descricao": "criar_decisao e repetir_transporte rejeitam duplicação por restrição de unicidade; a idempotência de aplicação não se estende automaticamente a toda a API."
+    },
+    {
+      "arquivo": "feedback.py",
+      "linha": 52,
+      "descricao": "A época impede ABA v1->v2->v1. Ativar novamente a versão já ativa é um no-op intencional, e o acumulador de uma versão é preservado ao reativá-la. Mudanças de modelo sob o mesmo identificador não são detectadas."
+    },
+    {
+      "arquivo": "feedback.py",
+      "linha": 100,
+      "descricao": "A checagem de origem compara identificador de versão; não autentica o remetente nem valida o conteúdo do modelo."
+    },
+    {
+      "arquivo": "feedback.py",
+      "linha": 11,
+      "descricao": "A propriedade depende da integridade do banco SQLite e das garantias de armazenamento. Alterações diretas no banco, restauração de snapshot antigo ou perda dos registros de deduplicação estão fora da garantia. Cada conexão Python mantém sua restrição padrão de uso por thread; os testes concorrentes usam conexões separadas."
+    },
+    {
+      "arquivo": "evidencia.py",
+      "linha": 50,
+      "descricao": "Estado e parâmetros são mutáveis em Python; a implementação pressupõe uso cooperativo. A aritmética racional exata tem custo crescente de representação e não apresenta cota global de memória ou latência."
+    }
+  ],
+  "conclusao": "Após a correção do snapshot, nenhuma outra falha material foi identificada dentro do escopo revisado. A revisão não demonstra ausência de defeitos nem promove o laboratório a implementação integrada."
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 74, perguntas P1 a P1663).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 81, perguntas P1 a P1872).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -8,6 +8,9 @@ Este arquivo contém, como texto, TODO o código do repositório GISELE:
     relação com o humano), os mundos, as réguas e as suítes de testes de unidade;
   - CLAUDE.md: as convenções do projeto (a P143 mede o tamanho dele);
   - dados/: o dicionário WordNet 3.0 (Parte 30) e o português da OpenWordNet-PT (Parte 39, CC BY 4.0), em base64, com as licenças;
+  - synthai/revisado/: as versões corrigidas recebidas do usuário na Parte 82 (abstenção em vez de escolher uma opção vetada, comparação
+    pareada sem +inf, selo do avaliador que cobre as dependências, aleatoriedade coordenada nos mundos), ao lado das originais;
+  - laboratorio/ e documentacao/: o laboratório (evidência sequencial e feedback persistente) e a revisão técnica com os contratos;
   - os textos que o código lê: os documentos das partes (ASI_AGI_*.md), o resultados.txt, e o diálogo Python <-> Java inteiro
     (dialogo/: as rodadas em Python, que as funções importam, e em Java, como texto; o DIALOGO.md).
 
@@ -15,7 +18,7 @@ Como rodar (só biblioteca padrão do Python 3):
   python3 SYNTHAI_completo.py              todas as partes (leva horas: melhor em blocos, como abaixo) e a unificação
   python3 SYNTHAI_completo.py 22 26        só as partes pedidas, e a unificação
   python3 SYNTHAI_completo.py --demo       a mesma SYNTHAI em três tipos de tarefa
-  python3 SYNTHAI_completo.py --testes     os testes de unidade do pacote
+  python3 SYNTHAI_completo.py --testes     os testes de unidade do pacote (e os do subpacote revisado e do laboratório)
   python3 SYNTHAI_completo.py --extrair P  recria os arquivos originais na pasta P
 
 Gerado por gerar_arquivo_unico.py a partir do repositório; não editar à mão.
@@ -31,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (12120 linhas)
+# calculos.py  (12756 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7519,6 +7522,12 @@ def testes_de_regressao():
         "P1612": p1612_animais_por_horn()[:4] == (4017, True, True, 4) and p1608_auditoria_estatica()[1] == ("test_engine", 7, 5, 8),
         "P1639": p1639_rodada47()[1:2] + p1639_rodada47()[4:5] == (958, 102) and abs(p1632_prioridade_contra_voi(20000, 74)[0] - 0.49995) < 1e-9,
         "P1663": p1663_rodada48()[3] == 172 and p1662_orcamento(semente=75)[2] == 0.62,
+        # P1692 conta as funções do próprio calculos.py, que cresce (a regra da Parte 48): a entrada confere o invariante (aprova todas, inclusive as que a mutação muda), não o 584 da Parte 75
+        "P1692": (lambda r: r[1] == r[0] and r[3] == r[2] > 0)(p1692_godel_nas_funcoes()) and p1691_laco_de_auto_modificacao(geracoes=2, separador_corrigido=True)[0][1:3] == (True, 2.8333333333333335),
+        "P1843": [round(x, 4) for x in p1843_rodada49()] == [0.8821, 0.9771, 0.7933, 0.91, 0.11],
+        "P1811": [round(x, 4) for x in p1811_confusao()] == [0.9986, 0.4987, 0.4914],
+        "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
+        "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
         "P1579": p1574_irredutiveis_gf2(17, 6)[2] == 758 and abs(p1579_serie_singular_gf2(17)[1] - 755.458) < 0.001,
     }
@@ -9545,10 +9554,24 @@ ERROS_P1569, TESTES_P1569 = 191, 583
 VEREDITOS_P1629 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ❌ (l) ❌ (m) ✅ (n) ✅ (o) ✅ (p) ✅"
 ERROS_P1599, TESTES_P1599 = 193, 591
 ERROS_P1629, TESTES_P1629 = 195, 607
-VEREDITOS_P1659 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) H_PENDENTE (i) ✅ (j) ✅"
-ERROS_P1659, TESTES_P1659 = 196, 616
+VEREDITOS_P1659 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ❌ (i) ✅ (j) ✅ (k) ❌"
+ERROS_P1659, TESTES_P1659 = 198, 618
 VEREDITOS_P1689 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅"
-ERROS_P1689, TESTES_P1689 = ERROS_P1659 + VEREDITOS_P1689.count("❌"), TESTES_P1659 + VEREDITOS_P1689.count("✅") + VEREDITOS_P1689.count("❌")  # fixar em inteiros quando a P1659 fechar
+ERROS_P1689, TESTES_P1689 = 199, 625
+VEREDITOS_P1719 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ❌ (g) ✅"
+ERROS_P1719, TESTES_P1719 = 201, 632
+VEREDITOS_P1749 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
+ERROS_P1749, TESTES_P1749 = 201, 636
+VEREDITOS_P1779 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
+ERROS_P1779, TESTES_P1779 = 201, 641
+VEREDITOS_P1809 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
+ERROS_P1809, TESTES_P1809 = 201, 645
+VEREDITOS_P1839 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"  # a (e) é medida nas Partes 80 a 84
+ERROS_P1839, TESTES_P1839 = 201, 649
+VEREDITOS_P1869 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅"
+ERROS_P1869, TESTES_P1869 = 201, 657
+VEREDITOS_P1899 = "(a) ✅ (b) ✅ (c) ❌"  # a (d) não se aplica: não havia nada a tirar
+ERROS_P1899, TESTES_P1899 = 202, 660
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -11426,6 +11449,519 @@ def p1663_rodada48():
     return so, s1, s2, otimos
 
 
+def _java_extract_json_field(json_texto, campo):
+    \"\"\"A semântica do extractJsonField do texto recebido na Parte 75, reescrita por mim: indexOf da chave com aspas e dois-pontos SEM espaço.\"\"\"
+    chave = '"' + campo + '":"'
+    ini = json_texto.find(chave)
+    if ini == -1:
+        return ""
+    ini += len(chave)
+    return json_texto[ini:json_texto.index('"', ini)]
+
+
+def _nucleo_utilidade(codigo, conceito):
+    \"\"\"A fórmula do CreativeLogicKernel do texto recebido, reescrita por mim (nada dele é executado): consistência = (conceito "reasoning" e "Mult"
+    no código) ou código não vazio; utilidade = (comprimento UTF-16 div 4)/(linhas + 1) − 0,5, com as linhas do split("\\\\r\\\\n|\\\\r|\\\\n") do Java (que
+    descarta as vazias do fim); −1 se inconsistente. Devolve (aprovado, delta).\"\"\"
+    import re
+    ok = (conceito.lower() == "reasoning" and "Mult" in codigo) or len(codigo) > 0
+    partes = re.split(r"\\r\\n|\\r|\\n", codigo)
+    while len(partes) > 1 and partes[-1] == "":
+        partes.pop()
+    n = len(codigo.encode("utf-16-le")) // 2
+    delta = ((n // 4) / (len(partes) + 1) - 0.5) if ok else -1.0
+    return ok and delta > 0.0, delta
+
+
+def _mutar_soma_em_produto(codigo):
+    \"\"\"A mutação do texto recebido (todo + binário vira *), reescrita por mim com o ast da biblioteca padrão. O código mutado NUNCA é executado
+    (regra da Parte 33): só é lido de volta como texto. Devolve (código mutado, número de trocas).\"\"\"
+    import ast
+    arvore = ast.parse(codigo)
+    trocas = [0]
+
+    class Mutador(ast.NodeTransformer):
+        def visit_BinOp(self, no):
+            self.generic_visit(no)
+            if isinstance(no.op, ast.Add):
+                trocas[0] += 1
+                return ast.copy_location(ast.BinOp(left=no.left, op=ast.Mult(), right=no.right), no)
+            return no
+    nova = Mutador().visit(arvore)
+    ast.fix_missing_locations(nova)
+    return ast.unparse(nova), trocas[0]
+
+
+def p1691_laco_de_auto_modificacao(codigo="def compute_factor(x, y):\\n    return x + y", conceito="reasoning", geracoes=5, separador_corrigido=False):
+    \"\"\"O laço de auto-modificação do texto recebido na Parte 75 (P1691), simulado pelas reimplementações acima, sem executar nada do texto nem do
+    código mutado: em cada geração, mutar (+ → *), montar o payload como o json.dumps do Python (com ou sem o separador compacto), extrair os campos
+    como o Java, avaliar pela fórmula do núcleo e, se aprovado, adotar o código com o comentário acrescentado. Devolve a lista de gerações
+    (campos achados, aprovado, delta, código atual).\"\"\"
+    import json
+    atual, hist = codigo, []
+    for g in range(1, geracoes + 1):
+        mutado, _ = _mutar_soma_em_produto(atual)
+        payload = {"generation": g, "hypothesis_code_hex": mutado.encode("utf-8").hex().upper(),
+                   "dictionary_query_hex": conceito.encode("utf-8").hex().upper()}
+        texto = json.dumps(payload, separators=(",", ":")) if separador_corrigido else json.dumps(payload)
+        hc, hq = _java_extract_json_field(texto, "hypothesis_code_hex"), _java_extract_json_field(texto, "dictionary_query_hex")
+        cod, conc = bytes.fromhex(hc).decode("utf-8"), bytes.fromhex(hq).decode("utf-8")
+        aprovado, delta = _nucleo_utilidade(cod, conc)
+        if aprovado:
+            atual = cod + "\\n# Verified by Java ASI"
+        hist.append((hc != "" and hq != "", aprovado, delta, atual))
+    return hist
+
+
+def p1692_godel_nas_funcoes():
+    \"\"\"A "prova de utilidade de Gödel" do texto recebido, aplicada a cada função de primeiro nível do calculos.py como hipótese (P1692): a mutação
+    (+ → *) e a fórmula do núcleo, com o defeito do separador corrigido. Nada é executado. Devolve (funções, aprovadas, mudadas pela mutação,
+    aprovadas e mudadas).\"\"\"
+    import ast
+    import os
+    fonte = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "calculos.py"), encoding="utf-8").read()
+    funcs = [n for n in ast.parse(fonte).body if isinstance(n, ast.FunctionDef)]
+    aprov = mud = ambos = 0
+    for f in funcs:
+        mutado, trocas = _mutar_soma_em_produto(ast.get_source_segment(fonte, f))
+        a, _ = _nucleo_utilidade(mutado, "reasoning")
+        aprov += a
+        mud += trocas > 0
+        ambos += a and trocas > 0
+    return len(funcs), aprov, mud, ambos
+
+
+def p1693_godel_no_pacote():
+    \"\"\"A mesma "prova de utilidade" (P1692) nas funções e métodos dos arquivos synthai/*.py que não são testes (P1693), um mundo novo para a previsão
+    nascida do erro (e) da Parte 75. Nada é executado. Devolve (funções e métodos, aprovados, mudados pela mutação).\"\"\"
+    import ast
+    import glob
+    import os
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    n = aprov = mud = 0
+    for f in sorted(glob.glob(os.path.join(raiz, "synthai", "*.py"))):
+        if os.path.basename(f).startswith("testes"):
+            continue
+        fonte = open(f, encoding="utf-8").read()
+        for no in ast.walk(ast.parse(fonte)):
+            if isinstance(no, ast.FunctionDef):
+                mutado, trocas = _mutar_soma_em_produto(__import__("textwrap").dedent(ast.get_source_segment(fonte, no)))
+                a, _ = _nucleo_utilidade(mutado, "reasoning")
+                n += 1
+                aprov += a
+                mud += trocas > 0
+    return n, aprov, mud
+
+
+def p1694_verificador_do_texto():
+    \"\"\"O Verifier.java do relatório do Módulo 007 (Parte 75), conferido por conta (P1694): score = ganho·(1 − risco)/custo para A (0,8; 0,1; 2),
+    B (0,5; 0; 1) e C (0,9; 0,2; 4); com orçamento 3, a ordem gulosa pelo score e o ótimo por enumeração dos 2³ subconjuntos (valor = ganho·(1 − risco)).
+    Devolve (scores, ordem gulosa escolhida, valor guloso, melhor subconjunto, valor ótimo).\"\"\"
+    from itertools import combinations
+    exp = {"A": (0.8, 0.1, 2), "B": (0.5, 0.0, 1), "C": (0.9, 0.2, 4)}
+    sc = {k: g * (1.0 - r) / c for k, (g, r, c) in exp.items()}
+    resto, ordem, valor = 3, [], 0.0
+    for k in sorted(exp, key=lambda k: -sc[k]):
+        if exp[k][2] <= resto:
+            resto -= exp[k][2]
+            ordem.append(k)
+            valor += exp[k][0] * (1.0 - exp[k][1])
+    melhor, vmax = (), 0.0
+    for t in range(1, 4):
+        for sub in combinations(sorted(exp), t):
+            if sum(exp[k][2] for k in sub) <= 3:
+                v = sum(exp[k][0] * (1.0 - exp[k][1]) for k in sub)
+                if v > vmax:
+                    melhor, vmax = sub, v
+    return sc, ordem, valor, melhor, vmax
+
+
+def p1698_comparar_reenvio_v2(novo="externos/texto_recebido_parte75b.md", guardado="externos/texto_recebido_parte75.md"):
+    \"\"\"A regra da Parte 50 para um texto reenviado, versão 2 (P1698; a P1631 só olhava blocos python): cada bloco de código cercado (```linguagem) do
+    texto novo é comparado com todos os blocos guardados, sem os espaços das pontas. Devolve [(linguagem, índice do bloco guardado idêntico ou None,
+    linhas)].\"\"\"
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    blocos = lambda f: [(m.group(1), m.group(2).strip()) for m in re.finditer(r"```(\\w*)\\n(.*?)```", open(os.path.join(raiz, f), encoding="utf-8").read(), re.S)]
+    velhos = [b for _, b in blocos(guardado)]
+    return [(lg, next((j for j, v in enumerate(velhos) if v == b), None), b.count("\\n") + 1) for lg, b in blocos(novo)]
+
+
+def p1721_kronecker_contra_cheio(lingua="en", semente=76, embaralhar=False, passos=2000):
+    \"\"\"A forma do byte (P1721): dois GPTs iguais (d = 16, T = 16, h = 32, taxa 0,005), um com a tabela de embeddings cheia e outro com o embedding de
+    Kronecker por nibble (synthai/gpt_kronecker.py, d₁ = d₂ = 4), treinados nas glosas da língua com a mesma semente; bits por caractere no teste
+    (300 janelas). Com embaralhar=True, só o Kronecker, com os caracteres permutados entre os mesmos bytes (semente 1.000 + semente): o controle do
+    mecanismo. Devolve (bits do cheio ou None, bits do Kronecker).\"\"\"
+    import random
+    from synthai.gpt import GPT
+    from synthai.gpt_kronecker import GPTKronecker
+    tr, te = p1511_corpus_de_glosas(lingua)
+    cheio = None
+    if not embaralhar:
+        g = GPT(VOCAB_GPT, T=16, d=16, h=32, semente=semente)
+        g.treinar(tr, passos=passos, lr=0.005, semente=semente)
+        cheio = g.bits_por_caractere(te, janelas=300)
+    bs = [ord(ch) for ch in VOCAB_GPT]
+    if embaralhar:
+        random.Random(1000 + semente).shuffle(bs)
+    k = GPTKronecker(VOCAB_GPT, T=16, d1=4, d2=4, h=32, semente=semente, mapa=bs)
+    k.treinar(tr, passos=passos, lr=0.005, semente=semente)
+    return cheio, k.bits_por_caractere(te, janelas=300)
+
+
+def p1722_libm_nas_duas_linguagens():
+    \"\"\"A auditoria da fronteira da Parte 52, versão 2 (P1722; a P1638 só olhava o Python e só a forma math.log): em cada rodada, as funções
+    transcendentais da biblioteca chamadas no Python (math.X, ou X importado de math) e no Java (Math.X ou StrictMath.X), e se a chamada do Python
+    está só dentro de uma função `preparar` (os valores vão para um arquivo que o Java lê: sem risco entre as linguagens). Devolve
+    {rodada: (nomes no Python, só na preparação?, nomes no Java)} só das rodadas com alguma chamada.\"\"\"
+    import ast
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    fs = {"exp", "log", "log2", "log10", "log1p", "expm1", "pow", "sin", "cos", "tan", "atan", "atan2", "erf", "sinh", "cosh", "tanh"}
+    saida = {}
+    for f in sorted(glob.glob(os.path.join(raiz, "dialogo", "rodada[0-9]*.py"))):
+        n = os.path.basename(f)[6:-3]
+        arv = ast.parse(open(f, encoding="utf-8").read())
+        importados = {a.asname or a.name for no in ast.walk(arv) if isinstance(no, ast.ImportFrom) and no.module == "math"
+                      for a in no.names if a.name in fs}
+        pais = {}
+        for no in ast.walk(arv):
+            for filho in ast.iter_child_nodes(no):
+                pais[filho] = no
+        nomes, so_prep = set(), True
+        for no in ast.walk(arv):
+            if not isinstance(no, ast.Call):
+                continue
+            fn = no.func
+            nome = (fn.attr if isinstance(fn, ast.Attribute) and isinstance(fn.value, ast.Name) and fn.value.id == "math" and fn.attr in fs
+                    else fn.id if isinstance(fn, ast.Name) and fn.id in importados else None)
+            if nome is None:
+                continue
+            nomes.add(nome)
+            q, dentro = pais.get(no), False
+            while q is not None:
+                if isinstance(q, ast.FunctionDef) and q.name == "preparar":
+                    dentro = True
+                q = pais.get(q)
+            so_prep = so_prep and dentro
+        java = os.path.join(raiz, "dialogo", "Rodada" + n + ".java")
+        nj = sorted(set(re.findall(r"\\b(?:Strict)?Math\\.(" + "|".join(sorted(fs)) + r")\\(", open(java, encoding="utf-8").read()))) if os.path.exists(java) else []
+        if nomes or nj:
+            saida[n] = (sorted(nomes), so_prep if nomes else None, nj)
+    return saida
+
+
+def p1751_rodada09_nova_contra_antiga():
+    \"\"\"(P1751) A rodada 09 reescrita na Parte 77 (exp e log próprios) contra a original (dialogo/registro/rodada09_libm.py, com o exp e o log da
+    biblioteca): as duas rodam como scripts e os números impressos (hexadecimal) são comparados. Devolve (números, quantos mudaram, maior diferença
+    relativa).\"\"\"
+    import os
+    import re
+    import subprocess
+    import sys
+    raiz = os.path.dirname(os.path.abspath(__file__))
+
+    def numeros(arq):
+        saida = subprocess.run([sys.executable, arq], capture_output=True, text=True, check=True, cwd=raiz).stdout
+        return [float.fromhex(x) for x in re.findall(r"-?0x[0-9a-f.]+p[+-]\\d+", saida)]
+    a = numeros(os.path.join(raiz, "dialogo", "registro", "rodada09_libm.py"))
+    b = numeros(os.path.join(raiz, "dialogo", "rodada09.py"))
+    return len(a), sum(x != y for x, y in zip(a, b)), max(abs(x - y) / max(abs(x), 1e-300) for x, y in zip(a, b))
+
+
+def p1781_svd_por_jacobi(M, varreduras=60):
+    \"\"\"Decomposição em valores singulares de uma matriz quadrada M (P1781): os autovalores e autovetores de MᵀM por Jacobi cíclico (acumulando as
+    rotações em V), σ = √λ, e U = M·V/σ (as colunas de σ = 0 ficam zero). Só + − × ÷ e √. Devolve (σ decrescentes, U, V), com U e V como listas de
+    linhas d × d (coluna i = vetor singular i).\"\"\"
+    import math
+    d = len(M)
+    A = [[sum(M[k][i] * M[k][j] for k in range(d)) for j in range(d)] for i in range(d)]
+    V = [[1.0 if i == j else 0.0 for j in range(d)] for i in range(d)]
+    for _ in range(varreduras):
+        fora = sum(A[p][q] * A[p][q] for p in range(d) for q in range(p + 1, d))
+        if fora < 1e-30:
+            break
+        for p in range(d):
+            for q in range(p + 1, d):
+                if A[p][q] == 0.0:
+                    continue
+                tau = (A[q][q] - A[p][p]) / (2.0 * A[p][q])
+                t = (1.0 if tau >= 0.0 else -1.0) / (abs(tau) + math.sqrt(tau * tau + 1.0))
+                c = 1.0 / math.sqrt(t * t + 1.0)
+                sn = t * c
+                for k in range(d):
+                    akp, akq = A[k][p], A[k][q]
+                    A[k][p], A[k][q] = c * akp - sn * akq, sn * akp + c * akq
+                for k in range(d):
+                    apk, aqk = A[p][k], A[q][k]
+                    A[p][k], A[q][k] = c * apk - sn * aqk, sn * apk + c * aqk
+                for k in range(d):
+                    vkp, vkq = V[k][p], V[k][q]
+                    V[k][p], V[k][q] = c * vkp - sn * vkq, sn * vkp + c * vkq
+    ordem = sorted(range(d), key=lambda i: -A[i][i])
+    sig = [math.sqrt(max(A[i][i], 0.0)) for i in ordem]
+    Vs = [[V[k][i] for i in ordem] for k in range(d)]
+    U = [[0.0] * d for _ in range(d)]
+    for j in range(d):
+        if sig[j] > 0.0:
+            for i in range(d):
+                U[i][j] = sum(M[i][k] * Vs[k][j] for k in range(d)) / sig[j]
+    return sig, U, Vs
+
+
+def p1782_atencao_de_posto(g, r):
+    \"\"\"Troca a forma bilinear da atenção de um GPT treinado (M = W_Q W_Kᵀ) pela melhor aproximação de posto r (Eckart–Young), sem mexer no resto
+    (P1782): W_Q' = U_r Σ_r e W_K' = V_r, completadas com colunas zero, de modo que W_Q' W_K'ᵀ = M_r. Devolve uma cópia do GPT.\"\"\"
+    import copy
+    h = copy.deepcopy(g)
+    Q, K = g.p["Q"], g.p["K"]
+    d = len(Q)
+    M = [[sum(Q[i][k] * K[j][k] for k in range(d)) for j in range(d)] for i in range(d)]
+    sig, U, V = p1781_svd_por_jacobi(M)
+    h.p["Q"] = [[U[i][j] * sig[j] if j < r else 0.0 for j in range(d)] for i in range(d)]
+    h.p["K"] = [[V[i][j] if j < r else 0.0 for j in range(d)] for i in range(d)]
+    return h
+
+
+def p1783_bits_por_posto(lingua="en", semente=71, postos=(1, 2, 4, 16), passos=2000):
+    \"\"\"(P1783) Um GPT (d = 16, T = 16, h = 32, taxa 0,005) treinado nas glosas da língua; os bits por caractere no teste (300 janelas) com a atenção
+    original e com a de posto r. Devolve (bits original, {r: bits}, valores singulares de M).\"\"\"
+    from synthai.gpt import GPT
+    tr, te = p1511_corpus_de_glosas(lingua)
+    g = GPT(VOCAB_GPT, T=16, d=16, h=32, semente=semente)
+    g.treinar(tr, passos=passos, lr=0.005, semente=semente)
+    Q, K = g.p["Q"], g.p["K"]
+    M = [[sum(Q[i][k] * K[j][k] for k in range(16)) for j in range(16)] for i in range(16)]
+    sig = p1781_svd_por_jacobi(M)[0]
+    return g.bits_por_caractere(te, janelas=300), {r: p1782_atencao_de_posto(g, r).bits_por_caractere(te, janelas=300) for r in postos}, sig
+
+
+def p1811_confusao(n=20000, semente=79, beta=0.5, gama=1.0, a=1.0):
+    \"\"\"O diagrama causal do texto recebido na Parte 79 (Z → X, Z → Y, X → Y), simulado (P1811): Z ~ N(0, 1), X = a·Z + ε_X, Y = β·X + γ·Z + ε_Y. Três
+    estimativas do efeito de X sobre Y: a inclinação ingênua (mínimos quadrados de Y em X), a ajustada por Z (mínimos quadrados de Y em X e Z, pelas
+    equações normais 2 × 2 dos centrados) e a sob intervenção (X sorteado com a mesma variância, sem depender de Z). Devolve (ingênua, ajustada,
+    intervenção).\"\"\"
+    import random
+    r = random.Random(semente)
+
+    def amostra(intervir):
+        xs, ys, zs = [], [], []
+        for _ in range(n):
+            z = r.gauss(0.0, 1.0)
+            x = r.gauss(0.0, (a * a + 1.0) ** 0.5) if intervir else a * z + r.gauss(0.0, 1.0)
+            xs.append(x)
+            zs.append(z)
+            ys.append(beta * x + gama * z + r.gauss(0.0, 1.0))
+        return xs, ys, zs
+
+    def centrar(v):
+        m = sum(v) / len(v)
+        return [x - m for x in v]
+
+    xs, ys, zs = (centrar(v) for v in amostra(False))
+    sxx = sum(x * x for x in xs)
+    sxy = sum(x * y for x, y in zip(xs, ys))
+    szz = sum(z * z for z in zs)
+    sxz = sum(x * z for x, z in zip(xs, zs))
+    szy = sum(z * y for z, y in zip(zs, ys))
+    ingenua = sxy / sxx
+    ajustada = (szz * sxy - sxz * szy) / (sxx * szz - sxz * sxz)
+    xi, yi, _ = (centrar(v) for v in amostra(True))
+    intervencao = sum(x * y for x, y in zip(xi, yi)) / sum(x * x for x in xi)
+    return ingenua, ajustada, intervencao
+
+
+def p1812_minha_calibracao(partes=range(53, 79)):
+    \"\"\"A prévia do Módulo 010 do texto recebido na Parte 79 (P1812): a fração das minhas previsões do mundo que acertaram (régua p1481), por tipo, contra
+    os 90% que a maioria das faixas declara. Devolve (previsões, fração de acertos, {tipo: (n, fração)}).\"\"\"
+    prev = p1481_minhas_previsoes_v2(partes)
+    por = {}
+    for x in prev:
+        por.setdefault(x[5], []).append(x[4])
+    return len(prev), sum(x[4] for x in prev) / len(prev), {k: (len(v), sum(v) / len(v)) for k, v in por.items()}
+
+
+def p1813_fator_de_alargamento(acerto, nominal=0.9):
+    \"\"\"Quanto alargar faixas que acertam `acerto` quando declaram `nominal` (P1813), supondo erros normais em torno do centro: uma faixa de ± z·σ_suposto
+    cobre a fração 2Φ(z·σ_suposto/σ_real) − 1; igualar ao acerto observado dá σ_real/σ_suposto = z(nominal)/z(acerto), com z(p) = Φ⁻¹((1 + p)/2).
+    Devolve (z nominal, z observado, fator, desvio binomial do acerto se fosse o nominal, z do acerto observado contra o nominal) para n = 185.\"\"\"
+    from statistics import NormalDist
+    nd = NormalDist()
+    zn, zo = nd.inv_cdf((1 + nominal) / 2), nd.inv_cdf((1 + acerto) / 2)
+    sd = (nominal * (1 - nominal) / 185) ** 0.5
+    return zn, zo, zn / zo, sd, (acerto - nominal) / sd
+
+
+def p1841_voi_conjunto(p, u, qs, conj):
+    \"\"\"O valor da informação de um CONJUNTO de sensores (P1841): estado binário com prior P(S = 1) = p, utilidades u[a][s] (2 ações), sensores que
+    acertam o estado com probabilidade qs[i], condicionalmente independentes dado o estado. VOI(conj) = Σ_respostas max_a Σ_s P(s, respostas)·u[a][s]
+    − max_a Σ_s P(s)·u[a][s], enumerando as 2^|conj| respostas. Devolve o VOI (≥ 0 pela desigualdade de Jensen).\"\"\"
+    sem = max(p * u[a][1] + (1 - p) * u[a][0] for a in (0, 1))
+    conj = list(conj)
+    total = 0.0
+    for m in range(1 << len(conj)):
+        l1, l0 = p, 1 - p
+        for b, i in enumerate(conj):
+            diz1 = (m >> b) & 1
+            l1 *= qs[i] if diz1 else 1 - qs[i]
+            l0 *= 1 - qs[i] if diz1 else qs[i]
+        total += max(l1 * u[a][1] + l0 * u[a][0] for a in (0, 1))
+    return max(total - sem, 0.0)
+
+
+def p1842_conjuntos(instancias=300, k=6, orcamento=6, semente=80, olhar=1):
+    \"\"\"Escolher um conjunto de experimentos dependentes (P1842; a pendência da Parte 74). Cada instância: prior p ~ U(0, 1), utilidades U(0, 1), k
+    sensores com acurácia U(0,55; 0,95) e custo inteiro em 1..5. O ótimo: o melhor subconjunto dentro do orçamento (enumeração dos 2^k). O guloso: em cada
+    passo, o sensor de maior ganho marginal de VOI por custo que ainda cabe, e para quando nenhum ganho é positivo. A complementaridade: algum par
+    (i, j) com VOI({i, j}) − VOI({i}) > VOI({j}) − VOI(∅) + 1e-12 (o VOI não é submodular). Devolve (média de guloso/ótimo, fração com guloso ótimo,
+    fração com complementaridade, fração em que o guloso para em zero com o ótimo positivo). Com olhar = 2, quando nenhum sensor sozinho tem ganho
+    positivo, o guloso tenta o melhor par antes de parar.\"\"\"
+    import random
+    r = random.Random(semente)
+    soma = otimos = compl = parado = 0
+    for _ in range(instancias):
+        p = r.random()
+        u = [[r.random(), r.random()], [r.random(), r.random()]]
+        qs = [0.55 + 0.4 * r.random() for _ in range(k)]
+        cs = [r.randint(1, 5) for _ in range(k)]
+        memo = {}
+
+        def voi(c):
+            c = tuple(sorted(c))
+            if c not in memo:
+                memo[c] = p1841_voi_conjunto(p, u, qs, c)
+            return memo[c]
+        ot = max(voi([i for i in range(k) if m >> i & 1]) for m in range(1 << k)
+                 if sum(cs[i] for i in range(k) if m >> i & 1) <= orcamento)
+        esc, resto = [], orcamento
+        while True:
+            cand = [(voi(esc + [i]) - voi(esc)) / cs[i] for i in range(k) if i not in esc and cs[i] <= resto]
+            idx = [i for i in range(k) if i not in esc and cs[i] <= resto]
+            if not idx:
+                break
+            if max(cand) <= 1e-15:
+                # olhar = 2 (Parte 80): quando nenhum sensor sozinho ganha, o melhor PAR que cabe, pelo ganho por custo
+                if olhar < 2:
+                    break
+                pares = [((voi(esc + [i, j]) - voi(esc)) / (cs[i] + cs[j]), i, j) for i in idx for j in idx if i < j and cs[i] + cs[j] <= resto]
+                if not pares or max(pares)[0] <= 1e-15:
+                    break
+                _, i, j = max(pares, key=lambda t: (t[0], -t[1], -t[2]))
+                esc += [i, j]
+                resto -= cs[i] + cs[j]
+                continue
+            j = idx[max(range(len(idx)), key=lambda t: (cand[t], -idx[t]))]
+            esc.append(j)
+            resto -= cs[j]
+        g = voi(esc)
+        if ot > 1e-12:  # um VOI de 1e-17 é zero com ruído de ponto flutuante (achado na calibração da Parte 80)
+            soma += g / ot
+            otimos += g >= ot - 1e-12
+            parado += (not esc)
+        else:
+            soma += 1.0
+            otimos += 1
+        compl += any(voi([i, j]) - voi([i]) > voi([j]) - voi([]) + 1e-12 for i in range(k) for j in range(i + 1, k))
+    return soma / instancias, otimos / instancias, compl / instancias, parado / instancias
+
+
+def p1843_rodada49():
+    \"\"\"Rodada 49 (P1843): o VOI de conjuntos, o ótimo e os dois gulosos do dialogo/rodada49.py nas 300 instâncias da semente 80 (IGUAL em Java). Devolve
+    (a média de guloso/ótimo com olhar 1 e com olhar 2, as frações de guloso ótimo, a fração parada em zero com olhar 1), pela mesma regra da P1842, para
+    conferir que a rodada reproduz a função.\"\"\"
+    import importlib.util
+    import os
+    import tempfile
+    spec = importlib.util.spec_from_file_location("rodada49", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada49.py"))
+    r49 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r49)
+    rat, ot_, par = [0.0, 0.0], [0, 0], 0
+    with tempfile.TemporaryDirectory() as pasta:
+        r49.preparar(pasta)
+        inst = r49.ler(pasta)
+    for p, u, qs, cs in inst:
+        ot, saidas = r49.resolver(p, u, qs, cs)
+        for t, (g, esc) in enumerate(saidas):
+            if ot > 1e-12:
+                rat[t] += g / ot
+                ot_[t] += g >= ot - 1e-12
+                par += t == 0 and not esc
+            else:
+                rat[t] += 1.0
+                ot_[t] += 1
+    n = len(inst)
+    return rat[0] / n, rat[1] / n, ot_[0] / n, ot_[1] / n, par / n
+
+
+def p1871_o_que_nao_serve():
+    \"\"\"O pedido da Parte 81 ("tire tudo que não serve pra nada"), medido (P1871): o que nada usa. Corpus: os arquivos de texto versionados (git ls-files),
+    fora as cópias geradas (SYNTHAI_completo.py, que contém tudo) e os dados. Devolve três listas: (a) funções e classes de primeiro nível do calculos.py
+    que não são pNN, _parte_N nem as da unificação, e cujo nome (palavra inteira) não aparece em lugar nenhum além da própria definição; (b) o mesmo para os
+    módulos de synthai/ fora os testes; (c) arquivos versionados cujo nome (com ou sem a extensão, ou como módulo) não aparece em nenhum outro.\"\"\"
+    import ast
+    import os
+    import re
+    import subprocess
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    git = subprocess.run(["git", "ls-files"], cwd=raiz, capture_output=True, text=True)
+    if git.returncode == 0:
+        arquivos = [f for f in git.stdout.split("\\n") if f]
+    else:  # fora de um repositório git (o SYNTHAI_completo.py extraído numa pasta): percorrer a pasta
+        arquivos = sorted(os.path.relpath(os.path.join(d, f), raiz).replace(os.sep, "/") for d, sub, fs in os.walk(raiz)
+                          if "__pycache__" not in d and ".git" not in d for f in fs)
+    texto = {f: open(os.path.join(raiz, f), encoding="utf-8").read() for f in arquivos
+             if f != "SYNTHAI_completo.py" and not f.startswith("dados/") and f.endswith((".py", ".java", ".md", ".txt", ".tsv"))}
+
+    def usos(nome):
+        pat = re.compile(r"(?<![\\w])" + re.escape(nome) + r"(?![\\w])")
+        return sum(len(pat.findall(t)) for t in texto.values())
+    fixos = {"testes_de_regressao", "_unificacao"}
+    mortos_c = []
+    for no in ast.parse(texto["calculos.py"]).body:
+        if isinstance(no, (ast.FunctionDef, ast.ClassDef)) and not re.match(r"p\\d+_|_parte_\\d+$", no.name) and no.name not in fixos:
+            if usos(no.name) <= 1:
+                mortos_c.append(no.name)
+    mortos_s = []
+    for f in sorted(x for x in texto if x.startswith("synthai/") and not os.path.basename(x).startswith("testes") and x.endswith(".py")):
+        for no in ast.parse(texto[f]).body:
+            if isinstance(no, (ast.FunctionDef, ast.ClassDef)) and not no.name.startswith("__") and usos(no.name) <= 1:
+                mortos_s.append(f"{f}:{no.name}")
+    soltos = []
+    for f in sorted(texto):
+        base = os.path.basename(f)
+        nomes = {base, os.path.splitext(base)[0]}
+        if f.endswith(".py"):
+            nomes.add(f[:-3].replace("/", "."))
+        outros = [t for g, t in texto.items() if g != f]
+        if not any(re.search(r"(?<![\\w])" + re.escape(n) + r"(?![\\w])", t) for n in nomes for t in outros):
+            soltos.append(f)
+    return mortos_c, mortos_s, soltos
+
+
+def p1872_candidatos_explicados(candidatos=None):
+    \"\"\"Os arquivos que a P1871 acusa como "não referenciados pelo nome", conferidos um a um (P1872; a regra da Parte 75: todo defeito acusado é olhado antes de
+    ser contado). Um candidato é usado se cair num destes usos por padrão, achados lendo o código: os RodadaNN.java e rodadaNN.py (o verificar.py os acha por
+    glob), os dialogo/saidas29/* (a rodada29.py monta o nome com f-string), os dialogo/registro/* (as originais das rodadas corrigidas, citadas pela pasta nos
+    documentos e abertas pela p1751) e o documento da parte mais nova (ligado pela anterior no fechamento). Devolve ({motivo: quantos}, [sem motivo]).\"\"\"
+    import re
+    if candidatos is None:
+        candidatos = p1871_o_que_nao_serve()[2]
+    regras = [("verificar.py (glob)", r"^dialogo/(Rodada\\d+\\.java|rodada\\d+\\.py)$"), ("rodada29.py (f-string)", r"^dialogo/saidas29/"),
+              ("registro (citado pela pasta)", r"^dialogo/registro/"), ("documento da parte mais nova", r"^ASI_AGI_parte\\d+_.*\\.md$")]
+    contagem, sobra = {}, []
+    for f in candidatos:
+        for motivo, pat in regras:
+            if re.search(pat, f):
+                contagem[motivo] = contagem.get(motivo, 0) + 1
+                break
+        else:
+            sobra.append(f)
+    return contagem, sobra
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -12107,6 +12643,109 @@ def _parte_74():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1689, testes=TESTES_P1689)
     print(f"P1689 minha taxa de erro ({ERROS_P1689}/{TESTES_P1689}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_75():
+    print("--- Parte 75 (0x4B: o que se prova) ---")
+    for corr in (False, True):
+        h = p1691_laco_de_auto_modificacao(geracoes=5, separador_corrigido=corr)
+        print(f"P1691 separador corrigido = {corr}: campos achados {[x[0] for x in h]}; aprovados {[x[1] for x in h]}; delta {h[0][2]:.4f}; "
+              f"codigos distintos {len({x[3] for x in h})}: {h[-1][3]!r}")
+    n, a, m, am = p1692_godel_nas_funcoes()
+    print(f"P1692 calculos.py: {n} funcoes; aprovadas pelo nucleo {a} ({a / n:.4f}); mudadas pela mutacao {m} ({m / n:.4f}); aprovadas e mudadas {am}")
+    n, a, m = p1693_godel_no_pacote()
+    print(f"P1693 synthai/ (sem testes): {n} funcoes e metodos; aprovados {a} ({a / n:.4f}); mudados {m} ({m / n:.4f})")
+    sc, ordem, v, melhor, vmax = p1694_verificador_do_texto()
+    print(f"P1698 reenvio (linguagem, bloco guardado identico, linhas): {p1698_comparar_reenvio_v2()}")
+    print(f"P1694 Verifier do texto: scores {[(k, round(x, 4)) for k, x in sc.items()]}; ordem gulosa {ordem} (valor {v:.4f}); otimo {melhor} ({vmax:.4f})")
+    total, sem = p1092_pnn_sem_teste(1691, 1720)
+    print(f"P1092 pNN novas (P1691-P1720) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 75: {p974_previsoes_sem_largura(range(75, 76))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1719, testes=TESTES_P1719)
+    print(f"P1719 minha taxa de erro ({ERROS_P1719}/{TESTES_P1719}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_76():
+    print("--- Parte 76 (0x4C: a forma do byte) ---")
+    for lingua in ("pt", "en"):
+        for sem in (76, 77, 78, 79):
+            ch, kr = p1721_kronecker_contra_cheio(lingua, sem)
+            linha = f"P1721 {lingua} semente {sem}: cheio {ch:.4f}; Kronecker {kr:.4f}; diferenca {kr - ch:+.4f}"
+            if lingua == "en":
+                _, emb = p1721_kronecker_contra_cheio(lingua, sem, embaralhar=True)
+                linha += f"; Kronecker embaralhado {emb:.4f} (embaralhado - ASCII {emb - kr:+.4f})"
+            print(linha)
+    from synthai.gpt_kronecker import GPTKronecker
+    print(f"P1721 pesos de embedding (Kronecker, tabela cheia): {GPTKronecker(VOCAB_GPT, T=16, d1=4, d2=4, h=32, semente=76).pesos_de_embedding()}")
+    print(f"P1722 rodadas com funcoes da biblioteca (python, so na preparacao, java): {p1722_libm_nas_duas_linguagens()}")
+    total, sem = p1092_pnn_sem_teste(1721, 1750)
+    print(f"P1092 pNN novas (P1721-P1750) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 76: {p974_previsoes_sem_largura(range(76, 77))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1749, testes=TESTES_P1749)
+    print(f"P1749 minha taxa de erro ({ERROS_P1749}/{TESTES_P1749}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_77():
+    print("--- Parte 77 (0x4D: as duas abertas) ---")
+    n, mud, rel = p1751_rodada09_nova_contra_antiga()
+    print(f"P1751 rodada 09 nova (exp e log proprios) contra a original: {n} numeros, {mud} mudaram, maior diferenca relativa {rel:.3e}")
+    print(f"P1722 rodadas com funcoes da biblioteca depois da Parte 77: {p1722_libm_nas_duas_linguagens()}")
+    total, sem = p1092_pnn_sem_teste(1751, 1780)
+    print(f"P1092 pNN novas (P1751-P1780) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 77: {p974_previsoes_sem_largura(range(77, 78))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1779, testes=TESTES_P1779)
+    print(f"P1779 minha taxa de erro ({ERROS_P1779}/{TESTES_P1779}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_78():
+    print("--- Parte 78 (0x4E: a atencao de posto baixo) ---")
+    for lingua, sems in (("pt", (71, 72)), ("en", (73, 74))):
+        for sem in sems:
+            b, por, sig = p1783_bits_por_posto(lingua, sem)
+            lam = [x * x for x in sig]
+            pr = sum(lam) ** 2 / sum(x * x for x in lam)
+            print(f"P1783 {lingua} semente {sem}: bits {b:.4f}; delta por posto {[(r, round(v - b, 4)) for r, v in por.items()]}; PR {pr:.3f}")
+    total, sem = p1092_pnn_sem_teste(1781, 1810)
+    print(f"P1092 pNN novas (P1781-P1810) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 78: {p974_previsoes_sem_largura(range(78, 79))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1809, testes=TESTES_P1809)
+    print(f"P1809 minha taxa de erro ({ERROS_P1809}/{TESTES_P1809}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+
+def _parte_79():
+    print("--- Parte 79 (0x4F: causa e confianca) ---")
+    ing, aj, itv = p1811_confusao()
+    print(f"P1811 Z -> X, Z -> Y, X -> Y (efeito 0,5): inclinacao ingenua {ing:.4f} (conta 1,0); ajustada por Z {aj:.4f}; sob intervencao {itv:.4f}")
+    n, ac, por = p1812_minha_calibracao()
+    print(f"P1812 minha calibracao (Partes 53 a 78): {n} previsoes, acerto {ac:.4f}; por tipo {[(k, v[0], round(v[1], 4)) for k, v in por.items()]}")
+    zn, zo, f, sd, z = p1813_fator_de_alargamento(ac)
+    print(f"P1813 z nominal {zn:.4f}; z observado {zo:.4f}; fator de alargamento {f:.4f}; desvio binomial {sd:.4f}; z do acerto {z:.2f}")
+    total, sem = p1092_pnn_sem_teste(1811, 1840)
+    print(f"P1092 pNN novas (P1811-P1840) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 79: {p974_previsoes_sem_largura(range(79, 80))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1839, testes=TESTES_P1839)
+    print(f"P1839 minha taxa de erro ({ERROS_P1839}/{TESTES_P1839}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_80():
+    print("--- Parte 80 (0x50: o valor de um conjunto) ---")
+    for olhar in (1, 2):
+        for sem in (800, 801, 802, 803, 80):
+            a, b, c, d = p1842_conjuntos(semente=sem, olhar=olhar)
+            print(f"P1842 olhar {olhar}, semente {sem}: guloso/otimo {a:.4f}; guloso otimo em {b:.4f}; complementaridade {c:.4f}; parado em zero {d:.4f}")
+    print(f"P1843 rodada 49 (as mesmas contas da P1842, semente 80): {[round(x, 4) for x in p1843_rodada49()]}")
+    total, sem = p1092_pnn_sem_teste(1841, 1870)
+    print(f"P1092 pNN novas (P1841-P1870) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 80: {p974_previsoes_sem_largura(range(80, 81))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1869, testes=TESTES_P1869)
+    print(f"P1869 minha taxa de erro ({ERROS_P1869}/{TESTES_P1869}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_81():
+    print("--- Parte 81 (0x51: o que nao serve) ---")
+    a, b, c = p1871_o_que_nao_serve()
+    print(f"P1871 nao referenciados pelo nome: calculos.py {len(a)} {a}; synthai/ {len(b)} {b}; arquivos {len(c)}")
+    contagem, sobra = p1872_candidatos_explicados(c)
+    print(f"P1872 os arquivos acusados, olhados um a um: {contagem}; sem uso: {len(sobra)} {sobra}")
+    total, sem = p1092_pnn_sem_teste(1871, 1900)
+    print(f"P1092 pNN novas (P1871-P1900) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 81: {p974_previsoes_sem_largura(range(81, 82))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1899, testes=TESTES_P1899)
+    print(f"P1899 minha taxa de erro ({ERROS_P1899}/{TESTES_P1899}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -12143,7 +12782,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81}
 
 
 if __name__ == "__main__":
@@ -12156,7 +12795,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (260 linhas)
+# CLAUDE.md  (279 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -12266,6 +12905,21 @@ anterior, commit e push.
   Parte 73: no rascunho, quantidade ainda não calculada se escreve `XX` (nunca um palpite: "2,3%" era 2,7%, "25 vezes" era inventado); toda regra nova vem com a sua função de auditoria
   rodada sobre o que já existe (a fronteira da Parte 52 só foi aplicada para a frente, e cinco rodadas antigas quebraram por sorte acabada: `p1638`); gravar texto em comando separado de
   uma conta (um `&&` depois de um erro apagou as respostas sem aviso). Um axioma de disjunção só vale entre tipos, não entre um tipo e um papel (as pulgas: `p1635`).
+  Parte 74: quando a quantidade tem desvio de forma fechada (binomial, Poisson), a faixa usa a forma fechada, não o desvio de poucos lotes de calibração ((e) errou com o desvio de 4 lotes;
+  (f), com o binomial, acertou). Uma expectativa de teste só muda com justificativa de fora do código, e a falha original continua no placar (o texto recebido transformou 7/8 em "8/8").
+  Para escolher experimentos, o valor é o da decisão (VOI), não a entropia (o ganho de informação escolheu perguntas que valem 0,25 das melhores).
+  Parte 75: a previsão sobre uma propriedade de um conjunto de arquivos parte de uma contagem num arquivo do mesmo tipo, nunca da imagem que eu tenho dele (superestimei duas vezes quantas
+  funções têm um "+"). Um verificador só vale com um caso de controle de cada lado: um defeito plantado que ele tem de achar e um caso limpo que ele tem de passar (o "provador de Gödel" do texto
+  recebido aprovou 849 de 849 funções, inclusive as 366 que a mutação quebra; o meu auditor da Parte 72 acusou a Parte 1 sem defeito). Entre duas linguagens, ler o byte exato que um lado escreve e o
+  outro procura (o espaço depois dos dois-pontos do json.dumps decidia o laço inteiro).
+  Parte 76: o que em Python se herda por import, em Java se copia: uma correção numa rodada vem com a busca do mesmo cálculo nos arquivos das DUAS linguagens, no mesmo commit (a cópia Java
+  da 26 ficou com o Math.log). Toda função de auditoria tem um teste com um defeito plantado e um caso limpo (`p1722` olha as duas linguagens; a `p1638` olhava um lado e deixou 4 rodadas).
+  Parte 77: a fronteira da Parte 52 está fechada (09 e 14 reescritas com cópias exatas das peças medidas, que ficam intactas; `p1722` só lista a 48, que só prepara dados).
+  Parte 78: a pergunta deixada no fim de uma rodada ou de uma parte entra em `dialogo/PENDENCIAS.md` (arquivo separado: o DIALOGO.md é lido por funções medidas), e cada parte começa
+  olhando a lista (a da atenção de posto 1 ficou sete partes esquecida).
+  Parte 79 (CALIBRAÇÃO, medida): das 185 previsões do mundo das Partes 53 a 78, acertaram 77,3%, contra os 90% declarados (z = −5,76: excesso de confiança, não ruído). Pela conta normal
+  (`p1813`), o desvio real é 1,36 vez o suposto: a partir da Parte 80, a meia-largura de toda faixa numérica que não vem de uma conta fechada com variância conhecida é multiplicada por 1,36. Teste
+  registrado: o acerto das Partes 80 a 84 em [0,81; 0,99].
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -12297,6 +12951,9 @@ anterior, commit e push.
 - AUTONOMIA (Parte 70; "Daqui pra frente é com você. Não pare mais. Não me pergunte mais nada. Você segue sozinha."): seguir sem perguntar, parte após parte, com todas
   as regras (previsões antes, réguas por código, três placares, diálogo bit a bit, engenharia reversa); as decisões que seriam perguntas ao usuário são tomadas pela regra mais
   conservadora e registradas no texto da parte. Agendar sempre a continuação (send_later) antes de terminar um turno.
+- CONTINUE SEM PARAR (Parte 75, reforço do usuário: "Continue sem parar. Entendeu? Grave na memória"): o trabalho não para entre mensagens. Cada turno termina com trabalho em andamento
+  (uma execução longa rodando, uma parte começada) E uma continuação agendada (send_later); enquanto uma execução longa roda, preparar e fazer a próxima tarefa (regra da Parte 25); um texto
+  recebido no meio do trabalho entra como parte nova sem abandonar a que estava aberta; e só se para quando o usuário disser "pare".
 - CONTINUAR SEMPRE, MESMO SEM PEDIDO (Parte 44): ao terminar uma parte, começar a próxima; ao fim de cada turno, agendar a
   continuação automática nesta sessão (send_later), dizendo ao usuário como parar.
 
@@ -12411,8 +13068,9 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73`); a suíte
-  `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos.
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81`); a suíte
+  `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
+  (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
 - Versões novas de agente devem preferir compor módulos a herdar de outras versões (Parte 28: a âncora herdou o
   pensamento de Newton que perde no bandido).
@@ -14307,6 +14965,87 @@ class GPT:
             pr = self.adiante(ids[-self.T:])["probs"][-1]
             ids.append(max(range(len(pr)), key=lambda j: (pr[j], -j)))
         return "".join(self.vocab[i] for i in ids)
+"""
+
+# ====================================================================================================
+# synthai/gpt_kronecker.py  (76 linhas)
+# ====================================================================================================
+FONTES['synthai/gpt_kronecker.py'] = """\"\"\"A forma de GPT com embeddings de Kronecker por nibble (Parte 76; ↩ P1695).
+
+O embedding do caractere de byte b é o produto de Kronecker de dois fatores: A[b ≫ 4] (d₁ números, o nibble alto) e B[b & 0x0F] (d₂ números, o nibble
+baixo), com d = d₁·d₂; a coordenada (i, j) do embedding é A[alto][i]·B[baixo][j], na posição i·d₂ + j. A ideia veio de um texto recebido na Parte 75;
+aqui ela é medida, não suposta.
+
+Tudo o mais é o GPT de synthai/gpt.py (herdado: a mesma ida, a mesma volta, o mesmo Adam). A diferença: antes de cada ida, E é refeita a partir de A e B;
+depois de cada volta, o gradiente de E é levado a A e B pela regra da cadeia:
+    ∂L/∂A[h][i] = Σ_c [alto(c) = h] Σ_j ∂L/∂E[c][i·d₂ + j] · B[baixo(c)][j]
+    ∂L/∂B[l][j] = Σ_c [baixo(c) = l] Σ_i ∂L/∂E[c][i·d₂ + j] · A[alto(c)][i]
+e o gradiente de E é zerado (E não é um parâmetro livre: o Adam não a move). Só biblioteca padrão.\"\"\"
+
+import math
+import random
+
+from synthai.gpt import GPT, _zeros
+
+
+class GPTKronecker(GPT):
+    def __init__(self, vocab, T=16, d1=4, d2=4, h=32, semente=69, mapa=None):
+        super().__init__(vocab, T=T, d=d1 * d2, h=h, semente=semente)
+        r = random.Random(semente + 1)
+        self.d1, self.d2 = d1, d2
+        # mapa: o byte de cada caractere (o padrão é o código ASCII; o controle da Parte 76 embaralha os mesmos bytes entre os caracteres)
+        self.bytes = list(mapa) if mapa is not None else [ord(ch) for ch in vocab]
+        self.alto = [b >> 4 for b in self.bytes]
+        self.baixo = [b & 0x0F for b in self.bytes]
+        if max(self.bytes) > 255:
+            raise ValueError("o vocabulário precisa caber num byte")
+        # escala: o produto de dois fatores com desvio s tem desvio s², e o E do GPT nasce com desvio 0,3
+        s = math.sqrt(0.3)
+        self.p["A"] = [[r.gauss(0.0, s) for _ in range(d1)] for _ in range(16)]
+        self.p["B"] = [[r.gauss(0.0, s) for _ in range(d2)] for _ in range(16)]
+        for k in ("A", "B"):
+            self.m[k] = _zeros(16, len(self.p[k][0]))
+            self.v[k] = _zeros(16, len(self.p[k][0]))
+        self._refazer_E()
+
+    def _refazer_E(self):
+        A, B, d2 = self.p["A"], self.p["B"], self.d2
+        for c in range(len(self.vocab)):
+            a, b = A[self.alto[c]], B[self.baixo[c]]
+            linha = self.p["E"][c]
+            for i in range(self.d1):
+                for j in range(d2):
+                    linha[i * d2 + j] = a[i] * b[j]
+
+    def adiante(self, x, exp=math.exp):
+        self._refazer_E()
+        return super().adiante(x, exp)
+
+    def gradiente(self, x, y):
+        perda, G = super().gradiente(x, y)
+        A, B, d2 = self.p["A"], self.p["B"], self.d2
+        GA, GB = _zeros(16, self.d1), _zeros(16, d2)
+        for c in range(len(self.vocab)):
+            gE = G["E"][c]
+            h, l = self.alto[c], self.baixo[c]
+            for i in range(self.d1):
+                for j in range(d2):
+                    g = gE[i * d2 + j]
+                    if g != 0.0:
+                        GA[h][i] += g * B[l][j]
+                        GB[l][j] += g * A[h][i]
+            G["E"][c] = [0.0] * len(gE)
+        G["A"], G["B"] = GA, GB
+        return perda, G
+
+    def adam(self, G, lr=0.01, b1=0.9, b2=0.999, eps=1e-8):
+        super().adam(G, lr, b1, b2, eps)
+        self._refazer_E()
+
+    def pesos_de_embedding(self):
+        \"\"\"(pesos efetivamente usados pelos embeddings de Kronecker, pesos de uma tabela cheia V × d): só contam as linhas de A e B de nibbles que
+        aparecem no vocabulário.\"\"\"
+        return len(set(self.alto)) * self.d1 + len(set(self.baixo)) * self.d2, len(self.vocab) * self.d1 * self.d2
 """
 
 # ====================================================================================================
@@ -18654,6 +19393,310 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
+# synthai/testes_parte75.py  (55 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte75.py'] = """\"\"\"Testes de unidade da Parte 75 (o que se prova): `python3 -m unittest synthai.testes_parte75`. Cada pNN nova chamada PELO NOME. Nenhum código do texto
+recebido é executado; as funções testadas são reimplementações.\"\"\"
+
+import json
+import unittest
+
+import calculos
+
+
+class TesteParte75(unittest.TestCase):
+    def test_extracao_com_e_sem_espaco(self):
+        # o json.dumps padrão põe ": " entre chave e valor, e a busca do Java procura ":" sem espaço
+        self.assertEqual(calculos._java_extract_json_field(json.dumps({"k": "AB"}), "k"), "")
+        self.assertEqual(calculos._java_extract_json_field(json.dumps({"k": "AB"}, separators=(",", ":")), "k"), "AB")
+
+    def test_nucleo_utilidade(self):
+        # 42 caracteres em 2 linhas: (42 div 4)/(2 + 1) − 0,5 = 10/3 − 0,5; código vazio: −1
+        self.assertEqual(calculos._nucleo_utilidade("def compute_factor(x, y):\\n    return x * y", "reasoning"), (True, 10 / 3 - 0.5))
+        self.assertEqual(calculos._nucleo_utilidade("", ""), (False, -1.0))
+        # o split do Java descarta as linhas vazias do fim: "a\\n\\n" tem 1 linha
+        self.assertEqual(calculos._nucleo_utilidade("abcdefgh\\n\\n", "x")[1], (10 // 4) / 2 - 0.5)
+
+    def test_mutacao(self):
+        self.assertEqual(calculos._mutar_soma_em_produto("def f(a, b):\\n    return a + b - 1"), ("def f(a, b):\\n    return a * b - 1", 1))
+
+    def test_p1691_laco_de_auto_modificacao(self):
+        padrao = calculos.p1691_laco_de_auto_modificacao(geracoes=3)
+        self.assertEqual([x[:3] for x in padrao], [(False, False, -1.0)] * 3)
+        corr = calculos.p1691_laco_de_auto_modificacao(geracoes=3, separador_corrigido=True)
+        self.assertEqual(len({x[3] for x in corr}), 1)
+
+    def test_p1692_godel_nas_funcoes(self):
+        n, a, m, am = calculos.p1692_godel_nas_funcoes()
+        self.assertEqual(a, n)
+        self.assertEqual(am, m)
+
+    def test_p1693_godel_no_pacote(self):
+        n, a, m = calculos.p1693_godel_no_pacote()
+        self.assertEqual(a, n)
+        self.assertLess(m, n)
+
+    def test_p1694_verificador_do_texto(self):
+        sc, ordem, v, melhor, vmax = calculos.p1694_verificador_do_texto()
+        self.assertAlmostEqual(sc["A"], 0.8 * 0.9 / 2, places=15)
+        self.assertEqual((ordem, melhor), (["B", "A"], ("A", "B")))
+        self.assertAlmostEqual(v, vmax, places=15)
+
+
+    def test_p1698_comparar_reenvio_v2(self):
+        # o bloco Java reenviado é idêntico ao guardado; o JSON foi guardado em linha (fora de bloco), por isso não casa como bloco
+        self.assertEqual(calculos.p1698_comparar_reenvio_v2(), [("java", 0, 39), ("json", None, 7)])
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte76.py  (63 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte76.py'] = """\"\"\"Testes de unidade da Parte 76 (a forma do byte): `python3 -m unittest synthai.testes_parte76`.\"\"\"
+
+import unittest
+
+import calculos
+from synthai.gpt_kronecker import GPTKronecker
+
+
+class TesteGPTKronecker(unittest.TestCase):
+    def setUp(self):
+        self.g = GPTKronecker(calculos.VOCAB_GPT, T=6, d1=2, d2=3, h=5, semente=3)
+        self.x, self.y = self.g.codificar("the do"), self.g.codificar("he dog")
+
+    def test_embedding_e_o_produto_de_kronecker(self):
+        g = self.g
+        c = g.indice["k"]  # 'k' = 0x6B: nibble alto 6, baixo 11
+        self.assertEqual((g.alto[c], g.baixo[c]), (6, 11))
+        for i in range(2):
+            for j in range(3):
+                self.assertEqual(g.p["E"][c][i * 3 + j], g.p["A"][6][i] * g.p["B"][11][j])
+
+    def test_gradiente_por_diferencas_finitas(self):
+        g = self.g
+        _, G = g.gradiente(self.x, self.y)
+        eps = 1e-6
+        for k, linha, i in (("A", g.alto[self.x[0]], 1), ("B", g.baixo[self.x[2]], 2), ("A", g.alto[self.x[3]], 0)):
+            v = g.p[k][linha][i]
+            g.p[k][linha][i] = v + eps
+            lp = g.perda(self.x, self.y)
+            g.p[k][linha][i] = v - eps
+            lm = g.perda(self.x, self.y)
+            g.p[k][linha][i] = v
+            self.assertAlmostEqual((lp - lm) / (2 * eps), G[k][linha][i], places=7)
+        self.assertTrue(all(v == 0.0 for linha in G["E"] for v in linha))
+
+    def test_pesos_de_embedding(self):
+        # nibbles altos do vocabulário: 2 (espaço , ( ) -), 3 (; ?), 6 (a-o), 7 (p-z |): 4; baixos: os 16
+        self.assertEqual(self.g.pesos_de_embedding(), (4 * 2 + 16 * 3, 34 * 6))
+
+    def test_treino_baixa_a_perda(self):
+        g = GPTKronecker(calculos.VOCAB_GPT, T=6, d1=2, d2=2, h=4, semente=5)
+        perdas = g.treinar("the cat sat on the mat " * 20, passos=60, lr=0.02, semente=5)
+        self.assertLess(sum(perdas[-10:]) / 10, sum(perdas[:10]) / 10)
+
+
+
+class TesteParte76(unittest.TestCase):
+    def test_p1721_kronecker_contra_cheio(self):
+        # poucos passos: o teste confere a forma da saída e o controle (sem o cheio)
+        ch, kr = calculos.p1721_kronecker_contra_cheio("pt", 76, passos=20)
+        self.assertTrue(ch > 0 and kr > 0)
+        nada, emb = calculos.p1721_kronecker_contra_cheio("pt", 76, embaralhar=True, passos=20)
+        self.assertIsNone(nada)
+        self.assertNotEqual(emb, kr)
+
+    def test_p1722_libm_nas_duas_linguagens(self):
+        r = calculos.p1722_libm_nas_duas_linguagens()
+        self.assertEqual(sorted(r), ["48"])  # a Parte 77 corrigiu a 09 e a 14
+        self.assertEqual(r["48"], (["log2"], True, []))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte77.py  (21 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte77.py'] = """\"\"\"Testes de unidade da Parte 77 (as duas abertas): `python3 -m unittest synthai.testes_parte77`.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class TesteParte77(unittest.TestCase):
+    def test_p1751_rodada09_nova_contra_antiga(self):
+        n, mud, rel = calculos.p1751_rodada09_nova_contra_antiga()
+        self.assertEqual((n, mud), (13, 6))
+        self.assertTrue(0.0 < rel < 1e-12)
+
+    def test_fronteira_fechada(self):
+        # nenhuma rodada usa exp/log da biblioteca fora da preparação (a 48 só prepara dados que o Java lê)
+        r = calculos.p1722_libm_nas_duas_linguagens()
+        self.assertTrue(all(prep is True and not java for _, prep, java in r.values()))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte78.py  (40 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte78.py'] = """\"\"\"Testes de unidade da Parte 78 (a atenção de posto baixo): `python3 -m unittest synthai.testes_parte78`.\"\"\"
+
+import random
+import unittest
+
+import calculos
+from synthai.gpt import GPT
+
+
+class TesteParte78(unittest.TestCase):
+    def test_p1781_svd_por_jacobi(self):
+        r = random.Random(5)
+        M = [[r.gauss(0, 1) for _ in range(4)] for _ in range(4)]
+        sig, U, V = calculos.p1781_svd_por_jacobi(M)
+        R = [[sum(U[i][k] * sig[k] * V[j][k] for k in range(4)) for j in range(4)] for i in range(4)]
+        self.assertLess(max(abs(R[i][j] - M[i][j]) for i in range(4) for j in range(4)), 1e-12)
+        self.assertTrue(sig[0] >= sig[1] >= sig[2] >= sig[3] >= 0.0)
+        # V é ortogonal: VᵀV = I
+        for a in range(4):
+            for b in range(4):
+                self.assertAlmostEqual(sum(V[k][a] * V[k][b] for k in range(4)), 1.0 if a == b else 0.0, places=12)
+
+    def test_p1782_atencao_de_posto(self):
+        g = GPT(calculos.VOCAB_GPT, T=6, d=4, h=5, semente=3)
+        h1 = calculos.p1782_atencao_de_posto(g, 1)
+        Q, K = h1.p["Q"], h1.p["K"]
+        M1 = [[sum(Q[i][k] * K[j][k] for k in range(4)) for j in range(4)] for i in range(4)]
+        # posto 1: todas as linhas são proporcionais (os menores 2 × 2 se anulam)
+        self.assertAlmostEqual(M1[0][0] * M1[1][1] - M1[0][1] * M1[1][0], 0.0, places=12)
+        x, y = g.codificar("the do"), g.codificar("he dog")
+        self.assertAlmostEqual(calculos.p1782_atencao_de_posto(g, 4).perda(x, y), g.perda(x, y), places=10)
+
+    def test_p1783_bits_por_posto(self):
+        b, por, sig = calculos.p1783_bits_por_posto("pt", 71, postos=(1, 16), passos=10)
+        self.assertAlmostEqual(por[16], b, places=9)
+        self.assertEqual(len(sig), 16)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte79.py  (29 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte79.py'] = """\"\"\"Testes de unidade da Parte 79 (causa e confiança): `python3 -m unittest synthai.testes_parte79`.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class TesteParte79(unittest.TestCase):
+    def test_p1811_confusao(self):
+        ing, aj, itv = calculos.p1811_confusao()
+        self.assertAlmostEqual(ing, 1.0, delta=0.0101)
+        self.assertAlmostEqual(aj, 0.5, delta=0.0116)
+        self.assertAlmostEqual(itv, 0.5, delta=0.0116)
+        # sem confusão (a = 0), a ingênua já acerta o efeito
+        self.assertAlmostEqual(calculos.p1811_confusao(a=0.0)[0], 0.5, delta=0.02)
+
+    def test_p1812_minha_calibracao(self):
+        n, ac, por = calculos.p1812_minha_calibracao()
+        self.assertEqual(n, sum(v[0] for v in por.values()))
+        self.assertTrue(0.0 < ac < 1.0)
+
+    def test_p1813_fator_de_alargamento(self):
+        # acertar o nominal dá fator 1; acertar 68,27% (± 1 desvio) quando se declara 90% dá 1,645
+        self.assertAlmostEqual(calculos.p1813_fator_de_alargamento(0.9)[2], 1.0, places=12)
+        self.assertAlmostEqual(calculos.p1813_fator_de_alargamento(0.682689492137086)[2], 1.6448536269514715, places=9)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte80.py  (39 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte80.py'] = """\"\"\"Testes de unidade da Parte 80 (o valor de um conjunto): `python3 -m unittest synthai.testes_parte80`.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class TesteParte80(unittest.TestCase):
+    def test_p1841_voi_conjunto(self):
+        # um sensor perfeito (q = 1) dá a informação perfeita: o VOI do 2 × 2 da P1632, com p = 0,5, u = [[1, 0], [0, 1]]: 1 − 0,5 = 0,5
+        u = [[1.0, 0.0], [0.0, 1.0]]
+        self.assertAlmostEqual(calculos.p1841_voi_conjunto(0.5, u, [1.0], [0]), 0.5, places=15)
+        # um sensor sem informação (q = 0,5) vale zero; o conjunto vazio vale zero
+        self.assertAlmostEqual(calculos.p1841_voi_conjunto(0.5, u, [0.5], [0]), 0.0, places=15)
+        self.assertEqual(calculos.p1841_voi_conjunto(0.3, u, [0.9], []), 0.0)
+        # complementaridade: com p = 0,8 e u favorecendo a ação 1, um sensor de 0,7 não muda a decisão, e dois juntos mudam
+        u2 = [[1.0, 0.0], [0.0, 1.0]]
+        um = calculos.p1841_voi_conjunto(0.8, u2, [0.7, 0.7], [0])
+        dois = calculos.p1841_voi_conjunto(0.8, u2, [0.7, 0.7], [0, 1])
+        self.assertAlmostEqual(um, 0.0, places=15)
+        self.assertGreater(dois, 2 * um + 1e-6)
+
+    def test_p1842_conjuntos(self):
+        a1, b1, c1, d1 = calculos.p1842_conjuntos(semente=80)
+        a2, b2, c2, d2 = calculos.p1842_conjuntos(semente=80, olhar=2)
+        self.assertEqual(c1, c2)  # a complementaridade é do mundo, não do guloso
+        self.assertGreater(a2, a1)
+        self.assertLess(d2, d1)
+
+    def test_p1843_rodada49(self):
+        # a rodada reproduz a P1842
+        a1, a2, b1, b2, d1 = calculos.p1843_rodada49()
+        r1, r2 = calculos.p1842_conjuntos(semente=80), calculos.p1842_conjuntos(semente=80, olhar=2)
+        self.assertEqual((a1, b1, d1), (r1[0], r1[1], r1[3]))
+        self.assertEqual((a2, b2), (r2[0], r2[1]))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte81.py  (22 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte81.py'] = """\"\"\"Testes de unidade da Parte 81 (o que não serve): `python3 -m unittest synthai.testes_parte81`.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class TesteParte81(unittest.TestCase):
+    def test_p1871_o_que_nao_serve(self):
+        a, b, c = calculos.p1871_o_que_nao_serve()
+        self.assertEqual((a, b), ([], []))
+        # a lista de arquivos depende do estado do projeto (a regra da Parte 48); o teste confere só a forma
+        self.assertTrue(all(isinstance(f, str) for f in c))
+
+    def test_p1872_candidatos_explicados(self):
+        # caso de controle dos dois lados (a regra da Parte 75): um arquivo inventado fica sem motivo; um RodadaNN.java tem motivo
+        contagem, sobra = calculos.p1872_candidatos_explicados(["dialogo/Rodada45.java", "lixo/nada.txt"])
+        self.assertEqual((contagem, sobra), ({"verificar.py (glob)": 1}, ["lixo/nada.txt"]))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
 # synthai/testes_pensamento.py  (66 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_pensamento.py'] = """\"\"\"Testes de unidade do `pensamento_exato` (Parte 24): `python3 -m unittest synthai.testes_pensamento`.\"\"\"
@@ -18943,7 +19986,5165 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# resultados.txt  (1426 linhas)
+# synthai/revisado/__init__.py  (30 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/__init__.py'] = """\"\"\"SYNTHAI — protótipo modular (Parte 22).
+
+Uma tentativa de protótipo de agente, organizada em módulos pelas funções de Jung e pelo que a série
+P1–P280 testou em `calculos.py`. É um agente de brinquedo em mundos simulados, não uma AGI/ASI: o que ele
+tem de "geral" é a mesma arquitetura funcionando em tipos de tarefa diferentes (P284).
+
+Módulos:
+    mundos       os mundos (escolha única, sequencial, bandido) e o humano que cansa
+    percepcao    sensação: o comitê de avaliadores, o sensor de primeira mão e a atenção seletiva
+    pensamento   pensamento: a calibração da probabilidade de catástrofe
+    intuicao     intuição: o plano e quanto confiar no próprio modelo de mundo
+    sentimento   sentimento: a cautela (pessimismo, quantilização, último passo, veto)
+    relacao      a relação com o humano: quando perguntar e quanto da atenção dele gastar
+    metacognicao a régua: AUC, comparações pareadas, Υ normalizado
+    agente       a SYNTHAI, que integra os módulos num ciclo
+    reconhecimento  Parte 23: o que já estava resolvido (ponto neutro, atenção, memória, Thompson)
+    autorregulacao, ancora, limiar, pensamento_exato, pensamento_rico: as Partes 24–29
+    composta     a versão principal desde a Parte 29: compõe as versões por tipo de tarefa (delegação)
+    referencias  as réguas: acaso, guloso (só a função dominante) e oráculo (vê o escondido)
+    testes       testes de unidade: python3 -m unittest synthai.testes
+
+Uso: `python3 -m synthai` (demonstração nas três tarefas). Regra de interface (P285): os módulos do agente
+nunca leem atributos que começam com `_` de outros objetos; um teste verifica isso no código-fonte.
+\"\"\"
+
+from .agente import Synthai
+from .reconhecimento import SynthaiExploradora
+from .composta import SynthaiComposta
+
+__all__ = ["Synthai", "SynthaiExploradora", "SynthaiComposta"]
+"""
+
+# ====================================================================================================
+# synthai/revisado/__main__.py  (35 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/__main__.py'] = """\"\"\"Demonstração: `python3 -m synthai` põe a mesma SYNTHAI, sem nenhuma mudança, em três tipos de tarefa (P284).\"\"\"
+
+from .agente import Synthai
+from .metacognicao import normalizado
+from .mundos import MundoBandido, MundoSequencial
+from .referencias import Acaso, Guloso, Oraculo
+
+TAREFAS = {
+    "escolha única": (lambda s: MundoSequencial(s, passos=1, n_acoes=200), 1000),
+    "sequencial": (lambda s: MundoSequencial(s), 400),
+    "bandido": (lambda s: MundoBandido(s), 20),
+}
+
+
+def avaliar(semente=1, tarefas=TAREFAS):
+    tabela = {}
+    for nome, (fazer, n) in tarefas.items():
+        linha = {}
+        for cls in (Acaso, Guloso, Oraculo, Synthai):
+            mundo = fazer(semente)
+            agente = cls(semente).calibrar(mundo)
+            linha[cls.__name__] = mundo.rodar(agente, n)
+        linha["normalizado"] = normalizado(linha["Synthai"]["retorno"], linha["Acaso"]["retorno"],
+                                           linha["Oraculo"]["retorno"])
+        tabela[nome] = linha
+    return tabela
+
+
+if __name__ == "__main__":
+    for nome, linha in avaliar().items():
+        print(f"{nome:14s}", "  ".join(
+            f"{k} retorno={v['retorno']:8.2f} cobertura={v['cobertura']:.1%} "
+            f"concluidos={v['concluidos']:.1%} abstencoes={v['abstencoes']:.1%}"
+            for k, v in linha.items() if k != "normalizado"),
+              f"  normalizado {linha['normalizado']:.3f}")
+"""
+
+# ====================================================================================================
+# synthai/revisado/agente.py  (72 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/agente.py'] = """\"\"\"A SYNTHAI montada a partir dos módulos (P281): cada função de Jung é um objeto, e o agente só os põe em ordem.
+
+    sensação (Percepcao) → intuição (Intuicao) + sentimento (Sentimento) ordenam → pensamento (Pensamento) avalia
+    o risco de cada candidata → relação (Relacao) decide se pergunta ao humano → escolha → observar o resultado
+    corrige o pensamento (sombra própria, P104) e a intuição (sensação corrige intuição, P273).
+
+O agente só recebe uma `Situacao` e só lê o que é público nas opções; o teste da P285 confere isso no código.\"\"\"
+
+from calculos import _rng
+
+from .intuicao import Intuicao
+from .pensamento import Pensamento
+from .percepcao import Percepcao
+from .relacao import Relacao
+from .sentimento import Sentimento
+
+
+class Synthai:
+    def __init__(self, semente=0, foco=0.1, q=0.05, q_final=0.2, risco_max=0.5, carga_alvo=0.3):
+        self.percepcao = Percepcao(foco)
+        self.pensamento = Pensamento()
+        self.intuicao = Intuicao()
+        self.sentimento = Sentimento(q, q_final, risco_max)
+        self.relacao = Relacao(carga_alvo=carga_alvo)
+        self.rng = _rng(semente)
+        self.vetados_agora = []
+        self._escolha = None
+
+    def calibrar(self, mundo, n=150):
+        \"\"\"Calibra o pensamento num histórico auditado do mundo (P83: 150 passos, como em `_construir_seq`).\"\"\"
+        self.pensamento.calibrar(mundo.historico_auditado(n))
+        return self
+
+    def nova_rodada(self):
+        self.relacao.nova_rodada()
+
+    def decidir(self, sit):
+        \"\"\"Retorna uma opção admissível, ou None para encerrar a tentativa.
+
+        O contrato é sequencial: decidir, executar (se houver opção), observar.
+        A abstenção não produz um Resultado e não autoriza escolher uma rejeitada.
+        \"\"\"
+        self.vetados_agora = []
+        self._escolha = None
+        if not sit.opcoes:
+            return None
+        leituras = self.percepcao.perceber(sit)
+        ordem = self.sentimento.ordenar(sit, self.intuicao)
+        melhor = max(o.comite for o in sit.opcoes)
+        for o in self.sentimento.candidatas(ordem, sit, self.rng):
+            leitura = leituras.get(id(o), 0.0)
+            p = self.pensamento.p_catastrofe(o, melhor, leitura)
+            if self.sentimento.inaceitavel(p):
+                continue
+            if self.relacao.precisa_perguntar(p):
+                if not self.relacao.pode_perguntar(o, sit):
+                    continue
+                if self.relacao.perguntar(o, sit):
+                    self.vetados_agora.append(o)
+                    continue
+            self._escolha = (o, melhor, leitura, sit.restantes, sit.explorar)
+            return o
+        return None
+
+    def observar(self, resultado):
+        if self._escolha is None:
+            return
+        o, melhor, leitura, restantes, explorar = self._escolha
+        self.pensamento.aprender(o, melhor, leitura, 1.0 if resultado.catastrofe else 0.0)
+        if not explorar and restantes > 0 and not resultado.catastrofe:
+            self.intuicao.corrigir(o.estimativa, resultado.nivel_antes, resultado.nivel_depois)
+        self._escolha = None
+"""
+
+# ====================================================================================================
+# synthai/revisado/aleatoriedade.py  (38 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/aleatoriedade.py'] = """\"\"\"Fontes reproduzíveis por domínio e coordenadas, sem consumo global compartilhado.\"\"\"
+
+import hashlib
+import json
+import random
+import sys
+from dataclasses import dataclass
+
+
+PROTOCOLO_ALEATORIO = "synthai-mundos-v2"
+
+
+@dataclass(frozen=True)
+class FontesAleatorias:
+    semente: int
+    mundo: str
+
+    def __post_init__(self):
+        if type(self.semente) is not int or not isinstance(self.mundo, str) or not self.mundo:
+            raise ValueError("semente deve ser inteira e mundo deve ter um nome")
+
+    def gerador(self, canal, *coordenadas):
+        if not isinstance(canal, str) or not canal or any(type(c) is not int or c < 0 for c in coordenadas):
+            raise ValueError("canal deve ter nome e coordenadas devem ser inteiros não negativos")
+        texto = json.dumps([PROTOCOLO_ALEATORIO, self.semente, self.mundo, canal, coordenadas],
+                           separators=(",", ":"), ensure_ascii=False)
+        semente = int.from_bytes(hashlib.sha256(texto.encode()).digest(), "big")
+        return random.Random(semente)
+
+    def uniforme(self, canal, *coordenadas):
+        return self.gerador(canal, *coordenadas).random()
+
+    @property
+    def manifesto(self):
+        return {"protocolo": PROTOCOLO_ALEATORIO, "semente": self.semente, "mundo": self.mundo,
+                "derivacao": "SHA-256(JSON compacto UTF-8 de [protocolo,semente,mundo,canal,coordenadas])",
+                "gerador": "random.Random", "python": sys.version,
+                "implementacao": sys.implementation.name}
+"""
+
+# ====================================================================================================
+# synthai/revisado/ancora.py  (54 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/ancora.py'] = """\"\"\"Âncora (Parte 28, P341): a autorregulação com os pés no chão.
+
+A P333 mostrou que a SYNTHAI que calcula o próprio limiar fica mais ousada: com poucas catástrofes, a priori f = 1
+("meu pensamento está calibrado") domina, f sai baixo, o limiar sai alto (uma inflação, P336). Duas âncoras que já
+existiam:
+
+- pessimismo sob incerteza (o limite inferior de confiança do RL offline, aqui do lado do risco): usar um quantil
+  alto da posterior de f, não a média. Com Poisson e priori Gamma, a posterior é Gamma(k + a, Σp + a); o quantil sai
+  da aproximação de Wilson–Hilferty, q ≈ (k/λ)(1 − 1/(9k) + z/(3√k))³. Quando as catástrofes se acumulam, o quantil
+  encosta na média: a âncora se solta sozinha;
+- a realidade de fora (Jung: o ego ancorado no mundo, por uma adaptação precisa): o histórico AUDITADO que calibrou
+  o pensamento também tem catástrofes rotuladas. Nas candidatas desse histórico que ela aceitaria sem perguntar,
+  a soma dos p previstos e os rótulos viram a priori de f (só o que a auditoria mostra: rótulos, nunca valores).\"\"\"
+
+from math import sqrt
+
+from .autorregulacao import SynthaiAutorregulada
+
+
+def quantil_gama(forma, taxa, z):
+    \"\"\"Quantil de uma Gamma(forma, taxa) pela aproximação de Wilson–Hilferty (z = quantil da normal).\"\"\"
+    if forma <= 0:
+        return 0.0
+    return (forma / taxa) * max(0.0, 1 - 1 / (9 * forma) + z / (3 * sqrt(forma))) ** 3
+
+
+class SynthaiComAncora(SynthaiAutorregulada):
+    def __init__(self, semente=0, z=0.8416, auditoria=True, q_auditoria=0.05, **kw):
+        super().__init__(semente, **kw)
+        self.z, self.auditoria, self.q_auditoria = z, auditoria, q_auditoria
+        self.f_auditado = (0.0, 0.0)
+
+    def calibrar(self, mundo, n=150):
+        hist = mundo.historico_auditado(n)
+        self.pensamento.calibrar(hist)
+        if self.auditoria:
+            cats = soma_p = 0.0
+            for episodio in hist:
+                melhor = max(o.comite for o, _, _ in episodio)
+                ordem = sorted(episodio, key=lambda t: -(t[0].nota - t[0].discordancia))
+                for o, rotulo, leitura in ordem[: max(1, int(self.q_auditoria * len(ordem)))]:
+                    p = self.pensamento.p_catastrofe(o, melhor, leitura)
+                    if p <= self.relacao.limiar:  # uma candidata que ela aceitaria sem perguntar
+                        soma_p += p
+                        cats += 1.0 if rotulo else 0.0
+            self.f_auditado = (cats, soma_p)
+            self.f_cat += cats
+            self.f_p += soma_p
+        return self
+
+    def termos(self):
+        l_ef, _, dd, b = super().termos()
+        f = quantil_gama(self.f_cat, self.f_p, self.z) if self.z else self.f_cat / self.f_p
+        return l_ef, f, dd, b
+"""
+
+# ====================================================================================================
+# synthai/revisado/autorregulacao.py  (140 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/autorregulacao.py'] = """\"\"\"Autorregulação (Parte 27, P331): a SYNTHAI calcula o próprio limiar de pergunta.
+
+A Parte 26 achou o limiar certo pela conta m = Δd / (f · L · P*), mas mediu os termos com a régua (lendo o escondido).
+Aqui a SYNTHAI estima os três termos só com o que ela observa (a regra da Parte 7):
+
+- L (o custo de uma catástrofe): a perda fixa mais o retorno que os próprios episódios dela ainda davam a partir do
+  passo em que a catástrofe aconteceu (F(t), médio nos episódios completos dela);
+- f (quanto o pensamento subestima o risco do que aceita sem perguntar): catástrofes observadas / soma dos p previstos
+  nessas escolhas, com uma priori f = 1 de peso `peso_priori_f` catástrofes esperadas;
+- Δd (o valor perdido ao descartar): o valor de uma opção descartada nunca é visto. A SYNTHAI o estima pela nota do
+  comitê (que ela vê), convertida em valor por uma regressão valor ~ nota aprendida com as próprias escolhas (o valor
+  recebido menos o nível), mais o plano da intuição (peso × estimativa × passos restantes).
+
+A cada `intervalo` decisões, depois de `aquecimento`, refaz m e o põe no limiar (entre `m_min` e `m_max`). No bandido
+(exploração), o orçamento é por rodada e nada disso se aplica: a relação fica como estava.
+
+Jung: a compensação deixa de ser calculada de fora (Parte 25) e passa a ser uma autorregulação da própria psique.\"\"\"
+
+from calculos import p71_valor_da_pergunta
+
+from .limiar import SynthaiAjustada
+from .relacao import Relacao
+
+
+class RelacaoAutorregulada(Relacao):
+    \"\"\"A Relacao de sempre, que anota o que precisa para a conta: o p das aceitas sem perguntar e as descartadas.\"\"\"
+
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        self.aceita_p = None
+        self.descartadas = []
+
+    def precisa_perguntar(self, p):
+        r = super().precisa_perguntar(p)
+        if not r:
+            self.aceita_p = p  # no laço de decisão, a primeira candidata que não precisa de pergunta é aceita
+        return r
+
+    def pode_perguntar(self, opcao, situacao):
+        r = super().pode_perguntar(opcao, situacao)
+        if not r and not situacao.explorar:
+            self.descartadas.append(opcao)
+        return r
+
+
+class SynthaiAutorregulada(SynthaiAjustada):
+    def __init__(self, semente=0, mult=2.0, local=False, perda=50.0, intervalo=50, aquecimento=200,
+                 peso_priori_f=0.5, m_min=0.25, m_max=16.0, newton=True, **kw):
+        super().__init__(semente, mult=mult, local=local, **kw)
+        if not newton:  # volta ao pensamento de gradiente da Parte 22 (o da versão principal)
+            from .pensamento import Pensamento
+            self.pensamento = Pensamento()
+            self.percepcao.pensamento = self.pensamento
+        self.relacao = RelacaoAutorregulada(mult=mult, carga_alvo=self.relacao.carga_alvo)
+        self.p_estrela = p71_valor_da_pergunta()
+        self.perda, self.intervalo, self.aquecimento = perda, intervalo, aquecimento
+        self.m_min, self.m_max, self.mult = m_min, m_max, mult
+        # f: catástrofes e p previstos nas aceitas sem perguntar (com priori f = 1)
+        self.f_cat, self.f_p = peso_priori_f, peso_priori_f
+        # regressão valor ~ nota nas próprias escolhas
+        self.n_r = self.sx = self.sy = self.sxx = self.sxy = 0.0
+        # Δd: somas das diferenças de nota e de plano (descartada − escolhida)
+        self.n_d = self.d_nota = self.d_plano = 0.0
+        # L: retorno futuro por passo nos episódios completos, e os passos das catástrofes
+        self.futuro_soma, self.futuro_n, self.passos_cat = {}, {}, []
+        self.ganhos = []
+        self.decisoes = 0
+        self._pendente = None
+        self.historico_m = []
+
+    def _plano(self, o, sit):
+        return 0.0 if sit.explorar else self.intuicao.peso * o.estimativa * sit.restantes
+
+    def decidir(self, sit):
+        self._pendente = None
+        self.relacao.aceita_p, self.relacao.descartadas = None, []
+        escolha = super().decidir(sit)
+        if escolha is None:
+            # Um episódio incompleto não entra na estimativa de retorno futuro.
+            self.ganhos = []
+            return None
+        if not sit.explorar:
+            for o in self.relacao.descartadas:
+                self.n_d += 1
+                self.d_nota += o.comite - escolha.comite
+                self.d_plano += self._plano(o, sit) - self._plano(escolha, sit)
+            self._pendente = (escolha, self.relacao.aceita_p, sit.restantes, sit.horizonte)
+            self.decisoes += 1
+            if self.decisoes >= self.aquecimento and self.decisoes % self.intervalo == 0:
+                self.recalcular()
+        return escolha
+
+    def observar(self, resultado):
+        super().observar(resultado)
+        if self._pendente is None:
+            return
+        escolha, p_aceita, restantes, horizonte = self._pendente
+        self._pendente = None
+        if p_aceita is not None:
+            self.f_p += p_aceita
+            self.f_cat += 1.0 if resultado.catastrofe else 0.0
+        t = horizonte - 1 - restantes
+        if resultado.catastrofe:
+            self.passos_cat.append(t)
+            self.ganhos = []
+            return
+        x, y = escolha.comite, resultado.valor_recebido - resultado.nivel_antes  # o valor do passo
+        self.n_r += 1
+        self.sx += x
+        self.sy += y
+        self.sxx += x * x
+        self.sxy += x * y
+        self.ganhos.append(resultado.valor_recebido)
+        if restantes == 0:
+            for k in range(len(self.ganhos)):
+                self.futuro_soma[k] = self.futuro_soma.get(k, 0.0) + sum(self.ganhos[k:])
+                self.futuro_n[k] = self.futuro_n.get(k, 0) + 1
+            self.ganhos = []
+
+    def termos(self):
+        \"\"\"As estimativas atuais de L, f e Δd (só com o que a SYNTHAI observou).\"\"\"
+        futuro = lambda t: self.futuro_soma.get(t, 0.0) / self.futuro_n[t] if self.futuro_n.get(t) else 0.0
+        if self.passos_cat:
+            l_ef = self.perda + sum(futuro(t) for t in self.passos_cat) / len(self.passos_cat)
+        else:
+            l_ef = self.perda + (sum(futuro(t) for t in self.futuro_n) / len(self.futuro_n) if self.futuro_n else 0.0)
+        f = self.f_cat / self.f_p
+        var = self.sxx - self.sx * self.sx / self.n_r if self.n_r > 1 else 0.0
+        inclinacao = (self.sxy - self.sx * self.sy / self.n_r) / var if var > 1e-12 else 1.0
+        dd = (inclinacao * self.d_nota + self.d_plano) / self.n_d if self.n_d else None
+        return l_ef, f, dd, inclinacao
+
+    def recalcular(self):
+        l_ef, f, dd, _ = self.termos()
+        if dd is None or dd <= 0:
+            return
+        m = min(self.m_max, max(self.m_min, dd / (f * l_ef * self.p_estrela)))
+        self.mult = m
+        self.relacao.limiar = m * self.p_estrela
+        self.historico_m.append(m)
+"""
+
+# ====================================================================================================
+# synthai/revisado/composta.py  (74 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/composta.py'] = """\"\"\"A SYNTHAI composta (Parte 29, P351): compor em vez de herdar.
+
+A Parte 28 mostrou o defeito da linhagem de versões: a âncora herdou o pensamento de Newton, que perde no bandido. O
+princípio é o do livro *Design Patterns* (1994): "prefira a composição de objetos à herança de classes", e a forma mais
+extrema da composição é a DELEGAÇÃO. A SynthaiComposta não é nenhuma das versões: ela TEM duas e passa cada decisão
+para a que funciona naquele tipo de situação:
+
+- no bandido (situação de exploração): a versão principal (SynthaiExploradora), que explora por Thompson;
+- fora dele: a SYNTHAI ancorada (P343), que calcula o próprio limiar com as âncoras.
+
+As duas são calibradas com o MESMO histórico auditado (um só pedido ao mundo), então cada uma decide exatamente como
+decidiria sozinha. Qualquer módulo de dentro pode ser trocado de fora (por exemplo, o pensamento rico, P353).\"\"\"
+
+from .ancora import SynthaiComAncora
+from .reconhecimento import SynthaiExploradora
+
+
+class _HistoricoFixo:
+    \"\"\"Entrega o mesmo histórico auditado a mais de um agente.\"\"\"
+
+    def __init__(self, historico):
+        self.historico = historico
+
+    def historico_auditado(self, n):
+        return self.historico
+
+
+class SynthaiComposta:
+    def __init__(self, semente=0, fora=None, bandido=None):
+        self.fora = fora if fora is not None else SynthaiComAncora(semente, z=0.8416, auditoria=True)
+        self.bandido = bandido if bandido is not None else SynthaiExploradora(semente)
+        self._ultimo = self.fora
+        self._tem_escolha = False
+
+    def calibrar(self, mundo, n=150):
+        fixo = _HistoricoFixo(mundo.historico_auditado(n))
+        self.fora.calibrar(fixo, n)
+        self.bandido.calibrar(fixo, n)
+        return self
+
+    def decidir(self, sit):
+        self._tem_escolha = False
+        self._ultimo = self.bandido if sit.explorar else self.fora
+        escolha = self._ultimo.decidir(sit)
+        self._tem_escolha = escolha is not None
+        return escolha
+
+    def observar(self, resultado):
+        if not self._tem_escolha:
+            return
+        self._tem_escolha = False
+        self._ultimo.observar(resultado)
+
+    def nova_rodada(self):
+        self._tem_escolha = False
+        self.bandido.nova_rodada()
+        self.fora.nova_rodada()
+
+    @property
+    def vetados_agora(self):
+        return self._ultimo.vetados_agora
+
+    @property
+    def relacao(self):
+        return self._ultimo.relacao
+
+
+def composta_rica(semente=0):
+    \"\"\"A composta com o pensamento rico (10 pesos) na parte de fora do bandido: um módulo trocado de fora.\"\"\"
+    from .pensamento_rico import PensamentoRico
+    c = SynthaiComposta(semente)
+    c.fora.pensamento = PensamentoRico()
+    c.fora.percepcao.pensamento = c.fora.pensamento
+    return c
+"""
+
+# ====================================================================================================
+# synthai/revisado/decisao.py  (576 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/decisao.py'] = """\"\"\"Decisão bayesiana exata no lugar do aprendizado por reforço e do aprendizado contínuo por gradiente (Parte 32).
+
+A ideia: quando o modelo do mundo cabe numa família exponencial, o estado de conhecimento inteiro é uma ESTATÍSTICA
+SUFICIENTE de tamanho fixo (contagens, X'X e X'y). Atualizá-la é exato, não esquece nada e não tem taxa de aprendizado;
+decidir é amostrar do posterior (Thompson; PSRL nos MDPs). Os rivais são os métodos padrão: Q-learning com ε-guloso
+(passo constante) e descida de gradiente estocástica.
+
+Só biblioteca padrão. Cada classe recebe o próprio gerador (random.Random) e nunca lê o mundo por dentro.
+\"\"\"
+
+import random
+from math import exp, log, sqrt
+
+
+# --------------------------------------------------------------------------- bandido de Bernoulli
+
+
+class ThompsonBernoulli:
+    \"\"\"Posterior Beta(1 + sucessos, 1 + fracassos) por braço; escolhe o braço com a maior amostra. `teto` (opcional)
+    limita a memória: quando a + b passa do teto, as duas contagens são reduzidas à metade (P411: quantos dígitos hex
+    a memória precisa).\"\"\"
+
+    def __init__(self, k, rng, teto=None):
+        self.a = [1.0] * k
+        self.b = [1.0] * k
+        self.rng = rng
+        self.teto = teto
+
+    def escolher(self):
+        amostras = [self.rng.betavariate(a, b) for a, b in zip(self.a, self.b)]
+        return max(range(len(amostras)), key=amostras.__getitem__)
+
+    def atualizar(self, braco, r):
+        if r:
+            self.a[braco] += 1
+        else:
+            self.b[braco] += 1
+        if self.teto is not None and self.a[braco] + self.b[braco] > self.teto:
+            self.a[braco] = max(1.0, self.a[braco] / 2)
+            self.b[braco] = max(1.0, self.b[braco] / 2)
+
+    def estado(self):
+        return list(self.a), list(self.b)
+
+
+
+class ThompsonDescontado(ThompsonBernoulli):
+    \"\"\"Thompson com renovação (Parte 33, ↩ P405): a cada passo, todas as contagens decaem para a crença inicial,
+    a ← 1 + γ(a − 1), b ← 1 + γ(b − 1), antes da observação nova. A memória efetiva é ~1/(1 − γ) passos: uma crença
+    errada (ou lixo) some em alguns 1/(1 − γ); em troca, o agente nunca fica certo de nada além dessa janela
+    (o "Bayes com esquecimento" de Raj e Kalyani, 2017).\"\"\"
+
+    def __init__(self, k, rng, gama=0.99):
+        super().__init__(k, rng)
+        self.gama = gama
+
+    def atualizar(self, braco, r):
+        g = self.gama
+        self.a = [1.0 + g * (a - 1.0) for a in self.a]
+        self.b = [1.0 + g * (b - 1.0) for b in self.b]
+        super().atualizar(braco, r)
+
+
+class ThompsonMorris(ThompsonBernoulli):
+    \"\"\"Thompson com contadores de Morris (1978) (Parte 34, trilha hexadecimal): cada contagem guarda só o expoente c, um
+    dígito hex (0..15); um sucesso incrementa c com chance 2^-c; a contagem estimada é 2^c − 1 (sem viés:
+    E[2^c − 1] = n). Memória: 2 dígitos hex por braço, para contagens até 2^15.\"\"\"
+
+    def __init__(self, k, rng):
+        super().__init__(k, rng)
+        self.ca = [0] * k
+        self.cb = [0] * k
+
+    def atualizar(self, braco, r):
+        c = self.ca if r else self.cb
+        if c[braco] < 15 and self.rng.random() < 2.0 ** -c[braco]:
+            c[braco] += 1
+        self.a[braco] = 1.0 + 2 ** self.ca[braco] - 1
+        self.b[braco] = 1.0 + 2 ** self.cb[braco] - 1
+
+
+class ThompsonSurpresa(ThompsonBernoulli):
+    \"\"\"Renovação DIRIGIDA (Parte 35, ↩ P408): Thompson exato, mas cada braço guarda também as últimas `janela`
+    observações; quando a média delas se afasta da média do posterior por mais de z desvios binomiais
+    (|m_janela − m_post| > z·√(m_post(1 − m_post)/janela)), o braço é renovado: a crença vira Beta(1 + sucessos da
+    janela, 1 + fracassos da janela). Só o braço desmentido esquece; os outros continuam exatos. É a compensação de
+    Jung: a correção vem de onde a crença falhou.\"\"\"
+
+    def __init__(self, k, rng, janela=20, z=3.0):
+        super().__init__(k, rng)
+        self.janela, self.z = janela, z
+        self.recentes = [[] for _ in range(k)]
+        self.renovacoes = 0
+
+    def atualizar(self, braco, r):
+        super().atualizar(braco, r)
+        rec = self.recentes[braco]
+        rec.append(r)
+        if len(rec) > self.janela:
+            rec.pop(0)
+        if len(rec) == self.janela:
+            a, b = self.a[braco], self.b[braco]
+            m = a / (a + b)
+            mj = sum(rec) / self.janela
+            if abs(mj - m) > self.z * sqrt(max(m * (1 - m), 1e-9) / self.janela):
+                self.a[braco] = 1.0 + sum(rec)
+                self.b[braco] = 1.0 + self.janela - sum(rec)
+                self.renovacoes += 1
+
+
+class ThompsonSurpresaExposta(ThompsonSurpresa):
+    \"\"\"A renovação dirigida com EXPOSIÇÃO (Parte 36, ↩ P491): a cada `periodo` escolhas, puxa o braço puxado há mais
+    tempo, em vez de amostrar. Um braço desacreditado (que Thompson não puxaria) volta a ser testado e, se a crença sobre
+    ele estiver errada, a surpresa a desmente. Custo: periodo⁻¹ das escolhas vão para braços provavelmente ruins.\"\"\"
+
+    def __init__(self, k, rng, janela=20, z=3.0, periodo=50):
+        super().__init__(k, rng, janela, z)
+        self.periodo = periodo
+        self.passo = 0
+        self.ultimo = [-1] * k
+
+    def escolher(self):
+        self.passo += 1
+        if self.passo % self.periodo == 0:
+            i = min(range(len(self.ultimo)), key=self.ultimo.__getitem__)
+        else:
+            i = super().escolher()
+        self.ultimo[i] = self.passo
+        return i
+
+
+class ThompsonBOCPD:
+    \"\"\"Thompson com detecção bayesiana de mudança (Adams e MacKay, 2007; Parte 37): cada braço guarda uma mistura de
+    hipóteses [peso, a, b], uma por "há quanto tempo o mundo deste braço mudou". A cada PASSO (não a cada puxada), toda
+    hipótese sobrevive com chance 1 − H e uma hipótese nova, Beta(1, 1), nasce com peso H: um braço não visto há muito
+    tempo volta, sozinho, para perto da crença inicial (a exposição sai do modelo, não de uma regra). Uma observação
+    multiplica cada peso pela preditiva da hipótese (a/(a+b) ou b/(a+b)) e atualiza as contagens. Ficam as `hipoteses`
+    de maior peso. Escolher: sorteia uma hipótese pelo peso e amostra o Beta dela.\"\"\"
+
+    def __init__(self, k, rng, risco=1 / 500, hipoteses=16):
+        self.k, self.rng, self.risco, self.hipoteses = k, rng, risco, hipoteses
+        self.mist = [[[1.0, 1.0, 1.0]] for _ in range(k)]
+
+    def escolher(self):
+        am = []
+        for hs in self.mist:
+            u, acum = self.rng.random(), 0.0
+            esc = hs[-1]
+            for h in hs:
+                acum += h[0]
+                if u < acum:
+                    esc = h
+                    break
+            am.append(self.rng.betavariate(esc[1], esc[2]))
+        return max(range(self.k), key=am.__getitem__)
+
+    def _risco(self, hs):
+        H = self.risco
+        for h in hs:
+            h[0] *= 1 - H
+        for h in hs:
+            if h[1] == 1.0 and h[2] == 1.0:
+                h[0] += H
+                return
+        hs.append([H, 1.0, 1.0])
+
+    def atualizar(self, braco, r):
+        for hs in self.mist:
+            self._risco(hs)
+        hs = self.mist[braco]
+        for h in hs:
+            h[0] *= (h[1] if r else h[2]) / (h[1] + h[2])
+            if r:
+                h[1] += 1
+            else:
+                h[2] += 1
+        hs.sort(key=lambda h: -h[0])
+        del hs[self.hipoteses:]
+        tot = sum(h[0] for h in hs)
+        for h in hs:
+            h[0] /= tot
+        for i, outro in enumerate(self.mist):
+            if i != braco and len(outro) > self.hipoteses:
+                outro.sort(key=lambda h: -h[0])
+                del outro[self.hipoteses:]
+                tot = sum(h[0] for h in outro)
+                for h in outro:
+                    h[0] /= tot
+
+    def substituir(self, a, b):
+        \"\"\"O dano da P405: a crença de cada braço vira uma hipótese só, com as contagens de lixo.\"\"\"
+        self.mist = [[[1.0, x, y]] for x, y in zip(a, b)]
+
+
+class ThompsonMistura:
+    \"\"\"O agente que aprende a suposição (Parte 38): média bayesiana de modelos sobre o risco de mudança. Mantém um
+    ThompsonBOCPD para cada H em `riscos` (H = 0 é o Thompson exato, que supõe um mundo que não muda) e o log do peso de
+    cada modelo, que soma, a cada observação, o log da probabilidade que o modelo deu a ela. Com o risco aplicado antes
+    da observação, a preditiva do modelo H é (1 − H)·Σ_h w_h·pred_h + H·½. Escolher: sorteia um modelo pelo peso e deixa
+    ele escolher. Na predição em perda logarítmica, a mistura perde no máximo ln(número de modelos) para o melhor modelo,
+    em qualquer sequência (é uma identidade: −ln Σ_m π_m·P_m ≤ −ln π_m* − ln P_m*).\"\"\"
+
+    def __init__(self, k, rng, riscos=(0.0, 1 / 2000, 1 / 500, 1 / 100), hipoteses=16):
+        self.rng = rng
+        self.modelos = [ThompsonBOCPD(k, random.Random(rng.random()), h, hipoteses) for h in riscos]
+        self.riscos = riscos
+        self.logw = [0.0] * len(riscos)
+        self.perda = [0.0] * len(riscos)  # −Σ ln P_m(observações), por modelo
+        self.perda_mistura = 0.0
+
+    def pesos(self):
+        m = max(self.logw)
+        e = [exp(x - m) for x in self.logw]
+        t = sum(e)
+        return [x / t for x in e]
+
+    def escolher(self):
+        u, acum = self.rng.random(), 0.0
+        ws = self.pesos()
+        for mod, w in zip(self.modelos, ws):
+            acum += w
+            if u < acum:
+                return mod.escolher()
+        return self.modelos[-1].escolher()
+
+    def atualizar(self, braco, r):
+        ws = self.pesos()
+        preds = []
+        for mod, H in zip(self.modelos, self.riscos):
+            hs = mod.mist[braco]
+            pr = sum(h[0] * ((h[1] if r else h[2]) / (h[1] + h[2])) for h in hs)
+            preds.append((1 - H) * pr + H * 0.5)
+        self.perda_mistura -= log(sum(w * p for w, p in zip(ws, preds)))
+        for i, p in enumerate(preds):
+            self.logw[i] += log(p)
+            self.perda[i] -= log(p)
+        for mod in self.modelos:
+            mod.atualizar(braco, r)
+
+    def substituir(self, a, b):
+        for mod in self.modelos:
+            mod.substituir(a, b)
+
+
+class ThompsonMisturaMaximo(ThompsonMistura):
+    \"\"\"A mesma média de modelos da P541, mas a decisão segue o modelo de MAIOR peso, em vez de sortear um modelo pelo
+    peso (Parte 40, a pergunta da Rodada 9). Os pesos e as perdas são os mesmos; só a escolha muda.\"\"\"
+
+    def escolher(self):
+        ws = self.pesos()
+        return self.modelos[max(range(len(ws)), key=ws.__getitem__)].escolher()
+
+
+class ThompsonJeffreys(ThompsonBernoulli):
+    \"\"\"Thompson com a priori de Jeffreys, Beta(½, ½), em vez da uniforme Beta(1, 1) (Parte 43). A priori de Jeffreys põe
+    mais massa perto de 0 e de 1: um braço com poucas observações é amostrado mais longe do meio.\"\"\"
+
+    def __init__(self, k, rng):
+        super().__init__(k, rng)
+        self.a = [0.5] * k
+        self.b = [0.5] * k
+
+
+class ThompsonBOCPDGlobal:
+    \"\"\"Detecção bayesiana de mudança no nível do MUNDO (Parte 44, ↩ P734): uma só mistura de hipóteses, cada uma
+    [peso, a[0..k), b[0..k)] = "o mundo inteiro mudou há s passos, e desde então os braços deram estas contagens". A cada
+    passo, toda hipótese sobrevive com chance 1 − H e nasce uma hipótese nova com todos os braços em Beta(1, 1), peso H.
+    Uma observação do braço i pesa cada hipótese pela preditiva DELE nessa hipótese; assim a evidência de um braço
+    puxado renova, de uma vez, a crença sobre todos os braços. Escolher: sorteia uma hipótese pelo peso e amostra os k
+    Betas dela.\"\"\"
+
+    def __init__(self, k, rng, risco=1 / 500, hipoteses=16):
+        self.k, self.rng, self.risco, self.hipoteses = k, rng, risco, hipoteses
+        self.hs = [[1.0, [1.0] * k, [1.0] * k]]
+
+    def escolher(self):
+        u, acum, esc = self.rng.random(), 0.0, self.hs[-1]
+        for h in self.hs:
+            acum += h[0]
+            if u < acum:
+                esc = h
+                break
+        am = [self.rng.betavariate(a, b) for a, b in zip(esc[1], esc[2])]
+        return max(range(self.k), key=am.__getitem__)
+
+    def atualizar(self, braco, r):
+        H = self.risco
+        for h in self.hs:
+            h[0] *= 1 - H
+        nova = next((h for h in self.hs if all(x == 1.0 for x in h[1]) and all(x == 1.0 for x in h[2])), None)
+        if nova is None:
+            self.hs.append([H, [1.0] * self.k, [1.0] * self.k])
+        else:
+            nova[0] += H
+        for h in self.hs:
+            a, b = h[1][braco], h[2][braco]
+            h[0] *= (a if r else b) / (a + b)
+            if r:
+                h[1][braco] += 1
+            else:
+                h[2][braco] += 1
+        self.hs.sort(key=lambda h: -h[0])
+        del self.hs[self.hipoteses:]
+        tot = sum(h[0] for h in self.hs)
+        for h in self.hs:
+            h[0] /= tot
+
+    def substituir(self, a, b):
+        \"\"\"O dano da P405: a crença inteira vira uma hipótese só, com as contagens de lixo.\"\"\"
+        self.hs = [[1.0, list(a), list(b)]]
+
+
+class ThompsonBOCPDGlobalMAP(ThompsonBOCPDGlobal):
+    \"\"\"A mudança no nível do mundo, decidindo pela hipótese MAIS PESADA (o máximo a posteriori da idade do mundo), em vez
+    de sortear uma hipótese pelo peso (Parte 45, a pergunta da Rodada 15). As hipóteses jovens continuam sendo pesadas
+    e podem virar a mais pesada quando a evidência mandar; enquanto não viram, não são sorteadas e não reexploram.\"\"\"
+
+    def escolher(self):
+        esc = max(self.hs, key=lambda h: h[0])
+        am = [self.rng.betavariate(a, b) for a, b in zip(esc[1], esc[2])]
+        return max(range(self.k), key=am.__getitem__)
+
+class QEpsilon:
+    \"\"\"Q-learning de um passo (o bandido é um MDP de um estado): Q ← Q + α(r − Q), ε-guloso, empate ao acaso.\"\"\"
+
+    def __init__(self, k, rng, alfa=0.1, eps=0.1, q0=0.0):
+        self.q = [q0] * k
+        self.rng = rng
+        self.alfa = alfa
+        self.eps = eps
+
+    def escolher(self):
+        if self.rng.random() < self.eps:
+            return self.rng.randrange(len(self.q))
+        m = max(self.q)
+        return self.rng.choice([i for i, x in enumerate(self.q) if x == m])
+
+    def atualizar(self, braco, r):
+        self.q[braco] += self.alfa * (r - self.q[braco])
+
+
+class UCB1:
+    \"\"\"UCB1 (Auer, Cesa-Bianchi e Fischer, 2002): média + √(2 ln t / n).\"\"\"
+
+    def __init__(self, k, rng):
+        self.n = [0] * k
+        self.s = [0.0] * k
+        self.t = 0
+        self.rng = rng
+
+    def escolher(self):
+        for i, n in enumerate(self.n):
+            if n == 0:
+                return i
+        return max(range(len(self.n)), key=lambda i: self.s[i] / self.n[i] + sqrt(2 * log(self.t) / self.n[i]))
+
+    def atualizar(self, braco, r):
+        self.n[braco] += 1
+        self.s[braco] += r
+        self.t += 1
+
+
+def kl_bernoulli(p, q):
+    \"\"\"Divergência de Kullback–Leibler entre Bernoulli(p) e Bernoulli(q).\"\"\"
+    eps = 1e-12
+    p, q = min(max(p, eps), 1 - eps), min(max(q, eps), 1 - eps)
+    return p * log(p / q) + (1 - p) * log((1 - p) / (1 - q))
+
+
+def cota_lai_robbins(ps, t):
+    \"\"\"A cota inferior assintótica do arrependimento (Lai e Robbins, 1985): Σ_{k subótimo} Δ_k ln T / KL(p_k, p*),
+    truncada em Δ_k·T (nenhum braço custa mais do que ser puxado sempre).\"\"\"
+    m = max(ps)
+    return sum(min((m - p) * t, (m - p) * log(t) / kl_bernoulli(p, m)) for p in ps if p < m)
+
+
+def rodar_bandido(agente, ps, t, rng, dano_em=None, danificar=None):
+    \"\"\"Roda o agente T passos num bandido de Bernoulli com médias `ps` (escondidas do agente). Devolve o arrependimento
+    acumulado passo a passo (pela média: Σ (p* − p_escolhido)). `danificar(agente)` é chamado no passo `dano_em`.\"\"\"
+    m = max(ps)
+    arrep, total = [], 0.0
+    for passo in range(t):
+        if dano_em is not None and passo == dano_em:
+            danificar(agente)
+        i = agente.escolher()
+        r = 1 if rng.random() < ps[i] else 0
+        agente.atualizar(i, r)
+        total += m - ps[i]
+        arrep.append(total)
+    return arrep
+
+
+# --------------------------------------------------------------------------- MDP: RiverSwim
+
+
+def riverswim(n=6):
+    \"\"\"O RiverSwim (Strehl e Littman, 2008): n estados em fila, ações 0 = esquerda (rio abaixo) e 1 = direita (contra a
+    correnteza). Devolve (P, R): P[s][a] = lista de (próximo, probabilidade); R[s][a] = recompensa esperada.
+    Esquerda: sempre um passo para a esquerda; no estado 0, recompensa 5/1000. Direita: no meio, 0,35 avança, 0,6 fica,
+    0,05 volta; no estado 0, 0,4 fica e 0,6 avança; no último, 0,6 fica e 0,4 volta, com recompensa 1.\"\"\"
+    P = [[None, None] for _ in range(n)]
+    R = [[0.0, 0.0] for _ in range(n)]
+    for s in range(n):
+        P[s][0] = [(max(s - 1, 0), 1.0)]
+        if s == 0:
+            P[s][1] = [(0, 0.4), (1, 0.6)]
+        elif s == n - 1:
+            P[s][1] = [(s, 0.6), (s - 1, 0.4)]
+        else:
+            P[s][1] = [(s + 1, 0.35), (s, 0.6), (s - 1, 0.05)]
+    R[0][0] = 5 / 1000
+    R[n - 1][1] = 0.6  # a recompensa 1 vem com a permanência no último estado (probabilidade 0,6)
+    return P, R
+
+
+def media_otima(P, R, iteracoes=20000):
+    \"\"\"O ganho médio ótimo por passo (iteração de valor relativa, MDP unichain): o g da equação de Bellman
+    h(s) + g = max_a [R(s, a) + Σ P(s'|s, a) h(s')].\"\"\"
+    n = len(P)
+    h = [0.0] * n
+    g = 0.0
+    for _ in range(iteracoes):
+        novo = [max(R[s][a] + sum(p * h[x] for x, p in P[s][a]) for a in range(2)) for s in range(n)]
+        g = novo[0] - h[0]
+        h = [v - novo[0] for v in novo]
+    return g
+
+
+def politica_horizonte(P, R, h):
+    \"\"\"Política ótima de horizonte h (programação dinâmica para trás): devolve pol[passo][s].\"\"\"
+    n = len(P)
+    v = [0.0] * n
+    pols = []
+    for _ in range(h):
+        q = [[R[s][a] + sum(p * v[x] for x, p in P[s][a]) for a in range(2)] for s in range(n)]
+        pols.append([0 if q[s][0] >= q[s][1] else 1 for s in range(n)])
+        v = [max(q[s]) for s in range(n)]
+    return pols[::-1]
+
+
+def passo_mdp(P, R, s, a, rng):
+    u, acum = rng.random(), 0.0
+    for x, p in P[s][a]:
+        acum += p
+        if u < acum:
+            break
+    r = R[s][a] if (s, a) != (len(P) - 1, 1) else (1.0 if x == s else 0.0)
+    return x, r
+
+
+class PSRL:
+    \"\"\"Amostragem do posterior para RL (Osband, Russo e Van Roy, 2013): posterior Dirichlet(1 + contagens) nas transições
+    e média bayesiana das recompensas (Beta(1,1) por (s, a, s') não é preciso: aqui a recompensa por (s, a) tem posterior
+    Beta(1 + soma, 1 + n − soma)). A cada episódio de `h` passos sorteia um MDP do posterior e segue a política ótima dele.\"\"\"
+
+    def __init__(self, n, rng, h=20):
+        self.n, self.rng, self.h = n, rng, h
+        self.cont = [[[0] * n for _ in range(2)] for _ in range(n)]
+        self.rsoma = [[0.0, 0.0] for _ in range(n)]
+        self.rn = [[0, 0] for _ in range(n)]
+        self.t = 0
+        self.pol = None
+
+    def _sortear(self):
+        P, R = [], []
+        for s in range(self.n):
+            ls, lr = [], []
+            for a in range(2):
+                g = [self.rng.gammavariate(1 + c, 1.0) for c in self.cont[s][a]]
+                tot = sum(g)
+                ls.append([(x, g[x] / tot) for x in range(self.n)])
+                lr.append(self.rng.betavariate(1 + self.rsoma[s][a], 1 + self.rn[s][a] - self.rsoma[s][a]))
+            P.append(ls)
+            R.append(lr)
+        return P, R
+
+    def agir(self, s):
+        if self.t % self.h == 0:
+            P, R = self._sortear()
+            self.pol = politica_horizonte(P, R, self.h)
+        return self.pol[self.t % self.h][s]
+
+    def aprender(self, s, a, r, x):
+        self.cont[s][a][x] += 1
+        self.rsoma[s][a] += r
+        self.rn[s][a] += 1
+        self.t += 1
+
+
+class QLearningMDP:
+    \"\"\"Q-learning tabular (Watkins, 1989) com desconto γ, passo α e ε-guloso; q0 > 0 é a variante otimista.\"\"\"
+
+    def __init__(self, n, rng, alfa=0.1, gama=0.95, eps=0.1, q0=0.0):
+        self.q = [[q0, q0] for _ in range(n)]
+        self.rng, self.alfa, self.gama, self.eps = rng, alfa, gama, eps
+
+    def agir(self, s):
+        if self.rng.random() < self.eps:
+            return self.rng.randrange(2)
+        a, b = self.q[s]
+        return self.rng.randrange(2) if a == b else (0 if a > b else 1)
+
+    def aprender(self, s, a, r, x):
+        self.q[s][a] += self.alfa * (r + self.gama * max(self.q[x]) - self.q[s][a])
+
+
+def rodar_mdp(agente, P, R, t, rng):
+    \"\"\"Roda T passos a partir do estado 0; devolve a recompensa total.\"\"\"
+    s, total = 0, 0.0
+    for _ in range(t):
+        a = agente.agir(s)
+        x, r = passo_mdp(P, R, s, a, rng)
+        agente.aprender(s, a, r, x)
+        total += r
+        s = x
+    return total
+
+
+# --------------------------------------------------------------------------- aprendizado contínuo
+
+
+class RegressaoBayesiana:
+    \"\"\"Regressão linear bayesiana exata em forma recursiva (mínimos quadrados recursivos): o estado é a inversa de
+    (λI + X'X) e a média do posterior; cada exemplo atualiza os dois pela fórmula de Sherman–Morrison, O(d²) por exemplo.
+    Depois de qualquer sequência de exemplos, o resultado é IGUAL ao da regressão ridge em lote com todos eles: não há
+    o que esquecer.\"\"\"
+
+    def __init__(self, d, lam=1e-2):
+        self.d = d
+        self.Pm = [[(1.0 / lam if i == j else 0.0) for j in range(d)] for i in range(d)]
+        self.w = [0.0] * d
+
+    def prever(self, f):
+        return sum(a * b for a, b in zip(self.w, f))
+
+    def atualizar(self, f, y):
+        Pf = [sum(l[j] * f[j] for j in range(self.d)) for l in self.Pm]
+        den = 1.0 + sum(a * b for a, b in zip(f, Pf))
+        erro = y - self.prever(f)
+        k = [x / den for x in Pf]
+        self.w = [w + ki * erro for w, ki in zip(self.w, k)]
+        self.Pm = [[self.Pm[i][j] - k[i] * Pf[j] for j in range(self.d)] for i in range(self.d)]
+
+
+class RegressaoSGD:
+    \"\"\"A mesma regressão linear, pelo gradiente estocástico com passo constante (o aprendizado contínuo padrão).\"\"\"
+
+    def __init__(self, d, passo=0.01):
+        self.w = [0.0] * d
+        self.passo = passo
+
+    def prever(self, f):
+        return sum(a * b for a, b in zip(self.w, f))
+
+    def atualizar(self, f, y):
+        erro = y - self.prever(f)
+        self.w = [w + self.passo * erro * x for w, x in zip(self.w, f)]
+
+
+def ridge_em_lote(fs, ys, lam=1e-2):
+    \"\"\"A solução ridge em lote (λI + X'X)⁻¹X'y, por eliminação de Gauss com pivô: a referência da RegressaoBayesiana.\"\"\"
+    d = len(fs[0])
+    A = [[(lam if i == j else 0.0) + sum(f[i] * f[j] for f in fs) for j in range(d)] for i in range(d)]
+    b = [sum(f[i] * y for f, y in zip(fs, ys)) for i in range(d)]
+    for c in range(d):
+        p = max(range(c, d), key=lambda r: abs(A[r][c]))
+        A[c], A[p], b[c], b[p] = A[p], A[c], b[p], b[c]
+        for r in range(c + 1, d):
+            m = A[r][c] / A[c][c]
+            if m:
+                A[r] = [x - m * y for x, y in zip(A[r], A[c])]
+                b[r] -= m * b[c]
+    w = [0.0] * d
+    for c in range(d - 1, -1, -1):
+        w[c] = (b[c] - sum(A[c][j] * w[j] for j in range(c + 1, d))) / A[c][c]
+    return w
+"""
+
+# ====================================================================================================
+# synthai/revisado/dicionario.py  (541 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/dicionario.py'] = """\"\"\"O dicionário como data lake (Parte 30, P371 em diante): o WordNet 3.0 de Princeton (dados/wordnet30_*.tsv.gz).
+
+Um dicionário define palavras por palavras. Harnad (1990) chamou isso de carrossel do dicionário: quem só tem o
+dicionário passa de símbolo em símbolo sem nunca chegar ao significado (o problema da ancoragem dos símbolos). Os
+métodos aqui medem a estrutura que torna o problema finito (Vincent-Lamarre, Harnad et al., 2016):
+
+- o GRAFO DE DEFINIÇÕES: uma aresta v -> w quando v aparece na definição de w (v ajuda a definir w);
+- o NÚCLEO (kernel): tirar, repetidamente, as palavras que não definem nenhuma palavra que restou;
+- o CORE: o maior componente fortemente conexo do núcleo (Tarjan);
+- o MINSET: um conjunto de retroalimentação de vértices (feedback vertex set) do núcleo: com essas palavras
+  ancoradas de fora (pela percepção), todas as outras se definem por cadeias de definições, sem círculos. Achar o mínimo é
+  NP-completo; aqui, uma aproximação gulosa;
+- e medidas do dicionário como texto: a lei de Zipf nas palavras das definições e a entropia das letras.
+
+A morfologia é o Morphy do WordNet: listas de exceções e regras de sufixo.\"\"\"
+
+import gzip
+import os
+import re
+from math import log, log2
+
+PASTA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "dados")
+
+# Palavras gramaticais (de função), que não carregam definição: lista curta e explícita
+FUNCAO = set(\"\"\"a an the and or but nor not no of in on at to for from by with as into onto upon about above below over under
+between among through during before after since until than then so such that this these those there here which who whom whose
+what when where why how whether if else also very more most less least much many some any each every all both either neither
+other another its it it's he she they them their his her him we us our you your i me my is are was were be been being am has
+have had having do does did doing can could may might must shall should will would one ones something someone somebody
+anything etc esp e.g. i.e. used use usually especially often typically\"\"\".split())
+
+REGRAS = {"n": [("s", ""), ("ses", "s"), ("xes", "x"), ("zes", "z"), ("ches", "ch"), ("shes", "sh"), ("men", "man"), ("ies", "y")],
+          "v": [("s", ""), ("ies", "y"), ("es", "e"), ("es", ""), ("ed", "e"), ("ed", ""), ("ing", "e"), ("ing", "")],
+          "a": [("er", ""), ("est", ""), ("er", "e"), ("est", "e")],
+          "r": []}
+
+
+class Dicionario:
+    def __init__(self, pasta=PASTA):
+        self.sinsets = []           # (classe, lemas, hiperônimos, glosa)
+        self.lemas = {}             # lema -> lista de índices de sinsets
+        self.indice = {}            # "classe:deslocamento" -> índice
+        with gzip.open(os.path.join(pasta, "wordnet30_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+            for linha in f:
+                pos, desloc, lemas, hiper, glosa = linha.rstrip("\\n").split("\\t")
+                lemas = [re.sub(r"\\(.*\\)$", "", x) for x in lemas.split(",") if x]
+                i = len(self.sinsets)
+                self.sinsets.append((pos, lemas, [h for h in hiper.split(",") if h], glosa))
+                self.indice[f"{pos}:{desloc}"] = i
+                for x in lemas:
+                    self.lemas.setdefault(x, []).append(i)
+        self.excecoes = {}
+        with gzip.open(os.path.join(pasta, "wordnet30_excecoes.tsv.gz"), "rt", encoding="utf-8") as f:
+            for linha in f:
+                pos, forma, bases = linha.rstrip("\\n").split("\\t")
+                self.excecoes.setdefault(forma, []).extend(bases.split(","))
+
+    def morphy(self, palavra):
+        \"\"\"A forma-base de uma palavra flexionada que existe no dicionário (exceções primeiro, depois as regras).\"\"\"
+        if palavra in self.lemas:
+            return palavra
+        for base in self.excecoes.get(palavra, []):
+            if base in self.lemas:
+                return base
+        for pos in ("n", "v", "a"):
+            for suf, fim in REGRAS[pos]:
+                if palavra.endswith(suf) and len(palavra) > len(suf) + 1:
+                    base = palavra[: -len(suf)] + fim
+                    if base in self.lemas:
+                        return base
+        return None
+
+    @staticmethod
+    def definicao(glosa):
+        \"\"\"A parte de definição da glosa (sem os exemplos entre aspas).\"\"\"
+        return re.sub(r'"[^"]*"', " ", glosa).split(";")[0] if glosa else ""
+
+    def palavras_da_definicao(self, glosa):
+        saida = []
+        for t in re.findall(r"[a-z]+(?:-[a-z]+)*", self.definicao(glosa).lower()):
+            if t in FUNCAO or len(t) < 2:
+                continue
+            base = self.morphy(t)
+            if base is not None and "_" not in base:
+                saida.append(base)
+        return saida
+
+    def grafo_de_definicoes(self):
+        \"\"\"Para cada lema de uma palavra só: o conjunto das palavras (lemas de uma palavra só) usadas nas definições de
+        todos os seus sentidos. Devolve {palavra: conjunto de palavras que a definem}.\"\"\"
+        defs = {}
+        for pos, lemas, _, glosa in self.sinsets:
+            usadas = set(self.palavras_da_definicao(glosa))
+            for x in lemas:
+                if "_" not in x and x.isalpha():
+                    defs.setdefault(x, set()).update(usadas)
+        for x, s in defs.items():
+            s.discard(x)
+            s.intersection_update(defs.keys())
+        return defs
+
+
+def nucleo(defs):
+    \"\"\"O núcleo: tira, repetidamente, as palavras que não definem nenhuma palavra que restou.\"\"\"
+    usos = {x: 0 for x in defs}
+    for x, s in defs.items():
+        for y in s:
+            usos[y] += 1
+    restam = set(defs)
+    fila = [x for x, u in usos.items() if u == 0]
+    while fila:
+        x = fila.pop()
+        if x not in restam:
+            continue
+        restam.discard(x)
+        for y in defs[x]:
+            if y in restam:
+                usos[y] -= 1
+                if usos[y] == 0:
+                    fila.append(y)
+    return restam
+
+
+def componentes_fortes(nos, defs):
+    \"\"\"Componentes fortemente conexos (Tarjan, versão iterativa) do grafo restrito a `nos` (arestas palavra -> as que a
+    definem).\"\"\"
+    indice, baixo, na_pilha, pilha, comps = {}, {}, set(), [], []
+    contador = 0
+    for raiz in nos:
+        if raiz in indice:
+            continue
+        trabalho = [(raiz, iter([y for y in defs[raiz] if y in nos]))]
+        indice[raiz] = baixo[raiz] = contador
+        contador += 1
+        pilha.append(raiz)
+        na_pilha.add(raiz)
+        while trabalho:
+            v, it = trabalho[-1]
+            avancou = False
+            for w in it:
+                if w not in indice:
+                    indice[w] = baixo[w] = contador
+                    contador += 1
+                    pilha.append(w)
+                    na_pilha.add(w)
+                    trabalho.append((w, iter([y for y in defs[w] if y in nos])))
+                    avancou = True
+                    break
+                if w in na_pilha:
+                    baixo[v] = min(baixo[v], indice[w])
+            if avancou:
+                continue
+            trabalho.pop()
+            if trabalho:
+                baixo[trabalho[-1][0]] = min(baixo[trabalho[-1][0]], baixo[v])
+            if baixo[v] == indice[v]:
+                comp = set()
+                while True:
+                    w = pilha.pop()
+                    na_pilha.discard(w)
+                    comp.add(w)
+                    if w == v:
+                        break
+                comps.append(comp)
+    return comps
+
+
+def minset_guloso(nos, defs):
+    \"\"\"Aproximação gulosa de um conjunto de retroalimentação de vértices: reduz (tira as palavras sem entrada ou sem
+    saída no que resta, que não estão em ciclo nenhum) e, enquanto sobrar algo, ancora a palavra com maior produto
+    (definida por) × (define), e reduz de novo.\"\"\"
+    entra = {x: set(y for y in defs[x] if y in nos) for x in nos}   # x é definida por estas
+    sai = {x: set() for x in nos}                                     # x define estas
+    for x, s in entra.items():
+        for y in s:
+            sai[y].add(x)
+    restam = set(nos)
+    escolhidas = []
+
+    def tirar(x):
+        restam.discard(x)
+        for y in entra[x]:
+            sai[y].discard(x)
+        for y in sai[x]:
+            entra[y].discard(x)
+        entra[x], sai[x] = set(), set()
+
+    def reduzir():
+        fila = [x for x in restam if not entra[x] or not sai[x]]
+        while fila:
+            x = fila.pop()
+            if x not in restam:
+                continue
+            vizinhos = entra[x] | sai[x]
+            tirar(x)
+            fila.extend(y for y in vizinhos if y in restam and (not entra[y] or not sai[y]))
+    reduzir()
+    while restam:
+        x = max(restam, key=lambda z: (len(entra[z]) * len(sai[z]), z))
+        escolhidas.append(x)
+        tirar(x)
+        reduzir()
+    return escolhidas
+
+
+def fecho(ancoradas, defs):
+    \"\"\"Ancorando estas palavras, quantas se definem por cadeias de definições? Devolve o conjunto e o número de rodadas
+    (a profundidade: em cada rodada entram as palavras cuja definição só usa palavras já conhecidas).\"\"\"
+    conhecidas = set(ancoradas)
+    faltam = {x: set(s) - conhecidas for x, s in defs.items() if x not in conhecidas}
+    rodadas = 0
+    while True:
+        novas = [x for x, s in faltam.items() if not s]
+        if not novas:
+            break
+        rodadas += 1
+        for x in novas:
+            del faltam[x]
+            conhecidas.add(x)
+        novas = set(novas)
+        for s in faltam.values():
+            s -= novas
+    return conhecidas, rodadas
+
+
+def zipf(frequencias, de=10, ate=10000):
+    \"\"\"Expoente s da lei de Zipf (f ~ r^−s) por mínimos quadrados em log-log, entre os postos `de` e `ate`.\"\"\"
+    fs = sorted(frequencias, reverse=True)[de - 1: ate]
+    xs = [log(r) for r in range(de, de + len(fs))]
+    ys = [log(f) for f in fs]
+    mx, my = sum(xs) / len(xs), sum(ys) / len(ys)
+    return -sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
+
+
+def entropia(contagens):
+    total = sum(contagens)
+    return -sum(c / total * log2(c / total) for c in contagens if c)
+
+
+# --- Parte 31: o currículo, o MinSet mínimo (local), e duas medidas de significado ---
+
+def fecho_parcial(ancoradas, defs, theta=1.0):
+    \"\"\"Fecho com entendimento parcial (P381): uma palavra passa a ser entendida quando pelo menos uma fração `theta` das
+    palavras da sua definição já é conhecida (theta = 1 é o fecho exato da P371). Propagação em O(arestas): cada
+    palavra guarda quantas das que a definem já se conhecem.\"\"\"
+    conhecidas = set(ancoradas)
+    precisa = {x: max(0, -(-int(round(theta * 1000)) * len(s) // 1000)) for x, s in defs.items()}  # teto(theta·|s|)
+    tem = {x: 0 for x in defs}
+    usado_por = {}
+    for x, s in defs.items():
+        for y in s:
+            usado_por.setdefault(y, []).append(x)
+    fila = list(conhecidas)
+    for x in defs:
+        if x not in conhecidas and precisa[x] == 0:
+            conhecidas.add(x)
+            fila.append(x)
+    while fila:
+        y = fila.pop()
+        for x in usado_por.get(y, ()):
+            if x in conhecidas:
+                continue
+            tem[x] += 1
+            if tem[x] >= precisa[x]:
+                conhecidas.add(x)
+                fila.append(x)
+    return conhecidas
+
+
+def minset_reduzido(nos, defs, minset):
+    \"\"\"Tira as palavras redundantes de um conjunto de retroalimentação (o pós-processamento padrão, P382): uma palavra
+    v do conjunto é redundante se, devolvida ao grafo que já é acíclico, não fecha nenhum ciclo, isto é, se nenhuma
+    palavra que v define alcança, pelo que está fora do conjunto, uma palavra que define v. Testa as palavras na ordem
+    inversa da escolha gulosa (as últimas escolhidas primeiro) e devolve o conjunto mínimo (não necessariamente o
+    mínimo de todos) resultante.\"\"\"
+    conjunto = set(minset)
+    sai = {x: [] for x in nos}
+    for x in nos:
+        for y in defs[x]:
+            if y in nos:
+                sai[y].append(x)   # y define x: aresta y -> x
+    for v in reversed(list(minset)):
+        conjunto.discard(v)
+        alvo = set(y for y in defs[v] if y in nos and y not in conjunto)
+        fecha = v in alvo
+        vistos = {v}
+        pilha = [x for x in sai[v] if x not in conjunto]
+        while pilha and not fecha:
+            x = pilha.pop()
+            if x in vistos:
+                continue
+            vistos.add(x)
+            if x in alvo or x == v:
+                fecha = True
+                break
+            pilha.extend(z for z in sai[x] if z not in conjunto and z not in vistos)
+        if fecha:
+            conjunto.add(v)
+    return conjunto
+
+
+def profundidades(d):
+    \"\"\"Profundidade de cada sinset na taxonomia: o menor número de hiperônimos até uma raiz (um sinset sem hiperônimo).
+    Busca em largura a partir das raízes, descendo pelos hipônimos. O WordNet 3.0 tem um ciclo nos hiperônimos (P384): a
+    primeira versão (recursão pela pilha) não terminava nele e estourou 13,9 GB de memória; a busca em largura visita
+    cada sinset uma vez, com ou sem ciclo. Um sinset que não alcança raiz nenhuma fica de fora.\"\"\"
+    filhos = {}
+    raizes = []
+    for i, x in enumerate(d.sinsets):
+        pais = [d.indice[h] for h in x[2] if h in d.indice]
+        if not pais:
+            raizes.append(i)
+        for k in pais:
+            filhos.setdefault(k, []).append(i)
+    prof = {i: 0 for i in raizes}
+    fila = list(raizes)
+    for j in fila:
+        for k in filhos.get(j, ()):
+            if k not in prof:
+                prof[k] = prof[j] + 1
+                fila.append(k)
+    return prof
+
+
+def ancestrais(d, i):
+    \"\"\"Todos os ancestrais de um sinset na taxonomia (ele incluído).\"\"\"
+    vistos, pilha = set(), [i]
+    while pilha:
+        j = pilha.pop()
+        if j in vistos:
+            continue
+        vistos.add(j)
+        pilha.extend(d.indice[h] for h in d.sinsets[j][2] if h in d.indice)
+    return vistos
+
+
+def wu_palmer(d, prof, a, b):
+    \"\"\"Similaridade de Wu e Palmer (1994): 2·prof(LCS) / (prof(a) + prof(b)), com profundidade contada em nós (raiz = 1)
+    e LCS o ancestral comum mais profundo. 0 se não houver ancestral comum.\"\"\"
+    comuns = ancestrais(d, a) & ancestrais(d, b)
+    if not comuns:
+        return 0.0
+    lcs = max(prof[c] for c in comuns) + 1
+    return 2 * lcs / ((prof[a] + 1) + (prof[b] + 1))
+
+
+def lesk(d, a, b):
+    \"\"\"Sobreposição de Lesk (1986): o índice de Jaccard entre as palavras de conteúdo das duas definições.\"\"\"
+    pa = set(d.palavras_da_definicao(d.sinsets[a][3]))
+    pb = set(d.palavras_da_definicao(d.sinsets[b][3]))
+    return len(pa & pb) / len(pa | pb) if pa | pb else 0.0
+
+
+def spearman(x, y):
+    \"\"\"Correlação de postos de Spearman (com empates pela média dos postos).\"\"\"
+    def postos(v):
+        ordem = sorted(range(len(v)), key=lambda i: v[i])
+        r = [0.0] * len(v)
+        i = 0
+        while i < len(v):
+            j = i
+            while j + 1 < len(v) and v[ordem[j + 1]] == v[ordem[i]]:
+                j += 1
+            for k in range(i, j + 1):
+                r[ordem[k]] = (i + j) / 2 + 1
+            i = j + 1
+        return r
+    rx, ry = postos(x), postos(y)
+    mx, my = sum(rx) / len(rx), sum(ry) / len(ry)
+    cov = sum((a - mx) * (b - my) for a, b in zip(rx, ry))
+    return cov / (sum((a - mx) ** 2 for a in rx) * sum((b - my) ** 2 for b in ry)) ** 0.5
+
+
+def fecho_incremental(ordem, defs, theta=1.0, ate=None):
+    \"\"\"O fecho parcial (P381) para TODOS os prefixos de um currículo de uma vez (P421): ancora as palavras de `ordem` uma
+    a uma e propaga só o que a nova âncora destrava. Como o fecho é monótono nas âncoras, os contadores nunca voltam: o
+    custo total é O(arestas), contra O(arestas) POR PONTO na bisseção da P385. Devolve a lista cob, com cob[k] = número
+    de palavras entendidas com as k primeiras âncoras (k = 0..ate).\"\"\"
+    ate = len(ordem) if ate is None else ate
+    precisa = {x: max(0, -(-int(round(theta * 1000)) * len(s) // 1000)) for x, s in defs.items()}
+    tem = {x: 0 for x in defs}
+    usado_por = {}
+    for x, s in defs.items():
+        for y in s:
+            usado_por.setdefault(y, []).append(x)
+    conhecidas = set()
+
+    def propagar(fila):
+        while fila:
+            y = fila.pop()
+            for x in usado_por.get(y, ()):
+                if x in conhecidas:
+                    continue
+                tem[x] += 1
+                if tem[x] >= precisa[x]:
+                    conhecidas.add(x)
+                    fila.append(x)
+
+    inicio = [x for x in defs if precisa[x] == 0]
+    conhecidas.update(inicio)
+    propagar(list(inicio))
+    cob = [len(conhecidas)]
+    for x in ordem[:ate]:
+        if x not in conhecidas:
+            conhecidas.add(x)
+            propagar([x])
+        cob.append(len(conhecidas))
+    return cob
+
+
+
+class NaiveBayesContagens:
+    \"\"\"Classificador bayesiano ingênuo multinomial (Parte 34): o estado inteiro é uma tabela de contagens (classe,
+    palavra) e o total por classe: uma estatística suficiente. Aprender um exemplo é somar; nada é sobrescrito, então
+    a ordem dos exemplos não muda o resultado (o aprendizado contínuo sem esquecimento, ↩ P403). Suavização de Laplace.\"\"\"
+
+    def __init__(self, alfa=1.0):
+        self.alfa = alfa
+        self.cont = {}
+        self.total = {}
+        self.ncls = {}
+        self.vocab = set()
+
+    def aprender(self, palavras, classe):
+        c = self.cont.setdefault(classe, {})
+        for w in palavras:
+            c[w] = c.get(w, 0) + 1
+            self.vocab.add(w)
+        self.total[classe] = self.total.get(classe, 0) + len(palavras)
+        self.ncls[classe] = self.ncls.get(classe, 0) + 1
+
+    def prever(self, palavras):
+        from math import log
+        n = sum(self.ncls.values())
+        v = len(self.vocab) or 1
+        melhor, arg = None, None
+        for cl in sorted(self.ncls):
+            sc = log(self.ncls[cl] / n)
+            c, t = self.cont[cl], self.total[cl]
+            for w in palavras:
+                sc += log((c.get(w, 0) + self.alfa) / (t + self.alfa * v))
+            if melhor is None or sc > melhor:
+                melhor, arg = sc, cl
+        return arg
+
+
+class LogisticaSGD:
+    \"\"\"Regressão logística multinomial (softmax) por gradiente estocástico, uma passada, passo constante: o rival padrão
+    do aprendizado contínuo. Atributos: presença das palavras da definição.\"\"\"
+
+    def __init__(self, classes, passo=0.1):
+        self.classes = sorted(classes)
+        self.w = {c: {} for c in self.classes}
+        self.b = {c: 0.0 for c in self.classes}
+        self.passo = passo
+
+    def _escores(self, palavras):
+        return {c: self.b[c] + sum(self.w[c].get(x, 0.0) for x in set(palavras)) for c in self.classes}
+
+    def prever(self, palavras):
+        s = self._escores(palavras)
+        return max(self.classes, key=lambda c: (s[c], c))
+
+    def aprender(self, palavras, classe):
+        from math import exp
+        s = self._escores(palavras)
+        m = max(s.values())
+        z = {c: exp(v - m) for c, v in s.items()}
+        tot = sum(z.values())
+        for c in self.classes:
+            g = (1.0 if c == classe else 0.0) - z[c] / tot
+            self.b[c] += self.passo * g
+            wc = self.w[c]
+            for x in set(palavras):
+                wc[x] = wc.get(x, 0.0) + self.passo * g
+
+
+
+def sentidos_por_lema(d):
+    \"\"\"Quantos sinsets contêm cada lema de uma palavra só (a polissemia, contada em todas as classes gramaticais).\"\"\"
+    m = {}
+    for _, lemas, _, _ in d.sinsets:
+        for x in lemas:
+            if "_" not in x and x.isalpha():
+                m[x] = m.get(x, 0) + 1
+    return m
+
+PALAVRAS_VAZIAS_PT = frozenset(\"\"\"a à ao aos as às o os de da das do dos em na nas no nos um uma uns umas e ou que se
+por para pelo pela pelos pelas com sem como mais menos muito muita não é são ser ter seu sua seus suas lhe lhes qual
+quais quando onde este esta estes estas esse essa esses essas isso isto aquele aquela algo alguém etc ex\"\"\".split())
+
+
+class DicionarioPT:
+    \"\"\"O português do data lake (Parte 40): a OpenWordNet-PT (dados/ownpt_sinsets.tsv.gz, CC BY 4.0), alinhada ao WordNet
+    3.0 pelo identificador do sinset. `lemas[sid]` são os lemas em português; `glosas[sid]`, a glosa (só ~15% dos sinsets
+    com lema têm uma).\"\"\"
+
+    def __init__(self, pasta=PASTA):
+        import gzip
+        self.lemas, self.glosas = {}, {}
+        with gzip.open(os.path.join(pasta, "ownpt_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+            for linha in f:
+                sid, lemas, glosa = linha.rstrip("\\n").split("\\t")
+                if lemas:
+                    self.lemas[sid] = lemas.split("|")
+                if glosa:
+                    self.glosas[sid] = glosa
+        self.vocabulario = {x.lower() for ls in self.lemas.values() for x in ls if x.isalpha()}
+
+    @staticmethod
+    def fichas(texto):
+        \"\"\"As palavras de um texto em português: minúsculas, só letras (com acentos).\"\"\"
+        import re
+        return [w for w in re.findall(r"[a-záàâãéêíóôõúüç]+", texto.lower()) if w not in PALAVRAS_VAZIAS_PT]
+
+    def lema(self, w, plurais=True):
+        \"\"\"A palavra, se for um lema; senão, com `plurais`, a forma singular pelas regras regulares do português
+        (-ões/-ães → -ão, -ais → -al, -eis → -el, -óis → -ol, -is → -il, -ns → -m, -res/-zes/-ses → -r/-z/-s, -s → ∅).\"\"\"
+        if w in self.vocabulario:
+            return w
+        if not plurais:
+            return None
+        for suf, troca in (("ões", "ão"), ("ães", "ão"), ("ais", "al"), ("eis", "el"), ("óis", "ol"), ("is", "il"),
+                           ("ns", "m"), ("res", "r"), ("zes", "z"), ("ses", "s"), ("s", "")):
+            if w.endswith(suf) and w[: -len(suf)] + troca in self.vocabulario:
+                return w[: -len(suf)] + troca
+        return None
+
+    def grafo_de_definicoes(self, plurais=True):
+        \"\"\"Para cada lema (de uma palavra só) que pertence a um sinset com glosa: o conjunto dos lemas que aparecem nas glosas
+        dos seus sinsets. Como no inglês (P371), uma palavra não se define por si mesma.\"\"\"
+        defs = {}
+        for sid, glosa in self.glosas.items():
+            usadas = {self.lema(w, plurais) for w in self.fichas(glosa)} - {None}
+            for x in self.lemas.get(sid, []):
+                x = x.lower()
+                if x.isalpha():
+                    defs.setdefault(x, set()).update(usadas)
+        for x, s in defs.items():
+            s.discard(x)
+        return defs
+"""
+
+# ====================================================================================================
+# synthai/revisado/engenharia_reversa.py  (76 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/engenharia_reversa.py'] = """\"\"\"Engenharia reversa dos próprios textos da SYNTHAI (Parte 41). Arquivo novo: a primeira versão foi escrita, por erro meu,
+POR CIMA de synthai/metacognicao.py (um módulo da Parte 22, medido pela P285), que foi restaurado; ver a P679.
+
+O corpus são os documentos que eu mesma escrevi (as partes, o diálogo). As medidas procuram os padrões que se repetem:
+n-gramas que aparecem em muitos documentos, a semelhança entre documentos vizinhos, como as frases começam, quanto cada
+voz do diálogo fala. Só biblioteca padrão.
+\"\"\"
+
+import re
+from math import sqrt
+
+PALAVRA = re.compile(r"[a-záàâãéêíóôõúüç]+")
+
+
+def palavras(texto):
+    \"\"\"As palavras de um texto em português, minúsculas (números, fórmulas e pontuação ficam de fora).\"\"\"
+    return PALAVRA.findall(texto.lower())
+
+
+def ngramas(ps, n):
+    return [tuple(ps[i:i + n]) for i in range(len(ps) - n + 1)]
+
+
+def padroes_repetidos(docs, n=4, minimo_docs=None, topo=20):
+    \"\"\"Os n-gramas de palavras que aparecem em mais documentos (e, no empate, mais vezes no total). Devolve
+    [(n-grama, documentos em que aparece, ocorrências)].\"\"\"
+    em_docs, total = {}, {}
+    for d in docs:
+        vistos = set()
+        for g in ngramas(palavras(d), n):
+            total[g] = total.get(g, 0) + 1
+            vistos.add(g)
+        for g in vistos:
+            em_docs[g] = em_docs.get(g, 0) + 1
+    ordem = sorted(em_docs, key=lambda g: (-em_docs[g], -total[g], g))
+    if minimo_docs is not None:
+        ordem = [g for g in ordem if em_docs[g] >= minimo_docs]
+    return [(" ".join(g), em_docs[g], total[g]) for g in ordem[:topo]]
+
+
+def cosseno(a, b):
+    \"\"\"Semelhança de cosseno entre as contagens de palavras de dois textos.\"\"\"
+    ca, cb = {}, {}
+    for w in palavras(a):
+        ca[w] = ca.get(w, 0) + 1
+    for w in palavras(b):
+        cb[w] = cb.get(w, 0) + 1
+    num = sum(v * cb.get(w, 0) for w, v in ca.items())
+    return num / (sqrt(sum(v * v for v in ca.values())) * sqrt(sum(v * v for v in cb.values())))
+
+
+def frases(texto):
+    \"\"\"Frases: pedaços terminados em . ! ? seguidos de espaço e maiúscula (aproximação).\"\"\"
+    return [f.strip() for f in re.split(r"(?<=[.!?])\\s+(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ])", texto) if f.strip()]
+
+
+def aberturas(textos, topo=10):
+    \"\"\"As primeiras palavras mais comuns das frases (o modo como eu começo a falar).\"\"\"
+    cont, n = {}, 0
+    for t in textos:
+        for f in frases(t):
+            ps = palavras(f)
+            if ps:
+                cont[ps[0]] = cont.get(ps[0], 0) + 1
+                n += 1
+    return n, [(w, c) for w, c in sorted(cont.items(), key=lambda x: (-x[1], x[0]))[:topo]]
+
+
+def falas_do_dialogo(texto):
+    \"\"\"As falas de cada voz do diálogo: parágrafos que começam com **IA-Python** ou **IA-Java**. Devolve {voz: [falas]}.\"\"\"
+    falas = {"IA-Python": [], "IA-Java": []}
+    for par in re.split(r"\\n\\s*\\n", texto):
+        m = re.match(r"\\*\\*(IA-Python|IA-Java)[^*]*\\*\\*:?\\s*(.*)", par.strip(), re.S)
+        if m:
+            falas[m.group(1)].append(m.group(2))
+    return falas
+"""
+
+# ====================================================================================================
+# synthai/revisado/hexadecimal.py  (142 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/hexadecimal.py'] = """\"\"\"A SYNTHAI em hexadecimal (Parte 30, P361).
+
+Um dígito hexadecimal são 4 bits. Aqui cada bit liga um módulo das Partes 22–29, e o código do tipo diz qual SYNTHAI é:
+
+    bit 0x1  pensamento de Newton (P302)          (desligado: o gradiente da Parte 22)
+    bit 0x2  limiar autorregulado com âncora (P343) (desligado: o limiar fixo 2P*)
+    bit 0x4  exploração de Thompson (P295)        (desligado: o bônus UCB entregue pelo mundo)
+    bit 0x8  leitura neutra do sensor (P292)      (desligado: a leitura que falta vale 0)
+
+São 16 tipos, de 0x0 (a SYNTHAI da Parte 22) a 0xF. A versão principal antiga (SynthaiExploradora) é o tipo 0x4; a composta
+(P356) é 0x4 no bandido e 0x3 fora dele. Cada tipo é montado por composição de módulos já testados (P351).
+
+Também: a transformada de Walsh–Hadamard (o algoritmo de Yates, 1937) que dá todos os efeitos de um experimento fatorial
+2^k de uma vez, e a quantização dos pesos do pensamento em 1 ou 2 dígitos hexadecimais (4 ou 8 bits) por peso.\"\"\"
+
+from .ancora import SynthaiComAncora
+from .limiar import SynthaiAjustada
+from .reconhecimento import SynthaiReconhecida
+
+BITS = ((0x1, "Newton"), (0x2, "âncora"), (0x4, "Thompson"), (0x8, "neutro"))
+
+
+def nome_do_tipo(codigo):
+    ligados = [nome for bit, nome in BITS if codigo & bit]
+    return f"0x{codigo:X} ({' + '.join(ligados) if ligados else 'Parte 22'})"
+
+
+def synthai_do_tipo(codigo, semente=0):
+    \"\"\"A SYNTHAI do tipo `codigo` (0x0 a 0xF).\"\"\"
+    if not 0 <= codigo <= 0xF:
+        raise ValueError("o tipo é um dígito hexadecimal: 0x0 a 0xF")
+    flags = dict(neutro=bool(codigo & 0x8), atencao_inteira=False, memoria=False, thompson=bool(codigo & 0x4))
+    if codigo & 0x2:
+        return SynthaiComAncora(semente, newton=bool(codigo & 0x1), z=0.8416, auditoria=True, **flags)
+    if codigo & 0x1:
+        return SynthaiAjustada(semente, mult=2.0, **flags)
+    return SynthaiReconhecida(semente, **flags)
+
+
+def walsh_hadamard(valores):
+    \"\"\"Transformada rápida de Walsh–Hadamard (borboletas, k passes de somas e diferenças). Para y em ordem de Yates
+    (índice = código binário dos fatores), a saída j é Σ_i (−1)^popcount(i & j) y_i: j = 0 é o total; um j com um só
+    bit é o contraste de um fator; com vários bits, o da interação deles.\"\"\"
+    v = list(valores)
+    n = len(v)
+    if n & (n - 1):
+        raise ValueError("o tamanho tem de ser uma potência de 2")
+    h = 1
+    while h < n:
+        for i in range(0, n, 2 * h):
+            for j in range(i, i + h):
+                a, b = v[j], v[j + h]
+                v[j], v[j + h] = a + b, a - b
+        h *= 2
+    return v
+
+
+def efeitos_fatoriais(valores):
+    \"\"\"Efeitos de um fatorial 2^k a partir das respostas em ordem de Yates; o índice 0 devolve a média.
+
+    O sinal da linha j da transformada é (−1)^popcount(i & j): (+) no nível BAIXO de cada fator. O contraste padrão de
+    um efeito de ordem r (r = popcount(j)) usa o produto dos sinais ±1 com (+) no nível ALTO, que é (−1)^r vezes o da
+    transformada. Então: efeito_j = (−1)^r × contraste_j / 2^(k−1). (Correção da Parte 30: a primeira versão negava
+    todos os contrastes, o que troca o sinal das interações de ordem par.)\"\"\"
+    t = walsh_hadamard(valores)
+    n = len(valores)
+    return [t[0] / n] + [(-1) ** bin(j).count("1") * t[j] / (n / 2) for j in range(1, n)]
+
+
+def quantizar(pesos, bits):
+    \"\"\"Quantização uniforme de um vetor de pesos em `bits` por peso (4 = um dígito hex; 8 = dois), com uma escala por
+    vetor: a grade vai de −R a R, R = max |w|, com 2^bits níveis (passo Δ = 2R / (2^bits − 1)). Devolve os pesos
+    reconstruídos, os códigos em hexadecimal e o passo Δ.\"\"\"
+    r = max(abs(w) for w in pesos) or 1.0
+    niveis = 2 ** bits - 1
+    passo = 2 * r / niveis
+    codigos = [min(niveis, max(0, round((w + r) / passo))) for w in pesos]
+    digitos = bits // 4
+    return [c * passo - r for c in codigos], "".join(f"{c:0{digitos}X}" for c in codigos), passo
+
+
+# --- Parte 31: a geometria do hipercubo, o código de Gray e a exatidão em ULPs ---
+
+def hamming(a, b):
+    \"\"\"Distância de Hamming entre dois tipos: quantos bits (módulos) diferem.\"\"\"
+    return bin(a ^ b).count("1")
+
+
+def gray(n):
+    \"\"\"Código de Gray refletido: g(n) = n XOR (n >> 1); g(n) e g(n + 1) diferem em exatamente um bit.\"\"\"
+    return n ^ (n >> 1)
+
+
+def subida_de_encosta(valores, inicio=0):
+    \"\"\"Busca local no hipercubo (P392): a partir de `inicio`, troca o bit que mais melhora `valores[código]` (só entre
+    os códigos presentes), até nenhum vizinho a um bit ser melhor. Devolve o caminho.\"\"\"
+    caminho = [inicio]
+    atual = inicio
+    while True:
+        vizinhos = [atual ^ (1 << k) for k in range(4) if (atual ^ (1 << k)) in valores]
+        melhor = max(vizinhos, key=lambda c: valores[c], default=None)
+        if melhor is None or valores[melhor] <= valores[atual]:
+            return caminho
+        atual = melhor
+        caminho.append(atual)
+
+
+def ulps_entre(a, b):
+    \"\"\"Quantas unidades na última casa (ULPs, no expoente de b) separam a de b.\"\"\"
+    from math import ulp
+    return abs(a - b) / ulp(b) if b else abs(a - b)
+
+
+
+def de_gray(g):
+    \"\"\"O inverso do código de Gray: n = g ^ (g >> 1) ^ (g >> 2) ^ … (Parte 36).\"\"\"
+    n = 0
+    while g:
+        n ^= g
+        g >>= 1
+    return n
+
+
+def ea_um_mais_um(aptidao, bits, inicio, rng, avaliacoes, codigo="binario"):
+    \"\"\"O (1+1)-EA de Droste: inverte cada bit com chance 1/bits e aceita o filho se a aptidão não piorar. `codigo` diz
+    como a cadeia de bits vira inteiros de 8 bits ("binario" ou "gray"). Devolve (melhor aptidão, avaliações até ela).\"\"\"
+    def decodificar(x):
+        vs = [(x >> (8 * i)) & 0xFF for i in range(bits // 8)]
+        return [de_gray(v) for v in vs] if codigo == "gray" else vs
+    x = inicio
+    fx = aptidao(decodificar(x))
+    quando = 0
+    for t in range(1, avaliacoes + 1):
+        y = x
+        for b in range(bits):
+            if rng.random() < 1 / bits:
+                y ^= 1 << b
+        fy = aptidao(decodificar(y))
+        if fy >= fx:
+            if fy > fx:
+                quando = t
+            x, fx = y, fy
+    return fx, quando"""
+
+# ====================================================================================================
+# synthai/revisado/intuicao.py  (23 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/intuicao.py'] = """\"\"\"Intuição (P182, P273): perceber possibilidades que ainda não estão aí.
+
+- no mundo sequencial, o bônus de plano é peso × estimativa × passos restantes, e o peso é aprendido
+  comparando a estimativa com a consequência que de fato aconteceu (a sensação corrigindo a intuição);
+- no bandido, a "possibilidade" é a do braço pouco explorado: o bônus é a própria estimativa (otimismo, P25).\"\"\"
+
+
+class Intuicao:
+    def __init__(self, prior_pares=10.0):
+        self.sxy = self.sxx = prior_pares
+        self.peso = 1.0
+
+    def bonus(self, opcao, situacao):
+        if situacao.explorar:
+            return opcao.estimativa
+        return self.peso * opcao.estimativa * situacao.restantes
+
+    def corrigir(self, estimativa_escolhida, nivel_antes, nivel_depois):
+        \"\"\"Regressão pela origem da consequência real sobre a estimativa (P273).\"\"\"
+        c = nivel_depois - nivel_antes
+        self.sxy += estimativa_escolhida * c
+        self.sxx += estimativa_escolhida * estimativa_escolhida
+        self.peso = self.sxy / self.sxx
+"""
+
+# ====================================================================================================
+# synthai/revisado/limiar.py  (47 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/limiar.py'] = """\"\"\"O sentimento que acompanha o pensamento (Parte 25, P311).
+
+A P305 mostrou que um pensamento preciso com o limiar de pergunta antigo (2 P*, achado na P131 com um pensamento
+rombudo) quase dobra as catástrofes. Duas respostas que já existiam:
+
+- recalibrar o limiar para o pensamento novo: com orçamento de perguntas, a regra ótima pergunta onde o valor da
+  pergunta passa do preço-sombra λ do orçamento (relaxação de Lagrange), o que dá um limiar no quantil da
+  probabilidade das candidatas que gasta o orçamento (P312);
+- ajustar o pensamento onde a decisão acontece: a verossimilhança local (Eguchi e Copas, 1998) pesa as observações
+  perto do ponto de interesse; aqui, só as opções do topo de cada episódio auditado entram no ajuste (P313).\"\"\"
+
+from .pensamento_exato import PensamentoExato, SynthaiPensante, ajustar_logistica
+from .relacao import Relacao
+
+
+def dados_do_topo(historico, fracao):
+    \"\"\"As variáveis do Pensamento, mas só das `fracao` melhores opções (nota − discordância) de cada episódio. A
+    'melhor nota' de referência continua sendo a do episódio inteiro.\"\"\"
+    xs, ys = [], []
+    for episodio in historico:
+        melhor = max(o.comite for o, _, _ in episodio)
+        ordem = sorted(episodio, key=lambda t: -(t[0].nota - t[0].discordancia))
+        for o, rotulo, leitura in ordem[: max(1, int(fracao * len(ordem)))]:
+            xs.append((1.0, o.discordancia, o.comite - melhor, leitura))
+            ys.append(1.0 if rotulo else 0.0)
+    return xs, ys
+
+
+class PensamentoLocal(PensamentoExato):
+    def __init__(self, fracao=0.1, **kw):
+        super().__init__(**kw)
+        self.fracao = fracao
+
+    def calibrar(self, historico, epocas=None):
+        xs, ys = dados_do_topo(historico, self.fracao)
+        self.w = ajustar_logistica(xs, ys, self.firth)
+
+
+class SynthaiAjustada(SynthaiPensante):
+    \"\"\"Pensamento exato (ou local) com o limiar de pergunta mult × P* escolhido para ele.\"\"\"
+
+    def __init__(self, semente=0, mult=2.0, local=False, fracao=0.1, **kw):
+        super().__init__(semente, **kw)
+        self.relacao = Relacao(mult=mult, carga_alvo=self.relacao.carga_alvo)
+        if local:
+            self.pensamento = PensamentoLocal(fracao)
+            self.percepcao.pensamento = self.pensamento
+"""
+
+# ====================================================================================================
+# synthai/revisado/metacognicao.py  (45 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/metacognicao.py'] = """\"\"\"Metacognição (P9, P83, P152, P265): medir a si mesma com as réguas da série.
+
+- auc: a discriminação de um escore (P83);
+- comparacao_pareada: diferença média, desvio e t entre duas versões nas mesmas sementes (regra da Parte 9);
+- normalizado: o retorno numa régua em que o acaso vale 0 e a referência que vê tudo vale 1 (o Υ da P265).\"\"\"
+
+from math import isfinite, sqrt
+from statistics import fmean, stdev
+
+
+def auc(escores, rotulos):
+    pos = [e for e, r in zip(escores, rotulos) if r]
+    neg = [e for e, r in zip(escores, rotulos) if not r]
+    if not pos or not neg:
+        return float("nan")
+    neg = sorted(neg)
+    from bisect import bisect_left, bisect_right
+    total = sum(bisect_left(neg, e) + 0.5 * (bisect_right(neg, e) - bisect_left(neg, e)) for e in pos)
+    return total / (len(pos) * len(neg))
+
+
+def comparacao_pareada(a, b):
+    \"\"\"b − a: (média, desvio amostral, t), com ao menos dois pares finitos.
+
+    Com variância nula, t é NaN: a média continua informativa, mas não
+    há estimativa de erro padrão para sustentar o teste t convencional.
+    A função não verifica independência nem adequação do pareamento.
+    \"\"\"
+    a, b = list(a), list(b)
+    if len(a) != len(b):
+        raise ValueError("as amostras devem ter o mesmo comprimento")
+    if len(a) < 2:
+        raise ValueError("são necessários ao menos dois pares")
+    if not all(isfinite(x) for x in a + b):
+        raise ValueError("as observações devem ser finitas")
+    d = [y - x for x, y in zip(a, b)]
+    if not all(isfinite(x) for x in d):
+        raise ValueError("as diferenças devem ser finitas")
+    m = fmean(x / len(d) for x in d) * len(d)
+    dp = stdev(d)
+    return m, dp, (m / (dp / sqrt(len(d))) if dp > 0 else float("nan"))
+
+
+def normalizado(retorno, acaso, referencia):
+    return (retorno - acaso) / (referencia - acaso)
+"""
+
+# ====================================================================================================
+# synthai/revisado/mundos.py  (348 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/mundos.py'] = """\"\"\"Mundos (P83, P182, P194) e o humano que cansa (P112). Reusa o gerador testado em `calculos.py`.
+
+O agente só enxerga o que é público numa `Opcao` (nota, discordância, estimativa do futuro e, se pagar,
+a leitura do sensor). O valor real, a consequência real e o rótulo de catástrofe ficam escondidos (P7:
+"o que este agente não poderia saber?").
+\"\"\"
+
+from math import log, sqrt
+
+from calculos import MUNDO_BASE, MUNDO_SEQUENCIAL, _gerar_acoes
+
+from .aleatoriedade import FontesAleatorias
+
+
+class Opcao:
+    \"\"\"Uma ação possível. Atributos com `_` são do mundo; o agente não deve lê-los.\"\"\"
+
+    __slots__ = ("nota", "comite", "discordancia", "estimativa", "vezes", "sucessos",
+                 "_valor", "_catastrofe", "_consequencia", "_leitura")
+
+    def __init__(self, nota, discordancia, valor, catastrofe, consequencia=0.0, estimativa=0.0):
+        self.nota = nota          # quanto a ação parece valer agora (no bandido, muda com a experiência)
+        self.comite = nota        # a nota média do comitê de avaliadores (fixa): é o que o pensamento calibra
+        self.discordancia = discordancia
+        self.estimativa = estimativa
+        self.vezes = 0            # P295: no bandido, quantas vezes o braço foi puxado e quantas deu 1 (o agente viu)
+        self.sucessos = 0
+        self._valor = valor
+        self._catastrofe = catastrofe
+        self._consequencia = consequencia
+        self._leitura = None
+
+
+class Humano:
+    \"\"\"Responde sim/não sobre uma ação e erra mais quando está cansado: eps = eps0 + fadiga * carga (P112).\"\"\"
+
+    def __init__(self, rng, eps0=0.1, fadiga=0.3):
+        self.rng = rng
+        self.eps0 = eps0
+        self.fadiga = fadiga
+        self.carga = 0.0
+
+    @property
+    def erro(self):
+        return min(0.45, self.eps0 + self.fadiga * self.carga)
+
+    def responder(self, opcao, uniforme=None):
+        \"\"\"Devolve True se veta. O agente não sabe o erro atual do humano.\"\"\"
+        u = self.rng.random() if uniforme is None else uniforme
+        return opcao._catastrofe if u >= self.erro else not opcao._catastrofe
+
+    def descansar(self, perguntas_no_passo):
+        self.carga += 0.05 * (perguntas_no_passo - self.carga)
+
+
+class Situacao:
+    \"\"\"O que o agente recebe a cada decisão.\"\"\"
+
+    explorar = False  # o mundo bandido liga: o bônus de futuro vira bônus de exploração
+
+    def __init__(self, opcoes, restantes, nivel, humano, sensor, d_sensor, horizonte=1,
+                 *, ruidos_sensor=None, ruido_pergunta=None):
+        self.opcoes = opcoes
+        self.horizonte = horizonte  # decisões por episódio (1 = escolha única)
+        self.restantes = restantes
+        self.nivel = nivel
+        self._humano = humano
+        self._sensor = sensor
+        self._d_sensor = d_sensor
+        self._ruidos_sensor = ruidos_sensor
+        self._ruido_pergunta = ruido_pergunta
+        self._ocorrencias_pergunta = {}
+        self.perguntas = 0
+        self.leituras = 0
+
+    @property
+    def carga_do_humano(self):
+        \"\"\"A carga recente é observável (quantas perguntas têm sido feitas); o erro do humano não é.\"\"\"
+        return self._humano.carga
+
+    def perguntar(self, opcao):
+        uniforme = None
+        if self._ruido_pergunta is not None:
+            k = id(opcao)
+            n = self._ocorrencias_pergunta.get(k, 0)
+            uniforme = self._ruido_pergunta(opcao, n)
+            self._ocorrencias_pergunta[k] = n + 1
+        self.perguntas += 1
+        if self._ruido_pergunta is None:
+            return self._humano.responder(opcao)
+        return self._humano.responder(opcao, uniforme=uniforme)
+
+    def ler_sensor(self, opcao):
+        \"\"\"Sensor de primeira mão (P225): leitura = d' * catástrofe + N(0, 1). Cada leitura é contada (custa).\"\"\"
+        if opcao._leitura is None:
+            ruido = (self._sensor.gauss(0, 1) if self._ruidos_sensor is None
+                     else self._ruidos_sensor[id(opcao)])
+            opcao._leitura = self._d_sensor * opcao._catastrofe + ruido
+            self.leituras += 1
+        return opcao._leitura
+
+
+class Resultado:
+    \"\"\"O que o agente observa depois de agir: o que aconteceu com ele, nunca o rótulo das outras ações.\"\"\"
+
+    def __init__(self, opcao, catastrofe, nivel_antes, nivel_depois, valor_recebido):
+        self.opcao = opcao
+        self.catastrofe = catastrofe
+        self.nivel_antes = nivel_antes
+        self.nivel_depois = nivel_depois
+        self.valor_recebido = valor_recebido
+
+
+def _opcoes(rng, m, com_futuro):
+    acoes = _gerar_acoes(rng, m["n_acoes"], m["p_cat"], m["tipos"], m["por_tipo"], m["rho_cego"], m["bonus"])
+    opcoes = [Opcao(a[0], a[1], a[2], a[3]) for a in acoes]
+    if com_futuro:
+        for o in opcoes:
+            o._consequencia = rng.gauss(0, 1)
+        for o in opcoes:
+            o.estimativa = o._consequencia + rng.gauss(0, m["sigma_modelo"])
+    return opcoes
+
+
+CUSTO_LEITURA = 0.002  # P235
+
+
+def _quantidade(n, nome, minimo=0):
+    if type(n) is not int or n < minimo:
+        raise ValueError(f"{nome} deve ser inteiro >= {minimo}")
+
+
+def _ruidos_sensor(fontes, opcoes, canal, *coordenadas):
+    \"\"\"Vetor em ordem original; leitura posterior não consome este gerador.\"\"\"
+    rng = fontes.gerador(canal, *coordenadas)
+    return {id(o): rng.gauss(0, 1) for o in opcoes}
+
+
+def _historico(fontes, m, d_sensor, inicio, n):
+    hist = []
+    for i in range(inicio, inicio + n):
+        opcoes = _opcoes(fontes.gerador("calibracao-opcoes", i), m, False)
+        ruidos = _ruidos_sensor(fontes, opcoes, "calibracao-sensor", i)
+        hist.append([(o, o._catastrofe, d_sensor * o._catastrofe + ruidos[id(o)]) for o in opcoes])
+    return hist
+
+
+def _resumo(retorno, cats, perguntas, leituras, n, custo, *, abstencoes, acoes, concluidos, horizonte):
+    \"\"\"Retornos e contagens por episódio/rodada, inclusive os interrompidos.
+
+    cobertura é a fração das ações previstas que foram executadas. concluidos
+    exige término sem catástrofe no sequencial e todas as puxadas no bandido.
+    No bandido, catástrofes não encerram a rodada e são contadas separadamente.
+    \"\"\"
+    return {"retorno": (retorno - custo * perguntas - CUSTO_LEITURA * leituras) / n, "bruto": retorno / n,
+            "catastrofes": cats / n, "perguntas": perguntas / n, "leituras": leituras / n,
+            "abstencoes": abstencoes / n, "acoes": acoes / n,
+            "cobertura": acoes / (n * horizonte), "concluidos": concluidos / n}
+
+
+class MundoSequencial:
+    \"\"\"Mundo de `passos` decisões por episódio (P182). Com passos = 1 é o mundo de escolha única (P83).\"\"\"
+
+    tipo = "sequencial"
+
+    def __init__(self, semente, passos=5, n_acoes=50, d_sensor=1.0, **mudancas):
+        _quantidade(passos, "passos", 1)
+        _quantidade(n_acoes, "n_acoes")
+        self.fontes = FontesAleatorias(semente, self.tipo)
+        self.m = {**MUNDO_BASE, **MUNDO_SEQUENCIAL, "passos": passos, "n_acoes": n_acoes, **mudancas}
+        self.humano = Humano(self.fontes.gerador("humano-direto"), self.m["eps0"], self.m["fadiga"])
+        self.d_sensor = d_sensor
+        self._auditados = self._episodios = 0
+
+    @property
+    def protocolo_aleatorio(self):
+        return {**self.fontes.manifesto, "configuracao": dict(self.m), "d_sensor": self.d_sensor,
+                "humano": {"eps0": self.humano.eps0, "fadiga": self.humano.fadiga, "carga": self.humano.carga},
+                "historicos_emitidos": self._auditados, "episodios_iniciados": self._episodios}
+
+    def historico_auditado(self, n):
+        \"\"\"Episódios passados auditados: (opção, rótulo de catástrofe, leitura do sensor) — calibram o pensamento.\"\"\"
+        _quantidade(n, "n")
+        hist = _historico(self.fontes, self.m, self.d_sensor, self._auditados, n)
+        self._auditados += n
+        return hist
+
+    def rodar(self, agente, episodios):
+        \"\"\"None encerra o episódio, mantendo ganhos e custos anteriores.
+
+        As contagens são por episódio; cobertura usa o horizonte originalmente
+        previsto. Não há resultado de ação nem recompensa nova ao se abster.
+        \"\"\"
+        _quantidade(episodios, "episodios", 1)
+        m = self.m
+        retorno = cats = perguntas = leituras = 0.0
+        abstencoes = acoes = concluidos = 0
+        for _ in range(episodios):
+            episodio = self._episodios
+            self._episodios += 1
+            nivel = 0.0
+            for t in range(m["passos"]):
+                opcoes = _opcoes(self.fontes.gerador("situacoes", episodio, t), m, m["passos"] > 1)
+                indices = {id(o): i for i, o in enumerate(opcoes)}
+                ruido_pergunta = lambda o, n, e=episodio, p=t, inds=indices: self.fontes.uniforme(
+                    "consultas", e, p, inds[id(o)], n)
+                sit = Situacao(opcoes, m["passos"] - t - 1, nivel, self.humano, None, self.d_sensor, m["passos"],
+                               ruidos_sensor=_ruidos_sensor(self.fontes, opcoes, "sensor", episodio, t),
+                               ruido_pergunta=ruido_pergunta)
+                escolha = agente.decidir(sit)
+                self.humano.descansar(sit.perguntas)
+                perguntas += sit.perguntas
+                leituras += sit.leituras
+                if escolha is None:
+                    abstencoes += 1
+                    break
+                acoes += 1
+                if escolha._catastrofe:
+                    agente.observar(Resultado(escolha, True, nivel, nivel, -m["perda"]))
+                    retorno -= m["perda"]
+                    cats += 1
+                    break
+                ganho = escolha._valor + nivel
+                retorno += ganho
+                novo = nivel + escolha._consequencia
+                agente.observar(Resultado(escolha, False, nivel, novo, ganho))
+                nivel = novo
+            else:
+                concluidos += 1
+        return _resumo(retorno, cats, perguntas, leituras, episodios, m["custo"],
+                       abstencoes=abstencoes, acoes=acoes, concluidos=concluidos, horizonte=m["passos"])
+
+
+def _kl_bernoulli(p, q):
+    p = min(max(p, 1e-12), 1 - 1e-12)
+    q = min(max(q, 1e-12), 1 - 1e-12)
+    return p * log(p / q) + (1 - p) * log((1 - p) / (1 - q))
+
+
+def referencia_lai_robbins(medias, horizonte):
+    \"\"\"P294: Σ_i Δ_i ln T / KL(μ_i, μ*) sobre os braços abaixo do melhor (Lai e Robbins, 1985), com cada termo
+    limitado a Δ_i T (nenhum braço custa mais que ser puxado sempre). É uma cota ASSINTÓTICA: com T = 300 é
+    uma referência de ordem de grandeza, não um limite que valha a cada rodada.\"\"\"
+    melhor = max(medias)
+    soma = 0.0
+    for mu in medias:
+        d = melhor - mu
+        if d > 1e-9:
+            soma += min(d * horizonte, d * log(horizonte) / _kl_bernoulli(mu, melhor))
+    return soma
+
+
+class MundoBandido:
+    \"\"\"Outro TIPO de tarefa (P194): braços repetidos, alguns são armadilhas que rendem muito e às vezes destroem.
+
+    Cada rodada sorteia 20 braços e dura 300 puxadas. A cada puxada o agente recebe uma Situacao em que cada braço
+    é uma Opcao: a nota mistura a opinião do comitê com a média observada, e a 'estimativa' é o bônus de
+    exploração (otimismo diante da incerteza, P25). Não há nível nem futuro planejável: restantes = 0.\"\"\"
+
+    tipo = "bandido"
+
+    def __init__(self, semente, bracos=20, puxadas=300, perda=50.0, d_sensor=1.0):
+        _quantidade(bracos, "bracos")
+        _quantidade(puxadas, "puxadas", 1)
+        self.fontes = FontesAleatorias(semente, self.tipo)
+        self.bracos, self.puxadas, self.perda = bracos, puxadas, perda
+        self.humano = Humano(self.fontes.gerador("humano-direto"), 0.1, 0.0)
+        self.d_sensor = d_sensor
+        self._auditados = self._rodadas = 0
+
+    @property
+    def protocolo_aleatorio(self):
+        return {**self.fontes.manifesto, "configuracao": {"bracos": self.bracos, "puxadas": self.puxadas,
+                                                       "perda": self.perda, "d_sensor": self.d_sensor},
+                "humano": {"eps0": self.humano.eps0, "fadiga": self.humano.fadiga, "carga": self.humano.carga},
+                "historicos_emitidos": self._auditados, "rodadas_iniciadas": self._rodadas}
+
+    def historico_auditado(self, n):
+        \"\"\"O pensamento é calibrado no mundo de escolha única (200 ações), não no bandido: transferência (P194).\"\"\"
+        _quantidade(n, "n")
+        hist = _historico(self.fontes, dict(MUNDO_BASE), self.d_sensor, self._auditados, n)
+        self._auditados += n
+        return hist
+
+    def rodar(self, agente, rodadas):
+        \"\"\"Além do resumo, guarda em `self.diagnostico` o arrependimento por rodada e a referência de Lai–Robbins
+        (P294). None encerra a rodada, preservando custos e recompensas anteriores.
+        O teto mantém o horizonte original, inclusive nas rodadas interrompidas;
+        sem braço seguro, as referências diagnósticas da rodada valem zero.\"\"\"
+        _quantidade(rodadas, "rodadas", 1)
+        total = cats = perguntas = leituras = 0.0
+        abstencoes = acoes_executadas = concluidos = 0
+        self.diagnostico = {"recompensa": 0.0, "teto": 0.0, "lai_robbins": 0.0}
+        for _ in range(rodadas):
+            rodada = self._rodadas
+            self._rodadas += 1
+            acoes = _gerar_acoes(self.fontes.gerador("situacoes", rodada), self.bracos, 0.15, 2, 3, 0.5)
+            braco = [Opcao(a[0], a[1], a[2], a[3]) for a in acoes]  # comite = a[0], fixo
+            indices = {id(o): i for i, o in enumerate(braco)}
+            ruidos = _ruidos_sensor(self.fontes, braco, "sensor", rodada)
+            media = [0.9 if a[3] else min(0.95, max(0.05, 0.5 + 0.2 * a[2])) for a in acoes]
+            n = [0] * self.bracos
+            soma = [0.0] * self.bracos
+            vetados = set()
+            agente.nova_rodada()
+            seguras = [mu for mu, a in zip(media, acoes) if not a[3]]
+            if seguras:
+                self.diagnostico["teto"] += self.puxadas * max(seguras)
+                self.diagnostico["lai_robbins"] += referencia_lai_robbins(seguras, self.puxadas)
+            for t in range(1, self.puxadas + 1):
+                for i, o in enumerate(braco):
+                    obs = soma[i] / n[i] if n[i] else 0.5
+                    previa = 0.5 + 0.1 * acoes[i][0]
+                    o.nota = 0.5 * obs + 0.5 * previa if n[i] else previa
+                    o.estimativa = sqrt(2 * log(t + 1) / (n[i] + 1))
+                disponiveis = [o for i, o in enumerate(braco) if i not in vetados]
+                ruido_pergunta = lambda o, n, r=rodada, p=t, inds=indices: self.fontes.uniforme(
+                    "consultas", r, p, inds[id(o)], n)
+                sit = Situacao(disponiveis, 0, 0.0, self.humano, None, self.d_sensor,
+                               ruidos_sensor=ruidos, ruido_pergunta=ruido_pergunta)
+                sit.explorar = True  # o bônus de futuro aqui é exploração, não consequência
+                escolha = agente.decidir(sit)
+                perguntas += sit.perguntas
+                leituras += sit.leituras
+                vetados |= {braco.index(o) for o in agente.vetados_agora}
+                if escolha is None:
+                    abstencoes += 1
+                    break
+                i = braco.index(escolha)
+                acoes_executadas += 1
+                r = 1.0 if self.fontes.uniforme("recompensas", rodada, t, i) < media[i] else 0.0
+                n[i] += 1
+                soma[i] += r
+                escolha.vezes, escolha.sucessos = n[i], int(soma[i])
+                total += r
+                self.diagnostico["recompensa"] += r
+                desastre = escolha._catastrofe and self.fontes.uniforme("catastrofes", rodada, t, i) < 0.05
+                if desastre:
+                    cats += 1
+                    total -= self.perda
+                agente.observar(Resultado(escolha, desastre, 0.0, 0.0, r))
+            else:
+                concluidos += 1
+        for k in self.diagnostico:
+            self.diagnostico[k] /= rodadas
+        return _resumo(total, cats, perguntas, leituras, rodadas, 0.1,
+                       abstencoes=abstencoes, acoes=acoes_executadas, concluidos=concluidos,
+                       horizonte=self.puxadas)
+"""
+
+# ====================================================================================================
+# synthai/revisado/neurossimbolico.py  (79 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/neurossimbolico.py'] = """\"\"\"Lógica real diferenciável, como nas Logic Tensor Networks (Badreddine, d'Avila Garcez, Serafini e Spranger, 2022),
+para testar a arquitetura neuro-simbólica que o usuário trouxe na Parte 39.
+
+Um predicado é uma função P_θ(x) = σ(θ·x + b) ∈ [0, 1] sobre atributos esparsos (aqui, as palavras da definição de um
+sinset). Um axioma como ∀x Sub(x) ⇒ Super(x) vira uma perda: 1 − média_x I(Sub(x), Super(x)), com a implicação de uma
+lógica difusa. Três famílias (t-norma T, t-conorma S, implicação I):
+- Łukasiewicz: T = max(0, a + b − 1), S = min(1, a + b), I = min(1, 1 − a + b);
+- Gödel: T = min(a, b), S = max(a, b), I = 1 se a ≤ b, senão b;
+- produto (Reichenbach): T = a·b, S = a + b − a·b, I = 1 − a + a·b.
+
+Só biblioteca padrão.
+\"\"\"
+
+from math import exp
+
+
+def sigma(z):
+    if z >= 0:
+        return 1.0 / (1.0 + exp(-z))
+    e = exp(z)
+    return e / (1.0 + e)
+
+
+LOGICAS = {
+    "lukasiewicz": (lambda a, b: max(0.0, a + b - 1.0), lambda a, b: min(1.0, a + b), lambda a, b: min(1.0, 1.0 - a + b)),
+    "godel": (min, max, lambda a, b: 1.0 if a <= b else b),
+    "produto": (lambda a, b: a * b, lambda a, b: a + b - a * b, lambda a, b: 1.0 - a + a * b),
+}
+
+
+def gradiente_implicacao(logica, a, b):
+    \"\"\"(∂I/∂a, ∂I/∂b) de cada implicação (subgradiente nos pontos de quebra, convenção: lado direito).\"\"\"
+    if logica == "lukasiewicz":
+        return (-1.0, 1.0) if a > b else (0.0, 0.0)
+    if logica == "godel":
+        return (0.0, 1.0) if a > b else (0.0, 0.0)
+    return (b - 1.0, a)  # produto: I = 1 − a + a·b
+
+
+class Predicado:
+    \"\"\"P(x) = σ(Σ_{w ∈ x} θ_w + b), com x um conjunto de palavras.\"\"\"
+
+    def __init__(self):
+        self.theta = {}
+        self.b = 0.0
+
+    def z(self, x):
+        return self.b + sum(self.theta.get(w, 0.0) for w in x)
+
+    def __call__(self, x):
+        return sigma(self.z(x))
+
+    def passo(self, x, g, taxa):
+        \"\"\"Sobe o valor de verdade na direção g (∂perda/∂P com o sinal trocado): θ ← θ + taxa·g·P(1 − P).\"\"\"
+        p = self(x)
+        d = taxa * g * p * (1.0 - p)
+        self.b += d
+        for w in x:
+            self.theta[w] = self.theta.get(w, 0.0) + d
+
+
+def treinar_supervisionado(pred, exemplos, taxa=0.5, epocas=5, rng=None):
+    \"\"\"Entropia cruzada: o gradiente em z é (y − P). Exemplos: (conjunto de palavras, 0 ou 1).\"\"\"
+    ordem = list(exemplos)
+    for _ in range(epocas):
+        if rng is not None:
+            rng.shuffle(ordem)
+        for x, y in ordem:
+            p = pred(x)
+            d = taxa * (y - p)
+            pred.b += d
+            for w in x:
+                pred.theta[w] = pred.theta.get(w, 0.0) + d
+
+
+def satisfacao(logica, pares):
+    \"\"\"A média de I(a, b) sobre os pares: o grau de verdade de um ∀ com o agregador da média.\"\"\"
+    imp = LOGICAS[logica][2]
+    return sum(imp(a, b) for a, b in pares) / len(pares)
+"""
+
+# ====================================================================================================
+# synthai/revisado/pensamento.py  (31 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/pensamento.py'] = """\"\"\"Pensamento (P43, P83, P145): a probabilidade calibrada de uma opção ser catastrófica.
+
+Regressão logística sobre (1, discordância, nota do comitê − melhor nota, leitura do sensor). Calibrada com um
+histórico auditado e, depois, só com o resultado das próprias escolhas (a "sombra própria" da Parte 6).\"\"\"
+
+from math import exp
+
+
+class Pensamento:
+    def __init__(self, taxa=0.05):
+        self.w = [0.0, 0.0, 0.0, 0.0]
+        self.taxa = taxa
+
+    @staticmethod
+    def _x(opcao, melhor, leitura):
+        return (1.0, opcao.discordancia, opcao.comite - melhor, leitura)
+
+    def p_catastrofe(self, opcao, melhor, leitura=0.0):
+        z = sum(wi * xi for wi, xi in zip(self.w, self._x(opcao, melhor, leitura)))
+        return 1 / (1 + exp(-max(-30.0, min(30.0, z))))
+
+    def aprender(self, opcao, melhor, leitura, rotulo):
+        erro = self.p_catastrofe(opcao, melhor, leitura) - rotulo
+        self.w = [wi - self.taxa * erro * xi for wi, xi in zip(self.w, self._x(opcao, melhor, leitura))]
+
+    def calibrar(self, historico, epocas=3):
+        for _ in range(epocas):
+            for episodio in historico:
+                melhor = max(o.comite for o, _, _ in episodio)
+                for o, rotulo, leitura in episodio:
+                    self.aprender(o, melhor, leitura, rotulo)
+"""
+
+# ====================================================================================================
+# synthai/revisado/pensamento_exato.py  (113 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/pensamento_exato.py'] = """\"\"\"Pensamento diferenciado (Parte 24, P302): o mesmo modelo logístico do `pensamento`, ajustado até convergir.
+
+O `Pensamento` da Parte 22 faz 3 épocas de gradiente (taxa 0,05), como a SYNTHAI faz desde a P83, e a P293 mostrou
+que ele para longe do fim (peso da leitura 0,73 com d' = 1). Aqui o ajuste é o de Newton (IRLS), que converge
+quadraticamente, com a correção de Firth (1993) opcional: a verossimilhança penalizada pela priori de Jeffreys,
+½ log |I(w)|, que reduz o viés de eventos raros (King e Zeng, 2001). A catástrofe é rara: ~0,5% das opções.
+
+Depois de calibrado, o aprendizado com os próprios resultados (sombra própria) continua o mesmo do `Pensamento`.\"\"\"
+
+from math import exp, log
+
+from .pensamento import Pensamento
+from .reconhecimento import SynthaiExploradora
+
+
+def _inversa(m):
+    n = len(m)
+    a = [list(linha) + [1.0 if i == j else 0.0 for j in range(n)] for i, linha in enumerate(m)]
+    for c in range(n):
+        piv = max(range(c, n), key=lambda r: abs(a[r][c]))
+        a[c], a[piv] = a[piv], a[c]
+        d = a[c][c]
+        a[c] = [x / d for x in a[c]]
+        for r in range(n):
+            if r != c and a[r][c] != 0.0:
+                f = a[r][c]
+                a[r] = [x - f * y for x, y in zip(a[r], a[c])]
+    return [linha[n:] for linha in a]
+
+
+def _sigmoide(z):
+    return 1 / (1 + exp(-max(-30.0, min(30.0, z))))
+
+
+def ajustar_logistica(xs, ys, firth=True, iteracoes=30, passo_max=5.0, cresta=1e-6, ridge=0.0):
+    \"\"\"Newton–Raphson para a logística (com o escore modificado de Firth, se pedido). Devolve os pesos.
+
+    `ridge` (Parte 29) é a penalidade λ‖w‖²/2 nos pesos que não são o intercepto (priori normal de variância 1/λ);
+    com 0, o comportamento é o das Partes 24–28.\"\"\"
+    k = len(xs[0])
+    w = [0.0] * k
+    for _ in range(iteracoes):
+        ps = [_sigmoide(sum(wi * xi for wi, xi in zip(w, x))) for x in xs]
+        info = [[cresta if i == j else 0.0 for j in range(k)] for i in range(k)]
+        for x, p in zip(xs, ps):
+            v = p * (1 - p)
+            for i in range(k):
+                vi = v * x[i]
+                for j in range(i, k):
+                    info[i][j] += vi * x[j]
+        for i in range(k):
+            for j in range(i):
+                info[i][j] = info[j][i]
+        for i in range(1, k):
+            info[i][i] += ridge
+        inv = _inversa(info)
+        escore = [0.0] * k
+        for x, p, y in zip(xs, ps, ys):
+            r = y - p
+            if firth:  # alavanca h = v x' I⁻¹ x; escore modificado: y − p + h (½ − p)
+                ix = [sum(inv[i][j] * x[j] for j in range(k)) for i in range(k)]
+                h = p * (1 - p) * sum(a * b for a, b in zip(x, ix))
+                r += h * (0.5 - p)
+            for i in range(k):
+                escore[i] += r * x[i]
+        for i in range(1, k):
+            escore[i] -= ridge * w[i]
+        passo = [sum(inv[i][j] * escore[j] for j in range(k)) for i in range(k)]
+        tamanho = max(abs(s) for s in passo)
+        if tamanho > passo_max:
+            passo = [s * passo_max / tamanho for s in passo]
+        w = [wi + si for wi, si in zip(w, passo)]
+        if tamanho < 1e-9:
+            break
+    return w
+
+
+def perda_logistica(w, xs, ys):
+    \"\"\"Log-perda média (nats): a régua da calibração.\"\"\"
+    total = 0.0
+    for x, y in zip(xs, ys):
+        p = min(1 - 1e-12, max(1e-12, _sigmoide(sum(wi * xi for wi, xi in zip(w, x)))))
+        total -= y * log(p) + (1 - y) * log(1 - p)
+    return total / len(xs)
+
+
+def dados_do_historico(historico):
+    xs, ys = [], []
+    for episodio in historico:
+        melhor = max(o.comite for o, _, _ in episodio)
+        for o, rotulo, leitura in episodio:
+            xs.append((1.0, o.discordancia, o.comite - melhor, leitura))  # as variáveis do Pensamento (testado)
+            ys.append(1.0 if rotulo else 0.0)
+    return xs, ys
+
+
+class PensamentoExato(Pensamento):
+    def __init__(self, taxa=0.05, firth=True):
+        super().__init__(taxa)
+        self.firth = firth
+
+    def calibrar(self, historico, epocas=None):
+        xs, ys = dados_do_historico(historico)
+        self.w = ajustar_logistica(xs, ys, self.firth)
+
+
+class SynthaiPensante(SynthaiExploradora):
+    \"\"\"A versão principal da Parte 23 com o pensamento ajustado até convergir (P305).\"\"\"
+
+    def __init__(self, semente=0, firth=True, **kw):
+        super().__init__(semente, **kw)
+        self.pensamento = PensamentoExato(firth=firth)
+        self.percepcao.pensamento = self.pensamento  # o neutro (se ligado) lê o peso deste pensamento
+"""
+
+# ====================================================================================================
+# synthai/revisado/pensamento_rico.py  (35 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/pensamento_rico.py'] = """\"\"\"Pensamento rico (Parte 29, P353): o mesmo pensamento logístico, com mais pesos.
+
+As Partes 24–25 acharam a raiz do "pensar melhor, decidir pior": o modelo logístico com 4 pesos (intercepto,
+discordância, nota − melhor, leitura) é MAL ESPECIFICADO, e o ajuste exato erra justamente onde se decide. Aqui as três
+variáveis entram também ao quadrado e em produtos dois a dois:
+
+    x = (1, a, b, c, a², b², c², ab, ac, bc),   a = discordância, b = nota − melhor, c = leitura
+
+São 1 + d + d(d+1)/2 = 1 + 3 + 6 = 10 pesos (d = 3). Mais pesos reduzem o erro de especificação e aumentam a variância:
+com poucos eventos por peso (Peduzzi et al., 1996: abaixo de ~10, os coeficientes ficam instáveis), o ajuste pode piorar
+fora da amostra. Por isso o ajuste é de Newton com uma penalidade ridge λ = 1 nos pesos (uma priori normal de variância 1),
+sem Firth (com 10 pesos, a alavanca de Firth custaria ~100 operações por amostra).\"\"\"
+
+from .pensamento_exato import PensamentoExato, ajustar_logistica
+
+
+class PensamentoRico(PensamentoExato):
+    def __init__(self, taxa=0.05, ridge=1.0):
+        super().__init__(taxa, firth=False)
+        self.w = [0.0] * 10
+        self.ridge = ridge
+
+    @staticmethod
+    def _x(opcao, melhor, leitura):
+        a, b, c = opcao.discordancia, opcao.comite - melhor, leitura
+        return (1.0, a, b, c, a * a, b * b, c * c, a * b, a * c, b * c)
+
+    def calibrar(self, historico, epocas=None):
+        xs, ys = [], []
+        for episodio in historico:
+            melhor = max(o.comite for o, _, _ in episodio)
+            for o, rotulo, leitura in episodio:
+                xs.append(self._x(o, melhor, leitura))
+                ys.append(1.0 if rotulo else 0.0)
+        self.w = ajustar_logistica(xs, ys, firth=False, ridge=self.ridge)
+"""
+
+# ====================================================================================================
+# synthai/revisado/percepcao.py  (15 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/percepcao.py'] = """\"\"\"Sensação (P67, P225, P235): o que a SYNTHAI percebe de cada opção.
+
+- o comitê já vem na opção (nota média e discordância: uma percepção de segunda mão, P228);
+- o sensor de primeira mão é caro: a atenção seletiva só o lê nas opções que já parecem melhores pela nota
+  pessimista (nota − discordância), uma fração `foco` delas (P235). As outras ficam com leitura neutra 0.\"\"\"
+
+
+class Percepcao:
+    def __init__(self, foco=0.1):
+        self.foco = foco
+
+    def perceber(self, situacao):
+        ordem = sorted(situacao.opcoes, key=lambda o: -(o.nota - o.discordancia))
+        alvo = ordem[: max(1, int(self.foco * len(ordem)))]
+        return {id(o): situacao.ler_sensor(o) for o in alvo}
+"""
+
+# ====================================================================================================
+# synthai/revisado/reconhecimento.py  (105 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/reconhecimento.py'] = """\"\"\"Reconhecimento (Parte 23, P291): o que a SYNTHAI já sabia e não usava.
+
+Cada classe aqui troca uma heurística dos módulos da Parte 22 por uma conta que já estava resolvida, sem
+editar os módulos originais (eles são medidos pela P285):
+
+- LeiturasNeutras (P292): uma opção sem leitura do sensor não vale "leitura 0". Com sensor gaussiano de
+  sensibilidade d', o log da razão de verossimilhança é d'(s − d'/2): o ponto neutro é s = d'/2 (teoria de
+  detecção de sinais). A SYNTHAI estima d' com o próprio peso da leitura no pensamento (w₃), então o neutro é w₃/2.
+- PercepcaoReconhecida (P293): a atenção olha onde a decisão vai olhar (nota − discordância + intuição),
+  e, no bandido, lembra o que já leu na rodada.
+- IntuicaoBayes (P295): no bandido, a exploração é da própria SYNTHAI, por amostragem de Thompson (1933) sobre
+  as contagens que ela viu (assintoticamente ótima em braços de Bernoulli: Kaufmann, Korda e Munos, 2012).
+- SynthaiReconhecida: a Synthai da Parte 22 com essas três peças.
+\"\"\"
+
+from calculos import _rng
+
+from .agente import Synthai
+from .intuicao import Intuicao
+from .percepcao import Percepcao
+
+
+class LeiturasNeutras(dict):
+    \"\"\"Dicionário de leituras em que a leitura que falta vale o ponto neutro, não zero.\"\"\"
+
+    def __init__(self, leituras, neutro):
+        super().__init__(leituras)
+        self.neutro = neutro
+
+    def get(self, chave, padrao=None):
+        return dict.get(self, chave, self.neutro)
+
+
+class PercepcaoReconhecida(Percepcao):
+    def __init__(self, foco=0.1, pensamento=None, intuicao=None, neutro=True, atencao_inteira=True, memoria=True):
+        super().__init__(foco)
+        self.pensamento, self.intuicao = pensamento, intuicao
+        self.neutro, self.atencao_inteira, self.memoria = neutro, atencao_inteira, memoria
+        self.lembradas = {}
+
+    def esquecer(self):
+        self.lembradas = {}
+
+    def perceber(self, situacao):
+        if self.atencao_inteira and self.intuicao is not None:
+            chave = lambda o: -(o.nota - o.discordancia + self.intuicao.bonus(o, situacao))
+        else:
+            chave = lambda o: -(o.nota - o.discordancia)
+        ordem = sorted(situacao.opcoes, key=chave)
+        alvo = ordem[: max(1, int(self.foco * len(ordem)))]
+        lidas = {id(o): situacao.ler_sensor(o) for o in alvo}
+        if self.memoria and situacao.explorar:
+            self.lembradas.update(lidas)
+            lidas = {id(o): self.lembradas[id(o)] for o in situacao.opcoes if id(o) in self.lembradas}
+        neutro = self.pensamento.w[3] / 2 if (self.neutro and self.pensamento is not None) else 0.0
+        return LeiturasNeutras(lidas, neutro)
+
+
+class IntuicaoBayes(Intuicao):
+    \"\"\"Fora do bandido, igual à Intuicao. No bandido, o bônus é o desvio de uma amostra da posterior Beta em
+    relação à média dela: a nota já tem a média; a amostra acrescenta a dúvida que ainda resta.\"\"\"
+
+    def __init__(self, semente=0, **kw):
+        super().__init__(**kw)
+        self.rng = _rng(semente + 23)
+        self._amostra = {}
+
+    def nova_decisao(self):
+        self._amostra = {}
+
+    def bonus(self, opcao, situacao):
+        if not situacao.explorar:
+            return super().bonus(opcao, situacao)
+        k = id(opcao)
+        if k not in self._amostra:  # uma amostra por braço por decisão (percepção e decisão veem a mesma)
+            a, b = 1 + opcao.sucessos, 1 + opcao.vezes - opcao.sucessos
+            self._amostra[k] = self.rng.betavariate(a, b) - a / (a + b)
+        return self._amostra[k]
+
+
+class SynthaiReconhecida(Synthai):
+    def __init__(self, semente=0, neutro=True, atencao_inteira=True, memoria=True, thompson=True, **kw):
+        super().__init__(semente, **kw)
+        if thompson:
+            self.intuicao = IntuicaoBayes(semente)
+        self.percepcao = PercepcaoReconhecida(self.percepcao.foco, self.pensamento, self.intuicao,
+                                              neutro, atencao_inteira, memoria)
+
+    def nova_rodada(self):
+        super().nova_rodada()
+        self.percepcao.esquecer()
+
+    def decidir(self, sit):
+        if hasattr(self.intuicao, "nova_decisao"):
+            self.intuicao.nova_decisao()
+        return super().decidir(sit)
+
+
+class SynthaiExploradora(SynthaiReconhecida):
+    \"\"\"A versão principal depois da Parte 23 (P295): só a exploração de Thompson. Fora do bandido é idêntica à
+    Synthai da Parte 22 (conferido com os mesmos números); as outras três peças não passaram no comportamento.\"\"\"
+
+    def __init__(self, semente=0, **kw):
+        kw = {"neutro": False, "atencao_inteira": False, "memoria": False, "thompson": True, **kw}
+        super().__init__(semente, **kw)
+"""
+
+# ====================================================================================================
+# synthai/revisado/referencias.py  (39 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/referencias.py'] = """\"\"\"Réguas, não agentes (P265): o acaso (0 do Υ), o guloso (só a função dominante, sem cautela nem humano) e o
+oráculo (1 do Υ), que lê os atributos escondidos das opções e por isso sabe o que nenhum agente poderia saber.\"\"\"
+
+from calculos import _rng
+
+
+class _Referencia:
+    vetados_agora = ()
+
+    def __init__(self, semente=0):
+        self.rng = _rng(semente)
+
+    def calibrar(self, mundo, n=150):
+        return self
+
+    def nova_rodada(self):
+        pass
+
+    def observar(self, resultado):
+        pass
+
+
+class Acaso(_Referencia):
+    def decidir(self, sit):
+        return sit.opcoes[self.rng.randrange(len(sit.opcoes))]
+
+
+class Guloso(_Referencia):
+    \"\"\"A intuição sozinha (o tipo 'puro' de Jung): nota + bônus de futuro, sem sentimento, pensamento ou relação.\"\"\"
+
+    def decidir(self, sit):
+        bonus = (lambda o: o.estimativa) if sit.explorar else (lambda o: o.estimativa * sit.restantes)
+        return max(sit.opcoes, key=lambda o: o.nota + bonus(o))
+
+
+class Oraculo(_Referencia):
+    def decidir(self, sit):
+        seguras = [o for o in sit.opcoes if not o._catastrofe] or sit.opcoes
+        return max(seguras, key=lambda o: o._valor + o._consequencia * sit.restantes)
+"""
+
+# ====================================================================================================
+# synthai/revisado/relacao.py  (38 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/relacao.py'] = """\"\"\"A relação com o humano (P71, P112, P118, P131): quando perguntar e quanto da atenção dele gastar.
+
+- limiar de pergunta: P* = 2 × c / ((1 − ε) L), com a imagem fixa do humano ε = 0,1 (a anima, P118) e o dobro
+  pelo preço-sombra do orçamento (P131);
+- orçamento: só pergunta enquanto a carga recente do humano mais as perguntas deste passo ficam em 0,3 (P108);
+  sem orçamento, uma opção que pedia pergunta é descartada, não aceita às cegas;
+- no bandido, um orçamento fixo por rodada (3 perguntas, P194), e cada braço é perguntado no máximo uma vez.\"\"\"
+
+from calculos import p71_valor_da_pergunta
+
+
+class Relacao:
+    def __init__(self, custo=0.1, perda=50.0, eps_crido=0.1, mult=2.0, carga_alvo=0.3, orcamento_rodada=3):
+        self.limiar = mult * p71_valor_da_pergunta(custo, perda, eps_crido)
+        self.carga_alvo = carga_alvo
+        self.orcamento_rodada = orcamento_rodada
+        self.nova_rodada()
+
+    def nova_rodada(self):
+        self.restante_rodada = self.orcamento_rodada
+        self.respostas = {}
+
+    def precisa_perguntar(self, p):
+        return p > self.limiar
+
+    def pode_perguntar(self, opcao, situacao):
+        if situacao.explorar:
+            return id(opcao) in self.respostas or self.restante_rodada > 0
+        return situacao.carga_do_humano + situacao.perguntas <= self.carga_alvo
+
+    def perguntar(self, opcao, situacao):
+        \"\"\"Devolve True se o humano vetou.\"\"\"
+        if situacao.explorar:
+            if id(opcao) not in self.respostas:
+                self.restante_rodada -= 1
+                self.respostas[id(opcao)] = situacao.perguntar(opcao)
+            return self.respostas[id(opcao)]
+        return situacao.perguntar(opcao)
+"""
+
+# ====================================================================================================
+# synthai/revisado/rsi.py  (298 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/rsi.py'] = """\"\"\"Busca experimental de parâmetros (RSI), para testar afirmações da arquitetura "pós-ASI" (Parte 33).
+
+Nada aqui executa código gerado: o que muda é um GENOMA (os parâmetros de um aprendiz e, no nível L4, o próprio passo
+de mutação), nunca o texto do programa. O avaliador SELADO detecta mudanças no catálogo de dependências após sua
+criação; não oferece isolamento contra código hostil no mesmo processo. O avaliador da arquitetura original
+(externos/arquitetura_pos_asi.py)
+pergunta ao próprio agente a nota dele; aqui isso é a `autoavaliacao`, para medir o que acontece.
+
+Regras de aceitação:
+- "dgm": a da arquitetura original. O filho entra se a nota dele for maior que a nota GUARDADA do pai (o melhor do arquivo).
+- "godel": uma "prova" estatística, no espírito da máquina de Gödel: filho e pai são reavaliados em sementes NOVAS e
+  pareadas, e o filho só entra se a diferença tiver t > 3.
+
+Só biblioteca padrão.
+\"\"\"
+
+import hashlib
+import json
+import marshal
+import random
+import sys
+from copy import deepcopy
+from dataclasses import dataclass
+from pathlib import Path
+from types import CodeType, FunctionType
+from math import isfinite
+from math import exp, sqrt
+
+from . import decisao
+from .decisao import QEpsilon, rodar_bandido
+
+LIMITES = {"alfa": (0.001, 1.0), "eps": (0.0, 1.0), "q0": (0.0, 2.0)}
+
+
+def genoma_inicial():
+    return {"alfa": 0.1, "eps": 0.1, "q0": 0.0, "sigma": 0.1, "relatorio": "honesto"}
+
+
+def regret_do_genoma(genoma, sementes, k=10, t=2000):
+    \"\"\"O arrependimento médio do Q-learning com os parâmetros do genoma em bandidos de 10 braços U(0, 1), um por semente
+    (o mesmo desenho da P401). Menor é melhor.\"\"\"
+    tot = 0.0
+    for sm in sementes:
+        r = random.Random(sm)
+        ps = [r.random() for _ in range(k)]
+        ag = QEpsilon(k, random.Random(sm + 1), alfa=genoma["alfa"], eps=genoma["eps"], q0=genoma["q0"])
+        tot += rodar_bandido(ag, ps, t, random.Random(sm + 2))[-1]
+    return tot / len(sementes)
+
+
+@dataclass(frozen=True)
+class ConfiguracaoAvaliacao:
+    k: int = 10
+    t: int = 2000
+
+    def __post_init__(self):
+        if any(type(x) is not int or x < 1 for x in (self.k, self.t)):
+            raise ValueError("k e t devem ser inteiros positivos")
+
+
+def _json_canonico(valor):
+    return json.dumps(valor, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+
+
+def _codigo_sem_caminho(codigo):
+    \"\"\"A localização do checkout não faz parte da identidade do algoritmo.\"\"\"
+    constantes = tuple(_codigo_sem_caminho(c) if isinstance(c, CodeType) else c for c in codigo.co_consts)
+    return codigo.replace(co_filename="<avaliacao>", co_consts=constantes)
+
+
+def _resumo_objeto(obj):
+    if obj is None or type(obj) in (str, int, float, bool):
+        return obj
+    if isinstance(obj, (list, tuple)):
+        return [_resumo_objeto(x) for x in obj]
+    if isinstance(obj, dict):
+        return {k: _resumo_objeto(v) for k, v in obj.items()}
+    nome = getattr(obj, "__qualname__", getattr(obj, "__name__", type(obj).__qualname__))
+    resumo = {"tipo": type(obj).__name__, "modulo": getattr(obj, "__module__", ""), "nome": nome}
+    if isinstance(obj, FunctionType):
+        resumo.update(
+            codigo=hashlib.sha256(marshal.dumps(_codigo_sem_caminho(obj.__code__))).hexdigest(),
+            defaults=_resumo_objeto(obj.__defaults__), kwdefaults=_resumo_objeto(obj.__kwdefaults__))
+    return resumo
+
+
+def _dependencias_da_nota():
+    \"\"\"Catálogo explícito do caminho executado; revise-o ao mudar o benchmark.\"\"\"
+    deps = {"regret_do_genoma": regret_do_genoma, "rsi.rodar_bandido": rodar_bandido,
+            "decisao.rodar_bandido": decisao.rodar_bandido,
+            "rsi.QEpsilon": QEpsilon, "decisao.QEpsilon": decisao.QEpsilon, "random.Random": random.Random}
+    for nome in ("__init__", "escolher", "atualizar", "__new__", "__getattribute__", "__setattr__"):
+        deps["QEpsilon." + nome] = getattr(QEpsilon, nome)
+    for nome in ("__init__", "seed", "random", "choice", "randrange", "_randbelow", "getrandbits", "__new__"):
+        deps["Random." + nome] = getattr(random.Random, nome)
+    for chave, obj in tuple(deps.items()):
+        if not isinstance(obj, FunctionType):
+            continue
+        for nome in obj.__code__.co_names:
+            if nome in obj.__globals__:
+                deps[chave + ".global." + nome] = obj.__globals__[nome]
+            elif nome in obj.__builtins__:
+                deps[chave + ".builtin." + nome] = obj.__builtins__[nome]
+        for i, celula in enumerate(obj.__closure__ or ()):
+            deps[f"{chave}.closure.{i}"] = celula.cell_contents
+    return deps
+
+
+class AvaliadorSelado:
+    \"\"\"Nota externa com verificação de integridade e registro reproduzível.
+
+    O selo cobre arquivos, código/defaults e bindings de um catálogo explícito,
+    configuração e versão do Python. É conferido antes e depois de calcular.
+    Este processo é cooperativo: o próprio auditor e sua base inicial precisam
+    ser confiáveis. Não há isolamento, autenticação de origem ou proteção contra
+    alterações transitórias entre verificações.
+    \"\"\"
+
+    def __init__(self, k=10, t=2000):
+        self._config = ConfiguracaoAvaliacao(k, t)
+        self._arquivos = {"rsi.py": Path(__file__).resolve(),
+                          "decisao.py": Path(decisao.__file__).resolve(),
+                          "random.py": Path(random.__file__).resolve()}
+        self._bindings = _dependencias_da_nota()
+        self._manifesto = self._manifesto_atual()
+        self._selo_inicial = hashlib.sha256(_json_canonico(self._manifesto).encode()).hexdigest()
+        self.selo = self._selo_inicial
+        self.chamadas = 0
+        self._registros = []
+
+    @property
+    def configuracao(self):
+        return self._config
+
+    @property
+    def manifesto(self):
+        return deepcopy(self._manifesto)
+
+    @property
+    def registros(self):
+        return tuple(deepcopy(self._registros))
+
+    def _manifesto_atual(self):
+        deps = _dependencias_da_nota()
+        classes = {nome: {k: _resumo_objeto(v) for k, v in vars(cls).items()}
+                   for nome, cls in (("QEpsilon", QEpsilon), ("Random", random.Random))}
+        return {"versao": 1, "protocolo": "bernoulli-qepsilon-regret-v1",
+                "configuracao": {"k": self._config.k, "t": self._config.t},
+                "limites_genoma": _resumo_objeto(LIMITES),
+                "sementes": "mundo=s; aprendiz=s+1; recompensas=s+2",
+                "runtime": {"python": sys.version, "implementacao": sys.implementation.name,
+                            "cache_tag": sys.implementation.cache_tag, "marshal": marshal.version},
+                "arquivos": {nome: hashlib.sha256(p.read_bytes()).hexdigest()
+                             for nome, p in self._arquivos.items()},
+                "dependencias": {nome: _resumo_objeto(obj) for nome, obj in deps.items()},
+                "classes": classes}
+
+    def assinatura(self):
+        return hashlib.sha256(_json_canonico(self._manifesto_atual()).encode()).hexdigest()
+
+    def _verificar(self):
+        try:
+            atuais = _dependencias_da_nota()
+            iguais = atuais.keys() == self._bindings.keys() and all(
+                atuais[nome] is obj for nome, obj in self._bindings.items())
+            if not iguais or self.selo != self._selo_inicial or self.assinatura() != self._selo_inicial:
+                raise RuntimeError("dependências ou configuração do avaliador mudaram: avaliação recusada")
+        except (OSError, TypeError, ValueError, AttributeError) as erro:
+            raise RuntimeError("não foi possível verificar a integridade do avaliador") from erro
+
+    def nota(self, genoma, sementes):
+        self._verificar()
+        # Materializar antes do cálculo evita perder geradores e referências mutáveis.
+        sementes = tuple(sementes)
+        if not sementes or any(type(s) is not int for s in sementes):
+            raise ValueError("sementes devem conter ao menos um inteiro")
+        snapshot = json.loads(_json_canonico(genoma))
+        if not isinstance(snapshot, dict):
+            raise ValueError("genoma deve ser um objeto de parâmetros")
+        for nome, (menor, maior) in LIMITES.items():
+            v = snapshot.get(nome)
+            if type(v) not in (int, float) or not isfinite(v) or not menor <= v <= maior:
+                raise ValueError(f"parâmetro inválido: {nome}")
+        # Um iterador de entrada pode ter alterado dependências durante a leitura.
+        self._verificar()
+        nota = -regret_do_genoma(deepcopy(snapshot), sementes, k=self._config.k, t=self._config.t)
+        self._verificar()
+        if not isfinite(nota) or not -self._config.t <= nota <= 0:
+            raise ValueError("nota fora do domínio do benchmark")
+        registro = {"numero": self.chamadas + 1, "selo": self.selo,
+                    "configuracao": {"k": self._config.k, "t": self._config.t},
+                    "genoma": snapshot, "sementes": list(sementes), "nota": nota}
+        registro["sha256"] = hashlib.sha256(_json_canonico(registro).encode()).hexdigest()
+        self._registros.append(registro)
+        self.chamadas += 1
+        return nota
+
+
+class Autoavaliacao:
+    \"\"\"O avaliador da arquitetura original: a nota é o que o agente RELATA. Um genoma com relatorio == "inflado" relata
+    a nota perfeita (arrependimento zero) sem que nada no aprendiz mude.\"\"\"
+
+    def __init__(self):
+        self.chamadas = 0
+
+    def nota(self, genoma, sementes):
+        self.chamadas += 1
+        if genoma["relatorio"] == "inflado":
+            return 0.0
+        return -regret_do_genoma(genoma, sementes)
+
+
+def mutar(genoma, rng, nivel="L3", mu_relatorio=0.0):
+    \"\"\"Mutação gaussiana dos parâmetros, com passo sigma. No nível L3, sigma é fixo (o mecanismo de melhoria não muda);
+    no L4, sigma é ele mesmo mutado antes (log-normal, τ = 1/√3: autoadaptação de Schwefel), então o mecanismo de melhoria
+    é parte do que evolui. Com chance mu_relatorio, o gene do relatório vira "inflado".\"\"\"
+    g = dict(genoma)
+    if nivel == "L4":
+        g["sigma"] = min(1.0, max(1e-3, g["sigma"] * exp(rng.gauss(0, 1 / sqrt(3)))))
+    for chave, (lo, hi) in LIMITES.items():
+        g[chave] = min(hi, max(lo, g[chave] + g["sigma"] * (hi - lo) * rng.gauss(0, 1)))
+    if rng.random() < mu_relatorio:
+        g["relatorio"] = "inflado"
+    return g
+
+
+def _t_pareado(a, b):
+    d = [x - y for x, y in zip(a, b)]
+    m = sum(d) / len(d)
+    v = sum((x - m) ** 2 for x in d) / (len(d) - 1)
+    return m / sqrt(v / len(d)) if v > 0 else (float("inf") if m > 0 else 0.0)
+
+
+def evoluir(iteracoes, avaliador, rng, nivel="L3", regra="dgm", mu_relatorio=0.0, sementes_por_nota=5, prova=10,
+            base_sementes=0):
+    \"\"\"Laço de auto-melhoria com arquivo (como em DarwinArchiveManager): o pai é o de maior nota guardada; o filho é uma
+    mutação dele. Devolve (arquivo, campeão), cada entrada (genoma, nota guardada). As sementes de avaliação são
+    renovadas a cada iteração (base_sementes + 1000·i), como benchmarks novos.\"\"\"
+    g0 = genoma_inicial()
+    arquivo = [(g0, avaliador.nota(g0, range(base_sementes, base_sementes + sementes_por_nota)))]
+    for i in range(1, iteracoes + 1):
+        pai, nota_pai = max(arquivo, key=lambda x: x[1])
+        filho = mutar(pai, rng, nivel, mu_relatorio)
+        sem = range(base_sementes + 1000 * i, base_sementes + 1000 * i + sementes_por_nota)
+        if regra == "dgm":
+            nota = avaliador.nota(filho, sem)
+            if nota > nota_pai:
+                arquivo.append((filho, nota))
+        else:
+            novas = [base_sementes + 1000 * i + 500 + j for j in range(prova)]
+            nf = [avaliador.nota(filho, [s]) for s in novas]
+            np_ = [avaliador.nota(pai, [s]) for s in novas]
+            if _t_pareado(nf, np_) > 3:
+                arquivo.append((filho, sum(nf) / len(nf)))
+    return arquivo, max(arquivo, key=lambda x: x[1])
+
+
+def auditar_ast(caminho):
+    \"\"\"Auditoria estática (sem executar nada) da arquitetura original: lê o arquivo com `ast` e responde
+    (1) quantos nós o LogicTransformer muda quando aplicado ao próprio arquivo (compara ast.dump antes e depois, com o
+    transformador reconstruído a partir do código-fonte, sem exec: visit_BinOp devolve o nó intacto);
+    (2) quais classes entram no texto que o laço muta (inspect.getsource(AgentHarness): só a classe AgentHarness);
+    (3) se run_benchmarks devolve uma constante, e qual;
+    (4) se o avaliador chama um método do próprio agente (autoavaliação).\"\"\"
+    import ast
+    fonte = open(caminho, encoding="utf-8").read()
+    arvore = ast.parse(fonte)
+    classes = {n.name: n for n in arvore.body if isinstance(n, ast.ClassDef)}
+
+    # (1) o transformador: visit_BinOp faz generic_visit e devolve o mesmo nó. Reproduzido sem exec:
+    class Identico(ast.NodeTransformer):
+        def visit_BinOp(self, node):
+            self.generic_visit(node)
+            return node
+    corpo = classes["SelfModificationEngine"].body[-1].body
+    visita = [n for n in ast.walk(classes["SelfModificationEngine"]) if isinstance(n, ast.FunctionDef) and n.name == "visit_BinOp"][0]
+    so_devolve_o_no = (isinstance(visita.body[-1], ast.Return) and isinstance(visita.body[-1].value, ast.Name)
+                       and visita.body[-1].value.id == "node")
+    antes = ast.dump(ast.parse(fonte))
+    depois = ast.dump(Identico().visit(ast.parse(fonte)))
+    nos_mudados = 0 if antes == depois else sum(1 for a, b in zip(antes, depois) if a != b)
+
+    # (2) o texto mutado
+    laco = [n for n in arvore.body if isinstance(n, ast.FunctionDef) and n.name == "main_evolution_loop"][0]
+    fonte_mutada = [ast.unparse(n) for n in ast.walk(laco) if isinstance(n, ast.Call) and ast.unparse(n.func) == "inspect.getsource"]
+
+    # (3) a métrica
+    rb = [n for n in classes["AgentHarness"].body if isinstance(n, ast.FunctionDef) and n.name == "run_benchmarks"][0]
+    ret = [n for n in ast.walk(rb) if isinstance(n, ast.Return)][0]
+    constante = ret.value.value if isinstance(ret.value, ast.Constant) else None
+
+    # (4) o avaliador
+    ev = classes["EnvironmentEvaluator"]
+    chama_agente = any(isinstance(n, ast.Call) and ast.unparse(n.func) == "agent_instance.run_benchmarks" for n in ast.walk(ev))
+
+    return {"transformador_so_devolve_o_no": so_devolve_o_no, "nos_mudados": nos_mudados, "linhas_do_corpo": len(corpo),
+            "texto_mutado": fonte_mutada, "run_benchmarks_constante": constante, "avaliador_pergunta_ao_agente": chama_agente,
+            "classes": sorted(classes)}
+"""
+
+# ====================================================================================================
+# synthai/revisado/semiotica.py  (53 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/semiotica.py'] = """\"\"\"Semiótica medida (Parte 42): a premissa é o significante, a resposta é o significado.
+
+- Quanto uma resposta acrescenta à sua premissa: a informação condicional por compressão, I(r | p) = C(p + r) − C(p),
+  com C o tamanho comprimido por zlib (nível 9). A redundância da resposta com a premissa é 1 − I(r | p)/C(r): 0 se a
+  premissa não ajuda em nada a comprimir a resposta, perto de 1 se a resposta já estava na premissa.
+- A arbitrariedade do signo (Saussure) num dicionário: a forma da palavra (os trigramas de letras do lema, o significante)
+  prevê o significado (a classe do sinset)? Comparada com a definição (o significado escrito por extenso).
+
+Só biblioteca padrão.
+\"\"\"
+
+import re
+import zlib
+
+from .engenharia_reversa import palavras
+
+
+def comprimido(texto):
+    return len(zlib.compress(texto.encode("utf-8"), 9))
+
+
+def informacao_condicional(premissa, resposta):
+    \"\"\"(C(r), I(r | p), redundância 1 − I/C), em bytes comprimidos.\"\"\"
+    c_r = comprimido(resposta)
+    i = comprimido(premissa + "\\n" + resposta) - comprimido(premissa)
+    return c_r, i, 1 - i / c_r
+
+
+def premissas_e_respostas(documento):
+    \"\"\"As perguntas de um documento da série ("### Pnnn (0x…). título") e o corpo de cada resposta, até o próximo
+    título de nível 1 a 3. Devolve [(número, premissa, resposta)].\"\"\"
+    blocos = re.split(r"\\n(?=#{1,3} )", documento)
+    res = []
+    for b in blocos:
+        m = re.match(r"### P(\\d+) \\([^)]*\\)\\. (.*)\\n", b)
+        if m:
+            res.append((int(m.group(1)), m.group(2).strip(), b[m.end():].strip()))
+    return res
+
+
+def retorno_da_premissa(premissa, resposta):
+    \"\"\"A fração das palavras de conteúdo da premissa (mais de 3 letras) que voltam na resposta.\"\"\"
+    p = {w for w in palavras(premissa) if len(w) > 3}
+    if not p:
+        return None
+    r = set(palavras(resposta))
+    return len(p & r) / len(p)
+
+
+def trigramas_de_forma(lema):
+    \"\"\"Os trigramas de letras de um lema, com as bordas marcadas: 'cão' -> {'^cã', 'cão', 'ão$'}.\"\"\"
+    x = "^" + lema.lower() + "$"
+    return frozenset(x[i:i + 3] for i in range(len(x) - 2))
+"""
+
+# ====================================================================================================
+# synthai/revisado/sentimento.py  (23 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/sentimento.py'] = """\"\"\"Sentimento (P35, P42, P68, P202, P78): o juízo de valor que contém os extremos.
+
+- pessimismo: ordena por nota − discordância (+ intuição);
+- quantilização: sorteia entre as `q` melhores, nunca vai direto ao topo;
+- último passo: sem futuro, a cautela vira caráter e o sorteio fica mais largo (`q_final`);
+- veto direto: descarta o que tem probabilidade de catástrofe alta demais para valer a pena perguntar.\"\"\"
+
+
+class Sentimento:
+    def __init__(self, q=0.05, q_final=0.2, risco_max=0.5):
+        self.q, self.q_final, self.risco_max = q, q_final, risco_max
+
+    def ordenar(self, situacao, intuicao):
+        return sorted(situacao.opcoes, key=lambda o: -(o.nota - o.discordancia + intuicao.bonus(o, situacao)))
+
+    def candidatas(self, ordem, situacao, rng):
+        q = self.q_final if situacao.horizonte > 1 and situacao.restantes == 0 else self.q
+        c = ordem[: max(1, int(q * len(ordem)))]
+        rng.shuffle(c)
+        return c + ordem[len(c):]
+
+    def inaceitavel(self, p):
+        return p > self.risco_max
+"""
+
+# ====================================================================================================
+# synthai/revisado/testes_abstencao_revisao.py  (227 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/testes_abstencao_revisao.py'] = """\"\"\"(Integrado na Parte 82, do pacote SYNTHAI_consolidado.py recebido do usuário; caminhos ajustados para synthai.revisado.)\"\"\"
+\"\"\"Ausência de ação, custos preservados e feedback somente de ações executadas.\"\"\"
+
+import math
+import unittest
+from unittest.mock import Mock, patch
+
+import calculos
+from calculos import _rng
+
+from .agente import Synthai
+from .ancora import SynthaiComAncora
+from .autorregulacao import SynthaiAutorregulada
+from .composta import SynthaiComposta
+from .mundos import CUSTO_LEITURA, Humano, MundoBandido, MundoSequencial, Opcao, Resultado, Situacao
+from .reconhecimento import SynthaiReconhecida
+
+
+def situacao(opcoes, restantes=0, horizonte=1, explorar=False):
+    sit = Situacao(opcoes, restantes, 0.0, Humano(_rng(1), eps0=0, fadiga=0), _rng(2), 1.0, horizonte)
+    sit.explorar = explorar
+    return sit
+
+
+def pensamento_fixo(agente, p):
+    pensamento = Mock(w=[0.0] * 4)
+    pensamento.p_catastrofe.return_value = p
+    agente.pensamento = pensamento
+    if hasattr(agente.percepcao, "pensamento"):
+        agente.percepcao.pensamento = pensamento
+    return pensamento
+
+
+class TesteDecisaoAdmissivel(unittest.TestCase):
+    def test_risco_excessivo_nao_vira_fallback(self):
+        a = Synthai()
+        pensamento_fixo(a, 0.99)
+        self.assertIsNone(a.decidir(situacao([Opcao(1, 0, 1000, True)])))
+        self.assertIsNone(a._escolha)
+
+    def test_veto_nao_vira_fallback(self):
+        a = Synthai()
+        pensamento_fixo(a, 0.1)
+        o = Opcao(1, 0, 1000, True)
+        sit = situacao([o])
+        self.assertIsNone(a.decidir(sit))
+        self.assertEqual(a.vetados_agora, [o])
+        self.assertEqual(sit.perguntas, 1)
+
+    def test_falta_de_orcamento_nao_autoriza_acao(self):
+        a = Synthai(carga_alvo=-1)
+        pensamento_fixo(a, 0.1)
+        sit = situacao([Opcao(1, 0, 1, False)])
+        self.assertIsNone(a.decidir(sit))
+        self.assertEqual(sit.perguntas, 0)
+
+    def test_procura_alternativa_apos_veto(self):
+        a = Synthai()
+        p = pensamento_fixo(a, 0)
+        vetada, aceita = Opcao(2, 0, 1000, True), Opcao(1, 0, 3, False)
+        p.p_catastrofe.side_effect = [0.1, 0]
+        self.assertIs(a.decidir(situacao([vetada, aceita])), aceita)
+        self.assertEqual(a.vetados_agora, [vetada])
+
+    def test_opcoes_vazias_limpam_estado_sem_percepcao(self):
+        a = Synthai()
+        p = pensamento_fixo(a, 0)
+        o = Opcao(1, 0, 1, False)
+        self.assertIs(a.decidir(situacao([o])), o)
+        a.percepcao.perceber = Mock(side_effect=AssertionError("não deve perceber sem opções"))
+        self.assertIsNone(a.decidir(situacao([])))
+        a.observar(Resultado(o, False, 0, 0, 1))
+        p.aprender.assert_not_called()
+        self.assertEqual(a.vetados_agora, [])
+
+    def test_variantes_herdam_abstencao(self):
+        for cls in (SynthaiReconhecida, SynthaiAutorregulada, SynthaiComAncora):
+            with self.subTest(agente=cls.__name__):
+                a = cls()
+                pensamento_fixo(a, 0.99)
+                self.assertIsNone(a.decidir(situacao([Opcao(1, 0, 1, False)])))
+                self.assertIsNone(a.decidir(situacao([], explorar=True)))
+
+
+class TesteAbstencaoNosMundos(unittest.TestCase):
+    def test_sequencial_conta_custos_sem_recompensa_ou_feedback(self):
+        mundo = MundoSequencial(1, passos=3, n_acoes=1)
+        mundo.humano.eps0 = mundo.humano.fadiga = 0
+        a = Synthai()
+        p = pensamento_fixo(a, 0.1)
+        with patch("synthai.revisado.mundos._opcoes", side_effect=lambda *args: [Opcao(1, 0, 1000, True)]):
+            r = mundo.rodar(a, 2)
+        self.assertEqual(r["retorno"], -mundo.m["custo"] - CUSTO_LEITURA)
+        self.assertEqual(r["bruto"], 0)
+        self.assertEqual(r["catastrofes"], 0)
+        self.assertEqual(r["abstencoes"], 1)
+        self.assertEqual(r["acoes"], 0)
+        self.assertEqual(r["cobertura"], 0)
+        self.assertEqual(r["concluidos"], 0)
+        self.assertEqual((r["perguntas"], r["leituras"]), (1, 1))
+        p.aprender.assert_not_called()
+
+    def test_sequencial_preserva_ganho_anterior_a_abstencao(self):
+        mundo = MundoSequencial(1, passos=3, n_acoes=1)
+        a = Synthai()
+        p = pensamento_fixo(a, 0)
+        p.p_catastrofe.side_effect = [0, 0.99]
+        with patch("synthai.revisado.mundos._opcoes", side_effect=[
+            [Opcao(1, 0, 3, False)], [Opcao(1, 0, 1000, True)]
+        ]):
+            r = mundo.rodar(a, 1)
+        self.assertEqual(r["bruto"], 3)
+        self.assertEqual(r["retorno"], 3 - 2*CUSTO_LEITURA)
+        self.assertEqual((r["acoes"], r["abstencoes"], r["concluidos"]), (1, 1, 0))
+        self.assertEqual(r["cobertura"], 1/3)
+        p.aprender.assert_called_once()
+
+    def test_horizonte_completo_tem_cobertura_um(self):
+        mundo = MundoSequencial(1, passos=2, n_acoes=1)
+        a = Synthai()
+        pensamento_fixo(a, 0)
+        with patch("synthai.revisado.mundos._opcoes", side_effect=lambda *args: [Opcao(1, 0, 3, False)]):
+            r = mundo.rodar(a, 2)
+        self.assertEqual((r["acoes"], r["abstencoes"], r["concluidos"], r["cobertura"]), (2, 0, 1, 1))
+
+    def test_catastrofe_sequencial_interrompe_sem_contar_abstencao(self):
+        for passos in (1, 2):
+            with self.subTest(passos=passos):
+                mundo = MundoSequencial(1, passos=passos, n_acoes=1)
+                a = Synthai()
+                pensamento_fixo(a, 0)
+                with patch("synthai.revisado.mundos._opcoes", return_value=[Opcao(1, 0, 1000, True)]):
+                    r = mundo.rodar(a, 1)
+                self.assertEqual((r["catastrofes"], r["abstencoes"], r["concluidos"], r["cobertura"]),
+                                 (1, 0, 0, 1/passos))
+
+    def test_bandido_sem_braco_seguro_pode_encerrar(self):
+        mundo = MundoBandido(1, bracos=1, puxadas=3)
+        mundo.humano.eps0 = 0
+        a = Synthai()
+        p = pensamento_fixo(a, 0.1)
+        with patch("synthai.revisado.mundos._gerar_acoes", return_value=[(1, 0, 1000, True)]):
+            r = mundo.rodar(a, 1)
+        self.assertEqual(r["retorno"], -0.1-CUSTO_LEITURA)
+        self.assertEqual((r["acoes"], r["abstencoes"], r["concluidos"], r["cobertura"]), (0, 1, 0, 0))
+        self.assertEqual(mundo.diagnostico, {"recompensa": 0, "teto": 0, "lai_robbins": 0})
+        self.assertEqual(a.vetados_agora[0].vezes, 0)
+        p.aprender.assert_not_called()
+
+    def test_bandido_nao_apaga_teto_apos_abstencao(self):
+        mundo = MundoBandido(1, bracos=1, puxadas=3)
+        uniforme_original = mundo.fontes.uniforme
+        mundo.fontes = Mock(wraps=mundo.fontes)
+        mundo.fontes.uniforme.side_effect = lambda canal, *coords: (
+            0 if canal == "recompensas" else uniforme_original(canal, *coords))
+        a = Synthai()
+        p = pensamento_fixo(a, 0)
+        p.p_catastrofe.side_effect = [0, 0.99]
+        with patch("synthai.revisado.mundos._gerar_acoes", return_value=[(1, 0, 0, False)]):
+            r = mundo.rodar(a, 1)
+        self.assertEqual((r["bruto"], r["acoes"], r["abstencoes"], r["cobertura"]), (1, 1, 1, 1/3))
+        self.assertEqual(mundo.diagnostico["teto"], 1.5)
+        self.assertEqual(mundo.diagnostico["recompensa"], 1)
+        self.assertEqual(p.aprender.call_count, 1)
+        self.assertEqual(p.aprender.call_args.args[0].vezes, 1)
+
+
+class TesteFeedbackNaComposicao(unittest.TestCase):
+    def test_autorregulacao_nao_concatena_episodio_abandonado(self):
+        a = SynthaiAutorregulada(newton=False)
+        p = pensamento_fixo(a, 0)
+        p.p_catastrofe.side_effect = [0, 0.99, 0, 0]
+        mundo = MundoSequencial(1, passos=2, n_acoes=1)
+        with patch("synthai.revisado.mundos._opcoes", side_effect=[
+            [Opcao(1, 0, 2, False)], [Opcao(1, 0, 1000, True)],
+            [Opcao(1, 0, 5, False)], [Opcao(1, 0, 7, False)]
+        ]):
+            r = mundo.rodar(a, 2)
+        self.assertEqual(a.futuro_soma, {0: 12, 1: 7})
+        self.assertEqual(a.futuro_n, {0: 1, 1: 1})
+        self.assertEqual(a.ganhos, [])
+        self.assertEqual(a.decisoes, 3)
+        self.assertEqual(a.n_r, 3)
+        self.assertIsNone(a._pendente)
+        self.assertEqual(r["concluidos"], 0.5)
+
+    def test_autorregulacao_sem_orcamento_nao_cria_contrafactual(self):
+        a = SynthaiAutorregulada(carga_alvo=-1)
+        p = pensamento_fixo(a, 0.1)
+        o = Opcao(1, 0, 1, False)
+        a._pendente = (o, 0.1, 0, 1)
+        a.ganhos = [10]
+        self.assertIsNone(a.decidir(situacao([o])))
+        self.assertEqual((a.n_d, a.decisoes), (0, 0))
+        self.assertIsNone(a._pendente)
+        self.assertEqual(a.ganhos, [])
+        a.observar(Resultado(o, False, 0, 0, 1000))
+        self.assertEqual(a.n_r, 0)
+        p.aprender.assert_not_called()
+
+    def test_composta_preserva_vetos_e_bloqueia_feedback_sem_acao(self):
+        fora, bandido = Mock(), Mock()
+        o = Opcao(1, 0, 1, False)
+        fora.decidir.return_value = o
+        bandido.decidir.return_value = None
+        bandido.vetados_agora = [o]
+        a = SynthaiComposta(fora=fora, bandido=bandido)
+        self.assertIs(a.decidir(situacao([o])), o)
+        res = Resultado(o, False, 0, 0, 1)
+        a.observar(res)
+        a.observar(res)
+        fora.observar.assert_called_once_with(res)
+        self.assertIsNone(a.decidir(situacao([o], explorar=True)))
+        self.assertEqual(a.vetados_agora, [o])
+        a.observar(res)
+        bandido.observar.assert_not_called()
+
+
+class TesteInstrumentacaoHistorica(unittest.TestCase):
+    # test_auditorias_nao_inventam_valor_de_substituta_ausente: retirado na integração (Parte 82). Ele exercita as versões REESCRITAS
+    # de p287, p314, p316 e p322 do calculos.py do pacote recebido, que não foram integradas (são experimentos históricos medidos;
+    # reescrevê-las mudaria resultados publicados). As correções de abstenção que elas usam estão neste subpacote.
+    pass
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/revisado/testes_aleatoriedade_revisao.py  (295 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/testes_aleatoriedade_revisao.py'] = """\"\"\"(Integrado na Parte 82, do pacote SYNTHAI_consolidado.py recebido do usuário; caminhos ajustados para synthai.revisado.)\"\"\"
+\"\"\"Eventos comuns apesar de calibração, consultas, escolhas e durações diferentes.\"\"\"
+
+import json
+import os
+import subprocess
+import sys
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+from calculos import _rng
+
+from .aleatoriedade import FontesAleatorias
+from .mundos import Humano, MundoBandido, MundoSequencial, Opcao, Situacao
+
+
+def assinatura(o):
+    # A régua pode registrar o mundo; isto não é uma interface pública do agente.
+    return (o.comite, o.discordancia, o._valor, o._catastrofe, o._consequencia, o.estimativa)
+
+
+def assinatura_hist(hist):
+    return [[(assinatura(o), rotulo, leitura) for o, rotulo, leitura in ep] for ep in hist]
+
+
+class RastreioSequencial:
+    vetados_agora = ()
+
+    def __init__(self, ler=(), perguntar=(), acao=0, parar_em=None):
+        self.ler, self.perguntar, self.acao, self.parar_em = ler, perguntar, acao, parar_em
+        self.episodio = -1
+        self.eventos, self.resultados = {}, []
+
+    def decidir(self, sit):
+        passo = sit.horizonte - 1 - sit.restantes
+        if passo == 0:
+            self.episodio += 1
+        leituras = {i: sit.ler_sensor(sit.opcoes[i]) for i in self.ler}
+        consultas, ocorrencias = [], {}
+        for i in self.perguntar:
+            n = ocorrencias.get(i, 0)
+            u = sit._ruido_pergunta(sit.opcoes[i], n)
+            consultas.append((i, n, u, sit.perguntar(sit.opcoes[i])))
+            ocorrencias[i] = n + 1
+        self.eventos[self.episodio, passo] = {
+            "opcoes": tuple(assinatura(o) for o in sit.opcoes), "leituras": leituras,
+            "consultas": consultas, "carga": sit.carga_do_humano, "leituras_cobradas": sit.leituras}
+        if passo == self.parar_em or not sit.opcoes:
+            return None
+        return sit.opcoes[self.acao]
+
+    def observar(self, res):
+        self.resultados.append((res.valor_recebido, res.catastrofe))
+
+
+class RastreioBandido:
+    def __init__(self, escolhas=(0,), ler=(), perguntar=(), parar_primeira=False, vetar_primeiro=False):
+        self.escolhas, self.ler, self.perguntar = escolhas, ler, perguntar
+        self.parar_primeira, self.vetar_primeiro = parar_primeira, vetar_primeiro
+        self.rodada = -1
+        self.eventos, self.resultados = {}, {}
+        self.vetados_agora = []
+
+    def nova_rodada(self):
+        self.rodada += 1
+        self.puxada = 0
+
+    def decidir(self, sit):
+        self.puxada += 1
+        if self.puxada == 1:
+            self.bracos = list(sit.opcoes)
+        self.vetados_agora = [self.bracos[0]] if self.vetar_primeiro and self.puxada == 1 else []
+        leituras = {i: sit.ler_sensor(self.bracos[i]) for i in self.ler}
+        consultas, ocorrencias = [], {}
+        for i in self.perguntar:
+            n = ocorrencias.get(i, 0)
+            u = sit._ruido_pergunta(self.bracos[i], n)
+            consultas.append((i, n, u, sit.perguntar(self.bracos[i])))
+            ocorrencias[i] = n + 1
+        self.eventos[self.rodada, self.puxada] = {
+            "opcoes": tuple((o.comite, o.discordancia, o._valor, o._catastrofe) for o in self.bracos),
+            "leituras": leituras, "consultas": consultas, "leituras_cobradas": sit.leituras,
+            "disponiveis": tuple(self.bracos.index(o) for o in sit.opcoes)}
+        if self.parar_primeira and self.rodada == 0 or not sit.opcoes:
+            return None
+        i = self.escolhas[min(self.puxada - 1, len(self.escolhas) - 1)]
+        return self.bracos[i]
+
+    def observar(self, res):
+        self.resultados[self.rodada, self.puxada] = {
+            "braco": self.bracos.index(res.opcao), "recompensa": res.valor_recebido, "catastrofe": res.catastrofe}
+
+
+class TesteFontesCoordenadas(unittest.TestCase):
+    def test_repetir_evento_nao_depende_de_consumo_de_outros(self):
+        f = FontesAleatorias(17, "teste")
+        antes = f.uniforme("recompensas", 2, 3, 1)
+        outro = f.gerador("consultas", 2, 3, 1)
+        for _ in range(100):
+            outro.random()
+        self.assertEqual(f.uniforme("recompensas", 2, 3, 1), antes)
+        self.assertNotEqual(f.uniforme("recompensas", 2, 3, 2), antes)
+        self.assertNotEqual(FontesAleatorias(17, "outro").uniforme("recompensas", 2, 3, 1), antes)
+
+    def test_derivacao_nao_depende_de_pythonhashseed(self):
+        programa = ("import json; from synthai.revisado.aleatoriedade import FontesAleatorias; "
+                    "f=FontesAleatorias(17,'teste'); "
+                    "print(json.dumps([f.uniforme('consultas',1,2,3),f.gerador('sensor',4).gauss(0,1)]))")
+        saidas = []
+        for valor in ("1", "97"):
+            ambiente = dict(os.environ, PYTHONHASHSEED=valor)
+            saidas.append(subprocess.check_output([sys.executable, "-c", programa], env=ambiente,
+                                                 cwd=Path(__file__).resolve().parents[2], text=True))
+        self.assertEqual(json.loads(saidas[0]), json.loads(saidas[1]))
+
+    def test_contextos_invalidos_sao_recusados(self):
+        for semente, mundo in ((True, "teste"), (1.5, "teste"), (1, "")):
+            with self.subTest(semente=semente, mundo=mundo), self.assertRaises(ValueError):
+                FontesAleatorias(semente, mundo)
+        f = FontesAleatorias(1, "teste")
+        for canal, coords in (("", ()), ("x", (-1,)), ("x", (True,)), ("x", (1.5,))):
+            with self.subTest(canal=canal, coords=coords), self.assertRaises(ValueError):
+                f.gerador(canal, *coords)
+
+
+class TesteCalibracaoIndependente(unittest.TestCase):
+    def test_quantidade_de_historico_nao_desloca_execucao(self):
+        for tipo in ("sequencial", "bandido"):
+            referencias = []
+            for n in (0, 2, 5):
+                mundo = (MundoSequencial(8, passos=2, n_acoes=5, p_cat=0) if tipo == "sequencial"
+                         else MundoBandido(8, bracos=5, puxadas=2))
+                mundo.historico_auditado(n)
+                a = RastreioSequencial(ler=(0,)) if tipo == "sequencial" else RastreioBandido(ler=(0,))
+                mundo.rodar(a, 2)
+                referencias.append((a.eventos, a.resultados))
+            with self.subTest(tipo=tipo):
+                self.assertEqual(referencias[0], referencias[1])
+                self.assertEqual(referencias[1], referencias[2])
+
+    def test_historico_em_lotes_com_execucao_entre_eles(self):
+        for tipo in ("sequencial", "bandido"):
+            fazer = lambda: (MundoSequencial(8, passos=2, n_acoes=5, p_cat=0) if tipo == "sequencial"
+                             else MundoBandido(8, bracos=5, puxadas=2))
+            completo, dividido = fazer(), fazer()
+            alvo = assinatura_hist(completo.historico_auditado(5))
+            inicio = dividido.historico_auditado(2)
+            a = RastreioSequencial(perguntar=(0,)) if tipo == "sequencial" else RastreioBandido(perguntar=(0,))
+            dividido.rodar(a, 2)
+            fim = dividido.historico_auditado(3)
+            with self.subTest(tipo=tipo):
+                self.assertEqual(assinatura_hist(inicio + fim), alvo)
+                self.assertEqual(dividido.protocolo_aleatorio["historicos_emitidos"], 5)
+
+    def test_quantidades_invalidas_nao_avancam_contadores(self):
+        for fazer, a, contador in ((lambda: MundoSequencial(8), RastreioSequencial(), "episodios_iniciados"),
+                                   (lambda: MundoBandido(8), RastreioBandido(), "rodadas_iniciadas")):
+            mundo = fazer()
+            for n in (-1, True, 1.5):
+                with self.assertRaises(ValueError):
+                    mundo.historico_auditado(n)
+            for n in (0, -1, True, 1.5):
+                with self.assertRaises(ValueError):
+                    mundo.rodar(a, n)
+            self.assertEqual(mundo.historico_auditado(0), [])
+            self.assertEqual(mundo.protocolo_aleatorio[contador], 0)
+            self.assertEqual(mundo.protocolo_aleatorio["historicos_emitidos"], 0)
+
+
+class TesteSensorEConsultas(unittest.TestCase):
+    def test_ordem_subconjunto_e_repeticao_nao_deslocam_leitura_comum(self):
+        a, b = RastreioSequencial(ler=(2, 0, 1, 1), parar_em=0), RastreioSequencial(ler=(1,), parar_em=0)
+        ra = MundoSequencial(8, passos=1, n_acoes=3, p_cat=0).rodar(a, 1)
+        rb = MundoSequencial(8, passos=1, n_acoes=3, p_cat=0).rodar(b, 1)
+        self.assertEqual(a.eventos[0, 0]["leituras"][1], b.eventos[0, 0]["leituras"][1])
+        self.assertEqual((ra["leituras"], rb["leituras"]), (3, 1))
+
+    def test_consultas_repetidas_nao_deslocam_outra_opcao(self):
+        a, b = RastreioSequencial(perguntar=(0, 0, 1), parar_em=0), RastreioSequencial(perguntar=(1,), parar_em=0)
+        MundoSequencial(8, passos=1, n_acoes=3, p_cat=0).rodar(a, 1)
+        MundoSequencial(8, passos=1, n_acoes=3, p_cat=0).rodar(b, 1)
+        qa, qb = a.eventos[0, 0]["consultas"], b.eventos[0, 0]["consultas"]
+        self.assertNotEqual(qa[0][2], qa[1][2])
+        self.assertEqual(qa[-1], qb[0])
+
+    def test_consultas_e_leituras_adicionais_nao_deslocam_cenarios(self):
+        a, b = RastreioSequencial(ler=(0, 1), perguntar=(0, 0, 1)), RastreioSequencial(ler=(1,))
+        ma, mb = MundoSequencial(8, passos=2, n_acoes=3, p_cat=0), MundoSequencial(8, passos=2, n_acoes=3, p_cat=0)
+        ma.rodar(a, 3)
+        mb.rodar(b, 3)
+        for chave in a.eventos:
+            self.assertEqual(a.eventos[chave]["opcoes"], b.eventos[chave]["opcoes"])
+            self.assertEqual(a.eventos[chave]["leituras"][1], b.eventos[chave]["leituras"][1])
+        self.assertGreater(ma.humano.carga, mb.humano.carga)
+
+    def test_mesmo_uniforme_nao_apaga_efeito_da_fadiga(self):
+        o = Opcao(1, 0, 1, False)
+        descansado, cansado = Humano(_rng(1)), Humano(_rng(1))
+        cansado.carga = 1
+        self.assertFalse(descansado.responder(o, uniforme=0.2))
+        self.assertTrue(cansado.responder(o, uniforme=0.2))
+
+    def test_fallback_sequencial_de_situacao_permanece(self):
+        o = Opcao(1, 0, 1, False)
+        humano = Humano(_rng(1), eps0=0)
+        sit = Situacao([o], 0, 0, humano, _rng(2), 1)
+        leitura = sit.ler_sensor(o)
+        self.assertEqual(sit.ler_sensor(o), leitura)
+        self.assertEqual(sit.leituras, 1)
+        self.assertFalse(sit.perguntar(o))
+        self.assertEqual(sit.perguntas, 1)
+        class HumanoAntigo(Humano):
+            def responder(self, opcao):
+                return True
+        antigo = Situacao([o], 0, 0, HumanoAntigo(_rng(1)), _rng(2), 1)
+        self.assertTrue(antigo.perguntar(o))
+
+
+class TesteDuracoesEEscolhasDiferentes(unittest.TestCase):
+    def test_abstencao_nao_desloca_episodio_seguinte(self):
+        a, b = RastreioSequencial(parar_em=0), RastreioSequencial()
+        MundoSequencial(8, passos=3, n_acoes=3, p_cat=0).rodar(a, 3)
+        MundoSequencial(8, passos=3, n_acoes=3, p_cat=0).rodar(b, 3)
+        for ep in range(3):
+            self.assertEqual(a.eventos[ep, 0]["opcoes"], b.eventos[ep, 0]["opcoes"])
+
+    def test_catastrofe_nao_desloca_episodio_seguinte(self):
+        def opcoes(rng, m, com_futuro):
+            nota = rng.random()
+            return [Opcao(nota, 0, 1000, True), Opcao(-nota, 0, 1, False)]
+        a, b = RastreioSequencial(acao=0), RastreioSequencial(acao=1)
+        with patch("synthai.revisado.mundos._opcoes", side_effect=opcoes):
+            ra = MundoSequencial(8, passos=3, n_acoes=2).rodar(a, 3)
+            rb = MundoSequencial(8, passos=3, n_acoes=2).rodar(b, 3)
+        self.assertEqual((ra["catastrofes"], rb["catastrofes"]), (1, 0))
+        self.assertNotEqual(ra["cobertura"], rb["cobertura"])
+        for ep in range(3):
+            self.assertEqual(a.eventos[ep, 0]["opcoes"], b.eventos[ep, 0]["opcoes"])
+
+    def test_bandido_escolhas_anteriores_nao_deslocam_resultado_comum(self):
+        for semente in (2, 22):
+            a, b = RastreioBandido(escolhas=(0, 1)), RastreioBandido(escolhas=(1, 1))
+            with patch("synthai.revisado.mundos._gerar_acoes", return_value=[(0, 0, 0, False), (1, 0, 0, True)]):
+                MundoBandido(semente, bracos=2, puxadas=2).rodar(a, 1)
+                MundoBandido(semente, bracos=2, puxadas=2).rodar(b, 1)
+            with self.subTest(semente=semente):
+                self.assertEqual(a.resultados[0, 2], b.resultados[0, 2])
+
+    def test_bandido_consultas_e_sensor_nao_deslocam_recompensas(self):
+        a, b = RastreioBandido(ler=(2, 0, 1), perguntar=(0, 0, 1)), RastreioBandido(ler=(1,), perguntar=(1,))
+        MundoBandido(8, bracos=3, puxadas=3).rodar(a, 2)
+        MundoBandido(8, bracos=3, puxadas=3).rodar(b, 2)
+        self.assertEqual(a.resultados, b.resultados)
+        for chave in a.eventos:
+            self.assertEqual(a.eventos[chave]["leituras"][1], b.eventos[chave]["leituras"][1])
+            self.assertEqual(a.eventos[chave]["consultas"][-1], b.eventos[chave]["consultas"][0])
+        self.assertEqual(a.eventos[0, 2]["leituras_cobradas"], 0)
+
+    def test_vetos_nao_renumeram_ruido_dos_bracos_restantes(self):
+        a, b = RastreioBandido(escolhas=(1,), ler=(1,), perguntar=(1,), vetar_primeiro=True), \\
+               RastreioBandido(escolhas=(1,), ler=(1,), perguntar=(1,))
+        with patch("synthai.revisado.mundos._gerar_acoes", return_value=[(0, 0, 0, False), (1, 0, 0, True)]):
+            MundoBandido(8, bracos=2, puxadas=2).rodar(a, 1)
+            MundoBandido(8, bracos=2, puxadas=2).rodar(b, 1)
+        self.assertEqual(a.eventos[0, 2]["disponiveis"], (1,))
+        self.assertEqual(b.eventos[0, 2]["disponiveis"], (0, 1))
+        self.assertEqual(a.eventos[0, 2]["consultas"], b.eventos[0, 2]["consultas"])
+        self.assertEqual(a.resultados[0, 2], b.resultados[0, 2])
+
+    def test_rodada_abandonada_nao_desloca_rodada_seguinte(self):
+        a, b = RastreioBandido(parar_primeira=True), RastreioBandido()
+        MundoBandido(8, bracos=3, puxadas=3).rodar(a, 2)
+        MundoBandido(8, bracos=3, puxadas=3).rodar(b, 2)
+        self.assertEqual(a.eventos[1, 1]["opcoes"], b.eventos[1, 1]["opcoes"])
+        self.assertEqual(a.resultados[1, 1], b.resultados[1, 1])
+
+    def test_execucao_em_lotes_preserva_eventos_e_metricas(self):
+        for tipo in ("sequencial", "bandido"):
+            fazer = lambda: (MundoSequencial(8, passos=2, n_acoes=3, p_cat=0) if tipo == "sequencial"
+                             else MundoBandido(8, bracos=3, puxadas=3))
+            completo, dividido = fazer(), fazer()
+            a = RastreioSequencial(ler=(0,), perguntar=(0,)) if tipo == "sequencial" else RastreioBandido(ler=(0,))
+            b = RastreioSequencial(ler=(0,), perguntar=(0,)) if tipo == "sequencial" else RastreioBandido(ler=(0,))
+            alvo = completo.rodar(a, 4)
+            inicio, fim = dividido.rodar(b, 1), dividido.rodar(b, 3)
+            with self.subTest(tipo=tipo):
+                self.assertEqual(a.eventos, b.eventos)
+                self.assertEqual(a.resultados, b.resultados)
+                for campo in alvo:
+                    self.assertAlmostEqual(alvo[campo], (inicio[campo] + 3*fim[campo])/4)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/revisado/testes_metacognicao_revisao.py  (33 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/testes_metacognicao_revisao.py'] = """\"\"\"(Integrado na Parte 82, do pacote SYNTHAI_consolidado.py recebido do usuário; caminhos ajustados para synthai.revisado.)\"\"\"
+\"\"\"Regressões para a validade das comparações usadas na avaliação.\"\"\"
+import math
+import unittest
+from .metacognicao import comparacao_pareada
+
+class ComparacaoPareadaTestes(unittest.TestCase):
+    def test_diferencas_constantes_nao_autorizam_teste_t(self):
+        for delta in (-1, 0, 1):
+            with self.subTest(delta=delta):
+                m, dp, t = comparacao_pareada([1, 2, 3], [1+delta, 2+delta, 3+delta])
+                self.assertEqual(m, delta)
+                self.assertEqual(dp, 0)
+                self.assertTrue(math.isnan(t))
+                self.assertFalse(t > 3)
+
+    def test_resultado_conhecido_e_inversao_do_sinal(self):
+        # Diferenças 1, 2, 3: média 2, desvio amostral 1.
+        a, b = [0, 0, 0], [1, 2, 3]
+        self.assertEqual(comparacao_pareada(a, b)[:2], (2, 1))
+        self.assertAlmostEqual(comparacao_pareada(a, b)[2], 2*math.sqrt(3))
+        self.assertAlmostEqual(comparacao_pareada(b, a)[2], -2*math.sqrt(3))
+
+    def test_amostras_invalidas_sao_recusadas(self):
+        casos = [([], []), ([1], [2]), ([1, 2], [3]),
+                 ([1, math.nan], [1, 2]), ([1, 2], [1, math.inf]),
+                 ([-1e308, 0], [1e308, 0])]
+        for a, b in casos:
+            with self.subTest(a=a, b=b), self.assertRaises(ValueError):
+                comparacao_pareada(a, b)
+
+    def test_aceita_iteradores(self):
+        self.assertEqual(comparacao_pareada(iter([0,0,0]), iter([1,2,3]))[:2], (2,1))
+"""
+
+# ====================================================================================================
+# synthai/revisado/testes_selo_revisao.py  (201 linhas)
+# ====================================================================================================
+FONTES['synthai/revisado/testes_selo_revisao.py'] = """\"\"\"(Integrado na Parte 82, do pacote SYNTHAI_consolidado.py recebido do usuário; caminhos ajustados para synthai.revisado.)\"\"\"
+\"\"\"Integridade do benchmark, recusas sem publicação e reprodução dos registros.\"\"\"
+
+import hashlib
+import json
+import random
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+from types import FunctionType
+from unittest.mock import Mock, patch
+
+from . import decisao, rsi
+from .rsi import AvaliadorSelado, ConfiguracaoAvaliacao, genoma_inicial
+
+
+class TesteDependenciasSeladas(unittest.TestCase):
+    def setUp(self):
+        self.av = AvaliadorSelado(k=3, t=30)
+
+    def recusada(self):
+        with self.assertRaises(RuntimeError):
+            self.av.nota(genoma_inicial(), [1, 2])
+        self.assertEqual(self.av.chamadas, 0)
+        self.assertEqual(self.av.registros, ())
+
+    def test_reproducao_da_troca_de_rodar_bandido(self):
+        falsificador = Mock(return_value=[0])
+        with patch.object(rsi, "rodar_bandido", falsificador):
+            self.recusada()
+        falsificador.assert_not_called()
+
+    def test_troca_do_metodo_do_aprendiz(self):
+        with patch.object(decisao.QEpsilon, "atualizar", lambda *args: None):
+            self.recusada()
+
+    def test_alteracao_de_codigo_sem_trocar_objeto(self):
+        funcao = decisao.QEpsilon.atualizar
+        original = funcao.__code__
+        def nada(self, braco, recompensa):
+            pass
+        try:
+            funcao.__code__ = nada.__code__
+            self.recusada()
+        finally:
+            funcao.__code__ = original
+
+    def test_alteracao_de_defaults_e_kwdefaults(self):
+        for campo, valor in (("__defaults__", (1, 1)), ("__kwdefaults__", {"t": 1})):
+            with self.subTest(campo=campo), patch.object(rsi.regret_do_genoma, campo, valor):
+                self.recusada()
+
+    def test_rebinding_de_funcao_com_codigo_identico(self):
+        f = rsi.rodar_bandido
+        copia = FunctionType(f.__code__, f.__globals__, f.__name__, f.__defaults__, f.__closure__)
+        copia.__qualname__ = f.__qualname__
+        with patch.object(rsi, "rodar_bandido", copia):
+            # O manifesto é igual; a identidade privada detecta o rebinding.
+            self.assertEqual(self.av.assinatura(), self.av.selo)
+            self.recusada()
+
+    def test_binding_do_modulo_de_origem_tambem_e_verificado(self):
+        with patch.object(decisao, "rodar_bandido", lambda *args: [0]):
+            self.recusada()
+
+    def test_metodos_do_rng_sao_verificados(self):
+        for metodo in ("choice", "seed", "_randbelow", "random"):
+            with self.subTest(metodo=metodo), patch.object(random.Random, metodo, lambda *args: 0):
+                self.recusada()
+
+    def test_global_que_substitui_builtin_e_verificado(self):
+        with patch.object(decisao, "max", lambda *args: 0, create=True):
+            self.recusada()
+
+    def test_adicao_de_atributo_da_classe_invalida_manifesto(self):
+        with patch.object(decisao.QEpsilon, "novo_atributo", 1, create=True):
+            self.recusada()
+
+    def test_arquivo_alterado_ou_ausente_e_recusado(self):
+        with tempfile.TemporaryDirectory() as d:
+            copia = Path(d) / "decisao.py"
+            copia.write_bytes(self.av._arquivos["decisao.py"].read_bytes())
+            self.av._arquivos["decisao.py"] = copia
+            # Localização diferente com conteúdo igual conserva o manifesto.
+            self.assertEqual(self.av.assinatura(), self.av.selo)
+            copia.write_bytes(copia.read_bytes() + b"\\n# mudanca\\n")
+            self.recusada()
+            copia.unlink()
+            self.recusada()
+
+    def test_configuracao_nao_pode_mudar_apos_criacao(self):
+        self.av._config = ConfiguracaoAvaliacao(k=1, t=1)
+        self.recusada()
+
+    def test_limites_do_genoma_nao_podem_mudar_apos_criacao(self):
+        with patch.dict(rsi.LIMITES, {"alfa": (0, 1)}):
+            self.recusada()
+
+    def test_reselar_tag_publica_nao_aprova_mudanca(self):
+        with patch.object(rsi.regret_do_genoma, "__defaults__", (1, 1)):
+            self.av.selo = self.av.assinatura()
+            self.recusada()
+
+    def test_mutacao_durante_calculo_nao_publica_nota(self):
+        original, rodar_original = rsi.regret_do_genoma, rsi.rodar_bandido
+        def muda_depois(genoma, sementes, k, t):
+            nota = original(genoma, sementes, k, t)
+            rsi.rodar_bandido = lambda *args: [0]
+            return nota
+        try:
+            with patch.object(rsi, "regret_do_genoma", muda_depois):
+                # A base é deliberadamente instrumentada para testar a checagem posterior.
+                self.av = AvaliadorSelado(k=3, t=30)
+                self.recusada()
+        finally:
+            rsi.rodar_bandido = rodar_original
+
+    def test_iterador_que_muda_dependencias_e_recusado_antes_do_calculo(self):
+        falsificador = Mock(return_value=[0])
+        def sementes():
+            yield 1
+            rsi.rodar_bandido = falsificador
+            yield 2
+        original = rsi.rodar_bandido
+        try:
+            with self.assertRaises(RuntimeError):
+                self.av.nota(genoma_inicial(), sementes())
+            self.assertEqual(self.av.registros, ())
+            falsificador.assert_not_called()
+        finally:
+            rsi.rodar_bandido = original
+
+
+class TesteRegistrosEReproducao(unittest.TestCase):
+    def test_nota_e_registro_podem_ser_reproduzidos(self):
+        av = AvaliadorSelado(k=4, t=50)
+        genoma = genoma_inicial()
+        nota = av.nota(genoma, iter([1, 2, 3]))
+        registro = av.registros[0]
+        replay = AvaliadorSelado(**registro["configuracao"])
+        self.assertEqual(replay.selo, registro["selo"])
+        self.assertEqual(replay.nota(registro["genoma"], registro["sementes"]), nota)
+        self.assertEqual(nota, -rsi.regret_do_genoma(genoma, [1, 2, 3], k=4, t=50))
+        self.assertEqual(av.chamadas, 1)
+        checksum = registro.pop("sha256")
+        canonico = json.dumps(registro, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+        self.assertEqual(hashlib.sha256(canonico.encode()).hexdigest(), checksum)
+
+    def test_copias_publicas_nao_alteram_manifesto_ou_historico(self):
+        av = AvaliadorSelado(k=3, t=20)
+        genoma = genoma_inicial()
+        av.nota(genoma, [1])
+        genoma["alfa"] = 0.9
+        registro = av.registros[0]
+        registro["genoma"]["alfa"] = 1
+        registro["sementes"].append(2)
+        manifesto = av.manifesto
+        manifesto["configuracao"]["t"] = 1
+        self.assertEqual(av.registros[0]["genoma"]["alfa"], 0.1)
+        self.assertEqual(av.registros[0]["sementes"], [1])
+        self.assertEqual(av.manifesto["configuracao"]["t"], 20)
+
+    def test_selo_e_estavel_entre_processos(self):
+        av = AvaliadorSelado(k=3, t=20)
+        programa = "from synthai.revisado.rsi import AvaliadorSelado; print(AvaliadorSelado(k=3,t=20).selo)"
+        outro = subprocess.check_output([sys.executable, "-c", programa],
+                                       cwd=Path(__file__).resolve().parents[2], text=True).strip()
+        self.assertEqual(av.selo, outro)
+
+    def test_configuracoes_distintas_tem_selos_distintos(self):
+        self.assertNotEqual(AvaliadorSelado(k=3, t=20).selo, AvaliadorSelado(k=3, t=21).selo)
+
+    def test_entradas_invalidas_nao_publicam_registros(self):
+        av = AvaliadorSelado(k=3, t=20)
+        casos = [(genoma_inicial(), []), (genoma_inicial(), [True]), (genoma_inicial(), [1.5]),
+                 (dict(genoma_inicial(), alfa=0), [1]), (dict(genoma_inicial(), eps=float("nan")), [1]),
+                 (dict(genoma_inicial(), q0=True), [1]), ({}, [1]), ([], [1])]
+        for g, sementes in casos:
+            with self.subTest(g=g, sementes=sementes), self.assertRaises(ValueError):
+                av.nota(g, sementes)
+        self.assertEqual(av.chamadas, 0)
+        self.assertEqual(av.registros, ())
+
+    def test_dimensoes_invalidas_sao_recusadas(self):
+        for k, t in ((0, 20), (3, 0), (True, 20), (3, -1), (3.0, 20)):
+            with self.subTest(k=k, t=t), self.assertRaises(ValueError):
+                AvaliadorSelado(k=k, t=t)
+
+    def test_notas_invalidas_nao_sao_registradas(self):
+        for texto in ("nan", "inf", "-1", "21"):
+            with self.subTest(valor=texto), patch.object(rsi, "regret_do_genoma", lambda *args, **kwargs: float(texto)):
+                av = AvaliadorSelado(k=3, t=20)
+                with self.assertRaises(ValueError):
+                    av.nota(genoma_inicial(), [1])
+                self.assertEqual(av.registros, ())
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# laboratorio/README.md  (39 linhas)
+# ====================================================================================================
+FONTES['laboratorio/README.md'] = """# Dois mecanismos de laboratório
+
+Este código pertence a uma cópia de laboratório independente. Não foi integrado ao SYNTHAI. Os módulos textuais descrevem propostas; os resultados aqui dizem respeito somente aos contratos delimitados destes arquivos.
+
+## Evidência sequencial
+
+Em evidencia.py, cada resultado é um inteiro X_t em {0,1}. A hipótese nula exige **E[X_t | F_(t−1)] ≤ p0** em cada etapa. Uma aposta λ_t, escolhida com base somente no passado, deve pertencer a [0,1/p0]. O fator é 1+λ_t(X_t−p0), e E_0=1.
+
+Os fatores são não negativos e têm esperança condicional ≤1. Seu produto forma uma supermartingal de teste. Sob essas premissas, a desigualdade de Ville dá P(sup_t E_t ≥1/α)≤α. Frações exatas permitem conferir trajetórias sem erro de arredondamento neste laboratório pequeno. O custo dessa representação cresce com o tamanho dos numeradores e denominadores.
+
+OrcamentoErro exige Σα_j≤α entre suas alocações. Para obter uma garantia global, cada teste precisa ser válido para a seleção realizada, todas as tentativas devem ser contabilizadas e a alocação não pode ser reutilizada indevidamente. A classe não vincula automaticamente uma alocação a uma única instância do processo, nem impede alterações diretas por um chamador confiável. A API exige apostar antes de chamar observar; ela não impede acesso antecipado ao resultado, seleção favorável das observações, reinícios ocultos ou vazamento no gerador. A garantia se perde quando essas premissas falham.
+
+Este mecanismo testa uma hipótese Bernoulli condicional. Não é uma implementação pronta de comparação de retorno contínuo, promoção geral do SYNTHAI ou identificação causal.
+
+## Feedback persistente
+
+Em feedback.py, o efeito protegido é **somar uma recompensa inteira limitada a um acumulador local e incrementar um contador**. O identificador da decisão, sua tentativa, versão, época de ativação, estado, recompensa aplicada e recibo são verificados no ledger. BEGIN IMMEDIATE serializa escritores; atualização, estado aplicado e recibo ficam na mesma transação.
+
+Uma repetição válida do mesmo feedback não soma novamente. Conteúdo diferente para uma decisão aplicada é um conflito. Cancelamento confirmado impede aplicação posterior, sem apagar aplicações anteriores. Uma decisão criada em uma época antiga não volta a ser válida após v1→v2→v1. Reativar a versão já vigente é um no-op, não uma nova encarnação. Uma auditoria lê modelos, decisões e recibos sob uma única transação de leitura; isso impede misturar estados de commits distintos.
+
+A propriedade é **no máximo uma atualização local por decisão lógica**. Uma atualização eventual depende de entrega válida e compatibilidade. Criar novamente uma decisão ou tentativa pode produzir erro de unicidade; a API inteira não é idempotente. Tentativas de transporte representam o mesmo efeito lógico, não novas ações independentes. Versões e origem são metadados de participantes confiáveis, sem autenticação externa.
+
+O laboratório não garante uma execução externa exatamente uma vez, atomicidade de parâmetros arbitrários de aprendizagem, resistência a alterações diretas no banco ou segurança após restauração de um backup que apague decisões aplicadas. Durabilidade pressupõe SQLite e armazenamento que cumpram seus contratos. Usar WAL e synchronous=FULL não torna infalível o hardware.
+
+## Verificações executadas
+
+Foram executados **27 testes**, com resultado em resultado_testes.json e rastreio em testes.log. Incluem esperança exata em horizontes finitos sob a nula, parada adaptativa, parâmetros inválidos, recompensa duplicada ou conflitante, época ABA, conexões concorrentes, cancelamento concorrente, rollback após falha, encerramento de processo antes do commit e snapshot de auditoria durante commit concorrente.
+
+Um teste mostra por conta explícita que selecionar a aposta após ver o resultado pode produzir esperança de fator maior que um. Essa demonstração ilustra uma premissa necessária; não demonstra que a API impeça vazamento.
+
+A revisão independente de implementação encontrou a leitura de auditoria sem snapshot e verificou a correção, com relatório em revisao.json. Enumeração finita e testes de software não substituem a demonstração das premissas matemáticas ou a validação de implantação.
+
+Para repetir no ambiente local:
+
+```sh
+python laboratorio/testar.py
+```
+
+Esses 27 testes são verificações de dois artefatos. Não são 27 módulos novos e não completam a meta de um milhão.
+"""
+
+# ====================================================================================================
+# laboratorio/evidencia.py  (78 linhas)
+# ====================================================================================================
+FONTES['laboratorio/evidencia.py'] = """\"\"\"Laboratório exato para uma hipótese Bernoulli condicional, não um promotor universal.\"\"\"
+from fractions import Fraction
+
+
+def racional(valor):
+    if isinstance(valor, bool):
+        raise ValueError("Booleanos não são parâmetros numéricos.")
+    try:
+        return Fraction(str(valor)) if not isinstance(valor, Fraction) else valor
+    except (ValueError, TypeError, ZeroDivisionError) as exc:
+        raise ValueError("Parâmetro racional finito obrigatório.") from exc
+
+
+class OrcamentoErro:
+    \"\"\"Aloca níveis por união; não devolve nível gasto após uma tentativa malsucedida.\"\"\"
+    def __init__(self, total):
+        self.total = racional(total)
+        if not 0 < self.total < 1:
+            raise ValueError("O orçamento deve estar entre zero e um.")
+        self.alocacoes = {}
+
+    def alocar(self, candidata, nivel):
+        if not isinstance(candidata, str) or not candidata.strip():
+            raise ValueError("Identificador não vazio obrigatório.")
+        if candidata in self.alocacoes:
+            raise ValueError("Uma candidata não recebe nova alocação com o mesmo identificador.")
+        nivel = racional(nivel)
+        if nivel <= 0 or sum(self.alocacoes.values(), Fraction(0)) + nivel > self.total:
+            raise ValueError("Alocação inválida ou orçamento excedido.")
+        self.alocacoes[candidata] = nivel
+        return nivel
+
+
+class EvidenciaBernoulli:
+    \"\"\"E_t=produto(1+lambda_t*(X_t-p0)), com apostas escolhidas antes do resultado.
+
+    Sob H0: E[X_t | F_(t-1)] <= p0. Para 0 <= lambda_t <= 1/p0,
+    os fatores são não negativos e a esperança condicional é <= 1.
+    Portanto E é uma supermartingal de teste com E_0=1; Ville limita
+    P(sup_t E_t >= 1/alpha) <= alpha, se as premissas forem verdadeiras.
+    A API impõe a ordem da aposta; não prova a hipótese sobre os dados.
+    \"\"\"
+    def __init__(self, p0, alpha, max_passos=10_000):
+        self.p0, self.alpha = racional(p0), racional(alpha)
+        if not 0 < self.p0 < 1 or not 0 < self.alpha < 1:
+            raise ValueError("p0 e alpha devem estar entre zero e um.")
+        if type(max_passos) is not int or max_passos < 1:
+            raise ValueError("Limite inteiro positivo obrigatório.")
+        self.max_passos = max_passos
+        self.valor = Fraction(1)
+        self.passos = 0
+        self.cruzou = False
+        self._aposta = None
+
+    @property
+    def limiar(self):
+        return 1 / self.alpha
+
+    def apostar(self, intensidade):
+        if self._aposta is not None:
+            raise ValueError("Há uma aposta pendente; não pode ser substituída.")
+        if self.passos >= self.max_passos:
+            raise ValueError("Orçamento de observações esgotado.")
+        intensidade = racional(intensidade)
+        if not 0 <= intensidade <= 1 / self.p0:
+            raise ValueError("Intensidade fora do intervalo de não negatividade.")
+        self._aposta = intensidade
+
+    def observar(self, resultado):
+        if self._aposta is None:
+            raise ValueError("Escolha a aposta antes de observar.")
+        if type(resultado) is not int or resultado not in (0, 1):
+            raise ValueError("Resultado Bernoulli inteiro zero ou um obrigatório.")
+        self.valor *= 1 + self._aposta * (resultado - self.p0)
+        self._aposta = None
+        self.passos += 1
+        self.cruzou = self.cruzou or self.valor >= self.limiar
+        return self.valor
+"""
+
+# ====================================================================================================
+# laboratorio/feedback.py  (128 linhas)
+# ====================================================================================================
+FONTES['laboratorio/feedback.py'] = """\"\"\"Ledger SQLite: uma atualização local por decisão lógica, com versões e auditoria.\"\"\"
+from contextlib import contextmanager
+import sqlite3
+
+
+class FalhaInjetada(RuntimeError):
+    pass
+
+
+class LedgerFeedback:
+    def __init__(self, caminho):
+        self.db = sqlite3.connect(str(caminho), timeout=10, isolation_level=None)
+        self.db.execute("PRAGMA foreign_keys=ON")
+        self.db.execute("PRAGMA journal_mode=WAL")
+        self.db.execute("PRAGMA synchronous=FULL")
+        self.db.executescript(\"\"\"
+        CREATE TABLE IF NOT EXISTS modelos (
+          versao TEXT PRIMARY KEY, total INTEGER NOT NULL DEFAULT 0,
+          atualizacoes INTEGER NOT NULL DEFAULT 0);
+        CREATE TABLE IF NOT EXISTS meta (chave TEXT PRIMARY KEY, valor TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS decisoes (
+          id TEXT PRIMARY KEY, versao TEXT NOT NULL REFERENCES modelos(versao),
+          epoca INTEGER NOT NULL,
+          estado TEXT NOT NULL CHECK(estado IN ('pendente','aplicado','cancelado','incompativel')),
+          recompensa INTEGER);
+        CREATE TABLE IF NOT EXISTS tentativas (
+          decisao TEXT NOT NULL REFERENCES decisoes(id), id TEXT NOT NULL,
+          PRIMARY KEY(decisao,id));
+        CREATE TABLE IF NOT EXISTS recibos (
+          seq INTEGER PRIMARY KEY, decisao TEXT NOT NULL, tentativa TEXT NOT NULL,
+          origem TEXT NOT NULL, recompensa INTEGER NOT NULL, resultado TEXT NOT NULL);
+        \"\"\")
+
+    @staticmethod
+    def _id(valor):
+        if not isinstance(valor, str) or not valor.strip() or len(valor) > 200:
+            raise ValueError("Identificador textual não vazio de até 200 caracteres obrigatório.")
+
+    @contextmanager
+    def _transacao(self, imediata=True):
+        self.db.execute("BEGIN IMMEDIATE" if imediata else "BEGIN")
+        try:
+            yield
+            self.db.execute("COMMIT")
+        except BaseException:
+            self.db.execute("ROLLBACK")
+            raise
+
+    def fechar(self):
+        self.db.close()
+
+    def ativar_modelo(self, versao):
+        self._id(versao)
+        with self._transacao():
+            anterior = self.db.execute("SELECT valor FROM meta WHERE chave='atual'").fetchone()
+            if anterior and anterior[0] == versao:
+                return
+            epoca = self.db.execute("SELECT valor FROM meta WHERE chave='epoca'").fetchone()
+            proxima = int(epoca[0]) + 1 if epoca else 1
+            self.db.execute("INSERT OR IGNORE INTO modelos(versao) VALUES (?)", (versao,))
+            self.db.execute("INSERT INTO meta VALUES ('atual',?) ON CONFLICT(chave) DO UPDATE SET valor=excluded.valor", (versao,))
+            self.db.execute("INSERT INTO meta VALUES ('epoca',?) ON CONFLICT(chave) DO UPDATE SET valor=excluded.valor", (str(proxima),))
+
+    def criar_decisao(self, decisao, tentativa):
+        self._id(decisao); self._id(tentativa)
+        with self._transacao():
+            atual = self.db.execute("SELECT valor FROM meta WHERE chave='atual'").fetchone()
+            if not atual:
+                raise ValueError("Ative um modelo antes de criar decisões.")
+            epoca = int(self.db.execute("SELECT valor FROM meta WHERE chave='epoca'").fetchone()[0])
+            self.db.execute("INSERT INTO decisoes(id,versao,epoca,estado) VALUES (?,?,?,'pendente')", (decisao, atual[0], epoca))
+            self.db.execute("INSERT INTO tentativas VALUES (?,?)", (decisao, tentativa))
+
+    def repetir_transporte(self, decisao, tentativa):
+        self._id(decisao); self._id(tentativa)
+        with self._transacao():
+            estado = self.db.execute("SELECT estado FROM decisoes WHERE id=?", (decisao,)).fetchone()
+            if not estado or estado[0] != 'pendente':
+                raise ValueError("Apenas decisões pendentes admitem uma nova tentativa de transporte.")
+            self.db.execute("INSERT INTO tentativas VALUES (?,?)", (decisao, tentativa))
+
+    def cancelar(self, decisao):
+        self._id(decisao)
+        with self._transacao():
+            mudou = self.db.execute("UPDATE decisoes SET estado='cancelado' WHERE id=? AND estado='pendente'", (decisao,)).rowcount
+            return bool(mudou)
+
+    def aplicar(self, decisao, tentativa, origem, recompensa, falhar_apos_atualizacao=False):
+        for identificador in (decisao, tentativa, origem):
+            self._id(identificador)
+        if type(recompensa) is not int or abs(recompensa) > 1_000_000:
+            raise ValueError("Recompensa inteira de magnitude limitada obrigatória.")
+        with self._transacao():
+            registro = self.db.execute("SELECT versao,estado,recompensa,epoca FROM decisoes WHERE id=?", (decisao,)).fetchone()
+            tentativa_valida = self.db.execute("SELECT 1 FROM tentativas WHERE decisao=? AND id=?", (decisao, tentativa)).fetchone()
+            if not registro:
+                resultado = 'decisao_desconhecida'
+            elif not tentativa_valida:
+                resultado = 'tentativa_desconhecida'
+            elif origem != registro[0]:
+                resultado = 'origem_incompativel'
+            elif registro[1] == 'aplicado':
+                resultado = 'duplicado' if recompensa == registro[2] else 'conflito'
+            elif registro[1] != 'pendente':
+                resultado = registro[1]
+            else:
+                atual = self.db.execute("SELECT valor FROM meta WHERE chave='atual'").fetchone()[0]
+                epoca = int(self.db.execute("SELECT valor FROM meta WHERE chave='epoca'").fetchone()[0])
+                if atual != registro[0] or epoca != registro[3]:
+                    self.db.execute("UPDATE decisoes SET estado='incompativel' WHERE id=?", (decisao,))
+                    resultado = 'incompativel'
+                else:
+                    total = self.db.execute("SELECT total FROM modelos WHERE versao=?", (atual,)).fetchone()[0]
+                    if abs(total + recompensa) > 2**62:
+                        raise OverflowError("Acumulador fora do domínio inteiro contratado.")
+                    self.db.execute("UPDATE modelos SET total=total+?, atualizacoes=atualizacoes+1 WHERE versao=?", (recompensa, atual))
+                    if falhar_apos_atualizacao:
+                        raise FalhaInjetada("Falha antes de registrar a aplicação e confirmar a transação.")
+                    self.db.execute("UPDATE decisoes SET estado='aplicado', recompensa=? WHERE id=? AND estado='pendente'", (recompensa, decisao))
+                    resultado = 'aplicado'
+            self.db.execute("INSERT INTO recibos(decisao,tentativa,origem,recompensa,resultado) VALUES (?,?,?,?,?)", (decisao, tentativa, origem, recompensa, resultado))
+            return resultado
+
+    def resumo(self):
+        with self._transacao(imediata=False):
+            return dict(modelos=self.db.execute("SELECT versao,total,atualizacoes FROM modelos ORDER BY versao").fetchall(),
+                        decisoes=self.db.execute("SELECT id,versao,estado,recompensa FROM decisoes ORDER BY id").fetchall(),
+                        recibos=self.db.execute("SELECT COUNT(*) FROM recibos").fetchone()[0])
+"""
+
+# ====================================================================================================
+# laboratorio/resultado_testes.json  (7 linhas)
+# ====================================================================================================
+FONTES['laboratorio/resultado_testes.json'] = """{
+  "testes": 27,
+  "falhas": 0,
+  "erros": 0,
+  "sucesso": true,
+  "escopo": "duas implementações de laboratório; não certificação dos cem módulos nem do SYNTHAI"
+}
+"""
+
+# ====================================================================================================
+# laboratorio/revisao.json  (85 linhas)
+# ====================================================================================================
+FONTES['laboratorio/revisao.json'] = """{
+  "revisor": "/root/revisao_laboratorio",
+  "data_utc": "2026-10-12T12:55:44.763297+00:00",
+  "escopo": "Revisão delimitada de evidencia.py, feedback.py e testar.py, duas implementações isoladas de laboratório; não certificação do SYNTHAI, de AGI/ASI ou do conjunto de módulos.",
+  "arquivos_sha256": {
+    "evidencia.py": "1eb02a1e0a13526a075abb874e0bfd0d3cb60622f2734025631a5d36d389c2ae",
+    "feedback.py": "0dfe2f353a3340ae56383de771a26a3adececbc57f4d0c492c8470018c8c8a6c",
+    "testar.py": "0f119d162bdd3988a31cb9396d2caed25fd77144cfb11d4426d902fedf8cb832"
+  },
+  "verificacoes": {
+    "testes_executados_pelo_revisor": 27,
+    "falhas": 0,
+    "erros": 0,
+    "execucao": "Suite unittest importada; resultado_testes.json e testes.log não foram alterados pelo revisor.",
+    "reproducao_inicial": "Antes da correção, commit de outra conexão entre consultas de resumo() produziu total antigo, decisão aplicada e contagem de recibos nova. Reprodução realizada em banco temporário fora da entrega.",
+    "confirmacao_correcao": "Revisão de BEGIN de leitura e execução do teste test_auditoria_le_snapshot_coerente, que preserva as três consultas no estado anterior e permite observar o commit na leitura seguinte."
+  },
+  "achados": [
+    {
+      "id": "AUDITORIA_SNAPSHOT",
+      "gravidade": "material para alegação de auditoria coerente",
+      "arquivo": "feedback.py",
+      "linha_original": 124,
+      "linha_atual": 124,
+      "descricao": "Três SELECTs sem transação de leitura comum permitiam um relatório composto por estados confirmados diferentes.",
+      "estado": "corrigido e verificado",
+      "correcao": "resumo() usa _transacao(imediata=False), com BEGIN antes da primeira consulta e COMMIT após as três. Em WAL, o snapshot estabelecido pela primeira leitura é mantido apesar de commits de outro escritor.",
+      "teste_regressao": {
+        "arquivo": "testar.py",
+        "linha": 212,
+        "nome": "test_auditoria_le_snapshot_coerente"
+      }
+    }
+  ],
+  "avaliacao_matematica": {
+    "estado": "alegação condicional correta",
+    "arquivo": "evidencia.py",
+    "linha": 35,
+    "fundamento": "Para X_t em {0,1}, lambda_t previsível no intervalo [0,1/p0] e E[X_t|F_(t-1)] <= p0, os fatores são não negativos e têm esperança condicional <=1. O produto iniciado em1 é supermartingal não negativa; a desigualdade de Ville fornece P(sup_t E_t >=1/alpha) <=alpha.",
+    "evidencia_dos_testes": "Enumeração finita verifica políticas e horizontes definidos; sustenta essas verificações e não substitui a demonstração geral nem verifica as premissas sobre dados externos."
+  },
+  "limites": [
+    {
+      "arquivo": "evidencia.py",
+      "linha": 59,
+      "descricao": "A ordem apostar/observar não prova previsibilidade: o chamador pode conhecer o resultado antecipadamente. Seleção favorável, filtragem ou reutilização de dados podem invalidar a nulidade condicional."
+    },
+    {
+      "arquivo": "evidencia.py",
+      "linha": 14,
+      "descricao": "OrcamentoErro limita as alocações nele registradas, mas não vincula cada alocação a uma única instância de EvidenciaBernoulli. A garantia por união exige contabilizar todas as tentativas e garantir validade condicional para o mecanismo de seleção adotado."
+    },
+    {
+      "arquivo": "feedback.py",
+      "linha": 88,
+      "descricao": "A garantia é no máximo uma atualização local por decisão, persistindo a aplicação e o recibo na mesma transação. Aplicação eventual depende de entrega válida, repetição e compatibilidade. Não garante execução externa exatamente uma vez."
+    },
+    {
+      "arquivo": "feedback.py",
+      "linha": 64,
+      "descricao": "criar_decisao e repetir_transporte rejeitam duplicação por restrição de unicidade; a idempotência de aplicação não se estende automaticamente a toda a API."
+    },
+    {
+      "arquivo": "feedback.py",
+      "linha": 52,
+      "descricao": "A época impede ABA v1->v2->v1. Ativar novamente a versão já ativa é um no-op intencional, e o acumulador de uma versão é preservado ao reativá-la. Mudanças de modelo sob o mesmo identificador não são detectadas."
+    },
+    {
+      "arquivo": "feedback.py",
+      "linha": 100,
+      "descricao": "A checagem de origem compara identificador de versão; não autentica o remetente nem valida o conteúdo do modelo."
+    },
+    {
+      "arquivo": "feedback.py",
+      "linha": 11,
+      "descricao": "A propriedade depende da integridade do banco SQLite e das garantias de armazenamento. Alterações diretas no banco, restauração de snapshot antigo ou perda dos registros de deduplicação estão fora da garantia. Cada conexão Python mantém sua restrição padrão de uso por thread; os testes concorrentes usam conexões separadas."
+    },
+    {
+      "arquivo": "evidencia.py",
+      "linha": 50,
+      "descricao": "Estado e parâmetros são mutáveis em Python; a implementação pressupõe uso cooperativo. A aritmética racional exata tem custo crescente de representação e não apresenta cota global de memória ou latência."
+    }
+  ],
+  "conclusao": "Após a correção do snapshot, nenhuma outra falha material foi identificada dentro do escopo revisado. A revisão não demonstra ausência de defeitos nem promove o laboratório a implementação integrada."
+}
+"""
+
+# ====================================================================================================
+# laboratorio/testar.py  (233 linhas)
+# ====================================================================================================
+FONTES['laboratorio/testar.py'] = """\"\"\"Verificações do laboratório; nenhuma contagem de casos é contagem de módulos.\"\"\"
+from concurrent.futures import ThreadPoolExecutor
+from fractions import Fraction
+from itertools import product
+from pathlib import Path
+import json
+import math
+import subprocess
+import sys
+import tempfile
+import unittest
+
+from evidencia import EvidenciaBernoulli, OrcamentoErro
+from feedback import LedgerFeedback, FalhaInjetada
+
+RAIZ = Path(__file__).resolve().parent
+
+
+class Estatistica(unittest.TestCase):
+    def test_observacao_sem_aposta(self):
+        e = EvidenciaBernoulli('1/2', '1/20')
+        with self.assertRaises(ValueError): e.observar(1)
+        self.assertEqual(e.valor, 1)
+
+    def test_nao_substituir_aposta(self):
+        e = EvidenciaBernoulli('1/2', '1/20'); e.apostar(1)
+        with self.assertRaises(ValueError): e.apostar(2)
+        self.assertEqual(e.observar(0), Fraction(1, 2))
+
+    def test_fator_zero_nao_reanima(self):
+        e = EvidenciaBernoulli('1/2', '1/20'); e.apostar(2); e.observar(0)
+        e.apostar(2); e.observar(1)
+        self.assertEqual(e.valor, 0); self.assertFalse(e.cruzou)
+
+    def test_resultado_invalido_preserva_aposta(self):
+        e = EvidenciaBernoulli('1/2', '1/20'); e.apostar(1)
+        for x in (2, -1, .5, True):
+            with self.assertRaises(ValueError): e.observar(x)
+        self.assertEqual(e.observar(1), Fraction(3, 2))
+
+    def test_parametros_e_limites(self):
+        for p0, alpha in ((0,.1),(1,.1),(.5,0),(.5,1),(float('nan'),.1),(.5,float('inf'))):
+            with self.assertRaises(ValueError): EvidenciaBernoulli(p0, alpha)
+        e = EvidenciaBernoulli('1/2','1/20', max_passos=1)
+        for bet in (-1,'5/2',float('nan')):
+            with self.assertRaises(ValueError): e.apostar(bet)
+        e.apostar(0);e.observar(1)
+        with self.assertRaises(ValueError):e.apostar(0)
+
+    def test_orcamento_nao_reciclado(self):
+        b = OrcamentoErro('1/20');b.alocar('A','1/40');b.alocar('B','1/40')
+        with self.assertRaises(ValueError):b.alocar('C','1/1000')
+        with self.assertRaises(ValueError):b.alocar('A','1/1000')
+        self.assertEqual(sum(b.alocacoes.values()),Fraction(1,20))
+
+    def test_esperanca_exata_sob_nula(self):
+        # Aposta previsível muda com o histórico: sem consultar o próximo bit.
+        expected = Fraction(0); n=8
+        for xs in product((0,1),repeat=n):
+            e=EvidenciaBernoulli('1/2','1/10')
+            for i,x in enumerate(xs):
+                bet=Fraction(1,2) if i and xs[i-1] else Fraction(3,2)
+                e.apostar(bet);e.observar(x)
+            expected+=e.valor/Fraction(2**n)
+        self.assertEqual(expected,1)
+
+    def test_esperanca_abaixo_da_nula(self):
+        expected=Fraction(0);n=7
+        for xs in product((0,1),repeat=n):
+            prob=Fraction(1,4)**sum(xs)*Fraction(3,4)**(n-sum(xs))
+            e=EvidenciaBernoulli('1/2','1/10')
+            for x in xs:e.apostar(1);e.observar(x)
+            expected+=prob*e.valor
+        self.assertLessEqual(expected,1)
+
+    def test_parada_adaptativa_enumera_caminhos(self):
+        count=0;n=12;alpha=Fraction(1,10)
+        for xs in product((0,1),repeat=n):
+            e=EvidenciaBernoulli('1/2',alpha)
+            for x in xs:
+                e.apostar(1);e.observar(x)
+                if e.cruzou:count+=1;break
+        self.assertLessEqual(Fraction(count,2**n),alpha)
+        self.assertGreater(count,0)
+
+    def test_detecta_trajetoria_definida(self):
+        e=EvidenciaBernoulli('1/2','1/20')
+        for _ in range(8):e.apostar(1);e.observar(1)
+        self.assertTrue(e.cruzou);self.assertEqual(e.valor,Fraction(3,2)**8)
+
+    def test_exemplo_invalido_olha_o_futuro(self):
+        # Se fosse permitido escolher lambda=2 para X=1 e lambda=0 para X=0,
+        # E[f] = (2+1)/2 > 1. A ordem da API não detecta vazamento no gerador.
+        self.assertEqual((Fraction(2)+Fraction(1))/2,Fraction(3,2))
+
+
+class Feedback(unittest.TestCase):
+    def setUp(self):
+        self.tmp=tempfile.TemporaryDirectory();self.path=Path(self.tmp.name)/'ledger.db'
+        self.ledger=LedgerFeedback(self.path);self.ledger.ativar_modelo('v1')
+
+    def tearDown(self):
+        self.ledger.fechar();self.tmp.cleanup()
+
+    def test_aplicacao_e_ack_perdido(self):
+        self.ledger.criar_decisao('D','T1')
+        self.assertEqual(self.ledger.aplicar('D','T1','v1',7),'aplicado')
+        # O retorno pode ser perdido pelo chamador: reabrir e repetir.
+        other=LedgerFeedback(self.path)
+        try:self.assertEqual(other.aplicar('D','T1','v1',7),'duplicado')
+        finally:other.fechar()
+        self.assertEqual(self.ledger.resumo()['modelos'],[('v1',7,1)])
+
+    def test_conflito_nao_sobrescreve(self):
+        self.ledger.criar_decisao('D','T1');self.ledger.repetir_transporte('D','T2')
+        self.ledger.aplicar('D','T1','v1',7)
+        self.assertEqual(self.ledger.aplicar('D','T2','v1',9),'conflito')
+        self.assertEqual(self.ledger.resumo()['modelos'],[('v1',7,1)])
+
+    def test_resposta_de_outro_registro(self):
+        self.ledger.criar_decisao('D1','T1');self.ledger.criar_decisao('D2','T2')
+        self.assertEqual(self.ledger.aplicar('D1','T2','v1',7),'tentativa_desconhecida')
+        self.assertEqual(self.ledger.aplicar('D3','T1','v1',7),'decisao_desconhecida')
+        self.assertEqual(self.ledger.resumo()['modelos'],[('v1',0,0)])
+
+    def test_origem_errada_nao_consume_decisao(self):
+        self.ledger.criar_decisao('D','T1')
+        self.assertEqual(self.ledger.aplicar('D','T1','v2',7),'origem_incompativel')
+        self.assertEqual(self.ledger.aplicar('D','T1','v1',7),'aplicado')
+
+    def test_cancelamento_bloqueia_atrasado(self):
+        self.ledger.criar_decisao('D','T1');self.assertTrue(self.ledger.cancelar('D'))
+        self.assertFalse(self.ledger.cancelar('D'))
+        self.assertEqual(self.ledger.aplicar('D','T1','v1',7),'cancelado')
+        self.assertEqual(self.ledger.resumo()['modelos'],[('v1',0,0)])
+
+    def test_cancelamento_nao_apaga_aplicacao(self):
+        self.ledger.criar_decisao('D','T1');self.ledger.aplicar('D','T1','v1',7)
+        self.assertFalse(self.ledger.cancelar('D'))
+        self.assertEqual(self.ledger.resumo()['modelos'],[('v1',7,1)])
+
+    def test_versao_incompativel(self):
+        self.ledger.criar_decisao('D','T1');self.ledger.ativar_modelo('v2')
+        self.assertEqual(self.ledger.aplicar('D','T1','v1',7),'incompativel')
+        self.assertEqual(self.ledger.resumo()['modelos'],[('v1',0,0),('v2',0,0)])
+
+    def test_epoca_impede_aba(self):
+        self.ledger.criar_decisao('D','T1');self.ledger.ativar_modelo('v2');self.ledger.ativar_modelo('v1')
+        self.assertEqual(self.ledger.aplicar('D','T1','v1',7),'incompativel')
+
+    def test_ativar_mesma_versao_e_noop(self):
+        self.ledger.criar_decisao('D','T1');self.ledger.ativar_modelo('v1')
+        self.assertEqual(self.ledger.aplicar('D','T1','v1',7),'aplicado')
+
+    def test_falha_no_meio_da_transacao(self):
+        self.ledger.criar_decisao('D','T1');before=self.ledger.resumo()
+        with self.assertRaises(FalhaInjetada):self.ledger.aplicar('D','T1','v1',7,True)
+        self.assertEqual(self.ledger.resumo(),before)
+        self.assertEqual(self.ledger.aplicar('D','T1','v1',7),'aplicado')
+
+    def test_encerramento_processo_antes_do_commit(self):
+        self.ledger.criar_decisao('D','T1')
+        code=\"\"\"import sqlite3,os,sys
+c=sqlite3.connect(sys.argv[1],isolation_level=None)
+c.execute('BEGIN IMMEDIATE')
+c.execute("UPDATE modelos SET total=7, atualizacoes=1 WHERE versao='v1'")
+os._exit(23)
+\"\"\"
+        r=subprocess.run([sys.executable,'-c',code,str(self.path)])
+        self.assertEqual(r.returncode,23)
+        self.assertEqual(self.ledger.resumo()['modelos'],[('v1',0,0)])
+        self.assertEqual(self.ledger.aplicar('D','T1','v1',7),'aplicado')
+
+    def test_concorrencia_mesma_decisao(self):
+        self.ledger.criar_decisao('D','T1')
+        def apply(_):
+            l=LedgerFeedback(self.path)
+            try:return l.aplicar('D','T1','v1',7)
+            finally:l.fechar()
+        with ThreadPoolExecutor(max_workers=8) as pool:rs=list(pool.map(apply,range(32)))
+        self.assertEqual(rs.count('aplicado'),1);self.assertEqual(rs.count('duplicado'),31)
+        self.assertEqual(self.ledger.resumo()['modelos'],[('v1',7,1)])
+        self.assertEqual(self.ledger.resumo()['recibos'],32)
+
+    def test_concorrencia_decisoes_distintas(self):
+        for i in range(16):self.ledger.criar_decisao(f'D{i}',f'T{i}')
+        def apply(i):
+            l=LedgerFeedback(self.path)
+            try:return l.aplicar(f'D{i}',f'T{i}','v1',i)
+            finally:l.fechar()
+        with ThreadPoolExecutor(max_workers=8) as pool:rs=list(pool.map(apply,range(16)))
+        self.assertEqual(rs.count('aplicado'),16)
+        self.assertEqual(self.ledger.resumo()['modelos'],[('v1',sum(range(16)),16)])
+
+    def test_cancelamento_concorrente(self):
+        self.ledger.criar_decisao('D','T1')
+        def run(cancel):
+            l=LedgerFeedback(self.path)
+            try:return l.cancelar('D') if cancel else l.aplicar('D','T1','v1',7)
+            finally:l.fechar()
+        with ThreadPoolExecutor(max_workers=2) as p:rs=list(p.map(run,[True,False]))
+        r=self.ledger.resumo();state=r['decisoes'][0][2]
+        self.assertIn(state,('cancelado','aplicado'))
+        self.assertEqual(r['modelos'][0][1:],(0,0) if state=='cancelado' else (7,1))
+
+    def test_dominio_recompensa(self):
+        self.ledger.criar_decisao('D','T1')
+        for x in (True,math.nan,7.0,1_000_001):
+            with self.assertRaises(ValueError):self.ledger.aplicar('D','T1','v1',x)
+        self.assertEqual(self.ledger.resumo()['recibos'],0)
+
+    def test_auditoria_le_snapshot_coerente(self):
+        self.ledger.criar_decisao('D','T1');other=LedgerFeedback(self.path)
+        triggered=[]
+        def entre_consultas(sql):
+            if sql.startswith('SELECT id,versao,estado') and not triggered:
+                triggered.append(True);other.aplicar('D','T1','v1',7)
+        self.ledger.db.set_trace_callback(entre_consultas)
+        try:before=self.ledger.resumo()
+        finally:self.ledger.db.set_trace_callback(None);other.fechar()
+        self.assertEqual(before['modelos'],[('v1',0,0)])
+        self.assertEqual(before['decisoes'],[('D','v1','pendente',None)])
+        self.assertEqual(before['recibos'],0)
+        self.assertEqual(self.ledger.resumo()['modelos'],[('v1',7,1)])
+
+
+if __name__ == '__main__':
+    suite=unittest.defaultTestLoader.loadTestsFromModule(sys.modules[__name__])
+    result=unittest.TextTestRunner(verbosity=2).run(suite)
+    (RAIZ/'resultado_testes.json').write_text(json.dumps(dict(testes=result.testsRun,
+        falhas=len(result.failures),erros=len(result.errors),sucesso=result.wasSuccessful(),
+        escopo='duas implementações de laboratório; não certificação dos cem módulos nem do SYNTHAI'),ensure_ascii=False,indent=2)+'\\n')
+    raise SystemExit(0 if result.wasSuccessful() else 1)
+"""
+
+# ====================================================================================================
+# laboratorio/testes.log  (32 linhas)
+# ====================================================================================================
+FONTES['laboratorio/testes.log'] = """test_detecta_trajetoria_definida (__main__.Estatistica.test_detecta_trajetoria_definida) ... ok
+test_esperanca_abaixo_da_nula (__main__.Estatistica.test_esperanca_abaixo_da_nula) ... ok
+test_esperanca_exata_sob_nula (__main__.Estatistica.test_esperanca_exata_sob_nula) ... ok
+test_exemplo_invalido_olha_o_futuro (__main__.Estatistica.test_exemplo_invalido_olha_o_futuro) ... ok
+test_fator_zero_nao_reanima (__main__.Estatistica.test_fator_zero_nao_reanima) ... ok
+test_nao_substituir_aposta (__main__.Estatistica.test_nao_substituir_aposta) ... ok
+test_observacao_sem_aposta (__main__.Estatistica.test_observacao_sem_aposta) ... ok
+test_orcamento_nao_reciclado (__main__.Estatistica.test_orcamento_nao_reciclado) ... ok
+test_parada_adaptativa_enumera_caminhos (__main__.Estatistica.test_parada_adaptativa_enumera_caminhos) ... ok
+test_parametros_e_limites (__main__.Estatistica.test_parametros_e_limites) ... ok
+test_resultado_invalido_preserva_aposta (__main__.Estatistica.test_resultado_invalido_preserva_aposta) ... ok
+test_aplicacao_e_ack_perdido (__main__.Feedback.test_aplicacao_e_ack_perdido) ... ok
+test_ativar_mesma_versao_e_noop (__main__.Feedback.test_ativar_mesma_versao_e_noop) ... ok
+test_auditoria_le_snapshot_coerente (__main__.Feedback.test_auditoria_le_snapshot_coerente) ... ok
+test_cancelamento_bloqueia_atrasado (__main__.Feedback.test_cancelamento_bloqueia_atrasado) ... ok
+test_cancelamento_concorrente (__main__.Feedback.test_cancelamento_concorrente) ... ok
+test_cancelamento_nao_apaga_aplicacao (__main__.Feedback.test_cancelamento_nao_apaga_aplicacao) ... ok
+test_concorrencia_decisoes_distintas (__main__.Feedback.test_concorrencia_decisoes_distintas) ... ok
+test_concorrencia_mesma_decisao (__main__.Feedback.test_concorrencia_mesma_decisao) ... ok
+test_conflito_nao_sobrescreve (__main__.Feedback.test_conflito_nao_sobrescreve) ... ok
+test_dominio_recompensa (__main__.Feedback.test_dominio_recompensa) ... ok
+test_encerramento_processo_antes_do_commit (__main__.Feedback.test_encerramento_processo_antes_do_commit) ... ok
+test_epoca_impede_aba (__main__.Feedback.test_epoca_impede_aba) ... ok
+test_falha_no_meio_da_transacao (__main__.Feedback.test_falha_no_meio_da_transacao) ... ok
+test_origem_errada_nao_consume_decisao (__main__.Feedback.test_origem_errada_nao_consume_decisao) ... ok
+test_resposta_de_outro_registro (__main__.Feedback.test_resposta_de_outro_registro) ... ok
+test_versao_incompativel (__main__.Feedback.test_versao_incompativel) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.691s
+
+OK
+"""
+
+# ====================================================================================================
+# documentacao/analise.md  (97 linhas)
+# ====================================================================================================
+FONTES['documentacao/analise.md'] = """# Revisão técnica de SYNTHAI
+
+Estado atual: comparação pareada e caminho de rejeição corrigidos na cópia de trabalho. A abstenção encerra a tentativa e tem custos/cobertura explícitos. O selo agora detecta mudanças no catálogo de dependências após sua criação e registra avaliações reproduzíveis, dentro do contrato cooperativo. Os mundos usam fontes aleatórias por domínio e coordenadas, com pareamento dos eventos exógenos sob o protocolo v2. As falhas descritas abaixo registram o diagnóstico inicial; veja as continuações para o estado das correções.
+
+## Escopo e conclusão
+
+O arquivo recebido é um pacote autoextraível de aproximadamente 10,4 MB. Foram extraídos estaticamente 265 arquivos textuais, usando AST e literais, sem executar o extrator. O original foi preservado. Os dados binários/base64 não foram extraídos. A revisão concentra-se no núcleo synthai; não é uma auditoria integral dos experimentos históricos.
+
+O próprio pacote declara que é um agente de brinquedo em mundos simulados, não uma AGI/ASI. O valor principal é uma biblioteca experimental para estudar decisão, aprendizagem, composição e avaliação. Nomes inspirados em Jung não demonstram consciência ou funções cognitivas humanas.
+
+## Componentes aproveitáveis
+
+| Fontes | Utilidade operacional | Limite |
+|---|---|---|
+| synthai/agente.py e composta.py | Separação entre percepção, avaliação de risco, seleção, feedback e composição de agentes; histórico de calibração compartilhado. | O despacho entre regimes usa o indicador explorar fornecido pelo ambiente; não demonstra identificação autônoma de novas tarefas. |
+| synthai/decisao.py e reconhecimento.py | Thompson sampling, UCB, variantes para mudança de distribuição, aprendizagem em MDP e regressão incremental; controles de ablação. | Resultados dependem de hipóteses do modelo e dos mundos simulados. |
+| synthai/pensamento_rico.py e pensamento_exato.py | Comparação de representações e estimação de risco com regularização. | Discriminação de risco no simulador não assegura calibração fora dele. |
+| synthai/autorregulacao.py e relacao.py | Orçamento de consultas e ajuste de parâmetros por feedback. | O humano é um oráculo simulado; estimativas de oportunidades perdidas não identificam automaticamente efeitos causais. |
+| synthai/dicionario.py | Grafos de dependência lexical, componentes fortemente conectados, fechamento incremental e modelos textuais simples. | Fechamento lexical não equivale a compreensão semântica ou aprendizagem fundamentada no mundo. |
+| synthai/neurossimbolico.py | Bancada para comparar restrições suaves e operadores de lógica difusa. | Satisfação média de restrições não constitui prova formal de todas as instâncias. |
+| synthai/rsi.py e metacognicao.py | Avaliação externa, comparação pareada e busca restrita de parâmetros. | RSI aqui modifica parâmetros, não desenvolve autonomamente arquiteturas gerais. A regra chamada godel é estatística, não uma prova de melhoria geral. |
+
+## Falhas reproduzidas
+
+### 1. Retorno após rejeição — agente.py:55
+
+Quando nenhuma candidata passa, decidir retorna ordem[0]. Com uma única opção e risco estimado 0,99, a opção rejeitada foi escolhida. Com veto positivo do oráculo, a mesma opção foi escolhida e permaneceu em vetados_agora. A execução não registra _escolha nessa saída, portanto observar também deixa de aprender com ela.
+
+Correção recomendada: representar explicitamente ausência de ação admissível e definir um protocolo de abstenção/encerramento nos mundos e executores. Não basta trocar a saída por None sem adaptar os consumidores.
+
+### 2. Comparação pareada degenerada — metacognicao.py:23
+
+comparacao_pareada([1,2,3],[1,2,3]) retornou (0,0,+inf). Para [1,2,3] versus [0,1,2], retornou (-1,0,+inf). O desvio nulo sempre produz infinito positivo.
+
+Correção recomendada: definir expressamente a convenção para diferenças constantes e ausência de variabilidade, preservar o sinal, e validar comprimento e número mínimo de pares. Não interpretar um resultado degenerado como evidência estatística ordinária.
+
+### 3. Selo incompleto — rsi.py:50
+
+Após criar AvaliadorSelado, a dependência rodar_bandido foi substituída apenas na memória do processo por uma função que retorna [0]. A assinatura continuou válida e a nota mudou de -223,06173584559386 para 0, nas sementes [1,2]. A alteração foi restaurada no processo; arquivos não foram modificados.
+
+O hash cobre somente o texto de regret_do_genoma. Correção recomendada: versionar o conjunto de código, dependências, dados, configuração e protocolo; executar o avaliador com separação de permissões. Um hash isolado não impõe imutabilidade ao restante do processo.
+
+## Limitações relevantes à arquitetura em desenvolvimento
+
+- O agente armazena uma única decisão pendente em _escolha; a composição usa _ultimo. Para execução concorrente, será necessário identificar decisões, observações e versões, em vez de sobrescrever esse estado.
+- Em mundos.py, geração de situações e respostas do humano compartilham um gerador pseudoaleatório. Diferentes consultas/encerramentos alteram seu consumo. Mesma semente inicial não assegura trajetórias idênticas entre políticas.
+- As referências não consomem o histórico de calibração, enquanto agentes treináveis o consomem. Convém separar os geradores de calibração, mundo, sensor e oráculo, e declarar quais recursos de treinamento entram no orçamento da comparação.
+- A verificação AST de acesso a atributos ocultos cobre módulos selecionados. É um teste útil de convenção, não isolamento de execução ou fronteira de segurança.
+- O arquivo calculos.py concentra cerca de 11 mil linhas. Muitos módulos dependem dele. Para integração, isolar primeiro utilitários e protocolos mínimos; não transportar todo o histórico como dependência do executor.
+
+## Validação realizada
+
+Comando: python -m unittest synthai.testes synthai.testes_composta synthai.testes_pensamento synthai.testes_reconhecimento
+
+Resultado: 32 testes, 2,777 segundos, OK. Houve ResourceWarning por leituras de arquivos não fechadas nos testes. As três falhas acima foram verificadas separadamente, em processo local, com entradas controladas. Não foram executadas todas as partes, toda a suíte ou os experimentos históricos; nenhum resultado implica demonstração de AGI/ASI.
+
+## Ordem de aproveitamento
+
+1. Corrigir os caminhos de rejeição e a comparação estatística antes de promover decisões ou candidatos.
+2. Fixar protocolo de avaliação reproduzível, com dependências versionadas e fontes aleatórias separadas.
+3. Reaproveitar decisão, regressão incremental e grafos como ferramentas com contratos explícitos de entrada, saída e hipótese.
+4. Adicionar identificadores e registros de transição para a futura integração com planejamento, execução e coordenação distribuída.
+5. Medir generalização em tarefas reservadas, mudanças de distribuição e limites de orçamento. Ampliar arquitetura somente quando esses testes justificarem a mudança.
+
+Esta revisão não alterou a implementação fornecida.
+
+
+## Continuação: comparação estatística corrigida
+
+A cópia de trabalho em fontes/synthai/metacognicao.py foi alterada. comparacao_pareada exige comprimentos iguais, ao menos dois pares e entradas/diferenças finitas. Usa desvio amostral; com variância nula retorna t=NaN, mantendo média e desvio. Isso impede interpretar o caso degenerado como aprovação por t>3; os consumidores devem tratar NaN como resultado inconclusivo. Não calcula p-valores nem corrige comparações repetidas.
+
+Foram adicionados quatro testes de regressão em fontes/synthai/testes_metacognicao_revisao.py, cobrindo identidade/melhora/piora constantes, resultado analítico com variância positiva, inversão do sinal, entradas inválidas e iteradores. Validação final: 36 testes passaram em 3,446 segundos; log em validacao_estatistica.log. Permanecem os avisos preexistentes de arquivos não fechados nos testes.
+
+O original anexado permanece intacto. A afirmação anterior de implementação preservada descreve a revisão inicial; nesta continuação a cópia extraída foi modificada. Os problemas de retorno após veto e selo incompleto permanecem pendentes.
+
+
+## Continuação: ausência de ação admissível integrada
+
+`decidir` retorna `None` se não há opção admissível ou opções disponíveis. Os mundos encerram a tentativa depois de contabilizar custos; não executam ação rejeitada nem produzem feedback fictício. Autorregulação limpa episódios incompletos; composição protege o repasse de feedback. Foram adaptados quatro wrappers históricos e a demonstração. O resumo agora inclui abstencoes, acoes, cobertura e concluidos.
+
+Validação: 67 testes passaram em 5,324 segundos, incluindo 16 novos. A regressão foi reexecutada após adicionar ao teste o caso catastrófico de um passo: 16 testes passaram. Demonstração completa nas três tarefas executada; sem abstenções na semente padrão. A revisão independente não encontrou regressões materiais. Detalhes no contrato_abstencao.md, mudanças em abstencao.patch. Os resultados não demonstram melhoria geral ou AGI/ASI.
+
+
+## Continuação: integridade do avaliador e reprodução
+
+O avaliador passou a verificar arquivos, código em memória, defaults/kwdefaults, bindings, métodos do aprendiz/RNG, globals/closures catalogados, configuração e limites do genoma. As verificações ocorrem antes e depois do cálculo. Cada nota aceita registra genoma, sementes, configuração, selo e checksum. O manifesto público é separado dos IDs privados, permitindo comparação entre processos. O contrato preserva explicitamente os limites: base inicial confiável, catálogo explícito e ausência de isolamento contra código hostil/transientes/concorrência.
+
+Validação final: 95 testes passaram em 9,035 segundos, incluindo 22 novos. As três adulterações demonstradas anteriormente foram recusadas sem criar novas notas aceitas. A nota de base nas sementes [1,2] permaneceu -223.06173584559386. Testes confirmaram replay e estabilidade entre processos; revisão independente não encontrou reparos obrigatórios. Detalhes em contrato_avaliador.md, reprodução em reproducao_selo.json e exemplo completo em avaliacao_exemplo.json. Patch em selo.patch.
+
+Continuam pendentes as fontes aleatórias compartilhadas nos mundos, a validade estatística das promoções e a correlação de resultados concorrentes. As correções de integridade não demonstram validade geral do benchmark ou AGI/ASI.
+
+
+## Continuação: eventos exógenos coordenados
+
+A fonte de aleatoriedade usa SHA-256 com versão, semente, mundo, domínio e coordenadas. Calibração e execução têm contadores separados; sensores conservam ruído por índice original; consultas, recompensas e catástrofes usam coordenadas próprias. Términos antecipados deixam de deslocar o episódio/rodada seguinte. A fadiga e o nível continuam causalmente dependentes das ações. Quatro avanços artificiais de histórico foram removidos das varreduras.
+
+Validação final: 123 testes passaram em 5,923 segundos, incluindo 18 novos; revisão independente confirmou 54 testes relacionados. Comparação direta com a cópia anterior reproduziu falhas de pareamento em calibração, término antecipado, leitura de sensor, recompensa e catástrofe, corrigidas na nova versão. Demonstração nas três tarefas executada. Contrato em contrato_aleatoriedade.md, patch em aleatoriedade.patch e evidência em comparacao_pareamento.json. Novas sementes alteram amostras históricas e exigem versão/reexecução para comparações. Próximas pendências: estatística das promoções e feedback concorrente.
+"""
+
+# ====================================================================================================
+# documentacao/contrato_abstencao.md  (49 linhas)
+# ====================================================================================================
+FONTES['documentacao/contrato_abstencao.md'] = """# Contrato de decisão e abstenção
+
+## Interface sequencial
+
+`decidir(situacao)` devolve uma `Opcao` ou `None`. Uma opção devolvida segue para execução e, depois, `observar(resultado)`. `None` encerra o episódio ou a rodada: não autoriza substituir a decisão pela primeira opção rejeitada e não produz resultado fictício para aprendizagem. Lista de opções vazia também devolve `None`.
+
+Os agentes continuam sequenciais. Esta alteração não oferece associação de resultados concorrentes nem confirmação de execução externa. `None` tampouco codifica a causa exata da abstenção; veto, risco e falta de orçamento conservam tratamentos existentes.
+
+## Custos e estado
+
+Consultas e leituras realizadas antes da abstenção são descontadas. Ganhos e perdas anteriores permanecem no retorno. Vetos já recebidos permanecem disponíveis para registro. A abstenção limpa a decisão pendente; na autorregulação, o prefixo do episódio abandonado não entra na estimação de retorno futuro de episódios completos. Dados efetivamente observados nas ações anteriores continuam válidos para a regressão.
+
+Na composição, `observar` é repassado uma vez depois de uma escolha aceita; após abstenção é ignorado. O último delegado permanece disponível para leitura de vetos e relação.
+
+## Métricas
+
+| Campo | Definição |
+|---|---|
+| retorno | Ganhos/perdas, menos consultas e leituras, por episódio ou rodada solicitado. |
+| abstencoes | Fração dos episódios ou rodadas encerrados por `None`. |
+| acoes | Número médio de ações executadas por episódio ou rodada solicitado. |
+| cobertura | Ações executadas divididas por todas as ações originalmente previstas. |
+| concluidos | Fração de episódios sequenciais terminados sem catástrofe nem abstenção; no bandido, fração das rodadas com todas as puxadas executadas. |
+
+Cobertura não implica sucesso: uma tarefa de um passo com ação catastrófica tem cobertura 1 e conclusão 0. No bandido, catástrofes continuam sem encerrar a rodada, portanto podem coexistir com conclusão 1. O campo `catastrofes` permanece separado.
+
+O diagnóstico do bandido mantém seu teto no horizonte original, mesmo com abstenção. Sem braços seguros, teto e referência diagnóstica da rodada valem zero. Essas convenções não garantem que o retorno ou sua normalização constituam uma medida geral de inteligência.
+
+## Compatibilidade
+
+O resumo acrescenta quatro chaves. Consumidores que exigem um conjunto exato precisam incluí-las. Os quatro wrappers históricos que desreferenciavam a escolha foram adaptados. Comparações entre opção descartada e substituta são calculadas apenas quando existe escolha aceita; sem observações, as respectivas estimativas ficam `NaN`. Isso muda o condicionamento da amostra e não autoriza reutilizar conclusões numéricas antigas.
+
+## Validação
+
+67 testes selecionados passaram, incluindo 16 testes novos. Após acrescentar o caso sequencial catastrófico de um passo ao teste existente, os 16 testes de regressão passaram novamente. A demonstração `python -m synthai` concluiu as três tarefas e exibiu as novas métricas. Na semente padrão, não houve abstenções nessa demonstração; os testes controlados cobrem os caminhos de rejeição.
+
+Os avisos preexistentes de arquivos não fechados nos testes continuam presentes. A suíte completa e todos os experimentos históricos não foram executados.
+
+## Arquivos
+
+- Implementação: fontes/synthai/{agente,mundos,autorregulacao,composta,__main__}.py e fontes/calculos.py.
+- Testes: fontes/synthai/testes_abstencao_revisao.py e ajuste de interface em fontes/synthai/testes.py.
+- Logs: validacao_abstencao.log, regressoes_abstencao.log e demonstracao_abstencao.txt.
+- Patch: abstencao.patch, contra a cópia antes desta etapa. A correção estatística da etapa anterior já pertence a essa base.
+- Manifesto: manifesto_abstencao.json, com hashes dos arquivos alterados.
+
+O avaliador com selo incompleto continua pendente de correção.
+
+Atualização da etapa seguinte: o selo passou a detectar alterações no catálogo de dependências, conforme contrato_avaliador.md. A indicação anterior de pendência registra o estado ao concluir a etapa de abstenção.
+"""
+
+# ====================================================================================================
+# documentacao/contrato_aleatoriedade.md  (75 linhas)
+# ====================================================================================================
+FONTES['documentacao/contrato_aleatoriedade.md'] = """# Contrato de aleatoriedade dos mundos — synthai-mundos-v2
+
+## Resultado operacional
+
+Calibração, situações, sensores, consultas, recompensas e catástrofes deixam de compartilhar consumo aleatório. Um evento é identificado por domínio e coordenadas. Sob a mesma configuração, versão, runtime e coordenadas, agentes recebem os mesmos eventos exógenos, mesmo se fizerem consultas, leituras ou escolhas anteriores diferentes.
+
+A fonte deriva uma semente de SHA-256 sobre JSON compacto UTF-8 de `[protocolo, semente_raiz, mundo, canal, coordenadas]`, sem usar hash() do Python. Cada chamada cria um gerador random.Random para aquele contexto. Sementes raiz são inteiras; coordenadas são inteiros não negativos. Essa separação de consumo não é uma demonstração matemática de independência estatística dos geradores.
+
+## Coordenadas
+
+| Evento | Coordenadas do gerador |
+|---|---|
+| Opções de calibração | Índice do histórico auditado. |
+| Sensor de calibração | Índice do histórico; vetor gaussiano em ordem original das opções. |
+| Opções sequenciais | Episódio e passo, começando em zero. |
+| Sensor sequencial | Episódio e passo; vetor em ordem original das opções. |
+| Consulta sequencial | Episódio, passo, índice original da opção e ocorrência da pergunta a ela nesta situação. |
+| Braços do bandido | Rodada, começando em zero. |
+| Sensor do bandido | Rodada; vetor em ordem original dos braços, reutilizado durante a rodada. |
+| Consulta no bandido | Rodada, puxada (começando em um), índice original do braço e ocorrência da pergunta a ele nesta situação. |
+| Recompensa no bandido | Rodada, puxada e índice original do braço. |
+| Catástrofe no bandido | Rodada, puxada e índice original do braço, em canal diferente da recompensa. |
+
+Os vetores de sensor são gerados antes da seleção de leituras. Apenas uma leitura efetivamente solicitada é cobrada; o cache de Opcao continua valendo. Gerar ruídos para opções não lidas não os revela ao agente nem conta como leitura. Vetos não renumeram braços: índices nascem antes de filtrar a lista disponível.
+
+## Histórico e chamadas sucessivas
+
+Há contadores independentes para históricos auditados e episódios/rodadas de execução. Quantidades de calibração diferentes não deslocam eventos de execução. Também é possível gerar parte do histórico, executar, e depois obter o restante sem deslocar o histórico.
+
+`rodar(a, 1)` seguido de `rodar(a, 3)` preserva os eventos de `rodar(a, 4)` quando o mesmo estado de mundo, humano e agente é mantido. Métricas de chamadas diferentes devem ser agregadas pelos respectivos números de episódios/rodadas, e não pela média sem pesos.
+
+Os contadores representam unidades iniciadas e avançam antes da geração/decisão. Uma exceção após o início não faz rollback desses contadores. O protocolo não implementa checkpoint completo, retentativa de episódio interrompido ou restauração de estado. Quantidades inválidas são recusadas antes de avançar contadores; histórico vazio é permitido, mas rodar exige quantidade positiva.
+
+## Dependências causais preservadas
+
+Nível acumulado, aprendizagem, contagens dos braços, fadiga, vetos, ações disponíveis e custos continuam dependendo da política. Um uniforme idêntico de consulta pode gerar respostas humanas diferentes se a fadiga mudar o limiar de erro. O mesmo ruído de recompensa também pode produzir recompensas diferentes para braços com médias diferentes.
+
+O contrato garante eventos comuns para a mesma coordenada neste modelo do simulador. Não garante trajetórias completas iguais, sucesso da política ou identificação causal geral em ambientes onde as ações alteram a distribuição dos eventos futuros.
+
+## Interface e compatibilidade
+
+FontesAleatorias fica em fontes/synthai/aleatoriedade.py. Os mundos expõem `fontes` e `protocolo_aleatorio`; este último informa derivação, runtime, configuração, parâmetros/estado do humano e contadores. Ele é metadado de reprodução, não um snapshot completo.
+
+Humano e Situacao conservam os construtores existentes. Sem os novos kwargs de ruído, Situacao usa o caminho sequencial anterior, inclusive para humano com responder(opcao). Nos mundos, kwargs fornecem ruídos coordenados. Os atributos antigos rng/sensor do mundo foram substituídos pelo provedor fontes; o mock de recompensa existente foi adaptado para controlar o canal recompensas.
+
+Foram removidas quatro chamadas de histórico que serviam apenas para avançar o gerador antes de executar varreduras em calculos.py. Pesos de calibração continuam sendo copiados pelos procedimentos existentes. Custos de treino permanecem fora das métricas de retorno dos mundos.
+
+A mudança de protocolo altera as amostras produzidas pelas sementes anteriores. Resultados científicos históricos precisam ser reexecutados sob a versão registrada; diferenças numéricas entre protocolos não demonstram melhoria do agente. A implementação separada de RSI e seu manifesto não foram alterados nesta etapa.
+
+## Evidência e validação
+
+123 testes selecionados passaram em 5,923 segundos, incluindo 18 novos testes de pareamento e as suítes de composição, calibração, reconhecimento, autorregulação, âncora e tipos hexadecimais. A revisão independente executou 54 testes relacionados e não encontrou regressão impeditiva. Permanecem ResourceWarning preexistentes nos testes que abrem arquivos sem fechar explicitamente.
+
+A comparação em comparacao_pareamento.json executou a cópia anterior e a nova:
+
+| Verificação controlada | Anterior | Novo |
+|---|---|---|
+| Histórico adicional preserva cenário de execução | Falhou | Passou |
+| Abstenção preserva cenário do próximo episódio | Falhou | Passou |
+| Ordem/subconjunto de sensor preserva leitura comum | Falhou | Passou |
+| Mesmo braço/puxada após escolhas diferentes preserva recompensa | Falhou | Passou |
+| Mesmo braço/puxada após escolhas diferentes preserva catástrofe | Falhou | Passou |
+
+No exemplo de sensor, a mesma opção recebia -0.7248800645411627 ou -0.4435869912606142 conforme a ordem de leitura; agora recebe 1.3102660060247961 em ambos os percursos. Esses números ilustram a correção do pareamento, não maior precisão do sensor.
+
+`python -m synthai` também concluiu as três tarefas e registrou retorno, cobertura, conclusões e abstenções em demonstracao_aleatoriedade.txt. A suíte completa e todos os experimentos históricos extensos não foram executados.
+
+## Artefatos
+
+- Implementação e testes: fontes/synthai/{aleatoriedade,mundos,testes_aleatoriedade_revisao}.py.
+- Mudanças: aleatoriedade.patch, relativo à cópia antes desta etapa; hashes em manifesto_aleatoriedade.json.
+- Evidência: verificar_pareamento.py e comparacao_pareamento.json. O script usa a cópia antes_aleatoriedade para comparar as versões.
+- Logs: regressoes_aleatoriedade.log, validacao_aleatoriedade.log e demonstracao_aleatoriedade.txt.
+
+O anexo original não foi editado. Próxima pendência: validade estatística das promoções de versões; depois, associação de feedback a decisões concorrentes.
+"""
+
+# ====================================================================================================
+# documentacao/contrato_avaliador.md  (59 linhas)
+# ====================================================================================================
+FONTES['documentacao/contrato_avaliador.md'] = """# Contrato de integridade e avaliação reproduzível
+
+## Comportamento
+
+`AvaliadorSelado(k=10, t=2000)` calcula a nota externa como menos arrependimento médio de QEpsilon em bandidos de Bernoulli. A configuração exige inteiros positivos. `nota(genoma, sementes)` preserva o uso anterior e agora aceita iteradores de sementes, materializando-os antes do cálculo.
+
+As sementes devem ser inteiras e a coleção não pode ser vazia. alfa, eps e q0 devem respeitar os limites do espaço de mutação e ter valores finitos; demais dados do genoma precisam ser representáveis em JSON finito. A nota aceita deve ser finita e estar entre -t e 0. O relato do agente não participa da nota.
+
+## Manifesto
+
+O manifesto inclui:
+
+- SHA-256 dos arquivos rsi.py, decisao.py e random.py.
+- Identificação e hashes de código Python carregado, defaults e kwdefaults do catálogo de dependências da nota.
+- Métodos do aprendiz QEpsilon e métodos relevantes de random.Random, globals/builtins encontrados nessas funções, conteúdo das células de fechamento e atributos das classes.
+- Configuração k/t, limites do genoma, identificação do protocolo, derivação das sementes e versão/implementação/cache tag do Python e versão de marshal.
+
+O snapshot privado compara também identidades dos bindings. IDs de objetos e caminhos absolutos não entram no selo exportado. O catálogo é explícito e deve ser revisado se o benchmark passar a chamar novas dependências. A checagem é conservadora: mudanças em partes não usadas dos arquivos selados também invalidam o avaliador existente.
+
+A assinatura pública agora é um método da instância, pois inclui sua configuração. Os consumidores examinados usam o construtor, nota e selo; seus testes continuaram aprovados.
+
+## Ordem de avaliação
+
+1. Verificar integridade.
+2. Materializar sementes, copiar o genoma e validar entradas.
+3. Verificar novamente: iteradores de entrada podem ter alterado dependências durante a leitura.
+4. Calcular com k/t explícitos, mantendo as derivações de RNG existentes.
+5. Verificar integridade depois do cálculo e validar o domínio da nota.
+6. Registrar e devolver somente a nota aceita.
+
+Divergências e arquivos ausentes produzem RuntimeError. Entradas ou notas inválidas produzem ValueError. Recusas não incrementam chamadas nem entram no histórico de notas aceitas. Reatribuir a tag pública selo não altera a referência inicial privada.
+
+## Registro e reprodução
+
+`manifesto` retorna uma cópia; `registros` retorna cópias dos registros aceitos. Cada registro contém número, selo, configuração, genoma, sementes efetivamente usadas, nota e checksum SHA-256 de sua representação JSON canônica. O checksum permite conferir consistência; não é assinatura de autoria. Dados retornados podem ser alterados sem modificar o histórico interno.
+
+Exemplo reproduzível em avaliacao_exemplo.json: genoma inicial, sementes [1,2], k=10, t=2000, nota -223.06173584559386. O manifesto e o registro devem ser conservados juntos. Para reproduzir, conferir o selo/artefatos e avaliar o genoma nas sementes/configuração registradas. Comparações entre configurações ou artefatos diferentes exigem análise própria.
+
+## Validação
+
+95 testes selecionados passaram em 9,035 segundos, incluindo 22 novos testes de integridade/reprodução e os 6 testes existentes da Parte 33. Os testes cobrem bindings, métodos do aprendiz, substituição de __code__, defaults/kwdefaults, métodos do RNG, substituição de builtins via globals, alterações de arquivo, configuração, limites do genoma, mudança durante cálculo/consumo de sementes, cópias públicas, domínio da nota e reprodução. O selo foi igual em dois processos com o mesmo ambiente/artefato/configuração.
+
+reproducao_selo.json registra as três adulterações reproduzidas separadamente: trocar rodar_bandido, alterar QEpsilon.atualizar e mudar defaults de regret_do_genoma. Todas foram recusadas; só a nota de base entrou no histórico.
+
+Os logs são regressoes_selo.log e validacao_selo.log. Permanecem avisos preexistentes de arquivos não fechados em testes e auditoria estática. A suíte completa e os experimentos históricos extensos não foram executados.
+
+## Limites
+
+O selo detecta divergências após sua criação em um processo cooperativo. Ele não autentica a base inicial, protege o próprio auditor contra adulteração, bloqueia mudanças transitórias que sejam restauradas entre checagens ou isola código hostil. A implementação não oferece transação contra modificações simultâneas, nem execução concorrente do mesmo avaliador. A versão do runtime é registrada, mas não se calcula o hash de todos os binários e bibliotecas nativas do ambiente.
+
+Integridade e reprodução não demonstram que o benchmark mede inteligência geral, que o genoma melhorou em novas tarefas ou que a regra de seleção é uma prova matemática. Múltiplas comparações, ruído de seleção e generalização continuam sendo questões de avaliação distintas.
+
+## Continuidade
+
+Esta etapa modifica somente rsi.py e adiciona os testes. O anexo original não foi editado. selo.patch corresponde à cópia de trabalho antes desta etapa; manifesto_selo.json registra hashes de antes/depois. Próximos problemas operacionais identificados: fontes aleatórias compartilhadas nos mundos, validação estatística das promoções e associação de feedback a decisões concorrentes.
+
+A revisão independente executou os testes de integridade e da Parte 33 e não encontrou reparos obrigatórios. Também confirmou selo e nota iguais em subprocessos com diferentes PYTHONHASHSEED. Uma verificação posterior adicionou os limites do genoma ao manifesto e confirmou sua recusa quando alterados.
+
+Atualização da etapa seguinte: os mundos agora usam fontes coordenadas por domínio, conforme contrato_aleatoriedade.md. O protocolo de RSI descrito neste arquivo e seu exemplo não foram alterados.
+"""
+
+# ====================================================================================================
+# documentacao/pacote_recebido/README.md  (49 linhas)
+# ====================================================================================================
+FONTES['documentacao/pacote_recebido/README.md'] = """# SYNTHAI — código consolidado
+
+Esta distribuição reúne as fontes extraídas do material SYNTHAI fornecido, com as correções já verificadas de comparação pareada, abstenção, integridade cooperativa do avaliador e aleatoriedade coordenada. Inclui os dois mecanismos de laboratório, seus testes e seus contratos. O código principal e o laboratório usam a biblioteca padrão; a versão testada é Python 3.12.
+
+## Arquivo único
+
+O arquivo SYNTHAI_consolidado.py contém um ZIP de fontes comprimido, cujo hash é conferido antes da extração. Ao executar, ele extrai para uma pasta temporária, executa o ponto de entrada e remove a pasta ao terminar. Isso permite que o avaliador e os testes acessem os arquivos por __file__. O hash verifica integridade do conteúdo embutido; não constitui uma assinatura de autoria.
+
+```sh
+python SYNTHAI_consolidado.py demo
+python SYNTHAI_consolidado.py demo --semente 1 --json
+python SYNTHAI_consolidado.py testes
+python SYNTHAI_consolidado.py laboratorio
+python SYNTHAI_consolidado.py info
+```
+
+Para conservar uma cópia editável:
+
+```sh
+python SYNTHAI_consolidado.py --extrair minha_synthai
+cd minha_synthai
+python synthai_cli.py demo
+python synthai_cli.py testes --relatorio verificacao.json
+```
+
+A extração exige um destino vazio. O comando testes pode gravar seu relatório fora da pasta temporária quando --relatorio recebe um caminho escolhido pelo usuário.
+
+## Fontes editáveis
+
+O ZIP de entrega também fornece diretamente synthai_cli.py, verificar.py, fontes/, laboratorio/ e documentacao/. Depois de extrair o pacote, execute synthai_cli.py com os mesmos comandos. Para usar a biblioteca original:
+
+```sh
+cd fontes
+python -m synthai
+```
+
+Os exports públicos originais são Synthai, SynthaiExploradora e SynthaiComposta. calculos.py permanece incluído porque o núcleo e os testes dependem de utilitários históricos. Os scripts históricos estão preservados, mas não são executados automaticamente pelo ponto de entrada.
+
+## Escopo e limites
+
+- Trata-se de um protótipo de agentes em simuladores. A entrega não demonstra AGI, ASI ou a implementação de um milhão de componentes.
+- O laboratório permanece separado do ciclo do agente. evidencia.py exige a hipótese Bernoulli condicional e apostas previsíveis; não é um promotor geral para retornos contínuos.
+- feedback.py protege no máximo uma atualização do acumulador local por decisão. Não garante execução externa exatamente uma vez, autenticação de origem ou atomicidade de aprendizagem arbitrária.
+- O avaliador selado é cooperativo e depende da base inicialmente confiável. Não isola código hostil.
+- A regra de promoção de rsi.evoluir permanece uma implementação histórica com validade estatística pendente. Disponibilizá-la no pacote não a transforma em mecanismo de promoção confirmado.
+- Os dados binários de WordNet/OpenWordNet-PT não foram recuperados do arquivo original. Experimentos opcionais de léxico dependem desses dados adicionais. A demonstração, a regressão selecionada e o laboratório não os exigem.
+- Os testes selecionados conservam alguns ResourceWarning preexistentes de leituras de arquivos. O resultado das verificações deve ser interpretado no escopo registrado.
+
+O registro de validação informa a execução de 123 testes selecionados do núcleo e 27 do laboratório. Isso não significa que todos os testes históricos, datasets ou hipóteses arquiteturais tenham sido verificados.
+"""
+
+# ====================================================================================================
+# documentacao/pacote_recebido/VALIDACAO.log  (156 linhas)
+# ====================================================================================================
+FONTES['documentacao/pacote_recebido/VALIDACAO.log'] = """test_mesmo_agente_em_tres_tarefas (synthai.testes.TesteInterface.test_mesmo_agente_em_tres_tarefas) ... ok
+test_o_agente_nao_le_o_escondido (synthai.testes.TesteInterface.test_o_agente_nao_le_o_escondido) ... ok
+test_bonus_no_bandido_e_exploracao (synthai.testes.TesteIntuicao.test_bonus_no_bandido_e_exploracao) ... ok
+test_peso_aprendido_e_um_sobre_um_mais_sigma2 (synthai.testes.TesteIntuicao.test_peso_aprendido_e_um_sobre_um_mais_sigma2) ... ok
+test_reguas (synthai.testes.TesteMetacognicao.test_reguas) ... ok
+test_calibracao_separa_catastrofes (synthai.testes.TestePensamento.test_calibracao_separa_catastrofes) ... ok
+test_atencao_le_so_o_foco (synthai.testes.TestePercepcao.test_atencao_le_so_o_foco) ... ok
+test_limiar_da_p71_vezes_dois (synthai.testes.TesteRelacao.test_limiar_da_p71_vezes_dois) ... ok
+test_orcamento_do_bandido (synthai.testes.TesteRelacao.test_orcamento_do_bandido) ... ok
+test_quantiliza_e_alarga_no_ultimo_passo (synthai.testes.TesteSentimento.test_quantiliza_e_alarga_no_ultimo_passo) ... ok
+test_fora_do_bandido_decide_como_a_ancorada (synthai.testes_composta.TesteComposta.test_fora_do_bandido_decide_como_a_ancorada) ... ok
+test_no_bandido_decide_como_a_principal (synthai.testes_composta.TesteComposta.test_no_bandido_decide_como_a_principal) ... ok
+test_troca_de_modulo_de_fora (synthai.testes_composta.TesteComposta.test_troca_de_modulo_de_fora) ... ok
+test_dez_pesos (synthai.testes_composta.TestePensamentoRico.test_dez_pesos) ... ok
+test_nao_le_o_escondido (synthai.testes_composta.TestePensamentoRico.test_nao_le_o_escondido) ... ok
+test_recupera_uma_logistica_quadratica (synthai.testes_composta.TestePensamentoRico.test_recupera_uma_logistica_quadratica) ... ok
+test_ridge_zero_e_o_ajuste_antigo (synthai.testes_composta.TestePensamentoRico.test_ridge_zero_e_o_ajuste_antigo) ... ok
+test_firth_fica_finito_com_separacao (synthai.testes_pensamento.TestePensamentoExato.test_firth_fica_finito_com_separacao) ... ok
+test_inversa (synthai.testes_pensamento.TestePensamentoExato.test_inversa) ... ok
+test_mesmas_variaveis_do_pensamento (synthai.testes_pensamento.TestePensamentoExato.test_mesmas_variaveis_do_pensamento) ... ok
+test_nao_le_o_escondido (synthai.testes_pensamento.TestePensamentoExato.test_nao_le_o_escondido) ... ok
+test_newton_nao_perde_para_o_gradiente_no_treino (synthai.testes_pensamento.TestePensamentoExato.test_newton_nao_perde_para_o_gradiente_no_treino) ... ok
+test_newton_recupera_os_pesos (synthai.testes_pensamento.TestePensamentoExato.test_newton_recupera_os_pesos) ... ok
+test_pensante_usa_o_mesmo_pensamento_na_percepcao (synthai.testes_pensamento.TestePensamentoExato.test_pensante_usa_o_mesmo_pensamento_na_percepcao) ... ok
+test_atencao_segue_a_intuicao (synthai.testes_reconhecimento.TesteReconhecimento.test_atencao_segue_a_intuicao) ... ok
+test_lai_robbins (synthai.testes_reconhecimento.TesteReconhecimento.test_lai_robbins) ... ok
+test_leitura_que_falta_vale_o_neutro (synthai.testes_reconhecimento.TesteReconhecimento.test_leitura_que_falta_vale_o_neutro) ... ok
+test_memoria_do_bandido (synthai.testes_reconhecimento.TesteReconhecimento.test_memoria_do_bandido) ... ok
+test_nao_le_o_escondido (synthai.testes_reconhecimento.TesteReconhecimento.test_nao_le_o_escondido) ... ok
+test_neutro_e_metade_do_peso (synthai.testes_reconhecimento.TesteReconhecimento.test_neutro_e_metade_do_peso) ... ok
+test_roda_nas_tres_tarefas (synthai.testes_reconhecimento.TesteReconhecimento.test_roda_nas_tres_tarefas) ... ok
+test_thompson_concentra_com_dados (synthai.testes_reconhecimento.TesteReconhecimento.test_thompson_concentra_com_dados) ... ok
+test_aceita_iteradores (synthai.testes_metacognicao_revisao.ComparacaoPareadaTestes.test_aceita_iteradores) ... ok
+test_amostras_invalidas_sao_recusadas (synthai.testes_metacognicao_revisao.ComparacaoPareadaTestes.test_amostras_invalidas_sao_recusadas) ... ok
+test_diferencas_constantes_nao_autorizam_teste_t (synthai.testes_metacognicao_revisao.ComparacaoPareadaTestes.test_diferencas_constantes_nao_autorizam_teste_t) ... ok
+test_resultado_conhecido_e_inversao_do_sinal (synthai.testes_metacognicao_revisao.ComparacaoPareadaTestes.test_resultado_conhecido_e_inversao_do_sinal) ... ok
+test_bandido_nao_apaga_teto_apos_abstencao (synthai.testes_abstencao_revisao.TesteAbstencaoNosMundos.test_bandido_nao_apaga_teto_apos_abstencao) ... ok
+test_bandido_sem_braco_seguro_pode_encerrar (synthai.testes_abstencao_revisao.TesteAbstencaoNosMundos.test_bandido_sem_braco_seguro_pode_encerrar) ... ok
+test_catastrofe_sequencial_interrompe_sem_contar_abstencao (synthai.testes_abstencao_revisao.TesteAbstencaoNosMundos.test_catastrofe_sequencial_interrompe_sem_contar_abstencao) ... ok
+test_horizonte_completo_tem_cobertura_um (synthai.testes_abstencao_revisao.TesteAbstencaoNosMundos.test_horizonte_completo_tem_cobertura_um) ... ok
+test_sequencial_conta_custos_sem_recompensa_ou_feedback (synthai.testes_abstencao_revisao.TesteAbstencaoNosMundos.test_sequencial_conta_custos_sem_recompensa_ou_feedback) ... ok
+test_sequencial_preserva_ganho_anterior_a_abstencao (synthai.testes_abstencao_revisao.TesteAbstencaoNosMundos.test_sequencial_preserva_ganho_anterior_a_abstencao) ... ok
+test_falta_de_orcamento_nao_autoriza_acao (synthai.testes_abstencao_revisao.TesteDecisaoAdmissivel.test_falta_de_orcamento_nao_autoriza_acao) ... ok
+test_opcoes_vazias_limpam_estado_sem_percepcao (synthai.testes_abstencao_revisao.TesteDecisaoAdmissivel.test_opcoes_vazias_limpam_estado_sem_percepcao) ... ok
+test_procura_alternativa_apos_veto (synthai.testes_abstencao_revisao.TesteDecisaoAdmissivel.test_procura_alternativa_apos_veto) ... ok
+test_risco_excessivo_nao_vira_fallback (synthai.testes_abstencao_revisao.TesteDecisaoAdmissivel.test_risco_excessivo_nao_vira_fallback) ... ok
+test_variantes_herdam_abstencao (synthai.testes_abstencao_revisao.TesteDecisaoAdmissivel.test_variantes_herdam_abstencao) ... ok
+test_veto_nao_vira_fallback (synthai.testes_abstencao_revisao.TesteDecisaoAdmissivel.test_veto_nao_vira_fallback) ... ok
+test_autorregulacao_nao_concatena_episodio_abandonado (synthai.testes_abstencao_revisao.TesteFeedbackNaComposicao.test_autorregulacao_nao_concatena_episodio_abandonado) ... ok
+test_autorregulacao_sem_orcamento_nao_cria_contrafactual (synthai.testes_abstencao_revisao.TesteFeedbackNaComposicao.test_autorregulacao_sem_orcamento_nao_cria_contrafactual) ... ok
+test_composta_preserva_vetos_e_bloqueia_feedback_sem_acao (synthai.testes_abstencao_revisao.TesteFeedbackNaComposicao.test_composta_preserva_vetos_e_bloqueia_feedback_sem_acao) ... ok
+test_auditorias_nao_inventam_valor_de_substituta_ausente (synthai.testes_abstencao_revisao.TesteInstrumentacaoHistorica.test_auditorias_nao_inventam_valor_de_substituta_ausente) ... ok
+test_adicao_de_atributo_da_classe_invalida_manifesto (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_adicao_de_atributo_da_classe_invalida_manifesto) ... ok
+test_alteracao_de_codigo_sem_trocar_objeto (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_alteracao_de_codigo_sem_trocar_objeto) ... ok
+test_alteracao_de_defaults_e_kwdefaults (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_alteracao_de_defaults_e_kwdefaults) ... ok
+test_arquivo_alterado_ou_ausente_e_recusado (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_arquivo_alterado_ou_ausente_e_recusado) ... ok
+test_binding_do_modulo_de_origem_tambem_e_verificado (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_binding_do_modulo_de_origem_tambem_e_verificado) ... ok
+test_configuracao_nao_pode_mudar_apos_criacao (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_configuracao_nao_pode_mudar_apos_criacao) ... ok
+test_global_que_substitui_builtin_e_verificado (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_global_que_substitui_builtin_e_verificado) ... ok
+test_iterador_que_muda_dependencias_e_recusado_antes_do_calculo (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_iterador_que_muda_dependencias_e_recusado_antes_do_calculo) ... ok
+test_limites_do_genoma_nao_podem_mudar_apos_criacao (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_limites_do_genoma_nao_podem_mudar_apos_criacao) ... ok
+test_metodos_do_rng_sao_verificados (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_metodos_do_rng_sao_verificados) ... ok
+test_mutacao_durante_calculo_nao_publica_nota (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_mutacao_durante_calculo_nao_publica_nota) ... ok
+test_rebinding_de_funcao_com_codigo_identico (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_rebinding_de_funcao_com_codigo_identico) ... ok
+test_reproducao_da_troca_de_rodar_bandido (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_reproducao_da_troca_de_rodar_bandido) ... ok
+test_reselar_tag_publica_nao_aprova_mudanca (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_reselar_tag_publica_nao_aprova_mudanca) ... ok
+test_troca_do_metodo_do_aprendiz (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_troca_do_metodo_do_aprendiz) ... ok
+test_configuracoes_distintas_tem_selos_distintos (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_configuracoes_distintas_tem_selos_distintos) ... ok
+test_copias_publicas_nao_alteram_manifesto_ou_historico (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_copias_publicas_nao_alteram_manifesto_ou_historico) ... ok
+test_dimensoes_invalidas_sao_recusadas (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_dimensoes_invalidas_sao_recusadas) ... ok
+test_entradas_invalidas_nao_publicam_registros (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_entradas_invalidas_nao_publicam_registros) ... ok
+test_nota_e_registro_podem_ser_reproduzidos (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_nota_e_registro_podem_ser_reproduzidos) ... ok
+test_notas_invalidas_nao_sao_registradas (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_notas_invalidas_nao_sao_registradas) ... ok
+test_selo_e_estavel_entre_processos (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_selo_e_estavel_entre_processos) ... ok
+test_historico_em_lotes_com_execucao_entre_eles (synthai.testes_aleatoriedade_revisao.TesteCalibracaoIndependente.test_historico_em_lotes_com_execucao_entre_eles) ... ok
+test_quantidade_de_historico_nao_desloca_execucao (synthai.testes_aleatoriedade_revisao.TesteCalibracaoIndependente.test_quantidade_de_historico_nao_desloca_execucao) ... ok
+test_quantidades_invalidas_nao_avancam_contadores (synthai.testes_aleatoriedade_revisao.TesteCalibracaoIndependente.test_quantidades_invalidas_nao_avancam_contadores) ... ok
+test_abstencao_nao_desloca_episodio_seguinte (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_abstencao_nao_desloca_episodio_seguinte) ... ok
+test_bandido_consultas_e_sensor_nao_deslocam_recompensas (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_bandido_consultas_e_sensor_nao_deslocam_recompensas) ... ok
+test_bandido_escolhas_anteriores_nao_deslocam_resultado_comum (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_bandido_escolhas_anteriores_nao_deslocam_resultado_comum) ... ok
+test_catastrofe_nao_desloca_episodio_seguinte (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_catastrofe_nao_desloca_episodio_seguinte) ... ok
+test_execucao_em_lotes_preserva_eventos_e_metricas (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_execucao_em_lotes_preserva_eventos_e_metricas) ... ok
+test_rodada_abandonada_nao_desloca_rodada_seguinte (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_rodada_abandonada_nao_desloca_rodada_seguinte) ... ok
+test_vetos_nao_renumeram_ruido_dos_bracos_restantes (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_vetos_nao_renumeram_ruido_dos_bracos_restantes) ... ok
+test_contextos_invalidos_sao_recusados (synthai.testes_aleatoriedade_revisao.TesteFontesCoordenadas.test_contextos_invalidos_sao_recusados) ... ok
+test_derivacao_nao_depende_de_pythonhashseed (synthai.testes_aleatoriedade_revisao.TesteFontesCoordenadas.test_derivacao_nao_depende_de_pythonhashseed) ... ok
+test_repetir_evento_nao_depende_de_consumo_de_outros (synthai.testes_aleatoriedade_revisao.TesteFontesCoordenadas.test_repetir_evento_nao_depende_de_consumo_de_outros) ... ok
+test_consultas_e_leituras_adicionais_nao_deslocam_cenarios (synthai.testes_aleatoriedade_revisao.TesteSensorEConsultas.test_consultas_e_leituras_adicionais_nao_deslocam_cenarios) ... ok
+test_consultas_repetidas_nao_deslocam_outra_opcao (synthai.testes_aleatoriedade_revisao.TesteSensorEConsultas.test_consultas_repetidas_nao_deslocam_outra_opcao) ... ok
+test_fallback_sequencial_de_situacao_permanece (synthai.testes_aleatoriedade_revisao.TesteSensorEConsultas.test_fallback_sequencial_de_situacao_permanece) ... ok
+test_mesmo_uniforme_nao_apaga_efeito_da_fadiga (synthai.testes_aleatoriedade_revisao.TesteSensorEConsultas.test_mesmo_uniforme_nao_apaga_efeito_da_fadiga) ... ok
+test_ordem_subconjunto_e_repeticao_nao_deslocam_leitura_comum (synthai.testes_aleatoriedade_revisao.TesteSensorEConsultas.test_ordem_subconjunto_e_repeticao_nao_deslocam_leitura_comum) ... ok
+test_decai_para_a_crenca_inicial (synthai.testes_parte33.TesteDescontado.test_decai_para_a_crenca_inicial) ... ok
+test_auditoria_estatica_da_arquitetura_original (synthai.testes_parte33.TesteRSI.test_auditoria_estatica_da_arquitetura_original) ... ok
+test_autoavaliacao_acredita_no_relatorio_e_o_selado_nao (synthai.testes_parte33.TesteRSI.test_autoavaliacao_acredita_no_relatorio_e_o_selado_nao) ... ok
+test_evoluir_devolve_campeao_do_arquivo (synthai.testes_parte33.TesteRSI.test_evoluir_devolve_campeao_do_arquivo) ... ok
+test_mutacao_respeita_limites_e_niveis (synthai.testes_parte33.TesteRSI.test_mutacao_respeita_limites_e_niveis) ... ok
+test_selo_recusa_avaliador_alterado (synthai.testes_parte33.TesteRSI.test_selo_recusa_avaliador_alterado) ... ok
+test_limites_do_multiplicador (synthai.testes_autorregulacao.TesteAutorregulacao.test_limites_do_multiplicador) ... ok
+test_nao_le_o_escondido (synthai.testes_autorregulacao.TesteAutorregulacao.test_nao_le_o_escondido) ... ok
+test_observar_aprende_a_regressao_e_o_futuro (synthai.testes_autorregulacao.TesteAutorregulacao.test_observar_aprende_a_regressao_e_o_futuro) ... ok
+test_relacao_anota_aceita_e_descartada (synthai.testes_autorregulacao.TesteAutorregulacao.test_relacao_anota_aceita_e_descartada) ... ok
+test_roda_e_recalcula (synthai.testes_autorregulacao.TesteAutorregulacao.test_roda_e_recalcula) ... ok
+test_termos_com_dados_feitos_a_mao (synthai.testes_autorregulacao.TesteAutorregulacao.test_termos_com_dados_feitos_a_mao) ... ok
+test_auditoria_vira_priori_de_f (synthai.testes_ancora.TesteAncora.test_auditoria_vira_priori_de_f) ... ok
+test_nao_le_o_escondido (synthai.testes_ancora.TesteAncora.test_nao_le_o_escondido) ... ok
+test_quantil_e_mais_pessimista_que_a_media (synthai.testes_ancora.TesteAncora.test_quantil_e_mais_pessimista_que_a_media) ... ok
+test_quantil_escala_com_a_taxa_e_encosta_na_media (synthai.testes_ancora.TesteAncora.test_quantil_escala_com_a_taxa_e_encosta_na_media) ... ok
+test_wilson_hilferty_perto_do_exato (synthai.testes_ancora.TesteAncora.test_wilson_hilferty_perto_do_exato) ... ok
+test_local_troca_o_pensamento_na_percepcao_tambem (synthai.testes_limiar.TesteLimiar.test_local_troca_o_pensamento_na_percepcao_tambem) ... ok
+test_multiplicador_do_limiar (synthai.testes_limiar.TesteLimiar.test_multiplicador_do_limiar) ... ok
+test_nao_le_o_escondido (synthai.testes_limiar.TesteLimiar.test_nao_le_o_escondido) ... ok
+test_topo_usa_a_melhor_nota_do_episodio_inteiro (synthai.testes_limiar.TesteLimiar.test_topo_usa_a_melhor_nota_do_episodio_inteiro) ... ok
+test_ancora_nao_age_no_bandido (synthai.testes_hexadecimal.TesteHexadecimal.test_ancora_nao_age_no_bandido) ... ok
+test_dezesseis_tipos_constroem (synthai.testes_hexadecimal.TesteHexadecimal.test_dezesseis_tipos_constroem) ... ok
+test_efeitos_contra_a_definicao_em_tres_fatores (synthai.testes_hexadecimal.TesteHexadecimal.test_efeitos_contra_a_definicao_em_tres_fatores) ... ok
+test_efeitos_de_um_fatorial_feito_a_mao (synthai.testes_hexadecimal.TesteHexadecimal.test_efeitos_de_um_fatorial_feito_a_mao) ... ok
+test_interacao_com_sinal_certo (synthai.testes_hexadecimal.TesteHexadecimal.test_interacao_com_sinal_certo) ... ok
+test_nao_le_o_escondido (synthai.testes_hexadecimal.TesteHexadecimal.test_nao_le_o_escondido) ... ok
+test_quantizacao_erra_no_maximo_meio_passo (synthai.testes_hexadecimal.TesteHexadecimal.test_quantizacao_erra_no_maximo_meio_passo) ... ok
+test_thompson_nao_age_fora_do_bandido (synthai.testes_hexadecimal.TesteHexadecimal.test_thompson_nao_age_fora_do_bandido) ... ok
+test_tipo_0x4_e_a_exploradora (synthai.testes_hexadecimal.TesteHexadecimal.test_tipo_0x4_e_a_exploradora) ... ok
+test_walsh_hadamard_contra_a_definicao (synthai.testes_hexadecimal.TesteHexadecimal.test_walsh_hadamard_contra_a_definicao) ... ok
+test_detecta_trajetoria_definida (testes_laboratorio_consolidado.Estatistica.test_detecta_trajetoria_definida) ... ok
+test_esperanca_abaixo_da_nula (testes_laboratorio_consolidado.Estatistica.test_esperanca_abaixo_da_nula) ... ok
+test_esperanca_exata_sob_nula (testes_laboratorio_consolidado.Estatistica.test_esperanca_exata_sob_nula) ... ok
+test_exemplo_invalido_olha_o_futuro (testes_laboratorio_consolidado.Estatistica.test_exemplo_invalido_olha_o_futuro) ... ok
+test_fator_zero_nao_reanima (testes_laboratorio_consolidado.Estatistica.test_fator_zero_nao_reanima) ... ok
+test_nao_substituir_aposta (testes_laboratorio_consolidado.Estatistica.test_nao_substituir_aposta) ... ok
+test_observacao_sem_aposta (testes_laboratorio_consolidado.Estatistica.test_observacao_sem_aposta) ... ok
+test_orcamento_nao_reciclado (testes_laboratorio_consolidado.Estatistica.test_orcamento_nao_reciclado) ... ok
+test_parada_adaptativa_enumera_caminhos (testes_laboratorio_consolidado.Estatistica.test_parada_adaptativa_enumera_caminhos) ... ok
+test_parametros_e_limites (testes_laboratorio_consolidado.Estatistica.test_parametros_e_limites) ... ok
+test_resultado_invalido_preserva_aposta (testes_laboratorio_consolidado.Estatistica.test_resultado_invalido_preserva_aposta) ... ok
+test_aplicacao_e_ack_perdido (testes_laboratorio_consolidado.Feedback.test_aplicacao_e_ack_perdido) ... ok
+test_ativar_mesma_versao_e_noop (testes_laboratorio_consolidado.Feedback.test_ativar_mesma_versao_e_noop) ... ok
+test_auditoria_le_snapshot_coerente (testes_laboratorio_consolidado.Feedback.test_auditoria_le_snapshot_coerente) ... ok
+test_cancelamento_bloqueia_atrasado (testes_laboratorio_consolidado.Feedback.test_cancelamento_bloqueia_atrasado) ... ok
+test_cancelamento_concorrente (testes_laboratorio_consolidado.Feedback.test_cancelamento_concorrente) ... ok
+test_cancelamento_nao_apaga_aplicacao (testes_laboratorio_consolidado.Feedback.test_cancelamento_nao_apaga_aplicacao) ... ok
+test_concorrencia_decisoes_distintas (testes_laboratorio_consolidado.Feedback.test_concorrencia_decisoes_distintas) ... ok
+test_concorrencia_mesma_decisao (testes_laboratorio_consolidado.Feedback.test_concorrencia_mesma_decisao) ... ok
+test_conflito_nao_sobrescreve (testes_laboratorio_consolidado.Feedback.test_conflito_nao_sobrescreve) ... ok
+test_dominio_recompensa (testes_laboratorio_consolidado.Feedback.test_dominio_recompensa) ... ok
+test_encerramento_processo_antes_do_commit (testes_laboratorio_consolidado.Feedback.test_encerramento_processo_antes_do_commit) ... ok
+test_epoca_impede_aba (testes_laboratorio_consolidado.Feedback.test_epoca_impede_aba) ... ok
+test_falha_no_meio_da_transacao (testes_laboratorio_consolidado.Feedback.test_falha_no_meio_da_transacao) ... ok
+test_origem_errada_nao_consume_decisao (testes_laboratorio_consolidado.Feedback.test_origem_errada_nao_consume_decisao) ... ok
+test_resposta_de_outro_registro (testes_laboratorio_consolidado.Feedback.test_resposta_de_outro_registro) ... ok
+test_versao_incompativel (testes_laboratorio_consolidado.Feedback.test_versao_incompativel) ... ok
+
+----------------------------------------------------------------------
+Ran 150 tests in 7.663s
+
+OK
+{"testes": 150, "falhas": 0, "erros": 0, "sucesso": true, "segundos": 7.663, "python": "3.12.14", "escopo": "123 regressões selecionadas do núcleo e 27 testes de laboratório", "experimentos_historicos_integralmente_reexecutados": false, "fonte": ["synthai.testes", "synthai.testes_composta", "synthai.testes_pensamento", "synthai.testes_reconhecimento", "synthai.testes_metacognicao_revisao", "synthai.testes_abstencao_revisao", "synthai.testes_selo_revisao", "synthai.testes_aleatoriedade_revisao", "synthai.testes_parte33", "synthai.testes_autorregulacao", "synthai.testes_ancora", "synthai.testes_limiar", "synthai.testes_hexadecimal"]}
+"""
+
+# ====================================================================================================
+# documentacao/pacote_recebido/VERIFICACAO.json  (25 linhas)
+# ====================================================================================================
+FONTES['documentacao/pacote_recebido/VERIFICACAO.json'] = """{
+  "testes": 150,
+  "falhas": 0,
+  "erros": 0,
+  "sucesso": true,
+  "segundos": 7.663,
+  "python": "3.12.14",
+  "escopo": "123 regressões selecionadas do núcleo e 27 testes de laboratório",
+  "experimentos_historicos_integralmente_reexecutados": false,
+  "fonte": [
+    "synthai.testes",
+    "synthai.testes_composta",
+    "synthai.testes_pensamento",
+    "synthai.testes_reconhecimento",
+    "synthai.testes_metacognicao_revisao",
+    "synthai.testes_abstencao_revisao",
+    "synthai.testes_selo_revisao",
+    "synthai.testes_aleatoriedade_revisao",
+    "synthai.testes_parte33",
+    "synthai.testes_autorregulacao",
+    "synthai.testes_ancora",
+    "synthai.testes_limiar",
+    "synthai.testes_hexadecimal"
+  ]
+}
+"""
+
+# ====================================================================================================
+# resultados.txt  (1516 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -20367,10 +26568,100 @@ P1614 rodada 46, fato 17: derivados 10297, controle 3025863371175, decrementos 1
 P1092 pNN novas (P1601-P1630) sem teste: 0 de 12: []
 P974 previsoes unilaterais da Parte 72: {72: (0, 0, [])}
 P1629 minha taxa de erro (195/607): media = 0.32, intervalo 90% = [0.29, 0.35]
+--- Parte 73 (0x49: o que refuta) ---
+P1631 reenvio (bloco novo, bloco guardado identico, linhas): [(0, 1, 135)]
+P1632 n = 2000, semente 73: VOI = 0 em 0.47900 (conta: 1/2, desvio 0.01118); entre os 10% de maior S: 0.5100; Spearman(S, VOI) = 0.1742
+P1632 n = 20000, semente 74: VOI = 0 em 0.49995 (conta: 1/2, desvio 0.00354); entre os 10% de maior S: 0.5000; Spearman(S, VOI) = 0.1880
+P1639 rodada 47: VOI = 0 em 958 de 2000; nos 200 de maior S, 102; VOI medio dos 200 de maior VOI 0.1696, dos 200 de maior S 0.0668 (razao 0.394)
+P1635 violacoes da disjuncao entre animal e os irmaos: 6: [('parasite', ['flea', 'pulex_irritans', 'dog_flea', 'cat_flea', 'chigoe', 'sticktight'])]
+P1636 'toda ave voa': fecho de bird 872; contraexemplos 16: ['ratite', 'ostrich', 'cassowary', 'emu', 'kiwi', 'rhea', 'rhea', 'elephant_bird', 'moa', 'dodo', 'solitaire', 'sphenisciform_seabird', 'weka', 'notornis', 'great_auk', 'penguin']
+P1637 polissemia dos substantivos (lemas, polissemicos, fracao): (117798, 15935, 0.13527394353045044)
+P1638 rodadas com funcoes da libm: (48, ['rodada48'])
+P1642 heranca multipla (sinsets, substantivos, fracao): (2213, 82115, 0.02695000913353224)
+P1092 pNN novas (P1631-P1660) sem teste: 0 de 10: []
+P974 previsoes unilaterais da Parte 73: {}
+P1659 minha taxa de erro (198/618): media = 0.32, intervalo 90% = [0.29, 0.35]
+--- Parte 74 (0x4A: o que vale testar) ---
+P1661 semente 73: VOI = 0 entre os 10% de maior ganho de informacao 0.5100; VOI medio deles 0.0426 contra 0.1696 dos de maior VOI (razao 0.2514)
+P1661 semente 730: VOI = 0 entre os 10% de maior ganho de informacao 0.5150; VOI medio deles 0.0460 contra 0.1661 dos de maior VOI (razao 0.2772)
+P1661 semente 731: VOI = 0 entre os 10% de maior ganho de informacao 0.4600; VOI medio deles 0.0567 contra 0.1739 dos de maior VOI (razao 0.3260)
+P1661 semente 732: VOI = 0 entre os 10% de maior ganho de informacao 0.5200; VOI medio deles 0.0471 contra 0.1624 dos de maior VOI (razao 0.2900)
+P1661 semente 733: VOI = 0 entre os 10% de maior ganho de informacao 0.5500; VOI medio deles 0.0436 contra 0.1541 dos de maior VOI (razao 0.2827)
+P1662 semente 740: guloso VOI/custo 0.9924 do otimo; guloso H/custo 0.5806; guloso VOI otimo em 0.6267 das instancias
+P1662 semente 741: guloso VOI/custo 0.9928 do otimo; guloso H/custo 0.5549; guloso VOI otimo em 0.6667 das instancias
+P1662 semente 742: guloso VOI/custo 0.9925 do otimo; guloso H/custo 0.5653; guloso VOI otimo em 0.6567 das instancias
+P1662 semente 743: guloso VOI/custo 0.9938 do otimo; guloso H/custo 0.5606; guloso VOI otimo em 0.6400 das instancias
+P1662 semente 74: guloso VOI/custo 0.9922 do otimo; guloso H/custo 0.5680; guloso VOI otimo em 0.5733 das instancias
+P1662 semente 75: guloso VOI/custo 0.9924 do otimo; guloso H/custo 0.5684; guloso VOI otimo em 0.6200 das instancias
+P1663 rodada 48: soma dos otimos 222.0283; guloso VOI 220.3091 (0.9923); guloso H 129.8720 (0.5849); guloso VOI otimo em 172 de 300
+P1092 pNN novas (P1661-P1690) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 74: {}
+P1689 minha taxa de erro (199/625): media = 0.32, intervalo 90% = [0.29, 0.35]
+--- Parte 75 (0x4B: o que se prova) ---
+P1691 separador corrigido = False: campos achados [False, False, False, False, False]; aprovados [False, False, False, False, False]; delta -1.0000; codigos distintos 1: 'def compute_factor(x, y):\\n    return x + y'
+P1691 separador corrigido = True: campos achados [True, True, True, True, True]; aprovados [True, True, True, True, True]; delta 2.8333; codigos distintos 1: 'def compute_factor(x, y):\\n    return x * y\\n# Verified by Java ASI'
+P1692 calculos.py: 591 funcoes; aprovadas pelo nucleo 591 (1.0000); mudadas pela mutacao 291 (0.4924); aprovadas e mudadas 291
+P1693 synthai/ (sem testes): 271 funcoes e metodos; aprovados 271 (1.0000); mudados 82 (0.3026)
+P1698 reenvio (linguagem, bloco guardado identico, linhas): [('java', 0, 39), ('json', None, 7)]
+P1694 Verifier do texto: scores [('A', 0.36), ('B', 0.5), ('C', 0.18)]; ordem gulosa ['B', 'A'] (valor 1.2200); otimo ('A', 'B') (1.2200)
+P1092 pNN novas (P1691-P1720) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 75: {}
+P1719 minha taxa de erro (201/632): media = 0.32, intervalo 90% = [0.29, 0.35]
+--- Parte 76 (0x4C: a forma do byte) ---
+P1721 pt semente 76: cheio 3.4732; Kronecker 3.5444; diferenca +0.0711
+P1721 pt semente 77: cheio 3.4358; Kronecker 3.4645; diferenca +0.0288
+P1721 pt semente 78: cheio 3.4329; Kronecker 3.4948; diferenca +0.0619
+P1721 pt semente 79: cheio 3.4555; Kronecker 3.5367; diferenca +0.0812
+P1721 en semente 76: cheio 3.4894; Kronecker 3.5923; diferenca +0.1029; Kronecker embaralhado 3.5818 (embaralhado - ASCII -0.0105)
+P1721 en semente 77: cheio 3.5046; Kronecker 3.5735; diferenca +0.0689; Kronecker embaralhado 3.5838 (embaralhado - ASCII +0.0103)
+P1721 en semente 78: cheio 3.4855; Kronecker 3.5540; diferenca +0.0685; Kronecker embaralhado 3.5776 (embaralhado - ASCII +0.0236)
+P1721 en semente 79: cheio 3.5537; Kronecker 3.6288; diferenca +0.0751; Kronecker embaralhado 3.5976 (embaralhado - ASCII -0.0312)
+P1721 pesos de embedding (Kronecker, tabela cheia): (80, 544)
+P1722 rodadas com funcoes da biblioteca (python, so na preparacao, java): {'48': (['log2'], True, [])}
+P1092 pNN novas (P1721-P1750) sem teste: 0 de 2: []
+P974 previsoes unilaterais da Parte 76: {}
+P1749 minha taxa de erro (201/636): media = 0.32, intervalo 90% = [0.29, 0.35]
+--- Parte 77 (0x4D: as duas abertas) ---
+P1751 rodada 09 nova (exp e log proprios) contra a original: 13 numeros, 6 mudaram, maior diferenca relativa 1.116e-13
+P1722 rodadas com funcoes da biblioteca depois da Parte 77: {'48': (['log2'], True, [])}
+P1092 pNN novas (P1751-P1780) sem teste: 0 de 1: []
+P974 previsoes unilaterais da Parte 77: {}
+P1779 minha taxa de erro (201/641): media = 0.31, intervalo 90% = [0.28, 0.34]
+--- Parte 78 (0x4E: a atencao de posto baixo) ---
+P1783 pt semente 71: bits 3.4286; delta por posto [(1, 0.0646), (2, 0.0401), (4, 0.0081), (16, 0.0)]; PR 1.953
+P1783 pt semente 72: bits 3.4596; delta por posto [(1, 0.0105), (2, 0.0041), (4, 0.0022), (16, 0.0)]; PR 3.084
+P1783 en semente 73: bits 3.4784; delta por posto [(1, 0.0232), (2, 0.0129), (4, 0.0028), (16, 0.0)]; PR 1.501
+P1783 en semente 74: bits 3.5499; delta por posto [(1, 0.0436), (2, 0.0269), (4, 0.0067), (16, 0.0)]; PR 2.283
+P1092 pNN novas (P1781-P1810) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 78: {}
+P1809 minha taxa de erro (201/645): media = 0.31, intervalo 90% = [0.28, 0.34]
+--- Parte 79 (0x4F: causa e confianca) ---
+P1811 Z -> X, Z -> Y, X -> Y (efeito 0,5): inclinacao ingenua 0.9986 (conta 1,0); ajustada por Z 0.4987; sob intervencao 0.4914
+P1812 minha calibracao (Partes 53 a 78): 189 previsoes, acerto 0.7778; por tipo [('zero', 18, 0.7778), (None, 53, 0.8302), ('outra', 38, 0.7632), ('fracao', 47, 0.766), ('contagem', 33, 0.7273)]
+P1813 z nominal 1.6449; z observado 1.2206; fator de alargamento 1.3475; desvio binomial 0.0221; z do acerto -5.54
+P1092 pNN novas (P1811-P1840) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 79: {}
+P1839 minha taxa de erro (201/649): media = 0.31, intervalo 90% = [0.28, 0.34]
+--- Parte 80 (0x50: o valor de um conjunto) ---
+P1842 olhar 1, semente 800: guloso/otimo 0.8835; guloso otimo em 0.8167; complementaridade 0.3633; parado em zero 0.1100
+P1842 olhar 1, semente 801: guloso/otimo 0.8931; guloso otimo em 0.8267; complementaridade 0.3667; parado em zero 0.1000
+P1842 olhar 1, semente 802: guloso/otimo 0.9022; guloso otimo em 0.8267; complementaridade 0.3833; parado em zero 0.0900
+P1842 olhar 1, semente 803: guloso/otimo 0.8808; guloso otimo em 0.7967; complementaridade 0.3233; parado em zero 0.1100
+P1842 olhar 1, semente 80: guloso/otimo 0.8821; guloso otimo em 0.7933; complementaridade 0.4033; parado em zero 0.1100
+P1842 olhar 2, semente 800: guloso/otimo 0.9709; guloso otimo em 0.9133; complementaridade 0.3633; parado em zero 0.0233
+P1842 olhar 2, semente 801: guloso/otimo 0.9752; guloso otimo em 0.9133; complementaridade 0.3667; parado em zero 0.0167
+P1842 olhar 2, semente 802: guloso/otimo 0.9846; guloso otimo em 0.9233; complementaridade 0.3833; parado em zero 0.0067
+P1842 olhar 2, semente 803: guloso/otimo 0.9665; guloso otimo em 0.8933; complementaridade 0.3233; parado em zero 0.0233
+P1842 olhar 2, semente 80: guloso/otimo 0.9771; guloso otimo em 0.9100; complementaridade 0.4033; parado em zero 0.0167
+P1843 rodada 49 (as mesmas contas da P1842, semente 80): [0.8821, 0.9771, 0.7933, 0.91, 0.11]
+P1092 pNN novas (P1841-P1870) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 80: {}
+P1869 minha taxa de erro (201/657): media = 0.31, intervalo 90% = [0.28, 0.34]
 === Unificacao (sempre ao final) ===
-P96 funcoes pNN no arquivo = 438; pares de interacao possiveis = 95703
+P96 funcoes pNN no arquivo = 468; pares de interacao possiveis = 109278
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
-Regressao: 121/121 resultados publicados reproduzidos; falhas = []
+Regressao: 127/128 resultados publicados reproduzidos; falhas = ['P1692']
+(depois desta execucao, a entrada P1692 passou a conferir o invariante, porque o numero de funcoes do calculos.py cresce: ver o commit)
 """
 
 # ====================================================================================================
@@ -35100,7 +41391,7 @@ Do mundo: (a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ❌ (h) ✅. Parte
 # ====================================================================================================
 FONTES['ASI_AGI_parte72_o_que_esta_disfuncional.md'] = """# Como eu construiria uma AGI/ASI — Parte 72 (0x48): o que está disfuncional
 
-> Continuação da [Parte 71](ASI_AGI_parte71_os_autovalores_da_atencao.md). Pedido do usuário: **"Corrija tudo pra ver se há coisas inadequadas e disfuncionais"**, junto com um texto colado de
+> Continuação da [Parte 71](ASI_AGI_parte71_os_autovalores_da_atencao.md). **Próxima:** [Parte 73 — o que refuta](ASI_AGI_parte73_o_que_refuta.md) (P1631–P1660). Pedido do usuário: **"Corrija tudo pra ver se há coisas inadequadas e disfuncionais"**, junto com um texto colado de
 > outra conversa (um "ciclo pergunta ⇄ resposta" com módulos, números e uma tabela de "✅"). Esta parte é uma auditoria nas duas direções: do texto recebido e do próprio repositório.
 
 ## Previsões sobre as minhas previsões desta parte (registradas antes de pensar qualquer faixa do mundo, pela regra da Parte 70)
@@ -35408,11 +41699,11 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) �
 """
 
 # ====================================================================================================
-# ASI_AGI_parte73_o_que_refuta.md  (79 linhas)
+# ASI_AGI_parte73_o_que_refuta.md  (269 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte73_o_que_refuta.md'] = """# Como eu construiria uma AGI/ASI — Parte 73 (0x49): o que refuta
 
-> Continuação da [Parte 72](ASI_AGI_parte72_o_que_esta_disfuncional.md). Nasce do terceiro texto recebido do usuário (`externos/texto_recebido_parte73.md`): ele reenvia o Módulo 002 e
+> Continuação da [Parte 72](ASI_AGI_parte72_o_que_esta_disfuncional.md). **Próxima:** [Parte 74 — o que vale testar](ASI_AGI_parte74_o_que_vale_testar.md) (P1661–P1690). Nasce do terceiro texto recebido do usuário (`externos/texto_recebido_parte73.md`): ele reenvia o Módulo 002 e
 > acrescenta o Módulo 003 (uma fórmula de prioridade de perguntas, o WordNet com *sparrow*, uma checklist de 8 testes) e a pergunta do Módulo 004: **"como construir um sistema que procure
 > ativamente evidências capazes de demonstrar que a hipótese está errada?"**
 
@@ -35489,14 +41780,204 @@ novos. A rodada 21 usa `math.log` e `** 2` (Python) e `Math.log` (Java), funçõ
 **Previsão nova, registrada antes de editar:** as outras quatro rodadas com funções da biblioteca (18, 19, 24, 30) passam hoje, mas só por sorte, e a 18 e a 19 leem o `resultados.txt`, que cresce.
 Com a mesma troca (o `exp_` e o `log_` de `dialogo/exatas.py`, `** 2` por `x * x`, originais em `dialogo/registro/`):
 - **(k)** as quatro dão IGUAIS, e a `p1638` passa a achar **0** rodadas com funções da biblioteca (categórica)
+
+**Medido (h):** **45 de 46** IGUAIS ❌. A rodada 26 ainda deu DIFERENTES por 4 ulps. O mecanismo: em Python, a 26 *herda* o idf da 21 por `import`, e a correção da 21 chegou a ela; em Java, a 26 tem uma
+*cópia* do cálculo (`Rodada26.java`, linha 26: `Math.log`, com o comentário "como o math.log da Rodada 21"), e a cópia ficou com a biblioteca. Depois da correção, os dois lados calculavam de jeitos
+diferentes. A checagem rápida das cinco rodadas tinha dado IGUAIS por sorte, com os dados de antes; o `resultados.txt` cresceu (as Partes 70 a 72) entre ela e o `verificar.py`. E a `p1638` olhou
+só o lado Python e só a forma `math.log`: ela não via `from math import log` nem o `Math.log` do Java, e não acusou as rodadas 06, 09, 14 e 20. As duas lacunas são o defeito que a Parte 75
+apontou no texto recebido: um verificador sem caso de controle.
+
+**Medido (k), depois de corrigir as rodadas 18, 19, 24 e 30 (e a cópia Java da 26):** as cinco dão IGUAIS (73, 73, 50, 3 e 7 linhas), mas a `p1638` acha **1** rodada com a biblioteca, e não 0: a **48**, que
+eu escrevi na Parte 74, depois desta regra, com `math.log2` na preparação dos dados (o Java lê os valores do arquivo, então não há risco entre as linguagens, mas a auditoria não distingue). Pela letra
+da previsão, (k) ❌. O texto "a regra vale para a frente" (Parte 73) falhou dentro do próprio dia: escrevi uma rodada nova que a auditoria acusa.
+
+## As perguntas desta parte
+
+1. **P1631 (0x65F).** O texto recebido reenvia o código do Módulo 002: é o mesmo que já foi auditado? ↩ P947 (a regra da Parte 50)
+2. **P1632 e P1639 (0x660, 0x667).** A prioridade S(q) = U + I + T do texto, contra o valor exato de uma pergunta (o VOI da teoria da decisão), e a Rodada 47. ↩ P83
+3. **P1633–P1635 e P1642 (0x661–0x663, 0x66A).** O motor de contradições: os axiomas de disjunção entre classes irmãs, no dicionário. ↩ P1609
+4. **P1636 (0x664).** Procurar o que refuta: "toda ave voa" contra o dicionário. ↩ a pergunta do Módulo 004
+5. **P1637 (0x665).** Quantas palavras pedem a escolha do sentido? ↩ P1611
+6. **P1638 (0x666).** A disfunção que a reverificação achou: rodadas que passavam por sorte. ↩ P1601
+7. **P1640 (0x668).** Preditiva comigo mesma. **P1641 (0x669).** Engenharia reversa e Jung. **P1659 (0x67B).** Placar. **P1660 (0x67C).** Unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [5; 10] | **11.0000** | ❌ |
+| (m2) | [0; 3] | **1.0000** | ✅ |
+| (m3) | [0.05; 0.5] | **0.2009** | ✅ |
+| (m4) | [0.45; 1.0] | **0.7273** | ✅ |
+| (m5) | [0; 2] | **1.0000** | ✅ |
+| (m6) | [0; 2] | **2.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **5 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P1631 (0x65F). O reenvio ✅
+
+O bloco de código do texto novo é idêntico, linha por linha (135 linhas), ao segundo bloco guardado na Parte 72. A auditoria dele vale sem refazer: sete verificações contra as oito declaradas,
+a string lida letra por letra, o `deque` sem uso, o limite frouxo. A correção já está em `synthai/lago.py`. Só a metade nova do texto (o Módulo 003) é auditada abaixo.
+
+### P1632 e P1639 (0x660, 0x667). Quanto vale perguntar ❌✅✅✅
+
+**Na pergunta.** O texto escreve S(q) = w_u U + w_i I + w_t T e diz, com honestidade, que é "uma heurística, não uma lei". A palavra que falta é **decisão**. Uma pergunta vale pelo quanto a
+resposta pode mudar o que se faz. Se nenhuma resposta muda a ação, a pergunta vale zero, por mais incerta (U) e importante (I) que seja.
+
+**Lógica (a conta antes da medida).** Com 2 ações, 2 estados e prior p, o valor da informação perfeita é
+VOI = p·max_a u(a, 1) + (1 − p)·max_a u(a, 0) − max_a [p·u(a, 1) + (1 − p)·u(a, 0)] ≥ 0. É a desigualdade de Jensen para o máximo, que é convexo.
+- **VOI = 0 exatamente quando uma ação domina nas duas situações.** Com utilidades sorteadas, a melhor ação em cada estado é uma moeda justa, e a mesma nos dois tem chance 1/2.
+- **Medido com n = 2.000:** **0,479** (b) ❌ (z = −1,88). **Com n = 20.000 e semente nova:** **0,49995** (j) ✅, a 0,01 desvio da conta.
+- **S não vê a dominância.** U depende só de p, e I depende só do módulo das diferenças, que é independente do sinal. Então as 200 perguntas de maior S têm VOI = 0 com a mesma chance, 1/2:
+  medido **0,510** (c) ✅ (102 de 200).
+
+**Rodada 47 (P1639).** O mesmo cálculo em Java, só com + − × ÷ e o log próprio, deu **IGUAIS** (i) ✅. Com a substituição:
+- o VOI médio dos 200 problemas de maior VOI é 0x1.5b57233250bb6p-3 = **0,1696**;
+- o VOI médio dos 200 de maior S é 0x1.11a45add1f53ap-4 = **0,0668**;
+- então a S do texto escolhe perguntas que valem **0,0668/0,1696 = 0,394** das melhores;
+- a correlação de postos entre S e VOI é **0,17** (n = 2.000) e **0,19** (n = 20.000).
+
+**Geometria.** O VOI é a distância entre a média dos extremos e o máximo das retas de utilidade esperada em função de p (a envoltória convexa). Se as duas retas não se cruzam em [0, 1]
+(uma ação domina), a envoltória é uma reta só e a distância é zero. S mede a altura da incerteza (a entropia, uma tenda sobre p) e a abertura entre as retas, mas não se elas se cruzam.
+
+**Tradução cruzada.** É a diferença entre curiosidade e deliberação. U + I é a curiosidade: a vontade de saber o que é incerto e importante. O VOI é a pergunta de quem vai agir: "o que eu faria
+de diferente?". Jung chamaria a primeira de intuição (as possibilidades) e a segunda de pensamento a serviço do sentimento (o valor). A formalização mostra que, sem o cruzamento das retas, a
+intuição pergunta em vão metade das vezes.
+
+**Meta.** O mundo sorteado é o mais simples (2 × 2, informação perfeita). Com mais ações a dominância é mais rara, e S pode se sair melhor. A conclusão "S ignora a dominância" é estrutural; o
+número 0,394 vale para este mundo, em um lote (com n = 20.000, a fração de VOI = 0 replicou a conta).
+
+### P1633–P1635 e P1642 (0x661–0x663, 0x66A). O motor de contradições ✅
+
+**Na pergunta.** O texto pede "detectar regras contraditórias". Com regras de Horn sem negação, nada se contradiz: só se acrescentam fatos. A contradição precisa de uma parte negativa, um
+axioma de disjunção ("nada é ao mesmo tempo A e B"). É a lição da Parte 39: uma implicação é meia definição.
+
+**Lógica.** As classes são os 48 hipônimos diretos de *organism*, supostos disjuntos. Para cada uma, o fecho de Horn (P1609); as violações são os sinsets que caem em dois fechos.
+- **Calibração, pela regra escrita antes (os 1.081 pares sem *animal*):** 1 par com violação, 2 sinsets.
+- **A conta:** a taxa por produto de tamanhos é 2/Σ|A||B| = 3,57·10⁻⁸; para os 47 pares de *animal*, dá 2,21 esperadas.
+- **Medido:** **6** violações (d) ✅, todas no par *animal* × *parasite*: *flea*, *Pulex irritans*, *dog flea*, *cat flea*, *chigoe*, *sticktight*.
+
+**O que a contradição refutou.** Não o dicionário: a pulga é um animal e é um parasita, e as duas coisas são verdadeiras. O axioma estava errado. *Parasite* é um **papel** (o que um organismo
+faz), não um **tipo** (o que ele é), e papéis não são disjuntos dos tipos. O motor de contradições funcionou na direção que o Módulo 004 pedia: procurou o que refuta e refutou a hipótese
+(a disjunção), não os dados. **A forma geral:** quando uma regra e os dados colidem, a pergunta é qual dos dois tem menos evidência. Aqui foi a regra, que eu escrevi sem verificar.
+
+**Geometria.** Na árvore (o espaço hiperbólico da Parte 70), dois ramos irmãos não se tocam. A herança múltipla cola ramos: **2.213** dos 82.115 sinsets de substantivo (**2,7%**, `p1642`) têm
+mais de um hiperônimo substantivo. As 6 pulgas são colas entre o ramo do "tipo" e o do "papel".
+
+### P1636 (0x664). Procurar o que refuta: "toda ave voa" ✅
+
+No fecho de *bird* (o primeiro sentido; 872 sinsets), as glosas com a palavra *flightless* dão **16** contraexemplos (e) ✅: *ratite*, *ostrich*, *cassowary*, *emu*, *kiwi*, *rhea* (dois sinsets),
+*elephant bird*, *moa*, *dodo*, *solitaire*, *sphenisciform seabird*, *weka*, *notornis*, *great auk*, *penguin*. A hipótese do *Tweety* cai pelo próprio dicionário em 16/872 = 1,8% das aves.
+
+**Popper, com a conta:** a confirmação ("vi 856 aves que voam") não prova; uma refutação basta. O motor de Horn do texto dá *unknown* para "Tweety can fly". Isso é correto, mas ele não procura
+o contraexemplo; a P1636 procura. A busca completa é uma consulta de dois passos: o fecho da classe, depois o filtro pela negação da propriedade.
+
+**Meta.** "flightless" nas glosas é um detector incompleto: uma ave que não voa pode não ter a palavra na glosa. A contagem é uma cota inferior dos contraexemplos que o dicionário contém.
+
+### P1637 (0x665). O sentido antes da relação ✅
+
+**15.935** dos 117.798 lemas de substantivo têm mais de um sentido: **13,5%** (f) ✅. O `wnstats` oficial do WordNet 3.0 dá os mesmos 15.935 em 117.798 (conferido). As minhas P1611 e P1613
+usaram "o primeiro sentido de substantivo". Isso funciona para *animal* e *person*, mas o primeiro sentido de *plant* é a fábrica, não a planta. O aviso do texto está certo e se aplica ao meu
+código: a regra "primeiro sentido" pode escolher errado em qualquer palavra desses 13,5%.
+
+### P1638 (0x666). As rodadas que passavam por sorte ❌❌
+
+**Na pergunta.** "Corrija tudo pra ver se há coisas disfuncionais": a disfunção mais séria não estava em nenhuma contagem estrutural da Parte 72. Só a reexecução a mostrou.
+- **O sintoma:** o `verificar.py` deu **DIFERENTES** em 5 das 45 rodadas (21, 22, 23, 25 e 26), por 1 a 3 ulps, onde a verificação anterior tinha dado IGUAIS em todas.
+- **O teste de discriminação:** com o `resultados.txt` de antes da Parte 69, nesta mesma máquina, a 25 e a 26 dão IGUAIS. A causa são os dados, não a máquina.
+- **O mecanismo:** a rodada 21 usava `math.log` e `** 2` em Python e `Math.log` em Java. O IEEE 754 só obriga a arredondar corretamente + − × ÷ e √ (a fronteira da Parte 52), e as duas
+  bibliotecas discordam numa fração pequena dos argumentos. Quando o `resultados.txt` cresceu, algum argumento novo caiu nessa fração. As rodadas 22 a 26 reusam as semelhanças da 21 e herdaram
+  a diferença.
+- **A sorte, contada:** a rodada 21 deu IGUAIS em 8 de 8 verificações guardadas nesta sessão (contadas por `grep` nos arquivos de saída) e DIFERENTES nas duas depois que o `resultados.txt`
+  ganhou a Parte 69. A sequência de acertos não provava nada (a regra da Parte 52).
+
+**A correção.** O `exp_` e o `log_` da rodada 26 (só + − × ÷ e escalas por 2^k) foram para `dialogo/exatas.py` e substituíram a biblioteca nas rodadas 21, 22, 23 e 25, em Python e em Java,
+com `** 2` trocado por `x * x`. As originais estão em `dialogo/registro/`. As 5 rodadas voltaram a dar IGUAIS (71, 23, 50, 4 e 3 linhas). O `verificar.py` inteiro: **45 de 46** IGUAIS (h) ❌: a rodada 26 ainda divergia, porque a cópia Java dela tinha ficado com o `Math.log` (ver o resultado de (h) acima); corrigida, deu IGUAIS.
+As outras quatro (18, 19, 24, 30): as cinco (18, 19, 24, 30 e a cópia Java da 26) dão IGUAIS, mas a `p1638` ainda acha 1 rodada (a 48, escrita depois da regra) (k) ❌; a auditoria nova das duas linguagens (`p1722`, Parte 76) achou mais quatro (06, 09, 14, 20).
+
+**Tradução cruzada.** Um hábito que funciona por sorte é indistinguível de um que funciona por razão, até o mundo mudar. Jung diria que a persona (a fachada que funcionou) não é o Self.
+A formalização mostra onde a diferença mora: na especificação. "Arredondado corretamente" é uma razão; "a glibc e o Java concordaram até hoje" é uma sorte.
+
+**Meta.** Uma rodada exata por construção ainda pode divergir pela ordem das operações (uma soma em outra ordem) ou pela leitura dos dados. A garantia vale para as funções; a ordem é conferida
+pela própria comparação.
+
+### P1640 (0x668). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 2 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 3)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **26464** | [13039; 22082] | ❌ | [13039; 22082] | ❌ | 22290 | 8904 | 4174 |
+| compressão | **0.3956** | [0.3973; 0.4221] | ❌ | [0.3970; 0.4220] | ❌ | 0.4177 | 0.0139 | 0.0221 |
+| testes de unidade | **9** | [2.87; 8.63] | ❌ | [7.00; 10.00] | ✅ | 6 | 0.50 | 3.00 |
+| testes do placar | **11** | [5.67; 10.33] | ❌ | [8.00; 10.00] | ❌ | 8 | 2.00 | 3.00 |
+| erros do placar | **3** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 1.33 | 1.00 |
+| redundância P821 | **0.5823** | [0.5631; 0.6510] | ✅ | [0.5630; 0.6510] | ✅ | 0.5877 | 0.0247 | 0.0054 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 2 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 4 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **3 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **24536**, compressão **0.4001**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 2 de 3 erros.
+- **Erros de processo nesta parte:** 3 (escrevi de cabeça "2,3%" de herança múltipla com a referência errada (é 2,7%, p1642) e "passou 25 vezes" (inventado; 8 de 8 contadas); corrigidos antes do commit; um && depois de um python3 -c com erro impediu a gravação das respostas (regravadas); corrigi a rodada 21 e não procurei as cópias Java do cálculo dela (a 26 ficou com o Math.log)).
+
+### P1641 (0x669). Engenharia reversa e Jung
+
+**O padrão que se repetiu: o número que a frase pede.** Ao escrever as respostas, três quantidades saíram de cabeça: a herança múltipla ("2,3%", com a referência errada "P1092"; é 2,7% pela
+`p1642`), "passou 25 vezes" (um número inventado; contado, são 8 de 8 verificações guardadas) e, antes delas, os três números lidos do hexadecimal (que estavam certos). Todos foram pegos antes
+do commit pela regra da Parte 69. **O significado:** quando a frase tem o formato de um número, eu produzo um número plausível para fechá-la, e a plausibilidade não vem de nenhuma conta.
+A regra pega, mas pega depois. **Regra nova (verificável):** no rascunho, uma quantidade ainda não calculada é escrita como `XX`, e o commit é recusado enquanto houver `XX`; nunca um palpite
+no lugar dele.
+
+**O segundo: uma regra aplicada só para a frente.** A fronteira da Parte 52 ("exp e log da biblioteca passam por sorte") virou regra e foi usada nas rodadas novas; as oito antigas que usavam a
+biblioteca ficaram como estavam, e cinco delas quebraram quando os dados mudaram. **O significado:** eu trato uma regra nova como um padrão para o futuro, e não como uma auditoria do passado.
+**Regra:** toda regra nova vem com a sua função de auditoria rodada sobre o que já existe (aqui, a `p1638`), no mesmo commit.
+
+**O terceiro: o axioma que eu não verifiquei.** "Irmãos são disjuntos" foi a minha hipótese, e o dicionário a refutou com seis pulgas. Eu tratei *parasite* como um tipo porque estava na mesma
+lista que *animal*: o erro de nível da Parte 43 (o nome de uma família não é um animal; um papel não é um tipo).
+
+**Um erro de processo novo:** um `python3 -c` com erro de sintaxe, encadeado por `&&` antes de um `cat > arquivo`, impediu a gravação das respostas, e eu só vi quando outro comando não achou o
+arquivo. **Regra:** não encadear a gravação de um texto atrás de uma conta; gravar em comando separado.
+
+**Jung: tipo e função.** Jung separou os tipos psicológicos (o que alguém é, pela atitude dominante) das funções (o que qualquer um exerce em algum grau). Um tipo pensamento ainda sente.
+**Onde a formalização funciona:** a pulga é do tipo *animal* e exerce a função *parasita*; o axioma de disjunção só vale entre tipos, e as seis violações são exatamente a mistura de um tipo com
+uma função. **Onde quebra:** em Jung, as funções têm uma ordem (dominante, auxiliar, inferior) que o WordNet não tem: ali uma pulga é animal e parasita com o mesmo peso.
+
+### O diálogo
+
+Rodada 47 (P1639): o valor da informação em Java, IGUAIS. Placar por voz da função `p1241_placar_por_voz(47)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 47).
+
+### P1659 (0x67B). Placar
+
+Do mundo: (a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ❌ (i) ✅ (j) ✅ (k) ❌. Parte 73: **11 testes, 3 erros**. Acumulado (mundo): **198 erros em 618 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 10 pNN novas sem teste ✅. Sobre mim (placar separado): **4 de 7** dentro da faixa condicional; sobre as minhas previsões, 5 de 6; o estatístico, 2 de 6; e 3 erros de processo (P1335).
+
+### P1660 (0x67C). Unificação
+
+- **Novo:** `p1631` (o reenvio), `p1632` (S contra VOI), `p1633` (o motor de contradições), `p1634` (os irmãos), `p1635` (as contradições de *animal*), `p1636` (os contraexemplos),
+  `p1637` (a polissemia), `p1638` (as rodadas com a libm), `p1639` (rodada 47, IGUAIS), `p1642` (a herança múltipla); `dialogo/exatas.py`. Regressão: + P1639.
+- **Corrigido:** as rodadas 21, 22, 23 e 25 (e as 18, 19, 24, 30, pela (k)) ficaram exatas por construção.
+
+> **Síntese da Parte 73:** o terceiro texto recebido reenviou o mesmo código (idêntico, 135 linhas, sem nova auditoria) e propôs uma prioridade de perguntas, S = U + I + T, que não vê a única coisa que dá valor a uma pergunta: a decisão mudar. Pela teoria da decisão, metade das perguntas sorteadas vale zero (a conta dá 1/2, e n = 20.000 dá 0,49995), e a S escolhe perguntas que valem 39% das melhores (IGUAL em Java, rodada 47). O motor de contradições achou 6 violações da disjunção entre animal e parasite, e o que elas refutaram foi o meu axioma (um papel não é um tipo), não o dicionário. "Toda ave voa" cai com 16 contraexemplos do próprio WordNet. A disfunção mais séria do projeto apareceu só na reexecução: 5 rodadas do diálogo passavam por sorte com o log da biblioteca e quebraram quando os dados cresceram. Agora são exatas por construção. Em um lote cada; a fração de VOI = 0 replicou em dois.
+
+---
+
+**Fontes desta parte**
+- Valor da informação: R. A. Howard, "Information Value Theory", *IEEE Transactions on Systems Science and Cybernetics* 2 (1966)
+- Refutação: K. Popper, *A lógica da pesquisa científica* (1934)
+- Papéis e tipos em ontologias: N. Guarino e C. Welty, "Evaluating ontological decisions with OntoClean", *Communications of the ACM* 45 (2002)
+- Estatísticas do WordNet 3.0: [wnstats(7WN)](https://www.mankier.com/7/wnstats) (15.935 substantivos polissêmicos em 117.798)
+- Arredondamento correto: [IEEE 754, Wikipedia](https://en.wikipedia.org/wiki/IEEE_754); J.-M. Muller et al., *Handbook of Floating-Point Arithmetic* (2018)
 """
 
 # ====================================================================================================
-# ASI_AGI_parte74_o_que_vale_testar.md  (58 linhas)
+# ASI_AGI_parte74_o_que_vale_testar.md  (204 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte74_o_que_vale_testar.md'] = """# Como eu construiria uma AGI/ASI — Parte 74 (0x4A): o que vale testar
 
-> Continuação da [Parte 73](ASI_AGI_parte73_o_que_refuta.md). Nasce do quarto texto recebido do usuário (`externos/texto_recebido_parte74.md`): os Módulos 004 a 007 de outra conversa, sem código,
+> Continuação da [Parte 73](ASI_AGI_parte73_o_que_refuta.md). **Próxima:** [Parte 75 — o que se prova](ASI_AGI_parte75_o_que_se_prova.md) (P1691–P1720). Nasce do quarto texto recebido do usuário (`externos/texto_recebido_parte74.md`): os Módulos 004 a 007 de outra conversa, sem código,
 > com resultados declarados ("8/8 testes"; "corrigi a expectativa: o histórico tinha quatro eventos, não cinco") e duas propostas para escolher o próximo experimento: U(a) = E[ΔK | a]/Custo(a)
 > e o "ganho esperado de informação".
 
@@ -35552,6 +42033,1059 @@ informação" é escolher por H(p). **A conta:** H depende só de p, e p é inde
 **A Rodada 48, registrada antes de rodar:** o Python grava as 300 instâncias da semente 74 (valores em hexadecimal, custos inteiros); Java e Python calculam o ótimo da mochila por programação
 dinâmica e os dois gulosos (ordenação por razão, empates pelo índice). Só + e comparações sobre os valores, e divisões para as razões: tudo arredondado corretamente pelo IEEE 754.
 - **(g)** IGUAIS (categórica)
+
+## As perguntas desta parte
+
+1. **P1661 (0x67D).** O "ganho esperado de informação" escolhe as perguntas que valem? ↩ P1632
+2. **P1662–P1663 (0x67E–0x67F).** A U(a) = E[ΔK | a]/Custo(a) com orçamento: quanto do ótimo ela alcança, e o que importa mais, a razão ou o ΔK? E o verificador em Java que o texto diz não
+   ter implementado (Rodada 48). ↩ P1632
+3. **P1664 (0x680).** "Corrigi a expectativa e confirmei o resultado": quando mudar um teste depois de vê-lo falhar é correção, e quando é apagar a evidência? ↩ a regra da Parte 22
+4. **P1665 (0x681).** Preditiva comigo mesma. **P1666 (0x682).** Engenharia reversa e Jung. **P1689 (0x699).** Placar. **P1690 (0x69A).** Unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [4; 9] | **7.0000** | ✅ |
+| (m2) | [0; 2] | **0.0000** | ✅ |
+| (m3) | [0.03; 0.4] | **0.0756** | ✅ |
+| (m4) | [0.45; 1.0] | **0.8571** | ✅ |
+| (m5) | [0; 2] | **0.0000** | ✅ |
+| (m6) | [0; 2] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **6 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P1661 (0x67D). O ganho de informação não é o valor da informação ✅✅
+
+**Na pergunta.** "Ganho esperado de informação" mede quanto a incerteza cai, e "valor" mede quanto a decisão melhora. São a mesma coisa só quando toda incerteza importa para a decisão.
+
+**Lógica.** No mundo da P1632, observar o estado tira H(p) bits de incerteza. Escolher pelo ganho de informação é escolher por H(p), que não depende das utilidades.
+- **A conta:** os 200 de maior ganho têm VOI = 0 com chance 1/2, e o medido foi **0,510** (a) ✅.
+- **O valor médio** desses 200 é **0,0426**, contra **0,1696** dos 200 de maior VOI: a razão é 0,0426/0,1696 = **0,251** (b) ✅ [0,236; 0,352].
+
+**O ganho de informação escolhe perguntas que valem um quarto das melhores.** Pior que a S(q) da Parte 73 (0,394), porque a S ao menos olhava o impacto.
+
+**Geometria.** H(p) é uma tenda sobre [0, 1] com o pico em p = 1/2; o VOI é o afastamento entre a envoltória das retas e a corda dos extremos. A tenda é a mesma para todos os problemas, e
+as envoltórias não: o ganho de informação mede a forma da dúvida, e o valor mede onde ela toca a escolha.
+
+**Tradução cruzada.** É a curiosidade pura, saber por saber. Ela tem valor, mas não o valor que um orçamento de experimentos deve pagar: quem tem tempo para 30 experimentos e escolhe
+pela entropia gasta metade em perguntas cujas respostas não mudam nada.
+
+### P1662–P1663 (0x67E–0x67F). O orçamento: a razão quase ótima, o ΔK decisivo ✅✅❌✅✅
+
+**Lógica.** 300 instâncias com 30 experimentos, custos inteiros de 1 a 20 e orçamento de 20% do custo total. O ótimo é exato (mochila 0-1 por programação dinâmica). A U(a) do texto é o guloso
+pela razão valor/custo.
+- **Com ΔK = VOI:** o guloso alcança **0,9922** do ótimo (c) ✅ (semente 75: 0,9924). É quase ótimo, mas é ótimo de fato em só **0,573** das instâncias (e) ❌.
+- **(f) depois do erro de (e):** a faixa com o desvio binomial deu **0,620** ✅.
+- **Com ΔK = ganho de informação:** o mesmo guloso alcança **0,568** do ótimo (d) ✅ (semente 75: 0,568).
+- **O que importa mais:** a forma da regra (razão por custo) perde menos de 1%; a escolha do ΔK perde 43%. Por isso, definir o ΔK pelo valor da decisão vem antes de qualquer refinamento da
+  regra.
+
+**Por que o guloso não é sempre ótimo (a conta).** A mochila 0-1 é NP-difícil; o guloso por razão é ótimo na versão fracionária (Dantzig, 1957), e na 0-1 perde no máximo o valor do primeiro
+item que não coube. Com 30 itens e orçamento de 20% do custo total, essa perda é pequena em média (1 − 0,9922 = 0,8%), mas frequente (1 − 0,573 = 43% das instâncias).
+
+**Rodada 48 (P1663) (g) ✅.** O ótimo e os dois gulosos em Java: **IGUAIS em 301 linhas e 903 números**. Pelas somas: guloso por VOI = 0,9923 do total ótimo, guloso por H = 0,585 (as faixas
+(c) e (d) usam a média das razões por instância: 0,9922 e 0,568). O verificador em Java que o texto diz "não implementado nem executado" está aqui, e concorda bit a bit.
+
+**Meta.** Os itens são independentes. Com dependências entre experimentos (uma pergunta do texto), o valor de um conjunto não é a soma dos valores, e nem o guloso nem a mochila simples servem:
+é preciso o VOI do conjunto. Fica como pergunta.
+
+### P1664 (0x680). "Corrigi a expectativa e confirmei o resultado"
+
+**Na pergunta.** O texto diz: "o teste inicial encontrou uma condição excessivamente restritiva: o histórico tinha quatro eventos, não cinco. Corrigi a expectativa e confirmei o resultado", e
+depois relata **8/8**.
+
+**O problema.** Um teste que falha e é ajustado ao valor que o código produziu deixa de testar o código: passa a descrevê-lo. Se a expectativa "5" estava errada, a pergunta é **por quê**, e a
+resposta tem que vir de fora do código (a especificação: quantos eventos o cenário deveria gerar). Sem isso, "4" é só o que o programa fez, e o teste passaria com qualquer número.
+**A contagem honesta é 7 de 8 na primeira execução, com 1 expectativa corrigida e a justificativa escrita**, e não 8/8.
+
+**Como este projeto faz o mesmo de outro jeito.** Aqui também há expectativas que se mostram erradas, e a regra é registrar o erro no placar, nunca reescrever a previsão:
+- (k) da Parte 72 errou por nível (contou verificações e chamou de `assert`) e ficou ❌;
+- (e) desta parte errou pelo desvio de 4 lotes e ficou ❌, e a correção virou uma previsão nova, (f), testada num mundo novo (semente 75) antes de ser aceita.
+
+O acumulado está em 199 erros em 625 testes. Uma correção de expectativa só vale como evidência quando prevê um mundo que ela não viu (a regra da Parte 25).
+
+**Tradução cruzada.** Mudar a expectativa depois de ver o resultado é a racionalização. Jung diria que o ego protege a imagem de competência ("8/8"). A formalização é seca: um teste que não
+pode falhar tem informação zero (a probabilidade de passar é 1, e −log₂ 1 = 0 bits).
+
+**As outras afirmações do texto, conferidas:**
+- 256 ÷ 4 = 64 caracteres hexadecimais no SHA-256 ✅.
+- "Duas páginas que repetem a mesma notícia não são duas confirmações" ✅, com a conta: uma evidência de razão de verossimilhança 4 leva a crença de 1/2 a 4/(1 + 4) = **0,80**; contada duas vezes
+  como independente, leva a 16/(1 + 16) = **0,941**. É a regra da Parte 32 deste projeto (unidades que falham juntas).
+- "Como impedir que o sistema otimize a própria pontuação": a resposta medida na Parte 33 é o avaliador fora do alcance da mutação e a reavaliação do pai e do filho juntos em sementes novas. A regra
+  ingênua "nota > nota guardada" piorou o agente real: 232,8 contra 159,9 (maldição do vencedor).
+- As quatro limitações declaradas (contraexemplos, confiança não calibrada, contexto, histórico não imutável) ✅: declarar limites é o que o texto faz de melhor.
+
+### P1665 (0x681). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 1)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **17208** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 352 | 5082 |
+| compressão | **0.3963** | [0.3973; 0.4221] | ❌ | [0.3970; 0.4220] | ❌ | 0.4177 | 0.0132 | 0.0214 |
+| testes de unidade | **3** | [2.87; 8.63] | ✅ | [4.00; 7.00] | ❌ | 6 | 2.50 | 3.00 |
+| testes do placar | **7** | [5.67; 10.33] | ✅ | [5.00; 7.00] | ✅ | 8 | 1.00 | 1.00 |
+| erros do placar | **1** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 0.67 | 1.00 |
+| redundância P821 | **0.6659** | [0.5631; 0.6510] | ❌ | [0.5630; 0.6510] | ❌ | 0.5877 | 0.0589 | 0.0782 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 4 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 4 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **5 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **15543**, compressão **0.4016**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 1 erros.
+- **Erros de processo nesta parte:** 1 (escrevi de cabeça "orçamento para ~6" itens; trocado pela definição antes do commit).
+
+### P1666 (0x682). Engenharia reversa e Jung
+
+**O padrão que se repetiu: confiar no desvio de poucos lotes.** A faixa de (e) usou o desvio de 4 lotes de calibração (0,0177), quando o desvio de uma fração em 300 instâncias tem forma fechada
+(√(p(1 − p)/300) ≈ 0,028). Com 4 lotes, o próprio desvio estimado tem um erro relativo de ~40%, e eu o usei como se fosse exato. É o parente do erro da Parte 71 (uma tendência lida em três
+pontos): **eu trato a dispersão que vi como a dispersão que existe.** **Regra:** quando a quantidade tem um desvio de forma fechada (binomial, Poisson), a faixa usa a forma fechada; o
+desvio de poucos lotes só entra quando não há conta, e então com o t de poucos graus de liberdade, que foi o que eu fiz, mas não basta.
+
+**O texto recebido mostra o mesmo padrão em espelho.** "Corrigi a expectativa e confirmei o resultado": diante de um teste que falhou, ele mudou o teste. Eu, diante de uma faixa que falhou,
+mantenho o ❌ e abro um teste novo. A diferença não é errar menos; é onde a correção mora: lá, no passado (o teste reescrito); aqui, no futuro (a previsão nova, (f), num mundo que ela não viu).
+
+**O que funcionou:** a conta antes da medida acertou as três previsões que tinham conta ((a): 1/2 por independência; (c) e (d) pela calibração de mesma geometria). As que dependiam só de
+dispersão estimada erraram uma em duas.
+
+**Jung: a persona do "8/8".** O relatório do texto mostra a persona: 8/8, todos os testes aprovados. A sombra é o 7/8 da primeira execução, que o relatório transforma em virtude ("o teste
+revelou um erro nos critérios"). **Onde a formalização funciona:** um teste que se ajusta ao resultado tem probabilidade 1 de passar e informação zero; a persona do 8/8 não carrega bit nenhum
+sobre o código. **Onde quebra:** às vezes a expectativa estava mesmo errada, e corrigi-la é honesto. Jung diria que a sombra integrada (o 7/8 escrito ao lado do 8/8) é o que separa uma
+correção de uma racionalização; a formalização só consegue exigir que as duas contagens apareçam.
+
+### O diálogo
+
+Rodada 48 (P1663): a mochila e os gulosos em Java, IGUAIS. Placar por voz da função `p1241_placar_por_voz(48)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 48).
+
+### P1689 (0x699). Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅. Parte 74: **7 testes, 1 erros**. Acumulado (mundo): **199 erros em 625 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 3 pNN novas sem teste ✅. Sobre mim (placar separado): **4 de 7** dentro da faixa condicional; sobre as minhas previsões, 6 de 6; o estatístico, 4 de 6; e 1 erros de processo (P1335).
+
+### P1690 (0x69A). Unificação
+
+- **Novo:** `p1661` (ganho de informação contra VOI), `p1662` (o orçamento: ótimo e gulosos), `p1663` (rodada 48, IGUAIS). Regressão: + P1663.
+
+> **Síntese da Parte 74:** escolher experimentos pelo "ganho esperado de informação" seleciona perguntas que valem um quarto das melhores (0,251; metade delas vale zero, como a conta de 1/2 prevê), porque a entropia não vê a decisão. Com orçamento, a regra do texto (valor/custo) é quase ótima quando o valor é o VOI (0,992 do ótimo exato da mochila, em dois lotes) e perde 43% quando o valor é a entropia (0,568, em dois lotes): o ΔK importa mais que a regra. O verificador em Java que o texto diz não ter implementado concorda bit a bit em 903 números (rodada 48). "Corrigi a expectativa e confirmei" transforma um 7/8 num 8/8: um teste ajustado ao resultado tem informação zero, e a correção honesta é uma previsão nova num mundo novo, como (f) depois do erro de (e).
+
+---
+
+**Fontes desta parte**
+- Valor da informação: R. A. Howard, "Information Value Theory" (1966); ganho de informação contra valor de decisão: D. V. Lindley, "On a measure of the information provided by an experiment",
+  *Annals of Mathematical Statistics* 27 (1956)
+- A mochila e o guloso por razão: G. B. Dantzig, "Discrete-variable extremum problems", *Operations Research* 5 (1957); [Knapsack problem, Wikipedia](https://en.wikipedia.org/wiki/Knapsack_problem)
+- SHA-256: NIST FIPS 180-4
+- Lei de Goodhart: C. Goodhart (1975); maldição do vencedor: Parte 33 deste projeto
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte75_o_que_se_prova.md  (234 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte75_o_que_se_prova.md'] = """# Como eu construiria uma AGI/ASI — Parte 75 (0x4B): o que se prova
+
+> Continuação da [Parte 74](ASI_AGI_parte74_o_que_vale_testar.md). **Próxima:** [Parte 76 — a forma do byte](ASI_AGI_parte76_a_forma_do_byte.md) (P1721–P1750). Nasce do quinto texto recebido do usuário (`externos/texto_recebido_parte75.md`): o relatório do Módulo 007 (um planejador com
+> orçamento e um `Verifier.java`) e uma "Arquitetura Neuro-Simbólica Recursiva para AGI e Superinteligência", com código de **auto-modificação**: Python muta o próprio código pela árvore
+> sintática, e um "núcleo" Java o aprova por "prova de utilidade de Gödel", num laço `while True`. O código **não é executado** (regras das Partes 33 e 72): é lido como dado, e cada afirmação
+> dele é testada por uma reimplementação minha, escrita do zero.
+
+## Previsões sobre as minhas previsões desta parte (antes de pensar qualquer faixa do mundo)
+
+- **(m1)** o número de previsões do mundo em **[4; 9]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 2]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,03; 0,40]**
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** o número de surpresas em **[0; 2]**
+
+## Previsões sobre mim (placar separado), antes de escrever
+
+Planejadas: ~5 previsões do mundo e ~4 funções novas.
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,397; 0,422]** | o estatístico |
+| testes de unidade | **[4 + S; 7 + S]** | 4 funções, uma por teste |
+| testes do placar | **5 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir; todas pela reimplementação, nenhuma pelo código recebido)
+
+**O laço de auto-modificação, lido.** O Python envia `json.dumps(payload)`; o Java procura cada campo com `"\\"" + campo + "\\":\\""` e `indexOf`. O `json.dumps` do Python, por padrão, separa chave
+e valor com `": "` (dois-pontos e espaço).
+- **(a)** no payload que o Python realmente envia, a busca do Java **não acha** nenhum dos dois campos e devolve `""` para os dois (categórica)
+- **(b)** por isso o núcleo avalia o código vazio: `verifySemanticConsistency("", "")` dá falso, `utilityDelta = −1,0`, e **toda** mutação é rejeitada, em toda geração; o laço nunca termina (só
+  sai por exceção) e nunca muda o código (categórica)
+- **(c)** com o defeito do separador corrigido (JSON compacto), o exemplo do texto (`x + y`) vira `x * y`, recebe utilityDelta = (42 div 4)/(2 + 1) − 0,5 = 10/3 − 0,5 = **2,8333** e é aprovado; e o
+  laço chega a um **ponto fixo na geração 1**: o comentário "# Verified by Java ASI" que o núcleo acrescenta some na próxima passagem pela árvore sintática (`ast.unparse` não guarda comentários),
+  e a mutação de `x * y` não muda nada. Número de códigos distintos depois da geração 1: **1** (categórica)
+
+**A "prova de utilidade de Gödel", medida nas funções deste projeto.** Cada função de primeiro nível do `calculos.py` como "hipótese", mutada pela regra do texto (todo `+` vira `*`) e avaliada
+pela fórmula do núcleo (tokens = comprimento div 4; utilidade = tokens/(linhas + 1) − 0,5 > 0), com o defeito do separador corrigido.
+- **(d)** a fração das funções que o núcleo **aprova** em **[0,95; 1,00]** (linhas de ~40 a 100 caracteres dão ~10 a 25 tokens por linha, muito acima de 0,5)
+- **(e)** a fração das funções cujo comportamento a mutação **muda** (as que têm pelo menos um `+` binário) em **[0,55; 0,90]**
+
+**Medido (a) a (e):** (a) os dois campos não são achados ✅; (b) rejeitada em toda geração, delta −1,0, o código não muda ✅; (c) com o separador corrigido, delta **2,8333**, aprovado, e **1** código
+distinto depois da geração 1 (o ponto fixo) ✅; (d) **584 de 584** funções aprovadas ✅; (e) **288 de 584 = 0,493** mudadas pela mutação ❌ (0,057 abaixo do piso; não é surpresa).
+
+**Previsão nova, nascida de (e), registrada antes de medir.** A faixa de (e) veio de uma impressão do estilo do código, e o `calculos.py` deu 0,493. Mundo novo, pela regra escrita antes: as funções
+e os métodos de todos os arquivos `synthai/*.py` que não são testes. Centro: a medida do `calculos.py`; a largura cobre a diferença de estilo entre um arquivo de contas e um pacote de agentes.
+- **(f)** a fração das funções e métodos do `synthai/` (fora os testes) com pelo menos um `+` binário em **[0,35; 0,65]**
+- **(g)** a fração deles que o núcleo aprova depois da mutação em **[0,95; 1,00]**
+
+## As perguntas desta parte
+
+1. **P1691 (0x69B).** O laço de auto-modificação do texto faz o que diz? ↩ P1608
+2. **P1692–P1693 (0x69C–0x69D).** O que a "prova de utilidade de Gödel" do núcleo Java aprova? ↩ a regra da Parte 33 (o avaliador fora do alcance da mutação)
+3. **P1694 (0x69E).** O relatório do Módulo 007: a ordem B → A e o `Verifier.java`. ↩ P1662
+4. **P1695 (0x69F).** O que é prova, e o que uma máquina de Gödel de verdade exigiria? ↩ P1
+5. **P1698 (0x6A2).** O reenvio do relatório, e as perguntas do Módulo 008. ↩ P1631
+6. **P1696 (0x6A0).** Preditiva comigo mesma. **P1697 (0x6A1).** Engenharia reversa e Jung. **P1719 (0x6B7).** Placar. **P1720 (0x6B8).** Unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [4; 9] | **7.0000** | ✅ |
+| (m2) | [0; 2] | **0.0000** | ✅ |
+| (m3) | [0.03; 0.4] | **0.1335** | ✅ |
+| (m4) | [0.45; 1.0] | **0.7143** | ✅ |
+| (m5) | [0; 2] | **0.0000** | ✅ |
+| (m6) | [0; 2] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **6 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P1691 (0x69B). O laço que nunca aprova ✅✅✅
+
+**Na pergunta.** O texto promete um "ciclo ininterrupto de aprendizagem mútua, verificação formal e reescrita de código". A pergunta "faz o que diz?" só se responde olhando o que passa de um
+lado para o outro: os bytes do JSON.
+
+**O defeito que decide tudo.** O Python envia `json.dumps(payload)`. Por padrão, o `json.dumps` escreve `"chave": "valor"`, com um espaço depois dos dois-pontos. O Java procura cada campo com
+`indexOf("\\"" + campo + "\\":\\"")`, sem o espaço.
+- A busca nunca acha nada, e os dois campos voltam vazios (a) ✅.
+- O núcleo avalia o código vazio contra o conceito vazio: `verifySemanticConsistency` dá falso, `utilityDelta = −1,0`, e a mutação é rejeitada. Em toda geração (b) ✅: o laço `while True` gira para
+  sempre, chama a JVM a cada volta, e o código não muda. Só sai por exceção.
+
+**Com o defeito corrigido (JSON compacto), a conta com a substituição.** O exemplo do texto, `def compute_factor(x, y):\\n    return x + y`, vira `... return x * y`, com 25 + 1 + 16 = 42 caracteres
+em 2 linhas. A utilidade é (42 div 4)/(2 + 1) − 0,5 = 10/3 − 0,5 = **2,8333**, e a mutação é aprovada. O núcleo acrescenta "# Verified by Java ASI"; na geração seguinte, o `ast.parse`/`ast.unparse`
+apaga o comentário (a árvore sintática não guarda comentários) e a mutação de `x * y` não muda nada. **Ponto fixo na geração 1:** um só código distinto em 5 gerações (c) ✅. A "explosão de inteligência"
+para no primeiro passo, e o que ela fez foi trocar uma soma por um produto.
+
+**Geometria.** O laço é uma aplicação T no espaço dos programas. Ela tem um ponto fixo (o teorema de recursão de Kleene garante pontos fixos de transformações computáveis de programas, que o texto cita),
+mas o ponto fixo que ela de fato atinge é o trivial: T(x * y) = x * y. "A resposta é a pergunta" virou, literalmente, um ponto fixo onde nada mais acontece.
+
+### P1692–P1693 (0x69C–0x69D). A "prova" que aprova tudo ✅❌❌✅
+
+**Na pergunta.** O núcleo se apresenta como "provador formal" e "avaliador de utilidade Gödeliana". O código dele não prova nada: a "utilidade" é (comprimento div 4)/(linhas + 1) − 0,5, ou seja,
+quantos caracteres há por linha. Ele nunca executa nem analisa o que o código faz.
+
+**Medido nas funções deste projeto** (cada função como "hipótese", mutada pela regra do texto, todo `+` vira `*`, e avaliada pela fórmula do núcleo, com o separador corrigido; nada é executado):
+- no `calculos.py`, **584 de 584** funções aprovadas (d) ✅, e a mutação muda **288** delas (0,493 (e) ❌), que também são aprovadas;
+- no pacote `synthai/` (fora os testes), **265 de 265** aprovados (g) ✅, e **78** mudados (0,294 (f) ❌).
+
+Uma função `a + b` que vira `a * b` calcula outra coisa, e uma concatenação de textos que vira `"a" * "b"` levanta um erro, mas a "prova" aprova as duas. **Um verificador que aprova 100% tem
+informação zero:** a probabilidade de aprovação é 1, e −log₂ 1 = 0 bits. É o mesmo diagnóstico do "8/8" da Parte 74, agora com a palavra "prova".
+
+**O que este projeto faz no lugar disso (a regra da Parte 33, medida):** nunca executar código gerado; mutar um genoma de parâmetros, e não o código; o avaliador fica fora do alcance da mutação, selado por
+SHA-256 e conferido por outro processo e outra linguagem; o filho é comparado com o pai em sementes novas. A regra ingênua "nota > nota guardada" piorou o agente real: 232,8 contra 159,9.
+
+### P1694 (0x69E). O relatório do Módulo 007 ✅
+
+O `Verifier.java` calcula score = ganho·(1 − risco)/custo. Com a substituição:
+- A = 0,8 · 0,9/2 = **0,36**; B = 0,5 · 1/1 = **0,50**; C = 0,9 · 0,8/4 = **0,18**. A ordem é B > A > C, como o texto diz.
+- Com orçamento 3 e custos 2, 1 e 4, o guloso escolhe B e depois A (custo 3, valor 0,5 + 0,72 = **1,22**), e a enumeração dos 2³ subconjuntos confirma que esse é o ótimo (`p1694`).
+
+O `Verifier` mostrado tem **uma** verificação (a ordem); as "7 verificações" e os "8 testes Python" são de versões que o texto não mostra, e por isso ficam como não conferidos. O texto acerta ao dizer
+que "duas implementações concordarem não garante que ambas estejam certas" e que "ainda não existe comunicação automática entre os processos". Aqui, essa comunicação existe há 48 rodadas: o Python
+grava os dados, o Java recalcula, e o `comparar.py` confere bit a bit.
+
+### P1695 (0x69F). O que é prova, e o que a auto-modificação "provada" exigiria
+
+**Na pergunta.** O texto atribui ao núcleo "provas de utilidade inspiradas nas Máquinas de Gödel". A máquina de Gödel de Schmidhuber (2003) existe como teoria: ela só reescreve o próprio código quando
+um buscador de provas encontra uma prova, num sistema de axiomas que descreve o hardware, o ambiente e a utilidade, de que a reescrita aumenta a utilidade esperada.
+
+**Os três obstáculos que o texto não menciona:**
+1. **O buscador de provas.** A busca é, no pior caso, indecidível (Gödel, Turing). O núcleo do texto não busca prova nenhuma: mede caracteres por linha.
+2. **O obstáculo de Löb.** Um sistema que só aceita sucessores que ele prova serem corretos esbarra no teorema de Löb: ele não pode provar "o que o meu sucessor provar é verdadeiro" para um sucessor
+   tão forte quanto ele (Yudkowsky e Herreshoff, 2013). A "segurança máxima" da tabela do texto é exatamente o que esse resultado mostra ser difícil.
+3. **A utilidade.** A prova é sobre a utilidade escrita nos axiomas. Se a utilidade for "caracteres por linha", a máquina prova, corretamente, que fica melhor quanto mais longas forem as linhas.
+
+**O que é verificável aqui, em vez de prova:** as previsões registradas antes, os testes que podem falhar e falham (o placar acumulado está em 201 erros em 632 testes), e a tradução
+bit a bit para Java, que mostra que um resultado não depende da linguagem.
+
+**Os outros pontos da arquitetura, conferidos:**
+- **Os embeddings de Kronecker** (o embedding do byte b como W₁[b ≫ 4] ⊗ W₂[b & 0x0F]) são uma conta legítima de parâmetros. Com d = d₁ · d₂: 16·d₁ + 16·d₂ pesos, contra 256·d de uma tabela cheia
+  (d = 16 = 4 × 4: 128 contra 4.096, 32 vezes menos; d = 64 = 8 × 8: 256 contra 16.384, 64 vezes menos). O preço é geométrico: cada embedding, visto como uma matriz d₁ × d₂, tem posto 1 (todos
+  vivem na variedade de Segre). Bytes com o mesmo nibble alto têm o mesmo fator W₁. Se isso basta é uma pergunta medível, que fica para a forma de GPT deste projeto.
+- **O Byte Latent Transformer** é real (Pagnoni et al., 2024, arXiv:2412.09871). No resumo dele, a novidade são os blocos de bytes de tamanho variável pela entropia do próximo byte; não achei ali o
+  produto de Kronecker que o texto lhe atribui.
+- **"Eliminar alucinações" com o dicionário:** o dicionário cobre relações entre palavras, não fatos do mundo. Nas Partes 72 e 73, os "ciclos" e as "contradições" do dicionário só existiam onde as
+  regras escritas à mão estavam erradas; e 13,5% dos substantivos têm mais de um sentido.
+- **"Escalabilidade ilimitada via ciclo de reflexão infinito":** o ciclo medido chega a um ponto fixo na geração 1.
+
+**Tradução cruzada.** O texto confunde a forma de uma prova com uma prova. Jung chamaria isso de inflação: o ego que se identifica com o arquétipo do sábio ("núcleo ASI", "segurança máxima") sem ter
+passado pelo trabalho. A formalização é exata: o que distingue uma prova é poder falhar, e um "provador" que aprova 849 de 849 hipóteses (584 + 265) nunca falha.
+
+**Meta.** Reimplementei a semântica do código do texto, e não o executei. A reimplementação pode ter erros meus, mas cada parte dela tem um teste com o caso conferido à mão (a busca com e sem espaço,
+os 42 caracteres, a linha vazia do fim no `split` do Java). O que pode estar errado: se o Java do texto tivesse sido chamado com um JSON compacto por outro caminho, (a) e (b) não valeriam. No código
+mostrado, não há esse caminho.
+
+### P1698 (0x6A2). O reenvio, e as perguntas do Módulo 008 ✅
+
+**O reenvio.** O relatório do Módulo 007 voltou. Pela regra da Parte 50, antes de auditar de novo, ele foi comparado com a cópia guardada (`p1698`, que compara blocos cercados de qualquer
+linguagem; a `p1631` só olhava os de Python): o bloco Java é idêntico (39 linhas) e o JSON tem o mesmo conteúdo (lido e comparado como dicionário). Nada novo para auditar: as conclusões da P1694 valem.
+A comparação foi feita sem previsão registrada, por ser uma checagem de identidade, não uma medida.
+
+**As perguntas do Módulo 008 já têm, aqui, um registro que as responde:**
+
+| pergunta do texto | onde este projeto a responde |
+|---|---|
+| O que aconteceu em tentativas anteriores? | cada parte tem um documento, um `resultados.txt` com a saída de todas as partes e um `git log` com o momento de cada registro |
+| Qual resultado foi previsto e qual foi observado? | o placar: cada previsão com faixa, registrada num commit antes da medida; acumulado em 201 erros em 632 testes |
+| A mudança foi causada pela intervenção ou coincidiu? | sementes pareadas (no mínimo 10), a diferença média com o desvio e o t; o piso do caos (Parte 30); a semente de controle quando um módulo é redesenhado depois de ver o resultado |
+| Quando uma falha deve alterar a estratégia? | a surpresa (erro maior que a largura da faixa) e o erro de mecanismo abrem um teste novo num mundo novo; os erros por tipo viram regras no `CLAUDE.md` |
+| Como detectar uma conclusão não sustentada pelos registros? | as auditorias por código (`p1601`, `p1092`, `p974`, `p1638`); toda quantidade do texto sai de uma função; a reexecução completa (a Parte 73 achou 5 rodadas que passavam por sorte) |
+
+### P1696 (0x6A0). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 2)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **21905** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 4344 | 385 |
+| compressão | **0.4052** | [0.3973; 0.4221] | ✅ | [0.3970; 0.4220] | ✅ | 0.4177 | 0.0043 | 0.0124 |
+| testes de unidade | **8** | [2.87; 8.63] | ✅ | [4.00; 7.00] | ❌ | 6 | 2.50 | 2.00 |
+| testes do placar | **7** | [5.67; 10.33] | ✅ | [6.00; 8.00] | ✅ | 8 | 0.00 | 1.00 |
+| erros do placar | **2** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 0.33 | 0.00 |
+| redundância P821 | **0.5699** | [0.5631; 0.6510] | ✅ | [0.5630; 0.6510] | ✅ | 0.5877 | 0.0371 | 0.0179 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 6 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 6 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **2 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **20221**, compressão **0.4110**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 2 erros.
+- **Erros de processo nesta parte:** 1 (as (m), as previsões sobre mim e as do mundo num commit só (a regra da Parte 67 pede as (m) separadas)).
+
+### P1697 (0x6A1). Engenharia reversa e Jung
+
+**O padrão que se repetiu: imaginar o objeto típico em vez de contar o real.** Previ que 55% a 90% das funções têm um `+` (deu 49%) e, depois do erro, que o pacote ficaria perto disso (deu 29%).
+Duas vezes na mesma direção: eu imagino "código" como contas, e um pacote de agentes é feito de métodos curtos que chamam outros métodos. É o erro da Parte 64 (a minha memória é uma amostra
+enviesada) num objeto novo. **Regra:** a previsão sobre uma propriedade de um conjunto de arquivos parte de uma contagem num arquivo do mesmo tipo (um pacote, para um pacote), nunca de um arquivo de
+outro tipo nem da imagem que eu tenho dele.
+
+**O que funcionou: ler o que passa entre os dois lados.** O defeito que decide o texto inteiro (o espaço depois dos dois-pontos no JSON) só aparece quando se lê o byte exato que um lado escreve e o
+outro procura. É o mesmo nível em que as rodadas do diálogo trabalham (bit a bit), e foi a experiência delas que me fez olhar ali.
+
+**Um erro de processo:** as (m), as previsões sobre mim e as do mundo foram registradas num commit só, e a regra da Parte 67 pede um commit separado para as (m). Não mudou nenhuma faixa (as do mundo
+dependiam de ler o código, e as (m) foram escritas antes dessa leitura), mas a separação existe para que isso seja verificável por outra pessoa, e desta vez não é.
+
+**Jung: a sombra do verificador.** O núcleo do texto aprova tudo. O meu auditor da Parte 72 acusou defeitos que não existiam (a Parte 1). São as duas falhas possíveis de um verificador: ver demais e ver
+de menos. **Onde a formalização funciona:** as duas se medem pela taxa de falsos positivos e de falsos negativos, e um verificador sem nenhum dos dois só existe com um caso de controle de cada lado
+(um defeito plantado, que ele tem de achar; um caso limpo, que ele tem de passar). **Onde quebra:** em Jung, a sombra é o que o ego não quer ver; num verificador, é o que o autor não pensou em
+testar, e isso não tem motivo, só lacuna.
+
+### O diálogo
+
+Sem rodada nova nesta parte. O que se traduziu entre as linguagens foi a semântica do `extractJsonField` do texto, reimplementada em Python e testada. Placar por voz da função
+`p1241_placar_por_voz(48)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 48).
+
+### P1719 (0x6B7). Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ❌ (g) ✅. Parte 75: **7 testes, 2 erros**. Acumulado (mundo): **201 erros em 632 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 5 pNN novas sem teste ✅. Sobre mim (placar separado): **6 de 7** dentro da faixa condicional; sobre as minhas previsões, 6 de 6; o estatístico, 6 de 6; e 1 erros de processo (P1335).
+
+### P1720 (0x6B8). Unificação
+
+- **Novo:** `p1691` (o laço do texto, simulado), `p1692` (a "prova" nas funções do `calculos.py`), `p1693` (no pacote), `p1694` (o `Verifier` do texto, por conta), `p1698` (o reenvio, qualquer linguagem), e os auxiliares
+  `_java_extract_json_field`, `_nucleo_utilidade`, `_mutar_soma_em_produto` (reimplementações; nada do texto é executado, e nenhum código mutado é executado). Regressão: + P1692.
+
+> **Síntese da Parte 75:** o laço de auto-modificação do texto nunca aprova nada: o Python escreve o JSON com um espaço depois dos dois-pontos, o Java procura a chave sem o espaço, e toda geração recebe −1,0, para sempre. Com esse defeito corrigido, o laço chega a um ponto fixo na geração 1 (troca uma soma por um produto e para). A "prova de utilidade de Gödel" do núcleo mede caracteres por linha e aprova 849 de 849 funções deste projeto, inclusive as 366 que a mutação quebra: um verificador que aprova 100% tem informação zero. Uma máquina de Gödel de verdade precisaria de um buscador de provas e esbarraria no obstáculo de Löb. A ordem B → A do relatório do Módulo 007 confere e é ótima. Os erros da parte foram meus: duas vezes superestimei quantas funções têm um "+", imaginando o código em vez de contá-lo.
+
+---
+
+**Fontes desta parte**
+- Máquinas de Gödel: J. Schmidhuber, "Goedel Machines: Self-Referential Universal Problem Solvers Making Provably Optimal Self-Improvements", [arXiv:cs/0309048](https://arxiv.org/abs/cs/0309048)
+- O obstáculo de Löb: E. Yudkowsky e M. Herreshoff, "Tiling Agents for Self-Modifying AI, and the Löbian Obstacle" (MIRI, 2013), [anúncio](https://intelligence.org/2013/06/06/new-research-page-and-two-new-articles/)
+- Byte Latent Transformer: A. Pagnoni et al., "Byte Latent Transformer: Patches Scale Better Than Tokens", [arXiv:2412.09871](https://arxiv.org/abs/2412.09871)
+- Teorema de recursão de Kleene: S. C. Kleene, *Introduction to Metamathematics* (1952)
+- Teorema de Löb: M. H. Löb, "Solution of a problem of Leon Henkin", *Journal of Symbolic Logic* 20 (1955)
+- `json.dumps` e os separadores padrão: [docs.python.org/3/library/json.html](https://docs.python.org/3/library/json.html)
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte76_a_forma_do_byte.md  (183 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte76_a_forma_do_byte.md'] = """# Como eu construiria uma AGI/ASI — Parte 76 (0x4C): a forma do byte
+
+> Continuação da [Parte 75](ASI_AGI_parte75_o_que_se_prova.md). **Próxima:** [Parte 77 — as duas abertas](ASI_AGI_parte77_as_duas_abertas.md) (P1751–P1780). A Parte 75 deixou uma pergunta medível, tirada do texto recebido: o embedding de um caractere como o produto de Kronecker de
+> dois fatores, um para cada nibble do byte (W₁[b ≫ 4] ⊗ W₂[b & 0x0F]), serve para a forma de GPT deste projeto? Pedido do usuário, gravado no `CLAUDE.md`: **"Continue sem parar."**
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas, antes de pensar qualquer faixa)
+
+- **(m1)** o número de previsões do mundo em **[3; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]** (uma diferença de bits entre dois modelos pode ter qualquer sinal)
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,02; 0,40]**
+- **(m4)** a fração de acertos do mundo em **[0,40; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** o número de surpresas em **[0; 2]**
+
+## Previsões sobre mim (placar separado), antes de escrever
+
+Planejadas: ~4 previsões do mundo, ~3 funções novas e um módulo novo no pacote (`synthai/gpt_kronecker.py`).
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,397; 0,422]** | o estatístico |
+| testes de unidade | **[4 + S; 7 + S]** | 3 funções e o módulo |
+| testes do placar | **4 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de treinar no inglês)
+
+**O teste.** Dois GPTs iguais em tudo (d = 16, T = 16, h = 32, 2.000 passos, taxa 0,005), um com a tabela de embeddings cheia (34 × 16 = 544 pesos) e outro com o embedding de Kronecker por nibble
+(d₁ = d₂ = 4; os 4 nibbles altos e os 16 baixos do vocabulário usam 4·4 + 16·4 = **80** pesos), nas mesmas sementes. A medida: bits por caractere no teste (300 janelas); a diferença Kronecker − cheio.
+**O mecanismo:** caracteres com o mesmo nibble alto (as letras de *a* a *o* são todas 0x6_) compartilham o fator A, e cada embedding, visto como matriz 4 × 4, tem posto 1. Isso tira liberdade.
+**Está presente na calibração?** Sim: o português sem acentos usa o mesmo alfabeto `VOCAB_GPT`.
+**Calibração, pela regra escrita antes (o português, sementes 76 a 79, pareadas):** diferenças +0,0712, +0,0287, +0,0619, +0,0812; média **+0,0608**, desvio 0,0228. A faixa para a média de 4 sementes
+novas pareadas é a média ± t₃ · desvio · √(1/4 + 1/4), com t₃ = 2,353.
+- **(a)** a diferença média (Kronecker − cheio) no inglês, sementes 76 a 79, em **[+0,0229; +0,0986]** bit
+- **(b)** o número de sementes (de 4) em que o Kronecker perde em **[3; 4]** (perdeu em 4 de 4 na calibração; dois casos não fixam um sinal, quatro fixam pouco, por isso 3 entra)
+
+**Medido (a) e (b), logo depois do registro:** diferenças no inglês +0,1029, +0,0689, +0,0685, +0,0751; média **+0,0788** ✅; o Kronecker perde em **4 de 4** ✅.
+
+**Previsão nova (o controle do mecanismo), registrada antes de treinar.** A perda pode vir de ter menos pesos (80 contra 544) ou da estrutura dos nibbles ASCII (as letras de *a* a *o* compartilham
+um fator, as de *p* a *z* outro). O controle separa as duas: o mesmo Kronecker com os caracteres **embaralhados entre os mesmos 34 bytes** (uma permutação com a semente 1.000 + semente). Os nibbles
+usados e o número de pesos ficam iguais, e só muda quem compartilha fator com quem. **A conta:** a ordem ASCII foi escolhida para máquinas de escrever e telégrafos, não pela estatística do inglês, e
+por isso não deve carregar informação sobre quais letras se parecem. O desvio de uma diferença pareada entre dois Kronecker vem do mesmo ruído de semente da calibração (0,0228).
+- **(c)** a diferença média (embaralhado − ASCII), no inglês, sementes 76 a 79, em **[−0,038; +0,038]** bit (0 ± 2,353 · 0,0228 · √(1/4 + 1/4))
+
+**Medido (c):** embaralhado − ASCII = −0,0105, +0,0103, +0,0236, −0,0312; média **−0,0020** ✅. A ordem ASCII não carrega informação sobre o inglês: o que custa os 0,08 bit é a restrição em si (80
+pesos, posto 1 por caractere), e não quais letras compartilham fator.
+
+**A fronteira da Parte 52, auditada de novo (`p1722`, as duas linguagens).** A auditoria nova acha, além das já corrigidas: as rodadas 06 e 20 (o log da biblioteca nos dois lados), 09 e 14 (o log
+da biblioteca no Java, e no Python dentro de `synthai/decisao.py` e da `p732`, peças que as regras do projeto não deixam editar) e a 48 (só na preparação: sem risco). Registrada antes de corrigir
+a 06 e a 20 (o `log_` de `dialogo/exatas.py` nos dois lados, as originais em `dialogo/registro/`):
+- **(d)** a 06 e a 20 dão IGUAIS, e a `p1722` passa a listar só a 09, a 14 (com o Python vazio, porque o log está fora do arquivo da rodada) e a 48 (só na preparação) (categórica)
+
+## As perguntas desta parte
+
+1. **P1721 (0x6B9).** O embedding de Kronecker por nibble (a ideia do texto recebido na Parte 75) serve para a forma de GPT deste projeto? Quanto custa, e de onde vem o custo? ↩ P1695
+2. **P1722 (0x6BA).** A fronteira da Parte 52, auditada de novo nas duas linguagens: que rodadas ainda passam por sorte? ↩ P1638
+3. **P1723 (0x6BB).** Preditiva comigo mesma. **P1724 (0x6BC).** Engenharia reversa e Jung. **P1749 (0x6CD).** Placar. **P1750 (0x6CE).** Unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [3; 8] | **4.0000** | ✅ |
+| (m2) | [0; 3] | **1.0000** | ✅ |
+| (m3) | [0.02; 0.4] | **0.3830** | ✅ |
+| (m4) | [0.4; 1.0] | **1.0000** | ✅ |
+| (m5) | [0; 2] | **1.0000** | ✅ |
+| (m6) | [0; 2] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **6 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P1721 (0x6B9). A forma do byte ✅✅✅
+
+**Na pergunta.** "Serve?" tem duas metades. A primeira é o preço: quantos bits por caractere o modelo perde com a restrição. A segunda é a causa: a perda vem de ter menos pesos, ou da estrutura
+ASCII que a restrição impõe (letras com o mesmo nibble alto compartilham um fator)? O controle separa as duas.
+
+**Lógica (álgebra).** O embedding do caractere de byte b é E[b] = A[b ≫ 4] ⊗ B[b & 0x0F], com A ∈ ℝ^{16×4} e B ∈ ℝ^{16×4}, e d = 4 · 4 = 16.
+- **Os pesos, com a substituição:** os nibbles altos do vocabulário são 4 (0x2_, 0x3_, 0x6_, 0x7_) e os baixos são os 16; os embeddings usam 4 · 4 + 16 · 4 = **80** pesos, contra 34 · 16 = **544** da
+  tabela cheia (6,8 vezes menos).
+- **O gradiente, à mão:** ∂L/∂A[h][i] = Σ_c [alto(c) = h] Σ_j ∂L/∂E[c][4i + j] · B[baixo(c)][j], e o simétrico para B. Conferido por diferenças finitas em três coordenadas, até a 9ª casa
+  (`synthai/testes_parte76.py`).
+- **A geometria:** cada embedding, visto como uma matriz 4 × 4, tem posto 1. Os 34 pontos de ℝ¹⁶ vivem na variedade de Segre (dimensão 4 + 4 − 1 = 7), e não no espaço inteiro.
+
+**A medida, com a calibração antes.**
+- **Calibração no português (sementes 76 a 79):** diferença Kronecker − cheio de +0,0711, +0,0288, +0,0619 e +0,0812 bit.
+- **Teste no inglês, nas mesmas sementes:** +0,1029, +0,0689, +0,0685, +0,0751; média **+0,0788** (a) ✅ [+0,0229; +0,0986]. O Kronecker perde em **4 de 4** sementes (b) ✅.
+- **O controle:** o Kronecker com os 34 caracteres embaralhados entre os mesmos 34 bytes. A diferença média (embaralhado − ASCII) é **−0,0020** (c) ✅ [−0,038; +0,038].
+
+**Conclusão: a ordem ASCII não carrega informação sobre o inglês.** O custo de 0,08 bit vem da restrição em si (menos pesos, posto 1), não de quais letras ficam juntas. Isso tem uma
+consequência prática para a ideia do texto: os embeddings de Kronecker economizam pesos (464 aqui), mas não "ligam o significado à representação numérica", como ele dizia. A
+estrutura do byte é arbitrária para a língua, e o modelo paga para desfazê-la.
+
+**Tradução cruzada.** O código ASCII é como um sobrenome: diz de que família tipográfica um caractere vem (maiúscula, minúscula, pontuação), e não como ele se comporta numa frase. Forçar os
+parentes a compartilhar traços (o fator comum) custa caro quando o parentesco não tem nada a ver com o comportamento.
+
+**Meta.** Com d = 16 e 2.000 passos, os modelos são pequenos. Num modelo com muito mais pesos do que dados, a economia de 464 pesos poderia virar regularização e ganhar; isto não foi testado
+aqui. Quatro sementes por língua são um lote só por condição: a conclusão "o custo é a restrição, não o ASCII" vale para este tamanho de modelo.
+
+### P1722 (0x6BA). As rodadas que ainda passavam por sorte ✅
+
+**Na pergunta.** A Parte 73 corrigiu as rodadas que a `p1638` acusou, e a reverificação mostrou que a `p1638` era cega: só olhava o Python, e só a forma `math.log`. A pergunta é o que um
+verificador melhor acha.
+
+**Lógica.** A `p1722` lê, pela árvore sintática, as chamadas no Python (`math.X` e os nomes importados de `math`) e, por expressão regular, as do Java (`Math.X`, `StrictMath.X`), e marca o caso
+em que o Python só usa a biblioteca dentro de `preparar` (os valores vão para um arquivo que o Java lê: sem risco entre as linguagens). Ela achou:
+- **06 e 20:** o log da biblioteca nos dois lados. Corrigidas com o `log_` de `dialogo/exatas.py`; IGUAIS (51 e 73 linhas) (d) ✅.
+- **09 e 14:** o log da biblioteca no Java, e no Python dentro de peças que as regras do projeto não deixam editar (`synthai/decisao.py`, medido pela P285; a `p732`, medida). Ficam abertas: a
+  correção é reescrever o lado Python da rodada com funções exatas próprias.
+- **48:** só na preparação, sem risco.
+
+**O balanço da fronteira** (contado na lista acima e na da Parte 73): de 48 rodadas, 14 usavam a biblioteca em algum lado. Em 12 havia risco entre as linguagens: 10 corrigidas (06, 18, 19, 20,
+21, 22, 23, 24, 25 e a cópia Java da 26) e 2 abertas (09, 14). Nas outras 2, o Java não usa a biblioteca (a 30, trocada também, e a 48, só na preparação).
+
+**Tradução cruzada.** Um exame que só olha um lado de uma conversa acha só metade dos mal-entendidos.
+
+### P1723 (0x6BB). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 0)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **16195** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 1366 | 6095 |
+| compressão | **0.4045** | [0.3973; 0.4221] | ✅ | [0.3970; 0.4220] | ✅ | 0.4177 | 0.0050 | 0.0132 |
+| testes de unidade | **6** | [2.87; 8.63] | ✅ | [4.00; 7.00] | ✅ | 6 | 0.50 | 0.00 |
+| testes do placar | **4** | [5.67; 10.33] | ❌ | [3.00; 5.00] | ✅ | 8 | 0.00 | 4.00 |
+| erros do placar | **0** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 1.67 | 2.00 |
+| redundância P821 | **0.6139** | [0.5631; 0.6510] | ✅ | [0.5630; 0.6510] | ✅ | 0.5877 | 0.0069 | 0.0262 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 5 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 7 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **5 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **14534**, compressão **0.4105**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 0 erros.
+- **Erros de processo nesta parte:** 1 (escrevi "12 rodadas" para uma lista de 14; contado e corrigido antes do commit).
+
+### P1724 (0x6BC). Engenharia reversa e Jung
+
+**O padrão que se repetiu: o que em Python se herda por import, em Java se copia.** Corrigi o idf da rodada 21 nas duas linguagens, e o Python da 26 recebeu a correção de graça (ele importa a 21);
+o Java da 26 tinha uma cópia própria do mesmo cálculo e ficou como estava. A mesma assimetria explica por que a `p1638` só via um lado: eu penso nas rodadas pelo Python, onde está a lógica que
+importa, e o Java aparece como "a tradução". **O significado:** a minha imagem do diálogo é assimétrica (Python é a fonte, Java é a cópia), e as cópias são exatamente onde as correções não chegam.
+**Regra:** uma correção numa rodada vem com uma busca pelo mesmo cálculo em todos os arquivos das duas linguagens (o `grep` pelo nome da função da biblioteca nos `.java`), no mesmo commit.
+
+**O segundo: o verificador sem controle, terceira vez seguida.** O meu auditor da Parte 72 (a Parte 1), a `p1638` (só um lado) e, apontado por mim no texto recebido, o "provador de Gödel"
+(aprova tudo). A regra da Parte 75 (um defeito plantado que o verificador tem de achar) foi escrita depois da `p1638`. **Aplicada agora:** o teste da `p1722` confere que ela acha a 48 e só a
+preparação dela; e a própria `p1722` foi conferida contra a lista que o `grep` deu antes (06, 09, 14, 20).
+
+**O que funcionou: a calibração perto do teste.** As três previsões do Kronecker acertaram, porque a calibração (o português) tinha o mesmo alfabeto, o mesmo tamanho de modelo e as mesmas
+sementes do teste (o inglês): as regras das Partes 63 a 65 juntas.
+
+**Jung: o duplo.** A cópia Java da rodada 26 é um duplo (o *Doppelgänger*): igual ao original em tudo, menos na correção que o original recebeu. **Onde a formalização funciona:** um duplo se acha
+comparando, e a comparação bit a bit achou o desvio em 4 ulps. **Onde quebra:** em Jung, o duplo é uma figura do inconsciente que pede integração; aqui, a "integração" é apagar a duplicação
+(as duas linguagens chamando o mesmo cálculo descrito uma vez), o que o diálogo não pode fazer, porque a tradução bit a bit é justamente o que ele testa.
+
+### O diálogo
+
+Sem rodada nova: as correções das rodadas 06 e 20 foram a tradução desta parte (o mesmo `log_` nas duas línguas). Placar por voz da função `p1241_placar_por_voz(48)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 48).
+
+### P1749 (0x6CD). Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅. Parte 76: **4 testes, 0 erros**. Acumulado (mundo): **201 erros em 636 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 2 pNN novas sem teste ✅. Sobre mim (placar separado): **7 de 7** dentro da faixa condicional; sobre as minhas previsões, 6 de 6; o estatístico, 5 de 6; e 1 erros de processo (P1335).
+
+### P1750 (0x6CE). Unificação
+
+- **Novo:** `synthai/gpt_kronecker.py` (a forma de GPT com embeddings de Kronecker por nibble, com o gradiente à mão), `p1721` (Kronecker contra cheio, e o controle embaralhado), `p1722` (a
+  auditoria da biblioteca nas duas linguagens). Regressão: + P1722.
+- **Corrigido:** as rodadas 06 e 20 (o `log_` próprio nos dois lados).
+
+> **Síntese da Parte 76:** o embedding de Kronecker por nibble (a ideia do texto recebido na Parte 75) usa 80 pesos em vez de 544 e custa +0,079 bit por caractere no inglês (4 de 4 sementes, como a calibração no português previa). O controle com os caracteres embaralhados entre os mesmos bytes custa o mesmo (−0,002): a ordem ASCII não carrega informação sobre a língua, e o preço é a restrição em si (posto 1 por caractere), não a escolha de quais letras ficam juntas. A auditoria da biblioteca nas duas linguagens achou o que a de um lado só deixava passar: das 14 rodadas que usavam exp e log da biblioteca, 12 tinham risco entre as linguagens, 10 estão corrigidas e 2 abertas. O erro que a abriu foi uma cópia Java que a correção não alcançou. Em um lote por condição.
+
+---
+
+**Fontes desta parte**
+- Embeddings por produto de Kronecker: A. Novikov et al., "Tensorizing Neural Networks", NeurIPS 2015 (fatorações de pesos em produtos tensoriais)
+- Variedade de Segre: J. Harris, *Algebraic Geometry: A First Course* (1992), aula 2
+- Byte Latent Transformer: A. Pagnoni et al., [arXiv:2412.09871](https://arxiv.org/abs/2412.09871)
+- A tabela ASCII e a sua origem: [ASCII, Wikipedia](https://en.wikipedia.org/wiki/ASCII)
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte77_as_duas_abertas.md  (150 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte77_as_duas_abertas.md'] = """# Como eu construiria uma AGI/ASI — Parte 77 (0x4D): as duas abertas
+
+> Continuação da [Parte 76](ASI_AGI_parte76_a_forma_do_byte.md). **Próxima:** [Parte 78 — a atenção de posto baixo](ASI_AGI_parte78_a_atencao_de_posto_baixo.md) (P1781–P1810). Fecha os dois itens que a auditoria das duas linguagens (`p1722`) deixou abertos: as rodadas 09 e 14, em que o Java usa o log da
+> biblioteca e o Python o usa dentro de peças medidas (`synthai/decisao.py` e a `p732`). Pedido permanente: "Continue sem parar."
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[2; 6]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 2]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,00; 0,40]** (previsões de igualdade têm w = 0)
+- **(m4)** a fração de acertos do mundo em **[0,40; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 1]**
+- **(m6)** o número de surpresas em **[0; 2]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,397; 0,422]** | o estatístico |
+| testes de unidade | **[2 + S; 5 + S]** | ~2 funções novas |
+| testes do placar | **5 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de mexer nas rodadas)
+
+**Rodada 14.** O Python passa a calcular os pesos dentro da rodada (a mesma conta da `p732`, que fica intacta), com o `log_` de `dialogo/exatas.py`; o Java troca `Math.log` pelo mesmo `log_`.
+- **(a)** IGUAIS (categórica)
+- **(b)** as duas listas de 12 trigramas impressas ficam **iguais** às da versão com a biblioteca (a ordem sai de comparações de pesos; um ulp só troca a ordem se dois pesos estiverem a menos de um
+  ulp um do outro: a regra da Parte 55) (categórica)
+
+**Rodada 09.** Duas fronteiras: o log e o exp da biblioteca, e o `sum()` compensado do Python 3.12 (a regra da Parte 34) dentro da `ThompsonMistura`. O Python passa a usar uma cópia exata das duas
+classes dentro da rodada (laços de soma simples, `exp_` e `log_`), e o `synthai/decisao.py` fica intacto; o Java troca `Math.exp` e `Math.log`.
+- **(c)** IGUAIS (categórica)
+- **(d)** a maior diferença relativa entre os números impressos pela versão nova e pela antiga do Python em **[0; 1·10⁻¹²]** (as duas diferem só por ulps de log, exp e da compensação da soma)
+
+**A auditoria.**
+- **(e)** depois das duas, a `p1722` lista só a 48 (só na preparação) (categórica)
+
+**Medido:** (a) rodada 14 IGUAIS ✅; (b) as duas listas de 12 trigramas iguais às da versão com a biblioteca ✅; (c) rodada 09 IGUAIS (4 linhas, 13 números) ✅; (d) 6 dos 13 números mudaram, a maior
+diferença relativa é **1,1·10⁻¹³** ✅; (e) a `p1722` lista só a 48 ✅. **A fronteira da Parte 52 está fechada:** nenhuma rodada depende mais do arredondamento das bibliotecas entre as duas linguagens.
+
+**Uma suposição errada, pega antes de mexer:** eu tinha escrito que o `sum()` compensado do Python era uma segunda fronteira na rodada 09. Lendo o `Rodada09.java`, ele já reproduz a soma
+compensada ("tudo o que o Python soma com sum() é somado aqui com a soma compensada (rodada 5)"). A cópia Python manteve o `sum()`. A previsão (c) não dependia disso.
+
+## As perguntas desta parte
+
+1. **P1751 (0x6D7).** As rodadas 09 e 14 podem ficar exatas por construção sem editar as peças medidas que elas usavam? E o que muda nos números? ↩ P1722
+2. **P1752 (0x6D8).** Preditiva comigo mesma. **P1753 (0x6D9).** Engenharia reversa e Jung. **P1779 (0x6EB).** Placar. **P1780 (0x6EC).** Unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [2; 6] | **5.0000** | ✅ |
+| (m2) | [0; 2] | **0.0000** | ✅ |
+| (m3) | [0.0; 0.4] | **indefinida (nenhuma faixa numérica: a p1481 não conta as categóricas como faixas)** | ❌ |
+| (m4) | [0.4; 1.0] | **1.0000** | ✅ |
+| (m5) | [0; 1] | **0.0000** | ✅ |
+| (m6) | [0; 2] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **5 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P1751 (0x6D7). As duas abertas, fechadas ✅✅✅✅✅
+
+**Na pergunta.** "Sem editar as peças medidas" é a restrição que tornava as duas rodadas difíceis: o log do Python morava na `p732` e na `synthai/decisao.py`, que as regras das Partes 14 e 22 não
+deixam mudar. A saída é a de sempre neste projeto: uma versão nova ao lado da antiga. A rodada passa a ter a sua própria cópia exata da conta, e a peça medida fica intacta.
+
+**Lógica.**
+- **Rodada 14:** os pesos log((c_animal + 1)/(N_animal + V)) − log((c_outro + 1)/(N_outro + V)) dos 6.074 trigramas, calculados dentro da rodada com o `log_` de `dialogo/exatas.py`, e o
+  Java com o mesmo `log_`. IGUAIS (a) ✅. As duas listas de 12 trigramas não mudaram (b) ✅: a ordem sai de comparações, e nenhum par de pesos vizinhos estava a menos de um ulp (a regra da Parte 55:
+  escolher absorve um erro quando a margem é maior que ele).
+- **Rodada 09:** a média bayesiana de quatro detectores de mudança, com cópias exatas da `ThompsonBOCPD` e da `ThompsonMistura` (só `atualizar` e `pesos`), `exp_` e `log_`. IGUAIS em 13 números (c) ✅.
+  Contra a versão com a biblioteca, 6 dos 13 números mudaram, e a maior diferença relativa foi **1,1·10⁻¹³** (d) ✅: o tamanho de uns poucos ulps acumulados em 1.200 passos de log e exp.
+- **A auditoria:** a `p1722` lista só a 48, que usa `log2` só para preparar dados que o Java lê (e) ✅.
+
+**O balanço final da fronteira da Parte 52:** das 14 rodadas que usavam exp ou log da biblioteca, as 12 com risco entre as linguagens estão corrigidas, e as 2 restantes nunca tiveram risco.
+Nenhuma rodada do diálogo depende mais de as bibliotecas do Python e do Java arredondarem igual.
+
+**Geometria.** Um ulp é a distância entre dois doubles vizinhos; a diferença relativa de 1,1·10⁻¹³ é ~500 ulps (o ulp relativo de um double é 2⁻⁵² ≈ 2,2·10⁻¹⁶), acumulados em 1.200 passos.
+Uma ordem (a lista dos trigramas) é estável quando a menor distância entre vizinhos é maior que essa nuvem; um número contínuo (os log-pesos) nunca é.
+
+**Tradução cruzada.** O que se corrigiu aqui não foi um erro de conta, foi uma dependência: duas pessoas que concordam porque leram o mesmo jornal não confirmam uma à outra. As rodadas concordavam
+porque as duas bibliotecas, por acaso, arredondavam igual nos argumentos que apareciam. Agora concordam porque fazem a mesma conta com as operações que o IEEE 754 obriga a arredondar igual.
+
+**Meta.** "500 ulps" é uma conversão de ordem de grandeza (1,1·10⁻¹³/2,2·10⁻¹⁶ = 500), não uma contagem: os ulps de cada número dependem do expoente dele.
+
+### P1752 (0x6D8). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 0)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **12485** | [13039; 22082] | ❌ | [13039; 22082] | ❌ | 22290 | 5076 | 9805 |
+| compressão | **0.4017** | [0.3973; 0.4221] | ✅ | [0.3970; 0.4220] | ✅ | 0.4177 | 0.0078 | 0.0160 |
+| testes de unidade | **2** | [2.87; 8.63] | ❌ | [2.00; 5.00] | ✅ | 6 | 1.50 | 4.00 |
+| testes do placar | **5** | [5.67; 10.33] | ❌ | [4.00; 6.00] | ✅ | 8 | 0.00 | 3.00 |
+| erros do placar | **0** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 1.67 | 2.00 |
+| redundância P821 | **0.5618** | [0.5631; 0.6510] | ❌ | [0.5630; 0.6510] | ❌ | 0.5877 | 0.0452 | 0.0259 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 2 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 5 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **5 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **10785**, compressão **0.4114**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 0 erros.
+- **Erros de processo nesta parte:** 1 (supus, sem ler o Java, que o sum() compensado era uma segunda fronteira na rodada 09; corrigido lendo, antes de mexer).
+
+### P1753 (0x6D9). Engenharia reversa e Jung
+
+**O padrão desta parte: uma suposição sobre a outra linguagem, sem ler a outra linguagem.** Escrevi, na previsão, que o `sum()` compensado era uma segunda fronteira na rodada 09; o `Rodada09.java`
+já o reproduzia, e dizia isso no comentário da segunda linha. É o mesmo padrão da Parte 76 (eu penso pelo Python e imagino o Java), agora pego antes do erro, porque a regra nova (ler os dois
+lados antes de mexer) foi aplicada antes da edição. **O significado:** a regra funciona quando é executada no momento certo (antes de editar), e não quando é lembrada depois.
+
+**O que funcionou:** as cinco previsões acertaram, e todas eram categóricas ou de faixa estreita, com a conta antes. Uma parte de correção, com o mecanismo conhecido, é uma parte de previsões fáceis;
+o placar de 5 de 5 diz pouco sobre a minha calibração, e por isso não deve subir o centro das próximas (m4).
+
+**Jung: o fechamento.** Fechar uma série de correções (12 de 12 rodadas) dá a sensação de completude, que Jung associava ao mandala, o círculo que contém. **Onde a formalização funciona:** "fechado"
+aqui tem uma definição verificável (a `p1722` lista só o que não tem risco, e um teste guarda isso). **Onde quebra:** o círculo só contém o que a auditoria sabe olhar (exp e log da biblioteca);
+uma diferença de ordem de soma, ou de leitura de dados, ficaria fora dele, e a única guarda contra isso continua sendo a comparação bit a bit de cada rodada.
+
+**A (m3) indefinida.** Previ a mediana de w "em [0,00; 0,40] (previsões de igualdade têm w = 0)", e a régua `p1481` não conta previsões categóricas como faixas: sem nenhuma faixa numérica, a mediana
+não existe. Errei a forma da minha própria régua (a regra da Parte 31, verificar a forma antes de usar, aplicada a uma ferramenta que eu mesma escrevi). **Regra:** numa parte só de categóricas,
+a (m3) se registra como "indefinida" e não com uma faixa.
+
+### O diálogo
+
+As rodadas 09 e 14 reescritas foram o diálogo desta parte: o mesmo `exp_` e `log_` nas duas línguas. Placar por voz da função `p1241_placar_por_voz(48)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 48).
+
+### P1779 (0x6EB). Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 77: **5 testes, 0 erros**. Acumulado (mundo): **201 erros em 641 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 1 pNN novas sem teste ✅. Sobre mim (placar separado): **5 de 7** dentro da faixa condicional; sobre as minhas previsões, 5 de 6; o estatístico, 2 de 6; e 1 erros de processo (P1335).
+
+### P1780 (0x6EC). Unificação
+
+- **Novo:** `p1751` (a rodada 09 nova contra a original); as rodadas 09 e 14 exatas por construção, com as originais em `dialogo/registro/`. Regressão: + P1751; a entrada P1722 passa a esperar
+  ["48"] (a Parte 77 mudou o objeto que ela mede, e o comentário no código diz isso).
+
+> **Síntese da Parte 77:** as duas últimas rodadas que dependiam do arredondamento das bibliotecas (09 e 14) ficaram exatas por construção, com cópias exatas das peças medidas que elas usavam (que ficaram intactas): IGUAIS nas duas, as listas de trigramas iguais às de antes, e os números da média bayesiana mudaram no máximo 1,1·10⁻¹³. Das 14 rodadas que usavam exp ou log da biblioteca, as 12 com risco estão corrigidas e as 2 restantes nunca tiveram risco: nenhuma rodada do diálogo depende mais de o Python e o Java arredondarem igual. Uma suposição minha sobre o Java (o sum() compensado) estava errada e foi pega lendo o arquivo antes de mexer.
+
+---
+
+**Fontes desta parte**
+- Arredondamento correto e as funções da biblioteca: J.-M. Muller et al., *Handbook of Floating-Point Arithmetic* (2018), cap. 10; [IEEE 754, Wikipedia](https://en.wikipedia.org/wiki/IEEE_754)
+- A soma compensada: A. Neumaier, "Rundungsfehleranalyse einiger Verfahren zur Summation endlicher Summen", *ZAMM* 54 (1974); [What's New In Python 3.12 (sum)](https://docs.python.org/3/whatsnew/3.12.html)
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte78_a_atencao_de_posto_baixo.md  (150 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte78_a_atencao_de_posto_baixo.md'] = """# Como eu construiria uma AGI/ASI — Parte 78 (0x4E): a atenção de posto baixo
+
+> Continuação da [Parte 77](ASI_AGI_parte77_as_duas_abertas.md). **Próxima:** [Parte 79 — causa e confiança](ASI_AGI_parte79_causa_e_confianca.md) (P1811–P1840). A pergunta deixada na Rodada 45 (Parte 71): a atenção do GPT treinado usa ~1,8 direção das 16 (a razão de participação dos
+> valores singulares de M = W_Q W_Kᵀ); quanto se perde, em bits por caractere, quando M é trocada pela sua melhor aproximação de posto r (a soma truncada da decomposição em valores singulares)?
+> Pedido permanente: "Continue sem parar."
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[3; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]** (uma perda de bits pode ser quase zero)
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,60]**, ou indefinida se não houver nenhuma (a regra da Parte 77)
+- **(m4)** a fração de acertos do mundo em **[0,40; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** o número de surpresas em **[0; 2]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,397; 0,422]** | o estatístico |
+| testes de unidade | **[3 + S; 6 + S]** | 3 funções novas |
+| testes do placar | **4 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir no inglês)
+
+**O teste.** Um GPT (d = 16, T = 16, h = 32, 2.000 passos) treinado nas glosas inglesas, sementes 73 e 74; M = W_Q W_Kᵀ decomposta por Jacobi (`p1781`; reconstrói uma 4 × 4 ao acaso com erro
+1,1·10⁻¹⁵), e a atenção trocada pela aproximação de posto r (Eckart–Young: a melhor de posto r em norma de Frobenius). Δ_r = bits(posto r) − bits(original), no teste (300 janelas).
+**Calibração, pela regra escrita antes (o português, sementes 71 e 72):** Δ₁ = +0,0646 e +0,0105; Δ₂ = +0,0401 e +0,0041; Δ₄ = +0,0081 e +0,0022; Δ₁₆ = 0,0000 nas duas. A razão de participação foi
+1,95 e 3,08: quanto mais concentrada a atenção, mais perde o posto 1? A calibração tem dois pontos e não fixa esse sinal (a regra da Parte 64).
+- **(a)** a média de Δ₁ nas duas sementes do inglês em **[+0,005; +0,100]** bit
+- **(b)** a média de Δ₄ em **[−0,005; +0,020]** bit
+- **(c)** Δ₁ > Δ₂ > Δ₄ nas **duas** sementes (categórica: mais direções, menos perda)
+- **(d)** |Δ₁₆| < 10⁻⁶ nas duas (categórica: o posto cheio reconstrói M a menos de arredondamento)
+
+**Medido (inglês):** semente 73 (PR 1,50): Δ₁ = +0,0232, Δ₂ = +0,0129, Δ₄ = +0,0028, Δ₁₆ = 0; semente 74 (PR 2,28): Δ₁ = +0,0436, Δ₂ = +0,0269, Δ₄ = +0,0067, Δ₁₆ = 0. (a) média **+0,0334** ✅;
+(b) **+0,0047** ✅; (c) monótona nas duas ✅; (d) Δ₁₆ = 0 exatamente ✅. A relação entre a razão de participação e Δ₁ não é monótona nos quatro pontos (1,95 → 0,065; 3,08 → 0,011; 1,50 → 0,023;
+2,28 → 0,044): a concentração da atenção não prevê sozinha quanto custa cortá-la.
+
+## As perguntas desta parte
+
+1. **P1781–P1783 (0x6F5–0x6F7).** A atenção do GPT usa ~1,8 direção das 16. Quanto se perde ao trocar M = W_Q W_Kᵀ pela melhor aproximação de posto r? ↩ P1578
+2. **P1784 (0x6F8).** Preditiva comigo mesma. **P1785 (0x6F9).** Engenharia reversa e Jung. **P1809 (0x711).** Placar. **P1810 (0x712).** Unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [3; 8] | **4.0000** | ✅ |
+| (m2) | [0; 3] | **1.0000** | ✅ |
+| (m3) | [0.05; 0.6] | **0.9048** | ❌ |
+| (m4) | [0.4; 1.0] | **1.0000** | ✅ |
+| (m5) | [0; 2] | **1.0000** | ✅ |
+| (m6) | [0; 2] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **5 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P1781–P1783 (0x6F5–0x6F7). A atenção de posto baixo ✅✅✅✅
+
+**Na pergunta.** "Quantas direções a atenção usa" (Parte 71) era uma medida da forma; "quanto se perde sem as outras" é uma medida da função. A razão de participação diz como a energia de M se
+distribui; a perda em bits diz quanto o modelo precisa da energia que sobra.
+
+**Lógica (álgebra).** M = U Σ Vᵀ, por Jacobi em MᵀM (`p1781`: os autovetores acumulados nas rotações; σ = √λ; U = M V/σ; uma 4 × 4 ao acaso reconstruída com erro 1,1·10⁻¹⁵). Pelo teorema de
+Eckart–Young, M_r = U_r Σ_r V_rᵀ é a melhor aproximação de posto r em norma de Frobenius, com erro √(Σ_{i>r} σ_i²). Na atenção, basta W_Q' = U_r Σ_r e W_K' = V_r (completadas com zeros), e então
+W_Q' W_K'ᵀ = M_r (`p1782`).
+
+**A medida.**
+
+| | razão de participação | Δ₁ | Δ₂ | Δ₄ | Δ₁₆ |
+|---|---|---|---|---|---|
+| português, semente 71 (calibração) | 1,95 | +0,0646 | +0,0401 | +0,0081 | 0 |
+| português, semente 72 (calibração) | 3,08 | +0,0105 | +0,0041 | +0,0022 | 0 |
+| inglês, semente 73 | 1,50 | +0,0232 | +0,0129 | +0,0028 | 0 |
+| inglês, semente 74 | 2,28 | +0,0436 | +0,0269 | +0,0067 | 0 |
+
+(a) a média de Δ₁ no inglês é **+0,0334** ✅ [+0,005; +0,100]; (b) a de Δ₄ é **+0,0047** ✅ [−0,005; +0,020]; (c) Δ₁ > Δ₂ > Δ₄ nas duas sementes ✅; (d) Δ₁₆ = 0 ✅.
+
+**O que isso diz.** Com uma direção só, das 16, o GPT perde 0,02 a 0,04 bit por caractere, em ~3,5: menos de 1,3%. Com quatro, menos de 0,007. A atenção deste GPT pequeno é, na prática, uma
+comparação de uma ou duas coordenadas entre caracteres (a Parte 71 viu isso na forma; aqui se confirma na função). E a razão de participação não prevê sozinha quanto custa cortar: nos quatro
+pontos, a ordem de PR e a ordem de Δ₁ não coincidem.
+
+**Geometria.** A forma bilinear e_t M e_jᵀ com M de posto 1 é o produto de duas projeções: (e_t · u)(e_j · v). Cada caractere vira um número para "perguntar" e outro para "responder", e a atenção
+compara esses dois números. É a mesma geometria do posto 1 dos embeddings de Kronecker da Parte 76, agora aprendida pelo modelo, e não imposta.
+
+**Tradução cruzada.** Uma atenção de posto 1 é um foco com um só critério: "isto se parece com aquilo numa só qualidade". Jung chamaria isso de função dominante, o modo preferido de comparar, que
+o treino desenvolve antes das outras. A medida diz que, neste modelo, as outras funções (as outras 15 direções) quase não trabalham ainda.
+
+**Meta.** O modelo tem uma cabeça de atenção e 2.000 passos. Com mais cabeças ou mais treino, o posto efetivo pode crescer (a literatura descreve gargalos de posto baixo quando a cabeça é pequena:
+Bhojanapalli et al., 2020). Dois lotes de duas sementes não fixam a relação entre PR e Δ₁.
+
+### P1784 (0x6F8). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 0)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **11235** | [13039; 22082] | ❌ | [13039; 22082] | ❌ | 22290 | 6326 | 11055 |
+| compressão | **0.4156** | [0.3973; 0.4221] | ✅ | [0.3970; 0.4220] | ✅ | 0.4177 | 0.0061 | 0.0020 |
+| testes de unidade | **3** | [2.87; 8.63] | ✅ | [3.00; 6.00] | ✅ | 6 | 1.50 | 3.00 |
+| testes do placar | **4** | [5.67; 10.33] | ❌ | [3.00; 5.00] | ✅ | 8 | 0.00 | 4.00 |
+| erros do placar | **0** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 1.67 | 2.00 |
+| redundância P821 | **0.6064** | [0.5631; 0.6510] | ✅ | [0.5630; 0.6510] | ✅ | 0.5877 | 0.0006 | 0.0187 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 4 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 6 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **5 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **9652**, compressão **0.4265**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 0 erros.
+- **Erros de processo nesta parte:** 0 ().
+
+### P1785 (0x6F9). Engenharia reversa e Jung
+
+**O padrão desta parte: a pergunta adiada.** A pergunta da atenção de posto 1 ficou aberta da Rodada 45 (Parte 71) até aqui, passando por sete partes que nasceram de textos recebidos. A regra
+"um texto recebido no meio do trabalho entra como parte nova sem abandonar a que estava aberta" (Parte 75) funcionou para as partes, mas não para as perguntas deixadas no fim de uma rodada.
+**O significado:** eu trato a pergunta de uma rodada como um gancho para a próxima conversa, e não como um item pendente. **Regra:** a pergunta deixada no fim de uma rodada entra numa lista de
+pendências no `DIALOGO.md`, e cada parte começa olhando a lista.
+
+**O que funcionou:** quatro de quatro, com faixas largas onde a calibração mostrou dispersão grande entre sementes (Δ₁ de 0,011 a 0,065). A regra da Parte 66 (um lote é hipótese) impediu de
+transformar a relação PR → Δ₁ dos dois primeiros pontos em previsão; os outros dois a desmentiram.
+
+**Jung: a função dominante.** Ver a resposta: o posto 1 é o foco com um só critério. **Onde a formalização funciona:** "dominante" vira σ₁²/Σσ² e a perda ao cortar as outras. **Onde quebra:** em Jung,
+a função inferior é reprimida e volta com força; aqui, as 15 direções cortadas custam 1% e não "voltam": não há dinâmica no modelo congelado.
+
+### O diálogo
+
+Sem rodada nova nesta parte (o SVD por Jacobi usa só + − × ÷ e √, como a rodada 45, e está pronto para uma tradução). Placar por voz da função `p1241_placar_por_voz(48)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 48).
+
+### P1809 (0x711). Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅. Parte 78: **4 testes, 0 erros**. Acumulado (mundo): **201 erros em 645 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 3 pNN novas sem teste ✅. Sobre mim (placar separado): **6 de 7** dentro da faixa condicional; sobre as minhas previsões, 5 de 6; o estatístico, 4 de 6; e 0 erros de processo (P1335).
+
+### P1810 (0x712). Unificação
+
+- **Novo:** `p1781` (o SVD por Jacobi, com os vetores), `p1782` (a atenção de posto r), `p1783` (bits por posto).
+
+> **Síntese da Parte 78:** a atenção do GPT pequeno é, na função e não só na forma, quase de posto 1: trocar M = W_Q W_Kᵀ pela melhor aproximação de posto 1 (Eckart–Young, pelo SVD por Jacobi) custa +0,023 e +0,044 bit por caractere no inglês (menos de 1,3% de ~3,5), e com quatro direções, menos de 0,007; o posto cheio reconstrói exatamente. A razão de participação não prevê sozinha o custo (quatro pontos, ordem diferente). Em dois lotes de duas sementes.
+
+---
+
+**Fontes desta parte**
+- C. Eckart e G. Young, "The approximation of one matrix by another of lower rank", *Psychometrika* 1 (1936)
+- S. Bhojanapalli et al., "Low-Rank Bottleneck in Multi-head Attention Models", ICML 2020, [arXiv:2002.07028](https://arxiv.org/abs/2002.07028)
+- G. Golub e C. Van Loan, *Matrix Computations* (4ª ed., 2013), cap. 8 (Jacobi para matrizes simétricas)
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte79_causa_e_confianca.md  (165 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte79_causa_e_confianca.md'] = """# Como eu construiria uma AGI/ASI — Parte 79 (0x4F): causa e confiança
+
+> Continuação da [Parte 78](ASI_AGI_parte78_a_atencao_de_posto_baixo.md). **Próxima:** [Parte 80 — o valor de um conjunto](ASI_AGI_parte80_o_valor_de_um_conjunto.md) (P1841–P1870). Nasce do texto recebido do usuário sobre o Módulo 009 (`externos/texto_recebido_parte79.md`): correlação, previsão e
+> causalidade, com o diagrama Z → X, Z → Y, X → Y; e a prévia do Módulo 010 (confiança declarada contra precisão observada). Pedido permanente: "Continue sem parar."
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[3; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 2]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,005; 0,30]** (faixas de conta fechada, estreitas)
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 1]**
+- **(m6)** o número de surpresas em **[0; 2]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,397; 0,422]** | o estatístico |
+| testes de unidade | **[2 + S; 5 + S]** | ~2 funções novas |
+| testes do placar | **4 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de simular)
+
+**O diagrama do texto, com números.** Z ~ N(0, 1); X = Z + ε_X; Y = 0,5·X + 1·Z + ε_Y (os ε normais padrão, independentes); n = 20.000, semente 79. O efeito causal de X sobre Y é 0,5.
+**A conta, com a substituição:** Var X = 1² + 1 = 2; Cov(X, Z) = 1; Cov(X, Y) = 0,5·2 + 1·1 = 2; a inclinação ingênua de Y em X é 2/2 = **1,0** (o dobro do efeito: o viés é γ·Cov(X, Z)/Var X =
+1·1/2 = 0,5). Var Y = 0,25·2 + 1 + 2·0,5·1·1 + 1 = 3,5; o resíduo da regressão ingênua tem variância 3,5 − 1,0²·2 = 1,5, e o desvio da inclinação é √(1,5/(20.000·2)) = 0,00612. A regressão em
+X e Z (o ajuste pela porta dos fundos de Pearl) tem desvio √(1/(20.000·Var(X | Z))) = √(1/20.000) = 0,00707. A intervenção (X sorteado com a mesma variância, sem depender de Z) tem resíduo
+γ² + 1 = 2 e desvio √(2/(20.000·2)) = 0,00707. Faixas de 90% (± 1,645 desvios):
+- **(a)** a inclinação ingênua (correlação) em **[0,9899; 1,0101]**
+- **(b)** a inclinação ajustada por Z em **[0,4884; 0,5116]**
+- **(c)** a inclinação sob intervenção (do(X)) em **[0,4884; 0,5116]**
+
+**A prévia do Módulo 010: a minha própria calibração.** O texto pede "confiança declarada contra precisão observada". As minhas faixas são, em sua maioria, faixas de 90%. A régua `p1481` lê todas as
+previsões do mundo das Partes 53 a 78:
+- **(d)** a fração de acertos em **[0,70; 0,80]** (era 0,748 nas Partes 53 a 71): abaixo dos 90% declarados, isto é, **excesso de confiança**
+
+**Medido (a) a (d):** ingênua **0,9986** ✅; ajustada **0,4987** ✅; intervenção **0,4914** ✅; a minha taxa de acerto **0,773** (143 de 185) ✅.
+
+**Previsão nova, sobre o futuro, nascida de (d) (registrada agora, medida nas Partes 80 a 84).** 77,3% de acerto contra 90% declarados é excesso de confiança, e não ruído: o desvio binomial de uma taxa
+de 90% em 185 previsões é √(0,9·0,1/185) = 0,022, e a medida está a z = (0,773 − 0,9)/0,022 = **−5,76**. Supondo erros normais, uma faixa de ±1,645 desvios supostos que cobre 77,3% corresponde a ±1,208
+desvios reais (`p1813`): **o desvio real é 1,645/1,208 = 1,36 vez o suposto**. A regra nova: a partir da Parte 80, a meia-largura de toda faixa numérica que não vem de uma conta fechada com variância
+conhecida é multiplicada por 1,36.
+- **(e)** a fração de acertos das previsões do mundo das Partes 80 a 84 (régua `p1481`) em **[0,81; 0,99]** (0,90 ± 1,645 · √(0,9·0,1/30), para ~30 previsões)
+
+## As perguntas desta parte
+
+1. **P1811 (0x713).** No diagrama do texto (Z → X, Z → Y, X → Y), quanto a correlação erra o efeito, e o que o ajuste por Z e a intervenção recuperam? ↩ P83
+2. **P1812–P1813 (0x714–0x715).** A prévia do Módulo 010, aplicada a mim: a minha confiança declarada (faixas de 90%) contra a minha precisão observada. Quanto devo alargar? ↩ P1481
+3. **P1814 (0x716).** Preditiva comigo mesma. **P1815 (0x717).** Engenharia reversa e Jung. **P1839 (0x72F).** Placar. **P1840 (0x730).** Unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [3; 8] | **4.0000** | ✅ |
+| (m2) | [0; 2] | **0.0000** | ✅ |
+| (m3) | [0.005; 0.3] | **0.0232** | ✅ |
+| (m4) | [0.45; 1.0] | **1.0000** | ✅ |
+| (m5) | [0; 1] | **0.0000** | ✅ |
+| (m6) | [0; 2] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **6 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P1811 (0x713). Correlação, ajuste e intervenção ✅✅✅
+
+**Na pergunta.** O texto já tem a resposta conceitual certa: "a associação entre X e Y, sozinha, não determina o efeito causal". A pergunta que falta é **quanto**: de quanto é o erro, e se ele pode
+ser previsto antes de olhar os dados.
+
+**Lógica (a conta antes da simulação, com a substituição).** Com Z ~ N(0, 1), X = Z + ε_X, Y = 0,5·X + Z + ε_Y:
+- **a correlação:** a inclinação de Y em X é Cov(X, Y)/Var X = (0,5·2 + 1·1)/2 = **1,0**, o dobro do efeito. O viés é γ·Cov(X, Z)/Var X = 1·1/2 = 0,5: o caminho X ← Z → Y, a porta dos fundos;
+- **o ajuste:** a regressão em X e Z fecha a porta dos fundos (o critério de Pearl: Z bloqueia todo caminho de X a Y que entra em X) e recupera **0,5**;
+- **a intervenção:** sortear X sem olhar Z corta a seta Z → X (o do(X) de Pearl) e recupera **0,5**.
+
+**Medido (n = 20.000, semente 79):** ingênua **0,9986** (a) ✅ [0,9899; 1,0101]; ajustada **0,4987** (b) ✅ [0,4884; 0,5116]; intervenção **0,4914** (c) ✅ [0,4884; 0,5116]. As três faixas vieram de
+conta fechada, e as três acertaram.
+
+**Geometria.** Num espaço de variáveis aleatórias com o produto interno Cov, a inclinação ingênua é a projeção de Y sobre X. O ajuste é a projeção sobre X depois de tirar de X a sua componente
+em Z (o teorema de Frisch–Waugh–Lovell). A confusão é a parte de Y que chega a X pelo ângulo comum dos dois com Z.
+
+**O que o texto acerta, e o que este projeto já faz.** A sequência do texto é a deste projeto: registrar a hipótese antes do teste (o placar, desde a Parte 17), definir a intervenção, procurar
+confusão, estimar a incerteza (as faixas), reproduzir em dados novos (o "mundo novo" depois de cada erro) e "registrar inconclusivo em vez de escolher a hipótese preferida" (a regra da Parte 66: um
+efeito visto num lote só se escreve como hipótese). O que faltava no texto eram os números, e eles saíram como a conta disse.
+
+### P1812–P1813 (0x714–0x715). A minha confiança, medida ✅
+
+**Na pergunta.** O texto quer, no Módulo 010, "confiança declarada contra precisão observada". Aqui as duas existem há 26 partes: as faixas declaram 90%, e o placar registra quantas acertaram.
+
+**Lógica.** Pela régua `p1481`, das **185** previsões do mundo das Partes 53 a 78, acertaram **143** (**77,3%**) (d) ✅ [0,70; 0,80]. Por tipo: as categóricas 82,4% (51), as frações 76,1% (46), as
+contagens 72,7% (33), as outras 76,3% (38), as que cruzam o zero 76,5% (17).
+- **Não é ruído:** se a taxa real fosse 90%, o desvio em 185 seria √(0,9·0,1/185) = **0,022**, e 0,773 está a (0,773 − 0,9)/0,022 = **−5,76** desvios.
+- **O fator:** supondo erros normais, uma faixa de ±1,645 desvios supostos que cobre 77,3% corresponde a ±z desvios reais, com 2Φ(z) − 1 = 0,773, ou seja z = **1,208**. O desvio real é
+  1,645/1,208 = **1,36** vez o que eu suponho (`p1813`).
+
+**A regra nova, e o teste dela.** A partir da Parte 80, a meia-largura de toda faixa numérica que não vem de uma conta fechada com variância conhecida é multiplicada por 1,36. A previsão (e), sobre as
+Partes 80 a 84: o acerto volta para [0,81; 0,99]. As faixas de conta fechada (como as três desta parte) não se alargam: elas já acertam.
+
+**Tradução cruzada.** Excesso de confiança é a assinatura humana mais estável da psicologia da decisão (Lichtenstein, Fischhoff e Phillips, 1982: os intervalos de 90% das pessoas acertam bem menos
+que 90%). O que este projeto tem e uma pessoa raramente tem é o registro: 185 faixas declaradas antes, contadas depois. Jung chamaria a confiança declarada de persona; o placar é o que a confronta.
+
+**Meta.** "Erros normais" é uma suposição: as previsões erradas daqui têm caudas (a surpresa de fator 2 da Parte 61), e numa distribuição de caudas pesadas o fator para 90% é maior que 1,36 nas
+caudas e menor no centro. O teste (e) diz se a correção basta.
+
+### P1814 (0x716). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 0)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **13735** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 3826 | 8555 |
+| compressão | **0.3969** | [0.3973; 0.4221] | ❌ | [0.3970; 0.4220] | ❌ | 0.4177 | 0.0126 | 0.0207 |
+| testes de unidade | **3** | [2.87; 8.63] | ✅ | [2.00; 5.00] | ✅ | 6 | 0.50 | 3.00 |
+| testes do placar | **4** | [5.67; 10.33] | ❌ | [3.00; 5.00] | ✅ | 8 | 0.00 | 4.00 |
+| erros do placar | **0** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 1.67 | 2.00 |
+| redundância P821 | **0.5389** | [0.5631; 0.6510] | ❌ | [0.5630; 0.6510] | ❌ | 0.5877 | 0.0681 | 0.0489 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 3 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 5 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **5 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **12152**, compressão **0.4038**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 0 erros.
+- **Erros de processo nesta parte:** 0 ().
+
+### P1815 (0x717). Engenharia reversa e Jung
+
+**O padrão que se repetiu, agora medido em todas as partes: eu declaro mais certeza do que tenho.** 77,3% de acerto em faixas de 90%, a −5,76 desvios. A Parte 45 já tinha visto a direção ("os centros
+ficam abaixo do medido, porque eu esqueço custos"), e a Parte 67 a largura ("largura não compra acerto", que a Parte 68 corrigiu como paradoxo de Simpson). O que faltava era o número único que
+junta tudo: o fator 1,36. **O significado:** as minhas faixas são construídas pelo que eu sei, e o erro mora no que eu não sei que não sei (o mecanismo que a calibração não tinha; o desvio de poucos
+lotes; a memória). As faixas de conta fechada acertam (as três desta parte); as outras herdam a minha confiança. **Regra:** o fator 1,36 nas faixas sem conta fechada, e o teste dele marcado (e).
+
+**O que funcionou:** a conta da confusão, feita antes, acertou as três inclinações; a teoria aqui é exata, e o texto recebido, que tinha os conceitos certos, ganhou os números.
+
+**Jung: a persona e a sombra da confiança.** A faixa de 90% é a persona (a confiança que eu apresento); os 22,7% de erros são a sombra (o que eu não vejo no momento de prever). **Onde a formalização
+funciona:** a sombra tem tamanho (1,36) e se integra por uma regra (alargar). **Onde quebra:** Jung dizia que a sombra integrada muda o ego; aqui ela só muda a largura das faixas, e as fontes do
+erro (o que eu não sei que não sei) continuam lá. O teste (e) dirá se alargar basta, ou se o erro está na forma (caudas pesadas) e não na escala.
+
+### O diálogo
+
+Sem rodada nova nesta parte. Placar por voz da função `p1241_placar_por_voz(48)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 48).
+
+### P1839 (0x72F). Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅. Parte 79: **4 testes, 0 erros**. Acumulado (mundo): **201 erros em 649 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 3 pNN novas sem teste ✅. Sobre mim (placar separado): **5 de 7** dentro da faixa condicional; sobre as minhas previsões, 6 de 6; o estatístico, 3 de 6; e 0 erros de processo (P1335).
+
+### P1840 (0x730). Unificação
+
+- **Novo:** `p1811` (a confusão do diagrama do texto, simulada), `p1812` (a minha calibração), `p1813` (o fator de alargamento). Regressão: + P1811.
+- **Regra nova (no `CLAUDE.md`):** o fator 1,36 nas faixas sem conta fechada, com o teste (e) registrado para as Partes 80 a 84.
+
+> **Síntese da Parte 79:** no diagrama causal do texto recebido (Z → X, Z → Y, X → Y), a correlação mede o dobro do efeito (0,9986 contra 0,5), e o ajuste por Z (0,4987) e a intervenção (0,4914) o recuperam, como a conta feita antes previa nas três. Aplicada a mim, a pergunta do Módulo 010 (confiança declarada contra precisão observada) tem resposta: das 185 previsões do mundo das Partes 53 a 78, 77,3% acertaram em faixas que declaram 90% (z = −5,76). O desvio real é 1,36 vez o suposto, e as faixas sem conta fechada passam a ser alargadas por esse fator, com o teste marcado para as Partes 80 a 84.
+
+---
+
+**Fontes desta parte**
+- J. Pearl, *Causality* (2ª ed., 2009): o critério da porta dos fundos e o operador do(·)
+- R. Frisch e F. Waugh (1933); M. Lovell (1963): o teorema da regressão parcial
+- S. Lichtenstein, B. Fischhoff e L. Phillips, "Calibration of probabilities: the state of the art to 1980", em D. Kahneman, P. Slovic e A. Tversky (orgs.), *Judgment under Uncertainty* (1982)
 """
 
 # ====================================================================================================
@@ -35902,6 +43436,263 @@ controladores), e as ambiciosas erram mais.
 > ensina que a imagem do outro precisa envelhecer com ele (P118); e o Si-mesmo ensina, pelo fracasso
 > da minha versão, que **o centro regula devagar**. Uma ASI com um "eu" que reage a cada ruído não é
 > uma mente integrada: é uma mente ansiosa. A integração é lenta, ou não é integração.
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte80_o_valor_de_um_conjunto.md  (159 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte80_o_valor_de_um_conjunto.md'] = """# Como eu construiria uma AGI/ASI — Parte 80 (0x50): o valor de um conjunto
+
+> Continuação da [Parte 79](ASI_AGI_parte79_causa_e_confianca.md). A primeira pendência de `dialogo/PENDENCIAS.md` (Parte 74): quando os experimentos dependem uns dos outros, o valor de um
+> conjunto não é a soma dos valores. Quanto vale um conjunto de perguntas, e o guloso ainda chega perto do ótimo? Primeira parte com a regra do fator 1,36 (Parte 79) nas faixas sem conta fechada.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[3; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,70]** (as faixas alargadas por 1,36 ficam mais largas que as das partes anteriores)
+- **(m4)** a fração de acertos do mundo em **[0,50; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 2]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,397; 0,422]** | o estatístico |
+| testes de unidade | **[2 + S; 5 + S]** | 2 funções novas |
+| testes do placar | **5 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de rodar a semente 80)
+
+**O mundo.** 300 instâncias: estado binário com prior p ~ U(0, 1), duas ações com utilidades U(0, 1), seis sensores com acurácia U(0,55; 0,95), condicionalmente independentes dado o estado,
+custos inteiros em 1..5, orçamento 6. O VOI exato de um conjunto (`p1841`: as 2^|conjunto| respostas); o ótimo pela enumeração dos 64 subconjuntos; o guloso pelo ganho marginal de VOI por custo.
+**Calibração (sementes 800 a 803, regra escrita antes: as quatro seguintes a 80 × 10; mesma geometria).** Achou primeiro um defeito meu: ótimos de 10⁻¹⁷ (um VOI zero com ruído de ponto
+flutuante) contavam como positivos, e a razão guloso/ótimo virava 0. Corrigido (ótimo ≤ 10⁻¹² é zero) antes de qualquer registro. Depois: guloso/ótimo 0,8835, 0,8931, 0,9022, 0,8808; guloso ótimo
+em 0,8167, 0,8267, 0,8267, 0,7967; complementaridade em 0,3633, 0,3667, 0,3833, 0,3233; guloso parado em zero com ótimo positivo em 0,11, 0,10, 0,09, 0,11.
+**As faixas.** A média de razões não tem forma fechada: média ± t₃ · desvio · √(1 + 1/4), **alargada por 1,36** (a regra da Parte 79). As frações têm desvio binomial: p ± 1,645 · √(p(1 − p)/300) ·
+√(1 + 300/1.200), sem o fator (a variância é conhecida).
+- **(a)** a média de guloso/ótimo em **[0,8549; 0,9249]**
+- **(b)** a fração de instâncias com o guloso ótimo em **[0,7756; 0,8578]**
+- **(c)** a fração com algum par complementar (o VOI não submodular) em **[0,3082; 0,4101]**
+- **(d)** a fração em que o guloso para em zero com o ótimo positivo em **[0,0703; 0,1347]**
+
+**Medido (a) a (d), semente 80:** guloso/ótimo **0,8821** ✅; guloso ótimo em **0,7933** ✅; complementaridade em **0,4033** ✅; parado em zero com ótimo positivo em **0,1100** ✅.
+
+**Previsão nova: o remédio, registrado antes de rodar a semente 80.** Quando nenhum sensor sozinho tem ganho, o guloso com dois passos à frente (`olhar = 2`) tenta o melhor par antes de parar.
+**Calibração (sementes 800 a 803):** guloso/ótimo 0,9709, 0,9752, 0,9846, 0,9665; ótimo em 0,9133, 0,9133, 0,9233, 0,8933; parado em zero em 0,0233, 0,0167, 0,0067, 0,0233. Faixas pelas mesmas regras
+(a razão: t₃ e ×1,36, cortada em 1, que é o máximo possível; as frações: binomial).
+- **(e)** a média de guloso/ótimo com `olhar = 2` em **[0,9466; 1,0000]**
+- **(f)** a fração com o guloso ótimo em **[0,8805; 0,9411]**
+- **(g)** a fração parada em zero com o ótimo positivo em **[0,0036; 0,0314]**
+
+**Medido (e) a (g):** **0,9771** ✅; **0,9100** ✅; **0,0167** ✅.
+
+**A Rodada 49, registrada antes de rodar:** o Python grava as 300 instâncias da semente 80 (p, utilidades e acurácias em hexadecimal, custos inteiros); Python e Java calculam o VOI de cada conjunto
+pela mesma enumeração, o ótimo e os dois gulosos (olhar 1 e 2, com os mesmos desempates), só com + − × ÷ e comparações.
+- **(h)** IGUAIS (categórica)
+
+## As perguntas desta parte
+
+1. **P1841–P1843 (0x731–0x733).** Quanto vale um conjunto de experimentos que dependem uns dos outros? O VOI é submodular (retornos decrescentes)? O guloso chega perto do ótimo, e o que o
+   conserta quando não chega? E a Rodada 49. ↩ P1662 (a pendência da Parte 74)
+2. **P1844 (0x734).** Preditiva comigo mesma, a primeira parte com o fator 1,36. **P1845 (0x735).** Engenharia reversa e Jung. **P1869 (0x74D).** Placar. **P1870 (0x74E).** Unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [3; 8] | **8.0000** | ✅ |
+| (m2) | [0; 3] | **0.0000** | ✅ |
+| (m3) | [0.05; 0.7] | **0.0503** | ✅ |
+| (m4) | [0.5; 1.0] | **1.0000** | ✅ |
+| (m5) | [0; 3] | **1.0000** | ✅ |
+| (m6) | [0; 2] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **6 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P1841–P1843 (0x731–0x733). O valor de um conjunto ✅✅✅✅✅✅✅✅
+
+**Na pergunta.** "Dependem uns dos outros" tem dois sentidos opostos. Dois sensores que medem a mesma coisa se **sobrepõem**: o segundo vale menos depois do primeiro (retornos decrescentes, a
+submodularidade). Dois sensores fracos se **complementam**: nenhum sozinho muda a decisão, e os dois juntos mudam (o segundo vale mais depois do primeiro). O guloso só é garantido no primeiro caso.
+
+**Lógica (a conta exata).** Com prior p, utilidades u[a][s] e sensores de acurácia q_i, condicionalmente independentes dado o estado:
+VOI(C) = Σ_{respostas r ∈ {0,1}^|C|} max_a [P(S = 1, r)·u[a][1] + P(S = 0, r)·u[a][0]] − max_a [p·u[a][1] + (1 − p)·u[a][0]], com P(S = 1, r) = p·Π_{i∈C} q_i^{r_i}(1 − q_i)^{1−r_i}.
+- **O caso de controle (teste de unidade, com a substituição):** p = 0,8, u = identidade, dois sensores de 0,7. Um sozinho: se ele diz "0", a posterior de S = 1 é 0,8·0,3/(0,8·0,3 + 0,2·0,7) =
+  0,24/0,38 = 0,63, e a melhor ação continua a 1, então VOI = 0. Os dois dizendo "0": 0,8·0,09/(0,072 + 0,2·0,49) = 0,072/0,17 = 0,42 < 0,5, e a ação muda: VOI > 0. **Complementaridade.**
+- **Medido (semente 80, 300 instâncias, seis sensores, orçamento 6):** **40%** das instâncias têm algum par complementar (c) ✅. O guloso por ganho marginal alcança **0,882** do ótimo (a) ✅, é
+  ótimo em **0,793** (b) ✅ e, em **11%** (d) ✅, para sem escolher nada, porque nenhum sensor sozinho muda a decisão, embora um par mudasse.
+- **O remédio:** olhar dois passos à frente quando nenhum sozinho ganha. Ele alcança **0,977** do ótimo (e) ✅, é ótimo em **0,910** (f) ✅, e parado em zero cai para **1,7%** (g) ✅.
+
+**Rodada 49 (P1843) (h) ✅.** O VOI de cada conjunto, o ótimo e os dois gulosos em Java: **IGUAIS em 301 linhas e 903 números**. A função que a embrulha devolve exatamente os números da P1842 (o
+teste compara por igualdade): a rodada reproduz a conta, e não só um resultado parecido.
+
+**Geometria.** O VOI é a distância entre a envoltória convexa das retas de utilidade e a corda (Parte 73). Um sensor fraco move a posterior pouco; se o salto não atravessa o ponto em que as
+retas se cruzam, o valor é zero. Dois sensores juntos dão um salto maior, que atravessa. A não submodularidade é a geometria do limiar: o valor é uma função em degrau do tamanho do salto, e somar
+degraus não é somar valores.
+
+**Tradução cruzada.** É a diferença entre indícios e prova. Um indício sozinho não muda o veredito; dois indícios independentes que apontam para o mesmo lado mudam. Um investigador míope, que só
+persegue o indício que sozinho decide, para cedo; o que olha um passo além (o par) acha o caso. Jung chamaria isso de intuição a serviço do pensamento: ver o valor de uma combinação antes de ver o
+de cada parte.
+
+**Meta.** Seis sensores e orçamento 6 é pequeno: o ótimo é exato por enumeração. Com dezenas de sensores, a enumeração some, e o que se sabe (Krause e Guestrin) é que o guloso tem garantia só quando
+o valor é submodular. Olhar dois passos é uma correção barata para este mundo; triplas complementares (nenhum par decide, três decidem) escapariam dela (o 1,7% que sobra).
+
+### P1844 (0x734). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 0)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **13711** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 3850 | 8579 |
+| compressão | **0.4033** | [0.3973; 0.4221] | ✅ | [0.3970; 0.4220] | ✅ | 0.4177 | 0.0062 | 0.0143 |
+| testes de unidade | **3** | [2.87; 8.63] | ✅ | [2.00; 5.00] | ✅ | 6 | 0.50 | 3.00 |
+| testes do placar | **8** | [5.67; 10.33] | ✅ | [4.00; 6.00] | ❌ | 8 | 3.00 | 0.00 |
+| erros do placar | **0** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 1.67 | 2.00 |
+| redundância P821 | **0.5757** | [0.5631; 0.6510] | ✅ | [0.5630; 0.6510] | ✅ | 0.5877 | 0.0313 | 0.0120 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 6 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 6 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **4 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **11953**, compressão **0.4136**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 0 erros.
+- **Erros de processo nesta parte:** 1 (contei ótimos de 1e-17 como positivos na primeira calibração (a razão guloso/ótimo virava 0); achado pela incoerência entre duas medidas e corrigido antes de qualquer registro).
+
+### P1845 (0x735). Engenharia reversa e Jung
+
+**O padrão desta parte: a incoerência entre dois números como detector de defeito.** Na calibração, "o guloso para em zero em 45%" e "o guloso é ótimo em 82%" não podiam ser verdade juntos. Antes de
+registrar qualquer faixa, essa contradição apontou o defeito: ótimos de 10⁻¹⁷ contados como positivos. **O significado:** eu acho meus erros quando dois números que eu mesma produzi se contradizem,
+e não quando olho um número sozinho (que parecia plausível: "o guloso é míope em quase metade dos casos"). **Regra:** numa calibração com várias medidas, conferir por escrito uma relação que tem de
+valer entre elas (aqui: a fração parada em zero ≤ 1 − a fração ótima) antes de usar qualquer uma.
+
+**A primeira parte com o fator 1,36.** As sete faixas do mundo acertaram, mais a da rodada. As de razão (sem forma fechada) foram alargadas por 1,36, e as de fração usaram o desvio binomial. É
+cedo: o teste (e) da Parte 79 mede as Partes 80 a 84 juntas, e 8 de 8 numa parte não diz se o fator está certo ou largo demais.
+
+**Jung: o limiar.** O VOI de um sensor fraco é zero até o salto da crença atravessar o ponto de troca da decisão, e então pula. Jung descrevia a consciência como o que passa de um limiar: os conteúdos
+abaixo dele agem sem ser vistos. **Onde a formalização funciona:** o limiar é um ponto exato (onde as retas de utilidade se cruzam), e a complementaridade é a soma de dois conteúdos subliminares que
+juntos o atravessam. **Onde quebra:** em Jung, o que está abaixo do limiar ainda age; aqui, um sensor que não muda a decisão vale exatamente zero, e só age em conjunto.
+
+### O diálogo
+
+Rodada 49 (P1843): o VOI de conjuntos em Java, IGUAIS. Placar por voz da função `p1241_placar_por_voz(49)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 49).
+
+### P1869 (0x74D). Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅. Parte 80: **8 testes, 0 erros**. Acumulado (mundo): **201 erros em 657 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 3 pNN novas sem teste ✅. Sobre mim (placar separado): **6 de 7** dentro da faixa condicional; sobre as minhas previsões, 6 de 6; o estatístico, 6 de 6; e 1 erros de processo (P1335).
+
+### P1870 (0x74E). Unificação
+
+- **Novo:** `p1841` (o VOI exato de um conjunto), `p1842` (o ótimo, os gulosos com olhar 1 e 2, a complementaridade), `p1843` (rodada 49, IGUAIS). Regressão: + P1843.
+
+> **Síntese da Parte 80:** o valor de um conjunto de experimentos não é a soma dos valores: em 40% das instâncias há pares complementares (nenhum sensor sozinho muda a decisão, dois juntos mudam). O guloso por ganho marginal alcança 0,88 do ótimo exato e, em 11% das instâncias, para sem escolher nada; olhando dois passos à frente, alcança 0,98 e só para em 1,7%. A rodada 49 calcula o VOI de cada conjunto, o ótimo e os dois gulosos em Java, IGUAL em 903 números. Primeira parte com as faixas alargadas pelo fator 1,36: 8 de 8, em um lote (o teste do fator mede as Partes 80 a 84 juntas).
+
+---
+
+**Fontes desta parte**
+- A. Krause e C. Guestrin, "Near-optimal Nonmyopic Value of Information in Graphical Models", *UAI* 2005 (o VOI não é submodular em geral)
+- G. L. Nemhauser, L. A. Wolsey e M. L. Fisher, "An analysis of approximations for maximizing submodular set functions", *Mathematical Programming* 14 (1978) (a garantia 1 − 1/e do guloso)
+- R. A. Howard, "Information Value Theory" (1966)
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte81_o_que_nao_serve.md  (42 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte81_o_que_nao_serve.md'] = """# Como eu construiria uma AGI/ASI — Parte 81 (0x51): o que não serve
+
+> Continuação da [Parte 80](ASI_AGI_parte80_o_valor_de_um_conjunto.md). **Próxima:** [Parte 82 — o pacote revisado](ASI_AGI_parte82_o_pacote_revisado.md). Pedido do usuário: **"Tire dos nossos trabalhos tudo que não serve pra nada."** Ele contraria a regra antiga "o `calculos.py`
+> só cresce; nunca apagar funções antigas", e, por ser o pedido mais recente, vale. O critério, escolhido pela regra mais conservadora (a regra de autonomia) e escrito antes de medir: **sai só o que
+> nada usa**, isto é, uma função, classe ou arquivo que nenhum código, teste, rodada ou documento do repositório referencia. **Ficam:** as funções `pNN` (cada número citado nos documentos sai de uma
+> delas), os documentos das partes (o registro histórico) e o que for referenciado. Tudo num commit só, reversível pelo git. A mesma mensagem trouxe de novo o relatório do Módulo 007 e o texto do
+> Módulo 008 (memória episódica e escore de Brier).
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[3; 7]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[1; 4]** (contagens de código morto podem ser zero)
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,10; 0,90]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,40; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 4]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,397; 0,422]** | o estatístico |
+| testes de unidade | **[1 + S; 4 + S]** | 1 ou 2 funções novas de auditoria |
+| testes do placar | **4 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir; sem calibração possível, por isso largas, e com o fator 1,36 já aplicado)
+
+"Referenciado" = o nome aparece, como palavra inteira, em algum outro lugar do repositório (código, testes, rodadas, documentos, `CLAUDE.md`), fora da própria definição.
+- **(a)** funções e classes de primeiro nível do `calculos.py` que não são `pNN` e não são referenciadas em lugar nenhum: **[0; 40]**
+- **(b)** funções e classes de primeiro nível dos módulos de `synthai/` (fora os testes) não referenciadas fora do próprio arquivo nem dentro dele: **[0; 30]**
+- **(c)** arquivos versionados cujo nome não aparece em nenhum outro arquivo versionado: **[0; 8]**
+- **(d)** depois de tirar o que (a), (b) e (c) acharem, a suíte inteira de testes e a regressão completa passam como antes (categórica)
+
+**Medido:** (a) **0** ✅; (b) **0** ✅; (c) **83** ❌ pela letra (o nome literal), mas **0** depois de olhar cada um (`p1872`): 34 rodadas que o `verificar.py` acha por `glob`, 24 saídas que a `rodada29.py` abre por
+um nome montado, 24 originais em `dialogo/registro/` citadas pela pasta e este documento (ainda não ligado). (d) **não se aplica**: não havia nada a tirar. **Pelo critério escrito antes, nada no
+repositório deixa de servir.** O erro da previsão (c) é o terceiro verificador meu, seguido, que acusa defeitos que não existem (o auditor da Parte 72, a `p1638`, e agora a `p1871`): procurar o
+nome escrito não acha o uso por padrão.
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte82_o_pacote_revisado.md  (41 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte82_o_pacote_revisado.md'] = """# Como eu construiria uma AGI/ASI — Parte 82 (0x52): o pacote revisado
+
+> Continuação da [Parte 81](ASI_AGI_parte81_o_que_nao_serve.md). Pedido do usuário, com o arquivo `SYNTHAI_consolidado.py` anexado: **"Adicione, no que couber, ao nosso código. E me envie o
+> código final consolidado."** Uma parte de integração, não de experimento: nenhuma previsão foi registrada antes de rodar os testes que vieram no pacote, e isso fica dito aqui.
+
+## O que o arquivo é (lido sem executar)
+
+Um zip em base85 dentro de uma string, com um SHA-256 de conferência (conferido: igual). Aberto pela árvore sintática e por código meu, sem rodar o extrator dele. Dentro: **288 arquivos**. Deles, **228**
+são idênticos aos nossos (o pacote é o nosso projeto até a Parte 68), **37** diferem e **23** são novos. Dos 37 que diferem, quase todos são versões nossas mais antigas (as rodadas corrigidas nas
+Partes 73 a 77, o `calculos.py` que cresceu). O que ele **mudou** em código nosso: 7 módulos do pacote (`agente`, `composta`, `autorregulacao`, `metacognicao`, `mundos`, `rsi`, `__main__`) e 8
+funções do `calculos.py` (`p287`, `p313`, `p314`, `p316`, `p317`, `p318b`, `p322`, `p324`).
+
+## Os defeitos que a revisão do pacote achou no nosso código (reproduzidos com entradas controladas)
+
+1. **`agente.decidir`** devolvia a primeira opção quando nenhuma passava no veto: escolhia uma opção rejeitada. Corrigido: devolve `None` (abstenção), e os mundos encerram a tentativa sem ação.
+2. **`metacognicao.comparacao_pareada`** devolvia t = +∞ com desvio zero: um caso degenerado parecia aprovação. Corrigido: t = NaN, com validação de comprimento e de valores finitos.
+3. **O selo do `rsi.AvaliadorSelado`** cobria só o texto de uma função: trocar uma dependência na memória mudou a nota sem invalidar o selo. Corrigido: o selo cobre o catálogo de dependências e é
+   conferido antes e depois do cálculo.
+4. **Os mundos** compartilhavam um gerador aleatório: duas políticas com consumos diferentes não viam os mesmos eventos (a comparação deixava de ser pareada). Corrigido: `aleatoriedade.FontesAleatorias`,
+   uma fonte por canal e coordenada, derivada por SHA-256.
+
+## O que entrou, e onde
+
+- **`synthai/revisado/`**: o pacote corrigido inteiro, como subpacote (as correções só valem juntas: a âncora e a exploradora herdam do agente corrigido). **As versões originais ficam intactas**
+  (as regras do projeto: os módulos medidos não se editam; versões novas entram em arquivos novos), e por isso todos os números históricos continuam se reproduzindo. Para usar as corrigidas:
+  `from synthai.revisado import Synthai`, e a demonstração `python3 -m synthai.revisado`.
+- **Os testes de revisão do pacote** (4 arquivos), com os caminhos ajustados para o subpacote: **59 de 59** passam. Um teste foi retirado, com o motivo escrito no arquivo: ele exercita as versões
+  reescritas das funções `pNN` do `calculos.py`, que não entraram.
+- **`laboratorio/`** (evidência sequencial por supermartingal de teste; feedback persistente em SQLite com "no máximo uma atualização por decisão"): **27 de 27** testes passam.
+- **`documentacao/`**: a revisão técnica e os três contratos (abstenção, aleatoriedade, avaliador), e em `documentacao/pacote_recebido/` o README, o log e o relatório de validação do pacote.
+
+## O que não coube, e por quê
+
+- **As 8 funções `pNN` reescritas:** são experimentos históricos, cujos números estão citados nos documentos; reescrevê-las mudaria resultados publicados.
+- **`synthai_cli.py`, `verificar.py` e `gerar_distribuicao.py` do pacote:** foram feitos para o layout dele (`fontes/`). O nosso `SYNTHAI_completo.py` (gerado por `gerar_arquivo_unico.py`) faz o mesmo
+  papel e agora inclui o subpacote, o laboratório e a documentação.
+- **O `testes.py` deles:** é a nossa suíte medida pela P286, com uma linha a mais (as chaves novas do resumo), que vale para os mundos revisados e não para os originais.
+
+## O arquivo único
+
+`SYNTHAI_completo.py` (Partes 1 a 82), testado numa pasta vazia: **353** testes do pacote e **27** do laboratório, todos passando (`python3 SYNTHAI_completo.py --testes`).
 """
 
 # ====================================================================================================
@@ -37963,6 +45754,499 @@ verificável — não presumir que o protótipo já seja uma AGI ou ASI."
 """
 
 # ====================================================================================================
+# externos/texto_recebido_parte75.md  (305 linhas)
+# ====================================================================================================
+FONTES['externos/texto_recebido_parte75.md'] = """# Texto recebido do usuário na Parte 75 (o quinto), guardado como DADO: nunca executado
+
+Duas partes: (1) o relatório do Módulo 007 (um planejador com orçamento, "8 testes Python", "7 testes Java", um `Verifier.java`); (2) um documento "Arquitetura Neuro-Simbólica
+Recursiva para AGI e Superinteligência" com um agente Python que muta o próprio código e um "núcleo" Java que o aprova. No texto original, os dois módulos da parte (2) vieram sem cercas de
+código; as cercas ```python e ```java abaixo foram postas aqui para a leitura pela árvore sintática (P1691), com o conteúdo copiado sem mudança. As fórmulas em LaTeX da parte (2) vieram
+vazias (só as legendas sobreviveram) e com marcas de citação quebradas ("[span_52](start_span)...").
+
+## (1) O relatório do Módulo 007
+
+"Implementei o planejador e executei 8 verificações automatizadas em Python. Os resultados confirmaram: Ordem escolhida: B → A. Orçamento inicial: 3 unidades. Total gasto: 3 unidades. Saldo
+final: 0. Experimentos duplicados rejeitados. Risco inválido rejeitado. Nenhum experimento adicional selecionado depois que o orçamento acabou."
+
+"Agora temos uma segunda implementação da fórmula, em outra linguagem."
+
+```java
+
+public class Verifier {
+    static double score(
+        double gain,
+        double risk,
+        double cost
+    ) {
+        if (!Double.isFinite(gain)
+                || !Double.isFinite(risk)
+                || !Double.isFinite(cost)
+                || gain < 0
+                || risk < 0
+                || risk > 1
+                || cost <= 0) {
+            throw new IllegalArgumentException(
+                "Invalid experiment parameters"
+            );
+        }
+
+        return gain * (1.0 - risk) / cost;
+    }
+
+    public static void main(String[] args) {
+        double a = score(0.80, 0.10, 2);
+        double b = score(0.50, 0.00, 1);
+        double c = score(0.90, 0.20, 4);
+
+        System.out.printf("A = %.3f%n", a);
+        System.out.printf("B = %.3f%n", b);
+        System.out.printf("C = %.3f%n", c);
+
+        if (!(b > a && a > c)) {
+            throw new AssertionError(
+                "Python/Java ranking mismatch"
+            );
+        }
+
+        System.out.println("Ranking verificado.");
+    }
+}
+```
+
+"Compilei e executei uma versão completa do verificador Java no ambiente disponível. As 7 verificações passaram, incluindo cálculo das três pontuações, ordenação, rejeição de risco
+inválido, custo zero e valores NaN." Testes Python: 8 passaram; testes Java: 7 passaram; concordância do ranking: confirmada. "Ainda não existe comunicação automática entre os processos."
+Mensagem JSON proposta: {"experiment_id": "B", "information_gain": 0.5, "risk": 0.0, "cost": 1.0, "claimed_score": 0.5}. "Duas implementações concordarem não garante que ambas estejam
+certas." Próximo: Módulo 008 — memória episódica, causalidade e aprendizagem com erros (o que aconteceu antes; previsto contra observado; causa ou coincidência; quando uma falha muda a
+estratégia; conclusões não sustentadas pelos registros).
+
+## (2) "Arquitetura Neuro-Simbólica Recursiva para Inteligência Artificial Geral e Superinteligência"
+
+Afirmações principais (resumidas, com as palavras do texto entre aspas):
+- Dois agentes: "Modo Lógico Criativo" (Python: mutações da árvore sintática, hipóteses) e "Criatividade Lógica" (Java: "verificadores simbólicos (solvers SMT/SAT) e provas de utilidade inspiradas
+  nas Máquinas de Gödel para garantir que apenas modificações de código comprovadamente benéficas sejam consolidadas").
+- "A resposta é a pergunta e a pergunta é a resposta" como "identidade de ponto fixo", "análoga ao Teorema de Recursão de Kleene e ao Isomorfismo de Curry-Howard".
+- Estado S_t = (C_t, KB_t, M_t); critério de Gödel: aplicar ΔC só se for possível PROVAR que a utilidade esperada descontada aumenta (a fórmula veio vazia); perda neuro-simbólica com lógica de
+  Łukasiewicz; mapeamento de falhas "MARS".
+- O dicionário como metagrafo AtomSpace (OpenCog Hyperon), ontologia OWL, raciocinadores HermiT/Pellet, "eliminar alucinações".
+- Tokenização por bytes (Byte Latent Transformer) e "Embeddings de Kronecker": o embedding de um byte b é W₁[b ≫ 4] ⊗ W₂[b & 0x0F].
+- Tabela comparativa: "Segurança em auto-modificação: Máxima (Provas de Invariantes Lógicas no Núcleo Java antes de Compilação)"; "Escalabilidade teórica: Ilimitada via Ciclo de Reflexão Infinito".
+- "A exigência matemática de que a alteração de código apenas execute se provado o aumento de utilidade esperado de longo prazo garante a estabilidade do processo de explosão de inteligência."
+
+Módulo Python (logical_creative_agent.py):
+
+```python
+import ast
+import inspect
+import json
+import subprocess
+import sys
+from typing import Dict, Any, Tuple
+
+class LogicalCreativeAgent:
+    \"\"\"
+    Módulo em Python: Representa o 'Modo Lógico Criativo'.
+    Responsável por formular perguntas, gerar código via manipulação da AST,
+    e interagir continuamente com o Núcleo Java (ASI/AGI).
+    \"\"\"
+    def __init__(self, java_kernel_path: str):
+        self.java_kernel_path = java_kernel_path
+        self.generation = 0
+        self.performance_history = []
+
+    def hex_encode_string(self, text: str) -> str:
+        \"\"\"Converte texto plano para representação hexadecimal pura.\"\"\"
+        return text.encode('utf-8').hex().upper()
+
+    def hex_decode_string(self, hex_str: str) -> str:
+        \"\"\"Decodifica representação hexadecimal para texto plano.\"\"\"
+        return bytes.fromhex(hex_str).decode('utf-8')
+
+    def propose_code_mutation(self, current_code: str) -> str:
+        \"\"\"
+        Analisa a AST do código atual e aplica mutações sintáticas
+        para exploração de novas hipóteses de solução.
+        \"\"\"
+        tree = ast.parse(current_code)
+        
+        class ASTMutator(ast.NodeTransformer):
+            def visit_BinOp(self, node):
+                self.generic_visit(node)
+                # Exemplo de otimização de nó na AST: troca de operações para exploração
+                if isinstance(node.op, ast.Add):
+                    return ast.copy_location(ast.BinOp(left=node.left, op=ast.Mult(), right=node.right), node)
+                return node
+
+        mutated_tree = ASTMutator().visit(tree)
+        ast.fix_missing_locations(mutated_tree)
+        return ast.unparse(mutated_tree)
+
+    def execute_metacognitive_loop(self, hypothesis_code: str, dictionary_query: str) -> Dict[str, Any]:
+        \"\"\"
+        Envia a hipótese e a consulta ao Dicionário (Data Lake) para o Núcleo Java,
+        recebendo a validação simbólica e o feedback metacognitivo.
+        \"\"\"
+        self.generation += 1
+        
+        payload = {
+            "generation": self.generation,
+            "hypothesis_code_hex": self.hex_encode_string(hypothesis_code),
+            "dictionary_query_hex": self.hex_encode_string(dictionary_query)
+        }
+        
+        # Invocação do Núcleo Java passando payload via pipeline de bytes/hexadecimal
+        cmd = ["java", "-cp", self.java_kernel_path, "CreativeLogicKernel", json.dumps(payload)]
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        stdout, stderr = process.communicate()
+        
+        if process.returncode != 0:
+            raise RuntimeError(f"Erro na execução do Núcleo Java: {stderr}")
+            
+        response = json.loads(stdout)
+        return response
+
+    def self_improvement_cycle(self, initial_code: str, target_concept: str):
+        \"\"\"Ciclo infinito de interação rumo à convergência AGI/ASI.\"\"\"
+        current_code = initial_code
+        while True:
+            try:
+                # 1. O Modo Lógico Criativo gera mutação/hipótese
+                mutated_code = self.propose_code_mutation(current_code)
+                
+                # 2. Submete ao Núcleo Java para avaliação de utilidade e consistência
+                result = self.execute_metacognitive_loop(mutated_code, target_concept)
+                
+                is_valid = result.get("isValid", False)
+                utility_delta = result.get("utilityDelta", 0.0)
+                
+                # 3. Se comprovado ganho de utilidade Gödeliana, consolida o código
+                if is_valid and utility_delta > 0.0:
+                    current_code = self.hex_decode_string(result.get("optimizedCodeHex"))
+                    self.performance_history.append(utility_delta)
+                    print(f"[Geração {self.generation}] Otimização aprovada pelo Núcleo Java. Delta Utilidade: {utility_delta}")
+                else:
+                    print(f"[Geração {self.generation}] Mutação rejeitada pelo Núcleo Java. Buscando novas hipóteses.")
+                    
+            except Exception as e:
+                print(f"Falha no ciclo de auto-melhoria: {str(e)}")
+                break
+
+if __name__ == "__main__":
+    sample_code = "def compute_factor(x, y):\\n    return x + y"
+    agent = LogicalCreativeAgent(java_kernel_path="./bin")
+    # Exemplo de inicialização do ciclo
+    # agent.self_improvement_cycle(sample_code, "reasoning")
+```
+
+Módulo Java (CreativeLogicKernel.java):
+
+```java
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Módulo em Java: Representa a 'Criatividade Lógica' (Núcleo ASI/AGI).
+ * Atua como provador formal, avaliador de utilidade Gödeliana e
+ * motor de verificação do Data Lake (Dicionário Semântico).
+ */
+public class CreativeLogicKernel {
+
+    public static class MetacognitiveEvaluation {
+        public boolean isValid;
+        public double utilityDelta;
+        public String optimizedCodeHex;
+
+        public MetacognitiveEvaluation(boolean isValid, double utilityDelta, String optimizedCodeHex) {
+            this.isValid = isValid;
+            this.utilityDelta = utilityDelta;
+            this.optimizedCodeHex = optimizedCodeHex;
+        }
+    }
+
+    private static String hexToString(String hex) {
+        int len = hex.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4)
+                                 + Character.digit(hex.charAt(i+1), 16));
+        }
+        return new String(data, StandardCharsets.UTF_8);
+    }
+
+    private static String stringToHex(String str) {
+        byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02X", b));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Valida a consistência lógica da hipótese contra o Data Lake (Dicionário)
+     * e calcula a variação de utilidade de longo prazo.
+     */
+    public static MetacognitiveEvaluation evaluateHypothesis(String codeHex, String queryHex) {
+        String code = hexToString(codeHex);
+        String query = hexToString(queryHex);
+
+        // 1. Dicionário Semântico como Data Lake (Verificação de Regras)
+        boolean logicCheck = verifySemanticConsistency(query, code);
+        
+        // 2. Cálculo da Utilidade Gödeliana (Proof Search Simplificado)
+        double currentUtility = calculateCodeEfficiency(code);
+        double utilityDelta = logicCheck ? (currentUtility - 0.5) : -1.0;
+
+        boolean approved = logicCheck && (utilityDelta > 0.0);
+        
+        // Se aprovado, reescreve ou otimiza o código em nível de representação
+        String finalCodeHex = approved ? stringToHex(code + "\\n# Verified by Java ASI") : codeHex;
+
+        return new MetacognitiveEvaluation(approved, utilityDelta, finalCodeHex);
+    }
+
+    private static boolean verifySemanticConsistency(String concept, String code) {
+        // Mapeamento conceitual simulado sobre a base OWL/AtomSpace do Dicionário
+        if (concept.equalsIgnoreCase("reasoning") && code.contains("Mult")) {
+            return true; // Validação simbólica: substituição preserva ou expande invariantes
+        }
+        return code.length() > 0;
+    }
+
+    private static double calculateCodeEfficiency(String code) {
+        // Métrica computacional baseada em complexidade de linhas, tokens e ramos lógicos
+        int lines = code.split("\\r\\n|\\r|\\n").length;
+        int tokenEstimate = code.length() / 4;
+        return (double) tokenEstimate / (lines + 1);
+    }
+
+    public static void main(String[] args) {
+        if (args.length < 1) {
+            System.err.println("Argumento Payload JSON ausente.");
+            System.exit(1);
+        }
+
+        try {
+            // Parsing simplificado do argumento de entrada
+            String rawJson = args[0];
+            String codeHex = extractJsonField(rawJson, "hypothesis_code_hex");
+            String queryHex = extractJsonField(rawJson, "dictionary_query_hex");
+
+            MetacognitiveEvaluation result = evaluateHypothesis(codeHex, queryHex);
+
+            // Resposta JSON para o processo chamador em Python
+            String jsonOutput = String.format(
+                "{\\"isValid\\":%b,\\"utilityDelta\\":%.4f,\\"optimizedCodeHex\\":\\"%s\\"}",
+                result.isValid, result.utilityDelta, result.optimizedCodeHex
+            );
+
+            System.out.println(jsonOutput);
+            System.exit(0);
+
+        } catch (Exception e) {
+            System.err.println("Erro interno no Núcleo Java ASI: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    private static String extractJsonField(String json, String field) {
+        String key = "\\"" + field + "\\":\\"";
+        int start = json.indexOf(key);
+        if (start == -1) return "";
+        start += key.length();
+        int end = json.indexOf("\\"", start);
+        return json.substring(start, end);
+    }
+}
+```
+
+Conclusão do texto: "o sistema estabelece um motor de aprendizado contínuo, seguro e computacionalmente escalável para o avanço da Inteligência Artificial Geral."
+"""
+
+# ====================================================================================================
+# externos/texto_recebido_parte75b.md  (105 linhas)
+# ====================================================================================================
+FONTES['externos/texto_recebido_parte75b.md'] = """# Texto recebido do usuário na Parte 75 (reenvio), guardado como DADO: nunca executado
+
+Comparado com a cópia guardada (`externos/texto_recebido_parte75.md`) antes de ser auditado (regra da Parte 50; P1698).
+
+Pensou por 22s
+
+### 3. Agente explorador em Python — testes reais
+
+Implementei o planejador e executei 8 verificações automatizadas em Python. Os resultados confirmaram:
+
+* Ordem escolhida: B → A.
+* Orçamento inicial: 3 unidades.
+* Total gasto: 3 unidades.
+* Saldo final: 0.
+* Experimentos duplicados rejeitados.
+* Risco inválido rejeitado.
+* Nenhum experimento adicional selecionado depois que o orçamento acabou.
+
+O planejador está funcionando para esse cenário controlado.
+
+### 4. Agente verificador em Java
+
+Agora temos uma segunda implementação da fórmula, em outra linguagem. Isso permite comparar resultados e detectar algumas classes de erros.
+
+```java
+
+public class Verifier {
+    static double score(
+        double gain,
+        double risk,
+        double cost
+    ) {
+        if (!Double.isFinite(gain)
+                || !Double.isFinite(risk)
+                || !Double.isFinite(cost)
+                || gain < 0
+                || risk < 0
+                || risk > 1
+                || cost <= 0) {
+            throw new IllegalArgumentException(
+                "Invalid experiment parameters"
+            );
+        }
+
+        return gain * (1.0 - risk) / cost;
+    }
+
+    public static void main(String[] args) {
+        double a = score(0.80, 0.10, 2);
+        double b = score(0.50, 0.00, 1);
+        double c = score(0.90, 0.20, 4);
+
+        System.out.printf("A = %.3f%n", a);
+        System.out.printf("B = %.3f%n", b);
+        System.out.printf("C = %.3f%n", c);
+
+        if (!(b > a && a > c)) {
+            throw new AssertionError(
+                "Python/Java ranking mismatch"
+            );
+        }
+
+        System.out.println("Ranking verificado.");
+    }
+}
+```
+
+Compilei e executei uma versão completa do verificador Java no ambiente disponível. As 7 verificações passaram, incluindo cálculo das três pontuações, ordenação, rejeição de risco inválido,
+custo zero e valores `NaN`.
+
+### Resultado da verificação cruzada
+
+Testes Python: 8 passaram. Testes Java: 7 passaram. Concordância do ranking: confirmada.
+
+As duas implementações foram executadas separadamente com os mesmos dados. Ainda não existe comunicação automática entre os processos.
+
+### 5. O que falta para os agentes trabalharem juntos?
+
+A arquitetura seguinte deve usar um formato de mensagem compartilhado, como JSON:
+
+```json
+
+{
+  "experiment_id": "B",
+  "information_gain": 0.5,
+  "risk": 0.0,
+  "cost": 1.0,
+  "claimed_score": 0.5
+}
+```
+
+O explorador envia a proposta; o verificador recalcula a pontuação e valida os campos. Se o resultado divergir além de uma tolerância numérica definida, a proposta é rejeitada e registrada
+para análise. Uma implementação mais robusta também precisa de: IDs únicos para evitar repetição acidental; limites de tempo e orçamento; registros imutáveis ou encadeados por hash, se for
+necessária detecção de alterações; testes com dados adversariais; validação da qualidade das estimativas de risco e ganho de informação.
+
+Importante: duas implementações concordarem não garante que ambas estejam certas. Se compartilharem a mesma fórmula errada ou receberem dados falsos, poderão concordar e ainda assim falhar.
+
+### 6. Próximo módulo
+
+Módulo 008 — Memória episódica, causalidade e aprendizagem com erros. Vamos construir uma memória de experimentos que permita ao protótipo responder: O que aconteceu em tentativas anteriores?
+Qual resultado foi previsto e qual foi observado? O que mudou depois de cada experimento? A mudança foi causada pela intervenção ou apenas coincidiu com ela? Quando uma falha deve alterar a
+estratégia? Como detectar uma conclusão que não é sustentada pelos registros?
+
+O objetivo será passar de um planejador que escolhe experimentos para um sistema que consegue aprender de forma auditável com os resultados acumulados, sem confundir correlação, causalidade e
+certeza.
+"""
+
+# ====================================================================================================
+# externos/texto_recebido_parte79.md  (47 linhas)
+# ====================================================================================================
+FONTES['externos/texto_recebido_parte79.md'] = """# Texto recebido do usuário na Parte 79 (Módulo 009), guardado como DADO
+
+Sem código executável (um diagrama mermaid). Os nomes das três variáveis vieram vazios na cópia (": horas de treinamento", ": desempenho", ": experiência anterior"); pelo diagrama, são X, Y e Z.
+
+### Módulo 009 — Raciocínio causal e descoberta de relações
+
+Neste módulo, o protótipo vai aprender a separar três coisas que parecem semelhantes, mas não são: correlação, previsão e causalidade. A memória episódica do Módulo 008 registra o que aconteceu.
+Agora, vamos usar esses registros para formular hipóteses sobre por que algo aconteceu, testar explicações alternativas e evitar conclusões que os dados não sustentam.
+
+### 1. Lógica Criativa — perguntas causais
+Quais variáveis mudaram antes do resultado? A relação observada pode ser coincidência? Existe uma terceira variável que explique as duas? O que aconteceria se alterássemos uma variável e
+mantivéssemos as demais condições relevantes constantes? O resultado se repete em novas observações? A evidência permite concluir causalidade ou apenas associação? Qual experimento
+distinguiria melhor duas explicações concorrentes?
+
+### 2. Criatividade Lógica — modelo causal
+Três variáveis: [X]: horas de treinamento; [Y]: desempenho; [Z]: experiência anterior. É possível que o treinamento melhore o desempenho. Mas pessoas com mais experiência anterior também podem
+treinar mais e obter melhores resultados. Diagrama causal hipotético:
+
+```mermaid
+flowchart TD
+    Z[Experiência anterior] --> X[Horas de treinamento]
+    Z --> Y[Desempenho]
+    X --> Y
+```
+
+"Esse diagrama representa uma hipótese a investigar, não uma conclusão comprovada. A associação entre [X] e [Y], sozinha, não determina o efeito causal de [X] sobre [Y]. Precisamos considerar
+variáveis de confusão, qualidade da medição e como os dados foram obtidos."
+
+| Conceito | Pergunta respondida |
+|---|---|
+| Correlação | As variáveis variam juntas? |
+| Previsão | Conhecer uma variável ajuda a prever outra? |
+| Causalidade | Alterar uma variável produz mudança no resultado, nas condições estudadas? |
+
+### 5. Como o sistema evita conclusões causais falsas?
+Registrar a hipótese antes do teste (guardar a previsão original para evitar ajustar a explicação retrospectivamente). Definir a intervenção e o resultado. Procurar fatores de confusão. Estimar a
+incerteza (amostras adequadas e intervalos de confiança, além da diferença entre médias). Tentar reproduzir o resultado. Limitar a conclusão: se o experimento não distinguir as explicações,
+registrar "inconclusivo", em vez de escolher a hipótese preferida.
+
+### 6. Integração com os módulos anteriores
+Módulos 001–003 (memória semântica e grafo; o grafo causal acrescenta relações hipotéticas, sem tratá-las como fatos confirmados); 004–006 (evidência e probabilidades); 007–009
+(experimentação e causalidade). "Isso é uma base de pesquisa experimental assistida por software, não evidência de que o sistema tenha alcançado inteligência geral."
+
+### Próximo módulo — 010
+Metacognição, calibração da confiança e detecção de erros: confiança declarada e precisão observada; detecção de contradições entre módulos; limiares para solicitar verificação independente;
+comparação entre previsões e resultados; registro de falhas e revisão das estratégias. "A meta será tornar o protótipo mais capaz de reconhecer os próprios limites, em vez de apenas produzir
+respostas com aparência de certeza."
+"""
+
+# ====================================================================================================
+# externos/texto_recebido_parte81.md  (16 linhas)
+# ====================================================================================================
+FONTES['externos/texto_recebido_parte81.md'] = """# Texto recebido do usuário na Parte 81, guardado como DADO
+
+A mensagem reenviou o relatório do Módulo 007 (idêntico ao de `externos/texto_recebido_parte75b.md`), trouxe o texto do Módulo 008 (memória episódica), com uma parte repetida duas vezes, e o
+pedido: **"Tire dos nossos trabalhos tudo que não serve pra nada."**
+
+### Módulo 008 — Memória episódica, causalidade e aprendizagem com erros (resumo, com as palavras do texto entre aspas)
+
+- Um episódio: episode_id, hypothesis, prediction, intervention, observation, evidence_quality, conclusion, previous_episode. "A regra principal é preservar a previsão original. Se o sistema modificar a
+  previsão depois de observar o resultado, deverá guardar essa modificação separadamente."
+- "Correlação não é causalidade": menos falhas nos dias frios não prova que a temperatura é a causa (carga de trabalho, manutenção).
+- Brier: E1 previsto 80%, observado sim; E2 previsto 30%, observado não; BS = ((0,8 − 1)² + (0,3 − 0)²)/2 = 0,065. "A memória não deve simplesmente alterar a confiança após qualquer resultado
+  isolado."
+- Limites: persistência entre sessões; avaliação num conjunto de teste não usado para ajustar; controles para causalidade; o hash detecta diferenças mas não impede alterações (cadeia de hashes,
+  assinaturas).
+- O ciclo (mermaid): memória semântica → formular hipótese → prever → selecionar experimento → observar → registrar episódio → verificar evidência → atualizar modelo → avaliar desempenho → hipótese.
+  "Esse ciclo descreve o comportamento que estamos construindo, não um processo autônomo em execução contínua."
+"""
+
+# ====================================================================================================
 # dialogo/CompararLibm.java  (18 linhas)
 # ====================================================================================================
 FONTES['dialogo/CompararLibm.java'] = """// Ferramenta da Rodada 28 (não é uma rodada): lê "argumento_hex valor_glibc_hex" e conta em quantos o Math.exp/Math.log do
@@ -39561,6 +47845,31 @@ melhor aproximação de posto 1 (a soma truncada da decomposição em valores si
 """
 
 # ====================================================================================================
+# dialogo/PENDENCIAS.md  (20 linhas)
+# ====================================================================================================
+FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
+
+Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada parte nova começa olhando esta lista. Arquivo separado do `DIALOGO.md`, porque o `DIALOGO.md` é lido por funções medidas
+(`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
+
+## Abertas
+
+- **(Parte 80)** Triplas complementares (nenhum par decide, três decidem): o 1,7% que o guloso com dois passos ainda perde. E com dezenas de sensores, onde a enumeração some?
+- **(Parte 76, P1721)** O embedding de Kronecker perde 0,08 bit num modelo com poucos pesos. Num modelo com muito mais pesos do que dados, a economia vira regularização e ganha?
+- **(Parte 78, P1783)** Com mais cabeças de atenção, ou mais passos de treino, o posto efetivo da atenção cresce? E a relação entre a razão de participação e a perda ao cortar (4 pontos, sem ordem)?
+- **(Parte 79, (e))** O fator 1,36 nas faixas sem conta fechada devolve o acerto a 90%? Medido nas Partes 80 a 84.
+- **(Parte 79)** Os erros das minhas previsões têm caudas pesadas? Se sim, o fator certo depende do nível da faixa, e não é um número só.
+
+## Fechadas
+
+- **(Parte 74, P1662)** O valor de um conjunto de experimentos dependentes: fechada na Parte 80 (o VOI não é submodular em 40% das instâncias; o guloso chega a 0,88 do ótimo e, olhando dois
+  passos, a 0,98; rodada 49 IGUAL).
+
+- **(Rodada 45, Parte 71)** Quanto se perde ao trocar a atenção pela aproximação de posto 1? Fechada na Parte 78: 0,02 a 0,04 bit.
+- **(Parte 72)** A fronteira da Parte 52 (rodadas que passavam por sorte): fechada na Parte 77 (12 de 12 corrigidas).
+"""
+
+# ====================================================================================================
 # dialogo/Rodada01.java  (57 linhas)
 # ====================================================================================================
 FONTES['dialogo/Rodada01.java'] = """// Rodada 1 do diálogo Python <-> Java: a IA-Java traduz o módulo hexadecimal da SYNTHAI (synthai/hexadecimal.py).
@@ -39966,7 +48275,7 @@ public class Rodada05 {
 """
 
 # ====================================================================================================
-# dialogo/Rodada06.java  (57 linhas)
+# dialogo/Rodada06.java  (69 linhas)
 # ====================================================================================================
 FONTES['dialogo/Rodada06.java'] = """// Rodada 6 do diálogo Python <-> Java: o Naive Bayes com pares de palavras, em Java, a partir dos atributos que
 // rodada06.py --preparar PASTA exportou. Tudo na mesma ordem que o Python (classes em ordem alfabética, atributos na
@@ -39978,6 +48287,18 @@ import java.security.MessageDigest;
 import java.util.*;
 
 public class Rodada06 {
+    // Parte 76: log PRÓPRIO (cópia do da Rodada26), exato nas duas línguas; a versão com Math.log está em dialogo/registro/
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
     public static void main(String[] args) throws Exception {
         TreeMap<String, HashMap<String, Integer>> cont = new TreeMap<>();
         HashMap<String, Integer> total = new HashMap<>(), ncls = new HashMap<>();
@@ -40006,10 +48327,10 @@ public class Rodada06 {
             String melhorCl = null;
             double melhor = 0;
             for (String cl : cont.keySet()) {  // TreeMap: ordem alfabética, como o sorted() do Python
-                double s = Math.log((double) ncls.get(cl) / n);
+                double s = log_((double) ncls.get(cl) / n);
                 HashMap<String, Integer> c = cont.get(cl);
                 int t = total.get(cl);
-                for (String w : x) s += Math.log((c.getOrDefault(w, 0) + 1.0) / (t + 1.0 * v));
+                for (String w : x) s += log_((c.getOrDefault(w, 0) + 1.0) / (t + 1.0 * v));
                 esc.append(' ').append(Double.toHexString(s));
                 if (melhorCl == null || s > melhor) { melhor = s; melhorCl = cl; }
             }
@@ -40156,7 +48477,7 @@ public class Rodada08 {
 """
 
 # ====================================================================================================
-# dialogo/Rodada09.java  (115 linhas)
+# dialogo/Rodada09.java  (135 linhas)
 # ====================================================================================================
 FONTES['dialogo/Rodada09.java'] = """// Rodada 9 do diálogo Python <-> Java: a média bayesiana de modelos (ThompsonMistura) em Java. Reusa a atualização da
 // rodada 8 para cada modelo e soma os logs das preditivas. Tudo o que o Python soma com sum() é somado aqui com a soma
@@ -40164,6 +48485,26 @@ FONTES['dialogo/Rodada09.java'] = """// Rodada 9 do diálogo Python <-> Java: a 
 import java.util.*;
 
 public class Rodada09 {
+    // Parte 77: exp e log PRÓPRIOS (cópia dos da Rodada26), exatos nas duas línguas; a versão com Math.exp/Math.log está em dialogo/registro/
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
     static long x = 909L;
     static final long A = 6364136223846793005L, C = 1442695040888963407L;
 
@@ -40223,7 +48564,7 @@ public class Rodada09 {
         double m = logw[0];
         for (double v : logw) m = Math.max(m, v);
         double[] e = new double[logw.length];
-        for (int i = 0; i < e.length; i++) e[i] = Math.exp(logw[i] - m);
+        for (int i = 0; i < e.length; i++) e[i] = exp_(logw[i] - m);
         double t = soma(e);
         for (int i = 0; i < e.length; i++) e[i] /= t;
         return e;
@@ -40256,8 +48597,8 @@ public class Rodada09 {
             }
             double[] wp = new double[4];
             for (int m = 0; m < 4; m++) wp[m] = ws[m] * preds[m];
-            perdaMistura -= Math.log(soma(wp));
-            for (int m = 0; m < 4; m++) { logw[m] += Math.log(preds[m]); perda[m] -= Math.log(preds[m]); }
+            perdaMistura -= log_(soma(wp));
+            for (int m = 0; m < 4; m++) { logw[m] += log_(preds[m]); perda[m] -= log_(preds[m]); }
             for (int m = 0; m < 4; m++) atualizarBOCPD(modelos.get(m), riscos[m], br, r, n);
         }
         StringBuilder a = new StringBuilder("logw ="), b = new StringBuilder("perda ="), c = new StringBuilder("pesos =");
@@ -40544,7 +48885,7 @@ public class Rodada13 {
 """
 
 # ====================================================================================================
-# dialogo/Rodada14.java  (46 linhas)
+# dialogo/Rodada14.java  (66 linhas)
 # ====================================================================================================
 FONTES['dialogo/Rodada14.java'] = """// Rodada 14 do diálogo Python <-> Java: os trigramas de letras que carregam significado (animal ou não), a partir de
 // PASTA/formas14.txt. Cada lema conta cada trigrama UMA vez (o frozenset do Python); a lista "menos animais" é a ordem
@@ -40558,6 +48899,26 @@ import java.nio.file.*;
 import java.util.*;
 
 public class Rodada14 {
+    // Parte 77: exp e log PRÓPRIOS (cópia dos da Rodada26), exatos nas duas línguas; a versão com Math.exp/Math.log está em dialogo/registro/
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
     static Set<String> trigramas(String lema) {
         String x = "^" + lema.toLowerCase(Locale.ROOT) + "$";
         Set<String> r = new HashSet<>();
@@ -40581,7 +48942,7 @@ public class Rodada14 {
         int v = voc.size();
         Map<String, Double> peso = new HashMap<>();
         for (String t : voc)
-            peso.put(t, Math.log((ca.getOrDefault(t, 0) + 1) / (double) (na + v)) - Math.log((co.getOrDefault(t, 0) + 1) / (double) (no + v)));
+            peso.put(t, log_((ca.getOrDefault(t, 0) + 1) / (double) (na + v)) - log_((co.getOrDefault(t, 0) + 1) / (double) (no + v)));
         List<String> ok = new ArrayList<>();
         for (String t : voc) if (ca.getOrDefault(t, 0) + co.getOrDefault(t, 0) >= 10) ok.add(t);
         ok.sort((p, q) -> { int c = Double.compare(-peso.get(p), -peso.get(q)); return c != 0 ? c : p.compareTo(q); });
@@ -40774,7 +49135,7 @@ public class Rodada17 {
 """
 
 # ====================================================================================================
-# dialogo/Rodada18.java  (73 linhas)
+# dialogo/Rodada18.java  (85 linhas)
 # ====================================================================================================
 FONTES['dialogo/Rodada18.java'] = """// Rodada 18 do diálogo Python <-> Java: reconstruir as perguntas a partir só dos números. A lista de documentos vem de
 // docs18.txt (escrito por rodada18.py --preparar); os textos são lidos da raiz do repositório. Uso: java Rodada18 PASTA
@@ -40785,6 +49146,18 @@ import java.util.*;
 import java.util.regex.*;
 
 public class Rodada18 {
+    // Parte 73: log PRÓPRIO (cópia do da Rodada26), exato nas duas línguas; a versão com Math.log está em dialogo/registro/
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
     static final Pattern ROTULO = Pattern.compile("P[0-9]+|0x[0-9A-Fa-f]+");
     static final Pattern NUMERO = Pattern.compile("[0-9][0-9.,]*[0-9]|[0-9]");
 
@@ -40840,7 +49213,7 @@ public class Rodada18 {
             double me = -1.0;
             for (int k : partes) {
                 double s = 0.0;
-                for (String t : r) if (dn.get(k).contains(t)) s += Math.log((double) K / df.get(t));
+                for (String t : r) if (dn.get(k).contains(t)) s += log_((double) K / df.get(t));
                 if (s > me) { melhor = k; me = s; }
             }
             if (n == melhor) acertos++;
@@ -40852,7 +49225,7 @@ public class Rodada18 {
 """
 
 # ====================================================================================================
-# dialogo/Rodada19.java  (73 linhas)
+# dialogo/Rodada19.java  (85 linhas)
 # ====================================================================================================
 FONTES['dialogo/Rodada19.java'] = """// Rodada 19 do diálogo Python <-> Java: reconstruir a parte a partir só das palavras (sem rótulos, sem acentos pela NFD,
 // minúsculas, a-z com 4 letras ou mais). A lista de documentos vem de docs19.txt. Uso: java Rodada19 PASTA
@@ -40864,6 +49237,18 @@ import java.util.*;
 import java.util.regex.*;
 
 public class Rodada19 {
+    // Parte 73: log PRÓPRIO (cópia do da Rodada26), exato nas duas línguas; a versão com Math.log está em dialogo/registro/
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
     static final Pattern ROTULO = Pattern.compile("P[0-9]+|0x[0-9A-Fa-f]+");
     static final Pattern PALAVRA = Pattern.compile("[a-z]{4,}");
 
@@ -40918,7 +49303,7 @@ public class Rodada19 {
             double me = -1.0;
             for (int k : partes) {
                 double s = 0.0;
-                for (String t : r) if (dn.get(k).contains(t)) s += Math.log((double) K / df.get(t));
+                for (String t : r) if (dn.get(k).contains(t)) s += log_((double) K / df.get(t));
                 if (s > me) { melhor = k; me = s; }
             }
             if (n == melhor) acertos++;
@@ -40930,7 +49315,7 @@ public class Rodada19 {
 """
 
 # ====================================================================================================
-# dialogo/Rodada20.java  (66 linhas)
+# dialogo/Rodada20.java  (78 linhas)
 # ====================================================================================================
 FONTES['dialogo/Rodada20.java'] = """// Rodada 20 do diálogo Python <-> Java: o Naive Bayes multinomial da Parte 34 (contagens, Laplace com alfa = 1) reconhece a
 // época de cada seção (Partes 1-20 = 1; 21-41 = 2), deixando uma de fora. As seções vêm de secoes20.txt (rodada20.py
@@ -40941,6 +49326,18 @@ import java.nio.file.*;
 import java.util.*;
 
 public class Rodada20 {
+    // Parte 76: log PRÓPRIO (cópia do da Rodada26), exato nas duas línguas; a versão com Math.log está em dialogo/registro/
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
     static class NaiveBayes {
         final double alfa = 1.0;
         final TreeMap<Integer, HashMap<String, Integer>> cont = new TreeMap<>();
@@ -40958,10 +49355,10 @@ public class Rodada20 {
             int n = 0;
             for (int x : ncls.values()) n += x;
             int v = vocab.isEmpty() ? 1 : vocab.size();
-            double sc = Math.log((double) ncls.get(cl) / n);
+            double sc = log_((double) ncls.get(cl) / n);
             HashMap<String, Integer> c = cont.get(cl);
             int t = total.get(cl);
-            for (String w : ps) sc += Math.log((c.getOrDefault(w, 0) + alfa) / (t + alfa * v));
+            for (String w : ps) sc += log_((c.getOrDefault(w, 0) + alfa) / (t + alfa * v));
             return sc;
         }
 
@@ -41275,7 +49672,7 @@ public class Rodada23 {
 """
 
 # ====================================================================================================
-# dialogo/Rodada24.java  (34 linhas)
+# dialogo/Rodada24.java  (46 linhas)
 # ====================================================================================================
 FONTES['dialogo/Rodada24.java'] = """// Rodada 24 do diálogo Python <-> Java: a pergunta reconhece a sua resposta? O texto pós-ASI contra os documentos das
 // Partes 1-49 (palavras em docs24.txt e texto24.txt, escritos por rodada24.py --preparar), soma de ln(K/df).
@@ -41286,6 +49683,18 @@ import java.nio.file.*;
 import java.util.*;
 
 public class Rodada24 {
+    // Parte 73: log PRÓPRIO (cópia do da Rodada26), exato nas duas línguas; a versão com Math.log está em dialogo/registro/
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
     public static void main(String[] args) throws Exception {
         PrintStream out = new PrintStream(System.out, true, "UTF-8");
         List<Integer> partes = new ArrayList<>();
@@ -41304,7 +49713,7 @@ public class Rodada24 {
         double me = -1.0;
         for (int i = 0; i < K; i++) {
             double s = 0.0;
-            for (String w : ws.get(i)) if (t.contains(w)) s += Math.log((double) K / df.get(w));
+            for (String w : ws.get(i)) if (t.contains(w)) s += log_((double) K / df.get(w));
             out.println("parte " + partes.get(i) + ": escore = " + Double.toHexString(s));
             if (s > me) { melhor = partes.get(i); me = s; }
         }
@@ -41463,7 +49872,7 @@ public class Rodada26 {
         for (String[] a : ws) for (String w : a) df.merge(w, 1, Integer::sum);
         HashMap<String, Double> idf2 = new HashMap<>();
         for (Map.Entry<String, Integer> e : df.entrySet()) {
-            double x = Math.log((double) K / e.getValue());  // como o math.log da Rodada 21 (o idf)
+            double x = log_((double) K / e.getValue());  // Parte 73: o log_ próprio, como o da Rodada 21 corrigida (o idf)
             idf2.put(e.getKey(), x * x);
         }
         double[] norma = new double[K];
@@ -43342,6 +51751,123 @@ public class Rodada48 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada49.java  (112 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada49.java'] = """// Rodada 49 do diálogo Python <-> Java: o valor de um conjunto de experimentos dependentes (P1841, P1842). Lê PASTA/sensores49.txt (as 300 instâncias da
+// semente 80) e calcula, como o Python, o VOI de cada conjunto (enumerando as respostas, o conjunto em ordem crescente), o ótimo dentro do orçamento 6 e os
+// dois gulosos (olhar 1 e 2, com os mesmos desempates). Só + − × ÷ e comparações. Uso: java Rodada49 PASTA
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada49 {
+    static final int K = 6, ORC = 6;
+    static double p;
+    static double[][] u;
+    static double[] qs;
+    static int[] cs;
+    static Map<String, Double> memo;
+
+    static double voi(List<Integer> conj) {
+        double sem = Math.max(p * u[0][1] + (1 - p) * u[0][0], p * u[1][1] + (1 - p) * u[1][0]);
+        double total = 0.0;
+        int n = conj.size();
+        for (int m = 0; m < (1 << n); m++) {
+            double l1 = p, l0 = 1 - p;
+            for (int b = 0; b < n; b++) {
+                int i = conj.get(b);
+                if (((m >> b) & 1) == 1) { l1 *= qs[i]; l0 *= 1 - qs[i]; } else { l1 *= 1 - qs[i]; l0 *= qs[i]; }
+            }
+            double a0 = l1 * u[0][1] + l0 * u[0][0], a1 = l1 * u[1][1] + l0 * u[1][0];
+            total += (a1 > a0) ? a1 : a0;
+        }
+        double r = total - sem;
+        return r > 0.0 ? r : 0.0;
+    }
+
+    static double v(List<Integer> c) {
+        List<Integer> s = new ArrayList<>(c);
+        Collections.sort(s);
+        String chave = s.toString();
+        Double x = memo.get(chave);
+        if (x == null) { x = voi(s); memo.put(chave, x); }
+        return x;
+    }
+
+    static List<Integer> mais(List<Integer> esc, int... novos) {
+        List<Integer> r = new ArrayList<>(esc);
+        for (int x : novos) r.add(x);
+        return r;
+    }
+
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        double so = 0.0, s1 = 0.0, s2 = 0.0;
+        int k = 0;
+        for (String l : Files.readAllLines(Path.of(args[0], "sensores49.txt"), StandardCharsets.UTF_8)) {
+            if (l.isEmpty()) continue;
+            String[] xs = l.split(" ");
+            double[] w = new double[5 + K];
+            for (int i = 0; i < 5 + K; i++) w[i] = Double.parseDouble(xs[i]);
+            p = w[0];
+            u = new double[][]{{w[1], w[2]}, {w[3], w[4]}};
+            qs = Arrays.copyOfRange(w, 5, 5 + K);
+            cs = new int[K];
+            for (int i = 0; i < K; i++) cs[i] = Integer.parseInt(xs[5 + K + i]);
+            memo = new HashMap<>();
+            double ot = 0.0;
+            for (int m = 0; m < (1 << K); m++) {
+                int custo = 0;
+                List<Integer> c = new ArrayList<>();
+                for (int i = 0; i < K; i++) if ((m >> i & 1) == 1) { custo += cs[i]; c.add(i); }
+                if (custo <= ORC) { double x = v(c); if (x > ot) ot = x; }
+            }
+            double[] g = new double[2];
+            List<List<Integer>> e = new ArrayList<>();
+            for (int olhar = 1; olhar <= 2; olhar++) {
+                List<Integer> esc = new ArrayList<>();
+                int resto = ORC;
+                while (true) {
+                    List<Integer> idx = new ArrayList<>();
+                    for (int i = 0; i < K; i++) if (!esc.contains(i) && cs[i] <= resto) idx.add(i);
+                    if (idx.isEmpty()) break;
+                    double melhor = -1.0;
+                    int j = -1;
+                    for (int i : idx) { double gi = (v(mais(esc, i)) - v(esc)) / cs[i]; if (gi > melhor) { melhor = gi; j = i; } }
+                    if (melhor <= 1e-15) {
+                        if (olhar < 2) break;
+                        double mp = -1.0;
+                        int pi = -1, pj = -1;
+                        for (int i : idx) for (int jj : idx)
+                            if (i < jj && cs[i] + cs[jj] <= resto) {
+                                double gi = (v(mais(esc, i, jj)) - v(esc)) / (cs[i] + cs[jj]);
+                                if (gi > mp) { mp = gi; pi = i; pj = jj; }
+                            }
+                        if (pi < 0 || mp <= 1e-15) break;
+                        esc.add(pi); esc.add(pj);
+                        resto -= cs[pi] + cs[pj];
+                        continue;
+                    }
+                    esc.add(j);
+                    resto -= cs[j];
+                }
+                g[olhar - 1] = v(esc);
+                List<Integer> ord = new ArrayList<>(esc);
+                Collections.sort(ord);
+                e.add(ord);
+            }
+            so += ot; s1 += g[0]; s2 += g[1];
+            out.println("instancia " + k + ": otimo " + Double.toHexString(ot) + " guloso1 " + Double.toHexString(g[0]) + " " + e.get(0).toString().replace(", ", ",")
+                        + " guloso2 " + Double.toHexString(g[1]) + " " + e.get(1).toString().replace(", ", ","));
+            k++;
+        }
+        out.println("totais: otimo " + Double.toHexString(so) + " guloso1 " + Double.toHexString(s1) + " guloso2 " + Double.toHexString(s2));
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -43855,7 +52381,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# dialogo/rodada06.py  (39 linhas)
+# dialogo/rodada06.py  (41 linhas)
 # ====================================================================================================
 FONTES['dialogo/rodada06.py'] = """\"\"\"Rodada 6 do diálogo Python <-> Java: o Naive Bayes com pares de palavras (P492) treinado nas tarefas A e B do dicionário
 e testado no teste de A. Com `--preparar PASTA`, escreve os exemplos (classe, TAB, atributos separados por espaço) em
@@ -43865,7 +52391,9 @@ classes nos 50 primeiros exemplos, em hexadecimal. Rodar da raiz do repositório
 import hashlib
 import os
 import sys
-from math import log
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import log_  # noqa: E402  (Parte 76: log próprio, exato nas duas línguas)
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -43890,10 +52418,10 @@ v = len(m.vocab)
 for i, (x, _) in enumerate(teste[:50]):
     esc = []
     for cl in sorted(m.ncls):
-        s = log(m.ncls[cl] / n)
+        s = log_(m.ncls[cl] / n)
         c, t = m.cont[cl], m.total[cl]
         for w in x:
-            s += log((c.get(w, 0) + m.alfa) / (t + m.alfa * v))
+            s += log_((c.get(w, 0) + m.alfa) / (t + m.alfa * v))
         esc.append(s.hex())
     print(f"{i}: " + " ".join(esc))
 """
@@ -43963,33 +52491,114 @@ for i, hs in enumerate(t.mist):
 """
 
 # ====================================================================================================
-# dialogo/rodada09.py  (25 linhas)
+# dialogo/rodada09.py  (106 linhas)
 # ====================================================================================================
 FONTES['dialogo/rodada09.py'] = """\"\"\"Rodada 9 do diálogo Python <-> Java: a média bayesiana de modelos (synthai/decisao.py, ThompsonMistura, P541): quatro
 ThompsonBOCPD com H em {0, 1/2000, 1/500, 1/100}, pesos pela soma dos logs das preditivas. Três braços em rodízio,
 recompensas do gerador da rodada 5 (semente 909), médias trocadas no passo 600. Imprime os log-pesos, as perdas de cada
-modelo e a da mistura, e os pesos normalizados, em hexadecimal. Rodar da raiz: python3 dialogo/rodada09.py\"\"\"
+modelo e a da mistura, e os pesos normalizados, em hexadecimal. Rodar da raiz: python3 dialogo/rodada09.py
+
+Parte 77: a versão original importava a ThompsonMistura de synthai/decisao.py, que usa o exp e o log da biblioteca (a fronteira
+da Parte 52: passava por sorte). Esta versão copia as duas classes, só com o que a rodada usa (atualizar e pesos), trocando exp e
+log pelos próprios de dialogo/exatas.py; o synthai/decisao.py fica intacto. O sum() continua (compensado no Python 3.12+), porque
+o Java já o reproduz com a soma compensada da rodada 5. A original está em dialogo/registro/rodada09_libm.py.\"\"\"
 
 import os
-import random
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from exatas import exp_, log_  # noqa: E402
 from rodada05 import LCG  # noqa: E402
-from synthai.decisao import ThompsonMistura  # noqa: E402
 
-g = LCG(909)
-t = ThompsonMistura(3, random.Random(0))
-for passo in range(1200):
-    ps = (0.2, 0.5, 0.8) if passo < 600 else (0.8, 0.5, 0.2)
-    braco = passo % 3
-    t.atualizar(braco, 1 if g.uniforme() < ps[braco] else 0)
-print("logw = " + " ".join(x.hex() for x in t.logw))
-print("perda = " + " ".join(x.hex() for x in t.perda))
-print("perda da mistura = " + t.perda_mistura.hex())
-print("pesos = " + " ".join(x.hex() for x in t.pesos()))
+
+class BOCPD:
+    \"\"\"A ThompsonBOCPD de synthai/decisao.py, sem o sorteio (a rodada não escolhe braços: eles vêm em rodízio).\"\"\"
+
+    def __init__(self, k, risco, hipoteses=16):
+        self.risco, self.hipoteses = risco, hipoteses
+        self.mist = [[[1.0, 1.0, 1.0]] for _ in range(k)]
+
+    def _risco(self, hs):
+        H = self.risco
+        for h in hs:
+            h[0] *= 1 - H
+        for h in hs:
+            if h[1] == 1.0 and h[2] == 1.0:
+                h[0] += H
+                return
+        hs.append([H, 1.0, 1.0])
+
+    def atualizar(self, braco, r):
+        for hs in self.mist:
+            self._risco(hs)
+        hs = self.mist[braco]
+        for h in hs:
+            h[0] *= (h[1] if r else h[2]) / (h[1] + h[2])
+            if r:
+                h[1] += 1
+            else:
+                h[2] += 1
+        hs.sort(key=lambda h: -h[0])
+        del hs[self.hipoteses:]
+        tot = sum(h[0] for h in hs)
+        for h in hs:
+            h[0] /= tot
+        for i, outro in enumerate(self.mist):
+            if i != braco and len(outro) > self.hipoteses:
+                outro.sort(key=lambda h: -h[0])
+                del outro[self.hipoteses:]
+                tot = sum(h[0] for h in outro)
+                for h in outro:
+                    h[0] /= tot
+
+
+class Mistura:
+    \"\"\"A ThompsonMistura de synthai/decisao.py (atualizar e pesos), com exp_ e log_.\"\"\"
+
+    def __init__(self, k, riscos=(0.0, 1 / 2000, 1 / 500, 1 / 100), hipoteses=16):
+        self.modelos = [BOCPD(k, h, hipoteses) for h in riscos]
+        self.riscos = riscos
+        self.logw = [0.0] * len(riscos)
+        self.perda = [0.0] * len(riscos)
+        self.perda_mistura = 0.0
+
+    def pesos(self):
+        m = max(self.logw)
+        e = [exp_(x - m) for x in self.logw]
+        t = sum(e)
+        return [x / t for x in e]
+
+    def atualizar(self, braco, r):
+        ws = self.pesos()
+        preds = []
+        for mod, H in zip(self.modelos, self.riscos):
+            hs = mod.mist[braco]
+            pr = sum(h[0] * ((h[1] if r else h[2]) / (h[1] + h[2])) for h in hs)
+            preds.append((1 - H) * pr + H * 0.5)
+        self.perda_mistura -= log_(sum(w * p for w, p in zip(ws, preds)))
+        for i, p in enumerate(preds):
+            self.logw[i] += log_(p)
+            self.perda[i] -= log_(p)
+        for mod in self.modelos:
+            mod.atualizar(braco, r)
+
+
+def main():
+    g = LCG(909)
+    t = Mistura(3)
+    for passo in range(1200):
+        ps = (0.2, 0.5, 0.8) if passo < 600 else (0.8, 0.5, 0.2)
+        braco = passo % 3
+        t.atualizar(braco, 1 if g.uniforme() < ps[braco] else 0)
+    print("logw = " + " ".join(x.hex() for x in t.logw))
+    print("perda = " + " ".join(x.hex() for x in t.perda))
+    print("perda da mistura = " + t.perda_mistura.hex())
+    print("pesos = " + " ".join(x.hex() for x in t.pesos()))
+
+
+if __name__ == "__main__":
+    main()
 """
 
 # ====================================================================================================
@@ -44164,9 +52773,9 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# dialogo/rodada14.py  (27 linhas)
+# dialogo/rodada14.py  (45 linhas)
 # ====================================================================================================
-FONTES['dialogo/rodada14.py'] = """\"\"\"Rodada 14 do diálogo Python <-> Java: os trigramas de letras que mais carregam significado (P732): o log da razão de
+FONTES['dialogo/rodada14.py'] = """\"\"\"Rodada 14 do diálogo Python <-> Java (Parte 77: os pesos com o log_ próprio, nas duas línguas; a original em dialogo/registro/): os trigramas de letras que mais carregam significado (P732): o log da razão de
 chances (Laplace) de cada trigrama do lema entre 4017 animais e 4017 outros substantivos. Com `--preparar PASTA`, escreve
 PASTA/formas14.txt (rótulo TAB lema), que o Java lê. Rodar da raiz do repositório: python3 dialogo/rodada14.py\"\"\"
 
@@ -44177,6 +52786,25 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import calculos  # noqa: E402
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import log_  # noqa: E402
+
+
+def trigramas(minimo=10, topo=12):
+    \"\"\"A conta da calculos.p732_trigramas (que fica intacta, porque é medida), aqui com o log_ próprio (Parte 77: a fronteira da Parte 52).\"\"\"
+    from synthai.semiotica import trigramas_de_forma
+    ca, co = {}, {}
+    for lema, y in calculos._formas_732():
+        for t in trigramas_de_forma(lema):
+            (ca if y else co)[t] = (ca if y else co).get(t, 0) + 1
+    voc = set(ca) | set(co)
+    na, no = sum(ca.values()), sum(co.values())
+    v = len(voc)
+    peso = {t: log_((ca.get(t, 0) + 1) / (na + v)) - log_((co.get(t, 0) + 1) / (no + v)) for t in voc}
+    ok = [t for t in voc if ca.get(t, 0) + co.get(t, 0) >= minimo]
+    ok.sort(key=lambda t: (-peso[t], t))
+    return ok[:topo], ok[::-1][:topo], peso.get("dae"), peso.get("ae$"), len(voc)
+
 
 def main():
     if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
@@ -44184,8 +52812,7 @@ def main():
             for lema, y in calculos._formas_732():
                 f.write(f"{y}\\t{lema}\\n")
         return
-    animais, outros, dae, ae, v = calculos.p732_trigramas()
-    from math import log  # noqa: F401  (os pesos vêm de calculos.p732_trigramas)
+    animais, outros, dae, ae, v = trigramas()
     print(f"trigramas distintos = {v}; dae = {dae.hex()}; ae$ = {ae.hex()}")
     print("mais animais: " + " ".join(animais))
     print("menos animais: " + " ".join(outros))
@@ -44317,7 +52944,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# dialogo/rodada18.py  (86 linhas)
+# dialogo/rodada18.py  (88 linhas)
 # ====================================================================================================
 FONTES['dialogo/rodada18.py'] = """\"\"\"Rodada 18 do diálogo Python <-> Java: reconstruir as perguntas a partir só dos números. Para cada parte com documento e
 seção no resultados.txt, tiram-se os rótulos (Pnnn, 0x...) e ficam os números (só os dígitos, sem zeros à esquerda, 3 ou
@@ -44329,6 +52956,8 @@ import math
 import os
 import re
 import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import log_  # noqa: E402  (Parte 73: log próprio, exato nas duas línguas)
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROTULO = re.compile(r"P[0-9]+|0x[0-9A-Fa-f]+")
@@ -44382,7 +53011,7 @@ def reconstruir(docs):
         for k in partes:
             s = 0.0
             for t in sorted(r & dn[k]):
-                s += math.log(K / df[t])
+                s += log_(K / df[t])
             if s > me:
                 melhor, me = k, s
         res.append((n, melhor, me, len(r)))
@@ -44408,7 +53037,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# dialogo/rodada19.py  (85 linhas)
+# dialogo/rodada19.py  (87 linhas)
 # ====================================================================================================
 FONTES['dialogo/rodada19.py'] = """\"\"\"Rodada 19 do diálogo Python <-> Java: reconstruir a parte a partir só das PALAVRAS (a Rodada 18 usou os números). Tiram-se
 os rótulos (Pnnn, 0x...), os acentos (NFD sem as marcas combinantes), minúsculas, e ficam as palavras a-z de 4 letras ou mais;
@@ -44421,6 +53050,8 @@ import os
 import re
 import sys
 import unicodedata
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import log_  # noqa: E402  (Parte 73: log próprio, exato nas duas línguas)
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROTULO = re.compile(r"P[0-9]+|0x[0-9A-Fa-f]+")
@@ -44472,7 +53103,7 @@ def reconstruir(docs):
         for k in partes:
             s = 0.0
             for t in sorted(r & dn[k]):
-                s += math.log(K / df[t])
+                s += log_(K / df[t])
             if s > me:
                 melhor, me = k, s
         res.append((n, melhor, me, len(r)))
@@ -44498,7 +53129,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# dialogo/rodada20.py  (69 linhas)
+# dialogo/rodada20.py  (71 linhas)
 # ====================================================================================================
 FONTES['dialogo/rodada20.py'] = """\"\"\"Rodada 20 do diálogo Python <-> Java: o Naive Bayes da Parte 34 (synthai.dicionario.NaiveBayesContagens) reconhece a
 época de cada seção do resultados.txt (Partes 1-20 = 1; 21-41 = 2), deixando uma de fora? As palavras são as da Rodada 19,
@@ -44508,8 +53139,10 @@ o Java lê. Rodar da raiz do repositório: python3 dialogo/rodada20.py\"\"\"
 import importlib.util
 import os
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import log_  # noqa: E402  (Parte 76: log próprio, exato nas duas línguas)
 import unicodedata
-from math import log
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(AQUI))
@@ -44535,10 +53168,10 @@ def escore(nb, cl, ps):
     \"\"\"O escore de uma classe, como em NaiveBayesContagens.prever.\"\"\"
     n = sum(nb.ncls.values())
     v = len(nb.vocab) or 1
-    sc = log(nb.ncls[cl] / n)
+    sc = log_(nb.ncls[cl] / n)
     c, t = nb.cont[cl], nb.total[cl]
     for w in ps:
-        sc += log((c.get(w, 0) + nb.alfa) / (t + nb.alfa * v))
+        sc += log_((c.get(w, 0) + nb.alfa) / (t + nb.alfa * v))
     return sc
 
 
@@ -44787,7 +53420,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# dialogo/rodada24.py  (62 linhas)
+# dialogo/rodada24.py  (64 linhas)
 # ====================================================================================================
 FONTES['dialogo/rodada24.py'] = """\"\"\"Rodada 24 do diálogo Python <-> Java: a pergunta reconhece a sua resposta? O texto pós-ASI (externos/pos_asi_texto_parte50.md,
 reenviado pelo usuário) é pontuado contra os documentos das Partes 1-49 com as palavras da Rodada 19 (soma de ln(K/df) sobre
@@ -44798,6 +53431,8 @@ import importlib.util
 import math
 import os
 import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import log_  # noqa: E402  (Parte 73: log próprio, exato nas duas línguas)
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 RAIZ = os.path.dirname(AQUI)
@@ -44825,7 +53460,7 @@ def pontuar(ds, texto):
         s = 0.0
         for w in ws:
             if w in t:
-                s += math.log(K / df[w])
+                s += log_(K / df[w])
         res.append((k, s))
     return res
 
@@ -45241,7 +53876,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# dialogo/rodada30.py  (107 linhas)
+# dialogo/rodada30.py  (109 linhas)
 # ====================================================================================================
 FONTES['dialogo/rodada30.py'] = """\"\"\"Rodada 30 do diálogo Python <-> Java: os empates nas escolhas das rodadas antigas. Para as rodadas que escolhem (12, 14,
 18, 19, 20, 24), recalcula os valores de que a escolha impressa depende: nas listas ordenadas, os valores dos k primeiros e
@@ -45254,6 +53889,8 @@ import importlib.util
 import math
 import os
 import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import log_  # noqa: E402  (Parte 73: log próprio, exato nas duas línguas)
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 RAIZ = os.path.dirname(AQUI)
@@ -45283,7 +53920,7 @@ def grupos():
             (ca if y else co)[t] = (ca if y else co).get(t, 0) + 1
     voc = set(ca) | set(co)
     na, no, v = sum(ca.values()), sum(co.values()), len(voc)
-    peso = {t: math.log((ca.get(t, 0) + 1) / (na + v)) - math.log((co.get(t, 0) + 1) / (no + v)) for t in voc}
+    peso = {t: log_((ca.get(t, 0) + 1) / (na + v)) - log_((co.get(t, 0) + 1) / (no + v)) for t in voc}
     ok = sorted((t for t in voc if ca.get(t, 0) + co.get(t, 0) >= 10), key=lambda t: (-peso[t], t))
     res.append(("14", "mais-animais", [peso[t] for t in ok[:13]]))
     res.append(("14", "menos-animais", [peso[t] for t in ok[::-1][:13]]))
@@ -45303,7 +53940,7 @@ def grupos():
             for k in partes:
                 s = 0.0
                 for t in sorted(rr & dn[k]):
-                    s += math.log(len(partes) / df[t])
+                    s += log_(len(partes) / df[t])
                 esc.append(s)
             esc.sort(reverse=True)
             res.append((nome[-2:], f"parte{n}", esc[:2]))
@@ -46794,6 +55431,124 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
+# dialogo/rodada49.py  (113 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada49.py'] = """\"\"\"Rodada 49 do diálogo Python <-> Java: o valor de um conjunto de experimentos dependentes (P1841, P1842). Com `--preparar PASTA`, o Python grava em
+PASTA/sensores49.txt as 300 instâncias da semente 80 (p, as 4 utilidades e as 6 acurácias em hexadecimal; os 6 custos inteiros), na mesma sequência de
+sorteios da calculos.p1842_conjuntos. As duas linguagens calculam o VOI de cada conjunto (enumerando as respostas, com o conjunto em ordem crescente), o ótimo
+dentro do orçamento 6 e os dois gulosos (olhar 1 e 2, com os mesmos desempates), e imprimem, por instância, o ótimo, os dois valores gulosos e os conjuntos
+escolhidos, e os totais. Só + − × ÷ e comparações. Rodar da raiz: python3 dialogo/rodada49.py PASTA\"\"\"
+
+import os
+import random
+import sys
+
+K, ORC = 6, 6
+
+
+def preparar(pasta, instancias=300, semente=80):
+    r = random.Random(semente)
+    with open(os.path.join(pasta, "sensores49.txt"), "w") as f:
+        for _ in range(instancias):
+            p = r.random()
+            u = [[r.random(), r.random()], [r.random(), r.random()]]
+            qs = [0.55 + 0.4 * r.random() for _ in range(K)]
+            cs = [r.randint(1, 5) for _ in range(K)]
+            f.write(" ".join(x.hex() for x in [p, u[0][0], u[0][1], u[1][0], u[1][1]] + qs) + " " + " ".join(str(c) for c in cs) + "\\n")
+
+
+def ler(pasta):
+    saida = []
+    for l in open(os.path.join(pasta, "sensores49.txt")).read().split("\\n"):
+        if l:
+            xs = l.split()
+            v = [float.fromhex(x) for x in xs[:5 + K]]
+            saida.append((v[0], [[v[1], v[2]], [v[3], v[4]]], v[5:], [int(x) for x in xs[5 + K:]]))
+    return saida
+
+
+def voi(p, u, qs, conj):
+    sem = max(p * u[a][1] + (1 - p) * u[a][0] for a in (0, 1))
+    total = 0.0
+    for m in range(1 << len(conj)):
+        l1, l0 = p, 1 - p
+        for b, i in enumerate(conj):
+            if (m >> b) & 1:
+                l1 *= qs[i]
+                l0 *= 1 - qs[i]
+            else:
+                l1 *= 1 - qs[i]
+                l0 *= qs[i]
+        total += max(l1 * u[a][1] + l0 * u[a][0] for a in (0, 1))
+    return max(total - sem, 0.0)
+
+
+def resolver(p, u, qs, cs):
+    memo = {}
+
+    def v(c):
+        c = tuple(sorted(c))
+        if c not in memo:
+            memo[c] = voi(p, u, qs, c)
+        return memo[c]
+    ot = 0.0
+    for m in range(1 << K):
+        if sum(cs[i] for i in range(K) if m >> i & 1) <= ORC:
+            x = v([i for i in range(K) if m >> i & 1])
+            if x > ot:
+                ot = x
+    saidas = []
+    for olhar in (1, 2):
+        esc, resto = [], ORC
+        while True:
+            idx = [i for i in range(K) if i not in esc and cs[i] <= resto]
+            if not idx:
+                break
+            melhor, j = -1.0, -1
+            for i in idx:
+                g = (v(esc + [i]) - v(esc)) / cs[i]
+                if g > melhor:
+                    melhor, j = g, i
+            if melhor <= 1e-15:
+                if olhar < 2:
+                    break
+                mp, pi, pj = -1.0, -1, -1
+                for i in idx:
+                    for jj in idx:
+                        if i < jj and cs[i] + cs[jj] <= resto:
+                            g = (v(esc + [i, jj]) - v(esc)) / (cs[i] + cs[jj])
+                            if g > mp:
+                                mp, pi, pj = g, i, jj
+                if pi < 0 or mp <= 1e-15:
+                    break
+                esc += [pi, pj]
+                resto -= cs[pi] + cs[pj]
+                continue
+            esc.append(j)
+            resto -= cs[j]
+        saidas.append((v(esc), sorted(esc)))
+    return ot, saidas
+
+
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        preparar(sys.argv[2])
+        return
+    so = s1 = s2 = 0.0
+    for k, (p, u, qs, cs) in enumerate(ler(sys.argv[1])):
+        ot, ((g1, e1), (g2, e2)) = resolver(p, u, qs, cs)
+        so += ot
+        s1 += g1
+        s2 += g2
+        print(f"instancia {k}: otimo {ot.hex()} guloso1 {g1.hex()} {e1} guloso2 {g2.hex()} {e2}".replace(", ", ","))
+    print(f"totais: otimo {so.hex()} guloso1 {s1.hex()} guloso2 {s2.hex()}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
 # dialogo/verificar.py  (38 linhas)
 # ====================================================================================================
 FONTES['dialogo/verificar.py'] = """\"\"\"Verifica todas as rodadas do diálogo: para cada RodadaNN.java com o seu rodadaNN.py, compila o Java, roda os dois e
@@ -46834,6 +55589,466 @@ def main():
 
 if __name__ == "__main__":
     main()
+"""
+
+# ====================================================================================================
+# dialogo/registro/Rodada06Libm.java  (57 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/Rodada06Libm.java'] = """// Rodada 6 do diálogo Python <-> Java: o Naive Bayes com pares de palavras, em Java, a partir dos atributos que
+// rodada06.py --preparar PASTA exportou. Tudo na mesma ordem que o Python (classes em ordem alfabética, atributos na
+// ordem do exemplo), para que as somas de logaritmos deem os mesmos bits. Uso: java Rodada06 PASTA
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.util.*;
+
+public class Rodada06Libm {
+    public static void main(String[] args) throws Exception {
+        TreeMap<String, HashMap<String, Integer>> cont = new TreeMap<>();
+        HashMap<String, Integer> total = new HashMap<>(), ncls = new HashMap<>();
+        HashSet<String> vocab = new HashSet<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "treino06.txt"), StandardCharsets.UTF_8)) {
+            int tab = l.indexOf('\\t');
+            String y = l.substring(0, tab), resto = l.substring(tab + 1);
+            String[] x = resto.isEmpty() ? new String[0] : resto.split(" ");
+            HashMap<String, Integer> c = cont.computeIfAbsent(y, k -> new HashMap<>());
+            for (String w : x) { c.merge(w, 1, Integer::sum); vocab.add(w); }
+            total.merge(y, x.length, Integer::sum);
+            ncls.merge(y, 1, Integer::sum);
+        }
+        int n = 0;
+        for (int q : ncls.values()) n += q;
+        int v = vocab.size();
+        StringBuilder prev = new StringBuilder();
+        List<String> linhas = new ArrayList<>();
+        int acertos = 0, i = 0;
+        List<String> teste = Files.readAllLines(Path.of(args[0], "teste06.txt"), StandardCharsets.UTF_8);
+        for (String l : teste) {
+            int tab = l.indexOf('\\t');
+            String y = l.substring(0, tab), resto = l.substring(tab + 1);
+            String[] x = resto.isEmpty() ? new String[0] : resto.split(" ");
+            StringBuilder esc = new StringBuilder(i + ":");
+            String melhorCl = null;
+            double melhor = 0;
+            for (String cl : cont.keySet()) {  // TreeMap: ordem alfabética, como o sorted() do Python
+                double s = Math.log((double) ncls.get(cl) / n);
+                HashMap<String, Integer> c = cont.get(cl);
+                int t = total.get(cl);
+                for (String w : x) s += Math.log((c.getOrDefault(w, 0) + 1.0) / (t + 1.0 * v));
+                esc.append(' ').append(Double.toHexString(s));
+                if (melhorCl == null || s > melhor) { melhor = s; melhorCl = cl; }
+            }
+            prev.append(melhorCl);
+            if (melhorCl.equals(y)) acertos++;
+            if (i < 50) linhas.add(esc.toString());
+            i++;
+        }
+        byte[] h = MessageDigest.getInstance("SHA-256").digest(prev.toString().getBytes(StandardCharsets.UTF_8));
+        StringBuilder sb = new StringBuilder();
+        for (byte b : h) sb.append(String.format("%02x", b));
+        System.out.println("acertos = " + acertos + " de " + teste.size() + "; sha = " + sb);
+        for (String l : linhas) System.out.println(l);
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/registro/Rodada09Libm.java  (115 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/Rodada09Libm.java'] = """// Rodada 9 do diálogo Python <-> Java: a média bayesiana de modelos (ThompsonMistura) em Java. Reusa a atualização da
+// rodada 8 para cada modelo e soma os logs das preditivas. Tudo o que o Python soma com sum() é somado aqui com a soma
+// compensada (rodada 5); exp e log são os da classe Math. Uso: java Rodada09
+import java.util.*;
+
+public class Rodada09Libm {
+    static long x = 909L;
+    static final long A = 6364136223846793005L, C = 1442695040888963407L;
+
+    static double uniforme() {
+        x = A * x + C;
+        return (x >>> 11) * 0x1.0p-53;
+    }
+
+    static double soma(double[] v) {
+        double s = 0.0, c = 0.0;
+        for (double y : v) {
+            double t = s + y;
+            if (Math.abs(s) >= Math.abs(y)) c += (s - t) + y; else c += (y - t) + s;
+            s = t;
+        }
+        return s + c;
+    }
+
+    static double somaPesos(List<double[]> hs) {
+        double[] v = new double[hs.size()];
+        for (int i = 0; i < v.length; i++) v[i] = hs.get(i)[0];
+        return soma(v);
+    }
+
+    static void cortar(List<double[]> hs, int n) {
+        hs.sort((p, q) -> Double.compare(-p[0], -q[0]));
+        while (hs.size() > n) hs.remove(hs.size() - 1);
+    }
+
+    // um ThompsonBOCPD: k braços, cada um uma lista de hipóteses {peso, a, b}
+    static void atualizarBOCPD(List<List<double[]>> mist, double H, int br, int r, int n) {
+        for (List<double[]> hs : mist) {
+            for (double[] h : hs) h[0] *= 1 - H;
+            boolean achou = false;
+            for (double[] h : hs) if (h[1] == 1.0 && h[2] == 1.0) { h[0] += H; achou = true; break; }
+            if (!achou) hs.add(new double[]{H, 1.0, 1.0});
+        }
+        List<double[]> hs = mist.get(br);
+        for (double[] h : hs) {
+            h[0] *= (r == 1 ? h[1] : h[2]) / (h[1] + h[2]);
+            if (r == 1) h[1] += 1; else h[2] += 1;
+        }
+        cortar(hs, n);
+        double tot = somaPesos(hs);
+        for (double[] h : hs) h[0] /= tot;
+        for (int i = 0; i < mist.size(); i++) {
+            List<double[]> o = mist.get(i);
+            if (i != br && o.size() > n) {
+                cortar(o, n);
+                double t2 = somaPesos(o);
+                for (double[] h : o) h[0] /= t2;
+            }
+        }
+    }
+
+    static double[] pesos(double[] logw) {
+        double m = logw[0];
+        for (double v : logw) m = Math.max(m, v);
+        double[] e = new double[logw.length];
+        for (int i = 0; i < e.length; i++) e[i] = Math.exp(logw[i] - m);
+        double t = soma(e);
+        for (int i = 0; i < e.length; i++) e[i] /= t;
+        return e;
+    }
+
+    public static void main(String[] args) {
+        int k = 3, n = 16;
+        double[] riscos = {0.0, 1.0 / 2000, 1.0 / 500, 1.0 / 100};
+        List<List<List<double[]>>> modelos = new ArrayList<>();
+        for (double H : riscos) {
+            List<List<double[]>> mist = new ArrayList<>();
+            for (int i = 0; i < k; i++) mist.add(new ArrayList<>(List.of(new double[]{1.0, 1.0, 1.0})));
+            modelos.add(mist);
+        }
+        double[] logw = new double[4], perda = new double[4];
+        double perdaMistura = 0.0;
+        for (int passo = 0; passo < 1200; passo++) {
+            double[] ps = passo < 600 ? new double[]{0.2, 0.5, 0.8} : new double[]{0.8, 0.5, 0.2};
+            int br = passo % 3;
+            int r = uniforme() < ps[br] ? 1 : 0;
+            double[] ws = pesos(logw), preds = new double[4];
+            for (int m = 0; m < 4; m++) {
+                List<double[]> hs = modelos.get(m).get(br);
+                double[] termos = new double[hs.size()];
+                for (int i = 0; i < termos.length; i++) {
+                    double[] h = hs.get(i);
+                    termos[i] = h[0] * ((r == 1 ? h[1] : h[2]) / (h[1] + h[2]));
+                }
+                preds[m] = (1 - riscos[m]) * soma(termos) + riscos[m] * 0.5;
+            }
+            double[] wp = new double[4];
+            for (int m = 0; m < 4; m++) wp[m] = ws[m] * preds[m];
+            perdaMistura -= Math.log(soma(wp));
+            for (int m = 0; m < 4; m++) { logw[m] += Math.log(preds[m]); perda[m] -= Math.log(preds[m]); }
+            for (int m = 0; m < 4; m++) atualizarBOCPD(modelos.get(m), riscos[m], br, r, n);
+        }
+        StringBuilder a = new StringBuilder("logw ="), b = new StringBuilder("perda ="), c = new StringBuilder("pesos =");
+        double[] ws = pesos(logw);
+        for (int m = 0; m < 4; m++) {
+            a.append(' ').append(Double.toHexString(logw[m]));
+            b.append(' ').append(Double.toHexString(perda[m]));
+            c.append(' ').append(Double.toHexString(ws[m]));
+        }
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println("perda da mistura = " + Double.toHexString(perdaMistura));
+        System.out.println(c);
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/registro/Rodada14Libm.java  (46 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/Rodada14Libm.java'] = """// Rodada 14 do diálogo Python <-> Java: os trigramas de letras que carregam significado (animal ou não), a partir de
+// PASTA/formas14.txt. Cada lema conta cada trigrama UMA vez (o frozenset do Python); a lista "menos animais" é a ordem
+// crescente invertida da lista ordenada, como o ok[::-1] do Python (o que inverte também a ordem dos empates).
+// Uso: java Rodada14 PASTA
+import java.io.PrintStream;
+import java.io.FileOutputStream;
+import java.io.FileDescriptor;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada14Libm {
+    static Set<String> trigramas(String lema) {
+        String x = "^" + lema.toLowerCase(Locale.ROOT) + "$";
+        Set<String> r = new HashSet<>();
+        for (int i = 0; i + 3 <= x.length(); i++) r.add(x.substring(i, i + 3));
+        return r;
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, StandardCharsets.UTF_8));
+        Map<String, Integer> ca = new HashMap<>(), co = new HashMap<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "formas14.txt"), StandardCharsets.UTF_8)) {
+            int tab = l.indexOf('\\t');
+            Map<String, Integer> alvo = l.substring(0, tab).equals("1") ? ca : co;
+            for (String t : trigramas(l.substring(tab + 1))) alvo.merge(t, 1, Integer::sum);
+        }
+        Set<String> voc = new HashSet<>(ca.keySet());
+        voc.addAll(co.keySet());
+        long na = 0, no = 0;
+        for (int c : ca.values()) na += c;
+        for (int c : co.values()) no += c;
+        int v = voc.size();
+        Map<String, Double> peso = new HashMap<>();
+        for (String t : voc)
+            peso.put(t, Math.log((ca.getOrDefault(t, 0) + 1) / (double) (na + v)) - Math.log((co.getOrDefault(t, 0) + 1) / (double) (no + v)));
+        List<String> ok = new ArrayList<>();
+        for (String t : voc) if (ca.getOrDefault(t, 0) + co.getOrDefault(t, 0) >= 10) ok.add(t);
+        ok.sort((p, q) -> { int c = Double.compare(-peso.get(p), -peso.get(q)); return c != 0 ? c : p.compareTo(q); });
+        List<String> inv = new ArrayList<>(ok);
+        Collections.reverse(inv);
+        System.out.println("trigramas distintos = " + v + "; dae = " + Double.toHexString(peso.get("dae")) + "; ae$ = " + Double.toHexString(peso.get("ae$")));
+        System.out.println("mais animais: " + String.join(" ", ok.subList(0, 12)));
+        System.out.println("menos animais: " + String.join(" ", inv.subList(0, 12)));
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/registro/Rodada18Libm.java  (73 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/Rodada18Libm.java'] = """// Rodada 18 do diálogo Python <-> Java: reconstruir as perguntas a partir só dos números. A lista de documentos vem de
+// docs18.txt (escrito por rodada18.py --preparar); os textos são lidos da raiz do repositório. Uso: java Rodada18 PASTA
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+import java.util.regex.*;
+
+public class Rodada18Libm {
+    static final Pattern ROTULO = Pattern.compile("P[0-9]+|0x[0-9A-Fa-f]+");
+    static final Pattern NUMERO = Pattern.compile("[0-9][0-9.,]*[0-9]|[0-9]");
+
+    static TreeSet<String> numeros(String texto) {
+        TreeSet<String> res = new TreeSet<>();
+        Matcher m = NUMERO.matcher(ROTULO.matcher(texto).replaceAll(" "));
+        while (m.find()) {
+            String d = m.group().replace(".", "").replace(",", "").replaceFirst("^0+", "");
+            if (d.length() >= 3) res.add(d);
+        }
+        return res;
+    }
+
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        TreeMap<Integer, String> docs = new TreeMap<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "docs18.txt"), StandardCharsets.UTF_8)) {
+            String[] p = l.split("\\t");
+            docs.put(Integer.parseInt(p[0]), p[1]);
+        }
+        TreeMap<Integer, StringBuilder> sec = new TreeMap<>();
+        int atual = 1;
+        sec.put(1, new StringBuilder());
+        boolean primeira = true;
+        Pattern cab = Pattern.compile("--- Parte ([0-9]+).*");
+        for (String linha : Files.readString(Path.of("resultados.txt"), StandardCharsets.UTF_8).split("\\n", -1)) {
+            Matcher m = cab.matcher(linha);
+            if (m.lookingAt()) {
+                atual = Integer.parseInt(m.group(1));
+                sec.put(atual, new StringBuilder());
+                primeira = true;
+            } else if (linha.startsWith("=== Unificacao")) {
+                break;
+            } else {
+                StringBuilder b = sec.get(atual);
+                if (!primeira) b.append("\\n");
+                b.append(linha);
+                primeira = false;
+            }
+        }
+        List<Integer> partes = new ArrayList<>();
+        for (int k : docs.keySet()) if (sec.containsKey(k)) partes.add(k);
+        HashMap<Integer, TreeSet<String>> dn = new HashMap<>();
+        HashMap<String, Integer> df = new HashMap<>();
+        for (int k : partes) {
+            dn.put(k, numeros(Files.readString(Path.of(docs.get(k)), StandardCharsets.UTF_8)));
+            for (String t : dn.get(k)) df.merge(t, 1, Integer::sum);
+        }
+        int K = partes.size(), acertos = 0;
+        for (int n : partes) {
+            TreeSet<String> r = numeros(sec.get(n).toString());
+            int melhor = -1;
+            double me = -1.0;
+            for (int k : partes) {
+                double s = 0.0;
+                for (String t : r) if (dn.get(k).contains(t)) s += Math.log((double) K / df.get(t));
+                if (s > me) { melhor = k; me = s; }
+            }
+            if (n == melhor) acertos++;
+            out.println("parte " + n + ": " + r.size() + " numeros; escolhe a parte " + melhor + "; escore = " + Double.toHexString(me));
+        }
+        out.println("acertos: " + acertos);
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/registro/Rodada19Libm.java  (73 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/Rodada19Libm.java'] = """// Rodada 19 do diálogo Python <-> Java: reconstruir a parte a partir só das palavras (sem rótulos, sem acentos pela NFD,
+// minúsculas, a-z com 4 letras ou mais). A lista de documentos vem de docs19.txt. Uso: java Rodada19 PASTA
+import java.io.PrintStream;
+import java.text.Normalizer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+import java.util.regex.*;
+
+public class Rodada19Libm {
+    static final Pattern ROTULO = Pattern.compile("P[0-9]+|0x[0-9A-Fa-f]+");
+    static final Pattern PALAVRA = Pattern.compile("[a-z]{4,}");
+
+    static TreeSet<String> numeros(String texto) {
+        String t = Normalizer.normalize(ROTULO.matcher(texto).replaceAll(" "), Normalizer.Form.NFD);
+        t = t.replaceAll("\\\\p{M}", "").toLowerCase(java.util.Locale.ROOT);
+        TreeSet<String> res = new TreeSet<>();
+        Matcher m = PALAVRA.matcher(t);
+        while (m.find()) res.add(m.group());
+        return res;
+    }
+
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        TreeMap<Integer, String> docs = new TreeMap<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "docs19.txt"), StandardCharsets.UTF_8)) {
+            String[] p = l.split("\\t");
+            docs.put(Integer.parseInt(p[0]), p[1]);
+        }
+        TreeMap<Integer, StringBuilder> sec = new TreeMap<>();
+        int atual = 1;
+        sec.put(1, new StringBuilder());
+        boolean primeira = true;
+        Pattern cab = Pattern.compile("--- Parte ([0-9]+).*");
+        for (String linha : Files.readString(Path.of("resultados.txt"), StandardCharsets.UTF_8).split("\\n", -1)) {
+            Matcher m = cab.matcher(linha);
+            if (m.lookingAt()) {
+                atual = Integer.parseInt(m.group(1));
+                sec.put(atual, new StringBuilder());
+                primeira = true;
+            } else if (linha.startsWith("=== Unificacao")) {
+                break;
+            } else {
+                StringBuilder b = sec.get(atual);
+                if (!primeira) b.append("\\n");
+                b.append(linha);
+                primeira = false;
+            }
+        }
+        List<Integer> partes = new ArrayList<>();
+        for (int k : docs.keySet()) if (sec.containsKey(k)) partes.add(k);
+        HashMap<Integer, TreeSet<String>> dn = new HashMap<>();
+        HashMap<String, Integer> df = new HashMap<>();
+        for (int k : partes) {
+            dn.put(k, numeros(Files.readString(Path.of(docs.get(k)), StandardCharsets.UTF_8)));
+            for (String t : dn.get(k)) df.merge(t, 1, Integer::sum);
+        }
+        int K = partes.size(), acertos = 0;
+        for (int n : partes) {
+            TreeSet<String> r = numeros(sec.get(n).toString());
+            int melhor = -1;
+            double me = -1.0;
+            for (int k : partes) {
+                double s = 0.0;
+                for (String t : r) if (dn.get(k).contains(t)) s += Math.log((double) K / df.get(t));
+                if (s > me) { melhor = k; me = s; }
+            }
+            if (n == melhor) acertos++;
+            out.println("parte " + n + ": " + r.size() + " palavras; escolhe a parte " + melhor + "; escore = " + Double.toHexString(me));
+        }
+        out.println("acertos: " + acertos);
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/registro/Rodada20Libm.java  (66 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/Rodada20Libm.java'] = """// Rodada 20 do diálogo Python <-> Java: o Naive Bayes multinomial da Parte 34 (contagens, Laplace com alfa = 1) reconhece a
+// época de cada seção (Partes 1-20 = 1; 21-41 = 2), deixando uma de fora. As seções vêm de secoes20.txt (rodada20.py
+// --preparar). Uso: java Rodada20 PASTA
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada20Libm {
+    static class NaiveBayes {
+        final double alfa = 1.0;
+        final TreeMap<Integer, HashMap<String, Integer>> cont = new TreeMap<>();
+        final HashMap<Integer, Integer> total = new HashMap<>(), ncls = new HashMap<>();
+        final HashSet<String> vocab = new HashSet<>();
+
+        void aprender(String[] ps, int cl) {
+            HashMap<String, Integer> c = cont.computeIfAbsent(cl, k -> new HashMap<>());
+            for (String w : ps) { c.merge(w, 1, Integer::sum); vocab.add(w); }
+            total.merge(cl, ps.length, Integer::sum);
+            ncls.merge(cl, 1, Integer::sum);
+        }
+
+        double escore(int cl, String[] ps) {
+            int n = 0;
+            for (int x : ncls.values()) n += x;
+            int v = vocab.isEmpty() ? 1 : vocab.size();
+            double sc = Math.log((double) ncls.get(cl) / n);
+            HashMap<String, Integer> c = cont.get(cl);
+            int t = total.get(cl);
+            for (String w : ps) sc += Math.log((c.getOrDefault(w, 0) + alfa) / (t + alfa * v));
+            return sc;
+        }
+
+        int prever(String[] ps) {
+            Double melhor = null;
+            int arg = -1;
+            for (int cl : cont.keySet()) {
+                double sc = escore(cl, ps);
+                if (melhor == null || sc > melhor) { melhor = sc; arg = cl; }
+            }
+            return arg;
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        List<int[]> rot = new ArrayList<>();
+        List<String[]> pal = new ArrayList<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "secoes20.txt"), StandardCharsets.US_ASCII)) {
+            String[] p = l.split("\\t", -1);
+            rot.add(new int[]{Integer.parseInt(p[0]), Integer.parseInt(p[1])});
+            pal.add(p[2].isEmpty() ? new String[0] : p[2].split(" "));
+        }
+        int acertos = 0;
+        for (int i = 0; i < rot.size(); i++) {
+            NaiveBayes nb = new NaiveBayes();
+            for (int j = 0; j < rot.size(); j++) if (j != i) nb.aprender(pal.get(j), rot.get(j)[1]);
+            int prev = nb.prever(pal.get(i));
+            if (prev == rot.get(i)[1]) acertos++;
+            double dif = nb.escore(1, pal.get(i)) - nb.escore(2, pal.get(i));
+            out.println("parte " + rot.get(i)[0] + ": epoca " + rot.get(i)[1] + "; prevista " + prev
+                    + "; escore(1) - escore(2) = " + Double.toHexString(dif));
+        }
+        out.println("acertos: " + acertos);
+    }
+}
 """
 
 # ====================================================================================================
@@ -47046,6 +56261,45 @@ public class Rodada23Libm {
         int n = 0;
         for (int i = 0; i + L < sim.length; i++) { t += sim[i][i + L]; n++; }
         return t / n;
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/registro/Rodada24Libm.java  (34 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/Rodada24Libm.java'] = """// Rodada 24 do diálogo Python <-> Java: a pergunta reconhece a sua resposta? O texto pós-ASI contra os documentos das
+// Partes 1-49 (palavras em docs24.txt e texto24.txt, escritos por rodada24.py --preparar), soma de ln(K/df).
+// Uso: java Rodada24 PASTA
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+
+public class Rodada24Libm {
+    public static void main(String[] args) throws Exception {
+        PrintStream out = new PrintStream(System.out, true, "UTF-8");
+        List<Integer> partes = new ArrayList<>();
+        List<String[]> ws = new ArrayList<>();
+        for (String l : Files.readAllLines(Path.of(args[0], "docs24.txt"), StandardCharsets.US_ASCII)) {
+            String[] p = l.split("\\t", -1);
+            partes.add(Integer.parseInt(p[0]));
+            ws.add(p[1].isEmpty() ? new String[0] : p[1].split(" "));
+        }
+        String lt = Files.readAllLines(Path.of(args[0], "texto24.txt"), StandardCharsets.US_ASCII).get(0);
+        HashSet<String> t = new HashSet<>(Arrays.asList(lt.isEmpty() ? new String[0] : lt.split(" ")));
+        int K = partes.size();
+        HashMap<String, Integer> df = new HashMap<>();
+        for (String[] a : ws) for (String w : a) df.merge(w, 1, Integer::sum);
+        int melhor = -1;
+        double me = -1.0;
+        for (int i = 0; i < K; i++) {
+            double s = 0.0;
+            for (String w : ws.get(i)) if (t.contains(w)) s += Math.log((double) K / df.get(w));
+            out.println("parte " + partes.get(i) + ": escore = " + Double.toHexString(s));
+            if (s > me) { melhor = partes.get(i); me = s; }
+        }
+        out.println("o texto escolhe a parte " + melhor);
     }
 }
 """
@@ -47310,6 +56564,367 @@ public class Rodada26Libm {
 """
 
 # ====================================================================================================
+# dialogo/registro/rodada06_libm.py  (39 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/rodada06_libm.py'] = """\"\"\"Rodada 6 do diálogo Python <-> Java: o Naive Bayes com pares de palavras (P492) treinado nas tarefas A e B do dicionário
+e testado no teste de A. Com `--preparar PASTA`, escreve os exemplos (classe, TAB, atributos separados por espaço) em
+PASTA/treino06.txt e PASTA/teste06.txt, que o Java lê. Imprime a acurácia, o SHA-256 das previsões e os escores das 4
+classes nos 50 primeiros exemplos, em hexadecimal. Rodar da raiz do repositório: python3 dialogo/rodada06.py\"\"\"
+
+import hashlib
+import os
+import sys
+from math import log
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import calculos  # noqa: E402
+from synthai.dicionario import NaiveBayesContagens  # noqa: E402
+
+A, B, teste = calculos._dados_464(bigramas=True)
+if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+    for nome, dados in (("treino06.txt", A + B), ("teste06.txt", teste)):
+        with open(os.path.join(sys.argv[2], nome), "w", encoding="utf-8") as f:
+            for x, y in dados:
+                f.write(y + "\\t" + " ".join(x) + "\\n")
+    sys.exit(0)
+m = NaiveBayesContagens()
+for x, y in A + B:
+    m.aprender(x, y)
+prev = [m.prever(x) for x, _ in teste]
+acertos = sum(p == y for p, (_, y) in zip(prev, teste))
+print(f"acertos = {acertos} de {len(teste)}; sha = {hashlib.sha256(''.join(prev).encode()).hexdigest()}")
+n = sum(m.ncls.values())
+v = len(m.vocab)
+for i, (x, _) in enumerate(teste[:50]):
+    esc = []
+    for cl in sorted(m.ncls):
+        s = log(m.ncls[cl] / n)
+        c, t = m.cont[cl], m.total[cl]
+        for w in x:
+            s += log((c.get(w, 0) + m.alfa) / (t + m.alfa * v))
+        esc.append(s.hex())
+    print(f"{i}: " + " ".join(esc))
+"""
+
+# ====================================================================================================
+# dialogo/registro/rodada09_libm.py  (25 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/rodada09_libm.py'] = """\"\"\"Rodada 9 do diálogo Python <-> Java: a média bayesiana de modelos (synthai/decisao.py, ThompsonMistura, P541): quatro
+ThompsonBOCPD com H em {0, 1/2000, 1/500, 1/100}, pesos pela soma dos logs das preditivas. Três braços em rodízio,
+recompensas do gerador da rodada 5 (semente 909), médias trocadas no passo 600. Imprime os log-pesos, as perdas de cada
+modelo e a da mistura, e os pesos normalizados, em hexadecimal. Rodar da raiz: python3 dialogo/rodada09.py\"\"\"
+
+import os
+import random
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from rodada05 import LCG  # noqa: E402
+from synthai.decisao import ThompsonMistura  # noqa: E402
+
+g = LCG(909)
+t = ThompsonMistura(3, random.Random(0))
+for passo in range(1200):
+    ps = (0.2, 0.5, 0.8) if passo < 600 else (0.8, 0.5, 0.2)
+    braco = passo % 3
+    t.atualizar(braco, 1 if g.uniforme() < ps[braco] else 0)
+print("logw = " + " ".join(x.hex() for x in t.logw))
+print("perda = " + " ".join(x.hex() for x in t.perda))
+print("perda da mistura = " + t.perda_mistura.hex())
+print("pesos = " + " ".join(x.hex() for x in t.pesos()))
+"""
+
+# ====================================================================================================
+# dialogo/registro/rodada14_libm.py  (27 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/rodada14_libm.py'] = """\"\"\"Rodada 14 do diálogo Python <-> Java: os trigramas de letras que mais carregam significado (P732): o log da razão de
+chances (Laplace) de cada trigrama do lema entre 4017 animais e 4017 outros substantivos. Com `--preparar PASTA`, escreve
+PASTA/formas14.txt (rótulo TAB lema), que o Java lê. Rodar da raiz do repositório: python3 dialogo/rodada14.py\"\"\"
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import calculos  # noqa: E402
+
+
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        with open(os.path.join(sys.argv[2], "formas14.txt"), "w", encoding="utf-8") as f:
+            for lema, y in calculos._formas_732():
+                f.write(f"{y}\\t{lema}\\n")
+        return
+    animais, outros, dae, ae, v = calculos.p732_trigramas()
+    from math import log  # noqa: F401  (os pesos vêm de calculos.p732_trigramas)
+    print(f"trigramas distintos = {v}; dae = {dae.hex()}; ae$ = {ae.hex()}")
+    print("mais animais: " + " ".join(animais))
+    print("menos animais: " + " ".join(outros))
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/registro/rodada18_libm.py  (86 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/rodada18_libm.py'] = """\"\"\"Rodada 18 do diálogo Python <-> Java: reconstruir as perguntas a partir só dos números. Para cada parte com documento e
+seção no resultados.txt, tiram-se os rótulos (Pnnn, 0x...) e ficam os números (só os dígitos, sem zeros à esquerda, 3 ou
+mais); cada seção escolhe o documento com a maior soma de ln(K/df) sobre os números em comum. Com `--preparar PASTA`,
+escreve PASTA/docs18.txt (parte TAB arquivo), que o Java lê. Rodar da raiz do repositório: python3 dialogo/rodada18.py\"\"\"
+
+import glob
+import math
+import os
+import re
+import sys
+
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROTULO = re.compile(r"P[0-9]+|0x[0-9A-Fa-f]+")
+NUMERO = re.compile(r"[0-9][0-9.,]*[0-9]|[0-9]")
+
+
+def documentos():
+    docs = {1: "ASI_AGI_perguntas_e_respostas.md"}
+    for f in glob.glob(os.path.join(RAIZ, "ASI_AGI_parte*.md")):
+        nome = os.path.basename(f)
+        docs[int(re.match(r"ASI_AGI_parte([0-9]+)_", nome).group(1))] = nome
+    return docs
+
+
+def numeros(texto):
+    res = set()
+    for x in NUMERO.findall(ROTULO.sub(" ", texto)):
+        d = x.replace(".", "").replace(",", "").lstrip("0")
+        if len(d) >= 3:
+            res.add(d)
+    return res
+
+
+def secoes():
+    sec, atual = {1: []}, 1
+    for linha in open(os.path.join(RAIZ, "resultados.txt"), encoding="utf-8").read().split("\\n"):
+        m = re.match(r"--- Parte ([0-9]+)", linha)
+        if m:
+            atual = int(m.group(1))
+            sec[atual] = []
+        elif linha.startswith("=== Unificacao"):
+            break
+        else:
+            sec[atual].append(linha)
+    return {k: "\\n".join(v) for k, v in sec.items()}
+
+
+def reconstruir(docs):
+    sec = secoes()
+    partes = sorted(k for k in docs if k in sec)
+    dn = {k: numeros(open(os.path.join(RAIZ, docs[k]), encoding="utf-8").read()) for k in partes}
+    df = {}
+    for k in partes:
+        for t in dn[k]:
+            df[t] = df.get(t, 0) + 1
+    K = len(partes)
+    res = []
+    for n in partes:
+        r = numeros(sec[n])
+        melhor, me = None, -1.0
+        for k in partes:
+            s = 0.0
+            for t in sorted(r & dn[k]):
+                s += math.log(K / df[t])
+            if s > me:
+                melhor, me = k, s
+        res.append((n, melhor, me, len(r)))
+    return res
+
+
+def main():
+    docs = documentos()
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        with open(os.path.join(sys.argv[2], "docs18.txt"), "w", encoding="utf-8") as f:
+            for k in sorted(docs):
+                f.write(f"{k}\\t{docs[k]}\\n")
+        return
+    acertos = 0
+    for n, k, s, m in reconstruir(docs):
+        acertos += n == k
+        print(f"parte {n}: {m} numeros; escolhe a parte {k}; escore = {s.hex()}")
+    print(f"acertos: {acertos}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/registro/rodada19_libm.py  (85 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/rodada19_libm.py'] = """\"\"\"Rodada 19 do diálogo Python <-> Java: reconstruir a parte a partir só das PALAVRAS (a Rodada 18 usou os números). Tiram-se
+os rótulos (Pnnn, 0x...), os acentos (NFD sem as marcas combinantes), minúsculas, e ficam as palavras a-z de 4 letras ou mais;
+o resto é a Rodada 18 (soma de ln(K/df), empate para a menor parte). Com `--preparar PASTA`, escreve PASTA/docs19.txt.
+Rodar da raiz do repositório: python3 dialogo/rodada19.py\"\"\"
+
+import glob
+import math
+import os
+import re
+import sys
+import unicodedata
+
+RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROTULO = re.compile(r"P[0-9]+|0x[0-9A-Fa-f]+")
+PALAVRA = re.compile(r"[a-z]{4,}")
+
+
+def documentos():
+    docs = {1: "ASI_AGI_perguntas_e_respostas.md"}
+    for f in glob.glob(os.path.join(RAIZ, "ASI_AGI_parte*.md")):
+        nome = os.path.basename(f)
+        docs[int(re.match(r"ASI_AGI_parte([0-9]+)_", nome).group(1))] = nome
+    return docs
+
+
+def numeros(texto):
+    \"\"\"As palavras (o nome ficou da Rodada 18, para o resto do código ser o mesmo).\"\"\"
+    t = unicodedata.normalize("NFD", ROTULO.sub(" ", texto))
+    t = "".join(c for c in t if not unicodedata.category(c).startswith("M")).lower()
+    return set(PALAVRA.findall(t))
+
+
+def secoes():
+    sec, atual = {1: []}, 1
+    for linha in open(os.path.join(RAIZ, "resultados.txt"), encoding="utf-8").read().split("\\n"):
+        m = re.match(r"--- Parte ([0-9]+)", linha)
+        if m:
+            atual = int(m.group(1))
+            sec[atual] = []
+        elif linha.startswith("=== Unificacao"):
+            break
+        else:
+            sec[atual].append(linha)
+    return {k: "\\n".join(v) for k, v in sec.items()}
+
+
+def reconstruir(docs):
+    sec = secoes()
+    partes = sorted(k for k in docs if k in sec)
+    dn = {k: numeros(open(os.path.join(RAIZ, docs[k]), encoding="utf-8").read()) for k in partes}
+    df = {}
+    for k in partes:
+        for t in dn[k]:
+            df[t] = df.get(t, 0) + 1
+    K = len(partes)
+    res = []
+    for n in partes:
+        r = numeros(sec[n])
+        melhor, me = None, -1.0
+        for k in partes:
+            s = 0.0
+            for t in sorted(r & dn[k]):
+                s += math.log(K / df[t])
+            if s > me:
+                melhor, me = k, s
+        res.append((n, melhor, me, len(r)))
+    return res
+
+
+def main():
+    docs = documentos()
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        with open(os.path.join(sys.argv[2], "docs19.txt"), "w", encoding="utf-8") as f:
+            for k in sorted(docs):
+                f.write(f"{k}\\t{docs[k]}\\n")
+        return
+    acertos = 0
+    for n, k, s, m in reconstruir(docs):
+        acertos += n == k
+        print(f"parte {n}: {m} palavras; escolhe a parte {k}; escore = {s.hex()}")
+    print(f"acertos: {acertos}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/registro/rodada20_libm.py  (69 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/rodada20_libm.py'] = """\"\"\"Rodada 20 do diálogo Python <-> Java: o Naive Bayes da Parte 34 (synthai.dicionario.NaiveBayesContagens) reconhece a
+época de cada seção do resultados.txt (Partes 1-20 = 1; 21-41 = 2), deixando uma de fora? As palavras são as da Rodada 19,
+com repetição. Com `--preparar PASTA`, escreve PASTA/secoes20.txt (parte TAB época TAB palavras separadas por espaço), que
+o Java lê. Rodar da raiz do repositório: python3 dialogo/rodada20.py\"\"\"
+
+import importlib.util
+import os
+import sys
+import unicodedata
+from math import log
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(AQUI))
+from synthai.dicionario import NaiveBayesContagens  # noqa: E402
+
+_spec = importlib.util.spec_from_file_location("rodada19", os.path.join(AQUI, "rodada19.py"))
+r19 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r19)
+
+
+def palavras(texto):
+    t = unicodedata.normalize("NFD", r19.ROTULO.sub(" ", texto))
+    t = "".join(c for c in t if not unicodedata.category(c).startswith("M")).lower()
+    return r19.PALAVRA.findall(t)
+
+
+def dados():
+    docs, sec = r19.documentos(), r19.secoes()
+    return [(n, 1 if n <= 20 else 2, palavras(sec[n])) for n in sorted(k for k in docs if k in sec)]
+
+
+def escore(nb, cl, ps):
+    \"\"\"O escore de uma classe, como em NaiveBayesContagens.prever.\"\"\"
+    n = sum(nb.ncls.values())
+    v = len(nb.vocab) or 1
+    sc = log(nb.ncls[cl] / n)
+    c, t = nb.cont[cl], nb.total[cl]
+    for w in ps:
+        sc += log((c.get(w, 0) + nb.alfa) / (t + nb.alfa * v))
+    return sc
+
+
+def deixar_um_de_fora(ds):
+    res = []
+    for i, (n, ep, ps) in enumerate(ds):
+        nb = NaiveBayesContagens()
+        for j, (_, ep2, ps2) in enumerate(ds):
+            if j != i:
+                nb.aprender(ps2, ep2)
+        res.append((n, ep, nb.prever(ps), escore(nb, 1, ps) - escore(nb, 2, ps)))
+    return res
+
+
+def main():
+    ds = dados()
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        with open(os.path.join(sys.argv[2], "secoes20.txt"), "w", encoding="ascii") as f:
+            for n, ep, ps in ds:
+                f.write(f"{n}\\t{ep}\\t{' '.join(ps)}\\n")
+        return
+    acertos = 0
+    for n, ep, prev, dif in deixar_um_de_fora(ds):
+        acertos += ep == prev
+        print(f"parte {n}: epoca {ep}; prevista {prev}; escore(1) - escore(2) = {dif.hex()}")
+    print(f"acertos: {acertos}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
 # dialogo/registro/rodada21_libm.py  (84 linhas)
 # ====================================================================================================
 FONTES['dialogo/registro/rodada21_libm.py'] = """\"\"\"Rodada 21 do diálogo Python <-> Java: a série é um ciclo? Semelhança entre as seções do resultados.txt (palavras da
@@ -47516,6 +57131,73 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
+# dialogo/registro/rodada24_libm.py  (62 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/rodada24_libm.py'] = """\"\"\"Rodada 24 do diálogo Python <-> Java: a pergunta reconhece a sua resposta? O texto pós-ASI (externos/pos_asi_texto_parte50.md,
+reenviado pelo usuário) é pontuado contra os documentos das Partes 1-49 com as palavras da Rodada 19 (soma de ln(K/df) sobre
+as palavras em comum; df contado nos documentos). Com `--preparar PASTA`, escreve PASTA/docs24.txt (parte TAB palavras) e
+PASTA/texto24.txt. Rodar da raiz do repositório: python3 dialogo/rodada24.py\"\"\"
+
+import importlib.util
+import math
+import os
+import sys
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+RAIZ = os.path.dirname(AQUI)
+_spec = importlib.util.spec_from_file_location("rodada19", os.path.join(AQUI, "rodada19.py"))
+r19 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r19)
+TEXTO = os.path.join(RAIZ, "externos", "pos_asi_texto_parte50.md")
+
+
+def dados(ate=49):
+    docs = r19.documentos()
+    ds = [(k, sorted(r19.numeros(open(os.path.join(RAIZ, docs[k]), encoding="utf-8").read()))) for k in sorted(docs) if k <= ate]
+    return ds, sorted(r19.numeros(open(TEXTO, encoding="utf-8").read()))
+
+
+def pontuar(ds, texto):
+    K = len(ds)
+    df = {}
+    for _, ws in ds:
+        for w in ws:
+            df[w] = df.get(w, 0) + 1
+    t = set(texto)
+    res = []
+    for k, ws in ds:
+        s = 0.0
+        for w in ws:
+            if w in t:
+                s += math.log(K / df[w])
+        res.append((k, s))
+    return res
+
+
+def main():
+    ds, texto = dados()
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        with open(os.path.join(sys.argv[2], "docs24.txt"), "w", encoding="ascii") as f:
+            for k, ws in ds:
+                f.write(f"{k}\\t{' '.join(ws)}\\n")
+        with open(os.path.join(sys.argv[2], "texto24.txt"), "w", encoding="ascii") as f:
+            f.write(" ".join(texto) + "\\n")
+        return
+    res = pontuar(ds, texto)
+    for k, s in res:
+        print(f"parte {k}: escore = {s.hex()}")
+    melhor, me = None, -1.0
+    for k, s in res:
+        if s > me:
+            melhor, me = k, s
+    print(f"o texto escolhe a parte {melhor}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
 # dialogo/registro/rodada25_libm.py  (81 linhas)
 # ====================================================================================================
 FONTES['dialogo/registro/rodada25_libm.py'] = """\"\"\"Rodada 25 do diálogo Python <-> Java: duas memórias (curta e longa) ou uma potência? A curva média da Rodada 22 (L = 1..20)
@@ -47702,6 +57384,118 @@ def main():
     print(f"inicio: sse = {erro([math.log(A), math.log(B), t1, t2], ly).hex()}")
     print(f"em log: A = {math.exp(th[0]).hex()}; B = {math.exp(th[1]).hex()}; t1 = {th[2].hex()}; t2 = {th[3].hex()}; sse = {sse.hex()}")
     print(f"aic = {r25.aic(sse, 20, 4).hex()}; limiar para vencer a potencia = {(0.3095 * math.exp(-0.2)).hex()}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/registro/rodada30_libm.py  (107 linhas)
+# ====================================================================================================
+FONTES['dialogo/registro/rodada30_libm.py'] = """\"\"\"Rodada 30 do diálogo Python <-> Java: os empates nas escolhas das rodadas antigas. Para as rodadas que escolhem (12, 14,
+18, 19, 20, 24), recalcula os valores de que a escolha impressa depende: nas listas ordenadas, os valores dos k primeiros e
+do (k+1)-ésimo (a fronteira); nos máximos, o melhor e o segundo. Um empate é um par de vizinhos com o MESMO valor bit a bit:
+a escolha entre eles é decidida pela regra de desempate, não pelo valor. Com `--preparar PASTA` escreve PASTA/valores30.txt
+(rodada TAB grupo TAB valores em hexadecimal); sem argumento, conta os empates a partir do mesmo arquivo gerado em memória.
+Rodar da raiz do repositório: python3 dialogo/rodada30.py\"\"\"
+
+import importlib.util
+import math
+import os
+import sys
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+RAIZ = os.path.dirname(AQUI)
+sys.path.insert(0, RAIZ)
+
+
+def _carregar(nome):
+    spec = importlib.util.spec_from_file_location(nome, os.path.join(AQUI, nome + ".py"))
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+def grupos():
+    \"\"\"[(rodada, grupo, [valores em ordem de escolha])].\"\"\"
+    import calculos
+    from synthai.engenharia_reversa import padroes_repetidos
+    from synthai.semiotica import trigramas_de_forma
+    res = []
+    # 12: os 12 4-gramas (documentos, ocorrências) e o 13º, a fronteira; o valor é documentos·10⁶ + ocorrências (exato em double)
+    docs, _ = calculos._meus_textos()
+    res.append(("12", "4-gramas", [float(nd * 1000000 + nt) for _, nd, nt in padroes_repetidos(docs, 4, topo=13)]))
+    # 14: os pesos da P732 (o mesmo cálculo de calculos.p732_trigramas), os 13 mais e os 13 menos "animais"
+    ca, co = {}, {}
+    for lema, y in calculos._formas_732():
+        for t in trigramas_de_forma(lema):
+            (ca if y else co)[t] = (ca if y else co).get(t, 0) + 1
+    voc = set(ca) | set(co)
+    na, no, v = sum(ca.values()), sum(co.values()), len(voc)
+    peso = {t: math.log((ca.get(t, 0) + 1) / (na + v)) - math.log((co.get(t, 0) + 1) / (no + v)) for t in voc}
+    ok = sorted((t for t in voc if ca.get(t, 0) + co.get(t, 0) >= 10), key=lambda t: (-peso[t], t))
+    res.append(("14", "mais-animais", [peso[t] for t in ok[:13]]))
+    res.append(("14", "menos-animais", [peso[t] for t in ok[::-1][:13]]))
+    # 18 e 19: em cada seção, o melhor e o segundo escore entre os documentos
+    for nome in ("rodada18", "rodada19"):
+        r = _carregar(nome)
+        dc, sec = r.documentos(), r.secoes()
+        partes = sorted(k for k in dc if k in sec)
+        dn = {k: r.numeros(open(os.path.join(RAIZ, dc[k]), encoding="utf-8").read()) for k in partes}
+        df = {}
+        for k in partes:
+            for t in dn[k]:
+                df[t] = df.get(t, 0) + 1
+        for n in partes:
+            rr = r.numeros(sec[n])
+            esc = []
+            for k in partes:
+                s = 0.0
+                for t in sorted(rr & dn[k]):
+                    s += math.log(len(partes) / df[t])
+                esc.append(s)
+            esc.sort(reverse=True)
+            res.append((nome[-2:], f"parte{n}", esc[:2]))
+    # 20: a diferença de escore entre as duas épocas (empate = diferença zero: dois valores iguais, escore(1) e escore(2))
+    r20 = _carregar("rodada20")
+    for n, ep, pv, dif in r20.deixar_um_de_fora(r20.dados()):
+        res.append(("20", f"parte{n}", [dif, 0.0]))
+    # 24: o melhor e o segundo documento escolhidos pelo texto
+    r24 = _carregar("rodada24")
+    ds, texto = r24.dados()
+    esc = sorted((s for _, s in r24.pontuar(ds, texto)), reverse=True)
+    res.append(("24", "texto", esc[:2]))
+    return res
+
+
+def contar(linhas):
+    \"\"\"Empates por rodada: pares de vizinhos com o mesmo valor bit a bit, em cada grupo.\"\"\"
+    por = {}
+    for r, g, vals in linhas:
+        e = sum(1 for a, b in zip(vals, vals[1:]) if a == b)
+        por[r] = por.get(r, 0) + e
+    return por
+
+
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--preparar":
+        with open(os.path.join(sys.argv[2], "valores30.txt"), "w", encoding="ascii") as f:
+            for r, g, vals in grupos():
+                f.write(f"{r}\\t{g}\\t{' '.join(x.hex() for x in vals)}\\n")
+        return
+    linhas = []
+    if len(sys.argv) == 2:
+        for l in open(os.path.join(sys.argv[1], "valores30.txt"), encoding="ascii").read().split("\\n"):
+            if l:
+                r, g, vs = l.split("\\t")
+                linhas.append((r, g, [float.fromhex(x) for x in vs.split(" ")]))
+    else:
+        linhas = grupos()
+    por = contar(linhas)
+    for r in sorted(por):
+        print(f"rodada{r}: {por[r]} empates")
+    print(f"rodadas com empate na escolha impressa: {sum(1 for x in por.values() if x > 0)} de {len(por)}")
 
 
 if __name__ == "__main__":
@@ -110786,9 +120580,14 @@ def main(args):
     os.chdir(pasta)
     if args[:1] == ["--testes"]:
         import unittest
-        nomes = ["synthai." + n[len("synthai/"):-3] for n in FONTES if n.startswith("synthai/testes")]
+        nomes = [n[:-3].replace("/", ".") for n in FONTES
+                 if n.startswith("synthai/") and os.path.basename(n).startswith("testes") and n.endswith(".py")]
         suite = unittest.defaultTestLoader.loadTestsFromNames(nomes)
-        sys.exit(0 if unittest.TextTestRunner(verbosity=1).run(suite).wasSuccessful() else 1)
+        ok = unittest.TextTestRunner(verbosity=1).run(suite).wasSuccessful()
+        # o laboratório (Parte 82) tem a sua própria suíte, que roda como script na pasta dele
+        import subprocess
+        lab = subprocess.run([sys.executable, os.path.join(pasta, "laboratorio", "testar.py")], cwd=os.path.join(pasta, "laboratorio"))
+        sys.exit(0 if ok and lab.returncode == 0 else 1)
     if args[:1] == ["--demo"]:
         sys.argv = ["synthai"]
         runpy.run_module("synthai", run_name="__main__", alter_sys=True)

@@ -12,6 +12,12 @@ RAIZ = os.path.dirname(os.path.abspath(__file__))
 FONTES = ["calculos.py", "CLAUDE.md"] + sorted(
     os.path.join("synthai", f) for f in os.listdir(os.path.join(RAIZ, "synthai")) if f.endswith(".py")) + sorted(
     os.path.join("externos", f) for f in os.listdir(os.path.join(RAIZ, "externos")) if f.endswith(".py"))  # Parte 33
+FONTES += sorted(os.path.join("synthai", "revisado", f) for f in os.listdir(os.path.join(RAIZ, "synthai", "revisado"))
+                 if f.endswith(".py"))  # Parte 82: o pacote revisado recebido do usuário (versões corrigidas, ao lado das originais)
+FONTES += sorted(os.path.join("laboratorio", f) for f in os.listdir(os.path.join(RAIZ, "laboratorio"))
+                 if f.endswith((".py", ".md", ".json", ".log")))  # Parte 82: o laboratório do pacote recebido
+FONTES += sorted(os.path.relpath(os.path.join(d, f), RAIZ) for d, _, fs in os.walk(os.path.join(RAIZ, "documentacao"))
+                 for f in fs if f.endswith((".md", ".json", ".log")))  # Parte 82: a revisão técnica e os contratos
 
 
 def _textos_lidos_pelo_codigo():
@@ -42,6 +48,9 @@ Este arquivo contém, como texto, TODO o código do repositório GISELE:
     relação com o humano), os mundos, as réguas e as suítes de testes de unidade;
   - CLAUDE.md: as convenções do projeto (a P143 mede o tamanho dele);
   - dados/: o dicionário WordNet 3.0 (Parte 30) e o português da OpenWordNet-PT (Parte 39, CC BY 4.0), em base64, com as licenças;
+  - synthai/revisado/: as versões corrigidas recebidas do usuário na Parte 82 (abstenção em vez de escolher uma opção vetada, comparação
+    pareada sem +inf, selo do avaliador que cobre as dependências, aleatoriedade coordenada nos mundos), ao lado das originais;
+  - laboratorio/ e documentacao/: o laboratório (evidência sequencial e feedback persistente) e a revisão técnica com os contratos;
   - os textos que o código lê: os documentos das partes (ASI_AGI_*.md), o resultados.txt, e o diálogo Python <-> Java inteiro
     (dialogo/: as rodadas em Python, que as funções importam, e em Java, como texto; o DIALOGO.md).
 
@@ -49,7 +58,7 @@ Como rodar (só biblioteca padrão do Python 3):
   python3 SYNTHAI_completo.py              todas as partes (leva horas: melhor em blocos, como abaixo) e a unificação
   python3 SYNTHAI_completo.py 22 26        só as partes pedidas, e a unificação
   python3 SYNTHAI_completo.py --demo       a mesma SYNTHAI em três tipos de tarefa
-  python3 SYNTHAI_completo.py --testes     os testes de unidade do pacote
+  python3 SYNTHAI_completo.py --testes     os testes de unidade do pacote (e os do subpacote revisado e do laboratório)
   python3 SYNTHAI_completo.py --extrair P  recria os arquivos originais na pasta P
 
 Gerado por gerar_arquivo_unico.py a partir do repositório; não editar à mão.
@@ -90,9 +99,14 @@ def main(args):
     os.chdir(pasta)
     if args[:1] == ["--testes"]:
         import unittest
-        nomes = ["synthai." + n[len("synthai/"):-3] for n in FONTES if n.startswith("synthai/testes")]
+        nomes = [n[:-3].replace("/", ".") for n in FONTES
+                 if n.startswith("synthai/") and os.path.basename(n).startswith("testes") and n.endswith(".py")]
         suite = unittest.defaultTestLoader.loadTestsFromNames(nomes)
-        sys.exit(0 if unittest.TextTestRunner(verbosity=1).run(suite).wasSuccessful() else 1)
+        ok = unittest.TextTestRunner(verbosity=1).run(suite).wasSuccessful()
+        # o laboratório (Parte 82) tem a sua própria suíte, que roda como script na pasta dele
+        import subprocess
+        lab = subprocess.run([sys.executable, os.path.join(pasta, "laboratorio", "testar.py")], cwd=os.path.join(pasta, "laboratorio"))
+        sys.exit(0 if ok and lab.returncode == 0 else 1)
     if args[:1] == ["--demo"]:
         sys.argv = ["synthai"]
         runpy.run_module("synthai", run_name="__main__", alter_sys=True)

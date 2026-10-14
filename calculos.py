@@ -7484,7 +7484,8 @@ def testes_de_regressao():
         "P1612": p1612_animais_por_horn()[:4] == (4017, True, True, 4) and p1608_auditoria_estatica()[1] == ("test_engine", 7, 5, 8),
         "P1639": p1639_rodada47()[1:2] + p1639_rodada47()[4:5] == (958, 102) and abs(p1632_prioridade_contra_voi(20000, 74)[0] - 0.49995) < 1e-9,
         "P1663": p1663_rodada48()[3] == 172 and p1662_orcamento(semente=75)[2] == 0.62,
-        "P1692": p1692_godel_nas_funcoes()[1:3] == (584, 288) and p1691_laco_de_auto_modificacao(geracoes=2, separador_corrigido=True)[0][1:3] == (True, 2.8333333333333335),
+        # P1692 conta as funções do próprio calculos.py, que cresce (a regra da Parte 48): a entrada confere o invariante (aprova todas, inclusive as que a mutação muda), não o 584 da Parte 75
+        "P1692": (lambda r: r[1] == r[0] and r[3] == r[2] > 0)(p1692_godel_nas_funcoes()) and p1691_laco_de_auto_modificacao(geracoes=2, separador_corrigido=True)[0][1:3] == (True, 2.8333333333333335),
         "P1843": [round(x, 4) for x in p1843_rodada49()] == [0.8821, 0.9771, 0.7933, 0.91, 0.11],
         "P1811": [round(x, 4) for x in p1811_confusao()] == [0.9986, 0.4987, 0.4914],
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
@@ -11867,7 +11868,12 @@ def p1871_o_que_nao_serve():
     import re
     import subprocess
     raiz = os.path.dirname(os.path.abspath(__file__))
-    arquivos = [f for f in subprocess.run(["git", "ls-files"], cwd=raiz, capture_output=True, text=True, check=True).stdout.split("\n") if f]
+    git = subprocess.run(["git", "ls-files"], cwd=raiz, capture_output=True, text=True)
+    if git.returncode == 0:
+        arquivos = [f for f in git.stdout.split("\n") if f]
+    else:  # fora de um repositório git (o SYNTHAI_completo.py extraído numa pasta): percorrer a pasta
+        arquivos = sorted(os.path.relpath(os.path.join(d, f), raiz).replace(os.sep, "/") for d, sub, fs in os.walk(raiz)
+                          if "__pycache__" not in d and ".git" not in d for f in fs)
     texto = {f: open(os.path.join(raiz, f), encoding="utf-8").read() for f in arquivos
              if f != "SYNTHAI_completo.py" and not f.startswith("dados/") and f.endswith((".py", ".java", ".md", ".txt", ".tsv"))}
 

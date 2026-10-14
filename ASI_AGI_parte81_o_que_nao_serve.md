@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 81 (0x51): o que não serve
 
-> Continuação da [Parte 80](ASI_AGI_parte80_o_valor_de_um_conjunto.md). Pedido do usuário: **"Tire dos nossos trabalhos tudo que não serve pra nada."** Ele contraria a regra antiga "o `calculos.py`
+> Continuação da [Parte 80](ASI_AGI_parte80_o_valor_de_um_conjunto.md). **Próxima:** [Parte 82 — o pacote revisado](ASI_AGI_parte82_o_pacote_revisado.md). Pedido do usuário: **"Tire dos nossos trabalhos tudo que não serve pra nada."** Ele contraria a regra antiga "o `calculos.py`
 > só cresce; nunca apagar funções antigas", e, por ser o pedido mais recente, vale. O critério, escolhido pela regra mais conservadora (a regra de autonomia) e escrito antes de medir: **sai só o que
 > nada usa**, isto é, uma função, classe ou arquivo que nenhum código, teste, rodada ou documento do repositório referencia. **Ficam:** as funções `pNN` (cada número citado nos documentos sai de uma
 > delas), os documentos das partes (o registro histórico) e o que for referenciado. Tudo num commit só, reversível pelo git. A mesma mensagem trouxe de novo o relatório do Módulo 007 e o texto do
