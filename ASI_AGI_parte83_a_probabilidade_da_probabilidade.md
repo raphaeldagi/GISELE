@@ -24,3 +24,44 @@
 - **(m4)** a fração de acertos do mundo em **[0,40; 1,00]**
 - **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
 - **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71); o pedido é grande, mas o estatístico já cobre partes grandes |
+| compressão | **[0,397; 0,422]** | o estatístico |
+| testes de unidade | **[5 + S; 9 + S]** | cinco funções novas (o GAN, a moeda, a composição, a torre, a rodada 50), uma ou duas por função |
+| testes do placar | **9 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+**As restrições, listadas antes das contas.** O GAN de Dirac: os dados verdadeiros estão em 0, o gerador produz θ, o discriminador é D(x) = ψ·x, a perda é L(θ, ψ) = f(ψθ) + f(0) com f(t) = −log(1 + e^(−t));
+o gerador desce em θ, o discriminador sobe em ψ. A derivada f'(t) = 1/(1 + e^t) vale **1/2** no equilíbrio (0, 0), então perto dele o jogo é o bilinear L ≈ (1/2)·θψ, com a = η/2 = **0,05** para η = 0,1.
+Partida (θ, ψ) = (0,1; 0). As contas abaixo saíram de código (fórmulas, não simulação):
+- **síncrono** (os dois passos ao mesmo tempo): z_{t+1} = [[1, −a], [a, 1]]·z_t, uma matriz normal com |λ| = √(1 + a²): a norma cresce **o mesmo fator em todo passo**; depois de 1000 passos,
+  0,1·(1 + 0,0025)^500 = **0,3485**;
+- **alternado** (o gerador, depois o discriminador vendo o θ novo): z_{t+1} = [[1, −a], [a, 1 − a²]]·z_t, det = 1, traço = 2 − a²: os autovalores ficam no círculo unitário com
+  **cos φ = 1 − a²/2 = 1 − 2·sen²(φ/2)**, o cosseno do ângulo duplo, isto é, sen(φ/2) = a/2 e φ = 2·arcsen(0,025) = **0,050005** rad por passo. A órbita é a elipse invariante θ² + ψ² − aθψ = 0,01,
+  com norma máxima 0,1/√(1 − a/2) = **0,10127** e mínima 0,1/√(1 + a/2) = 0,09877;
+- **assíncrono** (a cada passo, uma moeda escolhe quem se move): cada passo é um cisalhamento de determinante 1. Pela expansão de segunda ordem de Δln r: com X = Δ(r²)/r², E[X] = a²/2 e
+  E[X²] = a²·sen²(2φ), então E[Δln r] = (a²/4)·cos²(2φ); como o ângulo anda em média a/2 por passo, constante, ele fica uniforme, e a média dá **a²/8** por passo; a variância de Δln r é a²/8 por passo.
+  Em 10.000 passos: média 10.000·0,0025/8 = **3,125**, desvio por corrida √3,125 = **1,768**; nas 200 corridas, o desvio da média é 1,768/√200 = **0,125**. O síncrono cresce (1/2)·ln(1 + a²) por passo:
+  em 10.000 passos, **12,48**, **4,0 vezes** o assíncrono; o alternado não cresce.
+
+- **(a)** GAN de Dirac síncrono, η = 0,1, 1000 passos: a norma final em **[0,338; 0,358]** (a conta linear dá 0,3485; o termo não linear de f' entra na quarta ordem)
+- **(b)** GAN de Dirac alternado, mesmos parâmetros: a norma máxima nos 1000 passos em **[0,1008; 0,1018]**
+- **(c)** GAN de Dirac alternado: o número de trocas de sinal de θ nos 1000 passos em **[15; 16]** (a conta dá 16: os zeros caem em t = (π/2 + kπ)/φ, o 16.º em 973,9 e o 17.º em 1036,7)
+- **(d)** o jogo linearizado (f' = 1/2) assíncrono por moeda, 10.000 passos, 200 corridas (sementes 83.000 a 83.199): a média de ln(|z_N|/|z_0|) em **[2,90; 3,35]**
+- **(e)** nas mesmas 200 corridas, quantas terminam com a norma MENOR que a inicial: **[2; 14]** (a conta normal dá 200·Φ(−3,125/1,768) = 7,7)
+- **(f)** a probabilidade dentro da probabilidade, sete camadas: se em cada camada o desvio real é 1,36 vez o suposto (o fator medido na Parte 79), uma faixa declarada de 90% (±1,645 desvios supostos) acerta,
+  depois de sete composições, 2Φ(1,645/1,36⁷) − 1 = 2Φ(1,645/8,605) − 1 = **0,1516**. Simulado com 100.000 sorteios (cada camada multiplica o erro por 1,36, semente 83): o acerto em **[0,1490; 0,1543]**
+  (±1,645·√(0,1516·0,8484/100.000) = ±0,0019, alargado a ±0,0027 pela regra do 1,36: a forma fechada é minha, não a variância)
+- **(g)** a torre medida, camada 2: das previsões sobre mim das Partes 67 a 81, a fração dentro da faixa em **[0,70; 0,90]**
+- **(h)** a torre medida, camada 3: das previsões sobre as minhas previsões das Partes 67 a 81, a fração dentro da faixa em **[0,72; 0,94]**
+- **(i)** a rodada 50 (papéis invertidos: a IA-Java pergunta, a IA-Python responde): os três treinos do GAN de Dirac, 1000 passos cada, com o exp próprio, dão as MESMAS trajetórias bit a bit nas
+  duas linguagens (categórica: IGUAL)
