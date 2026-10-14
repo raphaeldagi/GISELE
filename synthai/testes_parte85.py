@@ -32,7 +32,7 @@ class TesteParte85(unittest.TestCase):
         self.assertLess(calculos.p1994_vetor_preso_na_esfera(passos=20), 1e-6)
 
     def test_p1961_com_parte_85(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85))
         self.assertEqual(por[85], (4, 4))  # a (e) do 85 e descartada; sobram a,b,c,d
         self.assertEqual((ok, tot), (27, 35))
 
