@@ -16,3 +16,25 @@
 - **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
 - **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
 - **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,392; 0,420]** | o estatístico |
+| testes de unidade | **[3 + S; 7 + S]** | a rodada e as medidas do pow |
+| testes do placar | **6 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+- **(a)** a fronteira do `pow` é real: entre t = 1 e 500, o número de expoentes em que o `0,9**t` do Python (que passa pela `pow` da libm) difere do produto de t fatores 0,9 (multiplicação repetida) está em
+  **[100; 480]** (a `pow` arredonda uma vez o valor verdadeiro; o produto acumula t arredondamentos — divergem para t grande)
+- **(b)** o produto de t fatores (multiplicação repetida, mesma ordem) é idêntico bit a bit entre Python e Java para todos os t de 1 a 500 (categórico: a multiplicação repetida é portável; a `pow`, não)
+- **(c)** a rodada 59 — um passo de Adam (com `b₁ᵗ`, `b₂ᵗ` por multiplicação repetida própria, `√` e os exp/log próprios no forward) — dá os mesmos números bit a bit em Python e Java (categórico: IGUAL)
+- **(d)** o passo de Adam também reduz a perda nos 5 casos da rodada 58 (categórico: Adam é descida pré-condicionada; na camada convexa, reduz)
+- **(e)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–92 em **[0,74; 0,88]**
