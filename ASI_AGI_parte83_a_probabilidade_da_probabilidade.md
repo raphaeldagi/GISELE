@@ -80,3 +80,8 @@ A conta (código, 200.000 sorteios da fórmula, não dos dados dele): a regra LI
 
 **Acrescentada depois de medir (a) a (l), antes de rodar:** (d) acertou com z = (3,341 − 3,125)/0,125 = +1,72, perto da borda. Réplica num lote novo, para não ler um ponto como um efeito (regra da Parte 66):
 - **(n)** o mesmo jogo assíncrono, 800 corridas novas (sementes 84.000 a 84.799): a média de ln(|z_N|/|z_0|) em **[3,02; 3,23]** (3,125 ± 1,645·1,768/√800 = ±0,103)
+
+**Acrescentada depois de (n), antes de rodar:** (n) acertou (3,202), mas os dois lotes ficaram acima da conta: juntos, 1000 corridas, média 3,230, z = (3,230 − 3,125)/(1,768/√1000) = +1,87. A minha conta de
+segunda ordem tem um resto O(a³) por passo, e a³·N = 0,05³·10.000 = 1,25 não é desprezível. Hipótese: o excesso relativo cresce como a (λ/(a²/8) ≈ 1 + 0,68·a, pelos lotes). Teste num caso fora:
+- **(o)** a = 0,2, uma corrida de 1.000.000 de passos (semente 85): λ/(a²/8) em **[1,03; 1,30]** (a hipótese dá 1,136; se o excesso fosse ruído, daria ≈ 0,995, que é ½·ln(1 + a²/4)/(a²/8) com ângulo uniforme;
+  o desvio relativo da corrida é √(N·a²/8)/(N·a²/8) = 1,4%)
