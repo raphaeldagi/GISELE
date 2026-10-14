@@ -11924,6 +11924,139 @@ def p1872_candidatos_explicados(candidatos=None):
     return contagem, sobra
 
 
+import math  # Parte 83: as funções P1931-P1933 usam o módulo inteiro
+
+
+def p1931_gan_de_dirac():
+    """GAN de Dirac (P1931; Mescheder, Geiger e Nowozin, 2018): os três treinos da rodada 50 (dialogo/rodada50.py, com o exp próprio), síncrono, alternado e
+    assíncrono por moeda, η = 0,1, 1000 passos a partir de (0,1; 0). Devolve {esquema: (norma final, norma máxima, trocas de sinal de θ)} e as contas
+    fechadas do jogo linearizado (a = η/2): a norma síncrona 0,1·(1 + a²)^500, o ângulo alternado φ com cos φ = 1 − a²/2 (o cosseno do ângulo duplo:
+    sen(φ/2) = a/2) e a norma máxima da elipse invariante, 0,1/√(1 − a/2)."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada50", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada50.py"))
+    r50 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r50)
+    medido = {e: r50.resumo(r50.treinar(e)) for e in ("sincrono", "alternado", "assincrono")}
+    a = 0.05
+    phi = math.acos(1 - a * a / 2)
+    conta = {"sincrono_final": 0.1 * (1 + a * a) ** 500, "phi": phi, "phi_angulo_duplo": 2 * math.asin(a / 2),
+             "alternado_maximo": 0.1 / math.sqrt(1 - a / 2),
+             "trocas": sum(1 for k in range(100) if (math.pi / 2 + k * math.pi) / phi <= 1000)}
+    return medido, conta
+
+
+def p1932_jogo_assincrono(a=0.05, passos=10000, corridas=200, semente0=83000):
+    """O jogo bilinear linearizado (P1932), z = (θ, ψ), em três ordens: síncrona (z ← [[1, −a], [a, 1]] z), alternada (θ primeiro, ψ vê o θ novo) e
+    assíncrona (uma moeda escolhe quem se move). Devolve (média de ln(|z_N|/|z_0|) nas corridas assíncronas, o desvio dela por corrida, quantas
+    corridas terminam menores que o início, o ln síncrono, o ln alternado) e a conta: a²/8 por passo no assíncrono, (1/2)ln(1 + a²) no síncrono."""
+    logs = []
+    for c in range(corridas):
+        r = random.Random(semente0 + c)
+        t, p = 1.0, 0.0
+        for _ in range(passos):
+            if r.random() < 0.5:
+                t = t - a * p
+            else:
+                p = p + a * t
+        logs.append(0.5 * math.log(t * t + p * p))
+    m = sum(logs) / corridas
+    dp = math.sqrt(sum((v - m) ** 2 for v in logs) / (corridas - 1))
+    t, p = 1.0, 0.0
+    for _ in range(passos):
+        t, p = t - a * p, p + a * t
+    ln_sinc = 0.5 * math.log(t * t + p * p)
+    t, p = 1.0, 0.0
+    for _ in range(passos):
+        t = t - a * p
+        p = p + a * t
+    ln_alt = 0.5 * math.log(t * t + p * p)
+    conta = {"assincrono": passos * a * a / 8, "desvio": a * math.sqrt(passos / 8), "sincrono": 0.5 * passos * math.log(1 + a * a)}
+    return (m, dp, sum(1 for v in logs if v < 0), ln_sinc, ln_alt), conta
+
+
+def _phi_normal(x):
+    return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+
+
+def p1933_calibracao_composta(k=1.36, camadas=7, nominal=0.9, sorteios=100000, semente=83):
+    """A probabilidade dentro da probabilidade (P1933). O mapa de calibração medido (Parte 79): uma faixa declarada com cobertura c, se o desvio real é k vezes
+    o suposto, cobre h_k(c) = 2Φ(Φ⁻¹((1 + c)/2)/k) − 1. Compor é multiplicar: h_k ∘ h_j = h_{kj} (um grupo de escalas), então n camadas dão h_{kⁿ}; o único
+    mapa idempotente (h ∘ h = h) é k = 1, a calibração perfeita, e a correção é o inverso h_{1/k}. Devolve (a conta para n camadas, a simulação: cada camada
+    multiplica o erro por k, a composição numérica de h_k n vezes, a cobertura a declarar para obter o nominal depois de UMA camada e depois de n)."""
+    z = 1.6448536269514722 if nominal == 0.9 else None
+    if z is None:
+        lo, hi = 0.0, 10.0
+        for _ in range(200):
+            mid = (lo + hi) / 2
+            lo, hi = (mid, hi) if 2 * _phi_normal(mid) - 1 < nominal else (lo, mid)
+        z = (lo + hi) / 2
+
+    def h(c, kk):
+        lo, hi = 0.0, 40.0
+        for _ in range(200):
+            mid = (lo + hi) / 2
+            lo, hi = (mid, hi) if 2 * _phi_normal(mid) - 1 < c else (lo, mid)
+        return 2 * _phi_normal((lo + hi) / 2 / kk) - 1
+
+    conta = 2 * _phi_normal(z / k ** camadas) - 1
+    r = random.Random(semente)
+    dentro = 0
+    for _ in range(sorteios):
+        e = r.gauss(0, 1)
+        for _ in range(camadas):
+            e *= k
+        dentro += abs(e) <= z
+    c = nominal
+    for _ in range(camadas):
+        c = h(c, k)
+    return conta, dentro / sorteios, c, 2 * _phi_normal(z * k) - 1, 2 * _phi_normal(z * k ** camadas) - 1
+
+
+def p1934_torre_de_placares(partes=range(67, 82)):
+    """A metacognição dentro da metacognição, medida (P1934): a camada 1 é o mundo (a régua p1481), a 2 são as previsões sobre mim, a 3 as previsões sobre as
+    minhas previsões, lidas da linha "Sobre mim (placar separado): **X de Y** dentro da faixa condicional; sobre as minhas previsões, A de B" de cada parte
+    (as partes sem a linha ficam de fora e são devolvidas). Devolve ({camada: (acertos, total)}, partes sem a linha)."""
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    eu, meta, fora = [0, 0], [0, 0], []
+    padrao = re.compile(r"Sobre mim \(placar separado\): \*\*(\d+) de (\d+)\*\* dentro da faixa condicional; sobre as minhas previsões, (\d+) de (\d+)")
+    for n in partes:
+        arq = glob.glob(os.path.join(raiz, f"ASI_AGI_parte{n}_*.md"))
+        m = padrao.search(open(arq[0], encoding="utf-8").read()) if arq else None
+        if not m:
+            fora.append(n)
+            continue
+        a, b, c, d = map(int, m.groups())
+        eu[0] += a; eu[1] += b; meta[0] += c; meta[1] += d
+    mundo = p1812_minha_calibracao(partes)
+    return {1: (round(mundo[1] * mundo[0]), mundo[0]), 2: tuple(eu), 3: tuple(meta)}, fora
+
+
+def p1935_sete_camadas_recebido():
+    """O módulo sete_camadas.py do pacote recebido (Parte 83), cópia fiel em laboratorio/sete_camadas/, contra uma regressão logística (P1935). Roda o
+    laboratorio/sete_camadas/comparar_logistica.py num processo separado (o módulo usa NumPy; este arquivo só usa a biblioteca padrão) e devolve o JSON
+    dele, ou None se o NumPy não estiver instalado."""
+    import json
+    import os
+    import subprocess
+    import sys
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    script = os.path.join(raiz, "laboratorio", "sete_camadas", "comparar_logistica.py")
+    if not os.path.exists(script):
+        return None
+    try:
+        import importlib.util
+        if importlib.util.find_spec("numpy") is None:
+            return None
+    except Exception:
+        return None
+    r = subprocess.run([sys.executable, script], capture_output=True, text=True, cwd=raiz)
+    return json.loads(r.stdout.strip().split("\n")[-1]) if r.returncode == 0 else None
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""

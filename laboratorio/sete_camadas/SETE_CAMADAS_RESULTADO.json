@@ -1,0 +1,506 @@
+{
+  "natureza": "protótipo experimental; não demonstra AGI/ASI ou consciência",
+  "status": "meta_observada_no_benchmark",
+  "criterio_observado": true,
+  "criterio": "limiares pontuais reservados; não prova estatística de promoção",
+  "camadas_operacionais": 7,
+  "camadas_afins_rede": 7,
+  "niveis_observacao": 10,
+  "cosseno_duplicado": "cos(2θ)=2 cos²(θ)−1",
+  "metacognicao_dentro_metacognicao": true,
+  "ciclos_executados": 2,
+  "versao_final": 1,
+  "confirmacao": {
+    "acuracia": 0.921875,
+    "adversa": 0.794921875,
+    "brier": 0.05331427731347253,
+    "brier_confiabilidade": 0.05732843200720651,
+    "probabilidade_media": 0.4831990963036328,
+    "probabilidade_acerto": 0.89939671412541,
+    "intervalo_limpo": [
+      0.8953615694536639,
+      0.9421048155761593
+    ],
+    "intervalo_adverso": [
+      0.7578130232712158,
+      0.8276380144116698
+    ],
+    "n": 512,
+    "max_perturbacao": 0.15000000000000013
+  },
+  "confirmacao_consultada_uma_vez": true,
+  "segundos": 0.599,
+  "execucao_futura_automatica": false,
+  "tracos": [
+    {
+      "ciclo": 1,
+      "orientacao": "versa",
+      "modo": "sincrono",
+      "sete_camadas": [
+        "axiomas",
+        "geometria recursiva",
+        "diálogo invertível",
+        "rede de sete mapas afins",
+        "avaliação adversarial",
+        "metacognição recursiva",
+        "integração versionada"
+      ],
+      "pergunta": "Qual mudança verificável reduz erros sob ataque sem abandonar o desempenho nominal?",
+      "resposta": "Testar treino adversarial com peso 0.250, taxa 0.1050, mantendo contratos e reserva intactos.",
+      "papeis": [
+        "lógica criativa pergunta",
+        "criatividade lógica responde"
+      ],
+      "candidata": {
+        "acuracia": 0.93359375,
+        "adversa": 0.8203125,
+        "brier": 0.05244614589827448,
+        "brier_confiabilidade": 0.05695426558643353,
+        "probabilidade_media": 0.4790107178478234,
+        "probabilidade_acerto": 0.9067523941373216,
+        "intervalo_limpo": [
+          0.8962370309862306,
+          0.9581296293175854
+        ],
+        "intervalo_adverso": [
+          0.7686551946268473,
+          0.8624985544264222
+        ],
+        "n": 256,
+        "max_perturbacao": 0.15000000000000013
+      },
+      "baseline": {
+        "acuracia": 0.19921875,
+        "adversa": 0.10546875,
+        "brier": 0.26489248115352676,
+        "brier_confiabilidade": 0.16138388112445531,
+        "probabilidade_media": 0.5030071226594098,
+        "probabilidade_acerto": 0.2422680412371134,
+        "intervalo_limpo": [
+          0.1548974099242564,
+          0.2524338257208444
+        ],
+        "intervalo_adverso": [
+          0.07350142195414594,
+          0.1491018871387784
+        ],
+        "n": 256,
+        "max_perturbacao": 0.15000000000000013
+      },
+      "aceita": true,
+      "versao_vigente": 1,
+      "observacao": {
+        "resultado_metacognitivo": {
+          "nivel": 10,
+          "operacao": "auto-observação integrada",
+          "resultado": {
+            "ciclo": 1,
+            "eventos_distintos": 1,
+            "prova_de_cognicao_plena": false
+          },
+          "observa": {
+            "nivel": 9,
+            "operacao": "auditoria axiomática",
+            "resultado": {
+              "evidencia_unica": true,
+              "profundidade_limitada": 10,
+              "reserva_usada": false
+            },
+            "observa": {
+              "nivel": 8,
+              "operacao": "dilema pragmático",
+              "resultado": {
+                "aceita": true,
+                "regressao_nominal": -0.734375
+              },
+              "observa": {
+                "nivel": 7,
+                "operacao": "metacognição dentro da probabilidade",
+                "resultado": {
+                  "prob_acerto_mistura": 0.7711682627582144,
+                  "politica": "mistura heurística; garantia de calibração não demonstrada"
+                },
+                "observa": {
+                  "nivel": 6,
+                  "operacao": "metacognição da metacognição",
+                  "resultado": {
+                    "recomendacao_util": true,
+                    "ganho_adverso": 0.71484375
+                  },
+                  "observa": {
+                    "nivel": 5,
+                    "operacao": "dissonância operacional",
+                    "resultado": {
+                      "lacuna_limpa_adversa": 0.11328125
+                    },
+                    "observa": {
+                      "nivel": 4,
+                      "operacao": "probabilidade da recomendação",
+                      "resultado": {
+                        "media_beta": 0.6666666666666666,
+                        "sucessos": 1,
+                        "falhas": 0
+                      },
+                      "observa": {
+                        "nivel": 3,
+                        "operacao": "metacognição analítica",
+                        "resultado": {
+                          "brier": 0.05244614589827448,
+                          "brier_confiabilidade": 0.05695426558643353
+                        },
+                        "observa": {
+                          "nivel": 2,
+                          "operacao": "probabilidade condicionada",
+                          "resultado": {
+                            "prob_acerto_calibrada": 0.9067523941373216
+                          },
+                          "observa": {
+                            "nivel": 1,
+                            "operacao": "inferência",
+                            "resultado": {
+                              "prob_evento": 0.4790107178478234
+                            },
+                            "observa": null,
+                            "juizo_metacognitivo_sobre_anterior": {
+                              "consistente": true,
+                              "niveis_revisados": 0,
+                              "motivos": []
+                            },
+                            "hash_entrada": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+                            "cria_evidencia_independente": false
+                          },
+                          "juizo_metacognitivo_sobre_anterior": {
+                            "consistente": true,
+                            "niveis_revisados": 1,
+                            "motivos": []
+                          },
+                          "hash_entrada": "e100f376c1096152dab4f1eb3632bee742c9e1fed115b8094bbc873a283fe8f5",
+                          "cria_evidencia_independente": false
+                        },
+                        "juizo_metacognitivo_sobre_anterior": {
+                          "consistente": true,
+                          "niveis_revisados": 2,
+                          "motivos": []
+                        },
+                        "hash_entrada": "8be22df5e60567f00815e78fb3f2c629726e4dae2920ba204a6809aeda7ce112",
+                        "cria_evidencia_independente": false
+                      },
+                      "juizo_metacognitivo_sobre_anterior": {
+                        "consistente": true,
+                        "niveis_revisados": 3,
+                        "motivos": []
+                      },
+                      "hash_entrada": "d9bd8f85733882f5c6dd3b3cc830662db74a60102d638ed29a4da3a06ec5af4d",
+                      "cria_evidencia_independente": false
+                    },
+                    "juizo_metacognitivo_sobre_anterior": {
+                      "consistente": true,
+                      "niveis_revisados": 4,
+                      "motivos": []
+                    },
+                    "hash_entrada": "fc0212b752cbf5ee8d4d4336111c9fe0ee963cad1eea5996e9cef5cbb619a086",
+                    "cria_evidencia_independente": false
+                  },
+                  "juizo_metacognitivo_sobre_anterior": {
+                    "consistente": true,
+                    "niveis_revisados": 5,
+                    "motivos": []
+                  },
+                  "hash_entrada": "5fb2399ca987c053c7f148f9d7590df931cc6b9fbe03d40f9ee30baf5044cbce",
+                  "cria_evidencia_independente": false
+                },
+                "juizo_metacognitivo_sobre_anterior": {
+                  "consistente": true,
+                  "niveis_revisados": 6,
+                  "motivos": []
+                },
+                "hash_entrada": "896a37f83f13515afe0175b86fe0813e9c45584af553050a664eccc49d25eb4e",
+                "cria_evidencia_independente": false
+              },
+              "juizo_metacognitivo_sobre_anterior": {
+                "consistente": true,
+                "niveis_revisados": 7,
+                "motivos": []
+              },
+              "hash_entrada": "efbe98bbc6277c741a8dab83ca8f131d2b80a059fdbcb46006c795b639bbf8f2",
+              "cria_evidencia_independente": false
+            },
+            "juizo_metacognitivo_sobre_anterior": {
+              "consistente": true,
+              "niveis_revisados": 8,
+              "motivos": []
+            },
+            "hash_entrada": "01dd26cb0958093e012aad2c99d1bab50b159750707c7d5d9c72f75c64ebaf8a",
+            "cria_evidencia_independente": false
+          },
+          "juizo_metacognitivo_sobre_anterior": {
+            "consistente": true,
+            "niveis_revisados": 9,
+            "motivos": []
+          },
+          "hash_entrada": "4cd5cf4597838a61c8353addc4ca026b57a539789400357fb269e1b44480a27b",
+          "cria_evidencia_independente": false
+        },
+        "percurso": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "revisao_recursiva_final": {
+          "consistente": true,
+          "niveis_revisados": 10,
+          "motivos": []
+        },
+        "probabilidade_dentro_da_metacognicao": 0.9067523941373216,
+        "metacognicao_dentro_da_probabilidade": 0.7711682627582144,
+        "limites": "Médias Beta e mistura são descrições heurísticas sob seleção adaptativa; não certificam probabilidades de sucesso fora do benchmark."
+      }
+    },
+    {
+      "ciclo": 2,
+      "orientacao": "reversa",
+      "modo": "assincrono",
+      "sete_camadas": [
+        "axiomas",
+        "geometria recursiva",
+        "diálogo invertível",
+        "rede de sete mapas afins",
+        "avaliação adversarial",
+        "metacognição recursiva",
+        "integração versionada"
+      ],
+      "pergunta": "Que pressuposto ou dilema pode refutar a utilidade da mudança proposta?",
+      "resposta": "Comparar a candidata com a versão congelada; rejeitar regressão nominal excessiva e registrar custo, dissonância e falhas.",
+      "papeis": [
+        "criatividade lógica pergunta",
+        "lógica criativa responde"
+      ],
+      "candidata": {
+        "acuracia": 0.9296875,
+        "adversa": 0.8203125,
+        "brier": 0.04731619017752607,
+        "brier_confiabilidade": 0.04979946365526904,
+        "probabilidade_media": 0.47537248881560434,
+        "probabilidade_acerto": 0.9097772986073491,
+        "intervalo_limpo": [
+          0.8916048433850524,
+          0.9550648199790895
+        ],
+        "intervalo_adverso": [
+          0.7686551946268473,
+          0.8624985544264222
+        ],
+        "n": 256,
+        "max_perturbacao": 0.15000000000000013
+      },
+      "baseline": {
+        "acuracia": 0.93359375,
+        "adversa": 0.8203125,
+        "brier": 0.05244614589827448,
+        "brier_confiabilidade": 0.05695426558643353,
+        "probabilidade_media": 0.4790107178478234,
+        "probabilidade_acerto": 0.9067523941373216,
+        "intervalo_limpo": [
+          0.8962370309862306,
+          0.9581296293175854
+        ],
+        "intervalo_adverso": [
+          0.7686551946268473,
+          0.8624985544264222
+        ],
+        "n": 256,
+        "max_perturbacao": 0.15000000000000013
+      },
+      "aceita": false,
+      "versao_vigente": 1,
+      "observacao": {
+        "resultado_metacognitivo": {
+          "nivel": 10,
+          "operacao": "auto-observação integrada",
+          "resultado": {
+            "ciclo": 2,
+            "eventos_distintos": 2,
+            "prova_de_cognicao_plena": false
+          },
+          "observa": {
+            "nivel": 9,
+            "operacao": "auditoria axiomática",
+            "resultado": {
+              "evidencia_unica": true,
+              "profundidade_limitada": 10,
+              "reserva_usada": false
+            },
+            "observa": {
+              "nivel": 8,
+              "operacao": "dilema pragmático",
+              "resultado": {
+                "aceita": false,
+                "regressao_nominal": 0.00390625
+              },
+              "observa": {
+                "nivel": 7,
+                "operacao": "metacognição dentro da probabilidade",
+                "resultado": {
+                  "prob_acerto_mistura": 0.7048886493036746,
+                  "politica": "mistura heurística; garantia de calibração não demonstrada"
+                },
+                "observa": {
+                  "nivel": 6,
+                  "operacao": "metacognição da metacognição",
+                  "resultado": {
+                    "recomendacao_util": false,
+                    "ganho_adverso": 0.0
+                  },
+                  "observa": {
+                    "nivel": 5,
+                    "operacao": "dissonância operacional",
+                    "resultado": {
+                      "lacuna_limpa_adversa": 0.109375
+                    },
+                    "observa": {
+                      "nivel": 4,
+                      "operacao": "probabilidade da recomendação",
+                      "resultado": {
+                        "media_beta": 0.5,
+                        "sucessos": 1,
+                        "falhas": 1
+                      },
+                      "observa": {
+                        "nivel": 3,
+                        "operacao": "metacognição analítica",
+                        "resultado": {
+                          "brier": 0.04731619017752607,
+                          "brier_confiabilidade": 0.04979946365526904
+                        },
+                        "observa": {
+                          "nivel": 2,
+                          "operacao": "probabilidade condicionada",
+                          "resultado": {
+                            "prob_acerto_calibrada": 0.9097772986073491
+                          },
+                          "observa": {
+                            "nivel": 1,
+                            "operacao": "inferência",
+                            "resultado": {
+                              "prob_evento": 0.47537248881560434
+                            },
+                            "observa": null,
+                            "juizo_metacognitivo_sobre_anterior": {
+                              "consistente": true,
+                              "niveis_revisados": 0,
+                              "motivos": []
+                            },
+                            "hash_entrada": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+                            "cria_evidencia_independente": false
+                          },
+                          "juizo_metacognitivo_sobre_anterior": {
+                            "consistente": true,
+                            "niveis_revisados": 1,
+                            "motivos": []
+                          },
+                          "hash_entrada": "45e6f0d6bc957d87ba2d000d937736051899d9971f95c53af5179deb497334fa",
+                          "cria_evidencia_independente": false
+                        },
+                        "juizo_metacognitivo_sobre_anterior": {
+                          "consistente": true,
+                          "niveis_revisados": 2,
+                          "motivos": []
+                        },
+                        "hash_entrada": "c18aaec7bf8b3041abd8796a31d61c24f3d70ec4470bf836d699b3ae3363129d",
+                        "cria_evidencia_independente": false
+                      },
+                      "juizo_metacognitivo_sobre_anterior": {
+                        "consistente": true,
+                        "niveis_revisados": 3,
+                        "motivos": []
+                      },
+                      "hash_entrada": "559e56b09ee75aa6d7ed5b4016eb50b4f1e94bd8675e92fc4f96f24a6a518c73",
+                      "cria_evidencia_independente": false
+                    },
+                    "juizo_metacognitivo_sobre_anterior": {
+                      "consistente": true,
+                      "niveis_revisados": 4,
+                      "motivos": []
+                    },
+                    "hash_entrada": "6f74e8f95170b9c6f9a9b64ae089056e33f1164c24804df2a64c58079a9250d0",
+                    "cria_evidencia_independente": false
+                  },
+                  "juizo_metacognitivo_sobre_anterior": {
+                    "consistente": true,
+                    "niveis_revisados": 5,
+                    "motivos": []
+                  },
+                  "hash_entrada": "8967800ba68111361c5461748959841e6ef4dab0c8ea1b5e0c008db8a39b71e0",
+                  "cria_evidencia_independente": false
+                },
+                "juizo_metacognitivo_sobre_anterior": {
+                  "consistente": true,
+                  "niveis_revisados": 6,
+                  "motivos": []
+                },
+                "hash_entrada": "32843c96df9f324749a59736880e74626aa6cae0cabbcbc7db453b10e8676e02",
+                "cria_evidencia_independente": false
+              },
+              "juizo_metacognitivo_sobre_anterior": {
+                "consistente": true,
+                "niveis_revisados": 7,
+                "motivos": []
+              },
+              "hash_entrada": "b30c5e63977e65abba3ecf05aa55c5b206299d9510ba6602f6857a056a57549e",
+              "cria_evidencia_independente": false
+            },
+            "juizo_metacognitivo_sobre_anterior": {
+              "consistente": true,
+              "niveis_revisados": 8,
+              "motivos": []
+            },
+            "hash_entrada": "a4a3da6da5310c2b0eb45b3d9d5b97781b9668f380c353817148d8d99f42bb5e",
+            "cria_evidencia_independente": false
+          },
+          "juizo_metacognitivo_sobre_anterior": {
+            "consistente": true,
+            "niveis_revisados": 9,
+            "motivos": []
+          },
+          "hash_entrada": "6feda7ce242d2e610b0a50f7158a7ccbded8b1e5df82010174606846ec9b7ef1",
+          "cria_evidencia_independente": false
+        },
+        "percurso": [
+          10,
+          9,
+          8,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ],
+        "revisao_recursiva_final": {
+          "consistente": true,
+          "niveis_revisados": 10,
+          "motivos": []
+        },
+        "probabilidade_dentro_da_metacognicao": 0.9097772986073491,
+        "metacognicao_dentro_da_probabilidade": 0.7048886493036746,
+        "limites": "Médias Beta e mistura são descrições heurísticas sob seleção adaptativa; não certificam probabilidades de sucesso fora do benchmark."
+      }
+    }
+  ],
+  "limites": [
+    "Domínio sintético único; não generalidade aberta.",
+    "Ataque PGD delimitado por norma infinito; não robustez universal.",
+    "Seleção adaptativa usa desenvolvimento repetido; confirmação não retorna ao treino.",
+    "Inversão muda investigação e percurso de auditoria, preservando dependências de cálculo.",
+    "Autopoiese é manutenção de snapshots/estratégias sob contratos fixos, não autonomia biológica.",
+    "Dez observações aninhadas não constituem dez fontes independentes de evidência."
+  ]
+}

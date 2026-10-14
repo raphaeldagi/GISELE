@@ -77,3 +77,6 @@ A conta (código, 200.000 sorteios da fórmula, não dos dados dele): a regra LI
 - **(k)** uma regressão logística (4 pesos e 1 viés, biblioteca padrão), treinada nos mesmos 512 exemplos de treino dele, acerta na confirmação dele (512 exemplos) uma fração em **[0,895; 0,945]**
   (centro 0,92: a regra linear ideal, 0,928, menos o custo de estimar os pesos; ±1,645·√(0,92·0,08/512) = ±0,02)
 - **(l)** a mesma logística sob o pior ataque ℓ∞ de 0,15 (exato para um modelo linear): acerto em **[0,76; 0,85]** (centro 0,80; o desvio binomial é 0,018)
+
+**Acrescentada depois de medir (a) a (l), antes de rodar:** (d) acertou com z = (3,341 − 3,125)/0,125 = +1,72, perto da borda. Réplica num lote novo, para não ler um ponto como um efeito (regra da Parte 66):
+- **(n)** o mesmo jogo assíncrono, 800 corridas novas (sementes 84.000 a 84.799): a média de ln(|z_N|/|z_0|) em **[3,02; 3,23]** (3,125 ± 1,645·1,768/√800 = ±0,103)

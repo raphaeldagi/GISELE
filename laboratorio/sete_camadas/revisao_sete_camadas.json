@@ -1,0 +1,113 @@
+{
+  "arquivo": "sete_camadas.py",
+  "sha256": "d6a8cd112e71357d86f8f86533a83f1fd0661cdd5d341790b11ccdd5b50aef70",
+  "tipo": "revisão independente read-only e checks direcionados; não certificação AGI/ASI",
+  "checks": {
+    "gradientes_parametros": {
+      "amostras": 14,
+      "erro_maximo": 7.59784496602578e-11,
+      "passou": true
+    },
+    "gradientes_entrada": {
+      "amostras": 20,
+      "erro_maximo": 7.688596113941681e-11,
+      "passou": true
+    },
+    "cos2_identidade_exata": true,
+    "ataque_epsilon_zero_exato": true,
+    "ataque_40_sementes": {
+      "casos": 16000,
+      "perdas_adversas_menores_que_limpa": 0,
+      "max_norma_infinito": 0.5000000000000002,
+      "epsilon": 0.5,
+      "acuracia_adversa_nunca_maior_limpa": true,
+      "passou": true
+    },
+    "orcamentos_invalidos_rejeitados": true,
+    "snapshots": {
+      "arrays_readonly": 17,
+      "mutacoes_rejeitadas": 17,
+      "isolamento_da_origem": true,
+      "passou": true
+    },
+    "sync_async_metricas_identicas": true,
+    "sync_async_ambos_execucao_completa_identica": true,
+    "niveis_observacao": [
+      10,
+      9,
+      8,
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "evidencia_evento_unico": true,
+    "evento_duplicado_rejeitado": true,
+    "revisao_recursiva_computacional": {
+      "final_10_niveis_consistente": true,
+      "hashes_10_entradas_corretos": true,
+      "juizos_10_anteriores_corretos": true,
+      "nenhum_nivel_cria_evidencia": true,
+      "erro_probabilidade_profunda_propagado": true,
+      "nao_finito_rejeitado": true,
+      "ordem_invalida_propagada": true,
+      "revisar_nao_consume_evidencia": true,
+      "observar_explica_erro_sem_falsa_consistencia": true
+    }
+  },
+  "achado_corrigido": {
+    "problema": "Ataque retornava somente o último passo PGD e podia reduzir BCE frente à entrada limpa.",
+    "contraexemplo": {
+      "semente_rede": 20,
+      "semente_referencia": 27,
+      "semente_dados": 120,
+      "amostra": 69,
+      "epsilon": 0.5,
+      "loss_limpa_antes": 0.8889011763247018,
+      "loss_ultimo_passo_antes": 0.8225679910329362
+    },
+    "correcao": "Preservar pior BCE calibrada por amostra entre entrada limpa, inicialização e todos os passos.",
+    "regressao_16000_casos": "passou"
+  },
+  "resultado_default_reexecutado": {
+    "confirmacao": {
+      "acuracia": 0.921875,
+      "adversa": 0.794921875,
+      "brier": 0.05331427731347253,
+      "brier_confiabilidade": 0.05732843200720651,
+      "probabilidade_media": 0.4831990963036328,
+      "probabilidade_acerto": 0.89939671412541,
+      "intervalo_limpo": [
+        0.8953615694536639,
+        0.9421048155761593
+      ],
+      "intervalo_adverso": [
+        0.7578130232712158,
+        0.8276380144116698
+      ],
+      "n": 512,
+      "max_perturbacao": 0.15000000000000013
+    },
+    "ciclos_executados": 2,
+    "versao_final": 1,
+    "status": "meta_observada_no_benchmark"
+  },
+  "limites": [
+    "Diferenças finitas amostram gradientes; não prova simbólica de todo o espaço.",
+    "PGD delimitado por orçamento é avaliação por ataque concreto, não certificado de robustez universal.",
+    "Arrays são readonly em snapshots cooperativos; isto não constitui isolamento contra código hostil.",
+    "Dez níveis fazem revisão recursiva real de consistência, sem constituir dez modelos ou dez fontes independentes de evidência.",
+    "Inversão alterna perguntas e percurso de auditoria, preservando dependências matemáticas.",
+    "Beta e mistura metacognitiva são descrições heurísticas sob adaptação; não probabilidades certificadas fora do benchmark.",
+    "Confirmação reservada é consulta única por execução, não ledger global entre execuções."
+  ],
+  "recheck_meta": {
+    "hash_antes": "d6a8cd112e71357d86f8f86533a83f1fd0661cdd5d341790b11ccdd5b50aef70",
+    "escopo": "Somente recursão metacognitiva nova. PGD, snapshots e gradientes não foram repetidos, pois implementação correspondente permaneceu igual.",
+    "checks_direcionados": 9,
+    "passou": true
+  }
+}

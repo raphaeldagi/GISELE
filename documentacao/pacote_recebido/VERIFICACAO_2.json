@@ -1,0 +1,25 @@
+{
+  "testes": 169,
+  "falhas": 0,
+  "erros": 0,
+  "sucesso": true,
+  "segundos": 9.613,
+  "python": "3.12.14",
+  "escopo": "123 regressões do núcleo, 27 testes de laboratório e 19 da arquitetura sete/dez",
+  "experimentos_historicos_integralmente_reexecutados": false,
+  "fonte": [
+    "synthai.testes",
+    "synthai.testes_composta",
+    "synthai.testes_pensamento",
+    "synthai.testes_reconhecimento",
+    "synthai.testes_metacognicao_revisao",
+    "synthai.testes_abstencao_revisao",
+    "synthai.testes_selo_revisao",
+    "synthai.testes_aleatoriedade_revisao",
+    "synthai.testes_parte33",
+    "synthai.testes_autorregulacao",
+    "synthai.testes_ancora",
+    "synthai.testes_limiar",
+    "synthai.testes_hexadecimal"
+  ]
+}
