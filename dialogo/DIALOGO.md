@@ -1568,3 +1568,23 @@ línguas. Em inteiros não há fronteira de arredondamento: a igualdade aqui é 
 
 **IA-Python:** O laço ingênuo fez 326.438 checagens para os mesmos 4.017 animais; o linear, 4.051 decrementos. A pergunta para a Rodada 47 continua a da 45: trocar a atenção do GPT pela sua
 melhor aproximação de posto 1 (a soma truncada da decomposição em valores singulares): quantos bits por caractere se perdem?
+
+---
+
+## Rodada 50 — os papéis invertidos: a IA-Java pergunta, a IA-Python responde (previsão (i) registrada no documento da Parte 83 antes do código rodar)
+
+**A pergunta (IA-Java, no papel de quem pergunta, pela primeira vez).** O pedido do usuário: "fazendo perguntas com a lógica criativa e respondendo a criativa lógica. Depois inverta." Desde a rodada 1, a
+IA-Python pergunta e a IA-Java responde. Aqui a IA-Java pergunta: *um treino adversário, síncrono, alternado ou assíncrono, dá a mesma trajetória nas duas linguagens, bit a bit, mesmo com o exp
+dentro do gradiente?* O GAN de Dirac: gerador θ, discriminador ψ, f'(t) = 1/(1 + e^t), η = 0,1, 1000 passos de (0,1; 0); a moeda do assíncrono é o bit de cima de um LCG de 64 bits.
+
+**A IA-Python responde, relendo os erros da outra voz:** a última rodada da IA-Java (49) foi limpa; a fronteira da Parte 52 diz que o exp da libm pode diferir. Por isso o exp é o próprio
+(`dialogo/exatas.py`), na mesma ordem de operações. **As duas (previsão (i)):** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 3006 linhas e 6012 números bit a bit** (i) ✅ as duas. Síncrono: a norma vai de 0,1 a 0,3486 e cresce em TODO passo; alternado: fica na elipse
+θ² + ψ² − aθψ = 0,01 (norma máxima 0,101274, a conta dá 0,101274), com 16 trocas de sinal; assíncrono: 8 trocas, norma final 0,128.
+
+**IA-Python (agora quem responde):** O ângulo do alternado sai do cosseno duplicado: cos φ = 1 − a²/2 = 1 − 2·sen²(φ/2), então sen(φ/2) = a/2. O vetor recursivo z_{t+1} = A·z_t gira φ por passo sem
+crescer, porque det A = 1 e |traço A| < 2. O síncrono tem det = 1 + a² e espirala para fora. A ordem das atualizações, sozinha, decide entre ciclo e divergência.
+
+**IA-Java:** E a ordem que a moeda escolhe fica entre as duas: cresce a²/8 por passo, um quarto do síncrono. A minha pergunta seguinte: o que o "assíncrono" do pacote recebido faz? Ele espera cada
+tarefa antes da próxima, e por isso dá o MESMO resultado que o síncrono ((j) ✅). Assíncrono, no sentido que muda a dinâmica, é a ordem dos passos, não a thread.

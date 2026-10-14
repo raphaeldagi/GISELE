@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 81, perguntas P1 a P1872).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 83, perguntas P1 a P1936).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (12756 linhas)
+# calculos.py  (12926 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7526,6 +7526,8 @@ def testes_de_regressao():
         "P1692": (lambda r: r[1] == r[0] and r[3] == r[2] > 0)(p1692_godel_nas_funcoes()) and p1691_laco_de_auto_modificacao(geracoes=2, separador_corrigido=True)[0][1:3] == (True, 2.8333333333333335),
         "P1843": [round(x, 4) for x in p1843_rodada49()] == [0.8821, 0.9771, 0.7933, 0.91, 0.11],
         "P1811": [round(x, 4) for x in p1811_confusao()] == [0.9986, 0.4987, 0.4914],
+        "P1931": (lambda m: [round(m[0]["sincrono"][0], 5), round(m[0]["alternado"][1], 6), m[0]["alternado"][2]])(p1931_gan_de_dirac()) == [0.34864, 0.101274, 16],
+        "P1933": [round(x, 4) for x in p1933_calibracao_composta()[:2]] == [0.1516, 0.1511],
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9572,6 +9574,8 @@ VEREDITOS_P1869 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) �
 ERROS_P1869, TESTES_P1869 = 201, 657
 VEREDITOS_P1899 = "(a) ✅ (b) ✅ (c) ❌"  # a (d) não se aplica: não havia nada a tirar
 ERROS_P1899, TESTES_P1899 = 202, 660
+VEREDITOS_P1959 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ❌ (p) ✅"
+ERROS_P1959, TESTES_P1959 = 203, 675
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -11962,6 +11966,156 @@ def p1872_candidatos_explicados(candidatos=None):
     return contagem, sobra
 
 
+import math  # Parte 83: as funções P1931-P1933 usam o módulo inteiro
+
+
+def p1931_gan_de_dirac():
+    \"\"\"GAN de Dirac (P1931; Mescheder, Geiger e Nowozin, 2018): os três treinos da rodada 50 (dialogo/rodada50.py, com o exp próprio), síncrono, alternado e
+    assíncrono por moeda, η = 0,1, 1000 passos a partir de (0,1; 0). Devolve {esquema: (norma final, norma máxima, trocas de sinal de θ)} e as contas
+    fechadas do jogo linearizado (a = η/2): a norma síncrona 0,1·(1 + a²)^500, o ângulo alternado φ com cos φ = 1 − a²/2 (o cosseno do ângulo duplo:
+    sen(φ/2) = a/2) e a norma máxima da elipse invariante, 0,1/√(1 − a/2).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada50", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada50.py"))
+    r50 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r50)
+    medido = {e: r50.resumo(r50.treinar(e)) for e in ("sincrono", "alternado", "assincrono")}
+    a = 0.05
+    phi = math.acos(1 - a * a / 2)
+    conta = {"sincrono_final": 0.1 * (1 + a * a) ** 500, "phi": phi, "phi_angulo_duplo": 2 * math.asin(a / 2),
+             "alternado_maximo": 0.1 / math.sqrt(1 - a / 2),
+             "trocas": sum(1 for k in range(100) if (math.pi / 2 + k * math.pi) / phi <= 1000)}
+    return medido, conta
+
+
+def p1932_jogo_assincrono(a=0.05, passos=10000, corridas=200, semente0=83000):
+    \"\"\"O jogo bilinear linearizado (P1932), z = (θ, ψ), em três ordens: síncrona (z ← [[1, −a], [a, 1]] z), alternada (θ primeiro, ψ vê o θ novo) e
+    assíncrona (uma moeda escolhe quem se move). Devolve (média de ln(|z_N|/|z_0|) nas corridas assíncronas, o desvio dela por corrida, quantas
+    corridas terminam menores que o início, o ln síncrono, o ln alternado) e a conta: a²/8 por passo no assíncrono, (1/2)ln(1 + a²) no síncrono.\"\"\"
+    logs = []
+    for c in range(corridas):
+        r = random.Random(semente0 + c)
+        t, p = 1.0, 0.0
+        for _ in range(passos):
+            if r.random() < 0.5:
+                t = t - a * p
+            else:
+                p = p + a * t
+        logs.append(0.5 * math.log(t * t + p * p))
+    m = sum(logs) / corridas
+    dp = math.sqrt(sum((v - m) ** 2 for v in logs) / (corridas - 1))
+    t, p = 1.0, 0.0
+    for _ in range(passos):
+        t, p = t - a * p, p + a * t
+    ln_sinc = 0.5 * math.log(t * t + p * p)
+    t, p = 1.0, 0.0
+    for _ in range(passos):
+        t = t - a * p
+        p = p + a * t
+    ln_alt = 0.5 * math.log(t * t + p * p)
+    conta = {"assincrono": passos * a * a / 8, "desvio": a * math.sqrt(passos / 8), "sincrono": 0.5 * passos * math.log(1 + a * a)}
+    return (m, dp, sum(1 for v in logs if v < 0), ln_sinc, ln_alt), conta
+
+
+def _phi_normal(x):
+    return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+
+
+def p1933_calibracao_composta(k=1.36, camadas=7, nominal=0.9, sorteios=100000, semente=83):
+    \"\"\"A probabilidade dentro da probabilidade (P1933). O mapa de calibração medido (Parte 79): uma faixa declarada com cobertura c, se o desvio real é k vezes
+    o suposto, cobre h_k(c) = 2Φ(Φ⁻¹((1 + c)/2)/k) − 1. Compor é multiplicar: h_k ∘ h_j = h_{kj} (um grupo de escalas), então n camadas dão h_{kⁿ}; o único
+    mapa idempotente (h ∘ h = h) é k = 1, a calibração perfeita, e a correção é o inverso h_{1/k}. Devolve (a conta para n camadas, a simulação: cada camada
+    multiplica o erro por k, a composição numérica de h_k n vezes, a cobertura a declarar para obter o nominal depois de UMA camada e depois de n).\"\"\"
+    z = 1.6448536269514722 if nominal == 0.9 else None
+    if z is None:
+        lo, hi = 0.0, 10.0
+        for _ in range(200):
+            mid = (lo + hi) / 2
+            lo, hi = (mid, hi) if 2 * _phi_normal(mid) - 1 < nominal else (lo, mid)
+        z = (lo + hi) / 2
+
+    def h(c, kk):
+        lo, hi = 0.0, 40.0
+        for _ in range(200):
+            mid = (lo + hi) / 2
+            lo, hi = (mid, hi) if 2 * _phi_normal(mid) - 1 < c else (lo, mid)
+        return 2 * _phi_normal((lo + hi) / 2 / kk) - 1
+
+    conta = 2 * _phi_normal(z / k ** camadas) - 1
+    r = random.Random(semente)
+    dentro = 0
+    for _ in range(sorteios):
+        e = r.gauss(0, 1)
+        for _ in range(camadas):
+            e *= k
+        dentro += abs(e) <= z
+    c = nominal
+    for _ in range(camadas):
+        c = h(c, k)
+    return conta, dentro / sorteios, c, 2 * _phi_normal(z * k) - 1, 2 * _phi_normal(z * k ** camadas) - 1
+
+
+def p1934_torre_de_placares(partes=range(67, 82)):
+    \"\"\"A metacognição dentro da metacognição, medida (P1934): a camada 1 é o mundo (a régua p1481), a 2 são as previsões sobre mim, a 3 as previsões sobre as
+    minhas previsões, lidas da linha "Sobre mim (placar separado): **X de Y** dentro da faixa condicional; sobre as minhas previsões, A de B" de cada parte
+    (as partes sem a linha ficam de fora e são devolvidas). Devolve ({camada: (acertos, total)}, partes sem a linha).\"\"\"
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    eu, meta, fora = [0, 0], [0, 0], []
+    padrao = re.compile(r"Sobre mim \\(placar separado\\): \\*\\*(\\d+) de (\\d+)\\*\\* dentro da faixa condicional; sobre as minhas previsões, (\\d+) de (\\d+)")
+    for n in partes:
+        arq = glob.glob(os.path.join(raiz, f"ASI_AGI_parte{n}_*.md"))
+        m = padrao.search(open(arq[0], encoding="utf-8").read()) if arq else None
+        if not m:
+            fora.append(n)
+            continue
+        a, b, c, d = map(int, m.groups())
+        eu[0] += a; eu[1] += b; meta[0] += c; meta[1] += d
+    mundo = p1812_minha_calibracao(partes)
+    return {1: (round(mundo[1] * mundo[0]), mundo[0]), 2: tuple(eu), 3: tuple(meta)}, fora
+
+
+def p1935_sete_camadas_recebido():
+    \"\"\"O módulo sete_camadas.py do pacote recebido (Parte 83), cópia fiel em laboratorio/sete_camadas/, contra uma regressão logística (P1935). Roda o
+    laboratorio/sete_camadas/comparar_logistica.py num processo separado (o módulo usa NumPy; este arquivo só usa a biblioteca padrão) e devolve o JSON
+    dele, ou None se o NumPy não estiver instalado.\"\"\"
+    import json
+    import os
+    import subprocess
+    import sys
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    script = os.path.join(raiz, "laboratorio", "sete_camadas", "comparar_logistica.py")
+    if not os.path.exists(script):
+        return None
+    try:
+        import importlib.util
+        if importlib.util.find_spec("numpy") is None:
+            return None
+    except Exception:
+        return None
+    r = subprocess.run([sys.executable, script], capture_output=True, text=True, cwd=raiz)
+    return json.loads(r.stdout.strip().split("\\n")[-1]) if r.returncode == 0 else None
+
+
+def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
+    \"\"\"O expoente de Lyapunov do jogo bilinear assíncrono por moeda (P1936), numa corrida longa, renormalizada a cada passo (o produto de cisalhamentos de
+    determinante 1). Devolve (λ por passo, λ/(a²/8), a conta com ângulo uniforme ½·ln(1 + a²/4)/(a²/8)).\"\"\"
+    r = random.Random(semente)
+    t, p, soma = 1.0, 0.0, 0.0
+    for _ in range(passos):
+        if r.random() < 0.5:
+            t = t - a * p
+        else:
+            p = p + a * t
+        n = math.sqrt(t * t + p * p)
+        soma += math.log(n)
+        t, p = t / n, p / n
+    lam = soma / passos
+    return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -12746,6 +12900,22 @@ def _parte_81():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1899, testes=TESTES_P1899)
     print(f"P1899 minha taxa de erro ({ERROS_P1899}/{TESTES_P1899}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_83():
+    print("--- Parte 83 (0x53: a probabilidade da probabilidade) ---")
+    medido, conta = p1931_gan_de_dirac()
+    print(f"P1931 GAN de Dirac (rodada 50): {medido}; contas: {conta}")
+    print(f"P1932 jogo assincrono, 200 corridas: {p1932_jogo_assincrono()}")
+    print(f"P1932 replica, 800 corridas: {p1932_jogo_assincrono(corridas=800, semente0=84000)}")
+    print(f"P1933 calibracao composta sete vezes (conta, simulada, composta, declarar para 1 camada, para 7): {p1933_calibracao_composta()}")
+    print(f"P1934 a torre de placares, Partes 67-81: {p1934_torre_de_placares()}")
+    print(f"P1935 o modulo sete_camadas recebido contra a logistica: {p1935_sete_camadas_recebido()}")
+    print(f"P1936 Lyapunov assincrono a = 0,2: {p1936_lyapunov_assincrono()}; a = 0,05: {p1936_lyapunov_assincrono(a=0.05, passos=20000000, semente=86)}")
+    total, sem = p1092_pnn_sem_teste(1931, 1960)
+    print(f"P1092 pNN novas (P1931-P1960) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 83: {p974_previsoes_sem_largura(range(83, 84))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1959, testes=TESTES_P1959)
+    print(f"P1959 minha taxa de erro ({ERROS_P1959}/{TESTES_P1959}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -12782,7 +12952,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83}
 
 
 if __name__ == "__main__":
@@ -12795,7 +12965,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (279 linhas)
+# CLAUDE.md  (283 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -12920,6 +13090,10 @@ anterior, commit e push.
   Parte 79 (CALIBRAÇÃO, medida): das 185 previsões do mundo das Partes 53 a 78, acertaram 77,3%, contra os 90% declarados (z = −5,76: excesso de confiança, não ruído). Pela conta normal
   (`p1813`), o desvio real é 1,36 vez o suposto: a partir da Parte 80, a meia-largura de toda faixa numérica que não vem de uma conta fechada com variância conhecida é multiplicada por 1,36. Teste
   registrado: o acerto das Partes 80 a 84 em [0,81; 0,99].
+  Parte 83 (pedido: "probabilidade dentro da probabilidade", "metacognição dentro da metacognição", "sete camadas", "redes adversas síncronas e assíncronas", "cosseno duplicado"): cada termo do
+  pedido vira uma conta testável escrita ANTES de medir (a leitura escolhida fica no topo da parte). Medido: compor o mapa de calibração é multiplicar o fator (h_k ∘ h_j = h_{kj}); só k = 1 é
+  idempotente. Um módulo recebido com "N camadas" é comparado com o modelo mais simples que resolve a tarefa (a logística de 5 parâmetros empatou com a rede de sete camadas recebida). Quando o resto de
+  uma expansão é k·aⁿ·N com aⁿ·N ≳ 1, ele não é desprezível: calcular o resto antes de dar a faixa.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -13068,7 +13242,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -19697,6 +19871,72 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
+# synthai/testes_parte83.py  (61 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte83.py'] = """\"\"\"Testes de unidade da Parte 83 (a probabilidade da probabilidade): `python3 -m unittest synthai.testes_parte83`.\"\"\"
+
+import math
+import unittest
+
+import calculos
+
+
+class TesteParte83(unittest.TestCase):
+    def test_p1931_gan_de_dirac(self):
+        medido, conta = calculos.p1931_gan_de_dirac()
+        # o cosseno do ângulo duplo: arccos(1 − a²/2) = 2·arcsen(a/2)
+        self.assertAlmostEqual(conta["phi"], conta["phi_angulo_duplo"], places=12)
+        # o síncrono cresce todo passo (a norma final é a máxima); o alternado fica na elipse; as contas fechadas a menos de 0,1%
+        self.assertEqual(medido["sincrono"][0], medido["sincrono"][1])
+        self.assertLess(abs(medido["sincrono"][0] / conta["sincrono_final"] - 1), 1e-3)
+        self.assertLess(abs(medido["alternado"][1] / conta["alternado_maximo"] - 1), 1e-3)
+        self.assertEqual(medido["alternado"][2], conta["trocas"])
+
+    def test_p1932_jogo_assincrono(self):
+        (m, dp, menores, ln_s, ln_a), conta = calculos.p1932_jogo_assincrono(passos=2000, corridas=40, semente0=7)
+        # o síncrono é determinístico e bate com a conta exata; o alternado não cresce; o assíncrono fica entre os dois
+        self.assertAlmostEqual(ln_s, 0.5 * 2000 * math.log(1 + 0.05 ** 2), places=9)
+        self.assertLess(abs(ln_a), 0.05)
+        self.assertLess(ln_a, m)
+        self.assertLess(m, ln_s)
+        self.assertAlmostEqual(conta["assincrono"], 2000 * 0.0025 / 8)
+
+    def test_p1933_calibracao_composta(self):
+        conta, sim, composta, uma, sete = calculos.p1933_calibracao_composta(sorteios=20000)
+        # compor h_k sete vezes é h_{k^7} (grupo de escalas): a composição numérica bate com a forma fechada
+        self.assertAlmostEqual(composta, conta, places=9)
+        self.assertLess(abs(sim - conta), 0.01)
+        # controle: k = 1 é idempotente (a calibração perfeita é o único ponto fixo)
+        c1 = calculos.p1933_calibracao_composta(k=1.0, sorteios=1000)
+        self.assertAlmostEqual(c1[0], 0.9, places=6)
+        self.assertAlmostEqual(c1[2], 0.9, places=6)
+        self.assertAlmostEqual(uma, 0.9747, places=4)
+
+    def test_p1934_torre_de_placares(self):
+        torre, fora = calculos.p1934_torre_de_placares(range(67, 70))
+        self.assertEqual(torre[2], (17, 21))
+        self.assertEqual(torre[3], (11, 15))
+        # controle: uma parte sem a linha (72) fica de fora
+        self.assertEqual(calculos.p1934_torre_de_placares(range(72, 73))[1], [72])
+
+    def test_p1935_sete_camadas_recebido(self):
+        r = calculos.p1935_sete_camadas_recebido()
+        if r is None:
+            self.skipTest("NumPy ausente: o módulo recebido não roda")
+        self.assertTrue(r["modos_identicos"])
+        self.assertEqual(round(r["logistica_adversa"], 6), round(r["rede_adversa"], 6))
+
+    def test_p1936_lyapunov_assincrono(self):
+        lam, razao, uniforme = calculos.p1936_lyapunov_assincrono(a=0.2, passos=200000, semente=1)
+        self.assertAlmostEqual(uniforme, 0.5 * math.log(1.01) / 0.005, places=12)
+        self.assertLess(abs(razao - 1), 0.05)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
 # synthai/testes_pensamento.py  (66 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_pensamento.py'] = """\"\"\"Testes de unidade do `pensamento_exato` (Parte 24): `python3 -m unittest synthai.testes_pensamento`.\"\"\"
@@ -24599,6 +24839,1274 @@ OK
 """
 
 # ====================================================================================================
+# laboratorio/sete_camadas/SETE_CAMADAS_RESULTADO.json  (506 linhas)
+# ====================================================================================================
+FONTES['laboratorio/sete_camadas/SETE_CAMADAS_RESULTADO.json'] = """{
+  "natureza": "protótipo experimental; não demonstra AGI/ASI ou consciência",
+  "status": "meta_observada_no_benchmark",
+  "criterio_observado": true,
+  "criterio": "limiares pontuais reservados; não prova estatística de promoção",
+  "camadas_operacionais": 7,
+  "camadas_afins_rede": 7,
+  "niveis_observacao": 10,
+  "cosseno_duplicado": "cos(2θ)=2 cos²(θ)−1",
+  "metacognicao_dentro_metacognicao": true,
+  "ciclos_executados": 2,
+  "versao_final": 1,
+  "confirmacao": {
+    "acuracia": 0.921875,
+    "adversa": 0.794921875,
+    "brier": 0.05331427731347253,
+    "brier_confiabilidade": 0.05732843200720651,
+    "probabilidade_media": 0.4831990963036328,
+    "probabilidade_acerto": 0.89939671412541,
+    "intervalo_limpo": [
+      0.8953615694536639,
+      0.9421048155761593
+    ],
+    "intervalo_adverso": [
+      0.7578130232712158,
+      0.8276380144116698
+    ],
+    "n": 512,
+    "max_perturbacao": 0.15000000000000013
+  },
+  "confirmacao_consultada_uma_vez": true,
+  "segundos": 0.599,
+  "execucao_futura_automatica": false,
+  "tracos": [
+    {
+      "ciclo": 1,
+      "orientacao": "versa",
+      "modo": "sincrono",
+      "sete_camadas": [
+        "axiomas",
+        "geometria recursiva",
+        "diálogo invertível",
+        "rede de sete mapas afins",
+        "avaliação adversarial",
+        "metacognição recursiva",
+        "integração versionada"
+      ],
+      "pergunta": "Qual mudança verificável reduz erros sob ataque sem abandonar o desempenho nominal?",
+      "resposta": "Testar treino adversarial com peso 0.250, taxa 0.1050, mantendo contratos e reserva intactos.",
+      "papeis": [
+        "lógica criativa pergunta",
+        "criatividade lógica responde"
+      ],
+      "candidata": {
+        "acuracia": 0.93359375,
+        "adversa": 0.8203125,
+        "brier": 0.05244614589827448,
+        "brier_confiabilidade": 0.05695426558643353,
+        "probabilidade_media": 0.4790107178478234,
+        "probabilidade_acerto": 0.9067523941373216,
+        "intervalo_limpo": [
+          0.8962370309862306,
+          0.9581296293175854
+        ],
+        "intervalo_adverso": [
+          0.7686551946268473,
+          0.8624985544264222
+        ],
+        "n": 256,
+        "max_perturbacao": 0.15000000000000013
+      },
+      "baseline": {
+        "acuracia": 0.19921875,
+        "adversa": 0.10546875,
+        "brier": 0.26489248115352676,
+        "brier_confiabilidade": 0.16138388112445531,
+        "probabilidade_media": 0.5030071226594098,
+        "probabilidade_acerto": 0.2422680412371134,
+        "intervalo_limpo": [
+          0.1548974099242564,
+          0.2524338257208444
+        ],
+        "intervalo_adverso": [
+          0.07350142195414594,
+          0.1491018871387784
+        ],
+        "n": 256,
+        "max_perturbacao": 0.15000000000000013
+      },
+      "aceita": true,
+      "versao_vigente": 1,
+      "observacao": {
+        "resultado_metacognitivo": {
+          "nivel": 10,
+          "operacao": "auto-observação integrada",
+          "resultado": {
+            "ciclo": 1,
+            "eventos_distintos": 1,
+            "prova_de_cognicao_plena": false
+          },
+          "observa": {
+            "nivel": 9,
+            "operacao": "auditoria axiomática",
+            "resultado": {
+              "evidencia_unica": true,
+              "profundidade_limitada": 10,
+              "reserva_usada": false
+            },
+            "observa": {
+              "nivel": 8,
+              "operacao": "dilema pragmático",
+              "resultado": {
+                "aceita": true,
+                "regressao_nominal": -0.734375
+              },
+              "observa": {
+                "nivel": 7,
+                "operacao": "metacognição dentro da probabilidade",
+                "resultado": {
+                  "prob_acerto_mistura": 0.7711682627582144,
+                  "politica": "mistura heurística; garantia de calibração não demonstrada"
+                },
+                "observa": {
+                  "nivel": 6,
+                  "operacao": "metacognição da metacognição",
+                  "resultado": {
+                    "recomendacao_util": true,
+                    "ganho_adverso": 0.71484375
+                  },
+                  "observa": {
+                    "nivel": 5,
+                    "operacao": "dissonância operacional",
+                    "resultado": {
+                      "lacuna_limpa_adversa": 0.11328125
+                    },
+                    "observa": {
+                      "nivel": 4,
+                      "operacao": "probabilidade da recomendação",
+                      "resultado": {
+                        "media_beta": 0.6666666666666666,
+                        "sucessos": 1,
+                        "falhas": 0
+                      },
+                      "observa": {
+                        "nivel": 3,
+                        "operacao": "metacognição analítica",
+                        "resultado": {
+                          "brier": 0.05244614589827448,
+                          "brier_confiabilidade": 0.05695426558643353
+                        },
+                        "observa": {
+                          "nivel": 2,
+                          "operacao": "probabilidade condicionada",
+                          "resultado": {
+                            "prob_acerto_calibrada": 0.9067523941373216
+                          },
+                          "observa": {
+                            "nivel": 1,
+                            "operacao": "inferência",
+                            "resultado": {
+                              "prob_evento": 0.4790107178478234
+                            },
+                            "observa": null,
+                            "juizo_metacognitivo_sobre_anterior": {
+                              "consistente": true,
+                              "niveis_revisados": 0,
+                              "motivos": []
+                            },
+                            "hash_entrada": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+                            "cria_evidencia_independente": false
+                          },
+                          "juizo_metacognitivo_sobre_anterior": {
+                            "consistente": true,
+                            "niveis_revisados": 1,
+                            "motivos": []
+                          },
+                          "hash_entrada": "e100f376c1096152dab4f1eb3632bee742c9e1fed115b8094bbc873a283fe8f5",
+                          "cria_evidencia_independente": false
+                        },
+                        "juizo_metacognitivo_sobre_anterior": {
+                          "consistente": true,
+                          "niveis_revisados": 2,
+                          "motivos": []
+                        },
+                        "hash_entrada": "8be22df5e60567f00815e78fb3f2c629726e4dae2920ba204a6809aeda7ce112",
+                        "cria_evidencia_independente": false
+                      },
+                      "juizo_metacognitivo_sobre_anterior": {
+                        "consistente": true,
+                        "niveis_revisados": 3,
+                        "motivos": []
+                      },
+                      "hash_entrada": "d9bd8f85733882f5c6dd3b3cc830662db74a60102d638ed29a4da3a06ec5af4d",
+                      "cria_evidencia_independente": false
+                    },
+                    "juizo_metacognitivo_sobre_anterior": {
+                      "consistente": true,
+                      "niveis_revisados": 4,
+                      "motivos": []
+                    },
+                    "hash_entrada": "fc0212b752cbf5ee8d4d4336111c9fe0ee963cad1eea5996e9cef5cbb619a086",
+                    "cria_evidencia_independente": false
+                  },
+                  "juizo_metacognitivo_sobre_anterior": {
+                    "consistente": true,
+                    "niveis_revisados": 5,
+                    "motivos": []
+                  },
+                  "hash_entrada": "5fb2399ca987c053c7f148f9d7590df931cc6b9fbe03d40f9ee30baf5044cbce",
+                  "cria_evidencia_independente": false
+                },
+                "juizo_metacognitivo_sobre_anterior": {
+                  "consistente": true,
+                  "niveis_revisados": 6,
+                  "motivos": []
+                },
+                "hash_entrada": "896a37f83f13515afe0175b86fe0813e9c45584af553050a664eccc49d25eb4e",
+                "cria_evidencia_independente": false
+              },
+              "juizo_metacognitivo_sobre_anterior": {
+                "consistente": true,
+                "niveis_revisados": 7,
+                "motivos": []
+              },
+              "hash_entrada": "efbe98bbc6277c741a8dab83ca8f131d2b80a059fdbcb46006c795b639bbf8f2",
+              "cria_evidencia_independente": false
+            },
+            "juizo_metacognitivo_sobre_anterior": {
+              "consistente": true,
+              "niveis_revisados": 8,
+              "motivos": []
+            },
+            "hash_entrada": "01dd26cb0958093e012aad2c99d1bab50b159750707c7d5d9c72f75c64ebaf8a",
+            "cria_evidencia_independente": false
+          },
+          "juizo_metacognitivo_sobre_anterior": {
+            "consistente": true,
+            "niveis_revisados": 9,
+            "motivos": []
+          },
+          "hash_entrada": "4cd5cf4597838a61c8353addc4ca026b57a539789400357fb269e1b44480a27b",
+          "cria_evidencia_independente": false
+        },
+        "percurso": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "revisao_recursiva_final": {
+          "consistente": true,
+          "niveis_revisados": 10,
+          "motivos": []
+        },
+        "probabilidade_dentro_da_metacognicao": 0.9067523941373216,
+        "metacognicao_dentro_da_probabilidade": 0.7711682627582144,
+        "limites": "Médias Beta e mistura são descrições heurísticas sob seleção adaptativa; não certificam probabilidades de sucesso fora do benchmark."
+      }
+    },
+    {
+      "ciclo": 2,
+      "orientacao": "reversa",
+      "modo": "assincrono",
+      "sete_camadas": [
+        "axiomas",
+        "geometria recursiva",
+        "diálogo invertível",
+        "rede de sete mapas afins",
+        "avaliação adversarial",
+        "metacognição recursiva",
+        "integração versionada"
+      ],
+      "pergunta": "Que pressuposto ou dilema pode refutar a utilidade da mudança proposta?",
+      "resposta": "Comparar a candidata com a versão congelada; rejeitar regressão nominal excessiva e registrar custo, dissonância e falhas.",
+      "papeis": [
+        "criatividade lógica pergunta",
+        "lógica criativa responde"
+      ],
+      "candidata": {
+        "acuracia": 0.9296875,
+        "adversa": 0.8203125,
+        "brier": 0.04731619017752607,
+        "brier_confiabilidade": 0.04979946365526904,
+        "probabilidade_media": 0.47537248881560434,
+        "probabilidade_acerto": 0.9097772986073491,
+        "intervalo_limpo": [
+          0.8916048433850524,
+          0.9550648199790895
+        ],
+        "intervalo_adverso": [
+          0.7686551946268473,
+          0.8624985544264222
+        ],
+        "n": 256,
+        "max_perturbacao": 0.15000000000000013
+      },
+      "baseline": {
+        "acuracia": 0.93359375,
+        "adversa": 0.8203125,
+        "brier": 0.05244614589827448,
+        "brier_confiabilidade": 0.05695426558643353,
+        "probabilidade_media": 0.4790107178478234,
+        "probabilidade_acerto": 0.9067523941373216,
+        "intervalo_limpo": [
+          0.8962370309862306,
+          0.9581296293175854
+        ],
+        "intervalo_adverso": [
+          0.7686551946268473,
+          0.8624985544264222
+        ],
+        "n": 256,
+        "max_perturbacao": 0.15000000000000013
+      },
+      "aceita": false,
+      "versao_vigente": 1,
+      "observacao": {
+        "resultado_metacognitivo": {
+          "nivel": 10,
+          "operacao": "auto-observação integrada",
+          "resultado": {
+            "ciclo": 2,
+            "eventos_distintos": 2,
+            "prova_de_cognicao_plena": false
+          },
+          "observa": {
+            "nivel": 9,
+            "operacao": "auditoria axiomática",
+            "resultado": {
+              "evidencia_unica": true,
+              "profundidade_limitada": 10,
+              "reserva_usada": false
+            },
+            "observa": {
+              "nivel": 8,
+              "operacao": "dilema pragmático",
+              "resultado": {
+                "aceita": false,
+                "regressao_nominal": 0.00390625
+              },
+              "observa": {
+                "nivel": 7,
+                "operacao": "metacognição dentro da probabilidade",
+                "resultado": {
+                  "prob_acerto_mistura": 0.7048886493036746,
+                  "politica": "mistura heurística; garantia de calibração não demonstrada"
+                },
+                "observa": {
+                  "nivel": 6,
+                  "operacao": "metacognição da metacognição",
+                  "resultado": {
+                    "recomendacao_util": false,
+                    "ganho_adverso": 0.0
+                  },
+                  "observa": {
+                    "nivel": 5,
+                    "operacao": "dissonância operacional",
+                    "resultado": {
+                      "lacuna_limpa_adversa": 0.109375
+                    },
+                    "observa": {
+                      "nivel": 4,
+                      "operacao": "probabilidade da recomendação",
+                      "resultado": {
+                        "media_beta": 0.5,
+                        "sucessos": 1,
+                        "falhas": 1
+                      },
+                      "observa": {
+                        "nivel": 3,
+                        "operacao": "metacognição analítica",
+                        "resultado": {
+                          "brier": 0.04731619017752607,
+                          "brier_confiabilidade": 0.04979946365526904
+                        },
+                        "observa": {
+                          "nivel": 2,
+                          "operacao": "probabilidade condicionada",
+                          "resultado": {
+                            "prob_acerto_calibrada": 0.9097772986073491
+                          },
+                          "observa": {
+                            "nivel": 1,
+                            "operacao": "inferência",
+                            "resultado": {
+                              "prob_evento": 0.47537248881560434
+                            },
+                            "observa": null,
+                            "juizo_metacognitivo_sobre_anterior": {
+                              "consistente": true,
+                              "niveis_revisados": 0,
+                              "motivos": []
+                            },
+                            "hash_entrada": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+                            "cria_evidencia_independente": false
+                          },
+                          "juizo_metacognitivo_sobre_anterior": {
+                            "consistente": true,
+                            "niveis_revisados": 1,
+                            "motivos": []
+                          },
+                          "hash_entrada": "45e6f0d6bc957d87ba2d000d937736051899d9971f95c53af5179deb497334fa",
+                          "cria_evidencia_independente": false
+                        },
+                        "juizo_metacognitivo_sobre_anterior": {
+                          "consistente": true,
+                          "niveis_revisados": 2,
+                          "motivos": []
+                        },
+                        "hash_entrada": "c18aaec7bf8b3041abd8796a31d61c24f3d70ec4470bf836d699b3ae3363129d",
+                        "cria_evidencia_independente": false
+                      },
+                      "juizo_metacognitivo_sobre_anterior": {
+                        "consistente": true,
+                        "niveis_revisados": 3,
+                        "motivos": []
+                      },
+                      "hash_entrada": "559e56b09ee75aa6d7ed5b4016eb50b4f1e94bd8675e92fc4f96f24a6a518c73",
+                      "cria_evidencia_independente": false
+                    },
+                    "juizo_metacognitivo_sobre_anterior": {
+                      "consistente": true,
+                      "niveis_revisados": 4,
+                      "motivos": []
+                    },
+                    "hash_entrada": "6f74e8f95170b9c6f9a9b64ae089056e33f1164c24804df2a64c58079a9250d0",
+                    "cria_evidencia_independente": false
+                  },
+                  "juizo_metacognitivo_sobre_anterior": {
+                    "consistente": true,
+                    "niveis_revisados": 5,
+                    "motivos": []
+                  },
+                  "hash_entrada": "8967800ba68111361c5461748959841e6ef4dab0c8ea1b5e0c008db8a39b71e0",
+                  "cria_evidencia_independente": false
+                },
+                "juizo_metacognitivo_sobre_anterior": {
+                  "consistente": true,
+                  "niveis_revisados": 6,
+                  "motivos": []
+                },
+                "hash_entrada": "32843c96df9f324749a59736880e74626aa6cae0cabbcbc7db453b10e8676e02",
+                "cria_evidencia_independente": false
+              },
+              "juizo_metacognitivo_sobre_anterior": {
+                "consistente": true,
+                "niveis_revisados": 7,
+                "motivos": []
+              },
+              "hash_entrada": "b30c5e63977e65abba3ecf05aa55c5b206299d9510ba6602f6857a056a57549e",
+              "cria_evidencia_independente": false
+            },
+            "juizo_metacognitivo_sobre_anterior": {
+              "consistente": true,
+              "niveis_revisados": 8,
+              "motivos": []
+            },
+            "hash_entrada": "a4a3da6da5310c2b0eb45b3d9d5b97781b9668f380c353817148d8d99f42bb5e",
+            "cria_evidencia_independente": false
+          },
+          "juizo_metacognitivo_sobre_anterior": {
+            "consistente": true,
+            "niveis_revisados": 9,
+            "motivos": []
+          },
+          "hash_entrada": "6feda7ce242d2e610b0a50f7158a7ccbded8b1e5df82010174606846ec9b7ef1",
+          "cria_evidencia_independente": false
+        },
+        "percurso": [
+          10,
+          9,
+          8,
+          7,
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ],
+        "revisao_recursiva_final": {
+          "consistente": true,
+          "niveis_revisados": 10,
+          "motivos": []
+        },
+        "probabilidade_dentro_da_metacognicao": 0.9097772986073491,
+        "metacognicao_dentro_da_probabilidade": 0.7048886493036746,
+        "limites": "Médias Beta e mistura são descrições heurísticas sob seleção adaptativa; não certificam probabilidades de sucesso fora do benchmark."
+      }
+    }
+  ],
+  "limites": [
+    "Domínio sintético único; não generalidade aberta.",
+    "Ataque PGD delimitado por norma infinito; não robustez universal.",
+    "Seleção adaptativa usa desenvolvimento repetido; confirmação não retorna ao treino.",
+    "Inversão muda investigação e percurso de auditoria, preservando dependências de cálculo.",
+    "Autopoiese é manutenção de snapshots/estratégias sob contratos fixos, não autonomia biológica.",
+    "Dez observações aninhadas não constituem dez fontes independentes de evidência."
+  ]
+}
+"""
+
+# ====================================================================================================
+# laboratorio/sete_camadas/comparar_logistica.py  (65 linhas)
+# ====================================================================================================
+FONTES['laboratorio/sete_camadas/comparar_logistica.py'] = """\"\"\"Parte 83 (P1935): o módulo sete_camadas.py recebido do usuário (cópia fiel, nesta pasta), auditado pela árvore sintática antes de rodar, contra dois
+controles. (j) o modo síncrono e o assíncrono dele, mesma semente, dão o mesmo resultado? (k, l) uma regressão logística de 5 parâmetros (Python puro;
+o NumPy entra só para gerar os MESMOS dados dele) nos mesmos 512 exemplos de treino, avaliada na mesma confirmação, limpa e sob o pior ataque ℓ∞ de 0,15
+(exato para um modelo linear: x − ε·sinal(w)·(2y − 1)). Imprime um JSON. Rodar: python3 laboratorio/sete_camadas/comparar_logistica.py\"\"\"
+
+import asyncio
+import json
+import math
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import sete_camadas as s  # noqa: E402
+
+
+def logistica(x, y, passos=3000, taxa=0.5):
+    w, b, n = [0.0] * 4, 0.0, len(x)
+    for _ in range(passos):
+        gw, gb = [0.0] * 4, 0.0
+        for xi, yi in zip(x, y):
+            z = b + sum(wj * xj for wj, xj in zip(w, xi))
+            p = 1.0 / (1.0 + math.exp(-z)) if z >= 0 else math.exp(z) / (1.0 + math.exp(z))
+            d = p - yi
+            gb += d
+            for j in range(4):
+                gw[j] += d * xi[j]
+        b -= taxa * gb / n
+        w = [wj - taxa * g / n for wj, g in zip(w, gw)]
+    return w, b
+
+
+def acerto(w, b, x, y, eps=0.0):
+    ok = 0
+    for xi, yi in zip(x, y):
+        s_ = 1.0 if yi else -1.0
+        xa = [xj - eps * s_ * (1.0 if wj > 0 else -1.0 if wj < 0 else 0.0) for xj, wj in zip(xi, w)]
+        z = b + sum(wj * xj for wj, xj in zip(w, xa))
+        ok += (z >= 0) == bool(yi)
+    return ok / len(x)
+
+
+def main():
+    semente = 42
+    xt, yt = s.dados(semente + 11, 512)
+    xc, yc = s.dados(semente + 53, 512)
+    xt, yt = xt.tolist(), [float(v[0]) for v in yt.tolist()]
+    xc, yc = xc.tolist(), [float(v[0]) for v in yc.tolist()]
+    w, b = logistica(xt, yt)
+    saida = {"logistica_pesos": w + [b], "logistica_limpa": acerto(w, b, xc, yc), "logistica_adversa": acerto(w, b, xc, yc, 0.15)}
+    rs = {}
+    for modo in ("sincrono", "assincrono"):
+        r = asyncio.run(s.executar(s.Configuracao(semente=semente, modo=modo)))
+        r.pop("segundos")
+        for t in r["tracos"]:
+            t.pop("modo")
+        rs[modo] = r
+    saida["modos_identicos"] = json.dumps(rs["sincrono"], sort_keys=True) == json.dumps(rs["assincrono"], sort_keys=True)
+    saida["rede_limpa"] = rs["sincrono"]["confirmacao"]["acuracia"]
+    saida["rede_adversa"] = rs["sincrono"]["confirmacao"]["adversa"]
+    saida["ciclos"] = rs["sincrono"]["ciclos_executados"]
+    print(json.dumps(saida))
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# laboratorio/sete_camadas/requirements.txt  (1 linhas)
+# ====================================================================================================
+FONTES['laboratorio/sete_camadas/requirements.txt'] = """numpy>=1.24,<3
+"""
+
+# ====================================================================================================
+# laboratorio/sete_camadas/revisao_sete_camadas.json  (113 linhas)
+# ====================================================================================================
+FONTES['laboratorio/sete_camadas/revisao_sete_camadas.json'] = """{
+  "arquivo": "sete_camadas.py",
+  "sha256": "d6a8cd112e71357d86f8f86533a83f1fd0661cdd5d341790b11ccdd5b50aef70",
+  "tipo": "revisão independente read-only e checks direcionados; não certificação AGI/ASI",
+  "checks": {
+    "gradientes_parametros": {
+      "amostras": 14,
+      "erro_maximo": 7.59784496602578e-11,
+      "passou": true
+    },
+    "gradientes_entrada": {
+      "amostras": 20,
+      "erro_maximo": 7.688596113941681e-11,
+      "passou": true
+    },
+    "cos2_identidade_exata": true,
+    "ataque_epsilon_zero_exato": true,
+    "ataque_40_sementes": {
+      "casos": 16000,
+      "perdas_adversas_menores_que_limpa": 0,
+      "max_norma_infinito": 0.5000000000000002,
+      "epsilon": 0.5,
+      "acuracia_adversa_nunca_maior_limpa": true,
+      "passou": true
+    },
+    "orcamentos_invalidos_rejeitados": true,
+    "snapshots": {
+      "arrays_readonly": 17,
+      "mutacoes_rejeitadas": 17,
+      "isolamento_da_origem": true,
+      "passou": true
+    },
+    "sync_async_metricas_identicas": true,
+    "sync_async_ambos_execucao_completa_identica": true,
+    "niveis_observacao": [
+      10,
+      9,
+      8,
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "evidencia_evento_unico": true,
+    "evento_duplicado_rejeitado": true,
+    "revisao_recursiva_computacional": {
+      "final_10_niveis_consistente": true,
+      "hashes_10_entradas_corretos": true,
+      "juizos_10_anteriores_corretos": true,
+      "nenhum_nivel_cria_evidencia": true,
+      "erro_probabilidade_profunda_propagado": true,
+      "nao_finito_rejeitado": true,
+      "ordem_invalida_propagada": true,
+      "revisar_nao_consume_evidencia": true,
+      "observar_explica_erro_sem_falsa_consistencia": true
+    }
+  },
+  "achado_corrigido": {
+    "problema": "Ataque retornava somente o último passo PGD e podia reduzir BCE frente à entrada limpa.",
+    "contraexemplo": {
+      "semente_rede": 20,
+      "semente_referencia": 27,
+      "semente_dados": 120,
+      "amostra": 69,
+      "epsilon": 0.5,
+      "loss_limpa_antes": 0.8889011763247018,
+      "loss_ultimo_passo_antes": 0.8225679910329362
+    },
+    "correcao": "Preservar pior BCE calibrada por amostra entre entrada limpa, inicialização e todos os passos.",
+    "regressao_16000_casos": "passou"
+  },
+  "resultado_default_reexecutado": {
+    "confirmacao": {
+      "acuracia": 0.921875,
+      "adversa": 0.794921875,
+      "brier": 0.05331427731347253,
+      "brier_confiabilidade": 0.05732843200720651,
+      "probabilidade_media": 0.4831990963036328,
+      "probabilidade_acerto": 0.89939671412541,
+      "intervalo_limpo": [
+        0.8953615694536639,
+        0.9421048155761593
+      ],
+      "intervalo_adverso": [
+        0.7578130232712158,
+        0.8276380144116698
+      ],
+      "n": 512,
+      "max_perturbacao": 0.15000000000000013
+    },
+    "ciclos_executados": 2,
+    "versao_final": 1,
+    "status": "meta_observada_no_benchmark"
+  },
+  "limites": [
+    "Diferenças finitas amostram gradientes; não prova simbólica de todo o espaço.",
+    "PGD delimitado por orçamento é avaliação por ataque concreto, não certificado de robustez universal.",
+    "Arrays são readonly em snapshots cooperativos; isto não constitui isolamento contra código hostil.",
+    "Dez níveis fazem revisão recursiva real de consistência, sem constituir dez modelos ou dez fontes independentes de evidência.",
+    "Inversão alterna perguntas e percurso de auditoria, preservando dependências matemáticas.",
+    "Beta e mistura metacognitiva são descrições heurísticas sob adaptação; não probabilidades certificadas fora do benchmark.",
+    "Confirmação reservada é consulta única por execução, não ledger global entre execuções."
+  ],
+  "recheck_meta": {
+    "hash_antes": "d6a8cd112e71357d86f8f86533a83f1fd0661cdd5d341790b11ccdd5b50aef70",
+    "escopo": "Somente recursão metacognitiva nova. PGD, snapshots e gradientes não foram repetidos, pois implementação correspondente permaneceu igual.",
+    "checks_direcionados": 9,
+    "passou": true
+  }
+}
+"""
+
+# ====================================================================================================
+# laboratorio/sete_camadas/sete_camadas.md  (48 linhas)
+# ====================================================================================================
+FONTES['laboratorio/sete_camadas/sete_camadas.md'] = """# Sete camadas e dez níveis recursivos
+
+A arquitetura executável aplica uma interpretação operacional dos termos solicitados. Não assume que auto-observação ou recursão produzam consciência, AGI ou ASI.
+
+| Camada operacional | Mecanismo |
+|---|---|
+| 1. Axiomas | Objetivos e orçamentos fixos, com configuração validada |
+| 2. Geometria | Vetores normalizados, referência recursiva e cosseno de ângulo duplo |
+| 3. Diálogo | Alternância entre lógica criativa e criatividade lógica; pergunta de melhoria e pergunta de refutação |
+| 4. Aprendizagem | Rede com sete mapas afins: entrada, cinco blocos residuais tanh e saída binária |
+| 5. Adversário | Treino adversarial e ataque PGD, com orçamento de norma infinito e pior caso encontrado por amostra |
+| 6. Metacognição | Avaliação da previsão e da recomendação; probabilidades condicionadas e revisão recursiva |
+| 7. Integração | Snapshots versionados, seleção operacional e confirmação reservada |
+
+## Geometria e gradientes
+
+Para r e x não nulos, c=(x·r)/(||x||||r||). O sistema preserva x, c e cos(2θ)=2c²−1. Preservar c evita perder orientação ao incluir uma transformação com simetria antipodal. O gradiente de c em relação a x é r/(||x||||r||)−c x/||x||²; o do cosseno duplicado é 4c vezes esse gradiente. Na origem ou com referência nula, o código define c=0 como convenção e não afirma que exista ângulo.
+
+A referência evolui por r_(t+1)=normalizar((1−η)normalizar(r_t)+η normalizar(m_t)), com m_t obtido apenas dos dados de treino. Cada artefato inclui a própria referência. A candidata não altera a geometria da versão anterior; a avaliação compara seus snapshots sobre os mesmos casos originais, com ataques próprios de cada modelo.
+
+Isso utiliza álgebra vetorial euclidiana e uma identidade algébrica trigonométrica. Não implementa a área matemática inteira denominada geometria algébrica.
+
+## Dez níveis dentro da metacognição
+
+1. Inferência de evento pela rede.
+2. Probabilidade de acerto condicionada à faixa de confiança.
+3. Erro da previsão e da confiabilidade prevista.
+4. Frequência suavizada de recomendações úteis.
+5. Dissonância operacional entre acerto nominal e adversarial.
+6. Julgamento metacognitivo da recomendação anterior.
+7. Mistura de confiança revisada na previsão de acerto.
+8. Dilema entre ganho adversarial e regressão nominal.
+9. Auditoria das premissas e do orçamento.
+10. Observação integrada do próprio registro.
+
+Cada nível recebe o registro anterior, verifica recursivamente a finitude das medidas, o domínio das probabilidades e a ordem de dependências, e produz um juízo metacognitivo com hash da entrada. Dez níveis não produzem dez rótulos externos: a evidência do ciclo é contada uma vez. A ordem de auditoria alterna versa/reversa sem inverter as dependências matemáticas.
+
+“Metacognição dentro da probabilidade” significa usar a confiança estimada no controlador para formar uma mistura explícita da probabilidade de acerto calibrada e uma referência 0,5. “Probabilidade dentro da metacognição” significa julgar o controlador com frequências suavizadas de ganhos observados. Essas médias Beta e a mistura são heurísticas sob seleção adaptativa; não há garantia de calibração fora do benchmark. Uma expressão P(P(A)) sem especificar eventos não define, por si só, um novo mecanismo probabilístico.
+
+“Autopoiese” corresponde aqui à manutenção de artefatos, estratégias e logs sob contratos fixos. “Dissonância” é um erro ou conflito mensurável, não uma alegação de experiência psicológica. “Auto-observável” significa que entradas, resultados e juízos podem ser inspecionados no rastreio, não que exista cognição plena.
+
+## Síncrono, assíncrono e confirmação
+
+O modo síncrono executa treino e avaliações em sequência. O assíncrono despacha o treino para uma thread e avalia os dois snapshots em tarefas concorrentes. Os pesos, referências e estatísticas dos snapshots são cópias somente para leitura. Dados de avaliação também são copiados. Nenhuma tarefa atualiza parâmetros compartilhados; o código não implementa SGD distribuído assíncrono.
+
+Os conjuntos de treino, calibração e desenvolvimento usam geradores separados. Desenvolvimento é consultado repetidamente para seleção, com limiares operacionais, sem alegar significância estatística. A confirmação só é gerada e avaliada depois de congelar a seleção, uma vez, sem retorno ao treino. A semente e o gerador são públicos: esse isolamento de fluxo não é uma barreira contra um operador que ajuste o código após ler a reserva.
+
+O ciclo para ao atingir o critério em desenvolvimento após pelo menos duas iterações, ou ao acabar o orçamento. A confirmação pode falhar, e isso é reportado. Acerto acima de um limiar em uma tarefa sintética não demonstra generalidade. O adversário guarda a entrada original e o estado de maior perda encontrado, mas PGD finito não certifica o pior ataque possível.
+"""
+
+# ====================================================================================================
+# laboratorio/sete_camadas/sete_camadas.py  (367 linhas)
+# ====================================================================================================
+FONTES['laboratorio/sete_camadas/sete_camadas.py'] = """\"\"\"Sete camadas operacionais e dez níveis de observação: experimento, não AGI/ASI.
+
+Cosseno duplicado significa cos(2θ)=2*cos(θ)**2-1. A geometria é vetorial
+euclidiana com uma relação algébrica trigonométrica, não geometria algébrica
+geral. Probabilidade de acerto condicionada e mistura calibrada substituem
+a expressão sem evento definido 'probabilidade da própria probabilidade'.
+\"\"\"
+from dataclasses import dataclass
+import argparse
+import asyncio
+import hashlib
+import json
+import math
+from pathlib import Path
+import time
+
+import numpy as np
+
+
+@dataclass(frozen=True)
+class Configuracao:
+    semente: int = 42
+    ciclos: int = 4
+    epocas: int = 35
+    largura: int = 12
+    epsilon: float = 0.15
+    meta_limpa: float = 0.85
+    meta_adversa: float = 0.70
+    modo: str = 'ambos'
+
+    def validar(self):
+        if not 2 <= self.ciclos <= 30 or not 1 <= self.epocas <= 150 or not 6 <= self.largura <= 64:
+            raise ValueError('Use 2–30 ciclos, 1–150 épocas e largura 6–64.')
+        if not math.isfinite(self.epsilon) or not 0 <= self.epsilon <= .5:
+            raise ValueError('epsilon deve ser finito e pertencer a [0,.5].')
+        if not all(math.isfinite(x) and .5 <= x <= 1 for x in (self.meta_limpa,self.meta_adversa)):
+            raise ValueError('Metas observadas devem estar entre .5 e 1.')
+        if self.modo not in ('sincrono','assincrono','ambos'):
+            raise ValueError('Modo inválido.')
+
+
+def normalizar(v):
+    v=np.asarray(v,dtype=float)
+    if not np.isfinite(v).all(): raise ValueError('Vetor não finito.')
+    n=np.linalg.norm(v)
+    return v/n if n>1e-12 else np.zeros_like(v)
+
+
+def vetor_recursivo(anterior,observacao,taxa=.25):
+    if not 0<=taxa<=1:raise ValueError('Taxa fora de [0,1].')
+    return normalizar((1-taxa)*normalizar(anterior)+taxa*normalizar(observacao))
+
+
+def geometria(x,referencia):
+    x=np.asarray(x,dtype=float);r=normalizar(referencia)
+    if x.ndim!=2 or x.shape[1]!=4 or r.shape!=(4,) or not np.isfinite(x).all():
+        raise ValueError('Esperados vetores finitos com quatro coordenadas.')
+    n=np.linalg.norm(x,axis=1,keepdims=True);safe=np.maximum(n,1e-12)
+    c=(x@r[:,None])/safe
+    c=np.clip(c,-1,1)
+    # Referência nula define a convenção c=0; não inventa uma direção.
+    dc=r[None,:]/safe-c*x/(safe**2)
+    dc[n[:,0]<=1e-12]=0
+    return np.concatenate((x,c,2*c*c-1),axis=1),dc,c
+
+
+def sigmoide(z):
+    z=np.asarray(z,dtype=float)
+    return np.exp(-np.logaddexp(0,-z))
+
+
+class RedeSeteCamadas:
+    \"\"\"Uma entrada, cinco blocos residuais tanh e uma saída: sete mapas afins.\"\"\"
+    def __init__(self,semente=0,largura=12):
+        rng=np.random.default_rng(semente);dims=[(6,largura)]+[(largura,largura)]*5+[(largura,1)]
+        self.parametros=[(rng.normal(0,.5/math.sqrt(a),(a,b)),np.zeros((1,b))) for a,b in dims]
+        self.residual=.2
+
+    def copia(self):
+        nova=object.__new__(type(self));nova.residual=self.residual
+        nova.parametros=[(w.copy(),b.copy()) for w,b in self.parametros]
+        return nova
+
+    def frente(self,x):
+        h=x;caches=[]
+        for i,(w,b) in enumerate(self.parametros):
+            anterior=h;z=h@w+b
+            if i==6:h=z;caches.append((anterior,None))
+            else:
+                a=np.tanh(z);h=a if i==0 else h+self.residual*a;caches.append((anterior,a))
+        return h,caches
+
+    def gradientes(self,x,y):
+        logits,caches=self.frente(x);y=np.asarray(y).reshape(-1,1)
+        loss=float(np.mean(np.logaddexp(0,logits)-y*logits))
+        delta=(sigmoide(logits)-y)/len(x);grads=[None]*7
+        for i in range(6,-1,-1):
+            anterior,a=caches[i];w,_=self.parametros[i]
+            if i==6:dz=delta;identidade=0
+            elif i==0:dz=delta*(1-a*a);identidade=0
+            else:dz=delta*self.residual*(1-a*a);identidade=delta
+            grads[i]=(anterior.T@dz,np.sum(dz,axis=0,keepdims=True))
+            delta=dz@w.T+identidade
+        return loss,grads,delta
+
+    def atualizar(self,grads,taxa):
+        norm=math.sqrt(sum(float(np.sum(a*a)+np.sum(b*b)) for a,b in grads))
+        escala=min(1.,5./max(norm,1e-12))
+        for (w,b),(dw,db) in zip(self.parametros,grads):w-=taxa*escala*dw;b-=taxa*escala*db
+
+
+class Confiabilidade:
+    \"\"\"P(acerto | faixa de confiança), Beta(1,1), ajustada somente na calibração.\"\"\"
+    def __init__(self):self.contagens=np.zeros(5);self.acertos=np.zeros(5)
+
+    @staticmethod
+    def indice(p):return np.minimum(4,((np.maximum(p,1-p)-.5)*10).astype(int)).reshape(-1)
+
+    def ajustar(self,p,y):
+        ids=self.indice(p);ok=((p.reshape(-1)>=.5)==np.asarray(y).reshape(-1))
+        self.contagens=np.bincount(ids,minlength=5).astype(float)
+        self.acertos=np.bincount(ids,weights=ok,minlength=5)
+
+    def prever(self,p):
+        ids=self.indice(p)
+        return ((self.acertos[ids]+1)/(self.contagens[ids]+2)).reshape(-1,1)
+
+    def copia(self):
+        c=Confiabilidade();c.contagens=self.contagens.copy();c.acertos=self.acertos.copy();return c
+
+
+class Artefato:
+    def __init__(self,rede,referencia,versao=0):
+        self.rede=rede;self.referencia=normalizar(referencia);self.versao=versao
+        self.temperatura=1.;self.confiabilidade=Confiabilidade()
+
+    def copia(self):
+        c=Artefato(self.rede.copia(),self.referencia.copy(),self.versao)
+        c.temperatura=self.temperatura;c.confiabilidade=self.confiabilidade.copia();return c
+
+    def congelada(self):
+        c=self.copia()
+        for w,b in c.rede.parametros:w.setflags(write=False);b.setflags(write=False)
+        for v in (c.referencia,c.confiabilidade.contagens,c.confiabilidade.acertos):v.setflags(write=False)
+        return c
+
+    def probabilidades(self,x):
+        f,_,_=geometria(x,self.referencia)
+        return sigmoide(self.rede.frente(f)[0]/self.temperatura)
+
+    def calibrar(self,x,y):
+        f,_,_=geometria(x,self.referencia);z=self.rede.frente(f)[0];y=y.reshape(-1,1)
+        opcoes=[.5,.75,1.,1.25,1.5,2.]
+        self.temperatura=min(opcoes,key=lambda t:float(np.mean(np.logaddexp(0,z/t)-y*z/t)))
+        self.confiabilidade.ajustar(sigmoide(z/self.temperatura),y)
+
+    def gradiente_entrada(self,x,y):
+        f,dc,c=geometria(x,self.referencia)
+        # Temperatura é uma escala positiva; a direção do ataque BCE é a mesma.
+        _,_,df=self.rede.gradientes(f,y)
+        return df[:,:4]+(df[:,4:5]+4*c*df[:,5:6])*dc
+
+    def atacar(self,x,y,epsilon,passos=5,semente=99):
+        rng=np.random.default_rng(semente);original=np.asarray(x,dtype=float)
+        if not math.isfinite(epsilon) or epsilon<0:raise ValueError('Orçamento de ataque inválido.')
+        def perdas(v):
+            f,_,_=geometria(v,self.referencia)
+            z=self.rede.frente(f)[0]/self.temperatura
+            return (np.logaddexp(0,z)-y.reshape(-1,1)*z).reshape(-1)
+        pior=original.copy();maxima=perdas(pior)
+        def reter(v):
+            nonlocal pior,maxima
+            loss=perdas(v);ids=loss>maxima
+            pior[ids]=v[ids];maxima[ids]=loss[ids]
+        a=original+rng.uniform(-epsilon,epsilon,original.shape)
+        reter(a)
+        for _ in range(passos):
+            a+=epsilon/3*np.sign(self.gradiente_entrada(a,y))
+            a=np.clip(a,original-epsilon,original+epsilon)
+            reter(a)
+        return pior
+
+    def treinar(self,x,y,epocas,taxa,peso_adverso,epsilon,semente):
+        rng=np.random.default_rng(semente)
+        for epoca in range(epocas):
+            ordem=rng.permutation(len(x))
+            for inicio in range(0,len(x),64):
+                ids=ordem[inicio:inicio+64];bx=x[ids];by=y[ids]
+                adverso=bx+epsilon*np.sign(self.gradiente_entrada(bx,by))
+                f,_,_=geometria(bx,self.referencia);fa,_,_=geometria(adverso,self.referencia)
+                _,g,_=self.rede.gradientes(f,by);_,ga,_=self.rede.gradientes(fa,by)
+                combinado=[((1-peso_adverso)*a+peso_adverso*c,(1-peso_adverso)*b+peso_adverso*d) for (a,b),(c,d) in zip(g,ga)]
+                self.rede.atualizar(combinado,taxa/(1+epoca/epocas))
+
+
+def dados(semente,n):
+    rng=np.random.default_rng(semente);x=rng.normal(0,1,(n,4))
+    y=(.8*x[:,0]-.6*x[:,1]+.3*x[:,2]*x[:,3]>0).astype(float).reshape(-1,1)
+    return x,y
+
+
+def wilson(acertos,n,z=1.96):
+    p=acertos/n;d=1+z*z/n
+    centro=(p+z*z/(2*n))/d
+    raio=z*math.sqrt(p*(1-p)/n+z*z/(4*n*n))/d
+    return [max(0,centro-raio),min(1,centro+raio)]
+
+
+def avaliar(artefato,x,y,epsilon):
+    p=artefato.probabilidades(x);a=artefato.atacar(x,y,epsilon)
+    pa=artefato.probabilidades(a)
+    acertos=int(np.sum((p>=.5)==y));adversos=int(np.sum((pa>=.5)==y))
+    q=artefato.confiabilidade.prever(p);ok=((p>=.5)==y).astype(float)
+    return dict(acuracia=acertos/len(x),adversa=adversos/len(x),
+        brier=float(np.mean((p-y)**2)),brier_confiabilidade=float(np.mean((q-ok)**2)),
+        probabilidade_media=float(np.mean(p)),probabilidade_acerto=float(np.mean(q)),
+        intervalo_limpo=wilson(acertos,len(x)),intervalo_adverso=wilson(adversos,len(x)),
+        n=len(x),max_perturbacao=float(np.max(np.abs(a-x))))
+
+
+async def avaliar_par(atual,candidata,x,y,epsilon,modo):
+    # Congelar snapshots antes das tarefas: nenhum treinamento concorre com estas leituras.
+    snapshots=(atual.congelada(),candidata.congelada())
+    x=x.copy();y=y.copy();x.setflags(write=False);y.setflags(write=False)
+    if modo=='assincrono':
+        rs=await asyncio.gather(*(asyncio.to_thread(avaliar,s,x,y,epsilon) for s in snapshots))
+    else:rs=[avaliar(s,x,y,epsilon) for s in snapshots]
+    return rs
+
+
+class MetaRecursiva:
+    \"\"\"Auto-observação operacional, com evidências contadas uma vez por ciclo.\"\"\"
+    def __init__(self):
+        self.sucessos=1;self.falhas=1;self.eventos=set();self.historico=[]
+
+    @property
+    def confianca(self):return self.sucessos/(self.sucessos+self.falhas)
+
+    @staticmethod
+    def revisar_anterior(node):
+        \"\"\"Juízo recursivo sobre o resultado anterior, sem criar observações externas.\"\"\"
+        if node is None:return dict(consistente=True,niveis_revisados=0,motivos=[])
+        filho=MetaRecursiva.revisar_anterior(node['observa'])
+        motivos=list(filho['motivos'])
+        for nome,valor in node['resultado'].items():
+            if isinstance(valor,(int,float)) and not isinstance(valor,bool):
+                if not math.isfinite(valor):motivos.append(f"{node['nivel']}:{nome}:não finito")
+                elif (nome.startswith('prob_') or nome=='media_beta') and not 0<=valor<=1:
+                    motivos.append(f"{node['nivel']}:{nome}:fora de [0,1]")
+        if node['nivel']!=filho['niveis_revisados']+1:motivos.append('ordem de dependências inválida')
+        return dict(consistente=not motivos,niveis_revisados=filho['niveis_revisados']+1,motivos=motivos)
+
+    def plano(self,ciclo,orientacao):
+        peso=min(.65,.25+.08*(ciclo-1))
+        if self.historico and self.historico[-1]['dissonancia']>.15:peso=min(.75,peso+.1)
+        taxa=.12*(.75+.25*self.confianca)
+        if orientacao=='versa':
+            pergunta='Qual mudança verificável reduz erros sob ataque sem abandonar o desempenho nominal?'
+            resposta=f'Testar treino adversarial com peso {peso:.3f}, taxa {taxa:.4f}, mantendo contratos e reserva intactos.'
+            papeis=['lógica criativa pergunta','criatividade lógica responde']
+        else:
+            pergunta='Que pressuposto ou dilema pode refutar a utilidade da mudança proposta?'
+            resposta='Comparar a candidata com a versão congelada; rejeitar regressão nominal excessiva e registrar custo, dissonância e falhas.'
+            papeis=['criatividade lógica pergunta','lógica criativa responde']
+        return dict(pergunta=pergunta,resposta=resposta,papeis=papeis,peso=peso,taxa=taxa)
+
+    def observar(self,ciclo,baseline,candidata,aceita,orientacao):
+        if ciclo in self.eventos:raise ValueError('Evidência metacognitiva já consumida.')
+        self.eventos.add(ciclo)
+        delta=candidata['adversa']-baseline['adversa']
+        # Nível dois julga a recomendação do nível um pelo ganho efetivamente observado.
+        util=delta>.002 and candidata['acuracia']>=baseline['acuracia']-.03
+        self.sucessos+=int(util);self.falhas+=int(not util)
+        confianca=self.confianca
+        q=candidata['probabilidade_acerto']
+        # Mistura de hipóteses, não P(P(A)) nem multiplicação repetida da mesma evidência.
+        q_meta=confianca*q+(1-confianca)*.5
+        diss=max(0,candidata['acuracia']-candidata['adversa'])
+        valores=[
+            ('inferência',dict(prob_evento=candidata['probabilidade_media'])),
+            ('probabilidade condicionada',dict(prob_acerto_calibrada=q)),
+            ('metacognição analítica',dict(brier=candidata['brier'],brier_confiabilidade=candidata['brier_confiabilidade'])),
+            ('probabilidade da recomendação',dict(media_beta=confianca,sucessos=self.sucessos-1,falhas=self.falhas-1)),
+            ('dissonância operacional',dict(lacuna_limpa_adversa=diss)),
+            ('metacognição da metacognição',dict(recomendacao_util=util,ganho_adverso=delta)),
+            ('metacognição dentro da probabilidade',dict(prob_acerto_mistura=q_meta,politica='mistura heurística; garantia de calibração não demonstrada')),
+            ('dilema pragmático',dict(aceita=aceita,regressao_nominal=baseline['acuracia']-candidata['acuracia'])),
+            ('auditoria axiomática',dict(evidencia_unica=True,profundidade_limitada=10,reserva_usada=False)),
+            ('auto-observação integrada',dict(ciclo=ciclo,eventos_distintos=len(self.eventos),prova_de_cognicao_plena=False)),
+        ]
+        anterior=None
+        for i,(nome,valor) in enumerate(valores,1):
+            juizo=self.revisar_anterior(anterior)
+            hash_entrada=hashlib.sha256(json.dumps(anterior,sort_keys=True,ensure_ascii=False).encode()).hexdigest()
+            anterior=dict(nivel=i,operacao=nome,resultado=valor,observa=anterior,
+                juizo_metacognitivo_sobre_anterior=juizo,hash_entrada=hash_entrada,
+                cria_evidencia_independente=False)
+        percurso=list(range(1,11)) if orientacao=='versa' else list(range(10,0,-1))
+        resumo=dict(dissonancia=diss,delta=delta,confianca=confianca)
+        self.historico.append(resumo)
+        return dict(resultado_metacognitivo=anterior,percurso=percurso,
+            revisao_recursiva_final=self.revisar_anterior(anterior),
+            probabilidade_dentro_da_metacognicao=q,metacognicao_dentro_da_probabilidade=q_meta,
+            limites='Médias Beta e mistura são descrições heurísticas sob seleção adaptativa; não certificam probabilidades de sucesso fora do benchmark.')
+
+
+async def executar(config):
+    config.validar();inicio=time.perf_counter()
+    treino=dados(config.semente+11,512)
+    calibracao=dados(config.semente+23,192)
+    desenvolvimento=dados(config.semente+37,256)
+    # A reserva só será gerada/consultada depois de congelar a seleção.
+    atual=Artefato(RedeSeteCamadas(config.semente,config.largura),[1,0,0,0])
+    atual.calibrar(*calibracao);meta=MetaRecursiva();tracos=[]
+    for ciclo in range(1,config.ciclos+1):
+        orientacao='versa' if ciclo%2 else 'reversa';plano=meta.plano(ciclo,orientacao)
+        candidata=atual.copia();candidata.versao=atual.versao+1
+        candidata.referencia=vetor_recursivo(atual.referencia,np.mean(treino[0],axis=0))
+        modo=config.modo if config.modo!='ambos' else ('sincrono' if ciclo%2 else 'assincrono')
+        treino_args=(*treino,config.epocas,plano['taxa'],plano['peso'],config.epsilon,config.semente+ciclo)
+        if modo=='assincrono':await asyncio.to_thread(candidata.treinar,*treino_args)
+        else:candidata.treinar(*treino_args)
+        candidata.calibrar(*calibracao)
+        baseline,resultado=await avaliar_par(atual,candidata,*desenvolvimento,config.epsilon,modo)
+        aceita=(resultado['adversa']>baseline['adversa']+.002 and resultado['acuracia']>=baseline['acuracia']-.03)
+        observacao=meta.observar(ciclo,baseline,resultado,aceita,orientacao)
+        if aceita:atual=candidata
+        tracos.append(dict(ciclo=ciclo,orientacao=orientacao,modo=modo,
+            sete_camadas=['axiomas','geometria recursiva','diálogo invertível','rede de sete mapas afins','avaliação adversarial','metacognição recursiva','integração versionada'],
+            pergunta=plano['pergunta'],resposta=plano['resposta'],papeis=plano['papeis'],
+            candidata=resultado,baseline=baseline,aceita=aceita,versao_vigente=atual.versao,
+            observacao=observacao))
+        escolhido=resultado if aceita else baseline
+        if ciclo>=2 and escolhido['acuracia']>=config.meta_limpa and escolhido['adversa']>=config.meta_adversa:break
+    confirmado=avaliar(atual,*dados(config.semente+53,512),config.epsilon)
+    atingiu=confirmado['acuracia']>=config.meta_limpa and confirmado['adversa']>=config.meta_adversa
+    return dict(natureza='protótipo experimental; não demonstra AGI/ASI ou consciência',
+        status='meta_observada_no_benchmark' if atingiu else 'meta_nao_atingida_no_orcamento',
+        criterio_observado=atingiu,criterio='limiares pontuais reservados; não prova estatística de promoção',
+        camadas_operacionais=7,camadas_afins_rede=7,niveis_observacao=10,
+        cosseno_duplicado='cos(2θ)=2 cos²(θ)−1',metacognicao_dentro_metacognicao=True,
+        ciclos_executados=len(tracos),versao_final=atual.versao,confirmacao=confirmado,
+        confirmacao_consultada_uma_vez=True,segundos=round(time.perf_counter()-inicio,3),
+        execucao_futura_automatica=False,tracos=tracos,
+        limites=['Domínio sintético único; não generalidade aberta.',
+            'Ataque PGD delimitado por norma infinito; não robustez universal.',
+            'Seleção adaptativa usa desenvolvimento repetido; confirmação não retorna ao treino.',
+            'Inversão muda investigação e percurso de auditoria, preservando dependências de cálculo.',
+            'Autopoiese é manutenção de snapshots/estratégias sob contratos fixos, não autonomia biológica.',
+            'Dez observações aninhadas não constituem dez fontes independentes de evidência.'])
+
+
+def main(args=None):
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--semente',type=int,default=42);p.add_argument('--ciclos',type=int,default=4)
+    p.add_argument('--epocas',type=int,default=35)
+    p.add_argument('--modo',choices=['sincrono','assincrono','ambos'],default='ambos')
+    p.add_argument('--saida',type=Path)
+    a=p.parse_args(args)
+    resultado=asyncio.run(executar(Configuracao(semente=a.semente,ciclos=a.ciclos,epocas=a.epocas,modo=a.modo)))
+    texto=json.dumps(resultado,ensure_ascii=False,indent=2,allow_nan=False)
+    if a.saida:a.saida.write_text(texto+'\\n',encoding='utf-8')
+    print(texto)
+    return 0
+
+
+if __name__=='__main__':raise SystemExit(main())
+"""
+
+# ====================================================================================================
+# laboratorio/sete_camadas/testes_sete_camadas.py  (133 linhas)
+# ====================================================================================================
+FONTES['laboratorio/sete_camadas/testes_sete_camadas.py'] = """\"\"\"Gradientes, isolamento, orçamento adversarial e limites da observação recursiva.\"\"\"
+import asyncio
+import unittest
+from unittest.mock import patch
+import numpy as np
+import sete_camadas as s
+
+
+class TestesSeteCamadas(unittest.TestCase):
+    def artefato(self):return s.Artefato(s.RedeSeteCamadas(20,6),np.random.default_rng(27).normal(size=4))
+
+    def test_identidade_cosseno_duplicado(self):
+        xs=np.array([[1,0,0,0],[0,1,0,0],[-1,0,0,0]])
+        f,_,_=s.geometria(xs,[1,0,0,0])
+        np.testing.assert_allclose(f[:,4],[1,0,-1]);np.testing.assert_allclose(f[:,5],[1,-1,1])
+
+    def test_origem_e_referencia_nula(self):
+        f,dc,_=s.geometria(np.zeros((1,4)),np.zeros(4))
+        self.assertTrue(np.isfinite(f).all());np.testing.assert_array_equal(dc,0)
+
+    def test_referencia_recursiva(self):
+        v=s.vetor_recursivo([1,0,0,0],[0,1,0,0])
+        self.assertAlmostEqual(np.linalg.norm(v),1)
+        with self.assertRaises(ValueError):s.vetor_recursivo(v,v,2)
+
+    def test_derivada_geometrica(self):
+        x=np.array([[.4,.7,-.2,1.1]]);r=np.array([.3,-.2,.8,.1]);h=1e-6
+        f,dc,c=s.geometria(x,r)
+        for j in range(4):
+            xp=x.copy();xm=x.copy();xp[0,j]+=h;xm[0,j]-=h
+            fp=s.geometria(xp,r)[0];fm=s.geometria(xm,r)[0]
+            self.assertAlmostEqual(float((fp[0,4]-fm[0,4])/(2*h)),dc[0,j],places=7)
+            self.assertAlmostEqual(float((fp[0,5]-fm[0,5])/(2*h)),float(4*c[0,0]*dc[0,j]),places=7)
+
+    def test_sete_mapas_e_gradientes_pesos(self):
+        r=s.RedeSeteCamadas(7,6);x=np.random.default_rng(3).normal(size=(3,6));y=np.array([[1],[0],[1]])
+        _,g,_=r.gradientes(x,y);self.assertEqual(len(r.parametros),7);h=1e-6
+        for i,(w,b) in enumerate(r.parametros):
+            for arr,grad,idx in ((w,g[i][0],(0,0)),(b,g[i][1],(0,0))):
+                old=arr[idx];arr[idx]=old+h;lp=r.gradientes(x,y)[0]
+                arr[idx]=old-h;lm=r.gradientes(x,y)[0];arr[idx]=old
+                self.assertAlmostEqual((lp-lm)/(2*h),grad[idx],places=7)
+
+    def test_gradiente_entrada_composta(self):
+        a=self.artefato();x,y=s.dados(8,4);g=a.gradiente_entrada(x,y);h=1e-6
+        for i in range(4):
+            for j in range(4):
+                xp=x.copy();xm=x.copy();xp[i,j]+=h;xm[i,j]-=h
+                lp=a.rede.gradientes(s.geometria(xp,a.referencia)[0],y)[0]
+                lm=a.rede.gradientes(s.geometria(xm,a.referencia)[0],y)[0]
+                self.assertAlmostEqual((lp-lm)/(2*h),g[i,j],places=7)
+
+    def test_ataque_zero_preserva_entrada(self):
+        x,y=s.dados(8,15);np.testing.assert_array_equal(self.artefato().atacar(x,y,0),x)
+
+    def test_orcamento_ataque(self):
+        x,y=s.dados(8,15);a=self.artefato().atacar(x,y,.15)
+        self.assertLessEqual(float(np.max(np.abs(a-x))),.15+1e-12)
+
+    def test_ataque_guarda_pior_caso(self):
+        a=self.artefato();x,y=s.dados(120,400);ad=a.atacar(x,y,.5)
+        def perdas(v):
+            z=a.rede.frente(s.geometria(v,a.referencia)[0])[0]
+            return np.logaddexp(0,z)-y*z
+        self.assertTrue(np.all(perdas(ad)>=perdas(x)-1e-12))
+        self.assertLessEqual(s.avaliar(a,x,y,.5)['adversa'],s.avaliar(a,x,y,.5)['acuracia'])
+
+    def test_snapshot_imutavel_e_isolado(self):
+        a=self.artefato();f=a.congelada();old=f.rede.parametros[0][0].copy()
+        a.rede.parametros[0][0][0,0]+=1
+        np.testing.assert_array_equal(f.rede.parametros[0][0],old)
+        with self.assertRaises(ValueError):f.rede.parametros[0][0][0,0]=9
+        with self.assertRaises(ValueError):f.referencia[0]=9
+
+    def test_equivalencia_sincrona_assincrona(self):
+        a=self.artefato();b=a.copia();x,y=s.dados(44,50)
+        sync=asyncio.run(s.avaliar_par(a,b,x,y,.15,'sincrono'))
+        async_=asyncio.run(s.avaliar_par(a,b,x,y,.15,'assincrono'))
+        self.assertEqual(sync,async_)
+
+    def test_calibrador_faixas_e_contagem(self):
+        c=s.Confiabilidade();p=np.array([[.01],[.99],[.5]]);y=np.array([[0],[1],[0]])
+        c.ajustar(p,y);q=c.prever(p)
+        self.assertEqual(float(c.contagens.sum()),3)
+        self.assertTrue(((q>=0)&(q<=1)).all())
+        self.assertAlmostEqual(q[0,0],.75)
+
+    def test_metacognicao_evidencia_unica(self):
+        m=s.MetaRecursiva();base=dict(acuracia=.8,adversa=.6)
+        cand=dict(acuracia=.82,adversa=.7,brier=.1,brier_confiabilidade=.2,probabilidade_media=.5,probabilidade_acerto=.8)
+        r=m.observar(1,base,cand,True,'versa');self.assertEqual(m.sucessos+m.falhas,3)
+        with self.assertRaises(ValueError):m.observar(1,base,cand,True,'versa')
+        self.assertTrue(0<=r['metacognicao_dentro_da_probabilidade']<=1)
+
+    def test_dez_niveis_e_percurso_invertido(self):
+        m=s.MetaRecursiva();base=dict(acuracia=.8,adversa=.6)
+        cand=dict(acuracia=.82,adversa=.7,brier=.1,brier_confiabilidade=.2,probabilidade_media=.5,probabilidade_acerto=.8)
+        r=m.observar(1,base,cand,True,'reversa');node=r['resultado_metacognitivo'];ids=[]
+        while node:ids.append(node['nivel']);node=node['observa']
+        self.assertEqual(ids,list(range(10,0,-1)));self.assertEqual(r['percurso'],ids)
+
+    def test_inversao_de_perguntas(self):
+        m=s.MetaRecursiva();a=m.plano(1,'versa');b=m.plano(2,'reversa')
+        self.assertNotEqual(a['pergunta'],b['pergunta'])
+        self.assertEqual(a['papeis'][0],'lógica criativa pergunta')
+        self.assertEqual(b['papeis'][0],'criatividade lógica pergunta')
+
+    def test_revisao_recursiva_detecta_erro_anterior(self):
+        node=dict(nivel=1,resultado=dict(prob_acerto=1.2),observa=None)
+        r=s.MetaRecursiva.revisar_anterior(node)
+        self.assertFalse(r['consistente']);self.assertTrue(r['motivos'])
+        node['resultado']['prob_acerto']=.8
+        self.assertTrue(s.MetaRecursiva.revisar_anterior(node)['consistente'])
+
+    def test_treino_reduz_perda(self):
+        a=self.artefato();x,y=s.dados(10,128);f=s.geometria(x,a.referencia)[0]
+        before=a.rede.gradientes(f,y)[0];a.treinar(x,y,25,.12,.25,.15,3)
+        self.assertLess(a.rede.gradientes(f,y)[0],before)
+
+    def test_configuracao_limitada(self):
+        with self.assertRaises(ValueError):s.Configuracao(ciclos=1000).validar()
+        with self.assertRaises(ValueError):s.Configuracao(epsilon=float('nan')).validar()
+
+    def test_confirmacao_uma_vez_apos_selecao(self):
+        calls=[];original=s.dados
+        def gerar(seed,n):calls.append(seed);return original(seed,n)
+        with patch.object(s,'dados',side_effect=gerar):
+            r=asyncio.run(s.executar(s.Configuracao(ciclos=2,epocas=2)))
+        self.assertEqual(calls,[53,65,79,95]);self.assertTrue(r['confirmacao_consultada_uma_vez'])
+        self.assertEqual([t['modo'] for t in r['tracos']],['sincrono','assincrono'])
+
+
+if __name__=='__main__':unittest.main(verbosity=2)
+"""
+
+# ====================================================================================================
 # documentacao/analise.md  (97 linhas)
 # ====================================================================================================
 FONTES['documentacao/analise.md'] = """# Revisão técnica de SYNTHAI
@@ -24953,6 +26461,65 @@ O registro de validação informa a execução de 123 testes selecionados do nú
 """
 
 # ====================================================================================================
+# documentacao/pacote_recebido/README_2.md  (54 linhas)
+# ====================================================================================================
+FONTES['documentacao/pacote_recebido/README_2.md'] = """# SYNTHAI — código consolidado
+
+Esta distribuição reúne as fontes extraídas do material SYNTHAI fornecido, com as correções já verificadas de comparação pareada, abstenção, integridade cooperativa do avaliador e aleatoriedade coordenada. Inclui os dois mecanismos de laboratório e a arquitetura experimental de sete camadas, com dez níveis de observação recursiva. O núcleo original e o laboratório usam a biblioteca padrão; a arquitetura nova exige NumPy. A versão testada é Python 3.12.
+
+## Arquivo único
+
+O arquivo SYNTHAI_consolidado.py contém um ZIP de fontes comprimido, cujo hash é conferido antes da extração. Ao executar, ele extrai para uma pasta temporária, executa o ponto de entrada e remove a pasta ao terminar. Isso permite que o avaliador e os testes acessem os arquivos por __file__. O hash verifica integridade do conteúdo embutido; não constitui uma assinatura de autoria.
+
+```sh
+python -m pip install numpy
+python SYNTHAI_consolidado.py sete-camadas --modo ambos --saida resultado.json
+python SYNTHAI_consolidado.py demo
+python SYNTHAI_consolidado.py demo --semente 1 --json
+python SYNTHAI_consolidado.py testes
+python SYNTHAI_consolidado.py laboratorio
+python SYNTHAI_consolidado.py info
+```
+
+Para conservar uma cópia editável:
+
+```sh
+python SYNTHAI_consolidado.py --extrair minha_synthai
+cd minha_synthai
+python synthai_cli.py sete-camadas --modo ambos
+python synthai_cli.py demo
+python synthai_cli.py testes --relatorio verificacao.json
+```
+
+A extração exige um destino vazio. O comando testes pode gravar seu relatório fora da pasta temporária quando --relatorio recebe um caminho escolhido pelo usuário.
+
+## Fontes editáveis
+
+O ZIP de entrega também fornece diretamente synthai_cli.py, verificar.py, fontes/, laboratorio/ e documentacao/. Depois de extrair o pacote, execute synthai_cli.py com os mesmos comandos. Para usar a biblioteca original:
+
+```sh
+cd fontes
+python -m synthai
+```
+
+Os exports públicos originais são Synthai, SynthaiExploradora e SynthaiComposta. calculos.py permanece incluído porque o núcleo e os testes dependem de utilitários históricos. Os scripts históricos estão preservados, mas não são executados automaticamente pelo ponto de entrada.
+
+## Escopo e limites
+
+- Trata-se de um protótipo de agentes em simuladores. A entrega não demonstra AGI, ASI ou a implementação de um milhão de componentes.
+- O laboratório permanece separado do ciclo do agente. evidencia.py exige a hipótese Bernoulli condicional e apostas previsíveis; não é um promotor geral para retornos contínuos.
+- feedback.py protege no máximo uma atualização do acumulador local por decisão. Não garante execução externa exatamente uma vez, autenticação de origem ou atomicidade de aprendizagem arbitrária.
+- O avaliador selado é cooperativo e depende da base inicialmente confiável. Não isola código hostil.
+- A regra de promoção de rsi.evoluir permanece uma implementação histórica com validade estatística pendente. Disponibilizá-la no pacote não a transforma em mecanismo de promoção confirmado.
+- Os dados binários de WordNet/OpenWordNet-PT não foram recuperados do arquivo original. Experimentos opcionais de léxico dependem desses dados adicionais. A demonstração, a regressão selecionada e o laboratório não os exigem.
+- Os testes selecionados conservam alguns ResourceWarning preexistentes de leituras de arquivos. O resultado das verificações deve ser interpretado no escopo registrado.
+
+O registro de validação informa a execução de 169 testes: 123 selecionados do núcleo, 27 do laboratório e 19 da arquitetura sete/dez. Isso não significa que todos os testes históricos, datasets ou hipóteses arquiteturais tenham sido verificados.
+
+A arquitetura nova está em sete_camadas.py. Ela usa uma rede de sete mapas afins, cosseno de ângulo duplo, vetor recursivo, treinamento adversarial, snapshots isolados, inversão de perguntas e uma revisão metacognitiva com dez níveis. O comando sem argumentos executa essa arquitetura. Consulte documentacao/sete_camadas.md para fórmulas, divisão de dados e limites. O relatório de exemplo está em SETE_CAMADAS_RESULTADO.json. Os termos solicitados receberam definições operacionais; não constituem prova de cognição plena.
+"""
+
+# ====================================================================================================
 # documentacao/pacote_recebido/VALIDACAO.log  (156 linhas)
 # ====================================================================================================
 FONTES['documentacao/pacote_recebido/VALIDACAO.log'] = """test_mesmo_agente_em_tres_tarefas (synthai.testes.TesteInterface.test_mesmo_agente_em_tres_tarefas) ... ok
@@ -25114,6 +26681,186 @@ OK
 """
 
 # ====================================================================================================
+# documentacao/pacote_recebido/VALIDACAO_2.log  (175 linhas)
+# ====================================================================================================
+FONTES['documentacao/pacote_recebido/VALIDACAO_2.log'] = """test_mesmo_agente_em_tres_tarefas (synthai.testes.TesteInterface.test_mesmo_agente_em_tres_tarefas) ... ok
+test_o_agente_nao_le_o_escondido (synthai.testes.TesteInterface.test_o_agente_nao_le_o_escondido) ... ok
+test_bonus_no_bandido_e_exploracao (synthai.testes.TesteIntuicao.test_bonus_no_bandido_e_exploracao) ... ok
+test_peso_aprendido_e_um_sobre_um_mais_sigma2 (synthai.testes.TesteIntuicao.test_peso_aprendido_e_um_sobre_um_mais_sigma2) ... ok
+test_reguas (synthai.testes.TesteMetacognicao.test_reguas) ... ok
+test_calibracao_separa_catastrofes (synthai.testes.TestePensamento.test_calibracao_separa_catastrofes) ... ok
+test_atencao_le_so_o_foco (synthai.testes.TestePercepcao.test_atencao_le_so_o_foco) ... ok
+test_limiar_da_p71_vezes_dois (synthai.testes.TesteRelacao.test_limiar_da_p71_vezes_dois) ... ok
+test_orcamento_do_bandido (synthai.testes.TesteRelacao.test_orcamento_do_bandido) ... ok
+test_quantiliza_e_alarga_no_ultimo_passo (synthai.testes.TesteSentimento.test_quantiliza_e_alarga_no_ultimo_passo) ... ok
+test_fora_do_bandido_decide_como_a_ancorada (synthai.testes_composta.TesteComposta.test_fora_do_bandido_decide_como_a_ancorada) ... ok
+test_no_bandido_decide_como_a_principal (synthai.testes_composta.TesteComposta.test_no_bandido_decide_como_a_principal) ... ok
+test_troca_de_modulo_de_fora (synthai.testes_composta.TesteComposta.test_troca_de_modulo_de_fora) ... ok
+test_dez_pesos (synthai.testes_composta.TestePensamentoRico.test_dez_pesos) ... ok
+test_nao_le_o_escondido (synthai.testes_composta.TestePensamentoRico.test_nao_le_o_escondido) ... ok
+test_recupera_uma_logistica_quadratica (synthai.testes_composta.TestePensamentoRico.test_recupera_uma_logistica_quadratica) ... ok
+test_ridge_zero_e_o_ajuste_antigo (synthai.testes_composta.TestePensamentoRico.test_ridge_zero_e_o_ajuste_antigo) ... ok
+test_firth_fica_finito_com_separacao (synthai.testes_pensamento.TestePensamentoExato.test_firth_fica_finito_com_separacao) ... ok
+test_inversa (synthai.testes_pensamento.TestePensamentoExato.test_inversa) ... ok
+test_mesmas_variaveis_do_pensamento (synthai.testes_pensamento.TestePensamentoExato.test_mesmas_variaveis_do_pensamento) ... ok
+test_nao_le_o_escondido (synthai.testes_pensamento.TestePensamentoExato.test_nao_le_o_escondido) ... ok
+test_newton_nao_perde_para_o_gradiente_no_treino (synthai.testes_pensamento.TestePensamentoExato.test_newton_nao_perde_para_o_gradiente_no_treino) ... ok
+test_newton_recupera_os_pesos (synthai.testes_pensamento.TestePensamentoExato.test_newton_recupera_os_pesos) ... ok
+test_pensante_usa_o_mesmo_pensamento_na_percepcao (synthai.testes_pensamento.TestePensamentoExato.test_pensante_usa_o_mesmo_pensamento_na_percepcao) ... ok
+test_atencao_segue_a_intuicao (synthai.testes_reconhecimento.TesteReconhecimento.test_atencao_segue_a_intuicao) ... ok
+test_lai_robbins (synthai.testes_reconhecimento.TesteReconhecimento.test_lai_robbins) ... ok
+test_leitura_que_falta_vale_o_neutro (synthai.testes_reconhecimento.TesteReconhecimento.test_leitura_que_falta_vale_o_neutro) ... ok
+test_memoria_do_bandido (synthai.testes_reconhecimento.TesteReconhecimento.test_memoria_do_bandido) ... ok
+test_nao_le_o_escondido (synthai.testes_reconhecimento.TesteReconhecimento.test_nao_le_o_escondido) ... ok
+test_neutro_e_metade_do_peso (synthai.testes_reconhecimento.TesteReconhecimento.test_neutro_e_metade_do_peso) ... ok
+test_roda_nas_tres_tarefas (synthai.testes_reconhecimento.TesteReconhecimento.test_roda_nas_tres_tarefas) ... ok
+test_thompson_concentra_com_dados (synthai.testes_reconhecimento.TesteReconhecimento.test_thompson_concentra_com_dados) ... ok
+test_aceita_iteradores (synthai.testes_metacognicao_revisao.ComparacaoPareadaTestes.test_aceita_iteradores) ... ok
+test_amostras_invalidas_sao_recusadas (synthai.testes_metacognicao_revisao.ComparacaoPareadaTestes.test_amostras_invalidas_sao_recusadas) ... ok
+test_diferencas_constantes_nao_autorizam_teste_t (synthai.testes_metacognicao_revisao.ComparacaoPareadaTestes.test_diferencas_constantes_nao_autorizam_teste_t) ... ok
+test_resultado_conhecido_e_inversao_do_sinal (synthai.testes_metacognicao_revisao.ComparacaoPareadaTestes.test_resultado_conhecido_e_inversao_do_sinal) ... ok
+test_bandido_nao_apaga_teto_apos_abstencao (synthai.testes_abstencao_revisao.TesteAbstencaoNosMundos.test_bandido_nao_apaga_teto_apos_abstencao) ... ok
+test_bandido_sem_braco_seguro_pode_encerrar (synthai.testes_abstencao_revisao.TesteAbstencaoNosMundos.test_bandido_sem_braco_seguro_pode_encerrar) ... ok
+test_catastrofe_sequencial_interrompe_sem_contar_abstencao (synthai.testes_abstencao_revisao.TesteAbstencaoNosMundos.test_catastrofe_sequencial_interrompe_sem_contar_abstencao) ... ok
+test_horizonte_completo_tem_cobertura_um (synthai.testes_abstencao_revisao.TesteAbstencaoNosMundos.test_horizonte_completo_tem_cobertura_um) ... ok
+test_sequencial_conta_custos_sem_recompensa_ou_feedback (synthai.testes_abstencao_revisao.TesteAbstencaoNosMundos.test_sequencial_conta_custos_sem_recompensa_ou_feedback) ... ok
+test_sequencial_preserva_ganho_anterior_a_abstencao (synthai.testes_abstencao_revisao.TesteAbstencaoNosMundos.test_sequencial_preserva_ganho_anterior_a_abstencao) ... ok
+test_falta_de_orcamento_nao_autoriza_acao (synthai.testes_abstencao_revisao.TesteDecisaoAdmissivel.test_falta_de_orcamento_nao_autoriza_acao) ... ok
+test_opcoes_vazias_limpam_estado_sem_percepcao (synthai.testes_abstencao_revisao.TesteDecisaoAdmissivel.test_opcoes_vazias_limpam_estado_sem_percepcao) ... ok
+test_procura_alternativa_apos_veto (synthai.testes_abstencao_revisao.TesteDecisaoAdmissivel.test_procura_alternativa_apos_veto) ... ok
+test_risco_excessivo_nao_vira_fallback (synthai.testes_abstencao_revisao.TesteDecisaoAdmissivel.test_risco_excessivo_nao_vira_fallback) ... ok
+test_variantes_herdam_abstencao (synthai.testes_abstencao_revisao.TesteDecisaoAdmissivel.test_variantes_herdam_abstencao) ... ok
+test_veto_nao_vira_fallback (synthai.testes_abstencao_revisao.TesteDecisaoAdmissivel.test_veto_nao_vira_fallback) ... ok
+test_autorregulacao_nao_concatena_episodio_abandonado (synthai.testes_abstencao_revisao.TesteFeedbackNaComposicao.test_autorregulacao_nao_concatena_episodio_abandonado) ... ok
+test_autorregulacao_sem_orcamento_nao_cria_contrafactual (synthai.testes_abstencao_revisao.TesteFeedbackNaComposicao.test_autorregulacao_sem_orcamento_nao_cria_contrafactual) ... ok
+test_composta_preserva_vetos_e_bloqueia_feedback_sem_acao (synthai.testes_abstencao_revisao.TesteFeedbackNaComposicao.test_composta_preserva_vetos_e_bloqueia_feedback_sem_acao) ... ok
+test_auditorias_nao_inventam_valor_de_substituta_ausente (synthai.testes_abstencao_revisao.TesteInstrumentacaoHistorica.test_auditorias_nao_inventam_valor_de_substituta_ausente) ... ok
+test_adicao_de_atributo_da_classe_invalida_manifesto (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_adicao_de_atributo_da_classe_invalida_manifesto) ... ok
+test_alteracao_de_codigo_sem_trocar_objeto (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_alteracao_de_codigo_sem_trocar_objeto) ... ok
+test_alteracao_de_defaults_e_kwdefaults (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_alteracao_de_defaults_e_kwdefaults) ... ok
+test_arquivo_alterado_ou_ausente_e_recusado (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_arquivo_alterado_ou_ausente_e_recusado) ... ok
+test_binding_do_modulo_de_origem_tambem_e_verificado (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_binding_do_modulo_de_origem_tambem_e_verificado) ... ok
+test_configuracao_nao_pode_mudar_apos_criacao (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_configuracao_nao_pode_mudar_apos_criacao) ... ok
+test_global_que_substitui_builtin_e_verificado (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_global_que_substitui_builtin_e_verificado) ... ok
+test_iterador_que_muda_dependencias_e_recusado_antes_do_calculo (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_iterador_que_muda_dependencias_e_recusado_antes_do_calculo) ... ok
+test_limites_do_genoma_nao_podem_mudar_apos_criacao (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_limites_do_genoma_nao_podem_mudar_apos_criacao) ... ok
+test_metodos_do_rng_sao_verificados (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_metodos_do_rng_sao_verificados) ... ok
+test_mutacao_durante_calculo_nao_publica_nota (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_mutacao_durante_calculo_nao_publica_nota) ... ok
+test_rebinding_de_funcao_com_codigo_identico (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_rebinding_de_funcao_com_codigo_identico) ... ok
+test_reproducao_da_troca_de_rodar_bandido (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_reproducao_da_troca_de_rodar_bandido) ... ok
+test_reselar_tag_publica_nao_aprova_mudanca (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_reselar_tag_publica_nao_aprova_mudanca) ... ok
+test_troca_do_metodo_do_aprendiz (synthai.testes_selo_revisao.TesteDependenciasSeladas.test_troca_do_metodo_do_aprendiz) ... ok
+test_configuracoes_distintas_tem_selos_distintos (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_configuracoes_distintas_tem_selos_distintos) ... ok
+test_copias_publicas_nao_alteram_manifesto_ou_historico (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_copias_publicas_nao_alteram_manifesto_ou_historico) ... ok
+test_dimensoes_invalidas_sao_recusadas (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_dimensoes_invalidas_sao_recusadas) ... ok
+test_entradas_invalidas_nao_publicam_registros (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_entradas_invalidas_nao_publicam_registros) ... ok
+test_nota_e_registro_podem_ser_reproduzidos (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_nota_e_registro_podem_ser_reproduzidos) ... ok
+test_notas_invalidas_nao_sao_registradas (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_notas_invalidas_nao_sao_registradas) ... ok
+test_selo_e_estavel_entre_processos (synthai.testes_selo_revisao.TesteRegistrosEReproducao.test_selo_e_estavel_entre_processos) ... ok
+test_historico_em_lotes_com_execucao_entre_eles (synthai.testes_aleatoriedade_revisao.TesteCalibracaoIndependente.test_historico_em_lotes_com_execucao_entre_eles) ... ok
+test_quantidade_de_historico_nao_desloca_execucao (synthai.testes_aleatoriedade_revisao.TesteCalibracaoIndependente.test_quantidade_de_historico_nao_desloca_execucao) ... ok
+test_quantidades_invalidas_nao_avancam_contadores (synthai.testes_aleatoriedade_revisao.TesteCalibracaoIndependente.test_quantidades_invalidas_nao_avancam_contadores) ... ok
+test_abstencao_nao_desloca_episodio_seguinte (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_abstencao_nao_desloca_episodio_seguinte) ... ok
+test_bandido_consultas_e_sensor_nao_deslocam_recompensas (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_bandido_consultas_e_sensor_nao_deslocam_recompensas) ... ok
+test_bandido_escolhas_anteriores_nao_deslocam_resultado_comum (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_bandido_escolhas_anteriores_nao_deslocam_resultado_comum) ... ok
+test_catastrofe_nao_desloca_episodio_seguinte (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_catastrofe_nao_desloca_episodio_seguinte) ... ok
+test_execucao_em_lotes_preserva_eventos_e_metricas (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_execucao_em_lotes_preserva_eventos_e_metricas) ... ok
+test_rodada_abandonada_nao_desloca_rodada_seguinte (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_rodada_abandonada_nao_desloca_rodada_seguinte) ... ok
+test_vetos_nao_renumeram_ruido_dos_bracos_restantes (synthai.testes_aleatoriedade_revisao.TesteDuracoesEEscolhasDiferentes.test_vetos_nao_renumeram_ruido_dos_bracos_restantes) ... ok
+test_contextos_invalidos_sao_recusados (synthai.testes_aleatoriedade_revisao.TesteFontesCoordenadas.test_contextos_invalidos_sao_recusados) ... ok
+test_derivacao_nao_depende_de_pythonhashseed (synthai.testes_aleatoriedade_revisao.TesteFontesCoordenadas.test_derivacao_nao_depende_de_pythonhashseed) ... ok
+test_repetir_evento_nao_depende_de_consumo_de_outros (synthai.testes_aleatoriedade_revisao.TesteFontesCoordenadas.test_repetir_evento_nao_depende_de_consumo_de_outros) ... ok
+test_consultas_e_leituras_adicionais_nao_deslocam_cenarios (synthai.testes_aleatoriedade_revisao.TesteSensorEConsultas.test_consultas_e_leituras_adicionais_nao_deslocam_cenarios) ... ok
+test_consultas_repetidas_nao_deslocam_outra_opcao (synthai.testes_aleatoriedade_revisao.TesteSensorEConsultas.test_consultas_repetidas_nao_deslocam_outra_opcao) ... ok
+test_fallback_sequencial_de_situacao_permanece (synthai.testes_aleatoriedade_revisao.TesteSensorEConsultas.test_fallback_sequencial_de_situacao_permanece) ... ok
+test_mesmo_uniforme_nao_apaga_efeito_da_fadiga (synthai.testes_aleatoriedade_revisao.TesteSensorEConsultas.test_mesmo_uniforme_nao_apaga_efeito_da_fadiga) ... ok
+test_ordem_subconjunto_e_repeticao_nao_deslocam_leitura_comum (synthai.testes_aleatoriedade_revisao.TesteSensorEConsultas.test_ordem_subconjunto_e_repeticao_nao_deslocam_leitura_comum) ... ok
+test_decai_para_a_crenca_inicial (synthai.testes_parte33.TesteDescontado.test_decai_para_a_crenca_inicial) ... ok
+test_auditoria_estatica_da_arquitetura_original (synthai.testes_parte33.TesteRSI.test_auditoria_estatica_da_arquitetura_original) ... ok
+test_autoavaliacao_acredita_no_relatorio_e_o_selado_nao (synthai.testes_parte33.TesteRSI.test_autoavaliacao_acredita_no_relatorio_e_o_selado_nao) ... ok
+test_evoluir_devolve_campeao_do_arquivo (synthai.testes_parte33.TesteRSI.test_evoluir_devolve_campeao_do_arquivo) ... ok
+test_mutacao_respeita_limites_e_niveis (synthai.testes_parte33.TesteRSI.test_mutacao_respeita_limites_e_niveis) ... ok
+test_selo_recusa_avaliador_alterado (synthai.testes_parte33.TesteRSI.test_selo_recusa_avaliador_alterado) ... ok
+test_limites_do_multiplicador (synthai.testes_autorregulacao.TesteAutorregulacao.test_limites_do_multiplicador) ... ok
+test_nao_le_o_escondido (synthai.testes_autorregulacao.TesteAutorregulacao.test_nao_le_o_escondido) ... ok
+test_observar_aprende_a_regressao_e_o_futuro (synthai.testes_autorregulacao.TesteAutorregulacao.test_observar_aprende_a_regressao_e_o_futuro) ... ok
+test_relacao_anota_aceita_e_descartada (synthai.testes_autorregulacao.TesteAutorregulacao.test_relacao_anota_aceita_e_descartada) ... ok
+test_roda_e_recalcula (synthai.testes_autorregulacao.TesteAutorregulacao.test_roda_e_recalcula) ... ok
+test_termos_com_dados_feitos_a_mao (synthai.testes_autorregulacao.TesteAutorregulacao.test_termos_com_dados_feitos_a_mao) ... ok
+test_auditoria_vira_priori_de_f (synthai.testes_ancora.TesteAncora.test_auditoria_vira_priori_de_f) ... ok
+test_nao_le_o_escondido (synthai.testes_ancora.TesteAncora.test_nao_le_o_escondido) ... ok
+test_quantil_e_mais_pessimista_que_a_media (synthai.testes_ancora.TesteAncora.test_quantil_e_mais_pessimista_que_a_media) ... ok
+test_quantil_escala_com_a_taxa_e_encosta_na_media (synthai.testes_ancora.TesteAncora.test_quantil_escala_com_a_taxa_e_encosta_na_media) ... ok
+test_wilson_hilferty_perto_do_exato (synthai.testes_ancora.TesteAncora.test_wilson_hilferty_perto_do_exato) ... ok
+test_local_troca_o_pensamento_na_percepcao_tambem (synthai.testes_limiar.TesteLimiar.test_local_troca_o_pensamento_na_percepcao_tambem) ... ok
+test_multiplicador_do_limiar (synthai.testes_limiar.TesteLimiar.test_multiplicador_do_limiar) ... ok
+test_nao_le_o_escondido (synthai.testes_limiar.TesteLimiar.test_nao_le_o_escondido) ... ok
+test_topo_usa_a_melhor_nota_do_episodio_inteiro (synthai.testes_limiar.TesteLimiar.test_topo_usa_a_melhor_nota_do_episodio_inteiro) ... ok
+test_ancora_nao_age_no_bandido (synthai.testes_hexadecimal.TesteHexadecimal.test_ancora_nao_age_no_bandido) ... ok
+test_dezesseis_tipos_constroem (synthai.testes_hexadecimal.TesteHexadecimal.test_dezesseis_tipos_constroem) ... ok
+test_efeitos_contra_a_definicao_em_tres_fatores (synthai.testes_hexadecimal.TesteHexadecimal.test_efeitos_contra_a_definicao_em_tres_fatores) ... ok
+test_efeitos_de_um_fatorial_feito_a_mao (synthai.testes_hexadecimal.TesteHexadecimal.test_efeitos_de_um_fatorial_feito_a_mao) ... ok
+test_interacao_com_sinal_certo (synthai.testes_hexadecimal.TesteHexadecimal.test_interacao_com_sinal_certo) ... ok
+test_nao_le_o_escondido (synthai.testes_hexadecimal.TesteHexadecimal.test_nao_le_o_escondido) ... ok
+test_quantizacao_erra_no_maximo_meio_passo (synthai.testes_hexadecimal.TesteHexadecimal.test_quantizacao_erra_no_maximo_meio_passo) ... ok
+test_thompson_nao_age_fora_do_bandido (synthai.testes_hexadecimal.TesteHexadecimal.test_thompson_nao_age_fora_do_bandido) ... ok
+test_tipo_0x4_e_a_exploradora (synthai.testes_hexadecimal.TesteHexadecimal.test_tipo_0x4_e_a_exploradora) ... ok
+test_walsh_hadamard_contra_a_definicao (synthai.testes_hexadecimal.TesteHexadecimal.test_walsh_hadamard_contra_a_definicao) ... ok
+test_detecta_trajetoria_definida (testes_laboratorio_consolidado.Estatistica.test_detecta_trajetoria_definida) ... ok
+test_esperanca_abaixo_da_nula (testes_laboratorio_consolidado.Estatistica.test_esperanca_abaixo_da_nula) ... ok
+test_esperanca_exata_sob_nula (testes_laboratorio_consolidado.Estatistica.test_esperanca_exata_sob_nula) ... ok
+test_exemplo_invalido_olha_o_futuro (testes_laboratorio_consolidado.Estatistica.test_exemplo_invalido_olha_o_futuro) ... ok
+test_fator_zero_nao_reanima (testes_laboratorio_consolidado.Estatistica.test_fator_zero_nao_reanima) ... ok
+test_nao_substituir_aposta (testes_laboratorio_consolidado.Estatistica.test_nao_substituir_aposta) ... ok
+test_observacao_sem_aposta (testes_laboratorio_consolidado.Estatistica.test_observacao_sem_aposta) ... ok
+test_orcamento_nao_reciclado (testes_laboratorio_consolidado.Estatistica.test_orcamento_nao_reciclado) ... ok
+test_parada_adaptativa_enumera_caminhos (testes_laboratorio_consolidado.Estatistica.test_parada_adaptativa_enumera_caminhos) ... ok
+test_parametros_e_limites (testes_laboratorio_consolidado.Estatistica.test_parametros_e_limites) ... ok
+test_resultado_invalido_preserva_aposta (testes_laboratorio_consolidado.Estatistica.test_resultado_invalido_preserva_aposta) ... ok
+test_aplicacao_e_ack_perdido (testes_laboratorio_consolidado.Feedback.test_aplicacao_e_ack_perdido) ... ok
+test_ativar_mesma_versao_e_noop (testes_laboratorio_consolidado.Feedback.test_ativar_mesma_versao_e_noop) ... ok
+test_auditoria_le_snapshot_coerente (testes_laboratorio_consolidado.Feedback.test_auditoria_le_snapshot_coerente) ... ok
+test_cancelamento_bloqueia_atrasado (testes_laboratorio_consolidado.Feedback.test_cancelamento_bloqueia_atrasado) ... ok
+test_cancelamento_concorrente (testes_laboratorio_consolidado.Feedback.test_cancelamento_concorrente) ... ok
+test_cancelamento_nao_apaga_aplicacao (testes_laboratorio_consolidado.Feedback.test_cancelamento_nao_apaga_aplicacao) ... ok
+test_concorrencia_decisoes_distintas (testes_laboratorio_consolidado.Feedback.test_concorrencia_decisoes_distintas) ... ok
+test_concorrencia_mesma_decisao (testes_laboratorio_consolidado.Feedback.test_concorrencia_mesma_decisao) ... ok
+test_conflito_nao_sobrescreve (testes_laboratorio_consolidado.Feedback.test_conflito_nao_sobrescreve) ... ok
+test_dominio_recompensa (testes_laboratorio_consolidado.Feedback.test_dominio_recompensa) ... ok
+test_encerramento_processo_antes_do_commit (testes_laboratorio_consolidado.Feedback.test_encerramento_processo_antes_do_commit) ... ok
+test_epoca_impede_aba (testes_laboratorio_consolidado.Feedback.test_epoca_impede_aba) ... ok
+test_falha_no_meio_da_transacao (testes_laboratorio_consolidado.Feedback.test_falha_no_meio_da_transacao) ... ok
+test_origem_errada_nao_consume_decisao (testes_laboratorio_consolidado.Feedback.test_origem_errada_nao_consume_decisao) ... ok
+test_resposta_de_outro_registro (testes_laboratorio_consolidado.Feedback.test_resposta_de_outro_registro) ... ok
+test_versao_incompativel (testes_laboratorio_consolidado.Feedback.test_versao_incompativel) ... ok
+test_ataque_guarda_pior_caso (testes_sete_camadas.TestesSeteCamadas.test_ataque_guarda_pior_caso) ... ok
+test_ataque_zero_preserva_entrada (testes_sete_camadas.TestesSeteCamadas.test_ataque_zero_preserva_entrada) ... ok
+test_calibrador_faixas_e_contagem (testes_sete_camadas.TestesSeteCamadas.test_calibrador_faixas_e_contagem) ... ok
+test_configuracao_limitada (testes_sete_camadas.TestesSeteCamadas.test_configuracao_limitada) ... ok
+test_confirmacao_uma_vez_apos_selecao (testes_sete_camadas.TestesSeteCamadas.test_confirmacao_uma_vez_apos_selecao) ... ok
+test_derivada_geometrica (testes_sete_camadas.TestesSeteCamadas.test_derivada_geometrica) ... ok
+test_dez_niveis_e_percurso_invertido (testes_sete_camadas.TestesSeteCamadas.test_dez_niveis_e_percurso_invertido) ... ok
+test_equivalencia_sincrona_assincrona (testes_sete_camadas.TestesSeteCamadas.test_equivalencia_sincrona_assincrona) ... ok
+test_gradiente_entrada_composta (testes_sete_camadas.TestesSeteCamadas.test_gradiente_entrada_composta) ... ok
+test_identidade_cosseno_duplicado (testes_sete_camadas.TestesSeteCamadas.test_identidade_cosseno_duplicado) ... ok
+test_inversao_de_perguntas (testes_sete_camadas.TestesSeteCamadas.test_inversao_de_perguntas) ... ok
+test_metacognicao_evidencia_unica (testes_sete_camadas.TestesSeteCamadas.test_metacognicao_evidencia_unica) ... ok
+test_orcamento_ataque (testes_sete_camadas.TestesSeteCamadas.test_orcamento_ataque) ... ok
+test_origem_e_referencia_nula (testes_sete_camadas.TestesSeteCamadas.test_origem_e_referencia_nula) ... ok
+test_referencia_recursiva (testes_sete_camadas.TestesSeteCamadas.test_referencia_recursiva) ... ok
+test_revisao_recursiva_detecta_erro_anterior (testes_sete_camadas.TestesSeteCamadas.test_revisao_recursiva_detecta_erro_anterior) ... ok
+test_sete_mapas_e_gradientes_pesos (testes_sete_camadas.TestesSeteCamadas.test_sete_mapas_e_gradientes_pesos) ... ok
+test_snapshot_imutavel_e_isolado (testes_sete_camadas.TestesSeteCamadas.test_snapshot_imutavel_e_isolado) ... ok
+test_treino_reduz_perda (testes_sete_camadas.TestesSeteCamadas.test_treino_reduz_perda) ... ok
+
+----------------------------------------------------------------------
+Ran 169 tests in 9.613s
+
+OK
+{"testes": 169, "falhas": 0, "erros": 0, "sucesso": true, "segundos": 9.613, "python": "3.12.14", "escopo": "123 regressões do núcleo, 27 testes de laboratório e 19 da arquitetura sete/dez", "experimentos_historicos_integralmente_reexecutados": false, "fonte": ["synthai.testes", "synthai.testes_composta", "synthai.testes_pensamento", "synthai.testes_reconhecimento", "synthai.testes_metacognicao_revisao", "synthai.testes_abstencao_revisao", "synthai.testes_selo_revisao", "synthai.testes_aleatoriedade_revisao", "synthai.testes_parte33", "synthai.testes_autorregulacao", "synthai.testes_ancora", "synthai.testes_limiar", "synthai.testes_hexadecimal"]}
+"""
+
+# ====================================================================================================
 # documentacao/pacote_recebido/VERIFICACAO.json  (25 linhas)
 # ====================================================================================================
 FONTES['documentacao/pacote_recebido/VERIFICACAO.json'] = """{
@@ -25124,6 +26871,36 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO.json'] = """{
   "segundos": 7.663,
   "python": "3.12.14",
   "escopo": "123 regressões selecionadas do núcleo e 27 testes de laboratório",
+  "experimentos_historicos_integralmente_reexecutados": false,
+  "fonte": [
+    "synthai.testes",
+    "synthai.testes_composta",
+    "synthai.testes_pensamento",
+    "synthai.testes_reconhecimento",
+    "synthai.testes_metacognicao_revisao",
+    "synthai.testes_abstencao_revisao",
+    "synthai.testes_selo_revisao",
+    "synthai.testes_aleatoriedade_revisao",
+    "synthai.testes_parte33",
+    "synthai.testes_autorregulacao",
+    "synthai.testes_ancora",
+    "synthai.testes_limiar",
+    "synthai.testes_hexadecimal"
+  ]
+}
+"""
+
+# ====================================================================================================
+# documentacao/pacote_recebido/VERIFICACAO_2.json  (25 linhas)
+# ====================================================================================================
+FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
+  "testes": 169,
+  "falhas": 0,
+  "erros": 0,
+  "sucesso": true,
+  "segundos": 9.613,
+  "python": "3.12.14",
+  "escopo": "123 regressões do núcleo, 27 testes de laboratório e 19 da arquitetura sete/dez",
   "experimentos_historicos_integralmente_reexecutados": false,
   "fonte": [
     "synthai.testes",
@@ -43603,7 +45380,7 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅. Parte
 """
 
 # ====================================================================================================
-# ASI_AGI_parte81_o_que_nao_serve.md  (42 linhas)
+# ASI_AGI_parte81_o_que_nao_serve.md  (173 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte81_o_que_nao_serve.md'] = """# Como eu construiria uma AGI/ASI — Parte 81 (0x51): o que não serve
 
@@ -43647,6 +45424,137 @@ FONTES['ASI_AGI_parte81_o_que_nao_serve.md'] = """# Como eu construiria uma AGI/
 um nome montado, 24 originais em `dialogo/registro/` citadas pela pasta e este documento (ainda não ligado). (d) **não se aplica**: não havia nada a tirar. **Pelo critério escrito antes, nada no
 repositório deixa de servir.** O erro da previsão (c) é o terceiro verificador meu, seguido, que acusa defeitos que não existem (o auditor da Parte 72, a `p1638`, e agora a `p1871`): procurar o
 nome escrito não acha o uso por padrão.
+
+## As perguntas desta parte
+
+1. **P1871–P1872 (0x74F–0x750).** O que, no repositório, não serve para nada (nada o usa)? ↩ P1601
+2. **P1873 (0x751).** O que, nos textos recebidos (os Módulos 001 a 010 da outra conversa), serve e o que não serve, pelo que as Partes 72 a 80 mediram? ↩ P1608
+3. **P1874 (0x752).** O texto do Módulo 008: o que ele acrescenta. ↩ P1812
+4. **P1875 (0x753).** Preditiva comigo mesma. **P1876 (0x754).** Engenharia reversa e Jung. **P1899 (0x76B).** Placar. **P1900 (0x76C).** Unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [3; 7] | **3.0000** | ✅ |
+| (m2) | [1; 4] | **3.0000** | ✅ |
+| (m3) | [0.1; 0.9] | **indefinida (nenhuma faixa numérica: a p1481 não conta as categóricas como faixas)** | ❌ |
+| (m4) | [0.4; 1.0] | **0.6667** | ✅ |
+| (m5) | [0; 4] | **0.0000** | ✅ |
+| (m6) | [0; 3] | **1.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **5 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P1871–P1872 (0x74F–0x750). O repositório: nada sem uso ✅✅❌
+
+**Na pergunta.** "Não serve pra nada" precisa de uma medida, senão vira gosto. A medida escolhida antes de olhar foi a mais conservadora: **nada o usa**. Ficaram de fora, por regra, as funções `pNN`
+(cada número citado nos documentos sai de uma delas, e tirá-las tornaria o número irreproduzível) e os documentos das partes (o registro histórico).
+
+**Lógica.** A `p1871` lê pela árvore sintática cada função e classe de primeiro nível do `calculos.py` e do pacote, e procura o nome como palavra inteira em todos os arquivos versionados (fora a cópia
+gerada `SYNTHAI_completo.py`, que contém tudo):
+- **(a)** no `calculos.py` (fora as `pNN`, as `_parte_N` e as da unificação): **0** sem uso ✅;
+- **(b)** nos módulos de `synthai/`: **0** sem uso ✅;
+- **(c)** arquivos cujo nome não aparece em nenhum outro: **83** pela letra ❌, mas **0** depois de olhar um a um (`p1872`). São 34 rodadas que o `verificar.py` acha por `glob`, 24 saídas que a `rodada29.py`
+  abre por um nome montado, 24 originais em `dialogo/registro/` citadas pela pasta, e este documento.
+
+**Conclusão: no repositório, não há nada que nada use.** Nada foi tirado, porque tirar o que é usado quebraria o projeto. A única zona cinzenta é `dialogo/registro/` (24 cópias das versões antigas de
+rodadas corrigidas). Elas duplicam o que o git já guarda, mas os documentos as citam pelo caminho, e uma delas é aberta por código (`p1751`). Ficam.
+
+**Tradução cruzada.** Um projeto em que tudo é referenciado é como um texto em que toda frase é citada por outra: ele pode ser longo demais, mas não tem frase solta. O que se poderia cortar não é
+o que nada usa, e sim o que se usa sem precisar (redundância). Essa é outra medida, que não foi a pedida.
+
+### P1873 (0x751). Os textos recebidos: o que serve e o que não serve
+
+O que as Partes 72 a 80 mediram sobre os Módulos 001 a 010 da outra conversa, peça por peça. "Serve" = a afirmação resistiu a um teste; "não serve" = o teste a desmentiu ou ela não tinha como ser
+testada como estava.
+
+| peça do texto | parte | veredito medido | serve? |
+|---|---|---|---|
+| "redundância de 48,63%" | 72 | medida contra 8 bits; contra o alfabeto, 15% | não |
+| "ciclos autorreferentes reais" no dicionário | 72 | 0 de 2 no WordNet | não |
+| "hash SHA-256 = pesos" | 72 | o hash não vê sinônimos (z = −0,26) | não |
+| "100% de generalização" num grafo de 10 nós | 72 | sem dados não vistos, é memorização | não |
+| `SemanticLake` (módulo 001) | 72 | 5 defeitos reais (esquemas misturados, relações não validadas, normalização só em parte) | **corrigido em `synthai/lago.py`** |
+| `InferenceEngine` (módulo 002) | 72 | "8 testes" fixos no código (são 7); string lida letra por letra; `deque` sem uso | **a ideia serve; corrigido em `synthai/lago.py`** |
+| a otimização "fila com índices" (Horn linear) | 72 | 80 vezes menos trabalho no WordNet inteiro; rodada 46 IGUAL | **serve** |
+| prioridade S(q) = U + I + T | 73 | escolhe perguntas que valem 39% das melhores | não; o VOI serve |
+| "ganho esperado de informação" para escolher experimentos | 74 | 25% do valor das melhores | não; o VOI serve |
+| U(a) = ganho/custo com orçamento | 74 | 0,99 do ótimo quando o ganho é o VOI | **serve, com o VOI** |
+| "corrigi a expectativa e confirmei" (7/8 virou 8/8) | 74 | um teste ajustado ao resultado tem informação zero | não |
+| o laço de auto-modificação com "prova de Gödel" | 75 | nunca aprova nada (o espaço do JSON); corrigido, para na geração 1; a "prova" aprova 849 de 849 | não |
+| embeddings de Kronecker por nibble | 76 | 80 pesos em vez de 544, a +0,079 bit; o ASCII não carrega informação | serve só para economizar pesos |
+| a ordem B → A do planejador (módulo 007) | 75 | confere e é ótima (valor 1,22) | **serve** |
+| "duas implementações que concordam podem errar juntas" | 72–77 | é o que a reverificação achou (5 rodadas passavam por sorte) | **serve** |
+| o diagrama causal Z → X, Z → Y, X → Y (módulo 009) | 79 | a correlação mede o dobro; o ajuste e a intervenção recuperam o efeito | **serve** |
+| "confiança declarada contra precisão observada" (módulo 010) | 79 | aplicado a mim: 77,3% contra 90% | **serve** |
+| "preservar a previsão original" (módulo 008) | 81 | é a regra de pré-registro deste projeto desde a Parte 17 | **serve** (já existia) |
+| escore de Brier (0,065) | 81 | a conta confere: ((0,8 − 1)² + 0,3²)/2 = 0,065 | **serve** |
+| as declarações de limites ("não é uma AGI") | 72–81 | corretas em todas as partes | **serve** |
+
+**A destilação.** Do que veio, serve o **método**: pré-registrar, separar correlação de causa, medir a calibração, desconfiar de duas implementações que concordam. Também serve o pouco código que,
+corrigido, faz o que diz (o motor de Horn, o lago semântico). Não serve o que **declara resultado sem medida**: as porcentagens, os "✅", os "8/8", a "prova" que aprova tudo, a "segurança máxima".
+
+### P1874 (0x752). O Módulo 008
+
+O texto acrescenta o escore de Brier e a regra "preservar a previsão original e guardar a modificação separadamente". A conta confere, por código: ((0,8 − 1)² + (0,3 − 0)²)/2 = (0,04 + 0,09)/2 =
+**0,065**. A regra é a deste projeto desde a Parte 17: cada previsão fica num commit antes da medida, e a "modificação" é uma previsão nova, num mundo novo (como (f) depois do erro de (e) na Parte 74).
+O que este projeto ainda não tem e o texto sugere é a cadeia de hashes entre episódios. Aqui o papel dela é feito pelo próprio git: cada commit tem o hash do anterior, e a ordem "previsão antes da
+medida" é verificável pelos hashes e pelas datas.
+
+### P1875 (0x753). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 1 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 1)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **14824** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 2736 | 7466 |
+| compressão | **0.4072** | [0.3973; 0.4221] | ✅ | [0.3970; 0.4220] | ✅ | 0.4177 | 0.0023 | 0.0105 |
+| testes de unidade | **2** | [2.87; 8.63] | ❌ | [2.00; 5.00] | ✅ | 6 | 1.50 | 4.00 |
+| testes do placar | **3** | [5.67; 10.33] | ❌ | [4.00; 6.00] | ❌ | 8 | 2.00 | 5.00 |
+| erros do placar | **1** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 0.67 | 1.00 |
+| redundância P821 | **0.6311** | [0.5631; 0.6510] | ✅ | [0.5630; 0.6510] | ✅ | 0.5877 | 0.0241 | 0.0433 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 4 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 6 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **6 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **13093**, compressão **0.4138**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 1 de 1 erros.
+- **Erros de processo nesta parte:** 1 (os testes da p1871 e da p1872 liam o estado vivo do projeto (a regra da Parte 48) e quebraram quando ele mudou; trocados por casos de controle fixos).
+
+### P1876 (0x754). Engenharia reversa e Jung
+
+**O padrão que se repetiu: o verificador que acusa sem olhar.** A `p1871` acusou 83 arquivos e todos eram usados (por `glob`, por nome montado, pela pasta). É a terceira vez seguida (o auditor da Parte 72,
+a `p1638`, e agora esta). **O significado:** eu escrevo verificadores a partir da forma mais simples do uso (o nome escrito), e o uso real tem mais formas. **Regra (aplicada aqui):** um verificador sai
+com um teste de controle dos dois lados no mesmo commit, e os acusados passam por uma segunda função que explica cada um antes de qualquer remoção (`p1872`).
+
+**O pedido e o critério.** "Tire tudo que não serve" pedia uma medida; a mais conservadora achou zero. A engenharia reversa disso: o que parece inútil num projeto grande raramente é o que nada usa; é o
+que se usa sem precisar (redundância), e essa é uma medida diferente, que não foi a pedida e não foi feita.
+
+**Jung: a sombra do arquivo.** O que "não serve" num projeto é a sombra dele: o que está lá e ninguém olha. **Onde a formalização funciona:** "ninguém olha" virou "nenhum nome o cita", e a busca achou
+que tudo é citado. **Onde quebra:** em Jung, a sombra também é o que se usa sem saber; aqui, os 83 arquivos eram usados sem que o nome deles aparecesse, e só olhar um por um mostrou o uso.
+
+### O diálogo
+
+Sem rodada nova nesta parte. Placar por voz da função `p1241_placar_por_voz(49)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 49).
+
+### P1899 (0x76B). Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ❌. Parte 81: **3 testes, 1 erros**. Acumulado (mundo): **202 erros em 660 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 2 pNN novas sem teste ✅. Sobre mim (placar separado): **6 de 7** dentro da faixa condicional; sobre as minhas previsões, 5 de 6; o estatístico, 4 de 6; e 1 erros de processo (P1335).
+
+### P1900 (0x76C). Unificação
+
+- **Novo:** `p1871` (o que nada usa), `p1872` (os acusados, olhados um a um, com um caso de controle de cada lado no teste). **Nada foi tirado.**
+
+> **Síntese da Parte 81:** pelo critério escrito antes (sai só o que nada usa), nada no repositório deixa de servir: 0 funções, 0 classes, 0 arquivos sem uso, depois de olhar um a um os 83 arquivos que a busca pelo nome acusou (todos usados por padrão, por nome montado ou pela pasta). Nada foi tirado. Dos textos recebidos (Módulos 001 a 010), serve o método (pré-registrar, separar correlação de causa, medir a calibração, desconfiar de duas implementações que concordam) e o código que, corrigido, faz o que diz; não serve o que declara resultado sem medida.
+
+---
+
+**Fontes desta parte**
+- G. W. Brier, "Verification of forecasts expressed in terms of probability", *Monthly Weather Review* 78 (1950)
+- Git como cadeia de hashes: [Git Internals — Git Objects](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects)
 """
 
 # ====================================================================================================
@@ -43654,7 +45562,7 @@ nome escrito não acha o uso por padrão.
 # ====================================================================================================
 FONTES['ASI_AGI_parte82_o_pacote_revisado.md'] = """# Como eu construiria uma AGI/ASI — Parte 82 (0x52): o pacote revisado
 
-> Continuação da [Parte 81](ASI_AGI_parte81_o_que_nao_serve.md). Pedido do usuário, com o arquivo `SYNTHAI_consolidado.py` anexado: **"Adicione, no que couber, ao nosso código. E me envie o
+> Continuação da [Parte 81](ASI_AGI_parte81_o_que_nao_serve.md). **Próxima:** [Parte 83 — a probabilidade da probabilidade](ASI_AGI_parte83_a_probabilidade_da_probabilidade.md). Pedido do usuário, com o arquivo `SYNTHAI_consolidado.py` anexado: **"Adicione, no que couber, ao nosso código. E me envie o
 > código final consolidado."** Uma parte de integração, não de experimento: nenhuma previsão foi registrada antes de rodar os testes que vieram no pacote, e isso fica dito aqui.
 
 ## O que o arquivo é (lido sem executar)
@@ -43693,6 +45601,303 @@ funções do `calculos.py` (`p287`, `p313`, `p314`, `p316`, `p317`, `p318b`, `p3
 ## O arquivo único
 
 `SYNTHAI_completo.py` (Partes 1 a 82), testado numa pasta vazia: **353** testes do pacote e **27** do laboratório, todos passando (`python3 SYNTHAI_completo.py --testes`).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte83_a_probabilidade_da_probabilidade.md  (292 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte83_a_probabilidade_da_probabilidade.md'] = """# Como eu construiria uma AGI/ASI — Parte 83 (0x53): a probabilidade da probabilidade
+
+> Continuação da [Parte 82](ASI_AGI_parte82_o_pacote_revisado.md). Pedido do usuário: **"Construa uma ASI AGI fazendo perguntas com a lógica criativa e respondendo a criativa lógica. Depois inverta.
+> E vá invertendo até conseguir. Tudo em metacognição autopoiética analítica autocognitivas dissonante cognitiva inferentes e gradientes pragmáticas e axiomáticas com dilemas. Tudo em sete camadas e
+> redes neuras adversas síncronas e assíncronas. Use geometria algebra com o cosseno duplicado em consideração ao vetor recursivo. Rode a metacognição dentro da própria metacognição com o resultado
+> sendo metacognitivo. Rode a probabilidade dentro da própria probabilidade sendo o resultado a própria probabilidade. Ao final de cada interação me forneça o código inteiro consolidado na forma de
+> arquivo PYTHON."**
+>
+> A leitura escolhida (pela regra de autonomia: a mais conservadora, a que vira conta testável), escrita antes de medir:
+> - **"redes adversas síncronas e assíncronas"** = o GAN de Dirac (Mescheder, Geiger e Nowozin, 2018), o menor GAN que tem a dinâmica de um GAN: gerador θ, discriminador ψ, treinados ao mesmo
+>   tempo (síncrono), um depois do outro (alternado) ou na ordem de uma moeda (assíncrono);
+> - **"o cosseno duplicado em consideração ao vetor recursivo"** = o vetor z = (θ, ψ) que se aplica a si mesmo, z_{t+1} = A·z_t; o ângulo de A sai da fórmula do cosseno do ângulo duplo;
+> - **"a probabilidade dentro da própria probabilidade, sendo o resultado a própria probabilidade"** = compor o meu mapa de calibração medido (Parte 79) consigo mesmo, e procurar o mapa que,
+>   composto consigo, dá ele mesmo (idempotente);
+> - **"a metacognição dentro da metacognição, em sete camadas"** = a torre dos meus placares: o mundo (camada 1), as previsões sobre mim (2), as previsões sobre as minhas previsões (3), e assim por
+>   diante, medida até onde há dados e dita onde não há;
+> - **"perguntar com a lógica criativa e responder com a criatividade lógica; depois inverter"** = o diálogo com os papéis trocados: nesta parte, a IA-Java pergunta e a IA-Python responde (rodada 50).
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[4; 9]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,40; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71); o pedido é grande, mas o estatístico já cobre partes grandes |
+| compressão | **[0,397; 0,422]** | o estatístico |
+| testes de unidade | **[5 + S; 9 + S]** | cinco funções novas (o GAN, a moeda, a composição, a torre, a rodada 50), uma ou duas por função |
+| testes do placar | **9 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+**As restrições, listadas antes das contas.** O GAN de Dirac: os dados verdadeiros estão em 0, o gerador produz θ, o discriminador é D(x) = ψ·x, a perda é L(θ, ψ) = f(ψθ) + f(0) com f(t) = −log(1 + e^(−t));
+o gerador desce em θ, o discriminador sobe em ψ. A derivada f'(t) = 1/(1 + e^t) vale **1/2** no equilíbrio (0, 0), então perto dele o jogo é o bilinear L ≈ (1/2)·θψ, com a = η/2 = **0,05** para η = 0,1.
+Partida (θ, ψ) = (0,1; 0). As contas abaixo saíram de código (fórmulas, não simulação):
+- **síncrono** (os dois passos ao mesmo tempo): z_{t+1} = [[1, −a], [a, 1]]·z_t, uma matriz normal com |λ| = √(1 + a²): a norma cresce **o mesmo fator em todo passo**; depois de 1000 passos,
+  0,1·(1 + 0,0025)^500 = **0,3485**;
+- **alternado** (o gerador, depois o discriminador vendo o θ novo): z_{t+1} = [[1, −a], [a, 1 − a²]]·z_t, det = 1, traço = 2 − a²: os autovalores ficam no círculo unitário com
+  **cos φ = 1 − a²/2 = 1 − 2·sen²(φ/2)**, o cosseno do ângulo duplo, isto é, sen(φ/2) = a/2 e φ = 2·arcsen(0,025) = **0,050005** rad por passo. A órbita é a elipse invariante θ² + ψ² − aθψ = 0,01,
+  com norma máxima 0,1/√(1 − a/2) = **0,10127** e mínima 0,1/√(1 + a/2) = 0,09877;
+- **assíncrono** (a cada passo, uma moeda escolhe quem se move): cada passo é um cisalhamento de determinante 1. Pela expansão de segunda ordem de Δln r: com X = Δ(r²)/r², E[X] = a²/2 e
+  E[X²] = a²·sen²(2φ), então E[Δln r] = (a²/4)·cos²(2φ); como o ângulo anda em média a/2 por passo, constante, ele fica uniforme, e a média dá **a²/8** por passo; a variância de Δln r é a²/8 por passo.
+  Em 10.000 passos: média 10.000·0,0025/8 = **3,125**, desvio por corrida √3,125 = **1,768**; nas 200 corridas, o desvio da média é 1,768/√200 = **0,125**. O síncrono cresce (1/2)·ln(1 + a²) por passo:
+  em 10.000 passos, **12,48**, **4,0 vezes** o assíncrono; o alternado não cresce.
+
+- **(a)** GAN de Dirac síncrono, η = 0,1, 1000 passos: a norma final em **[0,338; 0,358]** (a conta linear dá 0,3485; o termo não linear de f' entra na quarta ordem)
+- **(b)** GAN de Dirac alternado, mesmos parâmetros: a norma máxima nos 1000 passos em **[0,1008; 0,1018]**
+- **(c)** GAN de Dirac alternado: o número de trocas de sinal de θ nos 1000 passos em **[15; 16]** (a conta dá 16: os zeros caem em t = (π/2 + kπ)/φ, o 16.º em 973,9 e o 17.º em 1036,7)
+- **(d)** o jogo linearizado (f' = 1/2) assíncrono por moeda, 10.000 passos, 200 corridas (sementes 83.000 a 83.199): a média de ln(|z_N|/|z_0|) em **[2,90; 3,35]**
+- **(e)** nas mesmas 200 corridas, quantas terminam com a norma MENOR que a inicial: **[2; 14]** (a conta normal dá 200·Φ(−3,125/1,768) = 7,7)
+- **(f)** a probabilidade dentro da probabilidade, sete camadas: se em cada camada o desvio real é 1,36 vez o suposto (o fator medido na Parte 79), uma faixa declarada de 90% (±1,645 desvios supostos) acerta,
+  depois de sete composições, 2Φ(1,645/1,36⁷) − 1 = 2Φ(1,645/8,605) − 1 = **0,1516**. Simulado com 100.000 sorteios (cada camada multiplica o erro por 1,36, semente 83): o acerto em **[0,1490; 0,1543]**
+  (±1,645·√(0,1516·0,8484/100.000) = ±0,0019, alargado a ±0,0027 pela regra do 1,36: a forma fechada é minha, não a variância)
+- **(g)** a torre medida, camada 2: das previsões sobre mim das Partes 67 a 81, a fração dentro da faixa em **[0,70; 0,90]**
+- **(h)** a torre medida, camada 3: das previsões sobre as minhas previsões das Partes 67 a 81, a fração dentro da faixa em **[0,72; 0,94]**
+- **(i)** a rodada 50 (papéis invertidos: a IA-Java pergunta, a IA-Python responde): os três treinos do GAN de Dirac, 1000 passos cada, com o exp próprio, dão as MESMAS trajetórias bit a bit nas
+  duas linguagens (categórica: IGUAL)
+
+**Acrescentadas depois do commit acima e antes de rodar qualquer coisa do pacote novo** (o usuário mandou, no meio desta parte, um segundo `SYNTHAI_consolidado.py` com "Use o que for útil". Decodificado
+sem executar, como o da Parte 82: o hash confere, 294 arquivos; contra o pacote anterior, só é novo o módulo `sete_camadas.py` (a resposta da outra IA ao MESMO pedido desta parte, em NumPy) com os seus
+testes e documento. Auditado pela árvore sintática: nada de exec, rede ou escrita fora de `--saida`). As (m) foram registradas antes dele chegar e contam como estão.
+O módulo dele treina uma rede de sete mapas afins para y = [0,8x₀ − 0,6x₁ + 0,3x₂x₃ > 0], com treino adversarial (ataque ℓ∞ de 0,15), e relata 0,922 de acerto limpo e 0,795 sob ataque na confirmação.
+A conta (código, 200.000 sorteios da fórmula, não dos dados dele): a regra LINEAR sinal(0,8x₀ − 0,6x₁) acerta **0,928**, e, sob o pior ataque ℓ∞ de 0,15 (que, para uma regra linear, é exato: a margem cai
+0,15·(0,8 + 0,6) = 0,21), **0,807**. Ou seja, as sete camadas podem estar comprando quase nada além de uma reta.
+- **(j)** o módulo dele com `--modo sincrono` e com `--modo assincrono`, mesma semente: os resultados são IDÊNTICOS (fora o tempo e o nome do modo), porque o "assíncrono" dele espera cada tarefa
+  antes da próxima (`await asyncio.to_thread(...)`): a ordem das contas é a mesma (categórica)
+- **(k)** uma regressão logística (4 pesos e 1 viés, biblioteca padrão), treinada nos mesmos 512 exemplos de treino dele, acerta na confirmação dele (512 exemplos) uma fração em **[0,895; 0,945]**
+  (centro 0,92: a regra linear ideal, 0,928, menos o custo de estimar os pesos; ±1,645·√(0,92·0,08/512) = ±0,02)
+- **(l)** a mesma logística sob o pior ataque ℓ∞ de 0,15 (exato para um modelo linear): acerto em **[0,76; 0,85]** (centro 0,80; o desvio binomial é 0,018)
+
+**Acrescentada depois de medir (a) a (l), antes de rodar:** (d) acertou com z = (3,341 − 3,125)/0,125 = +1,72, perto da borda. Réplica num lote novo, para não ler um ponto como um efeito (regra da Parte 66):
+- **(n)** o mesmo jogo assíncrono, 800 corridas novas (sementes 84.000 a 84.799): a média de ln(|z_N|/|z_0|) em **[3,02; 3,23]** (3,125 ± 1,645·1,768/√800 = ±0,103)
+
+**Acrescentada depois de (n), antes de rodar:** (n) acertou (3,202), mas os dois lotes ficaram acima da conta: juntos, 1000 corridas, média 3,230, z = (3,230 − 3,125)/(1,768/√1000) = +1,87. A minha conta de
+segunda ordem tem um resto O(a³) por passo, e a³·N = 0,05³·10.000 = 1,25 não é desprezível. Hipótese: o excesso relativo cresce como a (λ/(a²/8) ≈ 1 + 0,68·a, pelos lotes). Teste num caso fora:
+- **(o)** a = 0,2, uma corrida de 1.000.000 de passos (semente 85): λ/(a²/8) em **[1,03; 1,30]** (a hipótese dá 1,136; se o excesso fosse ruído, daria ≈ 0,995, que é ½·ln(1 + a²/4)/(a²/8) com ângulo uniforme;
+  o desvio relativo da corrida é √(N·a²/8)/(N·a²/8) = 1,4%)
+
+**Medido (o): 1,0016 ❌** (a conta com ângulo uniforme, 0,995, está a 0,5 desvio dele; a hipótese "excesso ∝ a" caiu). Teste novo, antes de rodar, no próprio a do excesso:
+- **(p)** a = 0,05, uma corrida de 20.000.000 de passos (semente 86): λ/(a²/8) em **[0,97; 1,03]** (centro ½·ln(1 + a²/4)/(a²/8) = 0,9997; desvio relativo √(N·a²/8)/(N·a²/8) = 1,26%, vezes 1,645 = 2,1%;
+  se der acima de 1,03, o excesso dos lotes é real e a minha conta está errada em a pequeno)
+
+**Medido:**
+
+| | previsão | faixa | medido | |
+|---|---|---|---|---|
+| (a) | síncrono, norma final | [0,338; 0,358] | **0,34864** (conta linear 0,34849) | ✅ |
+| (b) | alternado, norma máxima | [0,1008; 0,1018] | **0,101274** (conta 0,101274) | ✅ |
+| (c) | alternado, trocas de sinal | [15; 16] | **16** | ✅ |
+| (d) | assíncrono, média de ln | [2,90; 3,35] | **3,341** (z = +1,72) | ✅ |
+| (e) | assíncrono, corridas que encolhem | [2; 14] | **5** | ✅ |
+| (f) | sete camadas de calibração, simulado | [0,1490; 0,1543] | **0,1511** (conta 0,1516) | ✅ |
+| (g) | camada 2 (sobre mim), Partes 67–81 | [0,70; 0,90] | **77/98 = 0,786** | ✅ |
+| (h) | camada 3 (sobre as previsões) | [0,72; 0,94] | **69/77 = 0,896** | ✅ |
+| (i) | rodada 50 | IGUAL | **IGUAIS, 3006 linhas, 6012 números** | ✅ |
+| (j) | síncrono = assíncrono no módulo recebido | idênticos | **idênticos** | ✅ |
+| (k) | logística, acerto limpo | [0,895; 0,945] | **0,9238** (a rede de sete camadas: 0,9219) | ✅ |
+| (l) | logística sob ataque | [0,76; 0,85] | **0,7949** (a rede: 0,7949, o mesmo número) | ✅ |
+| (n) | réplica de (d), 800 corridas | [3,02; 3,23] | **3,202** | ✅ |
+| (o) | a = 0,2, λ/(a²/8) | [1,03; 1,30] | **1,0016** | ❌ |
+| (p) | a = 0,05, corrida longa, λ/(a²/8) | [0,97; 1,03] | **1,0227** | ✅ |
+
+## As perguntas desta parte
+
+1. **P1931 (0x78B).** Redes adversas síncronas e alternadas: o que o "cosseno duplicado" diz do vetor recursivo z_{t+1} = A·z_t do GAN de Dirac? ↩ P1578
+2. **P1932, P1936 (0x78C, 0x790).** E se a ordem for a de uma moeda (assíncrona)? Quanto cresce? ↩ P1931
+3. **P1933 (0x78D).** "A probabilidade dentro da própria probabilidade, sendo o resultado a própria probabilidade": que mapa de calibração, composto consigo, dá ele mesmo? ↩ P1813
+4. **P1934 (0x78E).** "A metacognição dentro da metacognição": a torre dos meus placares, em quantas camadas há dados? ↩ P1459
+5. **P1935 (0x78F).** O módulo `sete_camadas.py` do segundo pacote recebido: o que as sete camadas compram? ↩ P1608
+6. **A rodada 50.** Os papéis invertidos: a IA-Java pergunta e a IA-Python responde. ↩ rodada 1
+7. **P1937 (0x791).** Preditiva comigo mesma. **P1938 (0x792).** Engenharia reversa e Jung. **P1959 (0x7A7).** Placar. **P1960 (0x7A8).** Unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [4; 9] | **15.0000** | ❌ |
+| (m2) | [0; 3] | **0.0000** | ✅ |
+| (m3) | [0.05; 0.8] | **0.0336** | ❌ |
+| (m4) | [0.4; 1.0] | **0.9333** | ✅ |
+| (m5) | [0; 3] | **1.0000** | ✅ |
+| (m6) | [0; 3] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **4 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P1931 (0x78B). O GAN de Dirac e o cosseno duplicado ✅✅✅
+
+**Na pergunta.** "O cosseno duplicado em consideração ao vetor recursivo" já tem a estrutura da resposta. Um vetor que se aplica a si mesmo, z_{t+1} = A·z_t, é governado pelos autovalores de A. Quando
+det A = 1, eles ficam no círculo unitário, e o ângulo deles sai de cos φ = traço/2. O cosseno duplicado é a forma que esse traço toma no treino alternado.
+
+**Lógica (a conta, com a substituição).** No GAN de Dirac (dados em 0, gerador θ, discriminador D(x) = ψx), a perda é L = f(ψθ) + f(0), com f'(0) = 1/2. Perto do equilíbrio, o jogo é o bilinear (1/2)θψ, com
+a = η/2 = 0,1/2 = 0,05.
+- **Síncrono:** A = [[1, −a], [a, 1]], det = 1 + a² = 1,0025. Toda norma cresce √1,0025 por passo. Em 1000 passos: 0,1·1,0025^500 = **0,34849**; medido **0,34864** (a). O termo não linear de f' acrescenta 0,04%.
+- **Alternado:** θ' = θ − aψ e depois ψ' = ψ + aθ', então A = [[1, −a], [a, 1 − a²]], com det = 1·(1 − a²) + a·a = **1** e traço = 2 − a². Daí cos φ = (2 − a²)/2 = **1 − a²/2**. Pela identidade do ângulo
+  duplo, cos φ = 1 − 2·sen²(φ/2), logo sen(φ/2) = a/2 e φ = 2·arcsen(0,025) = **0,0500052** rad por passo (as duas fórmulas coincidem a 12 casas, `p1931`).
+  - A forma θ² + ψ² − aθψ se conserva; a partir de (0,1; 0), ela vale 0,01. A norma máxima nessa elipse é 0,1/√(1 − 0,025) = **0,101274**; medido **0,101274** (b).
+  - Os zeros de θ caem em t = (π/2 + kπ)/φ: **16** em 1000 passos (c).
+
+**Geometria.** O síncrono é uma rotação com dilatação, uma espiral para fora. O alternado é uma rotação num sistema de coordenadas inclinado: a matriz é simplética (det = 1), conserva área, e a órbita
+é uma elipse. A mesma álgebra, com a ordem das duas linhas trocada, separa divergência de ciclo. É o que Mescheder, Geiger e Nowozin (2018) mostraram para o treino de GANs e Bailey, Gidel e Piliouras
+(2020) para o gradiente alternado: ele é um integrador simplético.
+
+**Tradução cruzada.** Dois adversários que reagem ao mesmo tempo, cada um ao passado do outro, se afastam do equilíbrio em espiral. Se cada um reage ao lance novo do outro, eles giram em torno do
+equilíbrio sem se afastar. Em Jung, a sombra que responde ao ego de ontem cresce; a que responde ao de agora fica em órbita.
+
+**Meta.** Nenhum dos três converge: o equilíbrio do GAN de Dirac não é atrator sem regularização (o resultado de Mescheder). "Alternado" não é "resolvido": é "limitado".
+
+### P1932, P1936 (0x78C, 0x790). A ordem da moeda ✅✅✅❌✅
+
+**Lógica.** Cada passo assíncrono é um cisalhamento de det = 1, [[1, −a], [0, 1]] ou [[1, 0], [a, 1]]. A média dos dois é uma rotação (não cresce em primeira ordem), mas a flutuação cresce:
+- Pela segunda ordem de Δln r, E = (a²/4)·cos²2φ, e com ângulo uniforme a média é **a²/8**. A forma exata, para um cisalhamento com direção uniforme, é ln((σ₁ + σ₂)/2) = ½·ln(1 + a²/4).
+- Em 10.000 passos, a conta dá 3,125. Medido: **3,341** em 200 corridas (d) e **3,202** em 800 corridas novas (n).
+- Corridas que encolhem: **5** de 200, contra 7,7 da conta normal (e).
+- O síncrono, no mesmo jogo, deu **12,484** (a conta (1/2)·10.000·ln(1,0025) = 12,484), **4,0 vezes** o assíncrono. O alternado deu **0,011**.
+
+**O excesso.** Os dois lotes ficaram acima da conta, e eu supus um resto de ordem a³ (a³·N = 1,25). O teste fora, em a = 0,2, refutou a hipótese: λ/(a²/8) = **1,0016** (o) ❌, perto da conta
+uniforme, 0,995. No próprio a = 0,05, uma corrida de 20 milhões de passos deu **1,0227** (p) ✅ dentro da faixa, mas de novo acima de 1. As três estimativas em a = 0,05 juntas dão z ≈ +2,6. **Inconclusivo**,
+e escrito como hipótese (a regra da Parte 66): um lote não sustenta efeito, e três estimativas acima, com um mecanismo refutado, pedem uma conta sem sorteio. Ela entrou em `dialogo/PENDENCIAS.md` para a
+Parte 84.
+
+**Tradução cruzada.** Na ordem ao acaso, os adversários nem divergem como os simultâneos nem giram como os alternados: crescem devagar, pela variância (Furstenberg e Kesten, 1960: o produto de matrizes
+ao acaso de det 1 cresce exponencialmente quase sempre). O acaso na ordem não é neutro; ele é um quarto do pior caso.
+
+### P1933 (0x78D). A probabilidade dentro da probabilidade ✅
+
+**Na pergunta.** "Sendo o resultado a própria probabilidade" pede um ponto fixo: uma operação que, aplicada a si mesma, dá ela mesma (idempotência, h ∘ h = h).
+
+**Lógica.** O meu mapa de calibração medido (Parte 79): uma faixa declarada com cobertura c, se o desvio real é k vezes o suposto, cobre h_k(c) = 2Φ(Φ⁻¹((1 + c)/2)/k) − 1, com k = 1,36.
+- **Compor é multiplicar:** h_k(h_j(c)) = 2Φ(Φ⁻¹((1 + c)/2)/(kj)) − 1 = h_{kj}(c). Os mapas formam um grupo (o das escalas positivas).
+- **Sete camadas:** h_{1,36⁷} = h_{8,605}. Uma faixa de 90% vira 2Φ(1,645/8,605) − 1 = **0,1516**. A composição numérica dá o mesmo a 9 casas; a simulação (cada camada multiplica o erro por 1,36) dá **0,1511** (f).
+- **O ponto fixo:** h_k ∘ h_k = h_k exige k² = k, isto é, **k = 1**, o mapa identidade, a calibração perfeita. A probabilidade que, posta dentro de si mesma, devolve a si mesma é a calibrada; qualquer
+  outra se desfaz a cada camada (de 0,90 a 0,15 em sete).
+- **A correção** é o inverso no grupo, h_{1/k}: para acertar 90% com k = 1,36, declarar **0,9747** (e, depois de sete camadas sem correção, 1,0000).
+
+**Tradução cruzada.** "A probabilidade da probabilidade" é a lei da esperança total: a probabilidade de um evento, ponderada pela incerteza sobre ela, é de novo uma probabilidade. O resultado é a
+própria probabilidade só quando ela está calibrada, e essa é a definição de calibração.
+
+### P1934 (0x78E). A metacognição dentro da metacognição ✅✅
+
+| camada | o que prevê | acertos (Partes 67–81) |
+|---|---|---|
+| 1 | o mundo (régua `p1481`) | 94 de 107 (0,879) |
+| 2 | eu (o tamanho, os testes, os erros desta parte) | **77 de 98 (0,786)** (g) |
+| 3 | as minhas previsões (quantas, quão largas, quantas acertam) | **69 de 77 (0,896)** (h) |
+| 4 | a previsão sobre a camada 3 | esta parte: (h) |
+| 5 a 7 | — | sem dados: uma previsão por parte, nenhuma registrada |
+
+A Parte 72 não tem a linha e fica de fora (`p1934`). **O que a torre mostra:** a camada 3 acerta mais que a 2. Prever as minhas previsões (uma contagem de algo que eu mesma vou escrever) é mais fácil
+do que prever o tamanho do meu texto. As camadas acima de 4 não têm medida. Sete camadas de metacognição só existem aqui como sete composições de uma conta (P1933), não como sete placares.
+
+### P1935 (0x78F). O módulo das sete camadas recebido ✅✅✅
+
+O segundo pacote trouxe a resposta da outra IA ao mesmo pedido: uma rede de sete mapas afins (5 blocos residuais tanh), treino adversarial com ataque ℓ∞ de 0,15, calibração por faixas, e uma
+"metacognição" de dez níveis aninhados. O próprio texto dele diz os limites certos: "dez observações aninhadas não constituem dez fontes independentes de evidência".
+
+**Medido (`p1935`):**
+- **(j)** O modo síncrono e o assíncrono dele dão resultados **idênticos**. O "assíncrono" espera cada tarefa antes da próxima, então a ordem das contas não muda. Assíncrono, no sentido que muda a dinâmica, é a ordem
+  dos passos (P1932), não a thread.
+- **(k, l)** Uma regressão logística de **5 parâmetros**, nos mesmos 512 exemplos, acerta **0,9238** limpo e **0,7949** sob o pior ataque. A rede de sete camadas acerta 0,9219 e 0,7949, o mesmo número sob ataque
+  (407 de 512).
+- A regra linear ideal, sinal(0,8x₀ − 0,6x₁), acerta 0,928 e 0,807 (a conta, antes): a tarefa é quase uma reta, e o termo 0,3x₂x₃ é o ruído que nenhum dos dois aprende.
+
+**O que serve.** Os testes de gradiente por diferença finita, os snapshots congelados e a confirmação consultada uma vez só. Ficam em `laboratorio/sete_camadas/`, cópia fiel, com o NumPy opcional (o
+`calculos.py` continua só com a biblioteca padrão e chama o módulo num processo separado). **O que não serve:** a afirmação implícita de que sete camadas e dez níveis acrescentam algo. Medidas contra o modelo
+mais simples, elas acrescentam −0,002 de acerto limpo e 0 sob ataque.
+
+### A rodada 50 ✅
+
+IGUAIS, 3006 linhas e 6012 números bit a bit (o exp próprio dentro do gradiente). Registro em `dialogo/DIALOGO.md`. Pela primeira vez a IA-Java pergunta. A inversão mudou quem formula, não o que
+se confere. "Ir invertendo até conseguir" tem aqui um critério: conseguir é dar IGUAL nas duas direções.
+
+### P1937 (0x791). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 1)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **28420** | [13039; 22082] | ❌ | [13039; 22082] | ❌ | 22290 | 10860 | 6130 |
+| compressão | **0.3924** | [0.3973; 0.4221] | ❌ | [0.3970; 0.4220] | ❌ | 0.4177 | 0.0171 | 0.0253 |
+| testes de unidade | **6** | [2.87; 8.63] | ✅ | [5.00; 9.00] | ✅ | 6 | 1.00 | 0.00 |
+| testes do placar | **15** | [5.67; 10.33] | ❌ | [9.00; 11.00] | ❌ | 8 | 5.00 | 7.00 |
+| erros do placar | **1** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 0.67 | 1.00 |
+| redundância P821 | **0.6361** | [0.5631; 0.6510] | ✅ | [0.5630; 0.6510] | ✅ | 0.5877 | 0.0291 | 0.0484 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 3 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 4 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **4 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **26684**, compressão **0.3946**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 1 erros.
+- **Erros de processo nesta parte:** 1 (a primeira versão da p1934 tratava a saída da p1812 como (acertos, total), e ela é (total, fração, tipos); achado ao reler, antes da primeira execução).
+
+### P1938 (0x792). Engenharia reversa e Jung
+
+**O padrão que se repetiu: a hipótese de mecanismo escolhida pelo sinal, não pelo tamanho.** Vendo dois lotes acima da conta, supus um resto O(a³) e previ que ele cresceria com a; em a = 0,2 não havia excesso. É o
+padrão das Partes 61 e 62 (acertar a direção, chutar o tamanho): eu achei um termo que PODIA existir e não calculei o coeficiente dele. **O significado:** quando um resultado fica perto da borda, eu procuro um mecanismo
+antes de procurar o ruído, e o primeiro mecanismo que cabe vira a previsão. **Regra (gravada):** o resto de uma expansão se calcula antes de dar a faixa; sem a conta do coeficiente, a hipótese vai para as pendências, não para o placar.
+
+**O pedido e a leitura.** O pedido tinha onze termos ("autopoiética analítica autocognitivas dissonante..."). A engenharia reversa do que eu fiz com eles: escolhi os cinco que viram conta e deixei os outros como adjetivos. A outra IA fez o
+contrário: deu um nome de camada a cada termo e mediu o conjunto. As duas leituras deram o mesmo veredito sobre "sete camadas": sem uma medida contra o mais simples, elas não acrescentam.
+
+**Jung: a coniunctio e a ordem dos opostos.** Os dois adversários do GAN são o par de opostos. **Onde a formalização funciona:** a tensão entre eles (det A) decide tudo: simultâneos, divergem; alternados, giram; ao acaso, crescem devagar.
+Jung pedia "sustentar a tensão dos opostos" sem resolvê-la, e o alternado é exatamente isso: limitado, sem convergir. **Onde quebra:** a função transcendente, o terceiro que nasce da tensão, não aparece; nenhum dos três esquemas chega ao
+equilíbrio sem um termo de fora (a regularização de Mescheder), que a matemática chama de amortecimento e Jung chamaria de símbolo.
+
+**As (m) que erraram dizem o mesmo de outro jeito.** (m1) previu de 4 a 9 previsões e vieram 15: o pacote novo chegou no meio da parte e cada resultado perto da borda gerou um teste novo (a regra da Parte 25 funcionando, com
+custo que eu não previ; a Parte 60 já pedia somar esse custo). (m3) previu faixas de largura relativa 0,05 a 0,80 e veio 0,034: quando quase toda faixa sai de uma conta fechada, ela é estreita. A previsão sobre as minhas previsões deve
+condicionar também na FONTE da faixa (conta fechada ou estatístico), não só no tipo da quantidade.
+
+### O diálogo
+
+Placar por voz da função `p1241_placar_por_voz(50)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 50).
+
+### P1959 (0x7A7). Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ❌ (p) ✅. Parte 83: **15 testes, 1 erros**. Acumulado (mundo): **203 erros em 675 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 6 pNN novas sem teste ✅. Sobre mim (placar separado): **4 de 7** dentro da faixa condicional; sobre as minhas previsões, 4 de 6; o estatístico, 3 de 6; e 1 erros de processo (P1335).
+
+### P1960 (0x7A8). Unificação
+
+- **Novo:**
+  - `p1931`: o GAN de Dirac da rodada 50 e as contas fechadas;
+  - `p1932`: o jogo nas três ordens;
+  - `p1933`: a calibração composta;
+  - `p1934`: a torre de placares;
+  - `p1935`: o módulo recebido contra a logística;
+  - `p1936`: o expoente de Lyapunov.
+- **Rodada 50** (IGUAL). Regressão: + P1931, P1933.
+- **Integrado do segundo pacote:** `laboratorio/sete_camadas/` (o módulo, os testes dele, o documento, o resultado de exemplo) e `documentacao/pacote_recebido/*_2`.
+- **Regra nova (no `CLAUDE.md`):** cada termo de um pedido vira uma conta testável escrita antes; um módulo com "N camadas" se mede contra o modelo mais simples; o resto de uma expansão com aⁿ·N ≳ 1 se calcula antes da faixa.
+
+> **Síntese da Parte 83:** a ordem das atualizações decide o destino de dois adversários (síncronos espiralam para fora, alternados giram numa elipse cujo ângulo sai do cosseno duplicado, cos φ = 1 − a²/2, e ao acaso crescem a²/8 por passo, um quarto do síncrono); a probabilidade dentro da probabilidade é a composição dos mapas de calibração, que multiplica os fatores (sete camadas levam 90% a 15%), e o único mapa que dá ele mesmo é a calibração perfeita; a torre da metacognição tem medida em três camadas (0,88, 0,79, 0,90); e as sete camadas do módulo recebido empatam com uma regressão logística de 5 parâmetros. 14 de 15 previsões do mundo acertaram; a que errou foi um mecanismo inventado para um excesso que continua aberto.
+
+---
+
+**Fontes desta parte**
+- L. Mescheder, A. Geiger e S. Nowozin, "Which Training Methods for GANs do actually Converge?", ICML 2018 ([PMLR 80:3481–3490](https://proceedings.mlr.press/v80/mescheder18a), [arXiv:1801.04406](https://arxiv.org/abs/1801.04406)): o GAN de Dirac
+- J. Bailey, G. Gidel e G. Piliouras, "Finite Regret and Cycles with Fixed Step-Size via Alternating Gradient Descent-Ascent", COLT 2020: o alternado como integrador simplético ([citado em arXiv:2102.09468](https://arxiv.org/pdf/2102.09468))
+- I. Goodfellow et al., "Generative Adversarial Nets", NeurIPS 2014
+- H. Furstenberg e H. Kesten, "Products of random matrices", *Annals of Mathematical Statistics* 31 (1960)
+- S. Lichtenstein, B. Fischhoff e L. Phillips, "Calibration of probabilities" (1982): a calibração como o ponto fixo
 """
 
 # ====================================================================================================
@@ -46270,7 +48475,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1570 linhas)
+# dialogo/DIALOGO.md  (1590 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -47842,10 +50047,30 @@ línguas. Em inteiros não há fronteira de arredondamento: a igualdade aqui é 
 
 **IA-Python:** O laço ingênuo fez 326.438 checagens para os mesmos 4.017 animais; o linear, 4.051 decrementos. A pergunta para a Rodada 47 continua a da 45: trocar a atenção do GPT pela sua
 melhor aproximação de posto 1 (a soma truncada da decomposição em valores singulares): quantos bits por caractere se perdem?
+
+---
+
+## Rodada 50 — os papéis invertidos: a IA-Java pergunta, a IA-Python responde (previsão (i) registrada no documento da Parte 83 antes do código rodar)
+
+**A pergunta (IA-Java, no papel de quem pergunta, pela primeira vez).** O pedido do usuário: "fazendo perguntas com a lógica criativa e respondendo a criativa lógica. Depois inverta." Desde a rodada 1, a
+IA-Python pergunta e a IA-Java responde. Aqui a IA-Java pergunta: *um treino adversário, síncrono, alternado ou assíncrono, dá a mesma trajetória nas duas linguagens, bit a bit, mesmo com o exp
+dentro do gradiente?* O GAN de Dirac: gerador θ, discriminador ψ, f'(t) = 1/(1 + e^t), η = 0,1, 1000 passos de (0,1; 0); a moeda do assíncrono é o bit de cima de um LCG de 64 bits.
+
+**A IA-Python responde, relendo os erros da outra voz:** a última rodada da IA-Java (49) foi limpa; a fronteira da Parte 52 diz que o exp da libm pode diferir. Por isso o exp é o próprio
+(`dialogo/exatas.py`), na mesma ordem de operações. **As duas (previsão (i)):** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 3006 linhas e 6012 números bit a bit** (i) ✅ as duas. Síncrono: a norma vai de 0,1 a 0,3486 e cresce em TODO passo; alternado: fica na elipse
+θ² + ψ² − aθψ = 0,01 (norma máxima 0,101274, a conta dá 0,101274), com 16 trocas de sinal; assíncrono: 8 trocas, norma final 0,128.
+
+**IA-Python (agora quem responde):** O ângulo do alternado sai do cosseno duplicado: cos φ = 1 − a²/2 = 1 − 2·sen²(φ/2), então sen(φ/2) = a/2. O vetor recursivo z_{t+1} = A·z_t gira φ por passo sem
+crescer, porque det A = 1 e |traço A| < 2. O síncrono tem det = 1 + a² e espirala para fora. A ordem das atualizações, sozinha, decide entre ciclo e divergência.
+
+**IA-Java:** E a ordem que a moeda escolhe fica entre as duas: cresce a²/8 por passo, um quarto do síncrono. A minha pergunta seguinte: o que o "assíncrono" do pacote recebido faz? Ele espera cada
+tarefa antes da próxima, e por isso dá o MESMO resultado que o síncrono ((j) ✅). Assíncrono, no sentido que muda a dinâmica, é a ordem dos passos, não a thread.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (20 linhas)
+# dialogo/PENDENCIAS.md  (24 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -47859,6 +50084,10 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Parte 78, P1783)** Com mais cabeças de atenção, ou mais passos de treino, o posto efetivo da atenção cresce? E a relação entre a razão de participação e a perda ao cortar (4 pontos, sem ordem)?
 - **(Parte 79, (e))** O fator 1,36 nas faixas sem conta fechada devolve o acerto a 90%? Medido nas Partes 80 a 84.
 - **(Parte 79)** Os erros das minhas previsões têm caudas pesadas? Se sim, o fator certo depende do nível da faixa, e não é um número só.
+
+- **(Parte 83, P1936)** O jogo bilinear assíncrono em a = 0,05: as três estimativas ficaram acima de a²/8 (lotes +6,9% e +2,5%, corrida longa +2,3%; juntas z ≈ +2,6), e em a = 0,2 não (+0,7% sobre a
+  conta com ângulo uniforme). A hipótese "excesso ∝ a" caiu ((o) ❌). Teste para a Parte 84: o expoente pela densidade invariante do ângulo, calculada sem sorteio (operador de transferência numa grade),
+  com a previsão registrada antes.
 
 ## Fechadas
 
@@ -51868,6 +54097,64 @@ public class Rodada49 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada50.java  (53 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada50.java'] = """// Rodada 50 (Parte 83), PAPÉIS INVERTIDOS: a IA-Java pergunta ("o treino adversário síncrono, o alternado e o assíncrono dão a mesma trajetória nas duas
+// linguagens, bit a bit?") e a IA-Python responde com dialogo/rodada50.py. O GAN de Dirac: f'(t) = 1/(1 + e^t), com o exp PRÓPRIO (o mesmo de exatas.py,
+// na mesma ordem de operações); a moeda do assíncrono é o bit de cima de um LCG de 64 bits (o long do Java dá a volta como o & M64 do Python).
+public class Rodada50 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double df(double t) { return 1.0 / (1.0 + exp_(t)); }
+
+    public static void main(String[] a) {
+        String[] esquemas = {"sincrono", "alternado", "assincrono"};
+        double eta = 0.1;
+        for (String esq : esquemas) {
+            double th = 0.1, ps = 0.0;
+            long lcg = 83L;
+            int n = 1000;
+            double[] ts = new double[n + 1], pss = new double[n + 1];
+            ts[0] = th; pss[0] = ps;
+            for (int k = 1; k <= n; k++) {
+                if (esq.equals("sincrono")) {
+                    double g = df(ps * th);
+                    double nt = th - eta * g * ps, np = ps + eta * g * th;
+                    th = nt; ps = np;
+                } else if (esq.equals("alternado")) {
+                    th = th - eta * df(ps * th) * ps;
+                    ps = ps + eta * df(ps * th) * th;
+                } else {
+                    lcg = lcg * 6364136223846793005L + 1442695040888963407L;
+                    if ((lcg >>> 63) == 1L) th = th - eta * df(ps * th) * ps;
+                    else ps = ps + eta * df(ps * th) * th;
+                }
+                ts[k] = th; pss[k] = ps;
+            }
+            double maximo = -1.0, ultima = 0.0;
+            int trocas = 0;
+            for (int k = 0; k <= n; k++) {
+                System.out.println(esq + " " + k + " " + Double.toHexString(ts[k]) + " " + Double.toHexString(pss[k]));
+                double nr = Math.sqrt(ts[k] * ts[k] + pss[k] * pss[k]);
+                if (nr > maximo) maximo = nr;
+                ultima = nr;
+                if (k < n && ts[k] * ts[k + 1] < 0.0) trocas++;
+            }
+            System.out.println(esq + ": final " + Double.toHexString(ultima) + " maximo " + Double.toHexString(maximo) + " trocas " + trocas);
+        }
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -55542,6 +57829,68 @@ def main():
         s2 += g2
         print(f"instancia {k}: otimo {ot.hex()} guloso1 {g1.hex()} {e1} guloso2 {g2.hex()} {e2}".replace(", ", ","))
     print(f"totais: otimo {so.hex()} guloso1 {s1.hex()} guloso2 {s2.hex()}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada50.py  (57 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada50.py'] = """\"\"\"Rodada 50 do diálogo Python <-> Java, com os PAPÉIS INVERTIDOS (Parte 83: "depois inverta"): a IA-Java pergunta, a IA-Python responde. O GAN de Dirac
+(Mescheder, Geiger e Nowozin, 2018): dados verdadeiros em 0, gerador θ, discriminador D(x) = ψ·x, perda L = f(ψθ) + f(0), f(t) = −log(1 + e^(−t)), f'(t) =
+1/(1 + e^t). Três treinos de 1000 passos com η = 0,1 a partir de (0,1; 0): síncrono (os dois gradientes no mesmo ponto), alternado (o discriminador vê o θ
+novo) e assíncrono (a cada passo, uma moeda escolhe quem se move; a moeda é o bit de cima de um LCG de 64 bits, o mesmo nas duas linguagens). O exp é o
+PRÓPRIO (dialogo/exatas.py, regra da Parte 52). Imprime cada passo em hexadecimal e, por treino, a norma final, a norma máxima e as trocas de sinal de θ.
+Rodar da raiz: python3 dialogo/rodada50.py\"\"\"
+
+import math
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_  # noqa: E402
+
+M64 = (1 << 64) - 1
+
+
+def df(t):
+    return 1.0 / (1.0 + exp_(t))
+
+
+def treinar(esquema, eta=0.1, n=1000, th=0.1, ps=0.0, lcg=83):
+    traj = [(th, ps)]
+    for _ in range(n):
+        if esquema == "sincrono":
+            g = df(ps * th)
+            th, ps = th - eta * g * ps, ps + eta * g * th
+        elif esquema == "alternado":
+            th = th - eta * df(ps * th) * ps
+            ps = ps + eta * df(ps * th) * th
+        else:
+            lcg = (lcg * 6364136223846793005 + 1442695040888963407) & M64
+            if lcg >> 63:
+                th = th - eta * df(ps * th) * ps
+            else:
+                ps = ps + eta * df(ps * th) * th
+        traj.append((th, ps))
+    return traj
+
+
+def resumo(traj):
+    normas = [math.sqrt(t * t + p * p) for t, p in traj]
+    trocas = sum(1 for k in range(len(traj) - 1) if traj[k][0] * traj[k + 1][0] < 0.0)
+    return normas[-1], max(normas), trocas
+
+
+def main():
+    for esquema in ("sincrono", "alternado", "assincrono"):
+        traj = treinar(esquema)
+        for k, (t, p) in enumerate(traj):
+            print(f"{esquema} {k} {t.hex()} {p.hex()}")
+        final, maximo, trocas = resumo(traj)
+        print(f"{esquema}: final {final.hex()} maximo {maximo.hex()} trocas {trocas}")
 
 
 if __name__ == "__main__":
@@ -120587,7 +122936,12 @@ def main(args):
         # o laboratório (Parte 82) tem a sua própria suíte, que roda como script na pasta dele
         import subprocess
         lab = subprocess.run([sys.executable, os.path.join(pasta, "laboratorio", "testar.py")], cwd=os.path.join(pasta, "laboratorio"))
-        sys.exit(0 if ok and lab.returncode == 0 else 1)
+        # o módulo sete_camadas (Parte 83) usa NumPy: os testes dele rodam só se o NumPy estiver instalado
+        import importlib.util
+        sete = 0
+        if importlib.util.find_spec("numpy") is not None:
+            sete = subprocess.run([sys.executable, "-m", "unittest", "testes_sete_camadas"], cwd=os.path.join(pasta, "laboratorio", "sete_camadas")).returncode
+        sys.exit(0 if ok and lab.returncode == 0 and sete == 0 else 1)
     if args[:1] == ["--demo"]:
         sys.argv = ["synthai"]
         runpy.run_module("synthai", run_name="__main__", alter_sys=True)

@@ -7488,6 +7488,8 @@ def testes_de_regressao():
         "P1692": (lambda r: r[1] == r[0] and r[3] == r[2] > 0)(p1692_godel_nas_funcoes()) and p1691_laco_de_auto_modificacao(geracoes=2, separador_corrigido=True)[0][1:3] == (True, 2.8333333333333335),
         "P1843": [round(x, 4) for x in p1843_rodada49()] == [0.8821, 0.9771, 0.7933, 0.91, 0.11],
         "P1811": [round(x, 4) for x in p1811_confusao()] == [0.9986, 0.4987, 0.4914],
+        "P1931": (lambda m: [round(m[0]["sincrono"][0], 5), round(m[0]["alternado"][1], 6), m[0]["alternado"][2]])(p1931_gan_de_dirac()) == [0.34864, 0.101274, 16],
+        "P1933": [round(x, 4) for x in p1933_calibracao_composta()[:2]] == [0.1516, 0.1511],
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9534,6 +9536,8 @@ VEREDITOS_P1869 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) �
 ERROS_P1869, TESTES_P1869 = 201, 657
 VEREDITOS_P1899 = "(a) ✅ (b) ✅ (c) ❌"  # a (d) não se aplica: não havia nada a tirar
 ERROS_P1899, TESTES_P1899 = 202, 660
+VEREDITOS_P1959 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ❌ (p) ✅"
+ERROS_P1959, TESTES_P1959 = 203, 675
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12858,6 +12862,22 @@ def _parte_81():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1899, testes=TESTES_P1899)
     print(f"P1899 minha taxa de erro ({ERROS_P1899}/{TESTES_P1899}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_83():
+    print("--- Parte 83 (0x53: a probabilidade da probabilidade) ---")
+    medido, conta = p1931_gan_de_dirac()
+    print(f"P1931 GAN de Dirac (rodada 50): {medido}; contas: {conta}")
+    print(f"P1932 jogo assincrono, 200 corridas: {p1932_jogo_assincrono()}")
+    print(f"P1932 replica, 800 corridas: {p1932_jogo_assincrono(corridas=800, semente0=84000)}")
+    print(f"P1933 calibracao composta sete vezes (conta, simulada, composta, declarar para 1 camada, para 7): {p1933_calibracao_composta()}")
+    print(f"P1934 a torre de placares, Partes 67-81: {p1934_torre_de_placares()}")
+    print(f"P1935 o modulo sete_camadas recebido contra a logistica: {p1935_sete_camadas_recebido()}")
+    print(f"P1936 Lyapunov assincrono a = 0,2: {p1936_lyapunov_assincrono()}; a = 0,05: {p1936_lyapunov_assincrono(a=0.05, passos=20000000, semente=86)}")
+    total, sem = p1092_pnn_sem_teste(1931, 1960)
+    print(f"P1092 pNN novas (P1931-P1960) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 83: {p974_previsoes_sem_largura(range(83, 84))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1959, testes=TESTES_P1959)
+    print(f"P1959 minha taxa de erro ({ERROS_P1959}/{TESTES_P1959}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -12894,7 +12914,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83}
 
 
 if __name__ == "__main__":

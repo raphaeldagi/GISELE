@@ -16,6 +16,8 @@ FONTES += sorted(os.path.join("synthai", "revisado", f) for f in os.listdir(os.p
                  if f.endswith(".py"))  # Parte 82: o pacote revisado recebido do usuário (versões corrigidas, ao lado das originais)
 FONTES += sorted(os.path.join("laboratorio", f) for f in os.listdir(os.path.join(RAIZ, "laboratorio"))
                  if f.endswith((".py", ".md", ".json", ".log")))  # Parte 82: o laboratório do pacote recebido
+FONTES += sorted(os.path.join("laboratorio", "sete_camadas", f) for f in os.listdir(os.path.join(RAIZ, "laboratorio", "sete_camadas"))
+                 if f.endswith((".py", ".md", ".json", ".txt")))  # Parte 83: o módulo sete_camadas do segundo pacote recebido (NumPy, opcional)
 FONTES += sorted(os.path.relpath(os.path.join(d, f), RAIZ) for d, _, fs in os.walk(os.path.join(RAIZ, "documentacao"))
                  for f in fs if f.endswith((".md", ".json", ".log")))  # Parte 82: a revisão técnica e os contratos
 
@@ -106,7 +108,12 @@ def main(args):
         # o laboratório (Parte 82) tem a sua própria suíte, que roda como script na pasta dele
         import subprocess
         lab = subprocess.run([sys.executable, os.path.join(pasta, "laboratorio", "testar.py")], cwd=os.path.join(pasta, "laboratorio"))
-        sys.exit(0 if ok and lab.returncode == 0 else 1)
+        # o módulo sete_camadas (Parte 83) usa NumPy: os testes dele rodam só se o NumPy estiver instalado
+        import importlib.util
+        sete = 0
+        if importlib.util.find_spec("numpy") is not None:
+            sete = subprocess.run([sys.executable, "-m", "unittest", "testes_sete_camadas"], cwd=os.path.join(pasta, "laboratorio", "sete_camadas")).returncode
+        sys.exit(0 if ok and lab.returncode == 0 and sete == 0 else 1)
     if args[:1] == ["--demo"]:
         sys.argv = ["synthai"]
         runpy.run_module("synthai", run_name="__main__", alter_sys=True)

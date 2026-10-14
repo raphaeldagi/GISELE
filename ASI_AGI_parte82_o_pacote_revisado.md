@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 82 (0x52): o pacote revisado
 
-> Continuação da [Parte 81](ASI_AGI_parte81_o_que_nao_serve.md). Pedido do usuário, com o arquivo `SYNTHAI_consolidado.py` anexado: **"Adicione, no que couber, ao nosso código. E me envie o
+> Continuação da [Parte 81](ASI_AGI_parte81_o_que_nao_serve.md). **Próxima:** [Parte 83 — a probabilidade da probabilidade](ASI_AGI_parte83_a_probabilidade_da_probabilidade.md). Pedido do usuário, com o arquivo `SYNTHAI_consolidado.py` anexado: **"Adicione, no que couber, ao nosso código. E me envie o
 > código final consolidado."** Uma parte de integração, não de experimento: nenhuma previsão foi registrada antes de rodar os testes que vieram no pacote, e isso fica dito aqui.
 
 ## O que o arquivo é (lido sem executar)

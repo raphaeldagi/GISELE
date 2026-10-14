@@ -11,6 +11,10 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Parte 79, (e))** O fator 1,36 nas faixas sem conta fechada devolve o acerto a 90%? Medido nas Partes 80 a 84.
 - **(Parte 79)** Os erros das minhas previsões têm caudas pesadas? Se sim, o fator certo depende do nível da faixa, e não é um número só.
 
+- **(Parte 83, P1936)** O jogo bilinear assíncrono em a = 0,05: as três estimativas ficaram acima de a²/8 (lotes +6,9% e +2,5%, corrida longa +2,3%; juntas z ≈ +2,6), e em a = 0,2 não (+0,7% sobre a
+  conta com ângulo uniforme). A hipótese "excesso ∝ a" caiu ((o) ❌). Teste para a Parte 84: o expoente pela densidade invariante do ângulo, calculada sem sorteio (operador de transferência numa grade),
+  com a previsão registrada antes.
+
 ## Fechadas
 
 - **(Parte 74, P1662)** O valor de um conjunto de experimentos dependentes: fechada na Parte 80 (o VOI não é submodular em 40% das instâncias; o guloso chega a 0,88 do ótimo e, olhando dois
