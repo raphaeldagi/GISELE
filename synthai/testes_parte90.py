@@ -23,7 +23,7 @@ class TesteParte90(unittest.TestCase):
         self.assertTrue(iguais)   # STDP lenta demais para mudar o padrao em 300 passos
 
     def test_p1961_com_parte_90(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90))
         self.assertEqual(por[90], (3, 3))   # a (d) fica fora da VEREDITOS; a,b,c contam
         self.assertEqual((ok, tot), (45, 57))
 

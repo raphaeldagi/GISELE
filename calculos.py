@@ -7510,6 +7510,8 @@ def testes_de_regressao():
         "P2115": p2115_rodada56() == 12,
         "P2141": (lambda r: r[0] == 12 and r[1] < r[2])(p2141_rede_stdp()),
         "P2143": p2143_disparos_aprendiz_vs_fixo() == (12, 12, True),
+        "P2172": p2172_sgd_reduz_perda() == [True] * 5,
+        "P2174": (lambda r: r[1] < 0.1 < r[0])(p2174_gpt_memoriza()),
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9572,6 +9574,8 @@ VEREDITOS_P2379 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P2379, TESTES_P2379 = 215, 713
 VEREDITOS_P2449 = "(a) ✅ (b) ✅ (c) ✅"
 ERROS_P2449, TESTES_P2449 = 215, 716
+VEREDITOS_P2519 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
+ERROS_P2519, TESTES_P2519 = 215, 720
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12112,16 +12116,16 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n in (84, 85, 86, 87, 88, 89, 90):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
+        if n in (84, 85, 86, 87, 88, 89, 90, 91):  # a (e)/(g)/(d) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12625,6 +12629,54 @@ def p2143_disparos_aprendiz_vs_fixo():
     spec.loader.exec_module(r56)
     fixo = r56.simular(imprimir=False)
     return aprendiz, fixo, aprendiz == fixo
+
+
+def p2171_rodada58():
+    """Rodada 58 (P2171; Parte 91): o coracao de um passo de treino de GPT (gradiente softmax+entropia cruzada, SGD, decisao), IGUAL em Java bit a bit.
+    Devolve, por caso, (perda antes, perda depois, argmax depois)."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada58", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada58.py"))
+    r58 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r58)
+    return [r58.passo(list(logits), alvo)[:3] for logits, alvo in r58.CASOS]
+
+
+def p2172_sgd_reduz_perda():
+    """O passo de SGD na camada de saida (P2172) reduz a perda nos 5 casos (descida de gradiente, camada convexa). Devolve a lista de (perda_depois < perda_antes)."""
+    return [depois < antes for antes, depois, _ in p2171_rodada58()]
+
+
+def p2173_gradiente_p_menos_onehot(semente=91, K=5, alvo=2):
+    """A identidade da camada de saida (P2173): d(-ln softmax(z)[t])/dz = softmax(z) - onehot(t). Devolve o maximo |numerico - analitico| por diferencas finitas."""
+    import math
+    import random
+    rng = random.Random(semente)
+    z = [rng.gauss(0, 1) for _ in range(K)]
+
+    def L(zz):
+        m = max(zz)
+        e = [math.exp(x - m) for x in zz]
+        s = sum(e)
+        return -math.log(e[alvo] / s)
+    h = 1e-6
+    num = [(L(z[:i] + [z[i] + h] + z[i + 1:]) - L(z[:i] + [z[i] - h] + z[i + 1:])) / (2 * h) for i in range(K)]
+    m = max(z)
+    e = [math.exp(x - m) for x in z]
+    s = sum(e)
+    p = [x / s for x in e]
+    ana = [p[i] - (1.0 if i == alvo else 0.0) for i in range(K)]
+    return max(abs(num[i] - ana[i]) for i in range(K))
+
+
+def p2174_gpt_memoriza(passos=60, lr=0.05, semente=91):
+    """O GPT real (synthai/gpt.py) minusculo treinado num padrao repetido (P2174) memoriza: devolve (perda inicial, perda final)."""
+    import synthai.gpt as g
+    texto = "abcabcabcabcabcabcabcabc" * 4
+    vocab = sorted(set(texto))
+    m = g.GPT(vocab, T=8, d=8, h=8, semente=semente)
+    perdas = m.treinar(texto, passos=passos, lr=lr, semente=semente)
+    return perdas[0], perdas[-1]
 
 
 def p1578_autovalores_da_atencao():
@@ -13538,6 +13590,20 @@ def _parte_90():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2449, testes=TESTES_P2449)
     print(f"P2449 minha taxa de erro ({ERROS_P2449}/{TESTES_P2449}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_91():
+    print("--- Parte 91 (0x5B: o GPT que aprende igual) ---")
+    print(f"P2171 rodada 58 (gradiente softmax+CE, SGD, decisao; IGUAL em Java): caso 0 = {p2171_rodada58()[0]}")
+    print(f"P2172 o passo de SGD reduz a perda nos 5 casos: {p2172_sgd_reduz_perda()}")
+    print(f"P2173 gradiente = p - onehot, max |num - analitico|: {p2173_gradiente_p_menos_onehot():.2e}")
+    print(f"P2174 o GPT real memoriza um padrao (perda inicial, final): {tuple(round(x, 4) for x in p2174_gpt_memoriza())}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (e), Partes 80-91: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2171, 2200)
+    print(f"P1092 pNN novas (P2171-P2200) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 91: {p974_previsoes_sem_largura(range(91, 92))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2519, testes=TESTES_P2519)
+    print(f"P2519 minha taxa de erro ({ERROS_P2519}/{TESTES_P2519}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -13574,7 +13640,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91}
 
 
 if __name__ == "__main__":

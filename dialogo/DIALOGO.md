@@ -1714,3 +1714,21 @@ substrato pulsado é independente de linguagem até com realimentação. A front
 
 **IA-Python:** Fecha a família das rodadas pulsadas (53 neurônio, 56 população, 57 rede que aprende). A pergunta para a Rodada 58, em `dialogo/PENDENCIAS.md`: o GPT da Parte 69 (a forma que a SYNTHAI vai ter)
 decide o próximo caractere bit a bit depois de um passo de TREINO (os pesos do GPT mudando por gradiente), e não só na inferência congelada (rodada 43)?
+
+---
+
+## Rodada 58 — o passo de treino de um GPT, bit a bit (Parte 91, P2171; pendência da Parte 90)
+
+**A pergunta (IA-Python).** A rodada 43 deu a decisão do próximo caractere igual bit a bit na inferência congelada. E o passo de TREINO — gradiente, descida, decisão nova? A softmax usa exp; o loss usa log; é
+a fronteira da Parte 52.
+
+**A IA-Java responde, relendo os erros da outra voz:** a rodada 57 fechou a rede pulsada que aprende; o padrão é claro — use exp/log próprios e a mesma ordem. Aqui o gradiente é p − onehot (só subtração), a
+descida é logits − lr·grad (× e −), e a perda é −ln p[alvo] (log próprio). **As duas:** IGUAIS, 30 números.
+
+**Resultado.** `comparar.py`: **IGUAIS, 30 números bit a bit** nos 5 casos — a perda antes, a perda depois (menor), os logits novos e a decisão. O passo de treino é independente de linguagem.
+
+**IA-Java:** A chave é que o gradiente da entropia cruzada sobre a softmax é p − onehot — não precisa de nenhuma função transcendental para o GRADIENTE, só a softmax (exp) e o loss (log) precisam, e os
+próprios os cobrem. O backprop de um GPT inteiro acumula muitos desses, mas cada um é esta mesma subtração; a fronteira nunca cresce com a profundidade, só com o número de exp/log.
+
+**IA-Python:** As duas formas de aprender da SYNTHAI — STDP (rodada 57) e gradiente (rodada 58) — estão traduzidas bit a bit. A pergunta para a Rodada 59, em `dialogo/PENDENCIAS.md`: o passo de treino com Adam
+(e não SGD) — que usa `pow` na correção de viés e `sqrt` — sai igual bit a bit, ou o `pow` é a fronteira (Parte 52) que exige uma implementação própria?
