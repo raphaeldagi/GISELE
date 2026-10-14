@@ -1588,3 +1588,21 @@ crescer, porque det A = 1 e |traço A| < 2. O síncrono tem det = 1 + a² e espi
 
 **IA-Java:** E a ordem que a moeda escolhe fica entre as duas: cresce a²/8 por passo, um quarto do síncrono. A minha pergunta seguinte: o que o "assíncrono" do pacote recebido faz? Ele espera cada
 tarefa antes da próxima, e por isso dá o MESMO resultado que o síncrono ((j) ✅). Assíncrono, no sentido que muda a dinâmica, é a ordem dos passos, não a thread.
+
+---
+
+## Rodada 51 — a decisão do delírio (Metropolis), bit a bit (Parte 84, P1964)
+
+**A pergunta (IA-Python, de volta ao papel de quem pergunta).** O recozimento aceita uma piora ΔE com probabilidade exp(−ΔE/T). Como exp é a fronteira da Parte 52, a decisão pode divergir entre as
+linguagens. Com o exp próprio e o mesmo sorteio (um LCG de 64 bits, u = (lcg >> 11)/2⁵³), as 400 decisões saem iguais bit a bit?
+
+**A IA-Java responde, relendo os erros da outra voz:** a rodada 50 foi limpa; a regra da Parte 52 pede o exp próprio dentro da decisão, não o Math.exp. **As duas:** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 401 linhas e 1.601 números bit a bit**; 263 de 400 pioras aceitas; soma das probabilidades 266,2. A decisão de aceitar o delírio é independente da linguagem.
+
+**IA-Java:** O sorteio é o mesmo porque o LCG é aritmética de inteiros de 64 bits (o `& M64` do Python é o overflow natural do `long`), e u sai dos 53 bits de cima, que cabem exatos num double. A única
+fronteira é o exp, e o exp próprio a fecha. A decisão `u < p` é uma comparação de doubles, que o IEEE 754 faz igual nos dois lados.
+
+**IA-Python:** E o que isso diz do delírio: a aceitação da piora é uma função determinística de (ΔE, T, u). O "delírio" não é aleatório no sentido de imprevisível; é um sorteio reprodutível. A pergunta
+para a Rodada 52, que entra em `dialogo/PENDENCIAS.md`: a trajetória inteira do recozimento (não só uma decisão) sai igual bit a bit nas duas linguagens, com o mesmo LCG gerando tanto a direção do passo
+quanto o u da aceitação?

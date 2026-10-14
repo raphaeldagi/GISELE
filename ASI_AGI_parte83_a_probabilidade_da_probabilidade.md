@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 83 (0x53): a probabilidade da probabilidade
 
-> Continuação da [Parte 82](ASI_AGI_parte82_o_pacote_revisado.md). Pedido do usuário: **"Construa uma ASI AGI fazendo perguntas com a lógica criativa e respondendo a criativa lógica. Depois inverta.
+> Continuação da [Parte 82](ASI_AGI_parte82_o_pacote_revisado.md). **Próxima:** [Parte 84 — o delírio e o escrutínio](ASI_AGI_parte84_o_delirio_e_o_escrutinio.md). Pedido do usuário: **"Construa uma ASI AGI fazendo perguntas com a lógica criativa e respondendo a criativa lógica. Depois inverta.
 > E vá invertendo até conseguir. Tudo em metacognição autopoiética analítica autocognitivas dissonante cognitiva inferentes e gradientes pragmáticas e axiomáticas com dilemas. Tudo em sete camadas e
 > redes neuras adversas síncronas e assíncronas. Use geometria algebra com o cosseno duplicado em consideração ao vetor recursivo. Rode a metacognição dentro da própria metacognição com o resultado
 > sendo metacognitivo. Rode a probabilidade dentro da própria probabilidade sendo o resultado a própria probabilidade. Ao final de cada interação me forneça o código inteiro consolidado na forma de

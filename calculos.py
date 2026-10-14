@@ -7490,6 +7490,9 @@ def testes_de_regressao():
         "P1811": [round(x, 4) for x in p1811_confusao()] == [0.9986, 0.4987, 0.4914],
         "P1931": (lambda m: [round(m[0]["sincrono"][0], 5), round(m[0]["alternado"][1], 6), m[0]["alternado"][2]])(p1931_gan_de_dirac()) == [0.34864, 0.101274, 16],
         "P1933": [round(x, 4) for x in p1933_calibracao_composta()[:2]] == [0.1516, 0.1511],
+        "P1961": p1961_teste_e_da_calibracao()[:2] == (23, 31),
+        "P1962": round(p1962_lyapunov_por_densidade(a=0.2, celulas=800, iteracoes=1500)[1], 3) == 0.998,
+        "P1964": p1964_rodada51()[0] == 263,
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9538,6 +9541,8 @@ VEREDITOS_P1899 = "(a) ✅ (b) ✅ (c) ❌"  # a (d) não se aplica: não havia 
 ERROS_P1899, TESTES_P1899 = 202, 660
 VEREDITOS_P1959 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ❌ (p) ✅"
 ERROS_P1959, TESTES_P1959 = 203, 675
+VEREDITOS_P2019 = "(a) ✅ (b) ❌ (c) ❌ (d) ❌ (e) ❌ (f) ✅ (g) ❌ (h) ✅ (i) ❌ (j) ❌"
+ERROS_P2019, TESTES_P2019 = 210, 685
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12082,10 +12087,13 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
+    import re
     mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
+        if n == 84:  # a (e) e o proprio teste de calibracao: contar a (e) na sua propria entrada seria circular
+            txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
         ok += a
@@ -12130,22 +12138,28 @@ def p1962_lyapunov_por_densidade(a=0.2, celulas=2000, iteracoes=4000):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def _energia_delirio(n=200):
-    """A paisagem fixa da Parte 84 (P1963): parabola com minimo local em i=100 (E=0) e um poco estreito com o minimo global E[10]=-5."""
+def _energia_delirio(n=200, largura=5):
+    """A paisagem fixa da Parte 84 (P1963): parabola com minimo local em i=100 (E=0) e um poco com o minimo global E=-5. largura=5: agulha em i=10 (o caso
+    base); largura=30: poco largo com o minimo em i=15 (o caso (i), para isolar se a culpa do delirio fraco e a agulha)."""
     E = [0.001 * (i - 100) ** 2 for i in range(n)]
-    for i, v in ((8, -3.0), (9, -4.0), (10, -5.0), (11, -4.0), (12, -3.0)):
-        E[i] = v
+    if largura == 5:
+        for i, v in ((8, -3.0), (9, -4.0), (10, -5.0), (11, -4.0), (12, -3.0)):
+            E[i] = v
+    else:
+        centro = largura // 2
+        for i in range(largura):
+            E[i] = -5.0 + 4.0 * abs(i - centro) / centro
     return E
 
 
-def p1963_delirio_e_escrutinio(partidas=300, passos=2000, semente=84, n=200, t0=5.0, t1=0.01, ruido=1.0):
+def p1963_delirio_e_escrutinio(partidas=300, passos=2000, semente=84, n=200, t0=5.0, t1=0.01, ruido=1.0, largura=5):
     """O metodo do delirio (P1963): recozimento simulado numa paisagem rugosa (`_energia_delirio`), contra a descida gulosa (T=0, "a IA sobria"), com um
     escrutinio num conjunto limpo. "Delirio" = aceitar pioras a temperatura alta (Metropolis, exp proprio); "sair" = resfriar (geometrico T0->T1); durante o
     delirio a energia e vista com ruido N(0, ruido); o escrutinio recalcula na energia LIMPA e so valida se a solucao bater a gulosa. Devolve
     (fracao gulosa acha o global, fracao recozimento acha o global, diferenca, fracao validada no escrutinio, energia media final do recozimento)."""
     import math
     import random
-    E = _energia_delirio(n)
+    E = _energia_delirio(n, largura)
     GLOBAL = min(range(n), key=lambda i: E[i])
 
     def desce(i):
@@ -12184,6 +12198,26 @@ def p1963_delirio_e_escrutinio(partidas=300, passos=2000, semente=84, n=200, t0=
     valida = sum(1 for s, f in zip(partidas_idx, r_finais) if E[f] < E[desce(s)] - 1e-12)
     return (g_ok / partidas, r_ok / partidas, r_ok / partidas - g_ok / partidas,
             valida / partidas, sum(E[f] for f in r_finais) / partidas)
+
+
+def p1964_rodada51():
+    """Rodada 51 (P1964): a decisao de Metropolis do recozimento (dialogo/rodada51.py, exp proprio), IGUAL em Java. Devolve (aceitos, soma das probabilidades)
+    dos 400 casos, para conferir que a rodada reproduz a decisao."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada51", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada51.py"))
+    r51 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r51)
+    lcg, aceitos, soma = 51, 0, 0.0
+    for k in range(400):
+        lcg = (lcg * 6364136223846793005 + 1442695040888963407) & ((1 << 64) - 1)
+        u = (lcg >> 11) / float(1 << 53)
+        dE = (k - 200) / 50.0
+        T = 0.5 + (k % 20) / 10.0
+        p, ac = r51.decisao(dE, T, u)
+        soma += p
+        aceitos += ac
+    return aceitos, soma
 
 
 def p1578_autovalores_da_atencao():
@@ -12986,6 +13020,24 @@ def _parte_83():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1959, testes=TESTES_P1959)
     print(f"P1959 minha taxa de erro ({ERROS_P1959}/{TESTES_P1959}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_84():
+    print("--- Parte 84 (0x54: o delirio e o escrutinio) ---")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (e) da Parte 79 (acerto das Partes 80, 81, 83, 84): {ok}/{tot} = {frac:.4f}; por parte {por}")
+    print(f"P1962 Lyapunov pelo operador de transferencia a=0,2: {p1962_lyapunov_por_densidade(a=0.2)}")
+    print(f"P1962 a=0,05: {p1962_lyapunov_por_densidade(a=0.05)}")
+    print(f"P1963 delirio base (agulha, com ruido): {p1963_delirio_e_escrutinio()}")
+    print(f"P1963 (h) limpo agulha: recoze {p1963_delirio_e_escrutinio(ruido=0.0)[1]:.4f}")
+    r_i = p1963_delirio_e_escrutinio(ruido=0.0, largura=30)
+    print(f"P1963 (i) limpo largo: recoze {r_i[1]:.4f} gulosa {r_i[0]:.4f}")
+    print(f"P1963 (j) limpo largo lento (50000 passos): recoze {p1963_delirio_e_escrutinio(ruido=0.0, largura=30, passos=50000)[1]:.4f}")
+    print(f"P1964 rodada 51 (Metropolis, IGUAL em Java): {p1964_rodada51()}")
+    total, sem = p1092_pnn_sem_teste(1961, 1990)
+    print(f"P1092 pNN novas (P1961-P1990) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 84: {p974_previsoes_sem_largura(range(84, 85))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2019, testes=TESTES_P2019)
+    print(f"P2019 minha taxa de erro ({ERROS_P2019}/{TESTES_P2019}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -13022,7 +13074,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84}
 
 
 if __name__ == "__main__":
