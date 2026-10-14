@@ -161,3 +161,7 @@ Com isto o GPT mínimo está traduzido de ponta a ponta: o embedding e a decisã
 - Controle ótimo linear-quadrático (LQR) e a equação algébrica de Riccati discreta (DARE): R. E. Kalman (1960); qualquer texto de controle ótimo. Resolvida aqui por iteração de ponto fixo, em biblioteca padrão.
 - Regressão por mínimos quadrados com base de características ampliada (viés de forma vs. variância): teoria estatística clássica.
 - Atenção causal (softmax sobre q·k/√d): Vaswani et al., "Attention Is All You Need" (2017); aqui em Python puro, com o exp próprio e traduzida bit a bit para Java.
+
+---
+
+**Continua na [Parte 95](ASI_AGI_parte95_o_relatorio_v2_e_o_que_ele_promete.md): um relatório recebido ("v2.0") — auditado sem executar; o que ele promete contra o que o mecanismo entrega.**
