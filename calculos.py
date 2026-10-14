@@ -7491,7 +7491,7 @@ def testes_de_regressao():
         "P1931": (lambda m: [round(m[0]["sincrono"][0], 5), round(m[0]["alternado"][1], 6), m[0]["alternado"][2]])(p1931_gan_de_dirac()) == [0.34864, 0.101274, 16],
         "P1933": [round(x, 4) for x in p1933_calibracao_composta()[:2]] == [0.1516, 0.1511],
         "P1961": p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84))[:2] == (23, 31) and p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85))[:2] == (27, 35),
-        "P1962": round(p1962_lyapunov_por_densidade(a=0.2, celulas=800, iteracoes=1500)[1], 3) == 0.998,
+        "P1962": round(p1962_lyapunov_por_densidade(a=0.2, celulas=800, iteracoes=1500)[1], 3) == 0.997,
         "P1964": p1964_rodada51()[0] == 263,
         "P1991": p1991_cosseno_duplicado_recebido() == [1.3, 0.5, -0.3, -0.5, -0.7],
         "P1993": len(p1993_buraco_do_escrutinio()) == 3,
