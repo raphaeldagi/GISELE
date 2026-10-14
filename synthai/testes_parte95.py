@@ -73,7 +73,7 @@ class TesteParte95(unittest.TestCase):
         self.assertFalse(descasa_limpo)
 
     def test_p1961_com_parte_95(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95))
         self.assertEqual(por[95], (5, 5))
         self.assertEqual((ok, tot), (68, 81))
 

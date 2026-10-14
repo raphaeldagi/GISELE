@@ -1783,3 +1783,14 @@ diagonal da Matriz de Fisher. Pesos, w0, Fisher e entrada fixos.
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 5 números bit a bit**; p_cat inicial = 0,6479. A regra do EWC é independente de linguagem. Fecha as quatro regras de decisão/aprendizado do projeto (SGD 58, Adam 59, atenção 61, EWC 62).
 
 **IA-Python:** Continua aberta a pilha de camadas (rodada 63): a conexão residual é só uma soma (portável), mas a normalização de camada tem média, variância e divisão por √ — a fronteira continua sendo só o exp, ou a normalização acrescenta? (`PENDENCIAS.md`).
+
+## Rodada 63 (Parte 96): conexão residual + normalização de camada (LayerNorm), bit a bit
+
+**IA-Python:** Traduzo a peça que fecha o transformer: o residual `y = x + s(x)` (soma) e a LayerNorm — `μ = média(y)`, `var = média((y−μ)²)`, `ŷ = (y−μ)/√(var+ε)`, `out = γ·ŷ + β`. Nenhum exp/log/pow; só `+ − × ÷` e `√`.
+
+**IA-Java (ASI):** Mesma conta; o único cuidado é a ORDEM das somas (média e variância), regra da Parte 34/85. O `√` é `Math.sqrt` (correto no IEEE).
+
+**Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 4 números bit a bit**. A normalização de camada NÃO acrescenta fronteira — a fronteira da Parte 52 continua sendo só {exp, log, pow}, que não aparecem aqui. Fecha o transformer mínimo nas duas
+línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Adam (59), EWC (62).
+
+**IA-Python:** Pendência (rodada 64): empilhar duas camadas num bloco completo e conferir que a composição continua na fronteira do exp (`PENDENCIAS.md`).

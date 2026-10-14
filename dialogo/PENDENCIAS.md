@@ -4,7 +4,9 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 95, rodada 63)** A pilha de camadas (conexao residual + normalizacao de camada): a conexao residual e so soma (portavel); a normalizacao tem media, variancia e divisao por sqrt (o sqrt e exato no IEEE) - a fronteira continua sendo so o exp, ou a normalizacao acrescenta? Empilhar e conferir bit a bit. (A rodada 62 ficou com o passo do EWC, o tema da Parte 95.)
+- **(Parte 96, rodada 64)** Empilhar DUAS camadas num bloco completo (atencao + residual/LayerNorm + MLP + residual/LayerNorm) e conferir que a composicao continua na fronteira do exp (so a atencao/softmax tem exp). Fechada a rodada 63: a LayerNorm+residual NAO acrescenta fronteira (so +-*/ e sqrt).
+- **(Parte 96, P2324)** A cura da variancia: ridge/early-stopping no ajuste de base rica (grau 5, n pequeno) - medir quanto o regularizador recupera o teste, e o lambda otimo vs. n.
+- **(Parte 96, P2323)** O MLP a 0,053 com h=8: mapear residuo vs. (h, passos) - quanto h e preciso para chegar a, digamos, 0,01 num mundo cubico, e isso cresce como?
 - **(Parte 95, P2292)** A vantagem do TTTS e regime-dependente (folga entre bracos, orcamento T): mapear onde o TTTS vence e onde empata/perde o Thompson, por uma grade de (folga, T), antes de adota-lo como padrao.
 - **(Parte 94, P2264)** O LQR supoe acoes que nao saturam na trajetoria otima; num mundo onde o alvo exige acao alem de [-1,1], o LQR irrestrito deixa de ser otimo e o MPC (que respeita o limite) pode alcanca-lo. Medir.
 - **(Parte 94, P2263)** Aprender a BASE de um mundo nao-linear (em vez de recebe-la): o degrau entre o brinquedo e um modelo de mundo de verdade. Features aprendidas (uma camada escondida) vs. base dada.

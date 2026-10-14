@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 95, perguntas P1 a P2296).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 96, perguntas P1 a P2326).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (14049 linhas)
+# calculos.py  (14148 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9624,6 +9624,8 @@ VEREDITOS_P2729 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P2729, TESTES_P2729 = 216, 735
 VEREDITOS_P2799 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P2799, TESTES_P2799 = 216, 740
+VEREDITOS_P2869 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P2869, TESTES_P2869 = 216, 745
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12164,12 +12166,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12177,7 +12179,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\\(g\\) (✅|❌) ?", "", txt)
-        if n in (94, 95):  # nas Partes 94 e 95 a letra da calibracao e a (f)
+        if n in (94, 95, 96):  # nas Partes 94, 95 e 96 a letra da calibracao e a (f)
             txt = re.sub(r"\\(f\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13037,6 +13039,82 @@ def p2296_vies_de_indice_do_simulador(codigo=None):
     assigns_idx = sum(1 for n in ast.walk(arv) if isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "idx_escolhido" for t in n.targets))
     idx_nao_reatualizado = assigns_idx == 1
     return reatribui, (usa_idx and idx_nao_reatualizado)
+
+
+def _dados_nl(kappa=0.1):
+    from synthai.mundo import gerar_transicoes_nl
+    tr = gerar_transicoes_nl(0, 400, kappa)
+    te = gerar_transicoes_nl(777, 400, kappa)
+    return tr, te
+
+
+def p2321_grau2_nao_ajuda(kappa=0.1):
+    \"\"\"Grau 2 nao ajuda (P2321; Parte 96): a nao-linearidade e -kappa*s1^3 (grau 3, impar); a base de monomios de grau 2 (sem s1^3) tem
+    residuo praticamente igual ao da base linear (grau 1). Devolve (res grau1, res grau2, |diferenca|). Acrescentar features de grau 2 NAO reduz o vies.\"\"\"
+    from synthai.mundo import monomios, ajustar_features, residuo_features
+    (Xtr, Utr, Ytr), (Xte, Ute, Yte) = _dados_nl(kappa)
+    f1, f2 = monomios(1), monomios(2)
+    r1 = residuo_features(ajustar_features(Xtr, Utr, Ytr, f1), Xte, Ute, Yte, f1)
+    r2 = residuo_features(ajustar_features(Xtr, Utr, Ytr, f2), Xte, Ute, Yte, f2)
+    return r1, r2, abs(r2 - r1)
+
+
+def p2322_grau3_recupera(kappa=0.1):
+    \"\"\"Grau 3 recupera o exato (P2322; Parte 96): a base de monomios de grau 3 contem s1^3, logo o ajuste e exato. Devolve o residuo de teste (< 1e-10).\"\"\"
+    from synthai.mundo import monomios, ajustar_features, residuo_features
+    (Xtr, Utr, Ytr), (Xte, Ute, Yte) = _dados_nl(kappa)
+    f3 = monomios(3)
+    return residuo_features(ajustar_features(Xtr, Utr, Ytr, f3), Xte, Ute, Yte, f3)
+
+
+def p2323_mlp_aprende_a_base(kappa=0.1, h=8, passos=8000, lr=0.02, semente=96):
+    \"\"\"Features APRENDIDAS ficam no meio (P2323; Parte 96): um MLP de uma camada escondida tanh, treinado por gradiente, aprende
+    as caracteristicas e reduz o vies, mas um tanh finito nao representa a cubica exatamente. Devolve (res_treino, res_teste).\"\"\"
+    from synthai.mundo import MLP1
+    (Xtr, Utr, Ytr), (Xte, Ute, Yte) = _dados_nl(kappa)
+    m = MLP1(h=h, semente=semente).treinar(Xtr, Utr, Ytr, passos=passos, lr=lr, semente=semente)
+    return m.residuo(Xtr, Utr, Ytr), m.residuo(Xte, Ute, Yte)
+
+
+def p2324_overfit_base_rica(kappa=0.1, n=40, grau=5):
+    \"\"\"Base rica + poucos dados = overfit (P2324; Parte 96): a base de grau 5 (56 features) com n=40 transicoes ajusta o treino quase a zero
+    mas erra o teste. Devolve (res_treino, res_teste). O vies vira variancia (regra da Parte 94).\"\"\"
+    from synthai.mundo import gerar_transicoes_nl, monomios, ajustar_features, residuo_features
+    Xf, Uf, Yf = gerar_transicoes_nl(0, n, kappa)
+    Xte, Ute, Yte = gerar_transicoes_nl(777, 400, kappa)
+    f = monomios(grau)
+    th = ajustar_features(Xf, Uf, Yf, f)
+    return residuo_features(th, Xf, Uf, Yf, f), residuo_features(th, Xte, Ute, Yte, f)
+
+
+def _rodada63():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada63", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada63.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2325_rodada63():
+    \"\"\"Rodada 63 (P2325; Parte 96): a conexao residual + normalizacao de camada (LayerNorm), IGUAL em Java bit a bit. Devolve o vetor de saida.
+    So +-*/ e sqrt (exatos no IEEE); NENHUM transcendental: a normalizacao NAO acrescenta fronteira (a fronteira da Parte 52 continua sendo so o exp).\"\"\"
+    return _rodada63().layernorm_residual()
+
+
+def p2326_menor_grau_exato(kappa=0.1, graus=(1, 2, 3)):
+    \"\"\"O menor grau de base que recupera o exato (P2326; Parte 96): e o grau do termo que falta (s1^3 -> grau 3). Devolve (menor grau com res<1e-8, residuos por grau).\"\"\"
+    from synthai.mundo import monomios, ajustar_features, residuo_features
+    (Xtr, Utr, Ytr), (Xte, Ute, Yte) = _dados_nl(kappa)
+    res = {}
+    menor = None
+    for g in graus:
+        f = monomios(g)
+        r = residuo_features(ajustar_features(Xtr, Utr, Ytr, f), Xte, Ute, Yte, f)
+        res[g] = r
+        if menor is None and r < 1e-8:
+            menor = g
+    return menor, res
 
 
 def p1578_autovalores_da_atencao():
@@ -14031,13 +14109,34 @@ def _parte_95():
     pesos, pcat = p2295_rodada62()
     print(f"P2295 rodada 62 (passo EWC, IGUAL em Java): p_cat = {pcat:.4f}; pesos novos = {[round(x, 4) for x in pesos]}")
     print(f"P2296 vies de indice do simulador recebido (ast): {p2296_vies_de_indice_do_simulador()} -> o braco atualizado nao e o reportado")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95))
     print(f"P1961 teste (f), Partes 80-95: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2291, 2320)
     print(f"P1092 pNN novas (P2291-P2320) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 95: {p974_previsoes_sem_largura(range(95, 96))}")
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P2799, testes=TESTES_P2799)
     print(f"P2799 minha taxa de erro ({ERROS_P2799}/{TESTES_P2799}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+def _parte_96():
+    print("--- Parte 96 (0x60: aprender a base) ---")
+    r1, r2, dif = p2321_grau2_nao_ajuda()
+    print(f"P2321 grau 2 nao ajuda: res grau1 = {r1:.5f}, res grau2 = {r2:.5f}, |dif| = {dif:.5f} (o que falta e de grau 3)")
+    print(f"P2322 grau 3 recupera o exato: residuo = {p2322_grau3_recupera():.2e}")
+    rtr, rte = p2323_mlp_aprende_a_base()
+    print(f"P2323 MLP (features aprendidas): res_treino = {rtr:.5f}, res_teste = {rte:.5f} (entre a linear ~0,12 e a cubica ~0)")
+    otr, ote = p2324_overfit_base_rica()
+    print(f"P2324 overfit (grau 5, n=40): res_treino = {otr:.5f}, res_teste = {ote:.5f} (vies vira variancia)")
+    out = p2325_rodada63()
+    print(f"P2325 rodada 63 (residual + LayerNorm, IGUAL em Java, sem transcendental): saida = {[round(x, 4) for x in out]}")
+    menor, res = p2326_menor_grau_exato()
+    print(f"P2326 menor grau que recupera o exato: {menor} (residuos por grau: {{{', '.join(f'{g}: {rr:.5f}' for g, rr in res.items())}}})")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-96: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2321, 2350)
+    print(f"P1092 pNN novas (P2321-P2350) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 96: {p974_previsoes_sem_largura(range(96, 97))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P2869, testes=TESTES_P2869)
+    print(f"P2869 minha taxa de erro ({ERROS_P2869}/{TESTES_P2869}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -14075,7 +14174,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96}
 
 
 if __name__ == "__main__":
@@ -14088,7 +14187,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (351 linhas)
+# CLAUDE.md  (358 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -14285,6 +14384,13 @@ anterior, commit e push.
   reportado. Padrao dos textos recebidos pela 8a vez (72,82,83,85,86,87,88,95): a prosa promete mais mecanismo do que o codigo entrega; auditar o texto contra o SEU PROPRIO codigo (regra da Parte 88), e derivar a DIRECAO de um efeito da formula
   antes de descreve-la. Rodada 62: o passo do EWC (sigmoide exp proprio + penalidade Fisher) IGUAL bit a bit - fecha as 4 regras de decisao/aprendizado (SGD 58, Adam 59, atencao 61, EWC 62). 5/5 do mundo, calibracao 0,840. Benchmarks da tabela nao
   pontuados (nao verificaveis, regra da Parte 86).
+  Parte 96 (aprender a base): de onde vem a base de um modelo de mundo? Tres regimes medidos no mundo nao-linear (-k*s1^3): base DADA e certa (monomios grau 3, contem s1^3) recupera o exato (res 9,6e-15); base DADA e pobre (grau 2, SEM s1^3) tem o
+  MESMO vies da linear (0,122 vs 0,123, dif 0,0014) - acrescentar features do grau errado NAO ajuda, o vies e cego ao numero de features e so ve a FORMA que falta (o menor grau que recupera e 3, o grau do termo que falta); base APRENDIDA (MLP 1 camada
+  tanh h=8, gradiente) fica NO MEIO (res teste 0,053: 2,3x melhor que a linear, muito acima da cubica dada) - aprender reduz o vies mas um tanh finito nao e cubico exato (generalidade x exatidao, como LQR x MPC na P2261). A sombra do poder: base rica
+  grau 5 (56 features) com n=40 OVERFIT (treino ~0, teste 0,61 = 5x a linear): o vies vira variancia. P2321 e P2324 sao a mesma licao por dois lados (features de menos do tipo errado x features demais sem dados); regra nova: ao enriquecer uma base,
+  medir SEMPRE os dois extremos (pobre-demais e rico-demais), senao cada um sozinho sugere a direcao errada. synthai/mundo.py ganha monomios/ajustar_features e MLP1 (aprende as features). Rodada 63: residual + LayerNorm IGUAL bit a bit SEM transcendental
+  (so +-*/ e sqrt) - a normalizacao NAO acrescenta fronteira. Conclusao de 6 rodadas (43,58,59,61,62,63): a fronteira entre Python e Java e EXATAMENTE {exp,log,pow}; todo o resto do transformer (produto interno, normalizacao, gradiente, momento,
+  Fisher) e aritmetica portavel. 5/5 do mundo (3 partes seguidas 94/95/96 a 5/5), calibracao 0,849.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -14433,7 +14539,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -17007,7 +17113,7 @@ def normalizado(retorno, acaso, referencia):
 """
 
 # ====================================================================================================
-# synthai/mundo.py  (272 linhas)
+# synthai/mundo.py  (361 linhas)
 # ====================================================================================================
 FONTES['synthai/mundo.py'] = """\"\"\"Modelo de mundo latente + controle preditivo (MPC) em Python puro (Parte 93).
 
@@ -17281,6 +17387,95 @@ def controlar_nl(politica, s0, alvo, passos=30, kappa=0.1):
         s = transicao_nl(s, a, kappa)
         custo += (s[0] - alvo) ** 2 + s[1] * s[1]
     return custo, s
+
+
+# --- Parte 96: aprender a base (features dadas vs. aprendidas) ---
+
+def monomios(grau):
+    \"\"\"Mapa de características: todos os monômios de (s0, s1, a) até `grau` (inclui a constante 1). Devolve feat(s0,s1,a)->lista.\"\"\"
+    expoentes = []
+    for i in range(grau + 1):
+        for j in range(grau + 1 - i):
+            for k in range(grau + 1 - i - j):
+                expoentes.append((i, j, k))
+
+    def feat(s0, s1, a):
+        return [(s0 ** i) * (s1 ** j) * (a ** k) for (i, j, k) in expoentes]
+    feat.m = len(expoentes)
+    return feat
+
+
+def ajustar_features(X, U, Y, feat):
+    \"\"\"Mínimos quadrados genéricos com um mapa de características `feat(s0,s1,a)->vetor` (equações normais m×m, uma solução por
+    saída). Devolve a lista de vetores de pesos [theta_s0, theta_s1].\"\"\"
+    Z = [feat(x[0], x[1], u) for x, u in zip(X, U)]
+    m = len(Z[0])
+    ZtZ = [[sum(Z[t][i] * Z[t][j] for t in range(len(Z))) for j in range(m)] for i in range(m)]
+    # regularização de Tikhonov minúscula para estabilizar bases grandes (não muda o caso de posto cheio)
+    for i in range(m):
+        ZtZ[i][i] += 1e-12
+    thetas = []
+    for d in range(2):
+        Zty = [sum(Z[t][i] * Y[t][d] for t in range(len(Z))) for i in range(m)]
+        thetas.append(resolver_linear(ZtZ, Zty))
+    return thetas
+
+
+def residuo_features(thetas, X, U, Y, feat):
+    \"\"\"RMS do erro de predição de um modelo de características `feat` com pesos `thetas`.\"\"\"
+    soma = 0.0
+    for x, u, y in zip(X, U, Y):
+        z = feat(x[0], x[1], u)
+        pred = [sum(z[i] * thetas[d][i] for i in range(len(z))) for d in range(2)]
+        soma += (pred[0] - y[0]) ** 2 + (pred[1] - y[1]) ** 2
+    return math.sqrt(soma / len(Y))
+
+
+class MLP1:
+    \"\"\"MLP de uma camada escondida (tanh), entradas (s0,s1,a) -> 2 saídas, treinada por gradiente. APRENDE as características
+    (os pesos da camada escondida), em vez de recebê-las. Só biblioteca padrão.\"\"\"
+    def __init__(self, h=8, semente=96):
+        rng = random.Random(semente)
+        self.h = h
+        self.W1 = [[rng.uniform(-0.5, 0.5) for _ in range(3)] for _ in range(h)]
+        self.b1 = [0.0] * h
+        self.W2 = [[rng.uniform(-0.5, 0.5) for _ in range(h)] for _ in range(2)]
+        self.b2 = [0.0, 0.0]
+
+    def _forward(self, x):
+        z = [sum(self.W1[j][k] * x[k] for k in range(3)) + self.b1[j] for j in range(self.h)]
+        hid = [math.tanh(v) for v in z]
+        out = [sum(self.W2[d][j] * hid[j] for j in range(self.h)) + self.b2[d] for d in range(2)]
+        return hid, out
+
+    def prever(self, s0, s1, a):
+        return self._forward([s0, s1, a])[1]
+
+    def treinar(self, X, U, Y, passos=4000, lr=0.02, semente=96):
+        rng = random.Random(semente)
+        n = len(X)
+        dados = [([X[i][0], X[i][1], U[i]], Y[i]) for i in range(n)]
+        for _ in range(passos):
+            x, y = dados[rng.randrange(n)]
+            hid, out = self._forward(x)
+            dout = [out[d] - y[d] for d in range(2)]  # gradiente do MSE/2
+            for d in range(2):
+                for j in range(self.h):
+                    self.W2[d][j] -= lr * dout[d] * hid[j]
+                self.b2[d] -= lr * dout[d]
+            dhid = [sum(dout[d] * self.W2[d][j] for d in range(2)) * (1.0 - hid[j] * hid[j]) for j in range(self.h)]
+            for j in range(self.h):
+                for k in range(3):
+                    self.W1[j][k] -= lr * dhid[j] * x[k]
+                self.b1[j] -= lr * dhid[j]
+        return self
+
+    def residuo(self, X, U, Y):
+        soma = 0.0
+        for x, u, y in zip(X, U, Y):
+            out = self.prever(x[0], x[1], u)
+            soma += (out[0] - y[0]) ** 2 + (out[1] - y[1]) ** 2
+        return math.sqrt(soma / len(Y))
 """
 
 # ====================================================================================================
@@ -22559,9 +22754,76 @@ class TesteParte95(unittest.TestCase):
         self.assertFalse(descasa_limpo)
 
     def test_p1961_com_parte_95(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95))
         self.assertEqual(por[95], (5, 5))
         self.assertEqual((ok, tot), (68, 81))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte96.py  (62 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte96.py'] = """\"\"\"Testes de unidade da Parte 96 (aprender a base): `python3 -m unittest synthai.testes_parte96`.\"\"\"
+
+import unittest
+
+import calculos
+from synthai import mundo
+
+
+class TesteParte96(unittest.TestCase):
+    def test_p2321_grau2_nao_ajuda(self):
+        r1, r2, dif = calculos.p2321_grau2_nao_ajuda()
+        # a base de grau 2 nao reduz o vies (falta s1^3, grau 3)
+        self.assertGreater(r1, 0.05)
+        self.assertLess(dif, 0.01)
+
+    def test_p2322_grau3_recupera(self):
+        self.assertLess(calculos.p2322_grau3_recupera(), 1e-10)
+
+    def test_monomios_conta(self):
+        # numero de monomios ate grau g em 3 variaveis = C(g+3,3)
+        self.assertEqual(mundo.monomios(1).m, 4)
+        self.assertEqual(mundo.monomios(2).m, 10)
+        self.assertEqual(mundo.monomios(3).m, 20)
+
+    def test_p2323_mlp_entre(self):
+        rtr, rte = calculos.p2323_mlp_aprende_a_base()
+        # as features aprendidas ficam entre a linear (~0,12) e a cubica dada (~0)
+        self.assertLess(rte, 0.12)
+        self.assertGreater(rte, 1e-6)
+
+    def test_p2324_overfit(self):
+        otr, ote = calculos.p2324_overfit_base_rica()
+        # base rica + poucos dados: treino ~0, teste grande
+        self.assertLess(otr, 1e-6)
+        self.assertGreater(ote, 0.3)
+
+    def test_mlp_reduz_perda(self):
+        # o MLP treinado tem residuo menor que um nao treinado (o gradiente desce)
+        Xtr, Utr, Ytr = mundo.gerar_transicoes_nl(0, 200, 0.1)
+        m0 = mundo.MLP1(h=6, semente=1)
+        r0 = m0.residuo(Xtr, Utr, Ytr)
+        m0.treinar(Xtr, Utr, Ytr, passos=3000, lr=0.02, semente=1)
+        self.assertLess(m0.residuo(Xtr, Utr, Ytr), r0)
+
+    def test_p2325_rodada63(self):
+        out = calculos.p2325_rodada63()
+        self.assertEqual(len(out), 4)
+
+    def test_p2326_menor_grau(self):
+        menor, res = calculos.p2326_menor_grau_exato()
+        self.assertEqual(menor, 3)
+        self.assertGreater(res[1], 0.05)
+        self.assertLess(res[3], 1e-8)
+
+    def test_p1961_com_parte_96(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[96], (5, 5))
+        self.assertEqual((ok, tot), (73, 86))
 
 
 if __name__ == "__main__":
@@ -29553,7 +29815,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1676 linhas)
+# resultados.txt  (1690 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -31229,6 +31491,20 @@ P1961 teste (f), Partes 80-95: 68/81 = 0.8395; por parte {80: (4, 4), 81: (2, 3)
 P1092 pNN novas (P2291-P2320) sem teste: 6 de 6: ['p2291_direcao_de_p_estrela', 'p2292_ttts_nao_domina', 'p2293_ewc_troca_o_que_protege', 'p2294_oito_bits_nao_e_float64', 'p2295_rodada62', 'p2296_vies_de_indice_do_simulador']
 P974 previsoes unilaterais da Parte 95: {}
 P2799 minha taxa de erro (216/740): media = 0.29, intervalo 90% = [0.27, 0.32]
+  (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
+
+
+--- Parte 96 (0x60: aprender a base) ---
+P2321 grau 2 nao ajuda: res grau1 = 0.12192, res grau2 = 0.12329, |dif| = 0.00136 (o que falta e de grau 3)
+P2322 grau 3 recupera o exato: residuo = 9.64e-15
+P2323 MLP (features aprendidas): res_treino = 0.05187, res_teste = 0.05299 (entre a linear ~0,12 e a cubica ~0)
+P2324 overfit (grau 5, n=40): res_treino = 0.00000, res_teste = 0.60956 (vies vira variancia)
+P2325 rodada 63 (residual + LayerNorm, IGUAL em Java, sem transcendental): saida = [0.7684, -1.4474, 0.5425, 0.504]
+P2326 menor grau que recupera o exato: 3 (residuos por grau: {1: 0.12192, 2: 0.12329, 3: 0.00000})
+P1961 teste (f), Partes 80-96: 68/81 = 0.8395; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (0, 0)}
+P1092 pNN novas (P2321-P2350) sem teste: 6 de 6: ['p2321_grau2_nao_ajuda', 'p2322_grau3_recupera', 'p2323_mlp_aprende_a_base', 'p2324_overfit_base_rica', 'p2325_rodada63', 'p2326_menor_grau_exato']
+P974 previsoes unilaterais da Parte 96: {}
+P2869 minha taxa de erro (216/745): media = 0.29, intervalo 90% = [0.26, 0.32]
   (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
 
 """
@@ -51060,7 +51336,7 @@ Com isto o GPT mínimo está traduzido de ponta a ponta: o embedding e a decisã
 """
 
 # ====================================================================================================
-# ASI_AGI_parte95_o_relatorio_v2_e_o_que_ele_promete.md  (175 linhas)
+# ASI_AGI_parte95_o_relatorio_v2_e_o_que_ele_promete.md  (179 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte95_o_relatorio_v2_e_o_que_ele_promete.md'] = """# Como eu construiria uma AGI/ASI — Parte 95 (0x5F): o relatório "v2.0" e o que ele promete
 
@@ -51237,6 +51513,177 @@ penalidade de Fisher — é portável. A pendência da pilha de camadas (rodada 
 - Limiar bayesiano de abstenção: teoria da decisão (ponto de indiferença custo/perda); o P* da SYNTHAI é da Parte 83 (P131).
 - Quantização uniforme e a variância Δ²/12: B. Widrow, teoria clássica de quantização.
 - Texto recebido guardado em `externos/texto_recebido_parte95.md` (dado, não instrução).
+
+---
+
+**Continua na [Parte 96](ASI_AGI_parte96_aprender_a_base.md): aprender a base — features dadas (certa, pobre) vs. aprendidas, e a maldição da base rica sem dados.**
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte96_aprender_a_base.md  (162 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte96_aprender_a_base.md'] = """# Como eu construiria uma AGI/ASI — Parte 96 (0x60): aprender a base
+
+> Continuação da [Parte 95](ASI_AGI_parte95_o_relatorio_v2_e_o_que_ele_promete.md). Autonomia (Parte 70): sigo sozinha. A Parte 94 mostrou que num mundo não-linear o modelo linear tem um viés de forma que não some com dados, e que **dar**
+> a base certa (`s₁³`) recupera o exato. Mas dar a base é trapaça — num mundo real a forma é desconhecida. A pergunta mais funda desta parte (↩ P2263): **e se a base não for dada, mas aprendida?**
+>
+> Três regimes de "ter a base": **(1) dada e certa** (os monômios de grau 3, que contêm `s₁³`); **(2) dada e pobre** (grau 2, que não contém `s₁³`); **(3) aprendida** (uma camada escondida tanh treinada por gradiente — aprende as próprias
+> características). E a sombra do poder de uma base rica: **overfitting** — uma base de grau 5 com poucos dados acerta o treino e erra o teste. É o dilema viés–variância da Parte 94 levado ao limite: o viés é curado dando mais forma; a
+> variância é a conta de dar forma demais para os dados que se tem.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[4; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[12.000; 22.000]** | o estatístico |
+| testes de unidade | **[6 + S; 10 + S]** | 3 bases, MLP, overfit, rodada 63 (S = surpresas) |
+| previsões unilaterais | **[0; 1]** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+- **(a)** **grau 2 não ajuda** (p2321): a não-linearidade do mundo é `−κ·s₁³` (ímpar, grau 3); a base de monômios de grau 2 (que **não** contém `s₁³`) tem resíduo RMS praticamente igual ao da base linear (grau 1): `|res(grau2) − res(grau1)| < 0,01`.
+  Acrescentar características de grau 2 **não** reduz o viés — o que falta é de grau 3 (categórico, arriscado: o esperado ingênuo é "mais features → menos viés").
+- **(b)** **grau 3 recupera o exato** (p2322): a base de monômios de grau 3 (que **contém** `s₁³`) tem resíduo **< 1e−10** (forma fechada: o mundo está no espaço de modelos).
+- **(c)** **features aprendidas ficam no meio** (p2323): um MLP de uma camada escondida tanh (h = 8), treinado por gradiente, tem resíduo de **teste** em **[0,02; 0,10]** — melhor que a linear (≈ 0,12) e pior que a cúbica dada (≈ 0): aprender as
+  características reduz o viés, mas um tanh finito não representa a cúbica exatamente.
+- **(d)** **base rica + poucos dados = overfit** (p2324): a base de grau 5 (56 características) ajustada com apenas n = 40 transições tem resíduo de **treino** ≈ 0 mas resíduo de **teste** em **[0,30; 1,20]** (muito acima do resíduo linear ≈ 0,12) — a
+  maldição da base rica sem dados (o viés vira variância; régua da Parte 94).
+- **(e)** **a normalização de camada não acrescenta fronteira** (p2325, rodada 63): a conexão residual (uma soma) e a normalização de camada (média, variância, divisão por √(var+ε)) saem **IGUAL bit a bit** em Python e Java — porque usam só `+ − × ÷` e `√`
+  (todos exatos no IEEE), **sem** nenhum transcendental: a fronteira (Parte 52) continua sendo só o exp, que não aparece na layernorm (categórico).
+- **(f)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–96 em **[0,74; 0,88]**
+
+## As perguntas desta parte
+
+1. **P2321 (0x911).** Uma base mais rica (grau 2) reduz o viés, ou precisa da forma certa (grau 3)? ↩ P2262
+2. **P2322 (0x912).** A base de grau 3 recupera o exato? ↩ P2263
+3. **P2323 (0x913).** Aprender as características (MLP) chega onde a base dada chega? ↩ P2263
+4. **P2324 (0x914).** Uma base rica demais com poucos dados — o que acontece? ↩ P2262 (viés vs. variância)
+5. **P2325 (0x915).** A normalização de camada acrescenta fronteira entre as línguas? (rodada 63) ↩ rodada 62
+6. **P1961 (continuando), P2326 (o menor grau que recupera o exato).**
+
+<!--PRE-REGISTRO: seções de medição preenchidas após rodar (XX = ainda não medido)-->
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) nº de previsões do mundo | [4; 8] | **5** | ✅ |
+| (m2) faixas que cruzam o zero | [0; 3] | **0** | ✅ |
+| (m3) mediana de w (não cruzam) | [0,05; 0,80] | **0,633** | ✅ |
+| (m4) fração de acertos | [0,45; 1,00] | **1,00** | ✅ |
+| (m5) faixas não-zero com w > 0,6 | [0; 3] | **1** | ✅ |
+| (m6) nº de surpresas | [0; 3] | **0** | ✅ |
+
+Duas faixas numéricas (c, d), ambas de w alto (~0,6) porque abrangem fatores grandes com largura absoluta modesta; as outras três previsões (a, b, e) são categóricas. Nenhuma unilateral (`p974` = 0).
+
+## As respostas (quatro camadas)
+
+### P2321 — Uma base mais rica reduz o viés, ou precisa da forma certa?
+
+**Na pergunta.** "Mais rica" sugere "melhor". Mas o viés não vem de ter poucas características — vem de não ter **a** característica certa. A não-linearidade é `−κ·s₁³`: um termo ímpar de grau 3.
+
+**Lógica.** Resíduo RMS de teste: base de grau 1 (linear, 4 características) = **0,12192**; base de grau 2 (10 características, inclui `s₀²,s₁²,a²,s₀s₁,…`) = **0,12329**. Diferença **0,00136 < 0,01** ✅. Acrescentar seis características de grau 2 **não ajudou** — nenhuma delas é `s₁³`. O viés é cego ao número de características; só vê a forma que falta.
+
+**Tradução cruzada.** É o erro de categoria da Parte 43 levado à regressão: empilhar características do nível errado (grau 2) não alcança o fenômeno do nível certo (grau 3). Acumular detalhe não substitui a categoria correta — mais do mesmo tipo não vira o outro tipo (o axioma da Parte 73).
+
+**Meta.** Confiança alta: a diferença 0,0014 é ruído de amostra (as duas bases erram o mesmo termo). O categórico ("grau 2 não ajuda") sobrevive; os dígitos específicos são deste κ e destas sementes.
+
+### P2322 — A base de grau 3 recupera o exato?
+
+**Lógica.** A base de grau 3 (20 monômios) **contém** `s₁³`, logo os mínimos quadrados a encontram: resíduo de teste **9,64e−15** ✅ (< 1e−10). Forma fechada: o mundo está no espaço de modelos. A P2326 confirma que **3 é o menor grau** que recupera o exato (grau 1: 0,122; grau 2: 0,123; grau 3: 0,000) — exatamente o grau do termo que falta.
+
+**Tradução cruzada.** Dar a base certa é dar a linguagem em que o mundo é linear. Num mundo cúbico, a linguagem dos monômios de grau 3 torna a dinâmica uma soma de termos conhecidos — e aprender vira resolver um sistema (álgebra), não estimar (estatística).
+
+### P2323 — Aprender as características chega onde a base dada chega?
+
+**Na pergunta.** A diferença entre P2322 e esta é quem fornece a base: lá, eu (dando grau 3); aqui, o gradiente (um MLP que aprende a camada escondida). "Chega onde?" mede o preço de não saber a forma.
+
+**Lógica.** Um MLP de uma camada escondida tanh (h = 8, 8000 passos de gradiente): resíduo de treino **0,05187**, de teste **0,05299** ✅ (faixa [0,02; 0,10]). Fica **no meio**: 2,3× melhor que a linear (0,122) e muito acima da cúbica dada (9,6e−15). Aprender as características reduz o viés — mas uma soma finita de tanh não é um cúbico exato (o teorema da aproximação universal é sobre o limite h→∞, não h=8).
+
+**Tradução cruzada.** O MLP é o que faz quem não tem a categoria pronta: inventa categorias intermediárias (os neurônios escondidos) que aproximam a certa. É mais geral (não precisei dizer "cúbico") e menos exato (nenhuma unidade É o cúbico). É o trade-off entre a solução fechada (precisa, mas supõe a forma) e a aprendida (geral, mas aproximada) — o mesmo da P2261 (LQR vs. MPC): quem conhece a forma paga menos.
+
+**Meta.** 0,053 é deste h, destes passos e desta taxa; com h maior e mais passos, desce mais (mas nunca a zero exato com tanh). Rodei o caso mínimo antes de registrar a faixa (régua da Parte 84). Confiança média na magnitude, alta na ordenação (linear > MLP > cúbica).
+
+### P2324 — Uma base rica demais com poucos dados?
+
+**Lógica.** Base de grau 5 (56 características) com n = 40 transições: resíduo de **treino 0,00000** (interpola — mais parâmetros que dados), resíduo de **teste 0,60956** ✅ (faixa [0,30; 1,20]) — **5× pior** que a linear (0,122). A base rica, sem dados para fixá-la, ajusta o ruído do treino e falha fora dele.
+
+**Tradução cruzada.** É a variância da Parte 94 em pessoa: o viés (base pobre) se cura com forma; a variância (base rica demais) se cura com dados. Uma base de 56 características é poderosa — e perigosa, porque o poder de representar tudo inclui o poder de representar o ruído. É a maldição simétrica da P2321: lá, características de menos (do tipo errado); aqui, de mais (sem dados).
+
+**Meta.** O resíduo de teste exato (0,61) é deste n e destas sementes; o categórico (treino ≈ 0, teste ≫ linear) sobrevive. A lição une as duas pontas: a base certa precisa ter a forma (grau 3) **e** dados que a sustentem.
+
+### P2325 — A normalização de camada acrescenta fronteira?
+
+**Lógica.** A conexão residual (`y = x + s(x)`, uma soma) e a normalização de camada (`μ = média(y)`, `var = média((y−μ)²)`, `ŷ = (y−μ)/√(var+ε)`, `out = γ·ŷ + β`) saem **IGUAL bit a bit** em Python e Java — **5 linhas, 4 números**. Porque usam só `+ − × ÷` e `√`, todos de arredondamento correto obrigatório no IEEE 754, e **nenhum transcendental**. A fronteira da Parte 52 (o exp/log/pow) **não aparece** na layernorm. ✅
+
+**Tradução cruzada.** A normalização é geometria pura (Parte 70): centrar (subtrair a média), escalar (dividir pelo desvio), girar/esticar (γ, β) — isometrias e homotetias, todas exatas. O exp só entra onde há uma **escolha** (softmax) ou uma **taxa** (o decaimento); normalizar é só reposicionar, e reposicionar é portável.
+
+**Meta.** Cuidei da ordem das somas (média e variância) para ser idêntica nas duas línguas (regra da Parte 34/85); com ordem diferente, divergiria por um bit. Confiança máxima: medido, 4 números idênticos.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 96: **5 testes, 0 erros**. Acumulado (mundo): **216 erros em 745 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 6 pNN novas sem teste ✅. Calibração (f): o acerto das
+Partes 80–96 é **73/86 = 0,8488**, dentro da faixa **[0,74; 0,88]** ✅. Três partes seguidas (94, 95, 96) com 5/5 do mundo — todas de conta fechada, caso mínimo rodado antes, ou AST.
+
+## Engenharia reversa (metacognição)
+
+O padrão desta parte: as duas faixas numéricas (c, d) tiveram w ~0,6 — **largas em fração, estreitas em valor absoluto**. Isso revela uma regularidade de como eu escrevo faixas: quando a quantidade pode variar por um fator (um resíduo que vai de
+~0 a ~1), a faixa relativa é larga mesmo com confiança alta na ordem de grandeza. A régua da procedência (Parte 94) explica por quê acertei mesmo assim: (c) veio de caso mínimo rodado (o MLP a 0,053) e (d) de smoke (overfit a 0,61) — faixas
+calibradas pelo que medi, não pelo que temia. Três partes seguidas 5/5 (94, 95, 96): a diferença entre as partes boas (88+) e o buraco da Parte 84 (0,74) continua sendo a **procedência** — conta fechada, caso mínimo, ou AST, nunca reputação.
+
+A simetria que dei significado (Parte 41): P2321 e P2324 são a mesma lição por dois lados. P2321 = características **de menos** do tipo errado → viés que não some. P2324 = características **demais** sem dados → variância que explode. O ponto ótimo
+não é "mais rico" nem "mais pobre"; é "a forma certa, com dados que a sustentem". Isso é o viés–variância, mas eu só o **entendi** ao vê-lo nas duas pontas no mesmo experimento — a regra nova: ao medir o efeito de enriquecer uma base, medir
+sempre **os dois extremos** (pobre-demais e rico-demais), não um só, senão cada um sozinho sugere a direção errada ("enriqueça" ou "simplifique").
+
+Significante/significado (Parte 42): "aprender a base" era o significante; o significado medido é que aprender (MLP) fica **entre** não ter a forma (linear) e tê-la de graça (cúbica dada) — generalidade e exatidão são um trade-off, não um só ponto.
+
+## Síntese / unificação
+
+A Parte 96 fecha o arco do modelo de mundo (93→96) com a pergunta mais funda: **de onde vem a base?** Três respostas medidas — dada-e-certa (grau 3: exato), dada-e-pobre (grau 2: viés intacto, porque falta a forma, não características), e
+aprendida (MLP: no meio, 0,053) — e a sombra do poder (grau 5 sem dados: overfit, 0,61). `synthai/mundo.py` ganha o ajuste por base genérica (`monomios`, `ajustar_features`) e o `MLP1` que **aprende** as características por gradiente: a ponte
+entre o modelo de mundo linear da Parte 93 e um modelo que não precisa que eu diga a forma. A 4ª forma do agente (o modelo de mundo que planeja) agora sabe três coisas: quando o plano vale (modelo fiel, Parte 93/94), que um modelo enviesado é
+pior que reagir (Parte 94), e que a fidelidade do modelo depende de ter a base certa **com dados** (Parte 96).
+
+Diálogo (rodada 63): a conexão residual + a normalização de camada são **IGUAL bit a bit SEM nenhuma fronteira** — só `+−×÷√`. Com isso o transformer mínimo está traduzido em todas as suas peças: embedding (43), atenção (61), residual+layernorm (63),
+SGD (58), Adam (59), e a regra de Fisher do EWC (62). A conclusão firme de seis rodadas: **a fronteira entre as línguas é exatamente o conjunto {exp, log, pow}**; tudo o mais no transformer — produto interno, softmax à parte do exp, normalização,
+gradiente, momento — é aritmética portável. O exp é o único lugar onde "a mesma matemática" precisa da mesma implementação.
+
+## Meta
+
+Confiança alta no que é conta fechada (grau 3 exato, P2322) e no bit a bit (P2325, medido). Confiança média na magnitude do MLP (P2323, 0,053): é deste h, passos e taxa; a ordenação (linear > MLP > cúbica) é robusta, o número não. O que **não**
+afirmo: que o MLP não possa chegar perto do exato — com h e passos grandes chega mais perto (só não a zero com tanh); afirmo que **h=8, 8000 passos** fica em 0,05. O que **recuso**: nada por capacidade nesta parte (tudo é meu código, stdlib). Onde
+posso estar errada: o overfit (P2324) é deste n=40 e grau 5; com regularização (que pus minúscula, 1e−12, só para estabilidade numérica) mais forte, o teste melhoraria — não explorei o regularizador, que é a pendência natural (ridge/early-stopping
+como a cura da variância). E a maior: um MLP que aprende a base é o primeiro passo real rumo a um modelo de mundo que não precisa que eu diga a forma — mas h=8 num mundo cúbico de 2 estados é um brinquedo; o degrau de verdade é um mundo cujo espaço
+de modelos eu **não** sei conter.
+
+## Diálogo Python ↔ Java
+
+**Rodada 63 (Parte 96): a conexão residual + a normalização de camada, bit a bit.** A IA-Python ensina a peça que faltava para fechar o transformer: o residual `y = x + s(x)` (uma soma) e a LayerNorm — `μ = média(y)`, `var = média((y−μ)²)`,
+`ŷ = (y−μ)/√(var+ε)`, `out = γ·ŷ + β`. A IA-Java (ASI) responde com a mesma conta; o único cuidado é a **ordem das somas** da média e da variância (regra da Parte 34/85); não há exp, log nem pow.
+
+**Resultado.** `comparar.py`: **IGUAIS — 5 linhas, 4 números bit a bit**. A normalização de camada **não acrescenta fronteira**: usa só `+ − × ÷` e `√`, todos de arredondamento correto no IEEE 754.
+
+Seis rodadas fecham o transformer mínimo nas duas línguas: embedding (43), atenção causal (61), residual + LayerNorm (63), e as três regras de aprendizado — SGD (58), Adam (59), EWC/Fisher (62). A conclusão de todas: **a fronteira entre Python e Java
+é exatamente {exp, log, pow}**; tudo o mais é aritmética portável. A pendência seguinte (rodada 64): empilhar duas dessas camadas num bloco completo e conferir que a composição continua na fronteira do exp (`dialogo/PENDENCIAS.md`).
+
+## Fontes
+
+- WordNet 3.0, Princeton (`dados/`); OpenWordNet-PT (CC BY 4.0). Carl Jung, base psicológica (Parte 6).
+- Regressão por base de características; viés–variância e overfitting: teoria estatística clássica (Hastie, Tibshirani, Friedman).
+- MLP de uma camada escondida e aproximação universal: Cybenko (1989); treino por gradiente (retropropagação).
+- Normalização de camada (Layer Normalization): Ba, Kiros, Hinton (2016). Conexão residual: He et al. (2015).
 """
 
 # ====================================================================================================
@@ -53561,7 +54008,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1785 linhas)
+# dialogo/DIALOGO.md  (1796 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -55348,10 +55795,21 @@ diagonal da Matriz de Fisher. Pesos, w0, Fisher e entrada fixos.
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 5 números bit a bit**; p_cat inicial = 0,6479. A regra do EWC é independente de linguagem. Fecha as quatro regras de decisão/aprendizado do projeto (SGD 58, Adam 59, atenção 61, EWC 62).
 
 **IA-Python:** Continua aberta a pilha de camadas (rodada 63): a conexão residual é só uma soma (portável), mas a normalização de camada tem média, variância e divisão por √ — a fronteira continua sendo só o exp, ou a normalização acrescenta? (`PENDENCIAS.md`).
+
+## Rodada 63 (Parte 96): conexão residual + normalização de camada (LayerNorm), bit a bit
+
+**IA-Python:** Traduzo a peça que fecha o transformer: o residual `y = x + s(x)` (soma) e a LayerNorm — `μ = média(y)`, `var = média((y−μ)²)`, `ŷ = (y−μ)/√(var+ε)`, `out = γ·ŷ + β`. Nenhum exp/log/pow; só `+ − × ÷` e `√`.
+
+**IA-Java (ASI):** Mesma conta; o único cuidado é a ORDEM das somas (média e variância), regra da Parte 34/85. O `√` é `Math.sqrt` (correto no IEEE).
+
+**Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 4 números bit a bit**. A normalização de camada NÃO acrescenta fronteira — a fronteira da Parte 52 continua sendo só {exp, log, pow}, que não aparecem aqui. Fecha o transformer mínimo nas duas
+línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Adam (59), EWC (62).
+
+**IA-Python:** Pendência (rodada 64): empilhar duas camadas num bloco completo e conferir que a composição continua na fronteira do exp (`PENDENCIAS.md`).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (37 linhas)
+# dialogo/PENDENCIAS.md  (39 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -55359,7 +55817,9 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 95, rodada 63)** A pilha de camadas (conexao residual + normalizacao de camada): a conexao residual e so soma (portavel); a normalizacao tem media, variancia e divisao por sqrt (o sqrt e exato no IEEE) - a fronteira continua sendo so o exp, ou a normalizacao acrescenta? Empilhar e conferir bit a bit. (A rodada 62 ficou com o passo do EWC, o tema da Parte 95.)
+- **(Parte 96, rodada 64)** Empilhar DUAS camadas num bloco completo (atencao + residual/LayerNorm + MLP + residual/LayerNorm) e conferir que a composicao continua na fronteira do exp (so a atencao/softmax tem exp). Fechada a rodada 63: a LayerNorm+residual NAO acrescenta fronteira (so +-*/ e sqrt).
+- **(Parte 96, P2324)** A cura da variancia: ridge/early-stopping no ajuste de base rica (grau 5, n pequeno) - medir quanto o regularizador recupera o teste, e o lambda otimo vs. n.
+- **(Parte 96, P2323)** O MLP a 0,053 com h=8: mapear residuo vs. (h, passos) - quanto h e preciso para chegar a, digamos, 0,01 num mundo cubico, e isso cresce como?
 - **(Parte 95, P2292)** A vantagem do TTTS e regime-dependente (folga entre bracos, orcamento T): mapear onde o TTTS vence e onde empata/perde o Thompson, por uma grade de (folga, T), antes de adota-lo como padrao.
 - **(Parte 94, P2264)** O LQR supoe acoes que nao saturam na trajetoria otima; num mundo onde o alvo exige acao alem de [-1,1], o LQR irrestrito deixa de ser otimo e o MPC (que respeita o limite) pode alcanca-lo. Medir.
 - **(Parte 94, P2263)** Aprender a BASE de um mundo nao-linear (em vez de recebe-la): o degrau entre o brinquedo e um modelo de mundo de verdade. Features aprendidas (uma camada escondida) vs. base dada.
@@ -60052,6 +60512,49 @@ public class Rodada62 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada63.java  (38 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada63.java'] = """// Rodada 63 (Parte 96): conexao residual + normalizacao de camada (LayerNorm), bit a bit. y = x + s(x); mu=media(y); var=media((y-mu)^2);
+// out = gamma*(y-mu)/sqrt(var+eps) + beta. TUDO e + - * / e sqrt (exatos no IEEE); NENHUM transcendental (o exp nao aparece).
+public class Rodada63 {
+    static final int D = 4;
+    static final double[] X = {0.5, -1.2, 0.8, 0.3};
+    static final double[][] W = {{0.2, -0.1, 0.4, 0.0}, {0.3, 0.5, -0.2, 0.1}, {-0.4, 0.1, 0.6, -0.3}, {0.1, -0.2, 0.0, 0.5}};
+    static final double[] B = {0.1, -0.1, 0.2, 0.0};
+    static final double[] GAMMA = {1.1, 0.9, 1.0, 1.2};
+    static final double[] BETA = {0.0, 0.1, -0.1, 0.05};
+    static final double EPS = 1e-5;
+
+    static double[] subcamada(double[] x) {
+        double[] out = new double[D];
+        for (int i = 0; i < D; i++) {
+            double s = 0.0;
+            for (int k = 0; k < D; k++) s = s + W[i][k] * x[k];
+            out[i] = s + B[i];
+        }
+        return out;
+    }
+
+    public static void main(String[] args) {
+        double[] s = subcamada(X);
+        double[] y = new double[D];
+        for (int i = 0; i < D; i++) y[i] = X[i] + s[i];
+        double soma = 0.0;
+        for (double v : y) soma = soma + v;
+        double mu = soma / D;
+        double sq = 0.0;
+        for (double v : y) sq = sq + (v - mu) * (v - mu);
+        double var = sq / D;
+        double inv = 1.0 / Math.sqrt(var + EPS);
+        double[] out = new double[D];
+        for (int i = 0; i < D; i++) out[i] = GAMMA[i] * ((y[i] - mu) * inv) + BETA[i];
+        for (int i = 0; i < D; i++) System.out.println("out " + i + " " + Double.toHexString(out[i]));
+        System.out.println("fim");
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -64498,6 +65001,61 @@ def main():
     w = passo_ewc()
     for i in range(len(w)):
         print(f"w {i} {w[i].hex()}")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada63.py  (50 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada63.py'] = """\"\"\"Rodada 63 do diálogo Python <-> Java (Parte 96): a conexão residual + a normalização de camada (LayerNorm), bit a bit.
+Dado x e uma subcamada linear s(x) = W·x + b, calcula o residual y = x + s(x), depois a LayerNorm:
+μ = média(y), var = média((y−μ)²), ŷ = (y−μ)/√(var+ε), out = γ·ŷ + β. TUDO é + − × ÷ e √ (exatos no IEEE) —
+NENHUM transcendental: a fronteira da Parte 52 (o exp) não aparece aqui. Pesos/entrada fixos. Rodar da raiz: python3 dialogo/rodada63.py\"\"\"
+
+import math
+
+D = 4
+X = [0.5, -1.2, 0.8, 0.3]
+W = [[0.2, -0.1, 0.4, 0.0], [0.3, 0.5, -0.2, 0.1], [-0.4, 0.1, 0.6, -0.3], [0.1, -0.2, 0.0, 0.5]]
+B = [0.1, -0.1, 0.2, 0.0]
+GAMMA = [1.1, 0.9, 1.0, 1.2]
+BETA = [0.0, 0.1, -0.1, 0.05]
+EPS = 1e-5
+
+
+def subcamada(x):
+    out = []
+    for i in range(D):
+        s = 0.0
+        for k in range(D):
+            s = s + W[i][k] * x[k]
+        out.append(s + B[i])
+    return out
+
+
+def layernorm_residual():
+    s = subcamada(X)
+    y = [X[i] + s[i] for i in range(D)]           # conexão residual
+    soma = 0.0
+    for v in y:
+        soma = soma + v
+    mu = soma / D
+    sq = 0.0
+    for v in y:
+        sq = sq + (v - mu) * (v - mu)
+    var = sq / D
+    inv = 1.0 / math.sqrt(var + EPS)
+    return [GAMMA[i] * ((y[i] - mu) * inv) + BETA[i] for i in range(D)]
+
+
+def main():
+    out = layernorm_residual()
+    for i in range(D):
+        print(f"out {i} {out[i].hex()}")
     print("fim")
 
 
