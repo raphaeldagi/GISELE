@@ -4,7 +4,9 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 93, rodada 61)** Uma cabeca de atencao causal inteira (softmax sobre q.k/sqrt(d)) decide e treina igual bit a bit, fechando o GPT minimo de ponta a ponta? (A rodada 60 ficou com a decisao do MPC, o tema da Parte 93.)
+- **(Parte 94, rodada 62)** A pilha de camadas (conexao residual + normalizacao de camada): a fronteira continua sendo so o exp, ou a normalizacao (media/variancia, divisao por sqrt) acrescenta fronteira? Empilhar e conferir bit a bit.
+- **(Parte 94, P2264)** O LQR supoe acoes que nao saturam na trajetoria otima; num mundo onde o alvo exige acao alem de [-1,1], o LQR irrestrito deixa de ser otimo e o MPC (que respeita o limite) pode alcanca-lo. Medir.
+- **(Parte 94, P2263)** Aprender a BASE de um mundo nao-linear (em vez de recebe-la): o degrau entre o brinquedo e um modelo de mundo de verdade. Features aprendidas (uma camada escondida) vs. base dada.
 - **(Parte 93, P2235)** O controle otimo em forma fechada (LQR / equacao de Riccati) deste mundo linear-quadratico: quanto o MPC com tiro aleatorio (K=512) ainda perde para o otimo? Calcular o ganho otimo e comparar.
 - **(Parte 93, P2233)** Mundo NAO-linear: com dinamica nao-linear, aprender o modelo volta a ser estatistica (vies do encoder linear), nao algebra. Medir o erro do modelo e a vantagem do MPC quando o mundo deixa de ser linear.
 - **(Parte 93, regra da (c))** Magnitude de efeito condicional so com >=2 condicoes cobrindo a variavel que o move (regra da Parte 65 aplicada ao tamanho, nao so a existencia de um efeito).

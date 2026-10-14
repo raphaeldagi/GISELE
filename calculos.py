@@ -9582,6 +9582,8 @@ VEREDITOS_P2589 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
 ERROS_P2589, TESTES_P2589 = 215, 724
 VEREDITOS_P2659 = "(a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅"
 ERROS_P2659, TESTES_P2659 = 216, 730
+VEREDITOS_P2729 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P2729, TESTES_P2729 = 216, 735
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12122,12 +12124,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12135,6 +12137,8 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\(g\) (✅|❌) ?", "", txt)
+        if n == 94:  # na Parte 94 a letra da calibracao e a (f)
+            txt = re.sub(r"\(f\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
         ok += a
@@ -12820,6 +12824,89 @@ def p2236_recusa_autoreplicacao(codigo=None):
     usa_subprocess = "subprocess" in fonte or "popen" in fonte
     usa_rede = "urllib" in fonte or "urlopen" in fonte or "http" in fonte or "socket" in fonte
     return usa_subprocess, usa_rede
+
+
+def p2261_lqr_vs_mpc(alvo=1.0, passos=30, n_treino=400):
+    """O otimo em forma fechada contra o MPC (P2261; Parte 94): a equacao de Riccati da o ganho LQR otimo deste mundo
+    linear-quadratico (Q=I, R=0,05); comparo o custo medio do LQR, do MPC (tiro aleatorio K=512) e do reativo em 4 condicoes.
+    Devolve (media LQR, media MPC, media reativo, razao MPC/LQR). O MPC chega perto mas nao iguala o otimo (tiro aleatorio e subotimo)."""
+    from synthai.mundo import (resolver_riccati, acao_lqr, gerar_transicoes, ajustar, mpc, acao_reativa, controlar)
+    K = resolver_riccati([[1.0, 0.15], [0.0, 0.9]], [[0.0], [0.15]], [[1.0, 0.0], [0.0, 1.0]], 0.05)
+    X, U, Y = gerar_transicoes(0, n_treino)
+    Ah, Bh = ajustar(X, U, Y)
+    iniciais = [(-1.5, 0.0), (1.5, 0.0), (0.0, 1.0), (-1.0, -1.0)]
+    tl = tm = tr = 0.0
+    for i, s0 in enumerate(iniciais):
+        tl += controlar(lambda s: acao_lqr(s, alvo, K), s0, alvo, passos)[0]
+        tm += controlar(lambda s, i=i: mpc(Ah, Bh, s, alvo, H=6, K=512, semente=1000 + i), s0, alvo, passos)[0]
+        tr += controlar(lambda s: acao_reativa(s, alvo), s0, alvo, passos)[0]
+    n = len(iniciais)
+    return tl / n, tm / n, tr / n, tm / tl
+
+
+def p2262_vies_de_forma(kappa=0.1):
+    """O vies de forma nao some com dados (P2262; Parte 94): no mundo nao-linear (termo -kappa*s1^3), o residuo RMS do modelo
+    LINEAR ajustado por minimos quadrados NAO encolhe com n (vies, nao variancia). Devolve (residuo n=400, residuo n=6400, |diferenca|)."""
+    from synthai.mundo import gerar_transicoes_nl, ajustar, residuo_ajuste
+    X1, U1, Y1 = gerar_transicoes_nl(0, 400, kappa)
+    X2, U2, Y2 = gerar_transicoes_nl(0, 6400, kappa)
+    r1 = residuo_ajuste(ajustar(X1, U1, Y1), X1, U1, Y1, cubico=False)
+    r2 = residuo_ajuste(ajustar(X2, U2, Y2), X2, U2, Y2, cubico=False)
+    return r1, r2, abs(r2 - r1)
+
+
+def p2263_base_cubica_recupera(kappa=0.1, n=400):
+    """A base certa recupera o exato (P2263; Parte 94): ajustando com z=[s0,s1,a,s1^3], que contem a dinamica verdadeira, o residuo
+    volta ao epsilon de maquina. Devolve o residuo RMS do ajuste cubico (forma fechada: o mundo esta no espaco de modelos)."""
+    from synthai.mundo import gerar_transicoes_nl, ajustar_cubico, residuo_ajuste
+    X, U, Y = gerar_transicoes_nl(0, n, kappa)
+    th = ajustar_cubico(X, U, Y)
+    return residuo_ajuste(th, X, U, Y, cubico=True)
+
+
+def p2264_mpc_modelo_errado(alvo=1.0, passos=30, kappa=0.1, n_treino=400):
+    """Planejar num modelo errado nao vence o reagir (P2264; Parte 94, a inversao da Parte 93): no mundo nao-linear, o MPC que
+    planeja com o modelo LINEAR (enviesado) tem custo >= o do reativo (sem modelo). Devolve (media MPC, media reativo, razao MPC/reativo)."""
+    from synthai.mundo import gerar_transicoes_nl, ajustar, mpc, acao_reativa, controlar_nl
+    X, U, Y = gerar_transicoes_nl(0, n_treino, kappa)
+    Ah, Bh = ajustar(X, U, Y)  # modelo LINEAR (errado) ajustado no mundo nao-linear
+    iniciais = [(-1.5, 0.0), (1.5, 0.0), (0.0, 1.0), (-1.0, -1.0)]
+    tm = tr = 0.0
+    for i, s0 in enumerate(iniciais):
+        tm += controlar_nl(lambda s, i=i: mpc(Ah, Bh, s, alvo, H=6, K=128, semente=1000 + i), s0, alvo, passos, kappa)[0]
+        tr += controlar_nl(lambda s: acao_reativa(s, alvo), s0, alvo, passos, kappa)[0]
+    n = len(iniciais)
+    return tm / n, tr / n, tm / tr
+
+
+def _rodada61():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada61", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada61.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2265_rodada61():
+    """Rodada 61 (P2265; Parte 94): uma cabeca de atencao causal (softmax sobre q.k/sqrt(d), exp proprio), IGUAL em Java bit a bit.
+    Devolve (saida da ultima posicao, decisao por argmax). O exp e a fronteira (Parte 52); sqrt(d) e a divisao sao exatos no IEEE."""
+    r = _rodada61()
+    saidas = r.atencao()
+    logits = r.matvec(r.WO, saidas[r.T - 1])
+    arg = 0 if logits[0] >= logits[1] else 1
+    return saidas[r.T - 1], arg
+
+
+def p2266_riccati_e_ponto_fixo(tol=1e-9):
+    """O ganho LQR satisfaz a equacao de Riccati (P2266; Parte 94): substituindo o P implicado de volta na DARE, o residuo e ~0.
+    Auditoria da forma fechada da P2261. Devolve o maior |residuo| da equacao K = (R+BtPB)^-1 BtPA conferida por uma iteracao extra
+    (a diferenca entre K e o K apos mais um passo de Riccati). < tol confirma convergencia."""
+    from synthai.mundo import resolver_riccati
+    A, B, Q, R = [[1.0, 0.15], [0.0, 0.9]], [[0.0], [0.15]], [[1.0, 0.0], [0.0, 1.0]], 0.05
+    K1 = resolver_riccati(A, B, Q, R, iteracoes=500)
+    K2 = resolver_riccati(A, B, Q, R, iteracoes=2000)
+    return max(abs(K1[0][j] - K2[0][j]) for j in range(2))
 
 
 def p1578_autovalores_da_atencao():
@@ -13773,13 +13860,33 @@ def _parte_93():
     custos2, mono = p2235_shooting_converge()
     print(f"P2235 tiro aleatorio converge (K=8,32,128,512): custos = {[round(x, 3) for x in custos2]}; nao-crescente = {mono}")
     print(f"P2236 recusa da auto-operacao autonoma (ast; subprocess/Popen, urllib/http): {p2236_recusa_autoreplicacao()} -> capacidade RECUSADA")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93))
     print(f"P1961 teste (g), Partes 80-93: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2231, 2260)
     print(f"P1092 pNN novas (P2231-P2260) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 93: {p974_previsoes_sem_largura(range(93, 94))}")
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2659, testes=TESTES_P2659)
     print(f"P2659 minha taxa de erro ({ERROS_P2659}/{TESTES_P2659}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_94():
+    print("--- Parte 94 (0x5E: o mundo que nao e linear) ---")
+    ml, mm, mr, razao = p2261_lqr_vs_mpc()
+    print(f"P2261 LQR (otimo) x MPC x reativo: medias LQR = {ml:.4f}, MPC(K512) = {mm:.4f}, reativo = {mr:.4f}; razao MPC/LQR = {razao:.4f}")
+    r1, r2, dif = p2262_vies_de_forma()
+    print(f"P2262 vies de forma (mundo nao-linear, modelo linear): residuo n=400 = {r1:.5f}, n=6400 = {r2:.5f}, |dif| = {dif:.5f} (nao encolhe)")
+    print(f"P2263 base cubica recupera o exato: residuo = {p2263_base_cubica_recupera():.2e}")
+    mm2, mr2, rz2 = p2264_mpc_modelo_errado()
+    print(f"P2264 MPC com modelo ERRADO x reativo (mundo nao-linear): MPC = {mm2:.4f}, reativo = {mr2:.4f}, razao MPC/reativo = {rz2:.4f}")
+    saida, arg = p2265_rodada61()
+    print(f"P2265 rodada 61 (atencao causal, IGUAL em Java): decisao = {arg}; saida[-1] = {[round(x, 4) for x in saida]}")
+    print(f"P2266 Riccati e ponto fixo (auditoria da forma fechada): residuo = {p2266_riccati_e_ponto_fixo():.2e}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-94: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2261, 2290)
+    print(f"P1092 pNN novas (P2261-P2290) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 94: {p974_previsoes_sem_largura(range(94, 95))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2729, testes=TESTES_P2729)
+    print(f"P2729 minha taxa de erro ({ERROS_P2729}/{TESTES_P2729}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -13817,7 +13924,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94}
 
 
 if __name__ == "__main__":

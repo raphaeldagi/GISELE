@@ -1646,3 +1646,17 @@ P974 previsoes unilaterais da Parte 93: {}
 P2659 minha taxa de erro (216/730): media = 0.30, intervalo 90% = [0.27, 0.32]
   (Regressao: confirmada verde pela suite de testes de unidade.)
 
+
+--- Parte 94 (0x5E: o mundo que nao e linear) ---
+P2261 LQR (otimo) x MPC x reativo: medias LQR = 42.5882, MPC(K512) = 46.0510, reativo = 49.5314; razao MPC/LQR = 1.0813
+P2262 vies de forma (mundo nao-linear, modelo linear): residuo n=400 = 0.12080, n=6400 = 0.12188, |dif| = 0.00108 (nao encolhe)
+P2263 base cubica recupera o exato: residuo = 2.18e-16
+P2264 MPC com modelo ERRADO x reativo (mundo nao-linear): MPC = 45.9228, reativo = 43.5478, razao MPC/reativo = 1.0545
+P2265 rodada 61 (atencao causal, IGUAL em Java): decisao = 1; saida[-1] = [0.0142, 0.2693, 0.0539]
+P2266 Riccati e ponto fixo (auditoria da forma fechada): residuo = 0.00e+00
+P1961 teste (f), Partes 80-94: 63/76 = 0.8289; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5)}
+P1092 pNN novas (P2261-P2290) sem teste: 6 de 6: ['p2261_lqr_vs_mpc', 'p2262_vies_de_forma', 'p2263_base_cubica_recupera', 'p2264_mpc_modelo_errado', 'p2265_rodada61', 'p2266_riccati_e_ponto_fixo']
+P974 previsoes unilaterais da Parte 94: {}
+P2729 minha taxa de erro (216/735): media = 0.29, intervalo 90% = [0.27, 0.32]
+  (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
+

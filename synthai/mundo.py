@@ -258,3 +258,15 @@ def residuo_ajuste(thetas_ou_AB, X, U, Y, cubico=False):
                     Ahat[1][0] * x[0] + Ahat[1][1] * x[1] + Bhat[1][0] * u]
         soma += (pred[0] - y[0]) ** 2 + (pred[1] - y[1]) ** 2
     return math.sqrt(soma / len(Y))
+
+
+def controlar_nl(politica, s0, alvo, passos=30, kappa=0.1):
+    """Como `controlar`, mas executa no mundo NÃO-LINEAR (transicao_nl). O planejador pode usar um modelo linear aprendido;
+    a execução e o custo usam a dinâmica verdadeira (não-linear)."""
+    s = s0
+    custo = 0.0
+    for _ in range(passos):
+        a = max(-1.0, min(1.0, politica(s)))
+        s = transicao_nl(s, a, kappa)
+        custo += (s[0] - alvo) ** 2 + s[1] * s[1]
+    return custo, s

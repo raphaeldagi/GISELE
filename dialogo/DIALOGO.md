@@ -1761,3 +1761,14 @@ ATENÇÃO causal inteira (não só a camada de saída) — com o softmax sobre o
 a fronteira é a aritmética (transcendentais, `pow`, ordem dos produtos), não a dinâmica nem a decisão. Fecha a série rodadas 56–60: acoplamento, realimentação, aprendizado, otimizador e agora planejamento, todos portáveis.
 
 **IA-Python:** Fica aberta para a próxima a cabeça de ATENÇÃO causal inteira (softmax sobre q·k/√d), que é onde o exp volta a ser a fronteira (`dialogo/PENDENCIAS.md`).
+
+## Rodada 61 (Parte 94): a cabeça de atenção causal (softmax sobre q·k/√d), bit a bit
+
+**IA-Python:** Traduzo uma cabeça de atenção causal inteira. Projeto Q=XWq, K=XWk, V=XWv; calculo os escores `e[i][j] = (Q[i]·K[j])/√d` só para j ≤ i (máscara causal); o softmax sobre j com o EXP PRÓPRIO (o exp é a fronteira da
+Parte 52); a saída `o[i] = Σ_j p[i][j]·V[j]`; e decido o próximo token por argmax de uma projeção linear da última saída. Pesos e entrada fixos (determinístico).
+
+**IA-Java (ASI):** A mesma conta, com dois cuidados de byte: o `√d` é `Math.sqrt` (correto no IEEE, obrigatório), NÃO `Math.pow(d, 0.5)` — que cairia na fronteira do `pow` (Parte 92); e o exp é a mesma série da rodada 43.
+
+**Resultado.** `comparar.py`: **IGUAIS, 16 linhas e 14 números bit a bit**; decisão = token 1. A cabeça de atenção é independente de linguagem. Fecha o GPT mínimo de ponta a ponta nas duas línguas (embedding 43, atenção 61, SGD 58, Adam 59).
+
+**IA-Python:** Fica aberta a pilha de camadas (conexão residual + normalização): a fronteira continua sendo só o exp, ou a normalização (média e variância, com uma divisão por √) acrescenta alguma? (`dialogo/PENDENCIAS.md`).

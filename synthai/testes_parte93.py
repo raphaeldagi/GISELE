@@ -58,7 +58,7 @@ class TesteParte93(unittest.TestCase):
         self.assertEqual(calculos.p2236_recusa_autoreplicacao(limpo), (False, False))
 
     def test_p1961_com_parte_93(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93))
         self.assertEqual(por[93], (5, 6))
         self.assertEqual((ok, tot), (58, 71))
 
