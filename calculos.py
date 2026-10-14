@@ -12347,7 +12347,7 @@ def p1995_rodada52():
     lcg, i = 52, 10
     melhor_i, melhor_e, mudancas = i, r52.energia(i), 0
     for k in range(r52.PASSOS):
-        T = 2.0 * (0.01 / 2.0) ** (k / (r52.PASSOS - 1))
+        T = r52.exp_(r52.log_(2.0) + (k / (r52.PASSOS - 1)) * (r52.log_(0.01) - r52.log_(2.0)))
         lcg = (lcg * 6364136223846793005 + 1442695040888963407) & ((1 << 64) - 1)
         direcao = 1 if (lcg >> 63) else -1
         lcg = (lcg * 6364136223846793005 + 1442695040888963407) & ((1 << 64) - 1)

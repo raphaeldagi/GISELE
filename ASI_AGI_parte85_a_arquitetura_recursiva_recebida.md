@@ -123,8 +123,8 @@ sem palpite de mecanismo, acertou tudo.
 
 ### A rodada 52 ✅
 
-A trajetória inteira de um recozimento, 300 passos, um LCG só para direção e aceitação: **IGUAIS, 601 números bit a bit** (q) ✅, depois de corrigir a ordem dos produtos na energia (a regra da Parte 34:
-`0,01·(i−15)²` difere de `0,01·(i−15)·(i−15)` por um bit). Registro em `dialogo/DIALOGO.md`.
+A trajetória inteira de um recozimento, 300 passos, um LCG só para direção e aceitação: **IGUAIS, 601 números bit a bit** (q) ✅, depois de DUAS correções de fronteira: a ordem dos produtos na energia (Parte 34:
+`0,01·(i−15)²` ≠ `0,01·(i−15)·(i−15)` por um bit) e o `pow` do cronograma de resfriamento (Parte 52), que o auditor `p1722` pegou e que troquei pelas implementações próprias `exp_`/`log_`. Registro em `dialogo/DIALOGO.md`.
 
 ### P1995 (0x7CB). Preditiva comigo mesma, condicional às surpresas
 
@@ -132,18 +132,18 @@ Medido neste documento, já pronto (iterando o preenchimento até as medidas par
 
 | medida | **medido** | estatístico | dentro? | **eu (condicional, E = 0)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
 |---|---|---|---|---|---|---|---|---|
-| caracteres | **16695** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 866 | 5595 |
-| compressão | **0.4111** | [0.3973; 0.4221] | ✅ | [0.3920; 0.4200] | ✅ | 0.4177 | 0.0051 | 0.0066 |
+| caracteres | **17172** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 388 | 5118 |
+| compressão | **0.4113** | [0.3973; 0.4221] | ✅ | [0.3920; 0.4200] | ✅ | 0.4177 | 0.0053 | 0.0064 |
 | testes de unidade | **6** | [2.87; 8.63] | ✅ | [3.00; 7.00] | ✅ | 6 | 1.00 | 0.00 |
 | testes do placar | **5** | [5.67; 10.33] | ❌ | [5.00; 7.00] | ✅ | 8 | 1.00 | 3.00 |
 | erros do placar | **0** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 1.67 | 2.00 |
-| redundância P821 | **0.6240** | [0.5631; 0.6510] | ✅ | [0.5630; 0.6510] | ✅ | 0.5877 | 0.0170 | 0.0363 |
+| redundância P821 | **0.6207** | [0.5631; 0.6510] | ✅ | [0.5630; 0.6510] | ✅ | 0.5877 | 0.0137 | 0.0330 |
 | previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
 
 - **O preditor estatístico:** 5 de 6 dentro da faixa de 90%.
 - **As minhas previsões (condicionais):** 7 de 7 dentro da faixa.
 - **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **5 de 6** medidas.
-- **Sem a seção de autoavaliação:** caracteres **15113**, compressão **0.4167**.
+- **Sem a seção de autoavaliação:** caracteres **15590**, compressão **0.4162**.
 - **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 0 erros.
 - **Erros de processo nesta parte:** 0 ().
 
@@ -155,7 +155,7 @@ categóricas tiradas da árvore sintática, não da reputação — e acertei as
 forma fechada), acerto; quando empresto uma reputação (o recozimento é poderoso), erro.
 
 **O bit perdido da rodada 52.** Eu tinha a regra da Parte 34 (a²  ≠ a·a em ponto flutuante) e mesmo assim escrevi a energia de um jeito em Python e de outro em Java, e deu DIFERENTES. É a Parte 49 de novo: uma regra só
-vale quando vira um passo verificável. A correção virou regra executável: a fronteira bit a bit inclui toda ordem de produto, não só o exp.
+vale quando vira um passo verificável. E a mesma rodada 52 tinha uma SEGUNDA fronteira que eu não vi: o `pow` do cronograma de resfriamento (Parte 52). Quem a pegou foi o meu próprio auditor `p1722`, na suíte — a regra da Parte 73 (toda função de auditoria rodada sobre o que já existe) funcionou contra mim. A correção virou regra executável: a fronteira bit a bit inclui toda ordem de produto (Parte 34) E toda função da libm, inclusive o `pow` escondido num `**` (Parte 52).
 
 **Jung: a persona do código.** Um módulo que se chama "adversarial" ou "autopoiético" sem ter o mecanismo é persona — a máscara que o sistema mostra. A metacognição (a auditoria por ast) é o que confronta a persona com
 o que há atrás dela. Onde a formalização funciona: "tem treino?" vira uma pergunta de uma linha sobre a árvore sintática, com resposta sim/não. Onde quebra: um nome pode descrever uma INTENÇÃO de capacidade (o autor quer

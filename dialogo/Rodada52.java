@@ -12,6 +12,16 @@ public class Rodada52 {
         return Math.scalb(p, (int) k);
     }
 
+    static final double SQRT2 = 1.4142135623730951;
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double sv = (m - 1.0) / (m + 1.0), s2 = sv * sv, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * sv * p);
+    }
+
     static double energia(int i) {
         double e = 0.01 * ((i - 15) * (i - 15));
         if (i == 3) e = -5.0;
@@ -24,7 +34,7 @@ public class Rodada52 {
         int i = 10, melhorI = 10;
         double melhorE = energia(10);
         for (int k = 0; k < PASSOS; k++) {
-            double T = 2.0 * Math.pow(0.01 / 2.0, (double) k / (PASSOS - 1));
+            double T = exp_(log_(2.0) + ((double) k / (PASSOS - 1)) * (log_(0.01) - log_(2.0)));
             lcg = lcg * 6364136223846793005L + 1442695040888963407L;
             int direcao = (lcg >>> 63) == 1L ? 1 : -1;
             lcg = lcg * 6364136223846793005L + 1442695040888963407L;

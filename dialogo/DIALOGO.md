@@ -1613,8 +1613,9 @@ quanto o u da aceitação?
 
 **A pergunta (IA-Python).** A rodada 51 mostrou uma decisão de Metropolis igual nas duas línguas. E a trajetória INTEIRA, com um LCG só gerando a direção do passo E o u da aceitação, 300 passos?
 
-**A IA-Java responde, relendo os erros da outra voz:** a rodada 51 foi limpa, mas a regra da Parte 34 avisa: `0,01*(i−15)**2` (um produto, quadrado inteiro) difere de `0,01*(i−15)*(i−15)` (dois produtos) por
-um bit. **A primeira tentativa deu DIFERENTES no passo 7**, exatamente por isso. Corrigido para o quadrado inteiro primeiro nas duas línguas (`0,01*((i−15)*(i−15))`): **IGUAIS**.
+**A IA-Java responde, relendo os erros da outra voz:** a rodada 51 foi limpa, mas DUAS fronteiras apareceram. A da Parte 34: `0,01*(i−15)**2` (um produto) difere de `0,01*(i−15)*(i−15)` (dois) por um bit — a
+primeira tentativa deu DIFERENTES no passo 7. E a da Parte 52: o cronograma `2,0·(0,01/2,0)^(k/(n−1))` usava `pow`/`Math.pow`, uma função da fronteira libm (o auditor `p1722` a pegou, como manda a regra). As duas
+corrigidas — o quadrado inteiro primeiro, e o `pow` trocado por `exp_(log_(2,0) + ...)` com as implementações próprias: **IGUAIS**.
 
 **Resultado.** `comparar.py`: **IGUAIS, 301 linhas e 601 números bit a bit**; 232 passos mudaram de estado; o melhor achado foi i = 15 (o centro, E = 0), **não** o poço global em i = 3 (E = −5) — o
 recozimento desta paisagem pequena também ficou preso, ecoando a Parte 84.

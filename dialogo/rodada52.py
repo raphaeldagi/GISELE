@@ -7,7 +7,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from exatas import exp_  # noqa: E402
+from exatas import exp_, log_  # noqa: E402
 
 M64 = (1 << 64) - 1
 N, PASSOS = 20, 300
@@ -27,7 +27,7 @@ def main():
     i = 10
     melhor_i, melhor_e = i, energia(i)
     for k in range(PASSOS):
-        T = 2.0 * (0.01 / 2.0) ** (k / (PASSOS - 1))
+        T = exp_(log_(2.0) + (k / (PASSOS - 1)) * (log_(0.01) - log_(2.0)))
         lcg = (lcg * 6364136223846793005 + 1442695040888963407) & M64
         direcao = 1 if (lcg >> 63) else -1
         lcg = (lcg * 6364136223846793005 + 1442695040888963407) & M64
