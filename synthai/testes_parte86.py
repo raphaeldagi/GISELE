@@ -48,7 +48,7 @@ class TesteParte86(unittest.TestCase):
         self.assertLess(stdp_delta(-5.0), 0)
 
     def test_p1961_com_parte_86(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86))
         self.assertEqual(por[86], (5, 6))  # a (g) descartada; a,b,c,d,e,f com a❌
         self.assertEqual((ok, tot), (32, 41))
 
