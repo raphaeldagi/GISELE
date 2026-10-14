@@ -359,3 +359,46 @@ class MLP1:
             out = self.prever(x[0], x[1], u)
             soma += (out[0] - y[0]) ** 2 + (out[1] - y[1]) ** 2
         return math.sqrt(soma / len(Y))
+
+
+# --- Parte 97: a cura da variância (ridge) e a capacidade do MLP ---
+
+def ajustar_features_ridge(X, U, Y, feat, lam):
+    """Mínimos quadrados com penalidade de cumeeira (ridge): resolve (ZᵀZ + λI)·θ = Zᵀy. λ grande encolhe os pesos (mais viés,
+    menos variância); λ → 0 recupera o ajuste comum. A constante (monômio 1) também é penalizada aqui (simples e suficiente para o brinquedo)."""
+    Z = [feat(x[0], x[1], u) for x, u in zip(X, U)]
+    m = len(Z[0])
+    ZtZ = [[sum(Z[t][i] * Z[t][j] for t in range(len(Z))) for j in range(m)] for i in range(m)]
+    for i in range(m):
+        ZtZ[i][i] += lam
+    thetas = []
+    for d in range(2):
+        Zty = [sum(Z[t][i] * Y[t][d] for t in range(len(Z))) for i in range(m)]
+        thetas.append(resolver_linear(ZtZ, Zty))
+    return thetas
+
+
+def ridge_sweep(grau=5, n=40, kappa=0.1, lams=(0.0, 1e-4, 1e-2, 1e-1, 1.0, 10.0), semente_tr=0, semente_te=777):
+    """Varre λ no ajuste de uma base rica (grau alto) com poucos dados. Devolve [(λ, res_treino, res_teste)] e (λ*, melhor res_teste).
+    Espera-se uma curva em U no teste: λ=0 superajusta (teste alto), λ grande subajusta, há um λ* no meio."""
+    Xtr, Utr, Ytr = gerar_transicoes_nl(semente_tr, n, kappa)
+    Xte, Ute, Yte = gerar_transicoes_nl(semente_te, 400, kappa)
+    f = monomios(grau)
+    linha = []
+    for lam in lams:
+        th = ajustar_features_ridge(Xtr, Utr, Ytr, f, lam)
+        linha.append((lam, residuo_features(th, Xtr, Utr, Ytr, f), residuo_features(th, Xte, Ute, Yte, f)))
+    melhor = min(linha, key=lambda r: r[2])
+    return linha, (melhor[0], melhor[2])
+
+
+def mlp_capacidade(hs=(2, 4, 8, 16), kappa=0.1, passos=8000, lr=0.02, semente=97):
+    """Resíduo de teste do MLP em função da largura h da camada escondida. Devolve [(h, res_teste)]. Mais capacidade -> menos viés
+    (num mundo com dados de sobra), mas não necessariamente monótono por causa do treino estocástico."""
+    Xtr, Utr, Ytr = gerar_transicoes_nl(0, 400, kappa)
+    Xte, Ute, Yte = gerar_transicoes_nl(777, 400, kappa)
+    out = []
+    for h in hs:
+        m = MLP1(h=h, semente=semente).treinar(Xtr, Utr, Ytr, passos=passos, lr=lr, semente=semente)
+        out.append((h, m.residuo(Xte, Ute, Yte)))
+    return out

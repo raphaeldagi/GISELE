@@ -160,3 +160,7 @@ Seis rodadas fecham o transformer mínimo nas duas línguas: embedding (43), ate
 - Regressão por base de características; viés–variância e overfitting: teoria estatística clássica (Hastie, Tibshirani, Friedman).
 - MLP de uma camada escondida e aproximação universal: Cybenko (1989); treino por gradiente (retropropagação).
 - Normalização de camada (Layer Normalization): Ba, Kiros, Hinton (2016). Conexão residual: He et al. (2015).
+
+---
+
+**Continua na [Parte 97](ASI_AGI_parte97_a_cura_da_variancia.md): a cura da variância (cumeeira vs. dados) e o bloco transformer inteiro bit a bit.**
