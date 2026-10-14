@@ -24,7 +24,7 @@ class TesteParte91(unittest.TestCase):
         self.assertLess(fim, 0.1)            # memoriza o padrao repetido
 
     def test_p1961_com_parte_91(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91))
         self.assertEqual(por[91], (4, 4))
         self.assertEqual((ok, tot), (49, 61))
 

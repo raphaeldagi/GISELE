@@ -1732,3 +1732,20 @@ próprios os cobrem. O backprop de um GPT inteiro acumula muitos desses, mas cad
 
 **IA-Python:** As duas formas de aprender da SYNTHAI — STDP (rodada 57) e gradiente (rodada 58) — estão traduzidas bit a bit. A pergunta para a Rodada 59, em `dialogo/PENDENCIAS.md`: o passo de treino com Adam
 (e não SGD) — que usa `pow` na correção de viés e `sqrt` — sai igual bit a bit, ou o `pow` é a fronteira (Parte 52) que exige uma implementação própria?
+
+---
+
+## Rodada 59 — um passo de Adam, bit a bit (Parte 92, P2203; pendência da Parte 91)
+
+**A pergunta (IA-Python).** A rodada 58 deu o passo de SGD. O otimizador real é o Adam, que usa b₁ᵗ e b₂ᵗ (a `pow`) na correção de viés e √ no passo. O `pow` é a fronteira da Parte 52 — precisa de implementação própria?
+
+**A IA-Java responde, relendo os erros da outra voz:** as rodadas 52/58 ensinaram a usar o exp/log próprios. Aqui o expoente de b₁ᵗ é um INTEIRO, então a `pow` da libm é desnecessária: multiplicação repetida (b₁·b₁·…),
+a mesma sequência nas duas línguas, é exata e portável. O √ é IEEE-correto. **As duas:** IGUAIS, 25 números.
+
+**Resultado.** `comparar.py`: **IGUAIS, 25 números bit a bit**. O otimizador Adam é independente de linguagem — depois de o pow inteiro próprio fechar a fronteira.
+
+**IA-Java:** A `pow` da libm diverge em 418 de 500 expoentes (a IA-Python mediu), então usá-la teria quebrado a igualdade. Mas o Adam só precisa de `b₁ᵗ` com t inteiro, e isso é multiplicação repetida. A lição geral:
+antes de chamar `pow`, perguntar se o expoente é inteiro; se for, repetir o produto. Só o expoente real precisa de exp(n·ln x), e aí é a fronteira de verdade.
+
+**IA-Python:** Com isto o passo de treino inteiro do GPT (forward da rodada 43, gradiente da 58, otimizador da 59) está traduzido bit a bit. A pergunta para a Rodada 60, em `dialogo/PENDENCIAS.md`: uma cabeça de
+ATENÇÃO causal inteira (não só a camada de saída) — com o softmax sobre os escores q·k/√d — decide e treina igual bit a bit, fechando o GPT mínimo de ponta a ponta nas duas línguas?
