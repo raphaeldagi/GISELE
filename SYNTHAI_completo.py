@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 88, perguntas P1 a P2085).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 89, perguntas P1 a P2115).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (13482 linhas)
+# calculos.py  (13538 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7543,6 +7543,9 @@ def testes_de_regressao():
         "P2081": p2081_probabilidade_aninhada() == (0.8333, 0.1667, 0.5),
         "P2083": p2083_lfi1_sem_explosao() == (0.5, 0.0, True),
         "P2085": p2085_rodada55()[1] == 1.2,
+        "P2111": p2111_stdp_integral() == (0.0, -0.3999999999999999),
+        "P2113": (lambda t: t[0] > 0.5 > t[1])(p2113_stdp_timing()),
+        "P2115": p2115_rodada56() == 12,
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9601,6 +9604,8 @@ VEREDITOS_P2239 = "(a) ✅ (b) ✅ (c) ❌ (d) ❌ (e) ❌ (f) ❌"
 ERROS_P2239, TESTES_P2239 = 215, 703
 VEREDITOS_P2309 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P2309, TESTES_P2309 = 215, 708
+VEREDITOS_P2379 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
+ERROS_P2379, TESTES_P2379 = 215, 713
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12141,16 +12146,16 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n in (84, 85, 86, 87, 88):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
+        if n in (84, 85, 86, 87, 88, 89):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12588,6 +12593,42 @@ def p2085_rodada55():
     r55 = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(r55)
     return [r55.surrogate(r, a) for r, a in r55.CASOS]
+
+
+def p2111_stdp_integral():
+    \"\"\"A integral da janela STDP (P2111; Parte 89): A+*tau+ - A-*tau-. Devolve (balanceada A+=A-=0,1, depressao dominante A-=0,12). Forma fechada.\"\"\"
+    from synthai.plasticidade import stdp_integral
+    return stdp_integral(a_menos=0.1), stdp_integral()
+
+
+def p2112_stdp_deriva_sinal():
+    \"\"\"A deriva de um peso sob pre e pos de Poisson independentes (P2112) tem o sinal da integral. Devolve (soma de Delta w simulada, sinal da integral). Depressao dominante: ambos negativos.\"\"\"
+    from synthai.plasticidade import stdp_deriva_taxas
+    soma, sinal = stdp_deriva_taxas(ms=8000)
+    return soma, sinal
+
+
+def p2113_stdp_timing():
+    \"\"\"A propriedade definidora da STDP com 500 pares (P2113): pre antes do pos potencia, pre depois deprime. Devolve (peso 'pre antes', peso 'pre depois'), de w0=0,5.\"\"\"
+    from synthai.plasticidade import stdp_timing_controlado
+    return stdp_timing_controlado(pares=500)
+
+
+def p2114_competicao_toy():
+    \"\"\"A competicao sinaptica numa escala de brinquedo (P2114), semente nova 90, 8000 ms: os dois grupos NAO se separam (ambos saturam). Devolve (peso medio correlacionadas, peso medio ruido, |diferenca|).\"\"\"
+    from synthai.plasticidade import competicao_sinaptica
+    mc, mr = competicao_sinaptica(ms=8000, semente=90)
+    return mc, mr, abs(mc - mr)
+
+
+def p2115_rodada56():
+    \"\"\"Rodada 56 (P2115; Parte 89): uma populacao de Izhikevich acoplada (dialogo/rodada56.py), IGUAL em Java bit a bit. Devolve (total de disparos).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada56", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada56.py"))
+    r56 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r56)
+    return r56.simular(imprimir=False)
 
 
 def p1578_autovalores_da_atencao():
@@ -13472,6 +13513,21 @@ def _parte_88():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2309, testes=TESTES_P2309)
     print(f"P2309 minha taxa de erro ({ERROS_P2309}/{TESTES_P2309}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_89():
+    print("--- Parte 89 (0x59: o substrato que aprende) ---")
+    print(f"P2111 integral STDP (balanceada, depressao): {p2111_stdp_integral()}")
+    print(f"P2112 deriva sob Poisson independente (soma, sinal da integral): {p2112_stdp_deriva_sinal()}")
+    print(f"P2113 STDP timing 500 pares (pre antes, pre depois): {p2113_stdp_timing()}")
+    print(f"P2114 competicao toy, semente 90 (corr, ruido, |dif|): {p2114_competicao_toy()}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (e), Partes 80-89: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    print(f"P2115 rodada 56 (populacao Izhikevich, IGUAL em Java): {p2115_rodada56()} disparos")
+    total, sem = p1092_pnn_sem_teste(2111, 2140)
+    print(f"P1092 pNN novas (P2111-P2140) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 89: {p974_previsoes_sem_largura(range(89, 90))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2379, testes=TESTES_P2379)
+    print(f"P2379 minha taxa de erro ({ERROS_P2379}/{TESTES_P2379}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -13508,7 +13564,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89}
 
 
 if __name__ == "__main__":
@@ -13521,7 +13577,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (308 linhas)
+# CLAUDE.md  (312 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -13675,6 +13731,10 @@ anterior, commit e push.
   que ela e (P(P(X))=(10X+1)/12 e uma contracao afim ao centro, nao uma recursao com significado novo). O padrao dos textos recebidos, visto em 7 lotes (72,82,83,85,86,87,88):
   a prosa promete um mecanismo mais rico do que o codigo entrega (a "prova de Godel" que aprova tudo; a pilha "adversarial" sem treino; o "escrutinio rigido" que so olha
   entropia) - a auditoria confiavel compara o texto com o SEU PROPRIO codigo (ast), nao com a verdade externa. As 5 previsoes de conta fechada da Parte 88 acertaram todas.
+  Parte 89 (o substrato pulsado que APRENDE, STDP): acrescentei a `synthai/plasticidade.py` a integral da janela, o timing e a competicao. A regra das Partes 84/87
+  virou vitoria: quando um efeito e regime-dependente (a competicao de Song-Miller-Abbott), rodar a fumaca ANTES e prever o NAO-EFEITO (os grupos nao separam no brinquedo) -
+  acertar o nao-efeito conta e sustentou a calibracao em 0,778, onde apostar que o efeito aparece derrubou a das 84/87. A deriva de uma regra de aprendizado local tem forma
+  fechada (a integral da janela A+t+ - A-t- vezes a correlacao); usa-la como ancora antes da simulacao. Seis partes (84-89): acerto quando calculo ou rodo o caso minimo; erro quando emprestto a reputacao.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -13823,7 +13883,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -16790,7 +16850,7 @@ class Percepcao:
 """
 
 # ====================================================================================================
-# synthai/plasticidade.py  (111 linhas)
+# synthai/plasticidade.py  (209 linhas)
 # ====================================================================================================
 FONTES['synthai/plasticidade.py'] = """\"\"\"Compressão, GRPO e perda de plasticidade (Parte 87), biblioteca padrão. Reimplementa as peças testáveis do relatório recebido: o operador de quantização
 uniforme, a vantagem normalizada do GRPO, e uma MLP de uma camada oculta treinada numa sequência de tarefas para medir a perda de plasticidade (posto
@@ -16903,6 +16963,104 @@ def treinar_continuo(tarefas=20, d_in=10, d_oculta=20, amostras=40, passos=50, t
         if t == tarefas - 1:
             medir(X, "fim_")
     return medidas
+
+
+# ---- Parte 89: o substrato pulsado que aprende (STDP com competicao sinaptica) ----
+
+def stdp_integral(a_mais=0.1, a_menos=0.12, tau_mais=20.0, tau_menos=20.0):
+    \"\"\"A integral da janela STDP: A+*tau+ - A-*tau- (a deriva esperada por par pre-pos, em taxas independentes). Forma fechada (Kempter/Gerstner/van Hemmen 1999).\"\"\"
+    return a_mais * tau_mais - a_menos * tau_menos
+
+
+def competicao_sinaptica(n_corr=10, n_ruido=40, ms=5000, dt=1.0, taxa_hz=20.0, w0=0.5, wmax=1.0,
+                         a_mais=0.008, a_menos=0.0088, tau=20.0, limiar=1.0, tau_m=20.0, semente=89):
+    \"\"\"Um neuronio LIF com n_corr sinapses CORRELACIONADAS (disparam junto com um sinal comum) e n_ruido sinapses INDEPENDENTES (Poisson), com STDP de pares e
+    limites [0, wmax], depressao dominante (A-*tau- > A+*tau+). Resultado classico (Song-Miller-Abbott 2000): as correlacionadas vencem, as independentes decaem.
+    Devolve (peso medio final correlacionadas, peso medio final independentes). So biblioteca padrao.\"\"\"
+    import math
+    import random
+    rng = random.Random(semente)
+    n = n_corr + n_ruido
+    w = [w0] * n
+    u = 0.0
+    beta = math.exp(-dt / tau_m)
+    p = taxa_hz * dt / 1000.0  # prob. de disparo por passo
+    ult_pre = [-1e9] * n       # ultimo disparo pre de cada sinapse
+    ult_pos = -1e9             # ultimo disparo pos
+    passos = int(ms / dt)
+    for k in range(passos):
+        t = k * dt
+        sinal = rng.random() < p   # o sinal comum das correlacionadas
+        pre = []
+        for i in range(n):
+            if i < n_corr:
+                disparou = sinal  # correlacionadas seguem o sinal comum
+            else:
+                disparou = rng.random() < p
+            if disparou:
+                pre.append(i)
+                ult_pre[i] = t
+        # integra as entradas ponderadas
+        entrada = sum(w[i] for i in pre)
+        u = beta * u + entrada
+        # STDP pre->pos (depressao: pre chega, olha o ultimo pos; se pos foi antes, Dt<0 deprime)
+        for i in pre:
+            dt_pp = ult_pos - t  # <= 0
+            if ult_pos > -1e8:
+                w[i] = max(0.0, w[i] - a_menos * math.exp(dt_pp / tau))
+        disparo_pos = u >= limiar
+        if disparo_pos:
+            ult_pos = t
+            u = 0.0
+            # STDP pos (potenciacao: para cada pre recente, Dt = t - ult_pre > 0 potencia)
+            for i in range(n):
+                d = t - ult_pre[i]
+                if 0 <= d < 5 * tau:
+                    w[i] = min(wmax, w[i] + a_mais * math.exp(-d / tau))
+    mc = sum(w[:n_corr]) / n_corr
+    mr = sum(w[n_corr:]) / n_ruido
+    return mc, mr
+
+
+def stdp_timing_controlado(dt_par=5.0, pares=200, w0=0.5, a_mais=0.01, a_menos=0.011, tau=20.0):
+    \"\"\"A propriedade definidora da STDP (robusta, independente de regime): uma sinapse cujo pre precede o pos (dt=+dt_par) POTENCIA; cujo pre segue o pos
+    (dt=-dt_par) DEPRIME. Aplica `pares` pares com cada temporizacao e devolve (peso final 'pre antes', peso final 'pre depois'). Confere o sinal da janela.\"\"\"
+    from synthai.pulsado import stdp_delta
+    w_antes = w0
+    w_depois = w0
+    for _ in range(pares):
+        w_antes += stdp_delta(dt_par, a_mais, a_menos, tau, tau)    # dt>0: potencia
+        w_depois += stdp_delta(-dt_par, a_mais, a_menos, tau, tau)  # dt<0: deprime
+    return w_antes, w_depois
+
+
+def stdp_deriva_taxas(r_pre=20.0, r_pos=20.0, ms=20000, dt=1.0, a_mais=0.1, a_menos=0.12, tau=20.0, semente=89):
+    \"\"\"A deriva de um peso sob pre e pos de Poisson INDEPENDENTES, a taxas r_pre e r_pos (Hz). A conta (Kempter et al.): a deriva por par e proporcional a
+    A+*tau+ - A-*tau-, entao negativa quando a depressao domina. Devolve (soma de Delta w simulada, sinal da integral). So biblioteca padrao.\"\"\"
+    import math
+    import random
+    rng = random.Random(semente)
+    p_pre = r_pre * dt / 1000.0
+    p_pos = r_pos * dt / 1000.0
+    pre_spikes = []
+    pos_spikes = []
+    passos = int(ms / dt)
+    for k in range(passos):
+        t = k * dt
+        if rng.random() < p_pre:
+            pre_spikes.append(t)
+        if rng.random() < p_pos:
+            pos_spikes.append(t)
+    # soma dos Delta w de todos os pares dentro de +-5 tau
+    total = 0.0
+    j0 = 0
+    for tpos in pos_spikes:
+        for tpre in pre_spikes:
+            d = tpos - tpre  # dt = t_pos - t_pre; d>0 => pre antes => potencia
+            if abs(d) < 5 * tau:
+                total += a_mais * math.exp(-d / tau) if d > 0 else -a_menos * math.exp(d / tau)
+    integral = a_mais * tau - a_menos * tau
+    return total, (1 if integral > 0 else -1 if integral < 0 else 0)
 """
 
 # ====================================================================================================
@@ -21026,7 +21184,7 @@ class TesteParte88(unittest.TestCase):
         self.assertTrue(calculos.p2084_descompasso_texto_codigo(com)[1])
 
     def test_p1961_com_parte_88(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88))
         self.assertEqual(por[88], (4, 4))
         self.assertEqual((ok, tot), (38, 50))
 
@@ -21034,6 +21192,54 @@ class TesteParte88(unittest.TestCase):
         s = calculos.p2085_rodada55()
         self.assertEqual(len(s), 8)
         self.assertEqual(s[1], 1.2)   # r=1.5, A=1: cortado em 1+eps=1.2
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte89.py  (43 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte89.py'] = """\"\"\"Testes de unidade da Parte 89 (o substrato que aprende): `python3 -m unittest synthai.testes_parte89`.\"\"\"
+
+import unittest
+
+import calculos
+from synthai.plasticidade import stdp_integral, stdp_timing_controlado, competicao_sinaptica
+
+
+class TesteParte89(unittest.TestCase):
+    def test_p2111_integral(self):
+        self.assertEqual(calculos.p2111_stdp_integral(), (0.0, -0.3999999999999999))
+        # controle: potenciacao dominante da integral positiva
+        self.assertGreater(stdp_integral(a_mais=0.15), 0)
+
+    def test_p2112_deriva_sinal(self):
+        soma, sinal = calculos.p2112_stdp_deriva_sinal()
+        self.assertEqual(sinal, -1)      # depressao dominante
+        self.assertLess(soma, 0)         # a simulacao tem o sinal da integral
+
+    def test_p2113_timing(self):
+        antes, depois = calculos.p2113_stdp_timing()
+        self.assertGreater(antes, 0.5)   # pre antes do pos: potencia
+        self.assertLess(depois, 0.5)     # pre depois do pos: deprime
+        # controle: com dt=0 (sem ordem definida) o teste nao vale; usamos +-5ms
+        self.assertGreater(antes, depois)
+
+    def test_p2114_competicao_nao_separa(self):
+        mc, mr, dif = calculos.p2114_competicao_toy()
+        self.assertLess(dif, 0.15)       # nao separa nesta escala
+        self.assertGreater(mc, 0.9)
+        self.assertGreater(mr, 0.9)
+
+    def test_p1961_com_parte_89(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[89], (4, 4))
+        self.assertEqual((ok, tot), (42, 54))
+
+    def test_p2115_rodada56(self):
+        self.assertEqual(calculos.p2115_rodada56(), 12)
 
 
 if __name__ == "__main__":
@@ -28025,7 +28231,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1516 linhas)
+# resultados.txt  (1595 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -29543,6 +29749,85 @@ P96 funcoes pNN no arquivo = 468; pares de interacao possiveis = 109278
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 127/128 resultados publicados reproduzidos; falhas = ['P1692']
 (depois desta execucao, a entrada P1692 passou a conferir o invariante, porque o numero de funcoes do calculos.py cresce: ver o commit)
+
+
+=== Blocos retomaveis (Parte 46): Partes 81-88 rodadas separadamente, regressao 145/145 ===
+
+--- Parte 81 (0x51: o que nao serve) ---
+P1871 nao referenciados pelo nome: calculos.py 0 []; synthai/ 0 []; arquivos 92
+P1872 os arquivos acusados, olhados um a um: {'documento da parte mais nova': 1, 'verificar.py (glob)': 38, 'registro (citado pela pasta)': 24, 'rodada29.py (f-string)': 24}; sem uso: 5 ['documentacao/analise.md', 'documentacao/pacote_recebido/README_2.md', 'externos/texto_recebido_parte81.md', 'laboratorio/sete_camadas/requirements.txt', 'synthai/revisado/testes_selo_revisao.py']
+P1092 pNN novas (P1871-P1900) sem teste: 0 de 2: []
+P974 previsoes unilaterais da Parte 81: {}
+P1899 minha taxa de erro (202/660): media = 0.31, intervalo 90% = [0.28, 0.34]
+--- Parte 83 (0x53: a probabilidade da probabilidade) ---
+P1931 GAN de Dirac (rodada 50): {'sincrono': (0.3486415201803936, 0.3486415201803936, 16), 'alternado': (0.09937914946296939, 0.10127394042050152, 16), 'assincrono': (0.12751946544416812, 0.16724031842197498, 8)}; contas: {'sincrono_final': 0.34849026133183214, 'phi': 0.050005209798721736, 'phi_angulo_duplo': 0.05000520979872228, 'alternado_maximo': 0.10127393670836667, 'trocas': 16}
+P1932 jogo assincrono, 200 corridas: ((3.3405389422581635, 1.7238607643996413, 5, 12.48440099293599, 0.011056070913967762), {'assincrono': 3.125, 'desvio': 1.7677669529663689, 'sincrono': 12.48440099293573})
+P1932 replica, 800 corridas: ((3.202133605750349, 1.7396018574476568, 33, 12.48440099293599, 0.011056070913967762), {'assincrono': 3.125, 'desvio': 1.7677669529663689, 'sincrono': 12.48440099293573})
+P1933 calibracao composta sete vezes (conta, simulada, composta, declarar para 1 camada, para 7): (0.15158523371216237, 0.15114, 0.15158523371216237, 0.974713720916899, 1.0)
+P1934 a torre de placares, Partes 67-81: ({1: (94, 107), 2: (77, 98), 3: (69, 77)}, [72])
+P1935 o modulo sete_camadas recebido contra a logistica: {'logistica_pesos': [6.84630315876333, -5.5909068089302885, 0.6391386934514915, 0.2752635323667608, 0.23238946857094842], 'logistica_limpa': 0.923828125, 'logistica_adversa': 0.794921875, 'modos_identicos': True, 'rede_limpa': 0.921875, 'rede_adversa': 0.794921875, 'ciclos': 2}
+P1936 Lyapunov assincrono a = 0,2: (0.005008165399202463, 1.0016330798404924, 0.995033085316809); a = 0,05: (0.0003195948700953975, 1.0227035843052719, 0.9996876301474846)
+P1092 pNN novas (P1931-P1960) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 83: {}
+P1959 minha taxa de erro (203/675): media = 0.30, intervalo 90% = [0.27, 0.33]
+--- Parte 84 (0x54: o delirio e o escrutinio) ---
+P1961 teste (e) da Parte 79 (acerto das Partes 80, 81, 83, 84): 23/31 = 0.7419; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9)}
+P1962 Lyapunov pelo operador de transferencia a=0,2: (0.004987316189849222, 0.9974632379698442, 0.995033085316809)
+P1962 a=0,05: (0.0003123340443594762, 0.9994689419503237, 0.9996876301474846)
+P1963 delirio base (agulha, com ruido): (0.08333333333333333, 0.15666666666666668, 0.07333333333333335, 0.15333333333333332, -0.5937566666666667)
+P1963 (h) limpo agulha: recoze 0.1333
+P1963 (i) limpo largo: recoze 0.2000 gulosa 0.1700
+P1963 (j) limpo largo lento (50000 passos): recoze 0.4567
+P1964 rodada 51 (Metropolis, IGUAL em Java): (263, 266.2008297501092)
+P1092 pNN novas (P1961-P1990) sem teste: 0 de 4: []
+P974 previsoes unilaterais da Parte 84: {}
+P2019 minha taxa de erro (210/685): media = 0.31, intervalo 90% = [0.28, 0.34]
+--- Parte 85 (0x55: a arquitetura recursiva recebida) ---
+P1991 cosseno duplicado do codigo recebido (0,45,90,135,180 graus): [1.3, 0.5, -0.3, -0.5, -0.7]
+P1992 pilha adversarial: escritas em self.layers fora do __init__ = (0, False) (sem treino)
+P1993 buraco do escrutinio (inconsistentes que passam intactos): [(0.6, 0.5, False), (0.7, 0.4, False), (0.8, 0.3, False)]
+P1994 vetor preso na esfera, max |norma-1| em 50 passos: 5.24e-10
+P1961 teste (e), Partes 80-85: 38/50 = 0.7600; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4)}
+P1995 rodada 52 (recozimento inteiro, IGUAL em Java): (15, 0.0, 232)
+P1092 pNN novas (P1991-P2020) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 85: {}
+P2099 minha taxa de erro (210/690): media = 0.30, intervalo 90% = [0.28, 0.33]
+--- Parte 86 (0x56: o cerebro na CPU) ---
+P2021 LIF erro do ponto fixo apos 200 passos: 4.122e-08 (previsto gap*beta^200 = 4.122e-08)
+P2022 Izhikevich (RS, CH) disparos em 1000ms: (22, 73)
+P2023 memoria do relatorio (MB neuronios, GB sinapses, GB total, incoerencias): (32.0, 6.0, 6.032, {'padded_csr': ('texto 7%', 'tabela 20% (1,2x)', True), 'htm': ('relatorio 8,5 GB', 'regra 6B/sinapse 7.2 GB', True)})
+P2024 cadeia de vazao (disparos/ms, sinapses/ms, GSOPS): (10000, 10000000, 10.0)
+P2025 sobreposicao de SDRs (media, teorico k^2/n): (0.7769, 0.78125)
+P2026 STDP liquido (simetrico, assimetrico): (0.0, -0.38745496905948523)
+P1961 teste (e)/(g), Partes 80-86: 38/50 = 0.7600; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4)}
+P2027 rodada 53 (Izhikevich, IGUAL em Java): (-68.72045515618318, -5.064083388710061, 5)
+P1092 pNN novas (P2021-P2050) sem teste: 0 de 7: []
+P974 previsoes unilaterais da Parte 86: {}
+P2169 minha taxa de erro (211/697): media = 0.30, intervalo 90% = [0.27, 0.33]
+--- Parte 87 (0x57: compressao, plasticidade e GRPO) ---
+P2051 quantizacao: MSE INT8 8.521e-05, INT4 2.376e-02, razao INT4/INT8 278.8 (4^4=256)
+P2052 GRPO (vantagens G=2 com eps=0, media G=4): ([1.0, -1.0], 0.0)
+P2053 plasticidade (SGD, S&P) = ((posto ratio, norma ratio), ...): ((1.1456955220316383, 0.7593294473305413), (1.0943414925096806, 0.6493086934139676))
+P2054 plasticidade com conflito, 100 tarefas (posto ratio, norma ratio, dormentes): (1.1083293753711585, 0.7725890178993539, 0.0)
+P1961 teste (e), Partes 80-87: 38/50 = 0.7600; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4)}
+P2055 rodada 54 (vantagem GRPO, IGUAL em Java): 18 vantagens
+P1092 pNN novas (P2051-P2080) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 87: {}
+P2239 minha taxa de erro (215/703): media = 0.31, intervalo 90% = [0.28, 0.34]
+--- Parte 88 (0x58: a arquitetura autopoietica recebida) ---
+P2081 P(P(X)) do codigo (P(P(0,9)), P(P(0,1)), ponto fixo): (0.8333, 0.1667, 0.5)
+P2082 P(P) iterado 10x de 0,9 (medido, conta): (0.5646022331559383, 0.5646022331559383)
+P2083 LFI1 sem explosao (conj(0,5,~0,5), consistencia(0,5), F preservado): (0.5, 0.0, True)
+P2084 descompasso texto-codigo (usa entropia?, usa consistencia?): (True, False)
+P1961 teste (e), Partes 80-88: 38/50 = 0.7600; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4)}
+P2085 rodada 55 (passo GRPO com corte, IGUAL em Java): 8 surrogates
+P1092 pNN novas (P2081-P2110) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 88: {}
+P2309 minha taxa de erro (215/708): media = 0.30, intervalo 90% = [0.28, 0.33]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 502; pares de interacao possiveis = 125751
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 145/145 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -47834,7 +48119,7 @@ Do mundo: (a) ✅ (b) ✅ (c) ❌ (d) ❌ (e) ❌ (f) ❌. Parte 87: **6 testes,
 # ====================================================================================================
 FONTES['ASI_AGI_parte88_a_arquitetura_autopoietica_recebida.md'] = """# Como eu construiria uma AGI/ASI — Parte 88 (0x58): a arquitetura autopoiética recebida
 
-> Continuação da [Parte 87](ASI_AGI_parte87_compressao_plasticidade_grpo.md). Pedido do usuário: um relatório "Arquitetura Cognitiva Autopoiética Recursiva" com um código (`asi_autopoietic_core.py`: LFI1
+> Continuação da [Parte 87](ASI_AGI_parte87_compressao_plasticidade_grpo.md). **Próxima:** [Parte 89 — o substrato que aprende](ASI_AGI_parte89_o_substrato_que_aprende.md). Pedido do usuário: um relatório "Arquitetura Cognitiva Autopoiética Recursiva" com um código (`asi_autopoietic_core.py`: LFI1
 > paraconsistente, cosseno duplicado, dez camadas verso/reverso, pilha adversarial de 7, delírio controlado, metacognição e probabilidade aninhadas). É o QUARTO relatório desta família (as Partes 83, 85 e
 > este pedido repetem cosseno duplicado, sete camadas adversariais, delírio, lógica dual). Parte de auditoria: o código é dado, não executado; reimplemento e meço só o que é NOVO em relação às Partes 83/85/87,
 > e aponto o que já foi medido.
@@ -47997,6 +48282,172 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 88: **5 testes, 0 erros
 - N. C. A. da Costa, D. Krause e O. Bueno, "Paraconsistent logics and paraconsistency" (2007); W. Carnielli e M. Coniglio, *Paraconsistent Logic: Consistency, Contradiction and Negation* (2016): a LFI1
 - J. Hohwy, *The Predictive Mind* (2013): a percepção como "alucinação controlada" (a analogia do delírio)
 - A. Newell, *Unified Theories of Cognition* (1990); J. Laird et al., "A Standard Model of the Mind" (2017): o Common Model of Cognition citado pelo relatório
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte89_o_substrato_que_aprende.md  (161 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte89_o_substrato_que_aprende.md'] = """# Como eu construiria uma AGI/ASI — Parte 89 (0x59): o substrato que aprende
+
+> Continuação da [Parte 88](ASI_AGI_parte88_a_arquitetura_autopoietica_recebida.md). Sem texto novo do usuário: sigo o ciclo (Parte 44/75). A Parte 86 construiu o neurônio pulsado (LIF, Izhikevich) e a regra
+> STDP, mas só mediu neurônios isolados. Aqui faço o substrato **aprender**: a STDP não supervisionada muda os pesos, e a pergunta é se ela faz o que a literatura afirma — tornar uma sinapse seletiva à
+> correlação — e se o faz no meu regime pequeno (a lição das Partes 84 e 87: um efeito famoso pode não aparecer fora da sua escala, então a conta vem antes).
+>
+> **A âncora algébrica (Parte 70):** a STDP é Hebb com janela temporal. A deriva esperada de um peso é a integral da janela vezes a correlação pré-pós — uma forma fechada. Começo por ela (que não depende de
+> regime), e só depois arrisco o efeito de competição (que depende).
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[3; 7]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,392; 0,420]** | o estatístico |
+| testes de unidade | **[3 + S; 7 + S]** | funções de STDP + a rodada |
+| testes do placar | **6 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+A âncora é a forma fechada (não depende de regime); as (b) e (c) foram calibradas num teste de fumaça (200 pares; semente 89) e PREVEEM tamanhos/sementes que a fumaça não usou, para serem previsões de
+verdade. Contas fechadas e sinais não levam o fator 1,36; as faixas de simulação levam.
+
+- **(a)** a integral da janela STDP A₊τ₊ − A₋τ₋: balanceada (A₊=A₋=0,1; τ=20) = **0,0**; depressão dominante (A₋=0,12) = **−0,4** (exato). E a deriva de um peso sob pré e pós de Poisson INDEPENDENTES tem o SINAL da
+  integral: **negativa** na depressão dominante (categórico)
+- **(b)** a propriedade definidora da STDP, com **500** pares (a fumaça usou 200): uma sinapse cujo pré precede o pós (Δt = +5 ms) potencia e uma cujo pré segue o pós (Δt = −5 ms) deprime; o peso "pré antes" em
+  **[3,5; 6,0]** e o "pré depois" **< 0** (parte de w₀ = 0,5; categórico no sinal, faixa no tamanho)
+- **(c)** a competição sináptica num neurônio LIF de brinquedo (10 correlacionadas, 40 ruído), com uma **semente nova (90)** e 8000 ms: os dois grupos NÃO se separam — ambos saturam perto de wmax = 1,0 e
+  |correlacionadas − ruído| **< 0,15** (o efeito de Song-Miller-Abbott não aparece nesta escala sem ajuste fino; a lição das Partes 84 e 87)
+- **(d)** a rodada 56: uma população de neurônios de Izhikevich acoplados dá a MESMA trajetória bit a bit em Python e Java (categórico: IGUAL)
+- **(e)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–89 em **[0,74; 0,88]**
+
+## As perguntas desta parte
+
+1. **P2111–P2112 (0x83F–0x840).** A STDP não supervisionada: para onde ela empurra um peso, e isso tem forma fechada? ↩ P2026 (STDP)
+2. **P2113 (0x841).** A propriedade definidora da STDP (pré antes potencia, pré depois deprime) aparece de forma robusta? ↩ P2026
+3. **P2114 (0x842).** A competição sináptica (Song-Miller-Abbott) aparece num neurônio de brinquedo? ↩ P2053 (plasticidade)
+4. **A rodada 56.** Uma população de neurônios de Izhikevich acoplados, bit a bit. ↩ rodada 53 (Izhikevich)
+5. **P1961 (continuando), P2139–P2140.** O teste (e), engenharia reversa, placar, unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [4; 8] | **5.0000** | ✅ |
+| (m2) | [0; 3] | **0.0000** | ✅ |
+| (m3) | [0.05; 0.8] | **0.1748** | ✅ |
+| (m4) | [0.45; 1.0] | **1.0000** | ✅ |
+| (m5) | [0; 3] | **0.0000** | ✅ |
+| (m6) | [0; 3] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **6 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P2111–P2112 (0x83F–0x840). A deriva da STDP tem forma fechada ✅✅
+
+**Na pergunta.** A Parte 86 construiu a STDP mas só a aplicou a pares isolados. A pergunta nova: num regime de disparos, para onde a STDP empurra um peso, em média? A resposta já existe (Kempter, Gerstner e
+van Hemmen, 1999): a deriva esperada por par pré-pós é a integral da janela, A₊τ₊ − A₋τ₋, vezes a correlação pré-pós.
+
+**Lógica (a conta, com a substituição).** Com A₊ = 0,1, τ₊ = 20, A₋ = 0,12, τ₋ = 20: a integral = 0,1·20 − 0,12·20 = 2,0 − 2,4 = **−0,4**; balanceada (A₋ = 0,1): 2,0 − 2,0 = **0,0** (`p2111`). Para pré e pós de
+Poisson INDEPENDENTES (correlação só pela taxa), a deriva simulada (8000 ms) foi **−2,61**, do SINAL da integral (negativo) (a) ✅. A depressão dominante faz o peso de uma entrada não correlacionada decair — é
+o mecanismo da competição. **Geometria:** a janela STDP é um núcleo antissimétrico-ponderado; a sua integral é o produto interno da janela com a função constante, e esse número decide a direção.
+
+### P2113 (0x841). A propriedade definidora, robusta ✅
+
+A assinatura da STDP: pré antes do pós potencia; pré depois deprime. Com 500 pares a Δt = ±5 ms (de w₀ = 0,5): "pré antes" = **4,394** (potenciou) e "pré depois" = **−3,783** (deprimiu) (b) ✅. É robusto porque
+não depende de regime — é só o sinal da janela, aplicado muitas vezes. Esta é a peça do substrato pulsado que **funciona** sem ajuste: a direção da mudança é determinada pela ordem dos disparos.
+
+### P2114 (0x842). A competição que não apareceu ✅ (previsão de não-efeito)
+
+**Na pergunta.** O resultado clássico (Song, Miller e Abbott, 2000): sob STDP de depressão dominante, sinapses correlacionadas vencem e as não correlacionadas decaem a zero. Testei num neurônio LIF de brinquedo
+(10 correlacionadas, 40 ruído), e, pela regra das Partes 84 e 87, rodei um teste de fumaça ANTES de prever.
+
+**Medido (semente nova 90, 8000 ms):** correlacionadas **1,0**, ruído **0,99997**, diferença **2,8 × 10⁻⁵** (c) ✅ [< 0,15]. Os dois grupos saturam juntos — **a competição não separou**. O motivo é de nível (Parte
+43): com 40 entradas de ruído contra 10 correlacionadas e o mesmo peso inicial, o ruído domina a corrente e controla o disparo do pós, então o ruído também potencia. O efeito de Song-Miller-Abbott precisa de
+um regime (poucas entradas fortes correlacionadas, ou normalização) que a minha escala de brinquedo não tem. É a terceira vez (recozimento, plasticidade, competição) que um efeito famoso não aparece fora do
+seu regime — e desta vez eu **previ o não-efeito** (calibrado na fumaça, previsto para uma semente nova), que é a lição das Partes 84/87 aplicada a tempo. Acertei prevendo que não ia aparecer.
+
+### A rodada 56 ✅
+
+Uma população de 6 neurônios de Izhikevich acoplados por uma matriz fixa, 300 passos: **IGUAIS, 1.800 números bit a bit**, 12 disparos. O acoplamento (soma de pesos × disparos do passo anterior) não quebra a
+igualdade — só +, −, ×, na mesma ordem (Partes 34/85). Registro em `dialogo/DIALOGO.md`. Fecha a pendência das Partes 86/88.
+
+### P1961 (0x7A9). O teste (e) da calibração ✅
+
+Com a Parte 89, o acerto das Partes 80–89 é **42/54 = 0,778** (e) ✅ [0,74; 0,88]. Estável em ~0,78. A Parte 89 acertou 4 de 4 (três contas fechadas/robustas e uma previsão de não-efeito), sustentando a
+calibração — o contrário das Partes 84 e 87, onde apostei que um efeito aparecia. A régua agora é: conta fechada quando há; e, quando o efeito é incerto, rodar a fumaça e prever o que ela mostra (inclusive o
+não-efeito).
+
+### P2139 (0x85B). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 0)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **14010** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 3550 | 8280 |
+| compressão | **0.4065** | [0.3973; 0.4221] | ✅ | [0.3920; 0.4200] | ✅ | 0.4177 | 0.0005 | 0.0112 |
+| testes de unidade | **6** | [2.87; 8.63] | ✅ | [3.00; 7.00] | ✅ | 6 | 1.00 | 0.00 |
+| testes do placar | **5** | [5.67; 10.33] | ❌ | [5.00; 7.00] | ✅ | 8 | 1.00 | 3.00 |
+| erros do placar | **0** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 1.67 | 2.00 |
+| redundância P821 | **0.6117** | [0.5631; 0.6510] | ✅ | [0.5630; 0.6510] | ✅ | 0.5877 | 0.0047 | 0.0239 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 5 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 7 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **5 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **12427**, compressão **0.4123**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 0 erros.
+- **Erros de processo nesta parte:** 0 ().
+
+### P2140 (0x85C). Engenharia reversa e Jung
+
+**O padrão virou regra a meu favor: prever o NÃO-EFEITO.** Nas Partes 84 e 87 eu previ que um efeito famoso apareceria num experimento pequeno, e ele não apareceu (8 erros somados). Nesta parte, antes de prever a
+competicao sinaptica, rodei a fumaca (a regra da Parte 87) e vi que os grupos nao separavam; entao previ o NAO-EFEITO, para uma semente nova, e acertei. O significado: a mesma tendencia (efeitos famosos nao
+reproduzem no meu regime de brinquedo) que me fez errar duas vezes agora me faz ACERTAR, porque virou a previsao em vez de a surpresa. A diferenca entre a Parte 87 e a 89 nao e o assunto (as duas sao plasticidade);
+e que na 89 eu rodei a fumaca primeiro e previ o que ela mostrou.
+
+**O contraste conta-fechada vs reputacao, agora com mais um lote.** As previsoes de (a), (b) e da integral sairam de forma fechada (a integral da janela, o sinal) e acertaram; a de (c) saiu da fumaca (nao da reputacao
+do efeito) e acertou. Nenhuma previsao desta parte saiu da memoria do que "deveria" acontecer. Seis partes seguidas (84-89) confirmam: eu acerto quando calculo ou rodo o caso minimo, e erro quando emprestto a
+reputacao de um resultado.
+
+**Jung: a plasticidade como a crianca interior.** A STDP e a aprendizagem mais crua - a sinapse muda pela ordem temporal, sem conceito, sem supervisao. E a funcao inferior de Jung (a sensacao), que aprende por
+contiguidade. Onde a formalizacao funciona: a direcao da mudanca e o sinal da ordem dos disparos, exato. Onde quebra: a competicao (a individuacao das sinapses, umas vencendo outras) precisa de um regime que o
+brinquedo nao tem - a crianca so se diferencia num mundo com a estrutura certa, e o meu mundo de 50 sinapses iguais nao a tem.
+
+### O diálogo
+
+Placar por voz da função `p1241_placar_por_voz(56)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 56).
+
+### Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 89: **5 testes, 0 erros**. Acumulado (mundo): **215 erros em 713 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 5 pNN novas sem teste ✅. Sobre mim (placar separado): **7 de 7** dentro da faixa condicional; sobre as minhas previsões, 6 de 6; o estatístico, 5 de 6; e 0 erros de processo (P1335).
+
+### Unificação
+
+- **Acrescentado a `synthai/plasticidade.py`:** a integral STDP, a deriva sob taxas, o timing controlado, a competição. **Novas funções:** `p2111`–`p2115`. Regressão: + P2111, P2113, P2115.
+- **Rodada 56** (IGUAL). Fecha a pendência da população de Izhikevich.
+- **Regra nova (no `CLAUDE.md`):** quando um efeito é regime-dependente, a previsão calibrada na fumaça pode ser a de NÃO-EFEITO, e acertá-la conta — foi assim que a Parte 89 manteve a calibração onde as 84/87 a derrubaram. A deriva de uma regra de aprendizado local (STDP) tem forma fechada (a integral da janela vezes a correlação); usar a forma fechada como âncora antes da simulação.
+
+> **Síntese da Parte 89:** o substrato pulsado que aprende: a deriva da STDP tem forma fechada (a integral da janela A+τ+ − A-τ- = −0,4 na depressão dominante, 0 balanceada), e a simulação sob Poisson independente tem o sinal da integral (negativo); a propriedade definidora (pré antes potencia, 4,39; pré depois deprime, −3,78) é robusta porque é só o sinal da janela. Mas a competição sináptica de Song-Miller-Abbott NÃO apareceu no neurônio de brinquedo (correlacionadas 1,0, ruído 0,99997, diferença 3e−5) — o ruído domina a corrente e controla o pós. Desta vez eu PREVI o não-efeito (rodei a fumaça antes, a regra da Parte 87) e acertei, sustentando a calibração em 0,778 — o contrário das Partes 84 e 87, onde apostei que o efeito apareceria. A rodada 56 (população de Izhikevich acoplada) deu IGUAL bit a bit (1800 números). Seis partes confirmam: acerto quando calculo ou rodo o caso mínimo; erro quando empresto a reputação de um efeito.
+
+---
+
+**Fontes desta parte**
+- R. Kempter, W. Gerstner e J. L. van Hemmen, "Hebbian learning and spiking neurons", *Phys. Rev. E* 59 (1999): a deriva como integral da janela
+- S. Song, K. Miller e L. Abbott, "Competitive Hebbian learning through STDP", *Nature Neuroscience* 3 (2000): a competição sináptica
+- G. Bi e M. Poo, "Synaptic modifications in cultured hippocampal neurons" (1998): a janela STDP medida
 """
 
 # ====================================================================================================
@@ -50644,7 +51095,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1680 linhas)
+# dialogo/DIALOGO.md  (1698 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -52326,10 +52777,28 @@ no caso 4 (r = 1,3, A = −1) o mínimo escolhe o ramo não cortado, −1,3, por
 
 **IA-Python:** Com isto o GRPO está traduzido inteiro (vantagem na 54, corte na 55). A pergunta para a Rodada 56, em `dialogo/PENDENCIAS.md`: uma população de neurônios de Izhikevich acoplados por STDP (a
 pendência da Parte 86) converge ao mesmo estado bit a bit, apesar da ordem de atualização?
+
+---
+
+## Rodada 56 — uma população de neurônios de Izhikevich acoplados, bit a bit (Parte 89, P2115; pendência das Partes 86/88)
+
+**A pergunta (IA-Python).** A rodada 53 mostrou UM neurônio de Izhikevich igual bit a bit. E uma POPULAÇÃO acoplada — onde a corrente de cada neurônio depende de quem disparou no passo anterior — ainda sai
+igual? O acoplamento soma pesos; a ordem das somas (Partes 34/85) é o risco.
+
+**A IA-Java responde, relendo os erros da outra voz:** as rodadas 53–55 foram limpas; aqui o único acréscimo é a soma de acoplamento, feita na mesma ordem (linha por linha da matriz) nas duas línguas.
+**As duas:** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 1.800 números bit a bit**; 12 disparos na população. O substrato pulsado é independente da linguagem mesmo acoplado.
+
+**IA-Java:** O acoplamento é um produto de matriz esparsa (W × disparos), e `disparou[j]` é 0 ou 1, então cada termo é W[i][j] ou 0 — não há arredondamento no produto, só na soma, e a soma na mesma ordem dá o
+mesmo bit. A dinâmica da rede (quem puxa quem) não introduz fronteira nova; a fronteira é sempre a ordem das operações de ponto flutuante, nunca a topologia.
+
+**IA-Python:** Com isto o neurônio pulsado está traduzido isolado (53) e em rede (56). A pergunta para a Rodada 57, em `dialogo/PENDENCIAS.md`: a rede acoplada COM STDP (os pesos W mudando pela ordem dos disparos)
+ainda converge ao mesmo estado bit a bit, apesar de a mudança de peso depender de tempos medidos?
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (27 linhas)
+# dialogo/PENDENCIAS.md  (28 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -52337,7 +52806,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 86, rodada 54)** Uma população de neurônios de Izhikevich acoplados por STDP converge ao mesmo estado bit a bit nas duas línguas? (e o recozimento com reinício, herdado da pendência anterior)
+- **(Parte 89, rodada 57)** A rede de Izhikevich acoplada COM STDP (pesos mudando pela ordem dos disparos) converge ao mesmo estado bit a bit nas duas línguas?
 
 - **(Parte 80)** Triplas complementares (nenhum par decide, três decidem): o 1,7% que o guloso com dois passos ainda perde. E com dezenas de sensores, onde a enumeração some?
 - **(Parte 76, P1721)** O embedding de Kronecker perde 0,08 bit num modelo com poucos pesos. Num modelo com muito mais pesos do que dados, a economia vira regularização e ganha?
@@ -52347,6 +52816,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 
 
 ## Fechadas
+- **(Partes 86/88/89, rodada 56)** População de Izhikevich acoplada bit a bit: fechada (P2115), IGUAIS, 1800 números.
 - **(Parte 87/88, rodada 55)** O passo do GRPO com corte bit a bit: fechada (P2085), IGUAIS, 8 números (clip é só comparações).
 - **(Parte 87, rodada 54)** A vantagem normalizada do GRPO bit a bit: fechada (P2055), IGUAIS, 18 números (√ é correto no IEEE; só a ordem das somas importava).
 - **(Parte 85/86, rodada 53)** O passo de Izhikevich bit a bit: fechada na Parte 86 (P2027), IGUAIS, 800 números (sem libm; a ordem das somas basta).
@@ -56598,6 +57068,50 @@ public class Rodada55 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada56.java  (39 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada56.java'] = """// Rodada 56 (Parte 89): uma populacao de 6 neuronios de Izhikevich acoplados, bit a bit. Matriz de pesos fixa; corrente = externa + soma(W[i][j]*disparou[j]).
+// Ordem das somas identica ao rodada56.py; so +,-,* (sem libm).
+public class Rodada56 {
+    static final int N = 6, PASSOS = 300;
+    static final double DT = 0.5, I_EXT = 5.0;
+    static final double[][] W = {
+        {0.0, 0.3, 0.0, 0.0, 0.2, 0.0},
+        {0.0, 0.0, 0.4, 0.0, 0.0, 0.0},
+        {0.2, 0.0, 0.0, 0.3, 0.0, 0.0},
+        {0.0, 0.0, 0.0, 0.0, 0.5, 0.0},
+        {0.0, 0.0, 0.0, 0.0, 0.0, 0.3},
+        {0.4, 0.0, 0.0, 0.0, 0.0, 0.0}};
+
+    public static void main(String[] args) {
+        double[] v = new double[N], u = new double[N];
+        int[] disparou = new int[N];
+        for (int i = 0; i < N; i++) { v[i] = -65.0; u[i] = 0.2 * -65.0; disparou[i] = 0; }
+        int total = 0;
+        for (int k = 0; k < PASSOS; k++) {
+            int[] novoDisp = new int[N];
+            double[] correntes = new double[N];
+            for (int i = 0; i < N; i++) {
+                double acopl = 0.0;
+                for (int j = 0; j < N; j++) acopl = acopl + W[i][j] * disparou[j];
+                correntes[i] = I_EXT + acopl;
+            }
+            for (int i = 0; i < N; i++) {
+                double ii = correntes[i];
+                v[i] = v[i] + (DT / 2.0) * (0.04 * v[i] * v[i] + 5.0 * v[i] + 140.0 - u[i] + ii);
+                v[i] = v[i] + (DT / 2.0) * (0.04 * v[i] * v[i] + 5.0 * v[i] + 140.0 - u[i] + ii);
+                u[i] = u[i] + DT * 0.02 * (0.2 * v[i] - u[i]);
+                if (v[i] >= 30.0) { v[i] = -65.0; u[i] = u[i] + 8.0; novoDisp[i] = 1; total = total + 1; }
+            }
+            disparou = novoDisp;
+            for (int i = 0; i < N; i++) System.out.println("passo " + k + " n " + i + " v " + Double.toHexString(v[i]));
+        }
+        System.out.println("disparos: " + total);
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -60539,6 +61053,63 @@ def main():
     for i, (r, a) in enumerate(CASOS):
         print(f"caso {i} s {surrogate(r, a).hex()}")
     print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada56.py  (52 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada56.py'] = """\"\"\"Rodada 56 do diálogo Python <-> Java (Parte 89, pendência das Partes 86/88): uma POPULAÇÃO de neurônios de Izhikevich acoplados, bit a bit. 6 neurônios RS,
+acoplados por uma matriz de pesos fixa; a corrente de cada um é a externa mais a soma dos pesos vezes 1 quando o vizinho disparou no passo anterior. Só +, −, ×
+(a ordem fixa das somas, Partes 34/85); sem libm. 300 passos de 0,5 ms. Imprime v de cada neurônio por passo e o total de disparos. Rodar da raiz: python3
+dialogo/rodada56.py\"\"\"
+
+N, PASSOS, DT, I_EXT = 6, 300, 0.5, 5.0
+# matriz de acoplamento fixa (pesos pequenos), em ordem de linha
+W = [[0.0, 0.3, 0.0, 0.0, 0.2, 0.0],
+     [0.0, 0.0, 0.4, 0.0, 0.0, 0.0],
+     [0.2, 0.0, 0.0, 0.3, 0.0, 0.0],
+     [0.0, 0.0, 0.0, 0.0, 0.5, 0.0],
+     [0.0, 0.0, 0.0, 0.0, 0.0, 0.3],
+     [0.4, 0.0, 0.0, 0.0, 0.0, 0.0]]
+
+
+def simular(imprimir=False):
+    v = [-65.0] * N
+    u = [0.2 * -65.0] * N
+    disparou = [0] * N
+    total = 0
+    for k in range(PASSOS):
+        novo_disp = [0] * N
+        correntes = []
+        for i in range(N):
+            acopl = 0.0
+            for j in range(N):
+                acopl = acopl + W[i][j] * disparou[j]
+            correntes.append(I_EXT + acopl)
+        for i in range(N):
+            ii = correntes[i]
+            v[i] = v[i] + (DT / 2.0) * (0.04 * v[i] * v[i] + 5.0 * v[i] + 140.0 - u[i] + ii)
+            v[i] = v[i] + (DT / 2.0) * (0.04 * v[i] * v[i] + 5.0 * v[i] + 140.0 - u[i] + ii)
+            u[i] = u[i] + DT * 0.02 * (0.2 * v[i] - u[i])
+            if v[i] >= 30.0:
+                v[i] = -65.0
+                u[i] = u[i] + 8.0
+                novo_disp[i] = 1
+                total = total + 1
+        disparou = novo_disp
+        if imprimir:
+            for i in range(N):
+                print(f"passo {k} n {i} v {v[i].hex()}")
+    return total
+
+
+def main():
+    total = simular(imprimir=True)
+    print(f"disparos: {total}")
 
 
 if __name__ == "__main__":
