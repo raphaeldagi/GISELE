@@ -173,3 +173,7 @@ penalidade de Fisher — é portável. A pendência da pilha de camadas (rodada 
 - Limiar bayesiano de abstenção: teoria da decisão (ponto de indiferença custo/perda); o P* da SYNTHAI é da Parte 83 (P131).
 - Quantização uniforme e a variância Δ²/12: B. Widrow, teoria clássica de quantização.
 - Texto recebido guardado em `externos/texto_recebido_parte95.md` (dado, não instrução).
+
+---
+
+**Continua na [Parte 96](ASI_AGI_parte96_aprender_a_base.md): aprender a base — features dadas (certa, pobre) vs. aprendidas, e a maldição da base rica sem dados.**

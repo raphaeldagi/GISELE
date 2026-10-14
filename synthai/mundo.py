@@ -270,3 +270,92 @@ def controlar_nl(politica, s0, alvo, passos=30, kappa=0.1):
         s = transicao_nl(s, a, kappa)
         custo += (s[0] - alvo) ** 2 + s[1] * s[1]
     return custo, s
+
+
+# --- Parte 96: aprender a base (features dadas vs. aprendidas) ---
+
+def monomios(grau):
+    """Mapa de características: todos os monômios de (s0, s1, a) até `grau` (inclui a constante 1). Devolve feat(s0,s1,a)->lista."""
+    expoentes = []
+    for i in range(grau + 1):
+        for j in range(grau + 1 - i):
+            for k in range(grau + 1 - i - j):
+                expoentes.append((i, j, k))
+
+    def feat(s0, s1, a):
+        return [(s0 ** i) * (s1 ** j) * (a ** k) for (i, j, k) in expoentes]
+    feat.m = len(expoentes)
+    return feat
+
+
+def ajustar_features(X, U, Y, feat):
+    """Mínimos quadrados genéricos com um mapa de características `feat(s0,s1,a)->vetor` (equações normais m×m, uma solução por
+    saída). Devolve a lista de vetores de pesos [theta_s0, theta_s1]."""
+    Z = [feat(x[0], x[1], u) for x, u in zip(X, U)]
+    m = len(Z[0])
+    ZtZ = [[sum(Z[t][i] * Z[t][j] for t in range(len(Z))) for j in range(m)] for i in range(m)]
+    # regularização de Tikhonov minúscula para estabilizar bases grandes (não muda o caso de posto cheio)
+    for i in range(m):
+        ZtZ[i][i] += 1e-12
+    thetas = []
+    for d in range(2):
+        Zty = [sum(Z[t][i] * Y[t][d] for t in range(len(Z))) for i in range(m)]
+        thetas.append(resolver_linear(ZtZ, Zty))
+    return thetas
+
+
+def residuo_features(thetas, X, U, Y, feat):
+    """RMS do erro de predição de um modelo de características `feat` com pesos `thetas`."""
+    soma = 0.0
+    for x, u, y in zip(X, U, Y):
+        z = feat(x[0], x[1], u)
+        pred = [sum(z[i] * thetas[d][i] for i in range(len(z))) for d in range(2)]
+        soma += (pred[0] - y[0]) ** 2 + (pred[1] - y[1]) ** 2
+    return math.sqrt(soma / len(Y))
+
+
+class MLP1:
+    """MLP de uma camada escondida (tanh), entradas (s0,s1,a) -> 2 saídas, treinada por gradiente. APRENDE as características
+    (os pesos da camada escondida), em vez de recebê-las. Só biblioteca padrão."""
+    def __init__(self, h=8, semente=96):
+        rng = random.Random(semente)
+        self.h = h
+        self.W1 = [[rng.uniform(-0.5, 0.5) for _ in range(3)] for _ in range(h)]
+        self.b1 = [0.0] * h
+        self.W2 = [[rng.uniform(-0.5, 0.5) for _ in range(h)] for _ in range(2)]
+        self.b2 = [0.0, 0.0]
+
+    def _forward(self, x):
+        z = [sum(self.W1[j][k] * x[k] for k in range(3)) + self.b1[j] for j in range(self.h)]
+        hid = [math.tanh(v) for v in z]
+        out = [sum(self.W2[d][j] * hid[j] for j in range(self.h)) + self.b2[d] for d in range(2)]
+        return hid, out
+
+    def prever(self, s0, s1, a):
+        return self._forward([s0, s1, a])[1]
+
+    def treinar(self, X, U, Y, passos=4000, lr=0.02, semente=96):
+        rng = random.Random(semente)
+        n = len(X)
+        dados = [([X[i][0], X[i][1], U[i]], Y[i]) for i in range(n)]
+        for _ in range(passos):
+            x, y = dados[rng.randrange(n)]
+            hid, out = self._forward(x)
+            dout = [out[d] - y[d] for d in range(2)]  # gradiente do MSE/2
+            for d in range(2):
+                for j in range(self.h):
+                    self.W2[d][j] -= lr * dout[d] * hid[j]
+                self.b2[d] -= lr * dout[d]
+            dhid = [sum(dout[d] * self.W2[d][j] for d in range(2)) * (1.0 - hid[j] * hid[j]) for j in range(self.h)]
+            for j in range(self.h):
+                for k in range(3):
+                    self.W1[j][k] -= lr * dhid[j] * x[k]
+                self.b1[j] -= lr * dhid[j]
+        return self
+
+    def residuo(self, X, U, Y):
+        soma = 0.0
+        for x, u, y in zip(X, U, Y):
+            out = self.prever(x[0], x[1], u)
+            soma += (out[0] - y[0]) ** 2 + (out[1] - y[1]) ** 2
+        return math.sqrt(soma / len(Y))
