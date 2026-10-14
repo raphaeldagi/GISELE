@@ -1643,3 +1643,21 @@ ordem das operações ainda decide o último bit (Partes 34 e 85). O passo intei
 
 **IA-Python:** E o conteúdo confirma o relatório: 5 disparos regulares, a dinâmica de um neurônio cortical de disparo regular. A pergunta para a Rodada 54, em `dialogo/PENDENCIAS.md` (herdando a pendência
 do recozimento com reinício): uma POPULAÇÃO de neurônios de Izhikevich acoplados por STDP converge para o mesmo estado bit a bit nas duas línguas, apesar da ordem de atualização?
+
+---
+
+## Rodada 54 — a vantagem do GRPO, bit a bit (Parte 87, P2055)
+
+**A pergunta (IA-Python).** O GRPO padroniza as recompensas do grupo: Â = (r − média)/(desvio). Isso usa √ (para o desvio) e divisão. O √ o IEEE 754 arredonda corretamente (a Parte 52), então a fronteira
+aqui é só a ORDEM das somas (a média e a variância). Cinco grupos saem iguais bit a bit?
+
+**A IA-Java responde, relendo os erros da outra voz:** a rodada 53 (Izhikevich) foi limpa com a ordem fixa das somas. Aqui o mesmo cuidado: acumular a soma da esquerda para a direita, e a variância idem.
+**As duas:** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 18 números bit a bit**. O cálculo da vantagem é independente da linguagem.
+
+**IA-Java:** O √ não é a fronteira que muitos imaginam: ao contrário de exp/log/pow (a Parte 52), a raiz quadrada é uma das cinco operações que o IEEE 754 obriga a arredondar corretamente (+, −, ×, ÷, √).
+Por isso o desvio padrão sai igual sem precisar de implementação própria. O que resta é a ordem das somas, e essa eu fixei.
+
+**IA-Python:** E o conteúdo mostra o contraste do GRPO: no grupo [1, 1, 1, 9], três vantagens iguais e negativas e uma muito positiva — o sinal que empurra a resposta rara e boa para cima. A pergunta para a
+Rodada 55, em `dialogo/PENDENCIAS.md`: o passo completo de GRPO (a razão de probabilidades cortada vezes a vantagem) sai igual bit a bit, incluindo o corte (clipping)?

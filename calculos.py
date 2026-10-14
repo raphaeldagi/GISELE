@@ -7499,6 +7499,9 @@ def testes_de_regressao():
         "P2022": p2022_izhikevich_tipos() == (22, 73),
         "P2024": p2024_gsops() == (10000, 10000000, 10.0),
         "P2027": p2027_rodada53()[2] == 5,
+        "P2051": round(p2051_quantizacao_mse()[2]) == 279,
+        "P2052": p2052_vantagem_grpo() == ([1.0, -1.0], 0.0),
+        "P2055": len(p2055_rodada54()) == 18 and round(p2055_rodada54()[0], 6) == 1.0,
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9553,6 +9556,8 @@ VEREDITOS_P2099 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P2099, TESTES_P2099 = 210, 690
 VEREDITOS_P2169 = "(a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅"
 ERROS_P2169, TESTES_P2169 = 211, 697
+VEREDITOS_P2239 = "(a) ✅ (b) ✅ (c) ❌ (d) ❌ (e) ❌ (f) ❌"
+ERROS_P2239, TESTES_P2239 = 215, 703
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12093,16 +12098,16 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n in (84, 85, 86):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
+        if n in (84, 85, 86, 87):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12437,6 +12442,54 @@ def p2027_rodada53():
         v, u, d = r53.passo(v, u)
         disparos += d
     return v, u, disparos
+
+
+def p2051_quantizacao_mse(bits_a=8, bits_b=4, amostras=100000, semente=87):
+    """O erro de quantizacao uniforme (P2051; Parte 87): MSE ~ passo^2 ~ 4^-bits. Devolve (MSE INT8, MSE INT4, razao INT4/INT8 ~ 4^(8-4)=256)."""
+    import random
+    from synthai.plasticidade import mse_quantizacao
+    rng = random.Random(semente)
+    xs = [rng.gauss(0, 1) for _ in range(amostras)]
+    m_a = mse_quantizacao(bits_a, xs)
+    m_b = mse_quantizacao(bits_b, xs)
+    return m_a, m_b, m_b / m_a
+
+
+def p2052_vantagem_grpo():
+    """A vantagem normalizada do GRPO (P2052): devolve (vantagens de G=2 com eps=0 [sinal contrastivo puro +-1], media das vantagens de G=4 [=0 exato])."""
+    from synthai.plasticidade import vantagem_grpo
+    g2 = vantagem_grpo([5.0, 2.0], eps=0.0)
+    g4 = vantagem_grpo([1.0, 2.0, 3.0, 4.0])
+    return g2, sum(g4) / len(g4)
+
+
+def p2053_plasticidade(tarefas=20):
+    """A perda de plasticidade numa MLP pequena, tarefas independentes (P2053): devolve, para SGD puro e Shrink&Perturb, (razao de posto estavel tarefaN/tarefa1,
+    razao de norma de W1). As patologias (colapso de posto, crescimento de norma) NAO aparecem nesta escala (razoes ~1); o S&P contem mais a norma."""
+    from synthai.plasticidade import treinar_continuo
+    p = treinar_continuo(tarefas=tarefas, shrink_perturb=False)
+    sp = treinar_continuo(tarefas=tarefas, shrink_perturb=True)
+    return ((p["fim_posto"] / p["ini_posto"], p["fim_norma"] / p["ini_norma"]),
+            (sp["fim_posto"] / sp["ini_posto"], sp["fim_norma"] / sp["ini_norma"]))
+
+
+def p2054_plasticidade_conflito(tarefas=100):
+    """O diagnostico (P2054): tarefas que conflitam (professor fixo, rotulos invertidos a cada tarefa) e muitas. Devolve (razao de posto, razao de norma, dormentes
+    no fim). A patologia tambem nao aparece: o efeito da literatura e dependente de regime e nao reproduz nesta escala de brinquedo."""
+    from synthai.plasticidade import treinar_continuo
+    c = treinar_continuo(tarefas=tarefas, conflito=True, shrink_perturb=False)
+    return c["fim_posto"] / c["ini_posto"], c["fim_norma"] / c["ini_norma"], c["fim_dorm"]
+
+
+def p2055_rodada54():
+    """Rodada 54 (P2055; Parte 87): a vantagem normalizada do GRPO (dialogo/rodada54.py), IGUAL em Java bit a bit. So +,-,*,/,sqrt. Devolve a lista de todas as
+    vantagens dos grupos, para conferir que a rodada reproduz a funcao."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada54", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada54.py"))
+    r54 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r54)
+    return [a for rs in r54.GRUPOS for a in r54.vantagens(rs)]
 
 
 def p1578_autovalores_da_atencao():
@@ -13290,6 +13343,22 @@ def _parte_86():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2169, testes=TESTES_P2169)
     print(f"P2169 minha taxa de erro ({ERROS_P2169}/{TESTES_P2169}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_87():
+    print("--- Parte 87 (0x57: compressao, plasticidade e GRPO) ---")
+    m8, m4, razao = p2051_quantizacao_mse()
+    print(f"P2051 quantizacao: MSE INT8 {m8:.3e}, INT4 {m4:.3e}, razao INT4/INT8 {razao:.1f} (4^4=256)")
+    print(f"P2052 GRPO (vantagens G=2 com eps=0, media G=4): {p2052_vantagem_grpo()}")
+    print(f"P2053 plasticidade (SGD, S&P) = ((posto ratio, norma ratio), ...): {p2053_plasticidade()}")
+    print(f"P2054 plasticidade com conflito, 100 tarefas (posto ratio, norma ratio, dormentes): {p2054_plasticidade_conflito()}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (e), Partes 80-87: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    print(f"P2055 rodada 54 (vantagem GRPO, IGUAL em Java): {len(p2055_rodada54())} vantagens")
+    total, sem = p1092_pnn_sem_teste(2051, 2080)
+    print(f"P1092 pNN novas (P2051-P2080) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 87: {p974_previsoes_sem_largura(range(87, 88))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2239, testes=TESTES_P2239)
+    print(f"P2239 minha taxa de erro ({ERROS_P2239}/{TESTES_P2239}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -13326,7 +13395,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87}
 
 
 if __name__ == "__main__":

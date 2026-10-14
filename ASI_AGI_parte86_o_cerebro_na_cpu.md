@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 86 (0x56): o cérebro na CPU
 
-> Continuação da [Parte 85](ASI_AGI_parte85_a_arquitetura_recursiva_recebida.md). Pedido do usuário: dois relatórios — um sobre uma "AGI/ASI doméstica" de baixo custo (modelos de pesos abertos, GRPO/FP8,
+> Continuação da [Parte 85](ASI_AGI_parte85_a_arquitetura_recursiva_recebida.md). **Próxima:** [Parte 87 — compressão, plasticidade e GRPO](ASI_AGI_parte87_compressao_plasticidade_grpo.md). Pedido do usuário: dois relatórios — um sobre uma "AGI/ASI doméstica" de baixo custo (modelos de pesos abertos, GRPO/FP8,
 > Exo, Vector Graph RAG, MCP/E2B) e outro sobre "IA biologicamente inspirada em CPUs de consumo" (SNN, LIF, Izhikevich, STDP/R-STDP, SDR, NEF/SPA, com contas exatas de FLOPS, memória e vazão). Mais:
 > **"Grave na memória. Código final consolidado ao término de toda mensagem."**
 >
