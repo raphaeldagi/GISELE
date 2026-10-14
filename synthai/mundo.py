@@ -166,3 +166,95 @@ def comparar_mpc_reativo(alvo=1.0, passos=30, H=6, K=64, n_treino=400, semente=0
     m_mpc = sum(p[0] for p in por) / len(por)
     m_re = sum(p[1] for p in por) / len(por)
     return m_mpc, m_re, erro, por
+
+
+# --- Parte 94: o ótimo em forma fechada (LQR) e o mundo não-linear ---
+
+def resolver_riccati(A, B, Q, R, iteracoes=1000, tol=1e-15):
+    """Resolve a equação algébrica de Riccati discreta (DARE) por iteração até ponto fixo e devolve o ganho ótimo K (LQR).
+    P <- Q + Aᵀ P A − Aᵀ P B (R + Bᵀ P B)⁻¹ Bᵀ P A;  K = (R + Bᵀ P B)⁻¹ Bᵀ P A. A = 2x2, B = 2x1, R escalar.
+    Controle ótimo: u = −K (s − s*). Só +−×÷ (R + BᵀPB é escalar, invertido por divisão)."""
+    def matmul(M, N):
+        return [[sum(M[i][k] * N[k][j] for k in range(len(N))) for j in range(len(N[0]))] for i in range(len(M))]
+    def T(M):
+        return [[M[j][i] for j in range(len(M))] for i in range(len(M[0]))]
+    At, Bt = T(A), T(B)
+    P = [row[:] for row in Q]
+    Kant = None
+    for _ in range(iteracoes):
+        AtP = matmul(At, P)              # 2x2
+        BtP = matmul(Bt, P)              # 1x2
+        BtPB = matmul(BtP, B)[0][0]      # escalar
+        s = R + BtPB
+        BtPA = matmul(BtP, A)            # 1x2
+        K = [[BtPA[0][j] / s for j in range(2)]]   # 1x2
+        AtPA = matmul(AtP, A)            # 2x2
+        AtPB = matmul(AtP, B)            # 2x1
+        # Aᵀ P B (1/s) Bᵀ P A  = AtPB * K
+        corr = [[AtPB[i][0] * K[0][j] for j in range(2)] for i in range(2)]
+        Pnovo = [[Q[i][j] + AtPA[i][j] - corr[i][j] for j in range(2)] for i in range(2)]
+        if Kant is not None and max(abs(K[0][j] - Kant[0][j]) for j in range(2)) < tol:
+            P = Pnovo
+            break
+        P, Kant = Pnovo, K
+    return K  # 1x2
+
+
+def acao_lqr(s, alvo, K):
+    """Controle ótimo linear-quadrático: u = −K (s − s*), s* = (alvo, 0), saturado em [−1, 1]."""
+    dx0, dx1 = s[0] - alvo, s[1] - 0.0
+    u = -(K[0][0] * dx0 + K[0][1] * dx1)
+    return max(-1.0, min(1.0, u))
+
+
+def transicao_nl(s, a, kappa=0.1, A=A_VERDADEIRO, B=B_VERDADEIRO):
+    """Mundo NÃO-LINEAR: a mesma dinâmica linear mais um termo cúbico de enrijecimento na velocidade,
+    s1' += −kappa·s1³ (uma mola que endurece). Com kappa=0 recupera o mundo linear da Parte 93."""
+    if not (-1.0 - 1e-12 <= a <= 1.0 + 1e-12):
+        raise ValueError("acao fora de [-1, 1]")
+    s0, s1 = s
+    n0 = A[0][0] * s0 + A[0][1] * s1 + B[0][0] * a
+    n1 = A[1][0] * s0 + A[1][1] * s1 + B[1][0] * a - kappa * s1 * s1 * s1
+    return (n0, n1)
+
+
+def gerar_transicoes_nl(semente, n, kappa=0.1):
+    rng = random.Random(semente)
+    X, U, Y = [], [], []
+    for _ in range(n):
+        s = (rng.uniform(-2, 2), rng.uniform(-2, 2))
+        a = rng.uniform(-1, 1)
+        X.append(s)
+        U.append(a)
+        Y.append(transicao_nl(s, a, kappa))
+    return X, U, Y
+
+
+def ajustar_cubico(X, U, Y):
+    """Mínimos quadrados com a base AMPLIADA z = [s0, s1, a, s1³] (equações normais 4x4). Num mundo com termo cúbico
+    em s1, essa base contém a dinâmica verdadeira e o ajuste volta a ser exato (álgebra, não estatística)."""
+    Z = [[x[0], x[1], u, x[1] ** 3] for x, u in zip(X, U)]
+    m = len(Z[0])
+    ZtZ = [[sum(Z[k][i] * Z[k][j] for k in range(len(Z))) for j in range(m)] for i in range(m)]
+    thetas = []
+    for j in range(2):
+        Zty = [sum(Z[k][i] * Y[k][j] for k in range(len(Z))) for i in range(m)]
+        thetas.append(resolver_linear(ZtZ, Zty))
+    return thetas  # [theta_s0, theta_s1], cada um com 4 coeficientes [s0, s1, a, s1^3]
+
+
+def residuo_ajuste(thetas_ou_AB, X, U, Y, cubico=False):
+    """A raiz do erro quadrático médio do modelo nas transições (X,U)->Y. Mede o VIÉS DE FORMA: um modelo linear num
+    mundo não-linear tem resíduo que NÃO vai a zero com n (platô), ao contrário do caso linear (resíduo ~ epsilon)."""
+    import math
+    soma = 0.0
+    for x, u, y in zip(X, U, Y):
+        if cubico:
+            z = [x[0], x[1], u, x[1] ** 3]
+            pred = [sum(z[i] * thetas_ou_AB[j][i] for i in range(len(z))) for j in range(2)]
+        else:
+            Ahat, Bhat = thetas_ou_AB
+            pred = [Ahat[0][0] * x[0] + Ahat[0][1] * x[1] + Bhat[0][0] * u,
+                    Ahat[1][0] * x[0] + Ahat[1][1] * x[1] + Bhat[1][0] * u]
+        soma += (pred[0] - y[0]) ** 2 + (pred[1] - y[1]) ** 2
+    return math.sqrt(soma / len(Y))

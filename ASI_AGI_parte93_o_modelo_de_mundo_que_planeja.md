@@ -177,3 +177,7 @@ acrescenta o **planejamento/controle**: escolher uma ação por `argmin` de cust
 - Modelo de mundo / predição latente condicionada a ações e MPC: ideia reimplementada em biblioteca padrão a partir do módulo recebido `modelo_mundo.py` (inspirado em predição joint-embedding; **não** é I-JEPA/V-JEPA, não usa LLaMA,
   sem rede). Controle preditivo (receding horizon) e tiro aleatório (random shooting) são métodos clássicos de controle ótimo.
 - Mínimos quadrados por equações normais; eliminação de Gauss com pivoteamento parcial.
+
+---
+
+**Continua na [Parte 94](ASI_AGI_parte94_o_mundo_que_nao_e_linear.md): o mundo que não é linear (onde aprender vira estatística) e o ótimo que existe (LQR).**
