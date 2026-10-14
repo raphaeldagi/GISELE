@@ -65,3 +65,15 @@ Partida (θ, ψ) = (0,1; 0). As contas abaixo saíram de código (fórmulas, nã
 - **(h)** a torre medida, camada 3: das previsões sobre as minhas previsões das Partes 67 a 81, a fração dentro da faixa em **[0,72; 0,94]**
 - **(i)** a rodada 50 (papéis invertidos: a IA-Java pergunta, a IA-Python responde): os três treinos do GAN de Dirac, 1000 passos cada, com o exp próprio, dão as MESMAS trajetórias bit a bit nas
   duas linguagens (categórica: IGUAL)
+
+**Acrescentadas depois do commit acima e antes de rodar qualquer coisa do pacote novo** (o usuário mandou, no meio desta parte, um segundo `SYNTHAI_consolidado.py` com "Use o que for útil". Decodificado
+sem executar, como o da Parte 82: o hash confere, 294 arquivos; contra o pacote anterior, só é novo o módulo `sete_camadas.py` (a resposta da outra IA ao MESMO pedido desta parte, em NumPy) com os seus
+testes e documento. Auditado pela árvore sintática: nada de exec, rede ou escrita fora de `--saida`). As (m) foram registradas antes dele chegar e contam como estão.
+O módulo dele treina uma rede de sete mapas afins para y = [0,8x₀ − 0,6x₁ + 0,3x₂x₃ > 0], com treino adversarial (ataque ℓ∞ de 0,15), e relata 0,922 de acerto limpo e 0,795 sob ataque na confirmação.
+A conta (código, 200.000 sorteios da fórmula, não dos dados dele): a regra LINEAR sinal(0,8x₀ − 0,6x₁) acerta **0,928**, e, sob o pior ataque ℓ∞ de 0,15 (que, para uma regra linear, é exato: a margem cai
+0,15·(0,8 + 0,6) = 0,21), **0,807**. Ou seja, as sete camadas podem estar comprando quase nada além de uma reta.
+- **(j)** o módulo dele com `--modo sincrono` e com `--modo assincrono`, mesma semente: os resultados são IDÊNTICOS (fora o tempo e o nome do modo), porque o "assíncrono" dele espera cada tarefa
+  antes da próxima (`await asyncio.to_thread(...)`): a ordem das contas é a mesma (categórica)
+- **(k)** uma regressão logística (4 pesos e 1 viés, biblioteca padrão), treinada nos mesmos 512 exemplos de treino dele, acerta na confirmação dele (512 exemplos) uma fração em **[0,895; 0,945]**
+  (centro 0,92: a regra linear ideal, 0,928, menos o custo de estimar os pesos; ±1,645·√(0,92·0,08/512) = ±0,02)
+- **(l)** a mesma logística sob o pior ataque ℓ∞ de 0,15 (exato para um modelo linear): acerto em **[0,76; 0,85]** (centro 0,80; o desvio binomial é 0,018)
