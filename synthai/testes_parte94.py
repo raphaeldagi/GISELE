@@ -55,7 +55,7 @@ class TesteParte94(unittest.TestCase):
         self.assertLess(calculos.p2266_riccati_e_ponto_fixo(), 1e-9)
 
     def test_p1961_com_parte_94(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94))
         self.assertEqual(por[94], (5, 5))
         self.assertEqual((ok, tot), (63, 76))
 

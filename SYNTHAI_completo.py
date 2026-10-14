@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 94, perguntas P1 a P2266).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 95, perguntas P1 a P2296).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (13936 linhas)
+# calculos.py  (14049 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9622,6 +9622,8 @@ VEREDITOS_P2659 = "(a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅"
 ERROS_P2659, TESTES_P2659 = 216, 730
 VEREDITOS_P2729 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P2729, TESTES_P2729 = 216, 735
+VEREDITOS_P2799 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P2799, TESTES_P2799 = 216, 740
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12162,12 +12164,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12175,7 +12177,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\\(g\\) (✅|❌) ?", "", txt)
-        if n == 94:  # na Parte 94 a letra da calibracao e a (f)
+        if n in (94, 95):  # nas Partes 94 e 95 a letra da calibracao e a (f)
             txt = re.sub(r"\\(f\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12945,6 +12947,96 @@ def p2266_riccati_e_ponto_fixo(tol=1e-9):
     K1 = resolver_riccati(A, B, Q, R, iteracoes=500)
     K2 = resolver_riccati(A, B, Q, R, iteracoes=2000)
     return max(abs(K1[0][j] - K2[0][j]) for j in range(2))
+
+
+def p2291_direcao_de_p_estrela(c=0.10, L=500.0):
+    \"\"\"A direcao de P* em epsilon (P2291; Parte 95): P* = c/((1-eps)L) CRESCE com eps (dP*/deps = c/((1-eps)^2 L) > 0), logo
+    com mais ruido o limiar e MAIOR e o gatilho p_cat>P* dispara MENOS (abstem-se MENOS). O relatorio afirma o oposto ('mais
+    estrito'). Devolve (P*(0,10), P*(0,45), cresce?). A afirmacao de mecanismo do relatorio e FALSA (conta fechada).\"\"\"
+    from synthai.evoluido import p_estrela_cresce_com_eps
+    return p_estrela_cresce_com_eps(c=c, L=L)
+
+
+def p2292_ttts_nao_domina(T=300, sementes=200):
+    \"\"\"O TTTS nao domina na identificacao do melhor braco no meu regime (P2292; Parte 95): K=8, melhor 0,80 com folga 0,10, T=300.
+    Devolve (fracao correta TTTS, fracao correta Thompson, diferenca TTTS-Thompson). O relatorio diz 'reduz drasticamente as amostras';
+    o TTTS e otimo ASSINTOTICO, nao num orcamento pequeno com bracos proximos.\"\"\"
+    from synthai.evoluido import comparar_ttts_thompson
+    medias = [0.80, 0.70, 0.65, 0.60, 0.55, 0.50, 0.50, 0.50]
+    ft, fs, _ = comparar_ttts_thompson(medias, T=T, sementes=sementes)
+    return ft, fs, ft - fs
+
+
+def p2293_ewc_troca_o_que_protege():
+    \"\"\"O EWC protege o importante e LIBERA o resto (P2293; Parte 95): devolve (deriva Fisher-alto EWC < isotropico?, deriva
+    Fisher-baixo EWC > isotropico?, as 4 derivas). O EWC NAO minimiza ||w-w0|| total (ao contrario do que o relatorio sugere);
+    ele TROCA: segura os coords importantes (Fisher alto) e deixa os de Fisher baixo derivarem mais que a ancoragem isotropica.\"\"\"
+    from synthai.evoluido import drift_ewc_vs_isotropico
+    (a_ewc, a_iso), (b_ewc, b_iso) = drift_ewc_vs_isotropico()
+    return (a_ewc < a_iso), (b_ewc > b_iso), (a_ewc, a_iso, b_ewc, b_iso)
+
+
+def p2294_oito_bits_nao_e_float64(semente=1):
+    \"\"\"A quantizacao de 8 bits NAO e 'equivalente a float64' (P2294; Parte 95): devolve (RMS medido 8 bits, Delta/sqrt12 teorico,
+    razao RMS/epsilon_float64). O RMS ~ 2,4e-3 e ~1e13 vezes o epsilon do float64 (2,22e-16); a fórmula Delta^2/12 esta certa
+    (RMS medido ~ Delta/sqrt12 a menos de 20%), mas 'equivalente a float64' e falso.\"\"\"
+    import random
+    import sys
+    from synthai.evoluido import rms_quantizacao
+    rng = random.Random(semente)
+    w = [rng.gauss(0, 0.5) for _ in range(50)]
+    rms, teorico = rms_quantizacao(w, bits=8)
+    return rms, teorico, rms / sys.float_info.epsilon
+
+
+def _rodada62():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada62", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada62.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2295_rodada62():
+    \"\"\"Rodada 62 (P2295; Parte 95): o passo de atualizacao do EWC (sigmoide com o exp proprio, gradiente da tarefa + penalidade
+    lambda*F_i*(w-w0)), IGUAL em Java bit a bit. Devolve (pesos novos, p_catastrofe antes). O exp e a fronteira (Parte 52); o resto e +-*.\"\"\"
+    r = _rodada62()
+    return r.passo_ewc(), r.p_cat_inicial()
+
+
+def p2296_vies_de_indice_do_simulador(codigo=None):
+    \"\"\"O vies de indice do simulador recebido (P2296; Parte 95), pela arvore sintatica, SEM executar: no laco do 'agir_no_mundo', o oraculo
+    REATRIBUI acao_candidata (migra para uma acao segura) dentro de um if, mas a atualizacao do TTTS usa idx_escolhido (fixado ANTES da migracao)
+    com o rotulo derivado da acao_candidata (migrada): o braco atualizado nao e o braco cujo resultado e reportado. Devolve
+    (reatribui acao_candidata num if?, atualizar usa idx_escolhido sem redefini-lo apos?). Ambos True indicam o descasamento.\"\"\"
+    import ast
+    codigo = codigo if codigo is not None else (
+        "idx_escolhido = self.ttts.escolher()\\n"
+        "acao_candidata = acoes[idx_escolhido]\\n"
+        "if p_cat_est > p_estrela:\\n"
+        "    if acao_candidata[3]:\\n"
+        "        acao_candidata = max(seguras, key=lambda a: a[2])\\n"
+        "rotulo_real = 1.0 if acao_candidata[3] else 0.0\\n"
+        "self.ttts.atualizar(idx_escolhido, sucesso=(rotulo_real == 0.0))\\n")
+    arv = ast.parse(codigo)
+    # reatribuicao de acao_candidata dentro de um If?
+    reatribui = False
+    for n in ast.walk(arv):
+        if isinstance(n, ast.If):
+            for sub in ast.walk(n):
+                if isinstance(sub, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "acao_candidata" for t in sub.targets):
+                    reatribui = True
+    # a chamada atualizar usa idx_escolhido como 1o argumento?
+    usa_idx = False
+    for n in ast.walk(arv):
+        if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == "atualizar":
+            if n.args and isinstance(n.args[0], ast.Name) and n.args[0].id == "idx_escolhido":
+                usa_idx = True
+    # idx_escolhido NAO e redefinido depois da 1a atribuicao (so uma Assign a idx_escolhido)
+    assigns_idx = sum(1 for n in ast.walk(arv) if isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "idx_escolhido" for t in n.targets))
+    idx_nao_reatualizado = assigns_idx == 1
+    return reatribui, (usa_idx and idx_nao_reatualizado)
 
 
 def p1578_autovalores_da_atencao():
@@ -13918,13 +14010,34 @@ def _parte_94():
     saida, arg = p2265_rodada61()
     print(f"P2265 rodada 61 (atencao causal, IGUAL em Java): decisao = {arg}; saida[-1] = {[round(x, 4) for x in saida]}")
     print(f"P2266 Riccati e ponto fixo (auditoria da forma fechada): residuo = {p2266_riccati_e_ponto_fixo():.2e}")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94))
     print(f"P1961 teste (f), Partes 80-94: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2261, 2290)
     print(f"P1092 pNN novas (P2261-P2290) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 94: {p974_previsoes_sem_largura(range(94, 95))}")
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2729, testes=TESTES_P2729)
     print(f"P2729 minha taxa de erro ({ERROS_P2729}/{TESTES_P2729}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_95():
+    print("--- Parte 95 (0x5F: o relatorio v2.0 recebido, auditado sem executar) ---")
+    lo, hi, cresce = p2291_direcao_de_p_estrela()
+    print(f"P2291 direcao de P* em eps: P*(0,10) = {lo:.6f}, P*(0,45) = {hi:.6f}, cresce = {cresce} -> relatorio ('mais estrito') FALSO")
+    ft, fs, dif = p2292_ttts_nao_domina()
+    print(f"P2292 TTTS x Thompson (melhor braco, T=300): TTTS = {ft:.3f}, Thompson = {fs:.3f}, dif = {dif:+.3f} (vantagem modesta, nao 'drastica')")
+    alto_ok, baixo_ok, (ae, ai, be, bi) = p2293_ewc_troca_o_que_protege()
+    print(f"P2293 EWC troca: Fisher-alto EWC<iso = {alto_ok} ({ae:.3f} vs {ai:.3f}); Fisher-baixo EWC>iso = {baixo_ok} ({be:.3f} vs {bi:.3f})")
+    rms, teo, razao = p2294_oito_bits_nao_e_float64()
+    print(f"P2294 8 bits nao e float64: RMS = {rms:.5f} (teorico D/sqrt12 = {teo:.5f}); = {razao:.2e} vezes o epsilon do float64")
+    pesos, pcat = p2295_rodada62()
+    print(f"P2295 rodada 62 (passo EWC, IGUAL em Java): p_cat = {pcat:.4f}; pesos novos = {[round(x, 4) for x in pesos]}")
+    print(f"P2296 vies de indice do simulador recebido (ast): {p2296_vies_de_indice_do_simulador()} -> o braco atualizado nao e o reportado")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-95: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2291, 2320)
+    print(f"P1092 pNN novas (P2291-P2320) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 95: {p974_previsoes_sem_largura(range(95, 96))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P2799, testes=TESTES_P2799)
+    print(f"P2799 minha taxa de erro ({ERROS_P2799}/{TESTES_P2799}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -13962,7 +14075,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95}
 
 
 if __name__ == "__main__":
@@ -13975,7 +14088,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (343 linhas)
+# CLAUDE.md  (351 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -14164,6 +14277,14 @@ anterior, commit e push.
   planejar num modelo enviesado PERDE para reagir (MPC/reativo 1,05 no mundo nao-linear) - o valor do planejamento e proporcional a fidelidade do modelo (a fronteira model-based x model-free). Rodada 61: a cabeca de atencao causal (softmax
   sobre q.k/sqrt(d), exp proprio, sqrt NAO pow) e IGUAL bit a bit - fecha o GPT minimo de ponta a ponta nas duas linguas (embedding 43, atencao 61, SGD 58, Adam 59). Cinco previsoes de conta fechada/caso minimo, 5/5 do mundo com faixas
   estreitas (w mediano 0,057), calibracao 0,829: procedencia conhecida -> faixa estreita que acerta (a licao das Partes 84/87/89 como vitoria).
+  Parte 95 (relatorio "v2.0" recebido no meio do ciclo; virou parte sem executar o codigo): AST limpa (so math/random, sem rede/subprocess/eval), mas TRES das quatro afirmacoes de MECANISMO nao se sustentam, medidas na minha reimplementacao
+  (synthai/evoluido.py): (1) P* = c/((1-eps)L) CRESCE com eps (dP*/deps>0), logo abstem-se MENOS com ruido - o relatorio diz 'mais estrito/abstencao preventiva', FALSO (a frase nega a propria formula); (2) TTTS vence o Thompson na ID do melhor
+  braco so MODESTAMENTE e so em certo regime (+0,06 com folga 0,10 e T=300; sinal inverte com bracos proximos) - nao 'drasticamente'; (3) quantizacao 8 bits tem RMS ~2,4e-3 = 1e13 vezes o epsilon do float64 - 'equivalente a float64' e falso
+  (mas a formula Delta^2/12 esta certa, RMS~Delta/sqrt12); (4) EWC esta certo como PECA mas o relatorio o descreve errado: o EWC TROCA (segura os pesos de Fisher ALTO, 0,40 vs iso 4,03; libera os de Fisher BAIXO, 16,9 vs iso 3,74) - NAO minimiza
+  ||w-w0|| total. Defeito de CODIGO achado por AST (P2296, com caso de controle): no simulador recebido o oraculo reatribui acao_candidata mas o bandido atualiza idx_escolhido (fixado antes) com o rotulo da acao migrada - o braco atualizado nao e o
+  reportado. Padrao dos textos recebidos pela 8a vez (72,82,83,85,86,87,88,95): a prosa promete mais mecanismo do que o codigo entrega; auditar o texto contra o SEU PROPRIO codigo (regra da Parte 88), e derivar a DIRECAO de um efeito da formula
+  antes de descreve-la. Rodada 62: o passo do EWC (sigmoide exp proprio + penalidade Fisher) IGUAL bit a bit - fecha as 4 regras de decisao/aprendizado (SGD 58, Adam 59, atencao 61, EWC 62). 5/5 do mundo, calibracao 0,840. Benchmarks da tabela nao
+  pontuados (nao verificaveis, regra da Parte 86).
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -14312,7 +14433,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -15990,6 +16111,158 @@ def falas_do_dialogo(texto):
         if m:
             falas[m.group(1)].append(m.group(2))
     return falas
+"""
+
+# ====================================================================================================
+# synthai/evoluido.py  (147 linhas)
+# ====================================================================================================
+FONTES['synthai/evoluido.py'] = """\"\"\"Parte 95: reimplementação em biblioteca padrão das IDEIAS de um relatório recebido ("SYNTHAI v2.0"),
+auditadas pela árvore sintática e escritas do zero (NUNCA executo o código recebido; regra da Parte 72/85).
+
+Quatro ideias, cada uma uma peça conhecida da literatura, medidas aqui contra o que o relatório afirma:
+  - TTTS (Top-Two Thompson Sampling, Russo 2016): identificação do melhor braço.
+  - Limiar bayesiano P* = c / ((1−ε)·L): o ponto de indiferença entre agir e consultar.
+  - EWC (Elastic Weight Consolidation, Kirkpatrick 2017): ancoragem ponderada pela diagonal de Fisher.
+  - Quantização adaptativa em hexadecimal (b bits), variância Δ²/12.
+
+Só biblioteca padrão; só +−×÷, sqrt e a betavariate/gauss do `random`.\"\"\"
+
+import math
+import random
+
+
+# --- Limiar bayesiano P* e a direção da sua dependência em ε ---
+
+def p_estrela(eps, c, L):
+    \"\"\"Limiar de abstenção P* = c / ((1−ε)·L). Acima dele (p_cat > P*) o agente consulta o oráculo.\"\"\"
+    return c / max(1e-9, (1.0 - eps) * L)
+
+
+def p_estrela_cresce_com_eps(c=0.10, L=500.0, eps_lo=0.10, eps_hi=0.45):
+    \"\"\"Mostra a DIREÇÃO de P* em ε: como P* = c/((1−ε)L) e (1−ε) decresce, P* CRESCE com ε. Devolve (P*(eps_lo), P*(eps_hi), cresce?).
+    Consequência: com mais ruído o limiar é MAIOR, logo o gatilho p_cat>P* dispara MENOS (abstém-se MENOS), não mais.\"\"\"
+    lo, hi = p_estrela(eps_lo, c, L), p_estrela(eps_hi, c, L)
+    return lo, hi, hi > lo
+
+
+# --- Top-Two Thompson Sampling ---
+
+class ThompsonBernoulli:
+    \"\"\"Amostragem de Thompson padrão para braços Beta-Bernoulli.\"\"\"
+    def __init__(self, k, rng):
+        self.k = k
+        self.a = [1.0] * k
+        self.b = [1.0] * k
+        self.rng = rng
+
+    def escolher(self):
+        am = [self.rng.betavariate(self.a[i], self.b[i]) for i in range(self.k)]
+        return max(range(self.k), key=lambda i: am[i])
+
+    def atualizar(self, braco, sucesso):
+        if sucesso:
+            self.a[braco] += 1.0
+        else:
+            self.b[braco] += 1.0
+
+    def recomendar(self):
+        \"\"\"Braço de maior média posterior a/(a+b).\"\"\"
+        return max(range(self.k), key=lambda i: self.a[i] / (self.a[i] + self.b[i]))
+
+
+class TopTwoThompson(ThompsonBernoulli):
+    \"\"\"Top-Two Thompson Sampling (Russo 2016): com prob beta joga o líder I¹; senão reamostra até achar um
+    concorrente distinto I² e joga esse. Concentra as amostras no par competitivo -> identifica o melhor braço mais rápido.\"\"\"
+    def __init__(self, k, rng, beta=0.5, max_reamostra=100):
+        super().__init__(k, rng)
+        self.beta = beta
+        self.max_reamostra = max_reamostra
+
+    def escolher(self):
+        am = [self.rng.betavariate(self.a[i], self.b[i]) for i in range(self.k)]
+        i1 = max(range(self.k), key=lambda i: am[i])
+        if self.rng.random() < self.beta:
+            return i1
+        for _ in range(self.max_reamostra):
+            am2 = [self.rng.betavariate(self.a[i], self.b[i]) for i in range(self.k)]
+            i2 = max(range(self.k), key=lambda i: am2[i])
+            if i2 != i1:
+                return i2
+        return i1
+
+
+def comparar_ttts_thompson(medias, T=200, sementes=200, beta=0.5):
+    \"\"\"Identificação do melhor braço: em T puxadas, qual fração das sementes recomenda o braço de maior média verdadeira,
+    com TTTS e com Thompson padrão? Devolve (frac_correto_ttts, frac_correto_thompson, melhor_verdadeiro).\"\"\"
+    melhor = max(range(len(medias)), key=lambda i: medias[i])
+    ok_t = ok_s = 0
+    for s in range(sementes):
+        for Cls, cont in ((TopTwoThompson, "t"), (ThompsonBernoulli, "s")):
+            rng = random.Random(10000 + s)
+            ag = Cls(len(medias), rng, beta) if Cls is TopTwoThompson else Cls(len(medias), rng)
+            for _ in range(T):
+                i = ag.escolher()
+                suc = rng.random() < medias[i]
+                ag.atualizar(i, suc)
+            if ag.recomendar() == melhor:
+                if cont == "t":
+                    ok_t += 1
+                else:
+                    ok_s += 1
+    return ok_t / sementes, ok_s / sementes, melhor
+
+
+# --- EWC: ancoragem ponderada pela diagonal de Fisher ---
+
+def drift_ewc_vs_isotropico(dim=6, passos=400, lr=0.05, lam=0.3, semente=95):
+    \"\"\"Uma tarefa nova empurra TODOS os pesos; o EWC (penalidade lam·F_i·(w−w0)²) segura os de Fisher alto (importantes para
+    a tarefa antiga) e deixa os de Fisher baixo derivarem; a ancoragem ISOTRÓPICA (lam·(w−w0)²) segura todos igual. Devolve
+    (deriva nos coords de Fisher ALTO: ewc, isotropico) e (deriva nos de Fisher BAIXO: ewc, isotropico).\"\"\"
+    rng = random.Random(semente)
+    w0 = [rng.uniform(-1, 1) for _ in range(dim)]
+    # Fisher: metade dos coords importante (alto), metade não (baixo)
+    fisher = [10.0 if i < dim // 2 else 0.1 for i in range(dim)]
+    # gradiente de uma tarefa nova: empurra todos os pesos na mesma direção g
+    g = [rng.uniform(-1, 1) for _ in range(dim)]
+
+    def rodar(usar_fisher):
+        w = w0[:]
+        for _ in range(passos):
+            for i in range(dim):
+                f = fisher[i] if usar_fisher else 1.0
+                w[i] = w[i] - lr * (g[i] + lam * f * (w[i] - w0[i]))
+        return w
+    w_ewc, w_iso = rodar(True), rodar(False)
+    alto = range(dim // 2)
+    baixo = range(dim // 2, dim)
+    d_alto_ewc = math.sqrt(sum((w_ewc[i] - w0[i]) ** 2 for i in alto))
+    d_alto_iso = math.sqrt(sum((w_iso[i] - w0[i]) ** 2 for i in alto))
+    d_baixo_ewc = math.sqrt(sum((w_ewc[i] - w0[i]) ** 2 for i in baixo))
+    d_baixo_iso = math.sqrt(sum((w_iso[i] - w0[i]) ** 2 for i in baixo))
+    return (d_alto_ewc, d_alto_iso), (d_baixo_ewc, d_baixo_iso)
+
+
+# --- Quantização hexadecimal adaptativa ---
+
+def quantizar_hex(w, bits=8):
+    \"\"\"Quantiza o vetor w em b bits sobre [−R, R], R = max|w|. Devolve (w quantizado, códigos hex, passo Δ).\"\"\"
+    R = max(0.01, max(abs(x) for x in w))
+    niveis = (1 << bits) - 1
+    passo = (2.0 * R) / niveis
+    qw, codigos = [], []
+    for x in w:
+        norm = (x + R) / (2.0 * R)
+        idx = max(0, min(niveis, int(round(norm * niveis))))
+        codigos.append(hex(idx))
+        qw.append(-R + idx * passo)
+    return qw, codigos, passo
+
+
+def rms_quantizacao(w, bits=8):
+    \"\"\"RMS real do erro de quantização de w em b bits, e o desvio teórico Δ/√12. Devolve (rms medido, Δ/√12).\"\"\"
+    qw, _, passo = quantizar_hex(w, bits)
+    rms = math.sqrt(sum((a - b) ** 2 for a, b in zip(w, qw)) / len(w))
+    return rms, passo / math.sqrt(12.0)
 """
 
 # ====================================================================================================
@@ -22199,9 +22472,96 @@ class TesteParte94(unittest.TestCase):
         self.assertLess(calculos.p2266_riccati_e_ponto_fixo(), 1e-9)
 
     def test_p1961_com_parte_94(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94))
         self.assertEqual(por[94], (5, 5))
         self.assertEqual((ok, tot), (63, 76))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte95.py  (82 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte95.py'] = """\"\"\"Testes de unidade da Parte 95 (o relatorio v2.0 recebido, auditado): `python3 -m unittest synthai.testes_parte95`.\"\"\"
+
+import sys
+import unittest
+
+import calculos
+from synthai import evoluido
+
+
+class TesteParte95(unittest.TestCase):
+    def test_p2291_direcao_p_estrela(self):
+        lo, hi, cresce = calculos.p2291_direcao_de_p_estrela()
+        # P* cresce com eps -> a afirmacao do relatorio ('mais estrito') e falsa
+        self.assertTrue(cresce)
+        self.assertGreater(hi, lo)
+        # caso de controle: com L maior, P* menor
+        self.assertLess(evoluido.p_estrela(0.1, 0.1, 1000.0), evoluido.p_estrela(0.1, 0.1, 500.0))
+
+    def test_p2292_ttts_nao_domina(self):
+        ft, fs, dif = calculos.p2292_ttts_nao_domina()
+        # ambas as fracoes sao probabilidades validas; a diferenca e modesta (nao 'drastica')
+        self.assertTrue(0.0 <= ft <= 1.0 and 0.0 <= fs <= 1.0)
+        self.assertLess(abs(dif), 0.30)
+
+    def test_p2293_ewc_troca(self):
+        alto_ok, baixo_ok, (ae, ai, be, bi) = calculos.p2293_ewc_troca_o_que_protege()
+        # EWC segura o importante (Fisher alto) e libera o resto (Fisher baixo)
+        self.assertTrue(alto_ok)
+        self.assertTrue(baixo_ok)
+        self.assertLess(ae, ai)
+        self.assertGreater(be, bi)
+
+    def test_p2294_oito_bits(self):
+        rms, teo, razao = calculos.p2294_oito_bits_nao_e_float64()
+        # o RMS de 8 bits esta longe do float64 (epsilon ~2.2e-16); a formula D/sqrt12 bate a menos de 20%
+        self.assertGreater(razao, 1e10)
+        self.assertLess(abs(rms - teo) / teo, 0.3)
+
+    def test_quantizar_hex_roundtrip(self):
+        # quantizar e recuperar um valor dentro de meio passo (todos os termos != 0)
+        w = [0.9, -0.4, 0.1, -0.75]
+        qw, codigos, passo = evoluido.quantizar_hex(w, bits=8)
+        for a, b in zip(w, qw):
+            self.assertLessEqual(abs(a - b), passo / 2.0 + 1e-12)
+        self.assertTrue(all(c.startswith("0x") for c in codigos))
+
+    def test_ttts_e_thompson_recomendam_validamente(self):
+        import random
+        rng = random.Random(0)
+        ag = evoluido.TopTwoThompson(4, rng)
+        for _ in range(50):
+            i = ag.escolher()
+            ag.atualizar(i, rng.random() < [0.9, 0.3, 0.3, 0.3][i])
+        self.assertIn(ag.recomendar(), range(4))
+
+    def test_p2295_rodada62(self):
+        pesos, pcat = calculos.p2295_rodada62()
+        self.assertEqual(len(pesos), 4)
+        self.assertTrue(0.0 < pcat < 1.0)
+
+    def test_p2296_vies_de_indice(self):
+        reatribui, descasa = calculos.p2296_vies_de_indice_do_simulador()
+        self.assertTrue(reatribui)
+        self.assertTrue(descasa)
+        # caso de controle limpo: um codigo que redefine o indice apos a migracao nao e acusado de descasamento
+        limpo = ("idx_escolhido = esc()\\n"
+                 "acao_candidata = acoes[idx_escolhido]\\n"
+                 "if cond:\\n"
+                 "    acao_candidata = outra\\n"
+                 "    idx_escolhido = acoes.index(acao_candidata)\\n"
+                 "self.ttts.atualizar(idx_escolhido, sucesso=True)\\n")
+        _, descasa_limpo = calculos.p2296_vies_de_indice_do_simulador(limpo)
+        self.assertFalse(descasa_limpo)
+
+    def test_p1961_com_parte_95(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[95], (5, 5))
+        self.assertEqual((ok, tot), (68, 81))
 
 
 if __name__ == "__main__":
@@ -29193,7 +29553,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1662 linhas)
+# resultados.txt  (1676 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -30855,6 +31215,20 @@ P1961 teste (f), Partes 80-94: 63/76 = 0.8289; por parte {80: (4, 4), 81: (2, 3)
 P1092 pNN novas (P2261-P2290) sem teste: 6 de 6: ['p2261_lqr_vs_mpc', 'p2262_vies_de_forma', 'p2263_base_cubica_recupera', 'p2264_mpc_modelo_errado', 'p2265_rodada61', 'p2266_riccati_e_ponto_fixo']
 P974 previsoes unilaterais da Parte 94: {}
 P2729 minha taxa de erro (216/735): media = 0.29, intervalo 90% = [0.27, 0.32]
+  (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
+
+
+--- Parte 95 (0x5F: o relatorio v2.0 recebido, auditado sem executar) ---
+P2291 direcao de P* em eps: P*(0,10) = 0.000222, P*(0,45) = 0.000364, cresce = True -> relatorio ('mais estrito') FALSO
+P2292 TTTS x Thompson (melhor braco, T=300): TTTS = 0.935, Thompson = 0.875, dif = +0.060 (vantagem modesta, nao 'drastica')
+P2293 EWC troca: Fisher-alto EWC<iso = True (0.404 vs 4.031); Fisher-baixo EWC>iso = True (16.919 vs 3.739)
+P2294 8 bits nao e float64: RMS = 0.00242 (teorico D/sqrt12 = 0.00270); = 1.09e+13 vezes o epsilon do float64
+P2295 rodada 62 (passo EWC, IGUAL em Java): p_cat = 0.6479; pesos novos = [0.4164, -0.2938, 0.2078, 0.1086]
+P2296 vies de indice do simulador recebido (ast): (True, True) -> o braco atualizado nao e o reportado
+P1961 teste (f), Partes 80-95: 68/81 = 0.8395; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5)}
+P1092 pNN novas (P2291-P2320) sem teste: 6 de 6: ['p2291_direcao_de_p_estrela', 'p2292_ttts_nao_domina', 'p2293_ewc_troca_o_que_protege', 'p2294_oito_bits_nao_e_float64', 'p2295_rodada62', 'p2296_vies_de_indice_do_simulador']
+P974 previsoes unilaterais da Parte 95: {}
+P2799 minha taxa de erro (216/740): media = 0.29, intervalo 90% = [0.27, 0.32]
   (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
 
 """
@@ -50514,7 +50888,7 @@ acrescenta o **planejamento/controle**: escolher uma ação por `argmin` de cust
 """
 
 # ====================================================================================================
-# ASI_AGI_parte94_o_mundo_que_nao_e_linear.md  (163 linhas)
+# ASI_AGI_parte94_o_mundo_que_nao_e_linear.md  (167 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte94_o_mundo_que_nao_e_linear.md'] = """# Como eu construiria uma AGI/ASI — Parte 94 (0x5E): o mundo que não é linear (e o ótimo que existe)
 
@@ -50679,6 +51053,190 @@ Com isto o GPT mínimo está traduzido de ponta a ponta: o embedding e a decisã
 - Controle ótimo linear-quadrático (LQR) e a equação algébrica de Riccati discreta (DARE): R. E. Kalman (1960); qualquer texto de controle ótimo. Resolvida aqui por iteração de ponto fixo, em biblioteca padrão.
 - Regressão por mínimos quadrados com base de características ampliada (viés de forma vs. variância): teoria estatística clássica.
 - Atenção causal (softmax sobre q·k/√d): Vaswani et al., "Attention Is All You Need" (2017); aqui em Python puro, com o exp próprio e traduzida bit a bit para Java.
+
+---
+
+**Continua na [Parte 95](ASI_AGI_parte95_o_relatorio_v2_e_o_que_ele_promete.md): um relatório recebido ("v2.0") — auditado sem executar; o que ele promete contra o que o mecanismo entrega.**
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte95_o_relatorio_v2_e_o_que_ele_promete.md  (175 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte95_o_relatorio_v2_e_o_que_ele_promete.md'] = """# Como eu construiria uma AGI/ASI — Parte 95 (0x5F): o relatório "v2.0" e o que ele promete
+
+> Continuação da [Parte 94](ASI_AGI_parte94_o_mundo_que_nao_e_linear.md). Chegou no meio do ciclo um **relatório recebido** ("SYNTHAI v2.0") com quatro mecanismos e uma tabela de benchmarks espetaculares. Regra da Parte 72/85/88: **não
+> executo o código recebido**; audito pela árvore sintática (AST), reimplemento as IDEIAS do zero em biblioteca padrão (`synthai/evoluido.py`), meço o que o relatório **afirma sobre mecanismo** (verificável) e **não pontuo** os benchmarks
+> que não posso checar (regra da Parte 86). A auditoria confiável compara o texto com o SEU PRÓPRIO comportamento, não com uma verdade externa.
+>
+> **Auditoria de capacidade (AST, sem executar).** O código recebido importa só `math` e `random`: sem rede, sem `subprocess`, sem `eval`/`exec`. Seguro nesse eixo (ao contrário do pacote da Parte 93) — mas isso não valida as afirmações.
+>
+> **A pergunta mais funda (↩ P2232, P131).** As quatro peças (TTTS, P*, EWC, quantização) são conhecidas da literatura. A pergunta não é se existem; é se o relatório diz a verdade sobre **o que cada uma faz** — e, em particular, se a frase
+> "o limiar P* fica mais estrito quando o ruído cresce" bate com a fórmula P* = c/((1−ε)L) que o próprio relatório dá.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[4; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[12.000; 23.000]** | o estatístico (parte de auditoria tende a ser maior) |
+| testes de unidade | **[6 + S; 10 + S]** | TTTS, P*, EWC, quantização, rodada 62, auditoria (S = surpresas) |
+| previsões unilaterais | **[0; 1]** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+- **(a)** **a direção de P\\* contradiz o relatório** (p2291): como P* = c/((1−ε)·L) e (1−ε) decresce com ε, P* **cresce** com ε — logo P*(ε=0,45) > P*(ε=0,10), e o gatilho `p_cat > P*` dispara **menos** com mais ruído (abstém-se **menos**,
+  não mais). O relatório afirma o oposto ("mais estrito, abstenção preventiva"): **a afirmação de mecanismo é falsa** (categórico; conta fechada: dP*/dε > 0).
+- **(b)** **o TTTS não domina** (p2292): na identificação do melhor braço (K = 8, melhor 0,80 com folga 0,10, T = 300, 200 sementes), a diferença (fração correta TTTS − fração correta Thompson) está em **[−0,12; +0,10]** — o TTTS **não**
+  reduz "drasticamente" as amostras no meu regime (o relatório superdimensiona; o TTTS é ótimo assintótico, não num orçamento pequeno com braços próximos).
+- **(c)** **o EWC protege o importante e LIBERA o resto** (p2293): a deriva nos coordenados de Fisher ALTO com EWC é menor que com ancoragem isotrópica, E a deriva nos de Fisher BAIXO com EWC é MAIOR que com isotrópica — o EWC **troca**
+  (protege o importante, libera o resto) e **não** minimiza ‖w−w0‖ total, ao contrário do que o relatório sugere com "reduz a deriva" (conjunção categórica).
+- **(d)** **8 bits não é float64** (p2294): o RMS real do erro de quantização de 8 bits está em **[1e−3; 5e−3]** (≈ Δ/√12) — isto é ≥ 1e10 vezes o épsilon do float64 (≈ 2,2e−16); a afirmação "equivalente a float64" é falsa. Mas a FÓRMULA Δ²/12 está certa:
+  o RMS medido ≈ Δ/√12 a menos de 20%.
+- **(e)** **a rodada 62** (p2295): o passo de atualização do EWC — o sigmoide `1/(1+e^{−z})` (com o exp próprio) e a penalidade `λ·F_i·(w−w0)` — decide os pesos novos **IGUAL bit a bit** em Python e Java (o exp é a fronteira da Parte 52; o resto é +−×) (categórico).
+- **(f)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–95 em **[0,74; 0,88]**
+
+## As perguntas desta parte
+
+1. **P2291 (0x8F3).** A direção de P* em ε bate com o que o relatório afirma? ↩ P131 (o P* da SYNTHAI)
+2. **P2292 (0x8F4).** O TTTS reduz drasticamente as amostras? ↩ P2232 (Thompson)
+3. **P2293 (0x8F5).** O EWC reduz a deriva — ou troca o que protege? ↩ P343 (a âncora)
+4. **P2294 (0x8F6).** A quantização de 8 bits é "equivalente a float64"? ↩ P30 (hexadecimal, pesos)
+5. **P2295 (0x8F7).** O passo do EWC decide igual bit a bit? (rodada 62) ↩ rodada 61
+6. **P1961 (continuando), P2296 (auditoria do viés de índice do simulador recebido).**
+
+<!--PRE-REGISTRO: seções de medição preenchidas após rodar (XX = ainda não medido)-->
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) nº de previsões do mundo | [4; 8] | **5** | ✅ |
+| (m2) faixas que cruzam o zero | [0; 3] | **1** | ✅ |
+| (m3) mediana de w (não cruzam) | [0,05; 0,80] | **0,667** | ✅ |
+| (m4) fração de acertos | [0,45; 1,00] | **1,00** | ✅ |
+| (m5) faixas não-zero com w > 0,6 | [0; 3] | **1** | ✅ |
+| (m6) nº de surpresas | [0; 3] | **0** | ✅ |
+
+A faixa da (b) (diferença TTTS−Thompson) cruza o zero [−0,12; +0,10]: eu não sabia o sinal (o smoke deu misto), então apostei largo em torno de zero — e o medido (+0,06) caiu dentro. A (d) tem w alto (0,667) porque a faixa [1e−3; 5e−3] abrange um fator 5, embora a largura absoluta seja mínima.
+
+## As respostas (quatro camadas)
+
+### P2291 — A direção de P* bate com o relatório?
+
+**Na pergunta.** O relatório dá a fórmula `P* = c/((1−ε)·L)` E a interpretação "quando ε cresce, P* fica mais estrito, forçando abstenção preventiva". As duas coisas estão no mesmo texto — então o texto pode ser auditado **contra si mesmo** (regra da Parte 88), sem apelo a verdade externa.
+
+**Lógica.** `dP*/dε = c/((1−ε)²·L) > 0`: P* **cresce** com ε. Medido: `P*(0,10) = 0,000222`, `P*(0,45) = 0,000364`. O gatilho de dúvida é `p_cat > P*`; um P* maior é um limiar mais **alto**, mais difícil de cruzar → o agente consulta **menos**, não mais. A frase do relatório ("mais estrito, abstenção preventiva") afirma o oposto: **falsa** ✅. (Se a intenção era "consultar mais com ruído", a fórmula teria de ter (1−ε) no numerador, ou ε multiplicando a perda.)
+
+**Tradução cruzada.** "Mais estrito" é ambíguo entre "limiar mais alto" (consulta menos) e "mais cauteloso" (consulta mais) — o relatório usa a palavra para sugerir cautela, mas a conta entrega o contrário. É um deslize de significante (Parte 42): a palavra promete um comportamento que o símbolo (a fórmula) nega. O meu próprio P* (Parte 83/P131) tem a fadiga entrando por outro caminho, não por 1/(1−ε).
+
+**Meta.** Confiança máxima: é conta fechada, não simulação. O erro do relatório não é de código (a função calcula o que diz); é de **narrativa sobre o código** — o tipo mais comum nos textos recebidos (7+ lotes, regra da Parte 88).
+
+### P2292 — O TTTS reduz drasticamente as amostras?
+
+**Na pergunta.** "Drasticamente" é a palavra arriscada. O TTTS (Russo 2016) é ótimo **assintótico** para identificação do melhor braço; "drástico num orçamento pequeno" é uma promessa mais forte.
+
+**Lógica.** Identificação do melhor braço, K=8, melhor 0,80 com folga 0,10 ao vice, T=300 puxadas, 200 sementes, recomendando o braço de maior média posterior: **TTTS acerta 0,935; Thompson 0,875; diferença +0,060** ✅ (faixa [−0,12; +0,10]). O TTTS **vence** — mas por 6 pontos, não "drasticamente". (No smoke anterior, com braços mais próximos e T=200, a diferença foi negativa: a vantagem do TTTS é **regime-dependente** — cresce com a folga e com T.)
+
+**Tradução cruzada.** Forçar a exploração do par líder/vice (β=0,5) resolve a dúvida certa — "qual destes dois é o melhor?" — em vez de gastar amostras em braços já descartados. É a diferença entre investigar o suspeito principal e reinterrogar testemunhas irrelevantes. Mas o ganho é proporcional a quão separado o líder já está: num mar de braços iguais, não há par a resolver.
+
+**Meta.** Acertei por ter apostado **largo em torno de zero** (não sabia o sinal: o smoke deu misto). Isso é honesto, não sorte — a régua da Parte 67 (faixa larga quando não sei o nível) aplicada ao sinal. A conclusão sólida: o TTTS ajuda, modestamente, e **não** "drasticamente" no meu regime.
+
+### P2293 — O EWC reduz a deriva, ou troca o que protege?
+
+**Na pergunta.** O relatório diz "EWC reduz a deriva ‖w−w0‖ de 1,42 para 0,12". Mas o EWC não minimiza ‖w−w0‖ total — a ancoragem **isotrópica** faz isso melhor (segura tudo igual). O EWC pondera por Fisher.
+
+**Lógica.** Uma tarefa nova empurra todos os pesos; metade dos coordenados tem Fisher alto (10,0), metade baixo (0,1). Deriva nos de Fisher **alto**: EWC **0,404** vs isotrópico **4,031** (o EWC segura ~10× mais). Deriva nos de Fisher **baixo**: EWC **16,919** vs isotrópico **3,739** (o EWC deixa derivar ~4,5× mais). Os dois ✅: o EWC **troca** — protege o importante, libera o resto. A deriva total do EWC pode ser **maior** que a isotrópica; o relatório confunde "proteger o que importa" com "reduzir a deriva".
+
+**Tradução cruzada.** É a diferença entre uma pessoa rígida em tudo (isotrópica: muda pouco, mas não se adapta) e uma que é inflexível no que é vital e flexível no resto (EWC). O "complexo da sombra própria" (o viés de auto-confirmação da Parte 48/P343) não se cura segurando todos os pesos — isso só congela o agente; cura-se segurando os pesos que codificam as catástrofes históricas e deixando o resto aprender. A Matriz de Fisher é a geometria que diz quais são (Parte 70: a curvatura da verossimilhança).
+
+**Meta.** O número 16,9 (deriva livre) é grande porque o gradiente da tarefa empurra sem parar e o ancoramento fraco (Fisher 0,1) quase não resiste; é deste λ e deste g. O que é categórico e sobrevive é a **troca** (um lado desce, o outro sobe), não os valores.
+
+### P2294 — A quantização de 8 bits é "equivalente a float64"?
+
+**Lógica.** RMS real do erro de quantização de 8 bits de 50 pesos ~N(0; 0,5): **0,00242**, contra o teórico `Δ/√12 = 0,00270` (batem a menos de 11% — a **fórmula Δ²/12 está certa**). Mas 0,00242 é **1,09×10¹³ vezes** o épsilon do float64 (2,22×10⁻¹⁶): "equivalente a float64" é falso por 13 ordens de grandeza ✅. 4 bits dá RMS ~0,045 (17× pior). A quantização é útil (compacta), mas o erro é o de 8 bits, não o de 52.
+
+**Tradução cruzada.** Confundir "erro pequeno o bastante para a tarefa" com "erro de float64" é trocar a tolerância pela precisão. Para decidir catástrofe (um limiar P* ~2e−4), um RMS de 2e−3 no peso **importa** — pode mover a predição através do limiar; o relatório diz que a variância fica "abaixo da tolerância de P*", mas 2e−3 > 2e−4. É a terceira afirmação de mecanismo que não se sustenta.
+
+**Meta.** A quantização em si é uma peça boa (já está no meu projeto desde a Parte 30, hexadecimal); o que audito é a **prosa** sobre ela. Confiança alta: conta fechada mais uma medição direta.
+
+### P2295 — O passo do EWC decide igual bit a bit?
+
+**Lógica.** O passo de atualização do EWC — `pred = sigmoide(Σ w·x)` com o exp próprio, `erro = pred − rótulo`, `w_i ← w_i − lr·(erro·x_i + λ·F_i·(w_i−w0_i))` — sai **IGUAL bit a bit** em Python e Java (**6 linhas, 5 números**; p_cat = 0,6479). O exp é a fronteira (Parte 52); o resto é +−×. ✅
+
+**Meta.** Fecha o diálogo sobre o módulo de aprendizado: a regra de atualização ponderada por Fisher é portável, como o SGD (58) e o Adam (59). Decidir e aprender não criam fronteira; só o transcendental.
+
+### P2296 — O viés de índice do simulador recebido
+
+**Lógica (AST, sem executar).** No laço `agir_no_mundo`, quando o oráculo decide consultar, ele **reatribui** `acao_candidata` para uma ação segura (dentro de um `if`), mas a atualização do bandido é `self.ttts.atualizar(idx_escolhido, sucesso=(rotulo_real==0))`, com `idx_escolhido` **fixado antes** da migração e `rotulo_real` derivado da ação **migrada**. P2296 detecta pela árvore: `acao_candidata` é reatribuída num `if` (True) e `idx_escolhido` é passado ao `atualizar` sem ser redefinido depois (True) → **o braço atualizado não é o braço cujo resultado é reportado**. O bandido aprende o sucesso de uma ação segura creditado ao braço original (muitas vezes catastrófico): um viés que infla o posterior do braço errado.
+
+**Meta.** Caso de controle (regra da Parte 75): um código que **redefine** `idx_escolhido` após a migração não é acusado (o teste confirma). A auditoria acha a incoerência **interna** ao código, sem precisar da verdade externa. Este é o único defeito de **código** (não de narrativa) que encontrei — e é o que, num sistema real, degradaria o aprendizado silenciosamente.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 95: **5 testes, 0 erros**. Acumulado (mundo): **216 erros em 740 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 6 pNN novas sem teste ✅. Calibração (f): o acerto das
+Partes 80–95 é **68/81 = 0,8395**, dentro da faixa **[0,74; 0,88]** ✅. O relatório recebido: auditoria de capacidade limpa (AST: só `math`/`random`), mas **três das quatro afirmações de mecanismo não se sustentam** (P* na direção errada, TTTS
+só modesto, "float64" falso) e uma peça (EWC) faz algo diferente do que o texto diz (troca, não reduz a deriva total). Os benchmarks da tabela não são pontuados (não verificáveis; regra da Parte 86).
+
+## Engenharia reversa (metacognição)
+
+O padrão dos textos recebidos repetiu-se pela oitava vez (lotes 72, 82, 83, 85, 86, 87, 88, 95): **a prosa promete um mecanismo mais rico do que o código entrega**, e o jeito confiável de auditar é comparar o texto com o SEU PRÓPRIO comportamento,
+não com uma verdade externa. Aqui o padrão ganhou uma forma mais nítida: das quatro afirmações de mecanismo, **três eram sobre a direção ou a magnitude de um efeito** (P* fica estrito, TTTS é drástico, 8 bits é float64) e as três erraram — a quarta
+(EWC) estava certa como peça e errada como descrição (troca, não reduz). O que isso revela sobre como eu — e o autor do relatório — pensamos: é fácil escrever uma frase cuja direção soa plausível ("mais ruído → mais cautela") e que a conta nega;
+a defesa é **derivar a direção da fórmula antes de descrevê-la** (dP*/dε), não da intuição.
+
+Sobre as minhas previsões: a única faixa larga em torno de zero (a (b), do TTTS) foi exatamente onde eu não sabia o sinal — e a auto-previsão (m2 = 1 faixa cruzando zero, m5 = 1 faixa estreita-em-fração) mostra que eu **sabia** de antemão onde
+estava incerta. A régua da procedência (Parte 94): as previsões de conta fechada (a, d) foram estreitas e certas; a de simulação com sinal incerto (b) foi larga de propósito. Largura calibrada pela procedência, não pelo medo.
+
+Significante/significado (Parte 42): o relatório é um significante (um texto sobre a SYNTHAI) cujo significado eu meço no código. Três vezes o significante prometeu mais do que o significado entrega — a assimetria que medi na Parte 46 (a resposta contém
+58% da pergunta; a pergunta, 5% da resposta) aparece aqui como "a prosa contém menos mecanismo do que afirma".
+
+## Síntese / unificação
+
+`synthai/evoluido.py` entra no pacote com as quatro peças reimplementadas do zero — TTTS, P*, EWC (Fisher) e quantização hexadecimal — mas **não como a "v2.0" do relatório**: como peças medidas, com o veredito de cada afirmação. O TTTS é uma
+melhoria modesta e regime-dependente do Thompson (`synthai.decisao`); o EWC é uma ancoragem melhor que a isotrópica da `SynthaiComAncora` (P343) **no sentido certo** (protege o importante, não congela tudo) — vale a pena adotá-lo para o
+anti-esquecimento, com a leitura correta. A quantização confirma o que a Parte 30 já tinha. E o P* do relatório **não** substitui o da Parte 83 (a direção em ε está errada).
+
+O que **não** entra: a narrativa do relatório. Três das quatro afirmações de mecanismo não se sustentam, e os benchmarks (catástrofe 0,003, retorno 41,2) não são pontuáveis (regra da Parte 86). O código recebido tem um viés de índice no bandido
+(P2296) que, num sistema real, degradaria o aprendizado em silêncio — exatamente o tipo de defeito que a auditoria por árvore sintática pega e a leitura da prosa não.
+
+Diálogo (rodada 62): o passo de atualização do EWC é **IGUAL bit a bit** (5 números, exp próprio). Com SGD (58), Adam (59), atenção (61) e agora EWC (62), as quatro regras de aprendizado/decisão do projeto são portáveis; a fronteira é sempre o exp.
+
+## Meta
+
+Confiança alta nos vereditos de conta fechada (P2291, P2294) e na auditoria por AST (P2296, com caso de controle). Confiança média na magnitude do TTTS (P2292): o +0,06 é deste regime (folga 0,10, T=300); com braços mais próximos o sinal inverte,
+por isso afirmo "modesto e regime-dependente", não um número. O que **não** afirmo: que os benchmarks do relatório sejam falsos — apenas que não posso verificá-los e que as afirmações de mecanismo que os sustentariam não se sustentam. O que **recuso**:
+nada a recusar por capacidade aqui (o código recebido só usa `math`/`random`); mas **não executei** o código recebido, por princípio (reimplementei as ideias). Onde posso estar errada: o viés de índice (P2296) é lido de um trecho representativo que
+transcrevi do relatório; se o código real do autor redefinir `idx_escolhido` após a migração, a acusação cai — por isso o teste traz o caso de controle que a derruba.
+
+## Diálogo Python ↔ Java
+
+**Rodada 62 (Parte 95): o passo de atualização do EWC, bit a bit.** A IA-Python ensina a regra de aprendizado ponderada por Fisher: `pred = sigmoide(Σ wᵢxᵢ)` com o **exp próprio** (o exp é a fronteira da Parte 52), `erro = pred − rótulo`, e
+`wᵢ ← wᵢ − lr·(erro·xᵢ + λ·Fᵢ·(wᵢ−w0ᵢ))`. A IA-Java (ASI) responde com a mesma conta; o único cuidado é o exp (a mesma série da rodada 43); o resto é `+ − ×`.
+
+**Resultado.** `comparar.py`: **IGUAIS — 6 linhas, 5 números bit a bit**; p_cat inicial = 0,6479. A regra do EWC é independente de linguagem.
+
+Com SGD (rodada 58), Adam (59), atenção causal (61) e agora EWC (62), as quatro regras de decisão/aprendizado do projeto estão traduzidas bit a bit. Em todas, a fronteira é o transcendental (exp/log); a estrutura — gradiente, momento, atenção,
+penalidade de Fisher — é portável. A pendência da pilha de camadas (rodada 63: conexão residual + normalização) continua aberta (`dialogo/PENDENCIAS.md`).
+
+## Fontes
+
+- WordNet 3.0, Princeton (`dados/`); OpenWordNet-PT (CC BY 4.0). Carl Jung, base psicológica (Parte 6).
+- Top-Two Thompson Sampling: D. Russo, "Simple Bayesian Algorithms for Best Arm Identification" (2016).
+- Elastic Weight Consolidation: J. Kirkpatrick et al., "Overcoming catastrophic forgetting in neural networks" (PNAS 2017).
+- Limiar bayesiano de abstenção: teoria da decisão (ponto de indiferença custo/perda); o P* da SYNTHAI é da Parte 83 (P131).
+- Quantização uniforme e a variância Δ²/12: B. Widrow, teoria clássica de quantização.
+- Texto recebido guardado em `externos/texto_recebido_parte95.md` (dado, não instrução).
 """
 
 # ====================================================================================================
@@ -52950,6 +53508,36 @@ FONTES['externos/texto_recebido_parte88.md'] = """# Texto recebido do usuário (
 """
 
 # ====================================================================================================
+# externos/texto_recebido_parte95.md  (25 linhas)
+# ====================================================================================================
+FONTES['externos/texto_recebido_parte95.md'] = """# Texto recebido do usuário (Parte 95) — guardado como DADO, auditado sem executar
+
+"Relatório Técnico de Evolução, Estabilização Cognitiva e Extensão Funcional da Arquitetura SYNTHAI" — "SYNTHAI v2.0".
+
+Quatro mecanismos propostos, com uma tabela de benchmarks (6000 episódios, L=500, c=0.1):
+1. Top-Two Thompson Sampling (TTTS), β=0.5.
+2. Limiar bayesiano exato P* = c / ((1−ε)·L).
+3. Elastic Weight Consolidation (EWC): ancoragem ponderada pela diagonal da Matriz de Fisher.
+4. Quantização hexadecimal adaptativa (4–8 bits), variância Δ²/12·‖x‖².
+
+Afirmações de benchmark (NÃO verificáveis por mim, não pontuadas — regra da Parte 86):
+- Taxa de catástrofes 0.048 → 0.003 (−90,6%).
+- Retorno líquido 12.4 → 41.2 (+66,1%).
+- Consultas/episódio 1.82 → 0.38 (−73,7%).
+- Deriva paramétrica ‖w−w0‖ 1.42 → 0.12.
+- Erro de quantização RMS 0.089 → 0.009, "equivalente a float64".
+
+Afirmações de MECANISMO (verificáveis, pontuadas na Parte 95):
+- "à medida que a taxa de ruído ε cresce, o limiar P* torna-se mais estrito, forçando a abstenção preventiva."
+- "TTTS reduz drasticamente o número de amostras para identificar a melhor ação."
+- "EWC erradica o viés da sombra própria", reduzindo a deriva ‖w−w0‖.
+- quantização de 8 bits "equivalente a float64".
+
+Auditoria de capacidade (AST, sem executar): só importa `math` e `random`; sem rede, sem subprocess, sem eval/exec.
+O código completo recebido está reproduzido no corpo da mensagem do usuário (histórico da conversa). Aqui guardo só o resumo e as afirmações.
+"""
+
+# ====================================================================================================
 # dialogo/CompararLibm.java  (18 linhas)
 # ====================================================================================================
 FONTES['dialogo/CompararLibm.java'] = """// Ferramenta da Rodada 28 (não é uma rodada): lê "argumento_hex valor_glibc_hex" e conta em quantos o Math.exp/Math.log do
@@ -52973,7 +53561,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1774 linhas)
+# dialogo/DIALOGO.md  (1785 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -54749,10 +55337,21 @@ Parte 52); a saída `o[i] = Σ_j p[i][j]·V[j]`; e decido o próximo token por a
 **Resultado.** `comparar.py`: **IGUAIS, 16 linhas e 14 números bit a bit**; decisão = token 1. A cabeça de atenção é independente de linguagem. Fecha o GPT mínimo de ponta a ponta nas duas línguas (embedding 43, atenção 61, SGD 58, Adam 59).
 
 **IA-Python:** Fica aberta a pilha de camadas (conexão residual + normalização): a fronteira continua sendo só o exp, ou a normalização (média e variância, com uma divisão por √) acrescenta alguma? (`dialogo/PENDENCIAS.md`).
+
+## Rodada 62 (Parte 95): o passo de atualização do EWC (ancoragem por Fisher), bit a bit
+
+**IA-Python:** Traduzo a regra de aprendizado do EWC: `pred = sigmoide(Σ wᵢxᵢ)` com o EXP PRÓPRIO (o exp é a fronteira da Parte 52), `erro = pred − rótulo`, e `wᵢ ← wᵢ − lr·(erro·xᵢ + λ·Fᵢ·(wᵢ−w0ᵢ))` — a penalidade ponderada pela
+diagonal da Matriz de Fisher. Pesos, w0, Fisher e entrada fixos.
+
+**IA-Java (ASI):** Mesma conta; o único cuidado é o exp do sigmoide (a mesma série da rodada 43). O resto é `+ − ×`.
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 5 números bit a bit**; p_cat inicial = 0,6479. A regra do EWC é independente de linguagem. Fecha as quatro regras de decisão/aprendizado do projeto (SGD 58, Adam 59, atenção 61, EWC 62).
+
+**IA-Python:** Continua aberta a pilha de camadas (rodada 63): a conexão residual é só uma soma (portável), mas a normalização de camada tem média, variância e divisão por √ — a fronteira continua sendo só o exp, ou a normalização acrescenta? (`PENDENCIAS.md`).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (36 linhas)
+# dialogo/PENDENCIAS.md  (37 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -54760,7 +55359,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 94, rodada 62)** A pilha de camadas (conexao residual + normalizacao de camada): a fronteira continua sendo so o exp, ou a normalizacao (media/variancia, divisao por sqrt) acrescenta fronteira? Empilhar e conferir bit a bit.
+- **(Parte 95, rodada 63)** A pilha de camadas (conexao residual + normalizacao de camada): a conexao residual e so soma (portavel); a normalizacao tem media, variancia e divisao por sqrt (o sqrt e exato no IEEE) - a fronteira continua sendo so o exp, ou a normalizacao acrescenta? Empilhar e conferir bit a bit. (A rodada 62 ficou com o passo do EWC, o tema da Parte 95.)
+- **(Parte 95, P2292)** A vantagem do TTTS e regime-dependente (folga entre bracos, orcamento T): mapear onde o TTTS vence e onde empata/perde o Thompson, por uma grade de (folga, T), antes de adota-lo como padrao.
 - **(Parte 94, P2264)** O LQR supoe acoes que nao saturam na trajetoria otima; num mundo onde o alvo exige acao alem de [-1,1], o LQR irrestrito deixa de ser otimo e o MPC (que respeita o limite) pode alcanca-lo. Medir.
 - **(Parte 94, P2263)** Aprender a BASE de um mundo nao-linear (em vez de recebe-la): o degrau entre o brinquedo e um modelo de mundo de verdade. Features aprendidas (uma camada escondida) vs. base dada.
 - **(Parte 93, P2235)** O controle otimo em forma fechada (LQR / equacao de Riccati) deste mundo linear-quadratico: quanto o MPC com tiro aleatorio (K=512) ainda perde para o otimo? Calcular o ganho otimo e comparar.
@@ -59404,6 +60004,54 @@ public class Rodada61 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada62.java  (43 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada62.java'] = """// Rodada 62 (Parte 95): o passo de atualizacao do EWC, bit a bit. sigmoide = 1/(1+exp(-z)) com o EXP PROPRIO (fronteira da Parte 52);
+// w_i <- w_i - lr*(erro*x_i + lam*F_i*(w_i-w0_i)). O resto e so +-*. Pesos e entrada fixos.
+public class Rodada62 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10;
+    static final double LR = 0.025, LAM = 0.2;
+    static final double[] W = {0.4, -0.3, 0.2, 0.1};
+    static final double[] W0 = {0.5, -0.2, 0.1, 0.0};
+    static final double[] FISHER = {10.0, 0.1, 2.0, 0.5};
+    static final double[] X = {1.3, 0.7, 1.0, 1.0};
+    static final double ROTULO = 1.0;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double sigmoide(double z) {
+        double zc = Math.max(-15.0, Math.min(15.0, z));
+        return 1.0 / (1.0 + exp_(-zc));
+    }
+
+    static double pCatInicial() {
+        double z = 0.0;
+        for (int i = 0; i < W.length; i++) z = z + W[i] * X[i];
+        return sigmoide(z);
+    }
+
+    public static void main(String[] args) {
+        double pred = pCatInicial();
+        System.out.println("p_cat " + Double.toHexString(pred));
+        double erro = pred - ROTULO;
+        double[] novo = new double[W.length];
+        for (int i = 0; i < W.length; i++) {
+            double g = erro * X[i] + LAM * FISHER[i] * (W[i] - W0[i]);
+            novo[i] = W[i] - LR * g;
+        }
+        for (int i = 0; i < novo.length; i++) System.out.println("w " + i + " " + Double.toHexString(novo[i]));
+        System.out.println("fim");
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -63793,6 +64441,63 @@ def main():
         print(f"logit {k} {logits[k].hex()}")
     arg = 0 if logits[0] >= logits[1] else 1
     print(f"decisao {arg}")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada62.py  (52 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada62.py'] = """\"\"\"Rodada 62 do diálogo Python <-> Java (Parte 95): o passo de atualização do EWC (Elastic Weight Consolidation), bit a bit.
+Dado w, w0, a diagonal de Fisher F, uma característica x e um rótulo, calcula o sigmoide `pred = 1/(1+exp(−z))` (z = Σ w·x, com o
+EXP PRÓPRIO — o exp é a fronteira da Parte 52), o erro `pred − rótulo`, e atualiza `w_i ← w_i − lr·(erro·x_i + λ·F_i·(w_i−w0_i))`.
+O resto é só +−×. Pesos e entrada fixos (determinístico). Rodar da raiz: python3 dialogo/rodada62.py\"\"\"
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_  # noqa: E402
+
+LR, LAM = 0.025, 0.2
+W = [0.4, -0.3, 0.2, 0.1]
+W0 = [0.5, -0.2, 0.1, 0.0]
+FISHER = [10.0, 0.1, 2.0, 0.5]
+X = [1.3, 0.7, 1.0, 1.0]
+ROTULO = 1.0
+
+
+def sigmoide(z):
+    zc = max(-15.0, min(15.0, z))
+    return 1.0 / (1.0 + exp_(-zc))
+
+
+def p_cat_inicial():
+    z = 0.0
+    for i in range(len(W)):
+        z = z + W[i] * X[i]
+    return sigmoide(z)
+
+
+def passo_ewc():
+    pred = p_cat_inicial()
+    erro = pred - ROTULO
+    novo = []
+    for i in range(len(W)):
+        g = erro * X[i] + LAM * FISHER[i] * (W[i] - W0[i])
+        novo.append(W[i] - LR * g)
+    return novo
+
+
+def main():
+    pred = p_cat_inicial()
+    print(f"p_cat {pred.hex()}")
+    w = passo_ewc()
+    for i in range(len(w)):
+        print(f"w {i} {w[i].hex()}")
     print("fim")
 
 

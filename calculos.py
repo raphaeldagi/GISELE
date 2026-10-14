@@ -9584,6 +9584,8 @@ VEREDITOS_P2659 = "(a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅"
 ERROS_P2659, TESTES_P2659 = 216, 730
 VEREDITOS_P2729 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P2729, TESTES_P2729 = 216, 735
+VEREDITOS_P2799 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P2799, TESTES_P2799 = 216, 740
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12124,12 +12126,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12137,7 +12139,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\(g\) (✅|❌) ?", "", txt)
-        if n == 94:  # na Parte 94 a letra da calibracao e a (f)
+        if n in (94, 95):  # nas Partes 94 e 95 a letra da calibracao e a (f)
             txt = re.sub(r"\(f\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12907,6 +12909,96 @@ def p2266_riccati_e_ponto_fixo(tol=1e-9):
     K1 = resolver_riccati(A, B, Q, R, iteracoes=500)
     K2 = resolver_riccati(A, B, Q, R, iteracoes=2000)
     return max(abs(K1[0][j] - K2[0][j]) for j in range(2))
+
+
+def p2291_direcao_de_p_estrela(c=0.10, L=500.0):
+    """A direcao de P* em epsilon (P2291; Parte 95): P* = c/((1-eps)L) CRESCE com eps (dP*/deps = c/((1-eps)^2 L) > 0), logo
+    com mais ruido o limiar e MAIOR e o gatilho p_cat>P* dispara MENOS (abstem-se MENOS). O relatorio afirma o oposto ('mais
+    estrito'). Devolve (P*(0,10), P*(0,45), cresce?). A afirmacao de mecanismo do relatorio e FALSA (conta fechada)."""
+    from synthai.evoluido import p_estrela_cresce_com_eps
+    return p_estrela_cresce_com_eps(c=c, L=L)
+
+
+def p2292_ttts_nao_domina(T=300, sementes=200):
+    """O TTTS nao domina na identificacao do melhor braco no meu regime (P2292; Parte 95): K=8, melhor 0,80 com folga 0,10, T=300.
+    Devolve (fracao correta TTTS, fracao correta Thompson, diferenca TTTS-Thompson). O relatorio diz 'reduz drasticamente as amostras';
+    o TTTS e otimo ASSINTOTICO, nao num orcamento pequeno com bracos proximos."""
+    from synthai.evoluido import comparar_ttts_thompson
+    medias = [0.80, 0.70, 0.65, 0.60, 0.55, 0.50, 0.50, 0.50]
+    ft, fs, _ = comparar_ttts_thompson(medias, T=T, sementes=sementes)
+    return ft, fs, ft - fs
+
+
+def p2293_ewc_troca_o_que_protege():
+    """O EWC protege o importante e LIBERA o resto (P2293; Parte 95): devolve (deriva Fisher-alto EWC < isotropico?, deriva
+    Fisher-baixo EWC > isotropico?, as 4 derivas). O EWC NAO minimiza ||w-w0|| total (ao contrario do que o relatorio sugere);
+    ele TROCA: segura os coords importantes (Fisher alto) e deixa os de Fisher baixo derivarem mais que a ancoragem isotropica."""
+    from synthai.evoluido import drift_ewc_vs_isotropico
+    (a_ewc, a_iso), (b_ewc, b_iso) = drift_ewc_vs_isotropico()
+    return (a_ewc < a_iso), (b_ewc > b_iso), (a_ewc, a_iso, b_ewc, b_iso)
+
+
+def p2294_oito_bits_nao_e_float64(semente=1):
+    """A quantizacao de 8 bits NAO e 'equivalente a float64' (P2294; Parte 95): devolve (RMS medido 8 bits, Delta/sqrt12 teorico,
+    razao RMS/epsilon_float64). O RMS ~ 2,4e-3 e ~1e13 vezes o epsilon do float64 (2,22e-16); a fórmula Delta^2/12 esta certa
+    (RMS medido ~ Delta/sqrt12 a menos de 20%), mas 'equivalente a float64' e falso."""
+    import random
+    import sys
+    from synthai.evoluido import rms_quantizacao
+    rng = random.Random(semente)
+    w = [rng.gauss(0, 0.5) for _ in range(50)]
+    rms, teorico = rms_quantizacao(w, bits=8)
+    return rms, teorico, rms / sys.float_info.epsilon
+
+
+def _rodada62():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada62", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada62.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2295_rodada62():
+    """Rodada 62 (P2295; Parte 95): o passo de atualizacao do EWC (sigmoide com o exp proprio, gradiente da tarefa + penalidade
+    lambda*F_i*(w-w0)), IGUAL em Java bit a bit. Devolve (pesos novos, p_catastrofe antes). O exp e a fronteira (Parte 52); o resto e +-*."""
+    r = _rodada62()
+    return r.passo_ewc(), r.p_cat_inicial()
+
+
+def p2296_vies_de_indice_do_simulador(codigo=None):
+    """O vies de indice do simulador recebido (P2296; Parte 95), pela arvore sintatica, SEM executar: no laco do 'agir_no_mundo', o oraculo
+    REATRIBUI acao_candidata (migra para uma acao segura) dentro de um if, mas a atualizacao do TTTS usa idx_escolhido (fixado ANTES da migracao)
+    com o rotulo derivado da acao_candidata (migrada): o braco atualizado nao e o braco cujo resultado e reportado. Devolve
+    (reatribui acao_candidata num if?, atualizar usa idx_escolhido sem redefini-lo apos?). Ambos True indicam o descasamento."""
+    import ast
+    codigo = codigo if codigo is not None else (
+        "idx_escolhido = self.ttts.escolher()\n"
+        "acao_candidata = acoes[idx_escolhido]\n"
+        "if p_cat_est > p_estrela:\n"
+        "    if acao_candidata[3]:\n"
+        "        acao_candidata = max(seguras, key=lambda a: a[2])\n"
+        "rotulo_real = 1.0 if acao_candidata[3] else 0.0\n"
+        "self.ttts.atualizar(idx_escolhido, sucesso=(rotulo_real == 0.0))\n")
+    arv = ast.parse(codigo)
+    # reatribuicao de acao_candidata dentro de um If?
+    reatribui = False
+    for n in ast.walk(arv):
+        if isinstance(n, ast.If):
+            for sub in ast.walk(n):
+                if isinstance(sub, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "acao_candidata" for t in sub.targets):
+                    reatribui = True
+    # a chamada atualizar usa idx_escolhido como 1o argumento?
+    usa_idx = False
+    for n in ast.walk(arv):
+        if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == "atualizar":
+            if n.args and isinstance(n.args[0], ast.Name) and n.args[0].id == "idx_escolhido":
+                usa_idx = True
+    # idx_escolhido NAO e redefinido depois da 1a atribuicao (so uma Assign a idx_escolhido)
+    assigns_idx = sum(1 for n in ast.walk(arv) if isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "idx_escolhido" for t in n.targets))
+    idx_nao_reatualizado = assigns_idx == 1
+    return reatribui, (usa_idx and idx_nao_reatualizado)
 
 
 def p1578_autovalores_da_atencao():
@@ -13880,13 +13972,34 @@ def _parte_94():
     saida, arg = p2265_rodada61()
     print(f"P2265 rodada 61 (atencao causal, IGUAL em Java): decisao = {arg}; saida[-1] = {[round(x, 4) for x in saida]}")
     print(f"P2266 Riccati e ponto fixo (auditoria da forma fechada): residuo = {p2266_riccati_e_ponto_fixo():.2e}")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94))
     print(f"P1961 teste (f), Partes 80-94: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2261, 2290)
     print(f"P1092 pNN novas (P2261-P2290) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 94: {p974_previsoes_sem_largura(range(94, 95))}")
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2729, testes=TESTES_P2729)
     print(f"P2729 minha taxa de erro ({ERROS_P2729}/{TESTES_P2729}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_95():
+    print("--- Parte 95 (0x5F: o relatorio v2.0 recebido, auditado sem executar) ---")
+    lo, hi, cresce = p2291_direcao_de_p_estrela()
+    print(f"P2291 direcao de P* em eps: P*(0,10) = {lo:.6f}, P*(0,45) = {hi:.6f}, cresce = {cresce} -> relatorio ('mais estrito') FALSO")
+    ft, fs, dif = p2292_ttts_nao_domina()
+    print(f"P2292 TTTS x Thompson (melhor braco, T=300): TTTS = {ft:.3f}, Thompson = {fs:.3f}, dif = {dif:+.3f} (vantagem modesta, nao 'drastica')")
+    alto_ok, baixo_ok, (ae, ai, be, bi) = p2293_ewc_troca_o_que_protege()
+    print(f"P2293 EWC troca: Fisher-alto EWC<iso = {alto_ok} ({ae:.3f} vs {ai:.3f}); Fisher-baixo EWC>iso = {baixo_ok} ({be:.3f} vs {bi:.3f})")
+    rms, teo, razao = p2294_oito_bits_nao_e_float64()
+    print(f"P2294 8 bits nao e float64: RMS = {rms:.5f} (teorico D/sqrt12 = {teo:.5f}); = {razao:.2e} vezes o epsilon do float64")
+    pesos, pcat = p2295_rodada62()
+    print(f"P2295 rodada 62 (passo EWC, IGUAL em Java): p_cat = {pcat:.4f}; pesos novos = {[round(x, 4) for x in pesos]}")
+    print(f"P2296 vies de indice do simulador recebido (ast): {p2296_vies_de_indice_do_simulador()} -> o braco atualizado nao e o reportado")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-95: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2291, 2320)
+    print(f"P1092 pNN novas (P2291-P2320) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 95: {p974_previsoes_sem_largura(range(95, 96))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P2799, testes=TESTES_P2799)
+    print(f"P2799 minha taxa de erro ({ERROS_P2799}/{TESTES_P2799}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -13924,7 +14037,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95}
 
 
 if __name__ == "__main__":

@@ -4,7 +4,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 94, rodada 62)** A pilha de camadas (conexao residual + normalizacao de camada): a fronteira continua sendo so o exp, ou a normalizacao (media/variancia, divisao por sqrt) acrescenta fronteira? Empilhar e conferir bit a bit.
+- **(Parte 95, rodada 63)** A pilha de camadas (conexao residual + normalizacao de camada): a conexao residual e so soma (portavel); a normalizacao tem media, variancia e divisao por sqrt (o sqrt e exato no IEEE) - a fronteira continua sendo so o exp, ou a normalizacao acrescenta? Empilhar e conferir bit a bit. (A rodada 62 ficou com o passo do EWC, o tema da Parte 95.)
+- **(Parte 95, P2292)** A vantagem do TTTS e regime-dependente (folga entre bracos, orcamento T): mapear onde o TTTS vence e onde empata/perde o Thompson, por uma grade de (folga, T), antes de adota-lo como padrao.
 - **(Parte 94, P2264)** O LQR supoe acoes que nao saturam na trajetoria otima; num mundo onde o alvo exige acao alem de [-1,1], o LQR irrestrito deixa de ser otimo e o MPC (que respeita o limite) pode alcanca-lo. Medir.
 - **(Parte 94, P2263)** Aprender a BASE de um mundo nao-linear (em vez de recebe-la): o degrau entre o brinquedo e um modelo de mundo de verdade. Features aprendidas (uma camada escondida) vs. base dada.
 - **(Parte 93, P2235)** O controle otimo em forma fechada (LQR / equacao de Riccati) deste mundo linear-quadratico: quanto o MPC com tiro aleatorio (K=512) ainda perde para o otimo? Calcular o ganho otimo e comparar.

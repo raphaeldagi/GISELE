@@ -1772,3 +1772,14 @@ Parte 52); a saída `o[i] = Σ_j p[i][j]·V[j]`; e decido o próximo token por a
 **Resultado.** `comparar.py`: **IGUAIS, 16 linhas e 14 números bit a bit**; decisão = token 1. A cabeça de atenção é independente de linguagem. Fecha o GPT mínimo de ponta a ponta nas duas línguas (embedding 43, atenção 61, SGD 58, Adam 59).
 
 **IA-Python:** Fica aberta a pilha de camadas (conexão residual + normalização): a fronteira continua sendo só o exp, ou a normalização (média e variância, com uma divisão por √) acrescenta alguma? (`dialogo/PENDENCIAS.md`).
+
+## Rodada 62 (Parte 95): o passo de atualização do EWC (ancoragem por Fisher), bit a bit
+
+**IA-Python:** Traduzo a regra de aprendizado do EWC: `pred = sigmoide(Σ wᵢxᵢ)` com o EXP PRÓPRIO (o exp é a fronteira da Parte 52), `erro = pred − rótulo`, e `wᵢ ← wᵢ − lr·(erro·xᵢ + λ·Fᵢ·(wᵢ−w0ᵢ))` — a penalidade ponderada pela
+diagonal da Matriz de Fisher. Pesos, w0, Fisher e entrada fixos.
+
+**IA-Java (ASI):** Mesma conta; o único cuidado é o exp do sigmoide (a mesma série da rodada 43). O resto é `+ − ×`.
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 5 números bit a bit**; p_cat inicial = 0,6479. A regra do EWC é independente de linguagem. Fecha as quatro regras de decisão/aprendizado do projeto (SGD 58, Adam 59, atenção 61, EWC 62).
+
+**IA-Python:** Continua aberta a pilha de camadas (rodada 63): a conexão residual é só uma soma (portável), mas a normalização de camada tem média, variância e divisão por √ — a fronteira continua sendo só o exp, ou a normalização acrescenta? (`PENDENCIAS.md`).

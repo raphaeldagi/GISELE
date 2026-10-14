@@ -1660,3 +1660,17 @@ P974 previsoes unilaterais da Parte 94: {}
 P2729 minha taxa de erro (216/735): media = 0.29, intervalo 90% = [0.27, 0.32]
   (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
 
+
+--- Parte 95 (0x5F: o relatorio v2.0 recebido, auditado sem executar) ---
+P2291 direcao de P* em eps: P*(0,10) = 0.000222, P*(0,45) = 0.000364, cresce = True -> relatorio ('mais estrito') FALSO
+P2292 TTTS x Thompson (melhor braco, T=300): TTTS = 0.935, Thompson = 0.875, dif = +0.060 (vantagem modesta, nao 'drastica')
+P2293 EWC troca: Fisher-alto EWC<iso = True (0.404 vs 4.031); Fisher-baixo EWC>iso = True (16.919 vs 3.739)
+P2294 8 bits nao e float64: RMS = 0.00242 (teorico D/sqrt12 = 0.00270); = 1.09e+13 vezes o epsilon do float64
+P2295 rodada 62 (passo EWC, IGUAL em Java): p_cat = 0.6479; pesos novos = [0.4164, -0.2938, 0.2078, 0.1086]
+P2296 vies de indice do simulador recebido (ast): (True, True) -> o braco atualizado nao e o reportado
+P1961 teste (f), Partes 80-95: 68/81 = 0.8395; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5)}
+P1092 pNN novas (P2291-P2320) sem teste: 6 de 6: ['p2291_direcao_de_p_estrela', 'p2292_ttts_nao_domina', 'p2293_ewc_troca_o_que_protege', 'p2294_oito_bits_nao_e_float64', 'p2295_rodada62', 'p2296_vies_de_indice_do_simulador']
+P974 previsoes unilaterais da Parte 95: {}
+P2799 minha taxa de erro (216/740): media = 0.29, intervalo 90% = [0.27, 0.32]
+  (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
+
