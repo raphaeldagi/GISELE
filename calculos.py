@@ -7502,6 +7502,9 @@ def testes_de_regressao():
         "P2051": round(p2051_quantizacao_mse()[2]) == 279,
         "P2052": p2052_vantagem_grpo() == ([1.0, -1.0], 0.0),
         "P2055": len(p2055_rodada54()) == 18 and round(p2055_rodada54()[0], 6) == 1.0,
+        "P2081": p2081_probabilidade_aninhada() == (0.8333, 0.1667, 0.5),
+        "P2083": p2083_lfi1_sem_explosao() == (0.5, 0.0, True),
+        "P2085": p2085_rodada55()[1] == 1.2,
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9558,6 +9561,8 @@ VEREDITOS_P2169 = "(a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅"
 ERROS_P2169, TESTES_P2169 = 211, 697
 VEREDITOS_P2239 = "(a) ✅ (b) ✅ (c) ❌ (d) ❌ (e) ❌ (f) ❌"
 ERROS_P2239, TESTES_P2239 = 215, 703
+VEREDITOS_P2309 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
+ERROS_P2309, TESTES_P2309 = 215, 708
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12098,16 +12103,16 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n in (84, 85, 86, 87):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
+        if n in (84, 85, 86, 87, 88):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12490,6 +12495,61 @@ def p2055_rodada54():
     r54 = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(r54)
     return [a for rs in r54.GRUPOS for a in r54.vantagens(rs)]
+
+
+def p2081_probabilidade_aninhada():
+    """A 'probabilidade dentro da probabilidade' do codigo recebido (P2081; Parte 88): P(P(X)) = (10X+1)/12, uma contracao afim para 0,5. Devolve
+    (P(P(0,9)), P(P(0,1)), ponto fixo). Nao e probabilidade de probabilidade; e um encolhimento linear ao centro (como o mapa de calibracao da Parte 83, so k=0,5 idempotente... aqui o fixo e 0,5)."""
+    from synthai.autopoiese import nested_probability
+    return round(nested_probability(0.9), 4), round(nested_probability(0.1), 4), round(nested_probability(0.5), 4)
+
+
+def p2082_probabilidade_aninhada_iterada(n=10, x0=0.9):
+    """Iterar P(P) n vezes (P2082): converge a 0,5 com fator 5/6. Devolve (valor apos n iteracoes, a conta fechada 0,5 + (x0-0,5)*(5/6)^n)."""
+    from synthai.autopoiese import iterar_nested_probability
+    medido = iterar_nested_probability(x0, n)
+    conta = 0.5 + (x0 - 0.5) * (5.0 / 6.0) ** n
+    return medido, conta
+
+
+def p2083_lfi1_sem_explosao():
+    """A LFI1 contem uma contradicao sem explosao (P2083). Devolve (conjuncao(0,5, neg 0,5), consistencia(0,5), uma proposicao F nao relacionada continua F?).
+    Ao contrario da logica classica (A ^ ~A |- qualquer coisa), a dialeteia fica contida em 0,5 e o operador de consistencia a marca, sem trivializar o resto."""
+    from synthai.autopoiese import lfi1_negacao, lfi1_conjuncao, lfi1_consistencia
+    a = 0.5
+    conj = lfi1_conjuncao(a, lfi1_negacao(a))
+    cons = lfi1_consistencia(a)
+    # uma proposicao F (0.0) nao relacionada: conjuncao com a dialeteia nao a torna verdadeira
+    f_preservado = lfi1_conjuncao(0.0, a) == 0.0
+    return conj, cons, f_preservado
+
+
+def p2084_descompasso_texto_codigo(codigo=None):
+    """O descompasso texto<->codigo do delirio (P2084), pela arvore sintatica. O texto diz que a hipotese do delirio e assimilada 'se resolver uma inconsistencia
+    previa'; o metodo scrutinize_evolution, de fato, so olha uma faixa de entropia. Devolve (usa 'entropy'?, usa 'consist'/'contradic'/'inconsist'?). O segundo deve
+    ser falso: a promessa do texto nao esta no codigo."""
+    import ast
+    codigo = codigo if codigo is not None else (
+        "def scrutinize_evolution(self, pre_state, post_delirium_state):\n"
+        "    pre_entropy = -sum(abs(pre_state) * log(abs(pre_state) + 1e-9))\n"
+        "    post_entropy = -sum(abs(post_delirium_state) * log(abs(post_delirium_state) + 1e-9))\n"
+        "    delta_entropy = post_entropy - pre_entropy\n"
+        "    return bool(0.1 < delta_entropy < 3.0)\n")
+    arv = ast.parse(codigo)
+    fonte = ast.dump(arv).lower()
+    usa_entropia = "entropy" in fonte or "entropia" in fonte
+    usa_consistencia = any(t in fonte for t in ("consist", "contradic", "inconsist", "dialeteia", "lfi"))
+    return usa_entropia, usa_consistencia
+
+
+def p2085_rodada55():
+    """Rodada 55 (P2085; Parte 88): o passo do GRPO com corte (dialogo/rodada55.py), IGUAL em Java bit a bit. Devolve a lista dos surrogates dos casos."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada55", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada55.py"))
+    r55 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r55)
+    return [r55.surrogate(r, a) for r, a in r55.CASOS]
 
 
 def p1578_autovalores_da_atencao():
@@ -13359,6 +13419,21 @@ def _parte_87():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2239, testes=TESTES_P2239)
     print(f"P2239 minha taxa de erro ({ERROS_P2239}/{TESTES_P2239}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_88():
+    print("--- Parte 88 (0x58: a arquitetura autopoietica recebida) ---")
+    print(f"P2081 P(P(X)) do codigo (P(P(0,9)), P(P(0,1)), ponto fixo): {p2081_probabilidade_aninhada()}")
+    print(f"P2082 P(P) iterado 10x de 0,9 (medido, conta): {p2082_probabilidade_aninhada_iterada()}")
+    print(f"P2083 LFI1 sem explosao (conj(0,5,~0,5), consistencia(0,5), F preservado): {p2083_lfi1_sem_explosao()}")
+    print(f"P2084 descompasso texto-codigo (usa entropia?, usa consistencia?): {p2084_descompasso_texto_codigo()}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (e), Partes 80-88: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    print(f"P2085 rodada 55 (passo GRPO com corte, IGUAL em Java): {len(p2085_rodada55())} surrogates")
+    total, sem = p1092_pnn_sem_teste(2081, 2110)
+    print(f"P1092 pNN novas (P2081-P2110) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 88: {p974_previsoes_sem_largura(range(88, 89))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2309, testes=TESTES_P2309)
+    print(f"P2309 minha taxa de erro ({ERROS_P2309}/{TESTES_P2309}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -13395,7 +13470,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88}
 
 
 if __name__ == "__main__":

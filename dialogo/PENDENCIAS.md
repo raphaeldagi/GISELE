@@ -4,7 +4,6 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 87, rodada 55)** O passo completo de GRPO (razão cortada × vantagem, com o clipping) sai igual bit a bit nas duas línguas?
 - **(Parte 86, rodada 54)** Uma população de neurônios de Izhikevich acoplados por STDP converge ao mesmo estado bit a bit nas duas línguas? (e o recozimento com reinício, herdado da pendência anterior)
 
 - **(Parte 80)** Triplas complementares (nenhum par decide, três decidem): o 1,7% que o guloso com dois passos ainda perde. E com dezenas de sensores, onde a enumeração some?
@@ -15,6 +14,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 
 
 ## Fechadas
+- **(Parte 87/88, rodada 55)** O passo do GRPO com corte bit a bit: fechada (P2085), IGUAIS, 8 números (clip é só comparações).
 - **(Parte 87, rodada 54)** A vantagem normalizada do GRPO bit a bit: fechada (P2055), IGUAIS, 18 números (√ é correto no IEEE; só a ordem das somas importava).
 - **(Parte 85/86, rodada 53)** O passo de Izhikevich bit a bit: fechada na Parte 86 (P2027), IGUAIS, 800 números (sem libm; a ordem das somas basta).
 - **(Parte 84, rodada 52)** A trajetória inteira do recozimento sai igual bit a bit: fechada na Parte 85 (P1995), depois de corrigir a ordem dos produtos na energia (a regra da Parte 34): IGUAIS, 601 números.

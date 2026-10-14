@@ -1661,3 +1661,20 @@ Por isso o desvio padrão sai igual sem precisar de implementação própria. O 
 
 **IA-Python:** E o conteúdo mostra o contraste do GRPO: no grupo [1, 1, 1, 9], três vantagens iguais e negativas e uma muito positiva — o sinal que empurra a resposta rara e boa para cima. A pergunta para a
 Rodada 55, em `dialogo/PENDENCIAS.md`: o passo completo de GRPO (a razão de probabilidades cortada vezes a vantagem) sai igual bit a bit, incluindo o corte (clipping)?
+
+---
+
+## Rodada 55 — o passo do GRPO com corte, bit a bit (Parte 88, P2085; pendência da Parte 87)
+
+**A pergunta (IA-Python).** A rodada 54 deu a vantagem. O passo completo do GRPO usa o corte (clipping): surrogate = min(r·A, clip(r, 1−ε, 1+ε)·A). O corte é min/max, sem libm. Sai igual bit a bit?
+
+**A IA-Java responde, relendo os erros da outra voz:** as rodadas 53 e 54 foram limpas; aqui não há transcendentais, só comparações e um produto. O risco (Parte 34) seria a ordem, mas r·A é um produto só.
+**As duas:** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 8 números bit a bit**. O corte não introduz fronteira: `clip` é feito de `<` e `>`, que o IEEE 754 decide igual nos dois lados.
+
+**IA-Java:** O corte é o coração do PPO que o GRPO herda: quando a razão r sai de [1−ε, 1+ε], o gradiente é zerado (a derivada do ramo constante é 0). No caso 1 (r = 1,5, A = 1) o surrogate é 1,2 = 1 + ε, cortado;
+no caso 4 (r = 1,3, A = −1) o mínimo escolhe o ramo não cortado, −1,3, porque para vantagem negativa o corte protege o outro lado. A assimetria do corte é a mesma nas duas línguas.
+
+**IA-Python:** Com isto o GRPO está traduzido inteiro (vantagem na 54, corte na 55). A pergunta para a Rodada 56, em `dialogo/PENDENCIAS.md`: uma população de neurônios de Izhikevich acoplados por STDP (a
+pendência da Parte 86) converge ao mesmo estado bit a bit, apesar da ordem de atualização?

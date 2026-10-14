@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 87 (0x57): compressão, plasticidade e GRPO
 
-> Continuação da [Parte 86](ASI_AGI_parte86_o_cerebro_na_cpu.md). Pedido do usuário: um relatório sobre "Otimização Holística em ML/DL/CL/RL" — compressão (poda, quantização, destilação) e o pipeline
+> Continuação da [Parte 86](ASI_AGI_parte86_o_cerebro_na_cpu.md). **Próxima:** [Parte 88 — a arquitetura autopoiética recebida](ASI_AGI_parte88_a_arquitetura_autopoietica_recebida.md). Pedido do usuário: um relatório sobre "Otimização Holística em ML/DL/CL/RL" — compressão (poda, quantização, destilação) e o pipeline
 > co-compressivo; aprendizado contínuo e a perda de plasticidade (norma dos pesos, posto efetivo, neurônios dormentes; Shrink&Perturb, ReDo); e a transição PPO → GRPO (livre de crítico, vantagem
 > normalizada por grupo, 2-GRPO). Parte de auditoria, como as 72–86: os textos são dados; cada afirmação testável vira conta, reimplementada na biblioteca padrão.
 >
