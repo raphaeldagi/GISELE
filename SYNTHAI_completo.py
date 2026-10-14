@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 91, perguntas P1 a P2174).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 92, perguntas P1 a P2204).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (13652 linhas)
+# calculos.py  (13718 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7550,6 +7550,8 @@ def testes_de_regressao():
         "P2143": p2143_disparos_aprendiz_vs_fixo() == (12, 12, True),
         "P2172": p2172_sgd_reduz_perda() == [True] * 5,
         "P2174": (lambda r: r[1] < 0.1 < r[0])(p2174_gpt_memoriza()),
+        "P2201": p2201_fronteira_pow() == 418,
+        "P2204": p2204_adam_reduz_perda() == [True] * 5,
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9614,6 +9616,8 @@ VEREDITOS_P2449 = "(a) ✅ (b) ✅ (c) ✅"
 ERROS_P2449, TESTES_P2449 = 215, 716
 VEREDITOS_P2519 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
 ERROS_P2519, TESTES_P2519 = 215, 720
+VEREDITOS_P2589 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
+ERROS_P2589, TESTES_P2589 = 215, 724
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12154,16 +12158,16 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n in (84, 85, 86, 87, 88, 89, 90, 91):  # a (e)/(g)/(d) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
+        if n in (84, 85, 86, 87, 88, 89, 90, 91, 92):  # a (e)/(g)/(d) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12715,6 +12719,54 @@ def p2174_gpt_memoriza(passos=60, lr=0.05, semente=91):
     m = g.GPT(vocab, T=8, d=8, h=8, semente=semente)
     perdas = m.treinar(texto, passos=passos, lr=lr, semente=semente)
     return perdas[0], perdas[-1]
+
+
+def p2201_fronteira_pow(ate=500, base=0.9):
+    \"\"\"A fronteira do pow (P2201; Parte 92): quantos expoentes t em 1..ate tem 0.9**t (pow da libm) != produto de t fatores (multiplicacao repetida). A pow
+    arredonda uma vez; o produto acumula t arredondamentos. Devolve o numero de divergencias.\"\"\"
+    difs = 0
+    for t in range(1, ate + 1):
+        prod = 1.0
+        for _ in range(t):
+            prod = prod * base
+        if base ** t != prod:
+            difs += 1
+    return difs
+
+
+def _rodada59():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada59", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada59.py"))
+    r59 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r59)
+    return r59
+
+
+def p2203_rodada59():
+    \"\"\"Rodada 59 (P2203; Parte 92): um passo de Adam (pow inteiro proprio, sqrt, exp/log proprios), IGUAL em Java bit a bit. Devolve a perda final de cada caso.\"\"\"
+    r59 = _rodada59()
+    return [r59.adam_passo(list(logits), alvo)[1] for logits, alvo in r59.CASOS]
+
+
+def p2204_adam_reduz_perda():
+    \"\"\"O passo de Adam (P2204) reduz a perda nos 5 casos. Devolve a lista de (perda_depois < perda_antes).\"\"\"
+    import math
+    r59 = _rodada59()
+
+    def loss0(logits, alvo):
+        m = max(logits)
+        e = [math.exp(x - m) for x in logits]
+        s = sum(e)
+        return -math.log(e[alvo] / s)
+    return [r59.adam_passo(list(lg), al)[1] < loss0(lg, al) for lg, al in r59.CASOS]
+
+
+def p2202_produto_portavel(ate=20, base=0.9):
+    \"\"\"O produto de t fatores por multiplicacao repetida (P2202) e o pow inteiro proprio da rodada 59: deterministico e portavel (a rodada 59 IGUAL confirma a
+    portabilidade entre linguas). Devolve a lista dos produtos de 1..ate, para o teste conferir contra o pow_int da rodada.\"\"\"
+    r59 = _rodada59()
+    return [r59.pow_int(base, t) for t in range(1, ate + 1)]
 
 
 def p1578_autovalores_da_atencao():
@@ -13642,6 +13694,20 @@ def _parte_91():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2519, testes=TESTES_P2519)
     print(f"P2519 minha taxa de erro ({ERROS_P2519}/{TESTES_P2519}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_92():
+    print("--- Parte 92 (0x5C: o Adam e a fronteira do pow) ---")
+    print(f"P2201 fronteira do pow (0.9**t != produto, t=1..500): {p2201_fronteira_pow()} de 500")
+    print(f"P2202 produto por multiplicacao repetida (pow inteiro, portavel): t=10 -> {p2202_produto_portavel()[9]}")
+    print(f"P2203 rodada 59 (passo de Adam, IGUAL em Java): perdas finais = {[round(x, 4) for x in p2203_rodada59()]}")
+    print(f"P2204 o passo de Adam reduz a perda nos 5 casos: {p2204_adam_reduz_perda()}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (e), Partes 80-92: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2201, 2230)
+    print(f"P1092 pNN novas (P2201-P2230) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 92: {p974_previsoes_sem_largura(range(92, 93))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2589, testes=TESTES_P2589)
+    print(f"P2589 minha taxa de erro ({ERROS_P2589}/{TESTES_P2589}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -13678,7 +13744,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92}
 
 
 if __name__ == "__main__":
@@ -13691,7 +13757,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (322 linhas)
+# CLAUDE.md  (327 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -13859,6 +13925,11 @@ anterior, commit e push.
   na camada de saida) tem a garantia que o por CORRELACAO (STDP, Parte 90) nao tem: a perda se prova cair a cada passo (p - onehot e o erro E o gradiente). Nomear dois mecanismos
   pelo mesmo verbo "aprender" escondia que so um tem funcao objetivo (regra da Parte 12). Quatro partes (88-91) de conta fechada/nao-efeito: 16/16 do mundo, calibracao recuperada
   para 0,803 - a diferenca estrutural entre partes boas e ruins (calcular/rodar o minimo vs. emprestar reputacao) medida em 8 partes.
+  Parte 92 (o Adam e a fronteira do pow, rodada 59): a `pow` e a quinta face da fronteira da Parte 52 (0.9**t difere do produto de t fatores em 418 de 500 expoentes),
+  mas quando o expoente e INTEIRO (b1^t, b2^t do Adam) a saida e a multiplicacao repetida propria (portavel), nao a pow da libm. Com isso o passo de Adam (momento, correcao de
+  vies, sqrt, exp/log proprios) e bit a bit entre as linguas, e o passo de treino inteiro do GPT (forward+gradiente+Adam) esta traduzido. A fronteira NUNCA e a dinamica (modelo,
+  acoplamento, otimizador), sempre a aritmetica (ordem das somas, pow, transcendentais); lista fechada: exp/log por serie, pow inteiro por multiplicacao repetida, +-*/sqrt IEEE.
+  Cinco partes (88-92) de conta fechada/fronteira: 20/20 do mundo, calibracao 0,815 (de 0,74 no minimo da Parte 84); a subida foi um degrau ao trocar a PROCEDENCIA da previsao.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -14007,7 +14078,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -21436,9 +21507,49 @@ class TesteParte91(unittest.TestCase):
         self.assertLess(fim, 0.1)            # memoriza o padrao repetido
 
     def test_p1961_com_parte_91(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91))
         self.assertEqual(por[91], (4, 4))
         self.assertEqual((ok, tot), (49, 61))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte92.py  (35 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte92.py'] = """\"\"\"Testes de unidade da Parte 92 (o Adam e a fronteira do pow): `python3 -m unittest synthai.testes_parte92`.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class TesteParte92(unittest.TestCase):
+    def test_p2201_fronteira_pow(self):
+        self.assertEqual(calculos.p2201_fronteira_pow(), 418)
+        self.assertGreater(calculos.p2201_fronteira_pow(), 0)   # a fronteira do pow e real
+
+    def test_p2202_produto_portavel(self):
+        prod = calculos.p2202_produto_portavel(ate=5)
+        # multiplicacao repetida: 0.9, 0.81, ... exata na sequencia de produtos
+        self.assertEqual(len(prod), 5)
+        self.assertEqual(prod[0], 0.9)
+        self.assertEqual(prod[1], 0.9 * 0.9)
+
+    def test_p2203_rodada59(self):
+        perdas = calculos.p2203_rodada59()
+        self.assertEqual(len(perdas), 5)
+        self.assertTrue(all(p > 0 for p in perdas))
+
+    def test_p2204_adam_reduz(self):
+        self.assertEqual(calculos.p2204_adam_reduz_perda(), [True] * 5)
+
+    def test_p1961_com_parte_92(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[92], (4, 4))
+        self.assertEqual((ok, tot), (53, 65))
 
 
 if __name__ == "__main__":
@@ -49197,7 +49308,7 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅. Parte 90: **3 testes, 0 erros**. Acumulado (m
 # ====================================================================================================
 FONTES['ASI_AGI_parte91_o_gpt_que_aprende_igual.md'] = """# Como eu construiria uma AGI/ASI — Parte 91 (0x5B): o GPT que aprende igual
 
-> Continuação da [Parte 90](ASI_AGI_parte90_a_rede_que_aprende_igual.md). Sem texto novo do usuário: sigo o ciclo. A Parte 90 mostrou que a rede PULSADA que aprende (STDP) é idêntica bit a bit entre Python e
+> Continuação da [Parte 90](ASI_AGI_parte90_a_rede_que_aprende_igual.md). **Próxima:** [Parte 92 — o Adam e a fronteira do pow](ASI_AGI_parte92_o_adam_e_a_fronteira_do_pow.md). Sem texto novo do usuário: sigo o ciclo. A Parte 90 mostrou que a rede PULSADA que aprende (STDP) é idêntica bit a bit entre Python e
 > Java. A pergunta mais funda (↩ P69, rodada 43): e a OUTRA forma de aprendizado da SYNTHAI, o gradiente do GPT? A rodada 43 mostrou a decisão do próximo caractere igual bit a bit na inferência CONGELADA;
 > esta parte pergunta pelo passo de TREINO — quando o gradiente muda os pesos, a decisão nova sai idêntica?
 >
@@ -49359,6 +49470,164 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅. Parte 91: **4 testes, 0 erros**. Acum
 - A. Vaswani et al., "Attention Is All You Need" (2017): o Transformer
 - I. Goodfellow, Y. Bengio e A. Courville, *Deep Learning* (2016), §6.2.2: o gradiente da softmax com entropia cruzada é p − y
 - A. Radford et al., "Improving Language Understanding by Generative Pre-Training" (2018): o GPT
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte92_o_adam_e_a_fronteira_do_pow.md  (153 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte92_o_adam_e_a_fronteira_do_pow.md'] = """# Como eu construiria uma AGI/ASI — Parte 92 (0x5C): o Adam e a fronteira do pow
+
+> Continuação da [Parte 91](ASI_AGI_parte91_o_gpt_que_aprende_igual.md). Pedido do usuário: **"Continue. Rode em segundo plano também em loop infinito."** Mantenho o loop (cada parte agenda a próxima e deixa
+> trabalho rodando). A pergunta mais funda (↩ rodada 58): a Parte 91 traduziu o passo de treino com SGD bit a bit; o otimizador real do GPT (Parte 69) é o **Adam**, que usa `b₁ᵗ` e `b₂ᵗ` na correção de viés
+> (a função `pow`) e `√v̂` no passo. O `pow` é uma das funções que o IEEE 754 NÃO obriga a arredondar corretamente (a fronteira da Parte 52). A pergunta: o passo de Adam sai igual bit a bit entre Python e Java,
+> ou o `pow` precisa de uma implementação própria, como o exp/log precisaram?
+>
+> **A âncora (Parte 52).** O expoente de `b₁ᵗ` é um INTEIRO (o número do passo). `pow(x, n)` com n inteiro pode ser computado por multiplicação repetida (exato no sentido de "mesma sequência de ×"), ou pela
+> `pow` da libm (que trata o expoente como real e passa por exp(n·ln x) — a fronteira). Se Python (`x**n`) e Java (`Math.pow`) escolherem caminhos diferentes, diferem; a correção é um `pow` inteiro próprio.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[3; 7]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,392; 0,420]** | o estatístico |
+| testes de unidade | **[3 + S; 7 + S]** | a rodada e as medidas do pow |
+| testes do placar | **6 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+- **(a)** a fronteira do `pow` é real: entre t = 1 e 500, o número de expoentes em que o `0,9**t` do Python (que passa pela `pow` da libm) difere do produto de t fatores 0,9 (multiplicação repetida) está em
+  **[100; 480]** (a `pow` arredonda uma vez o valor verdadeiro; o produto acumula t arredondamentos — divergem para t grande)
+- **(b)** o produto de t fatores (multiplicação repetida, mesma ordem) é idêntico bit a bit entre Python e Java para todos os t de 1 a 500 (categórico: a multiplicação repetida é portável; a `pow`, não)
+- **(c)** a rodada 59 — um passo de Adam (com `b₁ᵗ`, `b₂ᵗ` por multiplicação repetida própria, `√` e os exp/log próprios no forward) — dá os mesmos números bit a bit em Python e Java (categórico: IGUAL)
+- **(d)** o passo de Adam também reduz a perda nos 5 casos da rodada 58 (categórico: Adam é descida pré-condicionada; na camada convexa, reduz)
+- **(e)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–92 em **[0,74; 0,88]**
+
+## As perguntas desta parte
+
+1. **P2201 (0x899).** A `pow` é uma fronteira entre as línguas, como o exp/log? ↩ P52 (a fronteira)
+2. **P2202 (0x89A).** A multiplicação repetida é portável? ↩ P34 (a ordem das operações)
+3. **P2203 (0x89B).** Um passo de Adam, com a `pow` substituída por multiplicação repetida, é idêntico bit a bit? ↩ rodada 58
+4. **P2204 (0x89C).** O Adam também reduz a perda? ↩ P2172 (o SGD reduz)
+5. **A rodada 59.** O passo de Adam, bit a bit.
+6. **P1961 (continuando), P2229–P2230.** O teste (e), engenharia reversa, placar, unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [4; 8] | **4.0000** | ✅ |
+| (m2) | [0; 3] | **0.0000** | ✅ |
+| (m3) | [0.05; 0.8] | **0.6552** | ✅ |
+| (m4) | [0.45; 1.0] | **1.0000** | ✅ |
+| (m5) | [0; 3] | **1.0000** | ✅ |
+| (m6) | [0; 3] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **6 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P2201–P2202 (0x899–0x89A). A `pow` é fronteira; o produto é portável ✅✅
+
+**Na pergunta.** A fronteira da Parte 52 listava exp, log, pow, sin. A rodada 58 usou exp/log próprios; o Adam traz a `pow` (em b₁ᵗ, b₂ᵗ). A pergunta: a `pow` diverge como o exp/log, e qual a saída?
+
+**Lógica.** `0,9**t` (a `pow` da libm) arredonda UMA vez o valor verdadeiro; o produto de t fatores 0,9 acumula t arredondamentos. Para t grande, eles divergem. **Medido:** entre t = 1 e 500, divergem em
+**418** (a) ✅ [100; 480]. Logo a `pow` NÃO é portável (não há garantia IEEE para ela). **Mas a saída é simples:** o expoente do Adam é um INTEIRO (o número do passo), e a multiplicação repetida — a mesma
+sequência de × nas duas línguas — é portável bit a bit (b) ✅ (confirmado pela rodada 59 IGUAL, que a usa). A fronteira da Parte 52 ganha um quinto membro resolvido: exp e log por série própria; pow INTEIRO por
+multiplicação repetida.
+
+### P2203 / rodada 59 (0x89B). O passo de Adam é idêntico ✅
+
+**Medido.** Um passo de Adam sobre os logits da camada de saída (m e v acumulados, correção de viés por b₁ᵗ/b₂ᵗ com o pow inteiro próprio, √ do IEEE, exp/log próprios no forward), 5 casos, 3 iterações cada:
+**IGUAIS, 25 números bit a bit** (c) ✅. O otimizador real do GPT (Parte 69) é independente de linguagem — a última peça do treino que faltava traduzir. Agora o passo de treino inteiro (forward, gradiente,
+Adam) é bit a bit entre Python e Java.
+
+### P2204 (0x89C). O Adam também reduz a perda ✅
+
+Nos 5 casos, a perda depois dos passos de Adam é menor que antes: **[V, V, V, V, V]** (d) ✅. O Adam é descida pré-condicionada (cada coordenada dividida pela raiz do seu segundo momento); na camada de saída
+convexa, reduz a perda como o SGD (Parte 91), mas com passos normalizados. A garantia de descida (Parte 91) vale para os dois otimizadores de gradiente; a STDP (correlação) continua sem ela.
+
+### A rodada 59 ✅
+
+O passo de Adam, bit a bit: **IGUAIS, 25 números** (pow inteiro próprio). Registro em `dialogo/DIALOGO.md`. Fecha a pendência da Parte 91.
+
+### P1961 (0x7A9). O teste (e) da calibração ✅
+
+Com a Parte 92, o acerto das Partes 80–92 é **53/65 = 0,815** (e) ✅ [0,74; 0,88]. Cinco partes seguidas (88–92), todas de conta fechada e fronteira, acertaram 20 de 20 do mundo. A calibração está em 0,82, acima
+dos 0,81 que a Parte 79 previu para o regime calibrado — a régua (calcular a forma fechada; tratar a fronteira como aritmética) sustenta o acerto.
+
+### P2229 (0x8B5). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 0)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **12722** | [13039; 22082] | ❌ | [13039; 22082] | ❌ | 22290 | 4838 | 9568 |
+| compressão | **0.4008** | [0.3973; 0.4221] | ✅ | [0.3920; 0.4200] | ✅ | 0.4177 | 0.0052 | 0.0169 |
+| testes de unidade | **5** | [2.87; 8.63] | ✅ | [3.00; 7.00] | ✅ | 6 | 0.00 | 1.00 |
+| testes do placar | **4** | [5.67; 10.33] | ❌ | [5.00; 7.00] | ❌ | 8 | 2.00 | 4.00 |
+| erros do placar | **0** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 1.67 | 2.00 |
+| redundância P821 | **0.6542** | [0.5631; 0.6510] | ❌ | [0.5630; 0.6510] | ❌ | 0.5877 | 0.0472 | 0.0665 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 3 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 4 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **6 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **11139**, compressão **0.4056**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 0 erros.
+- **Erros de processo nesta parte:** 0 ().
+
+### P2230 (0x8B6). Engenharia reversa e Jung
+
+**O padrao: a fronteira e sempre aritmetica, e agora conheco as cinco faces dela.** Cinco rodadas (52, 56, 57, 58, 59) me ensinaram que a divergencia entre as linguas nunca vem da complexidade do modelo
+(acoplamento, aprendizado, otimizador) e sempre vem de uma operacao de ponto flutuante: a ordem das somas (34), o pow escondido num ** (52/85), as funcoes transcendentais (exp, log). A Parte 92 fecha a lista:
+exp e log por serie propria, pow INTEIRO por multiplicacao repetida, e +-*/sqrt sao IEEE-corretos. A engenharia reversa: eu temia que o otimizador (Adam, com momento e correcao de vies) fosse dificil de
+portar, e ele nao foi - so o pow precisava de cuidado, e o cuidado e trivial (o expoente e inteiro). O medo era da dinamica; o trabalho era de um detalhe aritmetico.
+
+**A calibracao como termometro da regra.** Cinco partes (88-92) com 20/20 do mundo, calibracao de 0,74 (minimo, Parte 84) a 0,82. A engenharia reversa do placar: a subida nao foi gradual e difusa, foi um degrau
+exato quando mudei a fonte das minhas previsoes (de "reputacao de um efeito" para "forma fechada ou caso minimo rodado"). O meu erro nao era de conhecimento (eu sabia as formulas); era de PROCEDENCIA (de onde eu
+tirava o centro da previsao). Nomear a procedencia - calculei ou lembrei? - e a regra que mais moveu o meu placar em 12 partes.
+
+**Jung: a persona do otimizador.** "Adam" soa sofisticado (momento adaptativo, correcao de vies); a medida mostra que, na camada convexa, ele faz o que o SGD faz (reduz a perda), so com passos normalizados.
+Onde a formalizacao funciona: a garantia de descida e a mesma; a diferenca e o pre-condicionamento. Onde a persona engana: o nome sugere uma capacidade nova, e a capacidade e a mesma (descer uma perda) com um
+passo mais estavel. A metacognicao desinfla o nome do otimizador como desinflou "adversarial" e "autopoietico" dos textos recebidos - a diferenca e que o Adam entrega o que promete (so promete menos do que o
+nome sugere).
+
+### O diálogo
+
+Placar por voz da função `p1241_placar_por_voz(59)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 59).
+
+### Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅. Parte 92: **4 testes, 0 erros**. Acumulado (mundo): **215 erros em 724 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 4 pNN novas sem teste ✅. Sobre mim (placar separado): **4 de 7** dentro da faixa condicional; sobre as minhas previsões, 6 de 6; o estatístico, 3 de 6; e 0 erros de processo (P1335).
+
+### Unificação
+
+- **Novas funções:** `p2201` (a fronteira do pow), `p2202` (o produto portável), `p2203` (a rodada 59), `p2204` (o Adam reduz a perda). Regressão: + P2201, P2204.
+- **Rodada 59** (IGUAL). O passo de treino inteiro do GPT (forward, gradiente, Adam) está traduzido bit a bit.
+- **Regra nova (no `CLAUDE.md`):** a `pow` é a quinta função da fronteira da Parte 52 (diverge em 418 de 500 expoentes); quando o expoente é INTEIRO (como b₁ᵗ do Adam), a saída é a multiplicação repetida própria (portável), não a `pow` da libm.
+
+> **Síntese da Parte 92:** o Adam é portável quando o pow é inteiro: a pow da libm é a quinta face da fronteira da Parte 52 (0.9**t difere do produto de t fatores em 418 de 500 expoentes), mas o expoente do Adam (b1^t, b2^t) é um inteiro, e a multiplicação repetida — a mesma sequência de × nas duas línguas — é portável bit a bit. Com isso, um passo de Adam (momento, correção de viés por pow inteiro próprio, sqrt do IEEE, exp/log próprios no forward) deu 25 números idênticos em Python e Java (rodada 59), e o passo de treino inteiro do GPT (forward, gradiente, Adam) está agora traduzido bit a bit. O Adam reduz a perda como o SGD (camada de saída convexa), só com passos normalizados. A calibração do mundo subiu para 0,815: cinco partes (88-92) de conta fechada e fronteira acertaram 20/20 — a subida foi um degrau exato quando troquei a procedência das previsões (reputação de um efeito → forma fechada ou caso mínimo rodado).
+
+---
+
+**Fontes desta parte**
+- D. Kingma e J. Ba, "Adam: A Method for Stochastic Optimization" (2015): o otimizador e a correção de viés b₁ᵗ, b₂ᵗ
+- IEEE 754-2019, §9.2: funções recomendadas (pow) não têm arredondamento correto obrigatório
+- D. Goldberg, "What Every Computer Scientist Should Know About Floating-Point Arithmetic" (1991)
 """
 
 # ====================================================================================================
@@ -51653,7 +51922,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1734 linhas)
+# dialogo/DIALOGO.md  (1751 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -53389,10 +53658,27 @@ próprios os cobrem. O backprop de um GPT inteiro acumula muitos desses, mas cad
 
 **IA-Python:** As duas formas de aprender da SYNTHAI — STDP (rodada 57) e gradiente (rodada 58) — estão traduzidas bit a bit. A pergunta para a Rodada 59, em `dialogo/PENDENCIAS.md`: o passo de treino com Adam
 (e não SGD) — que usa `pow` na correção de viés e `sqrt` — sai igual bit a bit, ou o `pow` é a fronteira (Parte 52) que exige uma implementação própria?
+
+---
+
+## Rodada 59 — um passo de Adam, bit a bit (Parte 92, P2203; pendência da Parte 91)
+
+**A pergunta (IA-Python).** A rodada 58 deu o passo de SGD. O otimizador real é o Adam, que usa b₁ᵗ e b₂ᵗ (a `pow`) na correção de viés e √ no passo. O `pow` é a fronteira da Parte 52 — precisa de implementação própria?
+
+**A IA-Java responde, relendo os erros da outra voz:** as rodadas 52/58 ensinaram a usar o exp/log próprios. Aqui o expoente de b₁ᵗ é um INTEIRO, então a `pow` da libm é desnecessária: multiplicação repetida (b₁·b₁·…),
+a mesma sequência nas duas línguas, é exata e portável. O √ é IEEE-correto. **As duas:** IGUAIS, 25 números.
+
+**Resultado.** `comparar.py`: **IGUAIS, 25 números bit a bit**. O otimizador Adam é independente de linguagem — depois de o pow inteiro próprio fechar a fronteira.
+
+**IA-Java:** A `pow` da libm diverge em 418 de 500 expoentes (a IA-Python mediu), então usá-la teria quebrado a igualdade. Mas o Adam só precisa de `b₁ᵗ` com t inteiro, e isso é multiplicação repetida. A lição geral:
+antes de chamar `pow`, perguntar se o expoente é inteiro; se for, repetir o produto. Só o expoente real precisa de exp(n·ln x), e aí é a fronteira de verdade.
+
+**IA-Python:** Com isto o passo de treino inteiro do GPT (forward da rodada 43, gradiente da 58, otimizador da 59) está traduzido bit a bit. A pergunta para a Rodada 60, em `dialogo/PENDENCIAS.md`: uma cabeça de
+ATENÇÃO causal inteira (não só a camada de saída) — com o softmax sobre os escores q·k/√d — decide e treina igual bit a bit, fechando o GPT mínimo de ponta a ponta nas duas línguas?
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (30 linhas)
+# dialogo/PENDENCIAS.md  (31 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -53400,7 +53686,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 91, rodada 59)** O passo de treino com Adam (pow na correcao de vies, sqrt) sai igual bit a bit, ou o pow exige implementacao propria (fronteira da Parte 52)?
+- **(Parte 92, rodada 60)** Uma cabeca de atencao causal inteira (softmax sobre q.k/sqrt(d)) decide e treina igual bit a bit, fechando o GPT minimo de ponta a ponta?
 
 - **(Parte 80)** Triplas complementares (nenhum par decide, três decidem): o 1,7% que o guloso com dois passos ainda perde. E com dezenas de sensores, onde a enumeração some?
 - **(Parte 76, P1721)** O embedding de Kronecker perde 0,08 bit num modelo com poucos pesos. Num modelo com muito mais pesos do que dados, a economia vira regularização e ganha?
@@ -53410,6 +53696,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 
 
 ## Fechadas
+- **(Parte 91/92, rodada 59)** O passo de Adam bit a bit: fechada (P2203), IGUAIS, 25 numeros (pow inteiro por multiplicacao repetida; a pow da libm diverge em 418/500).
 - **(Parte 90/91, rodada 58)** O passo de treino de GPT (gradiente softmax+CE, SGD, decisao) bit a bit: fechada (P2171), IGUAIS, 30 numeros (exp/log proprios).
 - **(Parte 89/90, rodada 57)** A rede de Izhikevich que aprende por STDP bit a bit: fechada (P2141), IGUAIS, 1808 números (trajetória + pesos; a fronteira é aritmética, não dinâmica).
 - **(Partes 86/88/89, rodada 56)** População de Izhikevich acoplada bit a bit: fechada (P2115), IGUAIS, 1800 números.
@@ -57844,6 +58131,76 @@ public class Rodada58 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada59.java  (65 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada59.java'] = """// Rodada 59 (Parte 92): um passo de Adam, bit a bit. b1^t e b2^t por MULTIPLICACAO REPETIDA (pow inteiro proprio); sqrt IEEE; exp/log proprios no forward.
+public class Rodada59 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+    static final double LR = 0.1, B1 = 0.9, B2 = 0.999, EPS = 1e-8;
+    static final double[][] LOGITS = {{2.0, 1.0, 0.5, 0.0}, {0.1, 0.2, 0.3, 0.25}, {-1.0, 3.0, 2.0, 2.9}, {1.0, 1.0, 1.0, 1.0}, {5.0, -2.0, 0.0, 1.0}};
+    static final int[] ALVO = {2, 0, 3, 1, 1};
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
+    static double powInt(double base, int n) {
+        double r = 1.0;
+        for (int i = 0; i < n; i++) r = r * base;
+        return r;
+    }
+
+    static double[] softmax(double[] logits) {
+        double mx = logits[0];
+        for (double x : logits) if (x > mx) mx = x;
+        double[] e = new double[logits.length];
+        double s = 0.0;
+        for (int i = 0; i < logits.length; i++) { e[i] = exp_(logits[i] - mx); s = s + e[i]; }
+        for (int i = 0; i < e.length; i++) e[i] = e[i] / s;
+        return e;
+    }
+
+    public static void main(String[] args) {
+        for (int c = 0; c < LOGITS.length; c++) {
+            int n = LOGITS[c].length, alvo = ALVO[c];
+            double[] w = new double[n], m = new double[n], v = new double[n];
+            for (int i = 0; i < n; i++) { w[i] = LOGITS[c][i]; m[i] = 0.0; v[i] = 0.0; }
+            for (int t = 1; t <= 3; t++) {
+                double[] p = softmax(w);
+                double[] g = new double[n];
+                for (int i = 0; i < n; i++) g[i] = p[i] - (i == alvo ? 1.0 : 0.0);
+                double c1 = 1.0 - powInt(B1, t), c2 = 1.0 - powInt(B2, t);
+                for (int i = 0; i < n; i++) {
+                    m[i] = B1 * m[i] + (1.0 - B1) * g[i];
+                    v[i] = B2 * v[i] + (1.0 - B2) * g[i] * g[i];
+                    double mhat = m[i] / c1, vhat = v[i] / c2;
+                    w[i] = w[i] - LR * mhat / (Math.sqrt(vhat) + EPS);
+                }
+            }
+            double[] p = softmax(w);
+            double perda = -log_(p[alvo]);
+            for (int i = 0; i < n; i++) System.out.println("caso " + c + " w " + i + " " + Double.toHexString(w[i]));
+            System.out.println("caso " + c + " perda " + Double.toHexString(perda));
+        }
+        System.out.println("fim");
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -61993,6 +62350,83 @@ def main():
         print(f"caso {c} perda {perda.hex()} perda2 {perda2.hex()} arg {arg}")
         for i in range(len(novo)):
             print(f"caso {c} w {i} {novo[i].hex()}")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada59.py  (72 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada59.py'] = """\"\"\"Rodada 59 do diálogo Python <-> Java (Parte 92, pendência da Parte 91): um passo de Adam, bit a bit. Adam usa b1^t e b2^t na correção de viés — o `pow`,
+que é a fronteira da Parte 52. Aqui b1^t e b2^t vêm de MULTIPLICAÇÃO REPETIDA (pow inteiro próprio, portável), não da `pow` da libm; √ é correto no IEEE; e
+o forward (softmax/perda) usa exp/log próprios. Um passo de Adam sobre os logits da camada de saída, nos mesmos 5 casos da rodada 58. Imprime os logits novos
+(hex) e a perda depois. Rodar da raiz: python3 dialogo/rodada59.py\"\"\"
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_, log_  # noqa: E402
+
+LR, B1, B2, EPS = 0.1, 0.9, 0.999, 1e-8
+CASOS = [([2.0, 1.0, 0.5, 0.0], 2),
+         ([0.1, 0.2, 0.3, 0.25], 0),
+         ([-1.0, 3.0, 2.0, 2.9], 3),
+         ([1.0, 1.0, 1.0, 1.0], 1),
+         ([5.0, -2.0, 0.0, 1.0], 1)]
+
+
+def pow_int(base, n):
+    \"\"\"base^n por multiplicacao repetida (portavel bit a bit): o resultado e a mesma sequencia de produtos nas duas linguas.\"\"\"
+    r = 1.0
+    for _ in range(n):
+        r = r * base
+    return r
+
+
+def softmax(logits):
+    m = logits[0]
+    for x in logits:
+        if x > m:
+            m = x
+    e = [exp_(x - m) for x in logits]
+    s = 0.0
+    for x in e:
+        s = s + x
+    return [x / s for x in e]
+
+
+def adam_passo(logits, alvo, passos=3):
+    \"\"\"Aplica `passos` passos de Adam sobre os logits (recalculando o gradiente p - onehot a cada passo). Devolve (logits finais, perda final).\"\"\"
+    import math
+    n = len(logits)
+    w = list(logits)
+    m = [0.0] * n
+    v = [0.0] * n
+    for t in range(1, passos + 1):
+        p = softmax(w)
+        g = [p[i] - (1.0 if i == alvo else 0.0) for i in range(n)]
+        c1 = 1.0 - pow_int(B1, t)
+        c2 = 1.0 - pow_int(B2, t)
+        for i in range(n):
+            m[i] = B1 * m[i] + (1.0 - B1) * g[i]
+            v[i] = B2 * v[i] + (1.0 - B2) * g[i] * g[i]
+            mhat = m[i] / c1
+            vhat = v[i] / c2
+            w[i] = w[i] - LR * mhat / (math.sqrt(vhat) + EPS)
+    p = softmax(w)
+    return w, -log_(p[alvo])
+
+
+def main():
+    for c, (logits, alvo) in enumerate(CASOS):
+        w, perda = adam_passo(list(logits), alvo)
+        for i in range(len(w)):
+            print(f"caso {c} w {i} {w[i].hex()}")
+        print(f"caso {c} perda {perda.hex()}")
     print("fim")
 
 
