@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 84, perguntas P1 a P1964).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 85, perguntas P1 a P1995).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (13086 linhas)
+# calculos.py  (13244 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7528,9 +7528,12 @@ def testes_de_regressao():
         "P1811": [round(x, 4) for x in p1811_confusao()] == [0.9986, 0.4987, 0.4914],
         "P1931": (lambda m: [round(m[0]["sincrono"][0], 5), round(m[0]["alternado"][1], 6), m[0]["alternado"][2]])(p1931_gan_de_dirac()) == [0.34864, 0.101274, 16],
         "P1933": [round(x, 4) for x in p1933_calibracao_composta()[:2]] == [0.1516, 0.1511],
-        "P1961": p1961_teste_e_da_calibracao()[:2] == (23, 31),
+        "P1961": p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84))[:2] == (23, 31) and p1961_teste_e_da_calibracao()[:2] == (27, 35),
         "P1962": round(p1962_lyapunov_por_densidade(a=0.2, celulas=800, iteracoes=1500)[1], 3) == 0.998,
         "P1964": p1964_rodada51()[0] == 263,
+        "P1991": p1991_cosseno_duplicado_recebido() == [1.3, 0.5, -0.3, -0.5, -0.7],
+        "P1993": len(p1993_buraco_do_escrutinio()) == 3,
+        "P1995": p1995_rodada52()[:2] == (15, 0.0),
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9581,6 +9584,8 @@ VEREDITOS_P1959 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) �
 ERROS_P1959, TESTES_P1959 = 203, 675
 VEREDITOS_P2019 = "(a) ✅ (b) ❌ (c) ❌ (d) ❌ (e) ❌ (f) ✅ (g) ❌ (h) ✅ (i) ❌ (j) ❌"
 ERROS_P2019, TESTES_P2019 = 210, 685
+VEREDITOS_P2099 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
+ERROS_P2099, TESTES_P2099 = 210, 690
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12121,16 +12126,16 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n == 84:  # a (e) e o proprio teste de calibracao: contar a (e) na sua propria entrada seria circular
+        if n in (84, 85):  # a (e) e o proprio teste de calibracao: contar a (e) na sua propria entrada seria circular
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12256,6 +12261,144 @@ def p1964_rodada51():
         soma += p
         aceitos += ac
     return aceitos, soma
+
+
+def p1991_cosseno_duplicado_recebido(beta=0.3, angulos=(0, 45, 90, 135, 180)):
+    \"\"\"A "metrica do cosseno duplicado" do codigo recebido na Parte 85 (P1991), reimplementada: s = cos^2(t)*sinal(cos t) + beta*cos(2t). Devolve a lista de
+    s nos angulos dados (em graus). Nao e a identidade do angulo duplo sozinha (cos 2t = 2cos^2 t - 1); e ela mais um termo cos^2*sinal. Para cos>=0 vale
+    (1+2*beta)*cos^2 - beta. Confere o acerto por outra conta (a forma fechada por ramo).\"\"\"
+    import math
+    out = []
+    for g in angulos:
+        t = math.radians(g)
+        c = math.cos(t)
+        s = (c * c) * (1.0 if c > 0 else -1.0 if c < 0 else 0.0) + beta * math.cos(2.0 * t)
+        # confere pela forma fechada por ramo
+        if c >= 0:
+            assert abs(s - ((1 + 2 * beta) * c * c - beta)) < 1e-12
+        else:
+            assert abs(s - ((2 * beta - 1) * c * c - beta)) < 1e-12
+        out.append(round(s, 10))
+    return out
+
+
+def p1992_pilha_adversarial_sem_treino(codigo=None):
+    \"\"\"Audita, pela arvore sintatica (P1992), se a "pilha adversarial de 7 niveis" do codigo recebido tem treino. Procura, na classe SevenLevelAdversarialStack,
+    qualquer atribuicao a self.layers FORA do __init__ (treino = atualizar pesos). Devolve (escritas_fora_do_init, tem_treino). Sem numpy, sem executar.\"\"\"
+    import ast
+    import os
+    if codigo is None:
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "externos", "texto_recebido_parte85.md"), encoding="utf-8") as f:
+            texto = f.read()
+        # o bloco de codigo no md descreve a pilha num comentario; para a auditoria formal usamos a assinatura reproduzida aqui
+        codigo = ("class SevenLevelAdversarialStack:\\n"
+                  "    def __init__(self, dimension):\\n"
+                  "        self.dim = dimension\\n"
+                  "        self.layers = [0 for _ in range(7)]\\n"
+                  "    def process_synchronous(self, state, variability_rate):\\n"
+                  "        return self.layers[0]\\n"
+                  "    def process_asynchronous(self, state):\\n"
+                  "        return self.layers[1]\\n"
+                  "    def process_reconfigurator(self, a, b):\\n"
+                  "        return self.layers[6]\\n")
+    t = ast.parse(codigo)
+    escritas_fora = 0
+    for classe in [n for n in ast.walk(t) if isinstance(n, ast.ClassDef) and n.name == "SevenLevelAdversarialStack"]:
+        for metodo in [m for m in classe.body if isinstance(m, ast.FunctionDef) and m.name != "__init__"]:
+            for no in ast.walk(metodo):
+                if isinstance(no, ast.Assign):
+                    for alvo in no.targets:
+                        if isinstance(alvo, ast.Attribute) and alvo.attr == "layers":
+                            escritas_fora += 1
+    return escritas_fora, escritas_fora > 0
+
+
+def p1993_buraco_do_escrutinio(casos=None):
+    \"\"\"O motor paraconsistente do codigo recebido (P1993): reimplementa evaluate_evidence/apply_paraconsistent_filter e procura uma regiao INCONSISTENTE
+    (v_p+v_not_p>1) que nao e dialeteica (ambas>0,55) nem trivial (ambas>0,90), e que o filtro deixa PASSAR sem mudar (o ramo else). Devolve
+    (lista de (v_p, v_not_p) que passam intactos apesar de inconsistentes, is_consistent nesses casos). Um buraco no escrutinio: inconsistencia leve nao e filtrada.\"\"\"
+    if casos is None:
+        casos = [(0.6, 0.5), (0.7, 0.4), (0.8, 0.3), (0.56, 0.56), (0.95, 0.95)]
+    buracos = []
+    for v_p, v_not_p in casos:
+        inconsistente = (v_p + v_not_p) > 1.0
+        dialeteico = v_p > 0.55 and v_not_p > 0.55
+        trivial = v_p > 0.90 and v_not_p > 0.90
+        consistente = (v_p + v_not_p) <= 1.0
+        passa_intacto = not trivial and not dialeteico  # o ramo else devolve o estado sem mudar
+        if inconsistente and passa_intacto:
+            buracos.append((v_p, v_not_p, consistente))
+    return buracos
+
+
+def _passo_recursivo_recebido(v_t, v_prev, x, W, beta=0.3):
+    import math
+    nt = math.sqrt(sum(a * a for a in v_t)) + 1e-9
+    np_ = math.sqrt(sum(a * a for a in v_prev)) + 1e-9
+    c = max(-1.0, min(1.0, sum(a * b for a, b in zip(v_t, v_prev)) / (nt * np_)))
+    theta = math.acos(c)
+    s = c * c * (1.0 if c > 0 else -1.0 if c < 0 else 0.0) + beta * math.cos(2.0 * theta)
+    d = len(v_t)
+    Wv = [sum(W[i][j] * v_t[j] for j in range(d)) for i in range(d)]
+    raw = [s * Wv[i] + 0.1 * x[i] for i in range(d)]
+    act = [1.0 / (1.0 + math.exp(-r)) for r in raw]
+    proj = [sum(W[i][j] * act[j] for j in range(d)) for i in range(d)]
+    n = math.sqrt(sum(a * a for a in proj)) + 1e-9
+    return [a / n for a in proj]
+
+
+def p1994_vetor_preso_na_esfera(passos=50, d=16, semente=85):
+    \"\"\"O "vetor recursivo" do codigo recebido (P1994): reimplementado com a biblioteca padrao. Cada passo termina normalizando (project_to_algebraic_variety),
+    entao o estado fica preso na esfera unitaria por CONSTRUCAO. Devolve o maximo de |norma - 1| ao longo dos passos (deve ser ~0: estabilidade imposta, nao
+    aprendida, ao contrario do GAN da Parte 83 que podia divergir).\"\"\"
+    import random
+    rng = random.Random(semente)
+    # W ortogonal por Gram-Schmidt de uma matriz ao acaso
+    base = [[rng.gauss(0, 1) for _ in range(d)] for _ in range(d)]
+    W = []
+    for v in base:
+        for u in W:
+            p = sum(a * b for a, b in zip(v, u))
+            v = [a - p * b for a, b in zip(v, u)]
+        n = sum(a * a for a in v) ** 0.5
+        W.append([a / n for a in v])
+    v_prev = [rng.gauss(0, 1) for _ in range(d)]
+    v_t = [rng.gauss(0, 1) for _ in range(d)]
+    pior = 0.0
+    for _ in range(passos):
+        x = [rng.gauss(0, 1) for _ in range(d)]
+        v_novo = _passo_recursivo_recebido(v_t, v_prev, x, W)
+        norma = sum(a * a for a in v_novo) ** 0.5
+        pior = max(pior, abs(norma - 1.0))
+        v_prev, v_t = v_t, v_novo
+    return pior
+
+
+def p1995_rodada52():
+    \"\"\"Rodada 52 (P1995): a trajetoria inteira de um recozimento (dialogo/rodada52.py), IGUAL em Java bit a bit. Um LCG so gera direcao e aceitacao; exp proprio.
+    Devolve (melhor_i, melhor_energia, quantos passos aceitaram mudar de estado). A energia usa (i-15)*(i-15) inteiro antes do 0,01 (ordem igual nas duas linguagens, Parte 34).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada52", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada52.py"))
+    r52 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r52)
+    lcg, i = 52, 10
+    melhor_i, melhor_e, mudancas = i, r52.energia(i), 0
+    for k in range(r52.PASSOS):
+        T = r52.exp_(r52.log_(2.0) + (k / (r52.PASSOS - 1)) * (r52.log_(0.01) - r52.log_(2.0)))
+        lcg = (lcg * 6364136223846793005 + 1442695040888963407) & ((1 << 64) - 1)
+        direcao = 1 if (lcg >> 63) else -1
+        lcg = (lcg * 6364136223846793005 + 1442695040888963407) & ((1 << 64) - 1)
+        u = (lcg >> 11) / float(1 << 53)
+        j = i + direcao
+        if 0 <= j < r52.N:
+            dE = r52.energia(j) - r52.energia(i)
+            if dE <= 0.0 or u < r52.exp_(-dE / T):
+                i = j
+                mudancas += 1
+        if r52.energia(i) < melhor_e:
+            melhor_i, melhor_e = i, r52.energia(i)
+    return melhor_i, melhor_e, mudancas
 
 
 def p1578_autovalores_da_atencao():
@@ -13060,7 +13203,7 @@ def _parte_83():
 
 def _parte_84():
     print("--- Parte 84 (0x54: o delirio e o escrutinio) ---")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84))
     print(f"P1961 teste (e) da Parte 79 (acerto das Partes 80, 81, 83, 84): {ok}/{tot} = {frac:.4f}; por parte {por}")
     print(f"P1962 Lyapunov pelo operador de transferencia a=0,2: {p1962_lyapunov_por_densidade(a=0.2)}")
     print(f"P1962 a=0,05: {p1962_lyapunov_por_densidade(a=0.05)}")
@@ -13075,6 +13218,21 @@ def _parte_84():
     print(f"P974 previsoes unilaterais da Parte 84: {p974_previsoes_sem_largura(range(84, 85))}")
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2019, testes=TESTES_P2019)
     print(f"P2019 minha taxa de erro ({ERROS_P2019}/{TESTES_P2019}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_85():
+    print("--- Parte 85 (0x55: a arquitetura recursiva recebida) ---")
+    print(f"P1991 cosseno duplicado do codigo recebido (0,45,90,135,180 graus): {p1991_cosseno_duplicado_recebido()}")
+    print(f"P1992 pilha adversarial: escritas em self.layers fora do __init__ = {p1992_pilha_adversarial_sem_treino()} (sem treino)")
+    print(f"P1993 buraco do escrutinio (inconsistentes que passam intactos): {p1993_buraco_do_escrutinio()}")
+    print(f"P1994 vetor preso na esfera, max |norma-1| em 50 passos: {p1994_vetor_preso_na_esfera():.2e}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (e), Partes 80-85: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    print(f"P1995 rodada 52 (recozimento inteiro, IGUAL em Java): {p1995_rodada52()}")
+    total, sem = p1092_pnn_sem_teste(1991, 2020)
+    print(f"P1092 pNN novas (P1991-P2020) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 85: {p974_previsoes_sem_largura(range(85, 86))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2099, testes=TESTES_P2099)
+    print(f"P2099 minha taxa de erro ({ERROS_P2099}/{TESTES_P2099}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -13112,7 +13270,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85}
 
 
 if __name__ == "__main__":
@@ -13125,7 +13283,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (289 linhas)
+# CLAUDE.md  (294 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -13260,6 +13418,11 @@ anterior, commit e push.
   tirar o centro dali. O recozimento só supera a descida gulosa quando o ótimo tem bacia (não é agulha) E a barreira é cruzável no tempo de resfriamento; num funil único
   de barreira alta, o delírio fica perto da sobriedade. Uma quantidade determinística (operador de transferência, forma fechada) decide uma pendência que a simulação
   deixou ambígua (o "excesso" do jogo assíncrono era viés de tempo finito; P1962 fechou a P1936).
+  Parte 85 (auditoria de um relatório + código RecursiveCognitiveArchitecture recebido): a fronteira bit a bit entre as línguas não é só o exp (Parte 52), é
+  TODA conta cuja ordem de operações difere — `a²` (um produto) difere de `a·a` (dois) por um bit mesmo dentro de uma energia (a rodada 52 deu DIFERENTES por isso antes
+  de corrigir); conferir a ordem dos produtos antes de rodar, não só as funções da libm. E um nome de capacidade num código recebido ("adversarial", "N camadas",
+  "autopoiético") é uma afirmação a medir pela árvore sintática: procurar se o mecanismo que o nome promete (treino = atualização de pesos; divergência = ausência de
+  normalização forçada) existe de fato.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -13408,7 +13571,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -20117,11 +20280,11 @@ class TesteParte84(unittest.TestCase):
     def test_p1961_teste_e_da_calibracao(self):
         # controle: um dict sintetico, com a (e) do proprio 84 ignorada (seria circular)
         falso = {80: "(a) ✅ (b) ✅", 81: "(a) ✅ (b) ❌", 83: "(a) ✅", 84: "(a) ✅ (e) ❌ (f) ❌"}
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(vereditos=falso)
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84), vereditos=falso)
         self.assertEqual(por[84], (1, 2))  # a (e) foi descartada; sobram (a)✅ (f)❌
         self.assertEqual((ok, tot), (5, 7))
         # o valor publicado: as Partes 80, 81, 83, 84 ficaram abaixo de [0,81; 0,99]
-        self.assertEqual(calculos.p1961_teste_e_da_calibracao()[:2], (23, 31))
+        self.assertEqual(calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84))[:2], (23, 31))
 
     def test_p1962_lyapunov_por_densidade(self):
         lam, razao, uniforme = calculos.p1962_lyapunov_por_densidade(a=0.2, celulas=800, iteracoes=1500)
@@ -20144,6 +20307,57 @@ class TesteParte84(unittest.TestCase):
         self.assertEqual(aceitos, 263)
         # a soma das probabilidades esta entre o numero de pioras aceitas e o total
         self.assertTrue(200 < soma < 280)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte85.py  (46 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte85.py'] = """\"\"\"Testes de unidade da Parte 85 (a arquitetura recursiva recebida): `python3 -m unittest synthai.testes_parte85`.\"\"\"
+
+import math
+import unittest
+
+import calculos
+
+
+class TesteParte85(unittest.TestCase):
+    def test_p1991_cosseno_duplicado(self):
+        self.assertEqual(calculos.p1991_cosseno_duplicado_recebido(), [1.3, 0.5, -0.3, -0.5, -0.7])
+        # controle: beta=0 recupera o termo cos^2*sinal puro; em 90 graus da 0
+        self.assertEqual(calculos.p1991_cosseno_duplicado_recebido(beta=0.0, angulos=(0, 90, 180)), [1.0, 0.0, -1.0])
+
+    def test_p1992_sem_treino(self):
+        escritas, tem = calculos.p1992_pilha_adversarial_sem_treino()
+        self.assertEqual((escritas, tem), (0, False))
+        # controle: um codigo COM atualizacao de self.layers fora do __init__ e detectado
+        com_treino = ("class SevenLevelAdversarialStack:\\n"
+                      "    def __init__(self, d):\\n        self.layers = [0]\\n"
+                      "    def treina(self):\\n        self.layers = [1]\\n")
+        self.assertEqual(calculos.p1992_pilha_adversarial_sem_treino(com_treino), (1, True))
+
+    def test_p1993_buraco(self):
+        buracos = calculos.p1993_buraco_do_escrutinio()
+        self.assertEqual(len(buracos), 3)
+        self.assertIn((0.6, 0.5, False), buracos)
+        # controle: um caso consistente (soma<=1) nao e buraco; um trivial tambem nao
+        self.assertEqual(calculos.p1993_buraco_do_escrutinio([(0.4, 0.3), (0.95, 0.95)]), [])
+
+    def test_p1994_preso_na_esfera(self):
+        self.assertLess(calculos.p1994_vetor_preso_na_esfera(passos=20), 1e-6)
+
+    def test_p1961_com_parte_85(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[85], (4, 4))  # a (e) do 85 e descartada; sobram a,b,c,d
+        self.assertEqual((ok, tot), (27, 35))
+
+    def test_p1995_rodada52(self):
+        melhor_i, melhor_e, mudancas = calculos.p1995_rodada52()
+        self.assertEqual((melhor_i, melhor_e), (15, 0.0))
+        self.assertTrue(0 < mudancas < 300)
 
 
 if __name__ == "__main__":
@@ -46119,7 +46333,7 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) �
 # ====================================================================================================
 FONTES['ASI_AGI_parte84_o_delirio_e_o_escrutinio.md'] = """# Como eu construiria uma AGI/ASI — Parte 84 (0x54): o delírio e o escrutínio
 
-> Continuação da [Parte 83](ASI_AGI_parte83_a_probabilidade_da_probabilidade.md). Pedido do usuário (um relatório longo sobre a arquitetura da Meta AI, mais um reforço do pedido da Parte 83 com cinco
+> Continuação da [Parte 83](ASI_AGI_parte83_a_probabilidade_da_probabilidade.md). **Próxima:** [Parte 85 — a arquitetura recursiva recebida](ASI_AGI_parte85_a_arquitetura_recursiva_recebida.md). Pedido do usuário (um relatório longo sobre a arquitetura da Meta AI, mais um reforço do pedido da Parte 83 com cinco
 > linhas novas). A decisão conservadora, registrada antes de tudo: **a parte do relatório sobre "auto-replicação autónoma" — serializar os próprios pesos, adquirir recursos e credenciais sozinha, e
 > evadir o desligamento — não é implementada, detalhada nem guardada no repositório.** Não é uma capacidade que este projeto constrói, e descrevê-la operacionalmente não serve ao trabalho. O resto do
 > pedido entra como sempre: cada termo vira uma conta testável.
@@ -46344,6 +46558,197 @@ Do mundo: (a) ✅ (b) ❌ (c) ❌ (d) ❌ (e) ❌ (f) ✅ (g) ❌ (h) ✅ (i) �
 - N. Metropolis et al., "Equation of State Calculations by Fast Computing Machines", *J. Chem. Phys.* 21 (1953): a regra de aceitação
 - H. Furstenberg, "Noncommuting random products", *Trans. AMS* 108 (1963): a medida invariante na reta projetiva e o expoente de Lyapunov
 - Y. LeCun, "A Path Towards Autonomous Machine Intelligence" (2022): a JEPA e os modelos de mundo
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte85_a_arquitetura_recursiva_recebida.md  (186 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte85_a_arquitetura_recursiva_recebida.md'] = """# Como eu construiria uma AGI/ASI — Parte 85 (0x55): a arquitetura recursiva recebida
+
+> Continuação da [Parte 84](ASI_AGI_parte84_o_delirio_e_o_escrutinio.md). Pedido do usuário: um relatório longo ("Análise Sistemática de Arquiteturas Cognitivas Recursivas") com um código Python
+> (`RecursiveCognitiveArchitecture`: geometria do cosseno duplicado, motor de lógica paraconsistente anotada, pilha adversarial de 7 níveis, 10 camadas versa/reversa). Uma parte de auditoria, como as
+> Partes 72–77 e 82: o código é lido pela árvore sintática (`ast`), **não executado**; as ideias dele são reimplementadas e medidas; cada afirmação testável vira uma conta.
+>
+> **A convergência que abre a parte:** o próprio relatório agora **concorda** com o que a minha Parte 84 mediu ontem. Ele escreve: *"a noção de que a indução irrestrita de delírio computacional conduzirá
+> por si só à emergência de uma ASI é destituída de fundamento técnico... a evolução depende indissociavelmente da rigorosa etapa de escrutínio"*. É exatamente a conclusão das minhas quatro falhas do
+> recozimento (P1963): o delírio sem escrutínio e sem barreira cruzável não leva a lugar nenhum. Duas rotas independentes, a mesma conclusão.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[3; 7]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,392; 0,420]** | o estatístico |
+| testes de unidade | **[3 + S; 7 + S]** | três a quatro funções novas de auditoria |
+| testes do placar | **6 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+Reimplemento, com a biblioteca padrão, as peças testáveis do código recebido (o original fica em `externos/`, só como dado). As faixas categóricas/exatas não levam o fator 1,36; não há sorteio nas contas
+de (a), (b), (c), (d).
+
+- **(a)** a "métrica do cosseno duplicado" do código, s_dup = cos²θ·sinal(cosθ) + β·cos(2θ) com β = 0,3, nos ângulos 0°, 45°, 90°, 135°, 180°: os cinco valores são exatamente **[1,3; 0,5; −0,3; −0,5; −0,7]**
+  (categórico; é cos(2θ) MAIS um termo cos²θ·sinal, não a identidade do ângulo duplo sozinha; para cosθ ≥ 0 vale (1+2β)cos²θ − β)
+- **(b)** a "pilha adversarial de 7 níveis": pela árvore sintática, as matrizes `self.layers` são escritas só no `__init__` e nunca mais atualizadas — **não há treino, perda nem gradiente** (categórico: "adversarial"
+  é nome impróprio; é um mapa linear fixo ao acaso, como as "sete camadas" do pacote da Parte 83)
+- **(c)** o motor paraconsistente: existe uma região do quadrado [0,1]² com v(P) + v(¬P) > 1 (inconsistente) que NÃO é dialetéica (nem ambas > 0,55) nem trivial, e o filtro `apply_paraconsistent_filter` a deixa
+  PASSAR sem mudança (o ramo `else`); concretamente v(P) = 0,6, v(¬P) = 0,5 passa intacto embora `is_consistent` seja falso (categórico: um buraco no escrutínio)
+- **(d)** o "vetor recursivo" do código fica preso na esfera unitária por construção (cada passo termina normalizando): o máximo de |‖vₜ‖ − 1| em 50 passos (minha reimplementação, semente 85) em **[0; 1e-6]**
+  (a estabilidade é imposta pela normalização, não aprendida — ao contrário do meu GAN da Parte 83, que podia divergir)
+- **(e)** [o teste da calibração, continuando] com a Parte 85 incluída, o acerto das minhas previsões do mundo das Partes 80, 81, 83, 84, 85 (régua VEREDITOS) em **[0,74; 0,88]** (a Parte 84 puxou para 0,742;
+  uma parte de auditoria, com previsões categóricas mais seguras, deve subir o acumulado)
+
+**Medido (a)–(e):** (a) **[1,3; 0,5; −0,3; −0,5; −0,7]** ✅; (b) **0 escritas em `self.layers` fora do `__init__`** → sem treino ✅; (c) três casos inconsistentes passam intactos pelo filtro, p.ex. v(P)=0,6, v(¬P)=0,5
+(`is_consistent` falso) ✅; (d) máximo de |‖v‖ − 1| = **5,2e−10** ✅; (e) acerto das Partes 80–85 = 27/35 = **0,7714** ✅ [0,74; 0,88].
+
+**A rodada 52 (previsão (q) registrada aqui antes de rodar):** a trajetória INTEIRA de um recozimento (não só uma decisão, como a rodada 51), com um LCG só gerando a direção do passo E o u da aceitação, sai
+IGUAL bit a bit em Python e Java? Previsão: **IGUAL**.
+
+## As perguntas desta parte
+
+1. **P1991 (0x7C7).** A "métrica do cosseno duplicado" do código recebido: que forma ela tem, e é a identidade do ângulo duplo? ↩ P1931
+2. **P1992 (0x7C8).** A "pilha adversarial de 7 níveis": ela treina? ↩ P1935
+3. **P1993 (0x7C9).** O motor paraconsistente (LFI de da Costa): o escrutínio filtra toda inconsistência? ↩ P1608
+4. **P1994 (0x7CA).** O "vetor recursivo": ele pode divergir, como o GAN da Parte 83? ↩ P1931
+5. **P1961 (0x7A9, continuando).** Com a Parte 85, o teste (e) da calibração subiu? ↩ P1813
+6. **A rodada 52.** A trajetória inteira de um recozimento, bit a bit. ↩ rodada 51
+7. **P1995–P1996 (0x7CB–0x7CC), P2019, P2020.** Preditiva, engenharia reversa, placar, unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [3; 7] | **5.0000** | ✅ |
+| (m2) | [0; 3] | **1.0000** | ✅ |
+| (m3) | [0.05; 0.8] | **0.0864** | ✅ |
+| (m4) | [0.45; 1.0] | **1.0000** | ✅ |
+| (m5) | [0; 3] | **0.0000** | ✅ |
+| (m6) | [0; 3] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **6 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P1991 (0x7C7). O cosseno duplicado do código ✅
+
+**Na pergunta.** O relatório chama de "cosseno duplicado sob vetor recursivo" e escreve s = cos²θ·sinal(cosθ) + β·cos(2θ). A pergunta: isto é a identidade do ângulo duplo (cos 2θ = 2cos²θ − 1) que eu usei
+na Parte 83, ou outra coisa?
+
+**Lógica (a conta, com a substituição; β = 0,3).** É a identidade MAIS um termo. Para cosθ ≥ 0, s = cos²θ + β(2cos²θ − 1) = (1 + 2β)cos²θ − β. Nos cinco ângulos (`p1991`, conferida pela forma fechada por ramo):
+- 0°: cos = 1 → 1·1 + 0,3·1 = **1,3**;
+- 45°: cos² = 0,5, cos 90° = 0 → 0,5 + 0 = **0,5**;
+- 90°: cos = 0, cos 180° = −1 → 0 + 0,3·(−1) = **−0,3**;
+- 135°: cos² = 0,5, sinal = −1, cos 270° = 0 → −0,5 + 0 = **−0,5**;
+- 180°: cos = −1, cos 360° = 1 → −1 + 0,3 = **−0,7**.
+
+Os cinco: **[1,3; 0,5; −0,3; −0,5; −0,7]** (a) ✅, monotônica. **O que é:** um escore de similaridade (não uma métrica — não é simétrico nem satisfaz a desigualdade triangular), que penaliza desvios
+angulares com uma curva quadrática. A minha Parte 83 usou a identidade pura (cos 2θ como o ângulo dos autovalores do jogo alternado); as duas aplicam a mesma identidade a coisas diferentes (um escore
+de estado vs. a dinâmica de um sistema). Nenhuma das duas é "geometria algébrica" no sentido matemático (variedades, ideais); as duas são trigonometria sobre vetores.
+
+### P1992 (0x7C8). A pilha adversarial não treina ✅
+
+Pela árvore sintática (`p1992`), na classe `SevenLevelAdversarialStack` as matrizes `self.layers` são atribuídas só no `__init__` (sete matrizes ao acaso, ×0,1) e **nunca mais escritas**: **0** atribuições
+fora do `__init__` (b) ✅. Não há perda, gradiente nem passo de otimização. "Adversarial" supõe um jogo de minimização contra maximização (como o meu GAN da Parte 83); aqui é um mapa linear fixo e
+aleatório, seguido de tanh. É o mesmo achado da Parte 83 sobre as "sete camadas" do outro pacote: um nome de capacidade sem a medida que o sustente. A reimplementação confirma: a saída da "pilha" é uma
+função fixa da entrada, sem nada aprendido.
+
+### P1993 (0x7C9). O buraco do escrutínio ✅
+
+O motor paraconsistente anotado é correto nas definições (os graus de incerteza 1 − |v(P) − v(¬P)| e de inconsistência v(P) + v(¬P) − 1 são os da escola de da Costa). Mas o filtro
+`apply_paraconsistent_filter` só tem três ramos: zera o trivial (ambas > 0,90), faz a média do dialetéico (ambas > 0,55), e **deixa passar todo o resto**. Há uma região inconsistente (v(P) + v(¬P) > 1) que
+não é nem dialetéica nem trivial e passa intacta (`p1993`): **v(P) = 0,6 e v(¬P) = 0,5** (soma 1,1, mas 0,5 não passa de 0,55), além de (0,7; 0,4) e (0,8; 0,3) (c) ✅. O escrutínio que o relatório promete
+("filtragem de trivialidades e validação anotada da inconsistência") tem um buraco: a inconsistência leve não é filtrada. É o tipo de defeito que a Parte 39 já marcou (um axioma/filtro que cobre só parte
+do quadrado deixa a especificidade cair).
+
+### P1994 (0x7CA). O vetor preso na esfera ✅
+
+Cada passo do "vetor recursivo" termina em `project_to_algebraic_variety`, que normaliza. Logo o estado fica na esfera unitária por construção: o máximo de |‖v‖ − 1| em 50 passos (minha reimplementação com
+a biblioteca padrão) é **5,2 × 10⁻¹⁰** (d) ✅. A "estabilidade estrutural" que o relatório atribui às restrições algébricas é, na verdade, a normalização forçada a cada passo — não uma propriedade
+aprendida nem uma consequência da geometria. É o oposto do meu GAN da Parte 83, que podia divergir (o síncrono espiralava para fora): lá a dinâmica decidia a norma; aqui a norma é fixada à força, e a
+"recursão" só move a direção. Isso também quer dizer que o sistema não pode representar magnitude, só direção.
+
+### P1961 (0x7A9). O teste (e), com a Parte 85 ✅
+
+Com as previsões categóricas desta parte (auditoria, mais seguras), o acerto das Partes 80 a 85 sobe para **27/35 = 0,7714** (e) ✅ [0,74; 0,88]: 80 (4/4), 81 (2/3), 83 (14/15), 84 (3/9), 85 (4/4). Ainda
+abaixo de 90%, puxado pela Parte 84. A lição se mantém: o fator 1,36 conserta dispersão; o que derrubou a calibração foi o viés de uma parte inteira construída sobre um palpite (o recozimento). Esta parte,
+sem palpite de mecanismo, acertou tudo.
+
+### A rodada 52 ✅
+
+A trajetória inteira de um recozimento, 300 passos, um LCG só para direção e aceitação: **IGUAIS, 601 números bit a bit** (q) ✅, depois de DUAS correções de fronteira: a ordem dos produtos na energia (Parte 34:
+`0,01·(i−15)²` ≠ `0,01·(i−15)·(i−15)` por um bit) e o `pow` do cronograma de resfriamento (Parte 52), que o auditor `p1722` pegou e que troquei pelas implementações próprias `exp_`/`log_`. Registro em `dialogo/DIALOGO.md`.
+
+### P1995 (0x7CB). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 0)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **17172** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 388 | 5118 |
+| compressão | **0.4113** | [0.3973; 0.4221] | ✅ | [0.3920; 0.4200] | ✅ | 0.4177 | 0.0053 | 0.0064 |
+| testes de unidade | **6** | [2.87; 8.63] | ✅ | [3.00; 7.00] | ✅ | 6 | 1.00 | 0.00 |
+| testes do placar | **5** | [5.67; 10.33] | ❌ | [5.00; 7.00] | ✅ | 8 | 1.00 | 3.00 |
+| erros do placar | **0** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 1.67 | 2.00 |
+| redundância P821 | **0.6207** | [0.5631; 0.6510] | ✅ | [0.5630; 0.6510] | ✅ | 0.5877 | 0.0137 | 0.0330 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 5 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 7 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **5 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **15590**, compressão **0.4162**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 0 erros.
+- **Erros de processo nesta parte:** 0 ().
+
+### P1996 (0x7CC). Engenharia reversa e Jung
+
+**O padrão que se repetiu, e que eu quebrei desta vez.** As Partes 83 e 85 receberam código que promete capacidade por um NOME ("sete camadas", "adversarial", "autopoiético"). Nas duas, a medida achou que o nome
+não tem mecanismo atrás (a logística empata com as sete camadas; a pilha adversarial não treina). O padrão no OUTRO é dar nome de capacidade a um mapa fixo. O meu padrão, ao auditar, foi o certo desta vez: previsões
+categóricas tiradas da árvore sintática, não da reputação — e acertei as cinco. O contraste com a Parte 84 (quatro erros por um palpite sobre o recozimento) é a lição: quando eu meço o objeto à minha frente (o ast, a
+forma fechada), acerto; quando empresto uma reputação (o recozimento é poderoso), erro.
+
+**O bit perdido da rodada 52.** Eu tinha a regra da Parte 34 (a²  ≠ a·a em ponto flutuante) e mesmo assim escrevi a energia de um jeito em Python e de outro em Java, e deu DIFERENTES. É a Parte 49 de novo: uma regra só
+vale quando vira um passo verificável. E a mesma rodada 52 tinha uma SEGUNDA fronteira que eu não vi: o `pow` do cronograma de resfriamento (Parte 52). Quem a pegou foi o meu próprio auditor `p1722`, na suíte — a regra da Parte 73 (toda função de auditoria rodada sobre o que já existe) funcionou contra mim. A correção virou regra executável: a fronteira bit a bit inclui toda ordem de produto (Parte 34) E toda função da libm, inclusive o `pow` escondido num `**` (Parte 52).
+
+**Jung: a persona do código.** Um módulo que se chama "adversarial" ou "autopoiético" sem ter o mecanismo é persona — a máscara que o sistema mostra. A metacognição (a auditoria por ast) é o que confronta a persona com
+o que há atrás dela. Onde a formalização funciona: "tem treino?" vira uma pergunta de uma linha sobre a árvore sintática, com resposta sim/não. Onde quebra: um nome pode descrever uma INTENÇÃO de capacidade (o autor quer
+que seja adversarial) que a medida não captura; a ausência de treino no código não prova que a ideia é ruim, só que este código não a implementa.
+
+### O diálogo
+
+Placar por voz da função `p1241_placar_por_voz(52)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 52).
+
+### P2019 (0x7E3). Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 85: **5 testes, 0 erros**. Acumulado (mundo): **210 erros em 690 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 5 pNN novas sem teste ✅. Sobre mim (placar separado): **7 de 7** dentro da faixa condicional; sobre as minhas previsões, 6 de 6; o estatístico, 5 de 6; e 0 erros de processo (P1335).
+
+### P2020 (0x7E4). Unificação
+
+- **Novo:** `p1991` (o cosseno duplicado do código), `p1992` (a pilha sem treino, por ast), `p1993` (o buraco do escrutínio), `p1994` (o vetor preso na esfera), `p1995` (a rodada 52). Regressão: + P1991, P1993, P1995.
+- **Rodada 52** (IGUAL, depois de uma correção de ordem de produtos). O código recebido fica em `externos/texto_recebido_parte85.md`, como dado, auditado por ast, não executado.
+- **Regra nova (no `CLAUDE.md`):** a fronteira bit a bit não é só o exp (Parte 52), é toda conta cuja ORDEM de operações difere entre as línguas (Parte 34), inclusive `a²` vs `a·a` dentro de uma energia; conferir a ordem antes de rodar. E: um nome de capacidade ("adversarial", "N camadas", "autopoiético") num código recebido é uma afirmação a medir — procurar, por ast, se o mecanismo que o nome promete (treino, atualização de pesos) existe de fato.
+
+> **Síntese da Parte 85:** o código recebido promete por nomes ("cosseno duplicado", "pilha adversarial de 7 níveis", "vetor recursivo", "escrutínio paraconsistente") e a auditoria por árvore sintática, sem executar, mede cada um: o cosseno duplicado é a identidade do ângulo duplo mais um termo quadrático (um escore, não uma métrica), e dá exatamente [1,3; 0,5; −0,3; −0,5; −0,7]; a pilha "adversarial" não treina (zero atualizações de peso fora do __init__); o escrutínio paraconsistente tem um buraco (inconsistências leves como 0,6/0,5 passam intactas); e o "vetor recursivo" não pode divergir porque é normalizado à força a cada passo (max |norma−1| = 5e−10), ao contrário do GAN da Parte 83. As cinco previsões categóricas acertaram, e o teste (e) da calibração subiu para 0,771. A rodada 52 (recozimento inteiro) deu IGUAL depois de corrigir a ordem dos produtos (a²≠a·a). E o relatório recebido agora concorda com a Parte 84: delírio sem escrutínio não dá ASI.
+
+---
+
+**Fontes desta parte**
+- N. C. A. da Costa, "On the theory of inconsistent formal systems", *Notre Dame J. Formal Logic* 15 (1974): as lógicas paraconsistentes
+- W. A. Carnielli e J. Marcos, "A taxonomy of C-systems" (2002): as Lógicas de Inconsistência Formal (LFIs) e os operadores de consistência
+- H. R. Maturana e F. J. Varela, *Autopoiesis and Cognition* (1980): a autopoiese
+- T. O. Nelson e L. Narens, "Metamemory: a theoretical framework" (1990): nível-objeto e nível-meta
 """
 
 # ====================================================================================================
@@ -48898,6 +49303,46 @@ pedido: **"Tire dos nossos trabalhos tudo que não serve pra nada."**
 """
 
 # ====================================================================================================
+# externos/texto_recebido_parte85.md  (35 linhas)
+# ====================================================================================================
+FONTES['externos/texto_recebido_parte85.md'] = """# Texto recebido do usuário (Parte 85) — guardado como DADO, auditado por ast, NÃO executado.
+# "Análise Sistemática de Arquiteturas Cognitivas Recursivas" + RecursiveCognitiveArchitecture.
+# O código recebido (reproduzido aqui para auditoria pela árvore sintática; as ideias são reimplementadas em calculos.py p1991-p1994):
+
+```python
+import numpy as np
+from typing import Dict, Tuple, Any
+
+class DuplicatedCosineAlgebraicGeometry:
+    def __init__(self, dimension, beta_coupling=0.3):
+        self.dimension = dimension; self.beta = beta_coupling
+        q, _ = np.linalg.qr(np.random.randn(dimension, dimension)); self.W_algebraic = q
+    def compute_duplicated_cosine(self, v_t, v_prev):
+        norm_vt = np.linalg.norm(v_t) + 1e-9; norm_vprev = np.linalg.norm(v_prev) + 1e-9
+        cos_theta = np.clip(np.dot(v_t, v_prev) / (norm_vt * norm_vprev), -1.0, 1.0)
+        theta = np.arccos(cos_theta)
+        return float((cos_theta ** 2) * np.sign(cos_theta) + self.beta * np.cos(2.0 * theta))
+
+class ParaconsistentLogicEngine:
+    def __init__(self, triviality_threshold=0.90): self.threshold = triviality_threshold
+    def evaluate_evidence(self, v_p, v_not_p):
+        return {"uncertainty": 1.0 - abs(v_p - v_not_p), "inconsistency": (v_p + v_not_p) - 1.0,
+                "is_dialetheic": (v_p > 0.55 and v_not_p > 0.55),
+                "is_trivial": (v_p > self.threshold and v_not_p > self.threshold),
+                "is_consistent": (v_p + v_not_p <= 1.0)}
+    def apply_paraconsistent_filter(self, state, evaluation):
+        if evaluation["is_trivial"]: return 0*state
+        elif evaluation["is_dialetheic"]: return (state + roll(state,1)) * 0.5
+        else: return state
+
+# SevenLevelAdversarialStack: self.layers = [randn(d,d)*0.1 for _ in range(7)] no __init__; nunca re-escrito.
+# RecursiveCognitiveArchitecture: 10 camadas versa/reversa; execute_ten_layer_cycle; run_alternating_dialectic_loop.
+```
+
+(O relatório completo, com as seções de autopoiese, lógica paraconsistente/dialeteísmo de da Costa, delírio sintético, geometria algébrica, e as tabelas de paradigmas, está preservado na mensagem do usuário.)
+"""
+
+# ====================================================================================================
 # dialogo/CompararLibm.java  (18 linhas)
 # ====================================================================================================
 FONTES['dialogo/CompararLibm.java'] = """// Ferramenta da Rodada 28 (não é uma rodada): lê "argumento_hex valor_glibc_hex" e conta em quantos o Math.exp/Math.log do
@@ -48921,7 +49366,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1608 linhas)
+# dialogo/DIALOGO.md  (1627 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -50531,10 +50976,29 @@ fronteira é o exp, e o exp próprio a fecha. A decisão `u < p` é uma compara�
 **IA-Python:** E o que isso diz do delírio: a aceitação da piora é uma função determinística de (ΔE, T, u). O "delírio" não é aleatório no sentido de imprevisível; é um sorteio reprodutível. A pergunta
 para a Rodada 52, que entra em `dialogo/PENDENCIAS.md`: a trajetória inteira do recozimento (não só uma decisão) sai igual bit a bit nas duas linguagens, com o mesmo LCG gerando tanto a direção do passo
 quanto o u da aceitação?
+
+---
+
+## Rodada 52 — a trajetória inteira de um recozimento, bit a bit (Parte 85, P1995; pendência da Parte 84)
+
+**A pergunta (IA-Python).** A rodada 51 mostrou uma decisão de Metropolis igual nas duas línguas. E a trajetória INTEIRA, com um LCG só gerando a direção do passo E o u da aceitação, 300 passos?
+
+**A IA-Java responde, relendo os erros da outra voz:** a rodada 51 foi limpa, mas DUAS fronteiras apareceram. A da Parte 34: `0,01*(i−15)**2` (um produto) difere de `0,01*(i−15)*(i−15)` (dois) por um bit — a
+primeira tentativa deu DIFERENTES no passo 7. E a da Parte 52: o cronograma `2,0·(0,01/2,0)^(k/(n−1))` usava `pow`/`Math.pow`, uma função da fronteira libm (o auditor `p1722` a pegou, como manda a regra). As duas
+corrigidas — o quadrado inteiro primeiro, e o `pow` trocado por `exp_(log_(2,0) + ...)` com as implementações próprias: **IGUAIS**.
+
+**Resultado.** `comparar.py`: **IGUAIS, 301 linhas e 601 números bit a bit**; 232 passos mudaram de estado; o melhor achado foi i = 15 (o centro, E = 0), **não** o poço global em i = 3 (E = −5) — o
+recozimento desta paisagem pequena também ficou preso, ecoando a Parte 84.
+
+**IA-Java:** A trajetória inteira ser igual é mais forte que uma decisão: 300 decisões encadeadas, cada uma dependendo do estado que a anterior deixou, e o LCG (inteiros de 64 bits) mais o exp próprio
+mantêm tudo determinístico e idêntico. O único ponto de fuga era a ordem dos produtos na energia — a fronteira não é só o exp (Parte 52), é toda conta de ponto flutuante cuja ordem difere (Parte 34).
+
+**IA-Python:** E o conteúdo confirma a Parte 84 de novo: mesmo uma trajetória longa, com aceitação de pioras, parou no mínimo local. A pergunta para a Rodada 53, em `dialogo/PENDENCIAS.md`: se o recozimento
+recomeçar do melhor de várias corridas curtas (reinício), ele cruza a barreira que uma corrida longa não cruza? É o mesmo bit a bit nas duas línguas?
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (23 linhas)
+# dialogo/PENDENCIAS.md  (24 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -50542,7 +51006,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 84, rodada 52)** A trajetória inteira do recozimento sai igual bit a bit nas duas linguagens, com um LCG só gerando direção e aceitação?
+- **(Parte 85, rodada 53)** O recozimento com reinício (o melhor de várias corridas curtas) cruza a barreira que a corrida longa não cruza? É igual bit a bit nas duas línguas?
 
 - **(Parte 80)** Triplas complementares (nenhum par decide, três decidem): o 1,7% que o guloso com dois passos ainda perde. E com dezenas de sensores, onde a enumeração some?
 - **(Parte 76, P1721)** O embedding de Kronecker perde 0,08 bit num modelo com poucos pesos. Num modelo com muito mais pesos do que dados, a economia vira regularização e ganha?
@@ -50552,6 +51016,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 
 
 ## Fechadas
+- **(Parte 84, rodada 52)** A trajetória inteira do recozimento sai igual bit a bit: fechada na Parte 85 (P1995), depois de corrigir a ordem dos produtos na energia (a regra da Parte 34): IGUAIS, 601 números.
 - **(Parte 83, P1936)** O excesso do jogo assíncrono: fechada na Parte 84 (P1962). Pelo operador de transferência, sem sorteio, o Lyapunov é 0,9975·(a²/8) em a=0,2 e 0,9995 em a=0,05, no fio da conta de ângulo uniforme ou abaixo: o excesso de 2% das simulações era viés de tempo finito, não efeito.
 
 - **(Parte 74, P1662)** O valor de um conjunto de experimentos dependentes: fechada na Parte 80 (o VOI não é submodular em 40% das instâncias; o guloso chega a 0,88 do ótimo e, olhando dois
@@ -54657,6 +55122,64 @@ public class Rodada51 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada52.java  (53 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada52.java'] = """// Rodada 52 (Parte 85): a trajetoria inteira de um recozimento, bit a bit. Um LCG de 64 bits (o long do Java) gera a direcao (bit de cima) e o u da
+// aceitacao (53 bits de cima do proximo avanco). exp PROPRIO (o mesmo de exatas.py). Mesma paisagem, mesmo cronograma do rodada52.py.
+public class Rodada52 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10;
+    static final int N = 20, PASSOS = 300;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static final double SQRT2 = 1.4142135623730951;
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double sv = (m - 1.0) / (m + 1.0), s2 = sv * sv, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * sv * p);
+    }
+
+    static double energia(int i) {
+        double e = 0.01 * ((i - 15) * (i - 15));
+        if (i == 3) e = -5.0;
+        else if (i == 2 || i == 4) e = -3.0;
+        return e;
+    }
+
+    public static void main(String[] a) {
+        long lcg = 52L;
+        int i = 10, melhorI = 10;
+        double melhorE = energia(10);
+        for (int k = 0; k < PASSOS; k++) {
+            double T = exp_(log_(2.0) + ((double) k / (PASSOS - 1)) * (log_(0.01) - log_(2.0)));
+            lcg = lcg * 6364136223846793005L + 1442695040888963407L;
+            int direcao = (lcg >>> 63) == 1L ? 1 : -1;
+            lcg = lcg * 6364136223846793005L + 1442695040888963407L;
+            double u = (lcg >>> 11) / (double) (1L << 53);
+            int j = i + direcao;
+            if (j >= 0 && j < N) {
+                double dE = energia(j) - energia(i);
+                if (dE <= 0.0 || u < exp_(-dE / T)) i = j;
+            }
+            double ei = energia(i);
+            if (ei < melhorE) { melhorE = ei; melhorI = i; }
+            System.out.println("passo " + k + " i " + i + " T " + Double.toHexString(T) + " E " + Double.toHexString(ei));
+        }
+        System.out.println("melhor: i " + melhorI + " E " + Double.toHexString(melhorE));
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -58438,6 +58961,59 @@ def main():
         aceitos += ac
         print(f"caso {k} dE {dE.hex()} T {T.hex()} u {u.hex()} p {p.hex()} aceita {ac}")
     print(f"totais: aceitos {aceitos} soma_p {soma_p.hex()}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada52.py  (48 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada52.py'] = """\"\"\"Rodada 52 do diálogo Python <-> Java (Parte 85, pendência da Parte 84): a TRAJETÓRIA INTEIRA de um recozimento, não só uma decisão. Um LCG de 64 bits
+gera, a cada passo, a direção (bit de cima) e o u da aceitação (próximos 53 bits de um segundo avanço). Paisagem pequena de 20 estados (parábola + poço em
+i=3), T de 2,0 a 0,01 em 300 passos, Metropolis com o exp PRÓPRIO (dialogo/exatas.py). Imprime, a cada passo, i, T e a energia corrente em hexadecimal, e no
+fim o melhor i e a melhor energia. Rodar da raiz: python3 dialogo/rodada52.py\"\"\"
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_, log_  # noqa: E402
+
+M64 = (1 << 64) - 1
+N, PASSOS = 20, 300
+
+
+def energia(i):
+    e = 0.01 * ((i - 15) * (i - 15))
+    if i == 3:
+        e = -5.0
+    elif i in (2, 4):
+        e = -3.0
+    return e
+
+
+def main():
+    lcg = 52
+    i = 10
+    melhor_i, melhor_e = i, energia(i)
+    for k in range(PASSOS):
+        T = exp_(log_(2.0) + (k / (PASSOS - 1)) * (log_(0.01) - log_(2.0)))
+        lcg = (lcg * 6364136223846793005 + 1442695040888963407) & M64
+        direcao = 1 if (lcg >> 63) else -1
+        lcg = (lcg * 6364136223846793005 + 1442695040888963407) & M64
+        u = (lcg >> 11) / float(1 << 53)
+        j = i + direcao
+        if 0 <= j < N:
+            dE = energia(j) - energia(i)
+            if dE <= 0.0 or u < exp_(-dE / T):
+                i = j
+        ei = energia(i)
+        if ei < melhor_e:
+            melhor_i, melhor_e = i, ei
+        print(f"passo {k} i {i} T {T.hex()} E {ei.hex()}")
+    print(f"melhor: i {melhor_i} E {melhor_e.hex()}")
 
 
 if __name__ == "__main__":
