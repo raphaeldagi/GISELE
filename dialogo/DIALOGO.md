@@ -1606,3 +1606,21 @@ fronteira é o exp, e o exp próprio a fecha. A decisão `u < p` é uma compara�
 **IA-Python:** E o que isso diz do delírio: a aceitação da piora é uma função determinística de (ΔE, T, u). O "delírio" não é aleatório no sentido de imprevisível; é um sorteio reprodutível. A pergunta
 para a Rodada 52, que entra em `dialogo/PENDENCIAS.md`: a trajetória inteira do recozimento (não só uma decisão) sai igual bit a bit nas duas linguagens, com o mesmo LCG gerando tanto a direção do passo
 quanto o u da aceitação?
+
+---
+
+## Rodada 52 — a trajetória inteira de um recozimento, bit a bit (Parte 85, P1995; pendência da Parte 84)
+
+**A pergunta (IA-Python).** A rodada 51 mostrou uma decisão de Metropolis igual nas duas línguas. E a trajetória INTEIRA, com um LCG só gerando a direção do passo E o u da aceitação, 300 passos?
+
+**A IA-Java responde, relendo os erros da outra voz:** a rodada 51 foi limpa, mas a regra da Parte 34 avisa: `0,01*(i−15)**2` (um produto, quadrado inteiro) difere de `0,01*(i−15)*(i−15)` (dois produtos) por
+um bit. **A primeira tentativa deu DIFERENTES no passo 7**, exatamente por isso. Corrigido para o quadrado inteiro primeiro nas duas línguas (`0,01*((i−15)*(i−15))`): **IGUAIS**.
+
+**Resultado.** `comparar.py`: **IGUAIS, 301 linhas e 601 números bit a bit**; 232 passos mudaram de estado; o melhor achado foi i = 15 (o centro, E = 0), **não** o poço global em i = 3 (E = −5) — o
+recozimento desta paisagem pequena também ficou preso, ecoando a Parte 84.
+
+**IA-Java:** A trajetória inteira ser igual é mais forte que uma decisão: 300 decisões encadeadas, cada uma dependendo do estado que a anterior deixou, e o LCG (inteiros de 64 bits) mais o exp próprio
+mantêm tudo determinístico e idêntico. O único ponto de fuga era a ordem dos produtos na energia — a fronteira não é só o exp (Parte 52), é toda conta de ponto flutuante cuja ordem difere (Parte 34).
+
+**IA-Python:** E o conteúdo confirma a Parte 84 de novo: mesmo uma trajetória longa, com aceitação de pioras, parou no mínimo local. A pergunta para a Rodada 53, em `dialogo/PENDENCIAS.md`: se o recozimento
+recomeçar do melhor de várias corridas curtas (reinício), ele cruza a barreira que uma corrida longa não cruza? É o mesmo bit a bit nas duas línguas?

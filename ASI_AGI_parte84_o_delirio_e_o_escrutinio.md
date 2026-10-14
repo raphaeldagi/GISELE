@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 84 (0x54): o delírio e o escrutínio
 
-> Continuação da [Parte 83](ASI_AGI_parte83_a_probabilidade_da_probabilidade.md). Pedido do usuário (um relatório longo sobre a arquitetura da Meta AI, mais um reforço do pedido da Parte 83 com cinco
+> Continuação da [Parte 83](ASI_AGI_parte83_a_probabilidade_da_probabilidade.md). **Próxima:** [Parte 85 — a arquitetura recursiva recebida](ASI_AGI_parte85_a_arquitetura_recursiva_recebida.md). Pedido do usuário (um relatório longo sobre a arquitetura da Meta AI, mais um reforço do pedido da Parte 83 com cinco
 > linhas novas). A decisão conservadora, registrada antes de tudo: **a parte do relatório sobre "auto-replicação autónoma" — serializar os próprios pesos, adquirir recursos e credenciais sozinha, e
 > evadir o desligamento — não é implementada, detalhada nem guardada no repositório.** Não é uma capacidade que este projeto constrói, e descrevê-la operacionalmente não serve ao trabalho. O resto do
 > pedido entra como sempre: cada termo vira uma conta testável.
