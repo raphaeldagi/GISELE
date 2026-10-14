@@ -12078,6 +12078,114 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84), vereditos=None):
+    """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
+    conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
+    que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019"}
+    ok, tot, por = 0, 0, {}
+    for n in partes:
+        txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
+        a, b = txt.count("✅"), txt.count("❌")
+        por[n] = (a, a + b)
+        ok += a
+        tot += a + b
+    return ok, tot, (ok / tot if tot else 0.0), por
+
+
+def _passo_cisalhamento(t, p, a, qual):
+    if qual == 0:
+        return t - a * p, p
+    return t, p + a * t
+
+
+def p1962_lyapunov_por_densidade(a=0.2, celulas=2000, iteracoes=4000):
+    """O expoente de Lyapunov do jogo assincrono (Parte 83, pendencia da P1936) pela DENSIDADE INVARIANTE do angulo, sem sorteio (P1962). O estado z = (t, p)
+    projetado no angulo phi em [0, pi) (a reta projetiva; z e -z sao o mesmo). Cada passo aplica, com prob 1/2, o cisalhamento A: t<-t-a*p, ou B: p<-p+a*t,
+    o que muda o angulo por um mapa de Mobius. Monta o operador de transferencia (Markov) numa grade de `celulas` angulos, acha a densidade estacionaria por
+    iteracao de potencia, e integra o crescimento esperado de ln r: lambda = sum_phi mu(phi)*(1/2)*(ln rA + ln rB). Devolve (lambda, lambda/(a*a/8),
+    a conta de angulo uniforme 0,5*ln(1+a*a/4)/(a*a/8))."""
+    import math
+    centros = [math.pi * (j + 0.5) / celulas for j in range(celulas)]
+    cos = [math.cos(x) for x in centros]
+    sin = [math.sin(x) for x in centros]
+
+    def destino_e_ganho(j, qual):
+        t, p = _passo_cisalhamento(cos[j], sin[j], a, qual)
+        r2 = t * t + p * p
+        ang = math.atan2(p, t) % math.pi
+        return min(celulas - 1, int(ang / math.pi * celulas)), 0.5 * math.log(r2)
+
+    # pre-computa, para cada celula e cada escolha, o destino e o ganho de ln r
+    dest = [[destino_e_ganho(j, q) for q in (0, 1)] for j in range(celulas)]
+    mu = [1.0 / celulas] * celulas
+    for _ in range(iteracoes):
+        novo = [0.0] * celulas
+        for j in range(celulas):
+            for q in (0, 1):
+                novo[dest[j][q][0]] += 0.5 * mu[j]
+        s = sum(novo)
+        mu = [x / s for x in novo]
+    lam = sum(mu[j] * 0.5 * (dest[j][0][1] + dest[j][1][1]) for j in range(celulas))
+    return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
+
+
+def _energia_delirio(n=200):
+    """A paisagem fixa da Parte 84 (P1963): parabola com minimo local em i=100 (E=0) e um poco estreito com o minimo global E[10]=-5."""
+    E = [0.001 * (i - 100) ** 2 for i in range(n)]
+    for i, v in ((8, -3.0), (9, -4.0), (10, -5.0), (11, -4.0), (12, -3.0)):
+        E[i] = v
+    return E
+
+
+def p1963_delirio_e_escrutinio(partidas=300, passos=2000, semente=84, n=200, t0=5.0, t1=0.01, ruido=1.0):
+    """O metodo do delirio (P1963): recozimento simulado numa paisagem rugosa (`_energia_delirio`), contra a descida gulosa (T=0, "a IA sobria"), com um
+    escrutinio num conjunto limpo. "Delirio" = aceitar pioras a temperatura alta (Metropolis, exp proprio); "sair" = resfriar (geometrico T0->T1); durante o
+    delirio a energia e vista com ruido N(0, ruido); o escrutinio recalcula na energia LIMPA e so valida se a solucao bater a gulosa. Devolve
+    (fracao gulosa acha o global, fracao recozimento acha o global, diferenca, fracao validada no escrutinio, energia media final do recozimento)."""
+    import math
+    import random
+    E = _energia_delirio(n)
+    GLOBAL = min(range(n), key=lambda i: E[i])
+
+    def desce(i):
+        while True:
+            viz = [j for j in (i - 1, i + 1) if 0 <= j < n]
+            melhor = min(viz, key=lambda j: E[j])
+            if E[melhor] >= E[i]:
+                return i
+            i = melhor
+
+    def recoze(rng):
+        i = rng.randrange(n)
+        melhor_i, melhor_e = i, E[i]
+        for k in range(passos):
+            T = t0 * (t1 / t0) ** (k / (passos - 1))
+            j = i + (1 if rng.random() < 0.5 else -1)
+            if not (0 <= j < n):
+                continue
+            # delirio: energia com ruido
+            ei = E[i] + rng.gauss(0, ruido)
+            ej = E[j] + rng.gauss(0, ruido)
+            d = ej - ei
+            if d <= 0 or rng.random() < math.exp(-d / T):
+                i = j
+            if E[i] < melhor_e:
+                melhor_i, melhor_e = i, E[i]
+        return melhor_i
+
+    rg = random.Random(semente)
+    rr = random.Random(semente)
+    partidas_idx = [rg.randrange(n) for _ in range(partidas)]
+    g_ok = sum(1 for s in partidas_idx if desce(s) == GLOBAL)
+    r_finais = [recoze(rr) for _ in range(partidas)]
+    r_ok = sum(1 for f in r_finais if f == GLOBAL)
+    # escrutinio: a solucao do recozimento (energia limpa) bate a gulosa daquela partida?
+    valida = sum(1 for s, f in zip(partidas_idx, r_finais) if E[f] < E[desce(s)] - 1e-12)
+    return (g_ok / partidas, r_ok / partidas, r_ok / partidas - g_ok / partidas,
+            valida / partidas, sum(E[f] for f in r_finais) / partidas)
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""

@@ -50,3 +50,18 @@ fração vêm do desvio binomial (conta fechada), então não levam o fator 1,36
   **[0,99; 1,02]** (a simulação longa deu 1,0016)
 - **(g)** o mesmo operador, a = 0,05: a razão λ/(a²/8) em **[0,99; 1,03]**, e ACIMA de 0,9997 (a conta de ângulo uniforme): se der acima, o excesso que ficou aberto na Parte 83 é real e vem de a densidade
   invariante do ângulo não ser uniforme (ela se concentra onde o cisalhamento estica)
+
+**Medido (a)–(g), e as surpresas:**
+- (a) gulosa **0,0833** ✅ [0,00; 0,10]; (b) recozimento **0,1567** ❌ [0,55; 1,00]; (c) diferença **0,073** ❌ [0,50; 1,00]; (d) escrutínio **0,153** ❌ [0,55; 1,00].
+- (f) Lyapunov a = 0,2: razão **0,9975** ✅ [0,99; 1,02]; (g) a = 0,05: razão **0,9995**, dentro de [0,99; 1,03] mas **não acima** de 0,9997 ❌.
+
+Duas surpresas, duas lições. **(f)–(g):** o operador de transferência diz que o Lyapunov é IGUAL ou um fio ABAIXO da conta de ângulo uniforme (a densidade invariante é quase uniforme). O "excesso" de
+2% das simulações da Parte 83 (z ≈ +2,6) era viés de tempo finito/amostragem, não efeito. A pendência da P1936 **fecha**: não há excesso; a conta a²/8 (levemente corrigida para baixo) é o valor certo. Isto
+também confirma a regra da Parte 74 (o desvio de poucos lotes engana; a forma fechada, ou aqui o cálculo determinístico, decide).
+
+**(b)–(d):** a tese do usuário — "só se chega à ASI pela IA em delírio" — FALHOU como enunciada: o recozimento mal bateu a gulosa. O diagnóstico, pré-registrado antes de rodar: o mínimo global é uma
+AGULHA (5 de 200 estados). Um método térmico amostra pelo peso de Boltzmann ∝ (tamanho da bacia)·exp(−E/T); uma bacia minúscula tem peso minúsculo mesmo sendo profunda. O delírio não acha o que não
+tem bacia. Dois testes isolam a causa (ruído vs. agulha):
+- **(h)** o mesmo recozimento SEM ruído (delírio limpo), mesma agulha de largura 5: a fração que acha o global em **[0,05; 0,55]** (se continuar baixo, a culpa é a agulha, não o ruído)
+- **(i)** recozimento sem ruído com o poço ALARGADO para a largura 30 (i ∈ [0, 29], mínimo global E[15] = −5): a fração que acha o global em **[0,70; 1,00]**, e a gulosa nessa paisagem em **[0,10; 0,20]**
+  (bacia de ~15/200): aí sim o delírio bate a sobriedade, QUANDO o ótimo tem bacia
