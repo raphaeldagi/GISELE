@@ -10,11 +10,11 @@ class TesteParte84(unittest.TestCase):
     def test_p1961_teste_e_da_calibracao(self):
         # controle: um dict sintetico, com a (e) do proprio 84 ignorada (seria circular)
         falso = {80: "(a) ✅ (b) ✅", 81: "(a) ✅ (b) ❌", 83: "(a) ✅", 84: "(a) ✅ (e) ❌ (f) ❌"}
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(vereditos=falso)
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84), vereditos=falso)
         self.assertEqual(por[84], (1, 2))  # a (e) foi descartada; sobram (a)✅ (f)❌
         self.assertEqual((ok, tot), (5, 7))
         # o valor publicado: as Partes 80, 81, 83, 84 ficaram abaixo de [0,81; 0,99]
-        self.assertEqual(calculos.p1961_teste_e_da_calibracao()[:2], (23, 31))
+        self.assertEqual(calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84))[:2], (23, 31))
 
     def test_p1962_lyapunov_por_densidade(self):
         lam, razao, uniforme = calculos.p1962_lyapunov_por_densidade(a=0.2, celulas=800, iteracoes=1500)
