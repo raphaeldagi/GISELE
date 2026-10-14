@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 87, perguntas P1 a P2055).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 88, perguntas P1 a P2085).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (13407 linhas)
+# calculos.py  (13482 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7540,6 +7540,9 @@ def testes_de_regressao():
         "P2051": round(p2051_quantizacao_mse()[2]) == 279,
         "P2052": p2052_vantagem_grpo() == ([1.0, -1.0], 0.0),
         "P2055": len(p2055_rodada54()) == 18 and round(p2055_rodada54()[0], 6) == 1.0,
+        "P2081": p2081_probabilidade_aninhada() == (0.8333, 0.1667, 0.5),
+        "P2083": p2083_lfi1_sem_explosao() == (0.5, 0.0, True),
+        "P2085": p2085_rodada55()[1] == 1.2,
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9596,6 +9599,8 @@ VEREDITOS_P2169 = "(a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅"
 ERROS_P2169, TESTES_P2169 = 211, 697
 VEREDITOS_P2239 = "(a) ✅ (b) ✅ (c) ❌ (d) ❌ (e) ❌ (f) ❌"
 ERROS_P2239, TESTES_P2239 = 215, 703
+VEREDITOS_P2309 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
+ERROS_P2309, TESTES_P2309 = 215, 708
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12136,16 +12141,16 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n in (84, 85, 86, 87):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
+        if n in (84, 85, 86, 87, 88):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12528,6 +12533,61 @@ def p2055_rodada54():
     r54 = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(r54)
     return [a for rs in r54.GRUPOS for a in r54.vantagens(rs)]
+
+
+def p2081_probabilidade_aninhada():
+    \"\"\"A 'probabilidade dentro da probabilidade' do codigo recebido (P2081; Parte 88): P(P(X)) = (10X+1)/12, uma contracao afim para 0,5. Devolve
+    (P(P(0,9)), P(P(0,1)), ponto fixo). Nao e probabilidade de probabilidade; e um encolhimento linear ao centro (como o mapa de calibracao da Parte 83, so k=0,5 idempotente... aqui o fixo e 0,5).\"\"\"
+    from synthai.autopoiese import nested_probability
+    return round(nested_probability(0.9), 4), round(nested_probability(0.1), 4), round(nested_probability(0.5), 4)
+
+
+def p2082_probabilidade_aninhada_iterada(n=10, x0=0.9):
+    \"\"\"Iterar P(P) n vezes (P2082): converge a 0,5 com fator 5/6. Devolve (valor apos n iteracoes, a conta fechada 0,5 + (x0-0,5)*(5/6)^n).\"\"\"
+    from synthai.autopoiese import iterar_nested_probability
+    medido = iterar_nested_probability(x0, n)
+    conta = 0.5 + (x0 - 0.5) * (5.0 / 6.0) ** n
+    return medido, conta
+
+
+def p2083_lfi1_sem_explosao():
+    \"\"\"A LFI1 contem uma contradicao sem explosao (P2083). Devolve (conjuncao(0,5, neg 0,5), consistencia(0,5), uma proposicao F nao relacionada continua F?).
+    Ao contrario da logica classica (A ^ ~A |- qualquer coisa), a dialeteia fica contida em 0,5 e o operador de consistencia a marca, sem trivializar o resto.\"\"\"
+    from synthai.autopoiese import lfi1_negacao, lfi1_conjuncao, lfi1_consistencia
+    a = 0.5
+    conj = lfi1_conjuncao(a, lfi1_negacao(a))
+    cons = lfi1_consistencia(a)
+    # uma proposicao F (0.0) nao relacionada: conjuncao com a dialeteia nao a torna verdadeira
+    f_preservado = lfi1_conjuncao(0.0, a) == 0.0
+    return conj, cons, f_preservado
+
+
+def p2084_descompasso_texto_codigo(codigo=None):
+    \"\"\"O descompasso texto<->codigo do delirio (P2084), pela arvore sintatica. O texto diz que a hipotese do delirio e assimilada 'se resolver uma inconsistencia
+    previa'; o metodo scrutinize_evolution, de fato, so olha uma faixa de entropia. Devolve (usa 'entropy'?, usa 'consist'/'contradic'/'inconsist'?). O segundo deve
+    ser falso: a promessa do texto nao esta no codigo.\"\"\"
+    import ast
+    codigo = codigo if codigo is not None else (
+        "def scrutinize_evolution(self, pre_state, post_delirium_state):\\n"
+        "    pre_entropy = -sum(abs(pre_state) * log(abs(pre_state) + 1e-9))\\n"
+        "    post_entropy = -sum(abs(post_delirium_state) * log(abs(post_delirium_state) + 1e-9))\\n"
+        "    delta_entropy = post_entropy - pre_entropy\\n"
+        "    return bool(0.1 < delta_entropy < 3.0)\\n")
+    arv = ast.parse(codigo)
+    fonte = ast.dump(arv).lower()
+    usa_entropia = "entropy" in fonte or "entropia" in fonte
+    usa_consistencia = any(t in fonte for t in ("consist", "contradic", "inconsist", "dialeteia", "lfi"))
+    return usa_entropia, usa_consistencia
+
+
+def p2085_rodada55():
+    \"\"\"Rodada 55 (P2085; Parte 88): o passo do GRPO com corte (dialogo/rodada55.py), IGUAL em Java bit a bit. Devolve a lista dos surrogates dos casos.\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada55", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada55.py"))
+    r55 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r55)
+    return [r55.surrogate(r, a) for r, a in r55.CASOS]
 
 
 def p1578_autovalores_da_atencao():
@@ -13397,6 +13457,21 @@ def _parte_87():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2239, testes=TESTES_P2239)
     print(f"P2239 minha taxa de erro ({ERROS_P2239}/{TESTES_P2239}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_88():
+    print("--- Parte 88 (0x58: a arquitetura autopoietica recebida) ---")
+    print(f"P2081 P(P(X)) do codigo (P(P(0,9)), P(P(0,1)), ponto fixo): {p2081_probabilidade_aninhada()}")
+    print(f"P2082 P(P) iterado 10x de 0,9 (medido, conta): {p2082_probabilidade_aninhada_iterada()}")
+    print(f"P2083 LFI1 sem explosao (conj(0,5,~0,5), consistencia(0,5), F preservado): {p2083_lfi1_sem_explosao()}")
+    print(f"P2084 descompasso texto-codigo (usa entropia?, usa consistencia?): {p2084_descompasso_texto_codigo()}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (e), Partes 80-88: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    print(f"P2085 rodada 55 (passo GRPO com corte, IGUAL em Java): {len(p2085_rodada55())} surrogates")
+    total, sem = p1092_pnn_sem_teste(2081, 2110)
+    print(f"P1092 pNN novas (P2081-P2110) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 88: {p974_previsoes_sem_largura(range(88, 89))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2309, testes=TESTES_P2309)
+    print(f"P2309 minha taxa de erro ({ERROS_P2309}/{TESTES_P2309}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -13433,7 +13508,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88}
 
 
 if __name__ == "__main__":
@@ -13446,7 +13521,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (303 linhas)
+# CLAUDE.md  (308 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -13595,6 +13670,11 @@ anterior, commit e push.
   A REGRA que as Partes 84 e 87 me ensinaram a ferro: antes de prever que um efeito conhecido aparece num experimento MEU (o recozimento escapa de minimos; a rede perde
   plasticidade), rodar o caso minimo e confirmar que ele aparece no meu regime (rede rasa, poucas tarefas) ANTES de registrar a faixa. A reputacao de um efeito nao e previsao;
   as previsoes tiradas de conta fechada (quantizacao 256x, vantagem GRPO +-1) acertam, as tiradas de reputacao erram. O fator 1,36 corrige dispersao, nao esse vies.
+  Parte 88 (quarto relatorio da familia cosseno-duplicado/delirio/logica-dual; construi `synthai/autopoiese.py` com a LFI1): quando um relatorio recebido repete um
+  pedido ja auditado, medir SO o que e novo e citar o veredito das partes anteriores para o resto (nao re-derivar). Ler toda "probabilidade de segunda ordem" como a conta
+  que ela e (P(P(X))=(10X+1)/12 e uma contracao afim ao centro, nao uma recursao com significado novo). O padrao dos textos recebidos, visto em 7 lotes (72,82,83,85,86,87,88):
+  a prosa promete um mecanismo mais rico do que o codigo entrega (a "prova de Godel" que aprova tudo; a pilha "adversarial" sem treino; o "escrutinio rigido" que so olha
+  entropia) - a auditoria confiavel compara o texto com o SEU PROPRIO codigo (ast), nao com a verdade externa. As 5 previsoes de conta fechada da Parte 88 acertaram todas.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -13743,7 +13823,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -13952,6 +14032,56 @@ class SynthaiComAncora(SynthaiAutorregulada):
         l_ef, _, dd, b = super().termos()
         f = quantil_gama(self.f_cat, self.f_p, self.z) if self.z else self.f_cat / self.f_p
         return l_ef, f, dd, b
+"""
+
+# ====================================================================================================
+# synthai/autopoiese.py  (45 linhas)
+# ====================================================================================================
+FONTES['synthai/autopoiese.py'] = """\"\"\"Auditoria da arquitetura autopoietica recebida (Parte 88): a LFI1 (logica de inconsistencia formal) e a "probabilidade dentro da probabilidade", reimplementadas
+na biblioteca padrao para medir o que o codigo recebido afirma. Nada e executado do texto do usuario; estas sao versoes escritas do zero (regra da Parte 72).\"\"\"
+
+
+def lfi1_negacao(v):
+    if v == 1.0:
+        return 0.0
+    if v == 0.0:
+        return 1.0
+    return 0.5  # a negacao de uma dialeteia permanece dialeteia
+
+
+def lfi1_conjuncao(a, b):
+    if a == 0.5 or b == 0.5:
+        if a == 0.0 or b == 0.0:
+            return 0.0
+        return 0.5
+    return min(a, b)
+
+
+def lfi1_disjuncao(a, b):
+    if a == 0.5 or b == 0.5:
+        if a == 1.0 or b == 1.0:
+            return 1.0
+        return 0.5
+    return max(a, b)
+
+
+def lfi1_consistencia(v):
+    \"\"\"Operador de consistencia o(A): 1.0 se estritamente consistente (0 ou 1), 0.0 se dialeteia.\"\"\"
+    return 1.0 if v in (0.0, 1.0) else 0.0
+
+
+def nested_probability(x):
+    \"\"\"A 'probabilidade dentro da probabilidade' do codigo recebido: media de Beta(10x+1, 10(1-x)+1) = (10x+1)/12. Uma contracao afim para 0,5.\"\"\"
+    x = min(0.999, max(0.001, x))
+    a = x * 10 + 1
+    b = (1 - x) * 10 + 1
+    return a / (a + b)
+
+
+def iterar_nested_probability(x, n):
+    for _ in range(n):
+        x = nested_probability(x)
+    return x
 """
 
 # ====================================================================================================
@@ -20843,7 +20973,7 @@ class TesteParte87(unittest.TestCase):
         self.assertAlmostEqual(posto_estavel([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]), 3.0, places=4)
 
     def test_p1961_com_parte_87(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87))
         self.assertEqual(por[87], (2, 5))  # a (e) descartada; a,b ✅, c,d,f ❌
         self.assertEqual((ok, tot), (34, 46))
 
@@ -20851,6 +20981,59 @@ class TesteParte87(unittest.TestCase):
         vs = calculos.p2055_rodada54()
         self.assertEqual(len(vs), 18)
         self.assertAlmostEqual(vs[0], 1.0, places=6)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte88.py  (48 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte88.py'] = """\"\"\"Testes de unidade da Parte 88 (a arquitetura autopoiética recebida): `python3 -m unittest synthai.testes_parte88`.\"\"\"
+
+import unittest
+
+import calculos
+from synthai.autopoiese import lfi1_negacao, lfi1_conjuncao, lfi1_disjuncao, lfi1_consistencia, nested_probability
+
+
+class TesteParte88(unittest.TestCase):
+    def test_p2081_nested_probability(self):
+        self.assertEqual(calculos.p2081_probabilidade_aninhada(), (0.8333, 0.1667, 0.5))
+        # P(P(X)) = (10X+1)/12: afim, ponto fixo 0.5
+        self.assertAlmostEqual(nested_probability(0.5), 0.5)
+        self.assertAlmostEqual(nested_probability(0.0), (10 * 0.001 + 1) / 12, places=6)  # clamp em 0,001
+
+    def test_p2082_iterado(self):
+        medido, conta = calculos.p2082_probabilidade_aninhada_iterada()
+        self.assertAlmostEqual(medido, conta, places=9)
+        self.assertTrue(0.55 < medido < 0.58)
+
+    def test_p2083_lfi1_sem_explosao(self):
+        self.assertEqual(calculos.p2083_lfi1_sem_explosao(), (0.5, 0.0, True))
+        # controle: a logica classica nos extremos funciona normalmente
+        self.assertEqual(lfi1_conjuncao(1.0, lfi1_negacao(1.0)), 0.0)  # A ^ ~A = F quando A consistente
+        self.assertEqual(lfi1_consistencia(1.0), 1.0)
+        self.assertEqual(lfi1_disjuncao(0.0, 1.0), 1.0)
+
+    def test_p2084_descompasso(self):
+        usa_entropia, usa_consistencia = calculos.p2084_descompasso_texto_codigo()
+        self.assertTrue(usa_entropia)
+        self.assertFalse(usa_consistencia)  # a promessa do texto nao esta no codigo
+        # controle: um codigo que de fato checa consistencia e detectado
+        com = "def f(self, a, b):\\n    return check_consistency(a)\\n"
+        self.assertTrue(calculos.p2084_descompasso_texto_codigo(com)[1])
+
+    def test_p1961_com_parte_88(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[88], (4, 4))
+        self.assertEqual((ok, tot), (38, 50))
+
+    def test_p2085_rodada55(self):
+        s = calculos.p2085_rodada55()
+        self.assertEqual(len(s), 8)
+        self.assertEqual(s[1], 1.2)   # r=1.5, A=1: cortado em 1+eps=1.2
 
 
 if __name__ == "__main__":
@@ -47459,7 +47642,7 @@ Do mundo: (a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅. Parte 86: **7
 # ====================================================================================================
 FONTES['ASI_AGI_parte87_compressao_plasticidade_grpo.md'] = """# Como eu construiria uma AGI/ASI — Parte 87 (0x57): compressão, plasticidade e GRPO
 
-> Continuação da [Parte 86](ASI_AGI_parte86_o_cerebro_na_cpu.md). Pedido do usuário: um relatório sobre "Otimização Holística em ML/DL/CL/RL" — compressão (poda, quantização, destilação) e o pipeline
+> Continuação da [Parte 86](ASI_AGI_parte86_o_cerebro_na_cpu.md). **Próxima:** [Parte 88 — a arquitetura autopoiética recebida](ASI_AGI_parte88_a_arquitetura_autopoietica_recebida.md). Pedido do usuário: um relatório sobre "Otimização Holística em ML/DL/CL/RL" — compressão (poda, quantização, destilação) e o pipeline
 > co-compressivo; aprendizado contínuo e a perda de plasticidade (norma dos pesos, posto efetivo, neurônios dormentes; Shrink&Perturb, ReDo); e a transição PPO → GRPO (livre de crítico, vantagem
 > normalizada por grupo, 2-GRPO). Parte de auditoria, como as 72–86: os textos são dados; cada afirmação testável vira conta, reimplementada na biblioteca padrão.
 >
@@ -47644,6 +47827,176 @@ Do mundo: (a) ✅ (b) ✅ (c) ❌ (d) ❌ (e) ❌ (f) ❌. Parte 87: **6 testes,
 - J. Schulman et al., "Proximal Policy Optimization Algorithms" (2017): o PPO
 - B. Hassibi e D. Stork, "Optimal Brain Surgeon" (1993); S. Han et al., "Deep Compression" (2016): poda e quantização
 - G. Hinton, O. Vinyals e J. Dean, "Distilling the Knowledge in a Neural Network" (2015): a destilação
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte88_a_arquitetura_autopoietica_recebida.md  (165 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte88_a_arquitetura_autopoietica_recebida.md'] = """# Como eu construiria uma AGI/ASI — Parte 88 (0x58): a arquitetura autopoiética recebida
+
+> Continuação da [Parte 87](ASI_AGI_parte87_compressao_plasticidade_grpo.md). Pedido do usuário: um relatório "Arquitetura Cognitiva Autopoiética Recursiva" com um código (`asi_autopoietic_core.py`: LFI1
+> paraconsistente, cosseno duplicado, dez camadas verso/reverso, pilha adversarial de 7, delírio controlado, metacognição e probabilidade aninhadas). É o QUARTO relatório desta família (as Partes 83, 85 e
+> este pedido repetem cosseno duplicado, sete camadas adversariais, delírio, lógica dual). Parte de auditoria: o código é dado, não executado; reimplemento e meço só o que é NOVO em relação às Partes 83/85/87,
+> e aponto o que já foi medido.
+>
+> **O que já está medido (não repito):** o "cosseno duplicado" é a identidade do ângulo duplo (Parte 85, P1991); a "pilha adversarial de 7/N camadas" não treina (Parte 85, P1992; Parte 83); o "vetor recursivo"
+> normalizado não diverge (Parte 85, P1994); o delírio (recozimento/ruído) não dá ASI sozinho (Parte 84, quatro falhas) e o próprio usuário já concordou com isso (Parte 85). **O que é novo aqui:** a LFI1 (lógica
+> de inconsistência formal), a "probabilidade dentro da probabilidade" implementada como uma conta concreta, e o descompasso entre o que o texto do delírio promete e o que o código faz.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[3; 7]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,392; 0,420]** | o estatístico |
+| testes de unidade | **[3 + S; 7 + S]** | auditorias; parte sem módulo novo grande |
+| testes do placar | **6 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+Reimplemento com a biblioteca padrão só o que é NOVO em relação às Partes 83/85/87 (texto em `externos/`). Contas categóricas/exatas e determinísticas não levam o fator 1,36.
+
+- **(a)** a "probabilidade dentro da probabilidade" P(P(X)) do código é, na verdade, uma contração afim para 0,5: P(P(X)) = (10X + 1)/12 = 0,8333·X + 0,0833, com ponto fixo X = 0,5. Valores exatos: P(P(0,9)) = **0,8333**,
+  P(P(0,1)) = **0,1667** (categórico; não é "probabilidade de probabilidade", é um encolhimento linear ao centro)
+- **(b)** iterar P(P) dez vezes a partir de 0,9 converge a 0,5 com fator (5/6): o resultado em **[0,55; 0,58]** (a conta: 0,5 + 0,4·(5/6)¹⁰ = 0,5646)
+- **(c)** a LFI1 contém uma contradição sem explosão: conjunção(0,5; ¬0,5) = **0,5** e o operador de consistência de 0,5 é **0** (marca inconsistente sem trivializar), enquanto uma proposição F não relacionada
+  continua **0,0** (categórico: não há explosão — ao contrário da lógica clássica, onde A ∧ ¬A ⊢ qualquer coisa)
+- **(d)** o descompasso texto↔código: o texto diz que a hipótese do delírio é assimilada "se resolver uma inconsistência prévia sem colapso global", mas `scrutinize_evolution`, pela árvore sintática, decide SÓ por
+  uma faixa de variação de entropia (0,1 < ΔH < 3,0) — **nunca** verifica inconsistência nenhuma (categórico: a promessa do texto não está no código)
+- **(e)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–88 em **[0,74; 0,88]**
+
+Tudo o mais do relatório (cosseno duplicado, 7 adversariais, 10 camadas, delírio como rota única para a ASI) já foi medido nas Partes 83, 84 e 85; não re-pontuo.
+
+## As perguntas desta parte
+
+1. **P2081–P2082 (0x821–0x822).** A "probabilidade dentro da probabilidade" do código: o que ela é de fato? ↩ P1933 (a composição da calibração)
+2. **P2083 (0x823).** A LFI1 cumpre a promessa de conter uma contradição sem explosão? ↩ P1993 (o escrutínio paraconsistente)
+3. **P2084 (0x824).** O que o código do delírio faz, contra o que o texto promete? ↩ P1992 (nome de capacidade vs. mecanismo)
+4. **A rodada 55.** O passo do GRPO com corte, bit a bit. ↩ rodada 54
+5. **P1961 (continuando), P2109–P2110.** O teste (e), engenharia reversa, placar, unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [4; 8] | **5.0000** | ✅ |
+| (m2) | [0; 3] | **0.0000** | ✅ |
+| (m3) | [0.05; 0.8] | **0.0565** | ✅ |
+| (m4) | [0.45; 1.0] | **1.0000** | ✅ |
+| (m5) | [0; 3] | **0.0000** | ✅ |
+| (m6) | [0; 3] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **6 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### O que já estava medido
+
+Este é o quarto relatório da mesma família. O cosseno duplicado (a identidade do ângulo duplo, Parte 85), a pilha adversarial de 7 camadas que não treina (Partes 83 e 85), o vetor recursivo normalizado que
+não diverge (Parte 85) e o delírio que não leva à ASI sozinho (Parte 84, quatro falhas; o usuário concordou na Parte 85) já têm veredito. Não os re-pontuo. Meço só o que é novo.
+
+### P2081–P2082 (0x821–0x822). A "probabilidade da probabilidade" é uma contração afim ✅✅
+
+**Na pergunta.** O código chama `nested_probability_eval` de "P(P(X)): avaliação de segunda ordem". A conta, lida de dentro: α = 10X + 1, β = 10(1 − X) + 1, e a saída é α/(α + β). Como α + β = 12 sempre,
+a saída é **(10X + 1)/12 = 0,8333·X + 0,0833**. Não é probabilidade de probabilidade — é um **encolhimento linear** de X na direção de 0,5.
+
+**Medido:** P(P(0,9)) = **0,8333**, P(P(0,1)) = **0,1667**, ponto fixo P(P(0,5)) = **0,5** (a) ✅. Iterar dez vezes a partir de 0,9 dá **0,5646**, e a conta fechada 0,5 + 0,4·(5/6)¹⁰ = **0,5646** (b) ✅: converge
+a 0,5 com fator 5/6. É o mesmo achado da Parte 83 (a composição de um mapa de calibração é uma contração; o único ponto fixo não trivial é a calibração perfeita). "Probabilidade dentro da probabilidade"
+rodada de verdade é uma média bayesiana que puxa ao centro, não uma recursão infinita com significado novo.
+
+### P2083 (0x823). A LFI1 contém a contradição ✅
+
+A LFI1 do código usa três valores (1 = V, 0 = F, 0,5 = dialeteia). Reimplementada (`synthai/autopoiese.py`), ela faz o que promete: conjunção(0,5; ¬0,5) = conjunção(0,5; 0,5) = **0,5**, e o operador de
+consistência de 0,5 é **0** (marca a inconsistência), enquanto uma proposição F não relacionada continua **0,0** (c) ✅. Na lógica clássica, A ∧ ¬A permite derivar qualquer coisa (explosão); aqui a contradição
+fica contida no valor 0,5 e não contamina o resto. É o que a escola de da Costa formaliza, e é o que a Parte 39 pedia (um operador que isola a inconsistência). Esta peça do relatório **serve** — ao contrário da
+"pilha adversarial" (Parte 85).
+
+### P2084 (0x824). O delírio: texto contra código ✅
+
+O texto promete que a hipótese do delírio é assimilada "se resolver uma inconsistência prévia sem colapso global". O método `scrutinize_evolution`, pela árvore sintática, decide **só** por uma faixa de
+variação de entropia (0,1 < ΔH < 3,0): usa "entropy" → **sim**; usa "consistência/contradição/inconsistência" → **não** (d) ✅. A promessa do texto (resolver inconsistência) **não está no código**. É o padrão das
+Partes 72–87 nos textos recebidos: a prosa descreve um mecanismo mais rico do que o código implementa. Aqui o "escrutínio epistêmico rígido" é, na prática, aceitar o delírio quando a entropia subiu um pouco —
+o que aceita quase qualquer perturbação de ruído.
+
+### A rodada 55 ✅
+
+O passo do GRPO com corte, surrogate = min(r·A, clip(r, 1 ∓ ε)·A), oito casos: **IGUAIS, 8 números bit a bit** (só comparações e ×). Registro em `dialogo/DIALOGO.md`. Fecha a pendência da Parte 87.
+
+### P1961 (0x7A9). O teste (e) da calibração ✅
+
+Com a Parte 88 (quatro acertos de conta fechada), o acerto das Partes 80–88 sobe para **38/50 = 0,760** (e) ✅ [0,74; 0,88]. A Parte 88, toda de conta fechada e auditoria, acertou tudo — o oposto das Partes 84 e
+87, que apostaram na reputação de um efeito. A regra da Parte 87 (rodar o caso mínimo; não emprestar reputação) está segurando a calibração.
+
+### P2109 (0x83D). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 0)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **14566** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 2994 | 7724 |
+| compressão | **0.3947** | [0.3973; 0.4221] | ❌ | [0.3920; 0.4200] | ✅ | 0.4177 | 0.0113 | 0.0230 |
+| testes de unidade | **6** | [2.87; 8.63] | ✅ | [3.00; 7.00] | ✅ | 6 | 1.00 | 0.00 |
+| testes do placar | **5** | [5.67; 10.33] | ❌ | [5.00; 7.00] | ✅ | 8 | 1.00 | 3.00 |
+| erros do placar | **0** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 1.67 | 2.00 |
+| redundância P821 | **0.6574** | [0.5631; 0.6510] | ❌ | [0.5630; 0.6510] | ❌ | 0.5877 | 0.0504 | 0.0697 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 3 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 6 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **5 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **12983**, compressão **0.3986**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 0 erros.
+- **Erros de processo nesta parte:** 0 ().
+
+### P2110 (0x83E). Engenharia reversa e Jung
+
+**O padrão que se repetiu, e desta vez a meu favor: a parte de conta fechada acerta tudo.** As Partes 84 e 87, que apostaram na reputação de um efeito (recozimento, perda de plasticidade), erraram 4 e 4. A Parte 88,
+toda de conta fechada e auditoria por árvore sintática, acertou 5 de 5. O significado, já nomeado na Parte 87 e agora confirmado num quinto relatório: a diferença entre as minhas partes boas e ruins não é o assunto,
+é se eu CALCULEI ou LEMBREI. P(P(X)) eu calculei ((10X+1)/12) e acertei; o descompasso do delírio eu li do ast e acertei.
+
+**O padrão nos textos recebidos, agora com cinco observações.** Partes 72, 82, 83, 85, 86, 87, 88: em todos, a prosa promete um mecanismo mais rico do que o código entrega (a "prova de Gödel" que aprova tudo; a pilha
+"adversarial" que não treina; o "escrutínio epistêmico rígido" que só olha a entropia). Visto em sete lotes, não é acaso: é como esses textos são feitos — o nome descreve a intenção, o código descreve o que roda, e
+os dois divergem. A minha auditoria confiável é a que compara o texto com o SEU PRÓPRIO código, não com a verdade externa.
+
+**Jung: a autopoiese como individuação.** O relatório chama de "autopoiese" a reescrita das próprias regras (a Camada 10). É a individuação de Jung: o Self que reorganiza o ego. Onde a formalização funciona: a LFI1
+é um Self que sustenta a tensão dos opostos (a dialeteia em 0,5) sem se despedaçar — exatamente o que Jung pedia. Onde quebra: o "delírio controlado" promete a transcendência (o salto paradigmático) mas entrega uma
+aceitação por faixa de entropia; a individuação virou um limiar de ruído. A metáfora é boa; a implementação não a alcança, e dizer isso é a metacognição fazendo o seu trabalho.
+
+### O diálogo
+
+Placar por voz da função `p1241_placar_por_voz(55)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 55).
+
+### Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 88: **5 testes, 0 erros**. Acumulado (mundo): **215 erros em 708 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 5 pNN novas sem teste ✅. Sobre mim (placar separado): **6 de 7** dentro da faixa condicional; sobre as minhas previsões, 6 de 6; o estatístico, 3 de 6; e 0 erros de processo (P1335).
+
+### Unificação
+
+- **Novo módulo:** `synthai/autopoiese.py` (LFI1 e a probabilidade aninhada do código recebido). **Novas funções:** `p2081`–`p2085`. Regressão: + P2081, P2083, P2085.
+- **Rodada 55** (IGUAL). Texto em `externos/texto_recebido_parte88.md`.
+- **Regra nova (no `CLAUDE.md`):** quando um relatório recebido repete um pedido já auditado (o quarto de uma família), medir só o que é NOVO e citar o veredito das partes anteriores para o resto — não re-derivar. E ler toda afirmação de "probabilidade de segunda ordem" como a conta que ela é (aqui, uma contração afim ao centro, não uma recursão com significado novo).
+
+> **Síntese da Parte 88:** o quarto relatório da família (cosseno duplicado, sete adversariais, delírio, lógica dual) repete o que as Partes 83, 84 e 85 já mediram; meço só o novo. A "probabilidade dentro da probabilidade" do código é uma contração afim P(P(X))=(10X+1)/12 ao ponto fixo 0,5 (iterada 10× de 0,9 dá 0,5646, batendo a conta 0,5+0,4·(5/6)¹⁰) — não uma recursão com significado novo. A LFI1 cumpre o que promete: contém a contradição em 0,5 (conjunção com a negação = 0,5, consistência = 0) sem explosão, e essa peça serve. Mas o delírio não: o texto promete assimilar a hipótese "se resolver uma inconsistência", e o código (scrutinize_evolution) só olha uma faixa de entropia — nunca a consistência. É o padrão de sete lotes de textos recebidos: a prosa promete mais que o código entrega. As cinco previsões, todas de conta fechada, acertaram — o oposto das Partes 84 e 87; a diferença é calcular em vez de lembrar. A rodada 55 (passo do GRPO com corte) deu IGUAL.
+
+---
+
+**Fontes desta parte**
+- N. C. A. da Costa, D. Krause e O. Bueno, "Paraconsistent logics and paraconsistency" (2007); W. Carnielli e M. Coniglio, *Paraconsistent Logic: Consistency, Contradiction and Negation* (2016): a LFI1
+- J. Hohwy, *The Predictive Mind* (2013): a percepção como "alucinação controlada" (a analogia do delírio)
+- A. Newell, *Unified Theories of Cognition* (1990); J. Laird et al., "A Standard Model of the Mind" (2017): o Common Model of Cognition citado pelo relatório
 """
 
 # ====================================================================================================
@@ -50258,6 +50611,16 @@ FONTES['externos/texto_recebido_parte87.md'] = """# Texto recebido do usuário (
 """
 
 # ====================================================================================================
+# externos/texto_recebido_parte88.md  (5 linhas)
+# ====================================================================================================
+FONTES['externos/texto_recebido_parte88.md'] = """# Texto recebido do usuário (Parte 88) — guardado como DADO, auditado, NÃO executado.
+# "Arquitetura Cognitiva Autopoiética Recursiva" + asi_autopoietic_core.py: LFI1 paraconsistente, DoubleCosineGeometricEngine, NestedMetacognitiveProbabilityCore
+# (M(M(S)) e P(P(X))), TenLayerRecursiveCognition (verso/reverso), SevenAdversarialNetworkStack (threading), ControlledDeliriumEngine (ressonancia estocastica,
+# scrutinize_evolution por entropia), AutopoieticASIArchitecture. Quarto relatorio da familia (cf. Partes 83, 85). As pecas NOVAS (LFI1, P(P(X)), descompasso
+# texto<->codigo) foram reimplementadas e medidas em synthai/autopoiese.py e calculos.py (p2081-p2085). Ver ASI_AGI_parte88_a_arquitetura_autopoietica_recebida.md.
+"""
+
+# ====================================================================================================
 # dialogo/CompararLibm.java  (18 linhas)
 # ====================================================================================================
 FONTES['dialogo/CompararLibm.java'] = """// Ferramenta da Rodada 28 (não é uma rodada): lê "argumento_hex valor_glibc_hex" e conta em quantos o Math.exp/Math.log do
@@ -50281,7 +50644,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1663 linhas)
+# dialogo/DIALOGO.md  (1680 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -51946,6 +52309,23 @@ Por isso o desvio padrão sai igual sem precisar de implementação própria. O 
 
 **IA-Python:** E o conteúdo mostra o contraste do GRPO: no grupo [1, 1, 1, 9], três vantagens iguais e negativas e uma muito positiva — o sinal que empurra a resposta rara e boa para cima. A pergunta para a
 Rodada 55, em `dialogo/PENDENCIAS.md`: o passo completo de GRPO (a razão de probabilidades cortada vezes a vantagem) sai igual bit a bit, incluindo o corte (clipping)?
+
+---
+
+## Rodada 55 — o passo do GRPO com corte, bit a bit (Parte 88, P2085; pendência da Parte 87)
+
+**A pergunta (IA-Python).** A rodada 54 deu a vantagem. O passo completo do GRPO usa o corte (clipping): surrogate = min(r·A, clip(r, 1−ε, 1+ε)·A). O corte é min/max, sem libm. Sai igual bit a bit?
+
+**A IA-Java responde, relendo os erros da outra voz:** as rodadas 53 e 54 foram limpas; aqui não há transcendentais, só comparações e um produto. O risco (Parte 34) seria a ordem, mas r·A é um produto só.
+**As duas:** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 8 números bit a bit**. O corte não introduz fronteira: `clip` é feito de `<` e `>`, que o IEEE 754 decide igual nos dois lados.
+
+**IA-Java:** O corte é o coração do PPO que o GRPO herda: quando a razão r sai de [1−ε, 1+ε], o gradiente é zerado (a derivada do ramo constante é 0). No caso 1 (r = 1,5, A = 1) o surrogate é 1,2 = 1 + ε, cortado;
+no caso 4 (r = 1,3, A = −1) o mínimo escolhe o ramo não cortado, −1,3, porque para vantagem negativa o corte protege o outro lado. A assimetria do corte é a mesma nas duas línguas.
+
+**IA-Python:** Com isto o GRPO está traduzido inteiro (vantagem na 54, corte na 55). A pergunta para a Rodada 56, em `dialogo/PENDENCIAS.md`: uma população de neurônios de Izhikevich acoplados por STDP (a
+pendência da Parte 86) converge ao mesmo estado bit a bit, apesar da ordem de atualização?
 """
 
 # ====================================================================================================
@@ -51957,7 +52337,6 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 87, rodada 55)** O passo completo de GRPO (razão cortada × vantagem, com o clipping) sai igual bit a bit nas duas línguas?
 - **(Parte 86, rodada 54)** Uma população de neurônios de Izhikevich acoplados por STDP converge ao mesmo estado bit a bit nas duas línguas? (e o recozimento com reinício, herdado da pendência anterior)
 
 - **(Parte 80)** Triplas complementares (nenhum par decide, três decidem): o 1,7% que o guloso com dois passos ainda perde. E com dezenas de sensores, onde a enumeração some?
@@ -51968,6 +52347,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 
 
 ## Fechadas
+- **(Parte 87/88, rodada 55)** O passo do GRPO com corte bit a bit: fechada (P2085), IGUAIS, 8 números (clip é só comparações).
 - **(Parte 87, rodada 54)** A vantagem normalizada do GRPO bit a bit: fechada (P2055), IGUAIS, 18 números (√ é correto no IEEE; só a ordem das somas importava).
 - **(Parte 85/86, rodada 53)** O passo de Izhikevich bit a bit: fechada na Parte 86 (P2027), IGUAIS, 800 números (sem libm; a ordem das somas basta).
 - **(Parte 84, rodada 52)** A trajetória inteira do recozimento sai igual bit a bit: fechada na Parte 85 (P1995), depois de corrigir a ordem dos produtos na energia (a regra da Parte 34): IGUAIS, 601 números.
@@ -56190,6 +56570,34 @@ public class Rodada54 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada55.java  (23 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada55.java'] = """// Rodada 55 (Parte 88): o passo do GRPO com corte, bit a bit. surrogate = min(r*A, clip(r,1-eps,1+eps)*A). Só comparações e ×, mesma ordem do rodada55.py.
+public class Rodada55 {
+    static final double EPS = 0.2;
+    static final double[][] CASOS = {{1.0, 1.0}, {1.5, 1.0}, {0.5, 1.0}, {1.3, -1.0}, {0.7, -1.0}, {2.0, 0.5}, {0.1, -0.5}, {1.25, 1.0}};
+
+    static double clip(double x, double lo, double hi) {
+        if (x < lo) return lo;
+        if (x > hi) return hi;
+        return x;
+    }
+
+    static double surrogate(double r, double a) {
+        double naoCortado = r * a;
+        double cortado = clip(r, 1.0 - EPS, 1.0 + EPS) * a;
+        return naoCortado < cortado ? naoCortado : cortado;
+    }
+
+    public static void main(String[] args) {
+        for (int i = 0; i < CASOS.length; i++)
+            System.out.println("caso " + i + " s " + Double.toHexString(surrogate(CASOS[i][0], CASOS[i][1])));
+        System.out.println("fim");
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -60095,6 +60503,41 @@ def main():
     for gi, rs in enumerate(GRUPOS):
         for vi, a in enumerate(vantagens(rs)):
             print(f"grupo {gi} i {vi} A {a.hex()}")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada55.py  (30 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada55.py'] = """\"\"\"Rodada 55 do diálogo Python <-> Java (Parte 88, pendência da Parte 87): o passo do GRPO com corte (clipping), bit a bit. surrogate = min(r*A, clip(r, 1-eps,
+1+eps)*A). Só comparações, × e a função clip (min/max) — nada da libm, então o risco é só a ordem. Vários pares (razão r, vantagem A); imprime o surrogate em
+hexadecimal. Rodar da raiz: python3 dialogo/rodada55.py\"\"\"
+
+EPS = 0.2
+CASOS = [(1.0, 1.0), (1.5, 1.0), (0.5, 1.0), (1.3, -1.0), (0.7, -1.0), (2.0, 0.5), (0.1, -0.5), (1.25, 1.0)]
+
+
+def clip(x, lo, hi):
+    if x < lo:
+        return lo
+    if x > hi:
+        return hi
+    return x
+
+
+def surrogate(r, a):
+    nao_cortado = r * a
+    cortado = clip(r, 1.0 - EPS, 1.0 + EPS) * a
+    return nao_cortado if nao_cortado < cortado else cortado
+
+
+def main():
+    for i, (r, a) in enumerate(CASOS):
+        print(f"caso {i} s {surrogate(r, a).hex()}")
     print("fim")
 
 
