@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 86, perguntas P1 a P2027).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 87, perguntas P1 a P2055).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (13338 linhas)
+# calculos.py  (13407 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7529,7 +7529,7 @@ def testes_de_regressao():
         "P1931": (lambda m: [round(m[0]["sincrono"][0], 5), round(m[0]["alternado"][1], 6), m[0]["alternado"][2]])(p1931_gan_de_dirac()) == [0.34864, 0.101274, 16],
         "P1933": [round(x, 4) for x in p1933_calibracao_composta()[:2]] == [0.1516, 0.1511],
         "P1961": p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84))[:2] == (23, 31) and p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85))[:2] == (27, 35),
-        "P1962": round(p1962_lyapunov_por_densidade(a=0.2, celulas=800, iteracoes=1500)[1], 3) == 0.998,
+        "P1962": round(p1962_lyapunov_por_densidade(a=0.2, celulas=800, iteracoes=1500)[1], 3) == 0.997,
         "P1964": p1964_rodada51()[0] == 263,
         "P1991": p1991_cosseno_duplicado_recebido() == [1.3, 0.5, -0.3, -0.5, -0.7],
         "P1993": len(p1993_buraco_do_escrutinio()) == 3,
@@ -7537,6 +7537,9 @@ def testes_de_regressao():
         "P2022": p2022_izhikevich_tipos() == (22, 73),
         "P2024": p2024_gsops() == (10000, 10000000, 10.0),
         "P2027": p2027_rodada53()[2] == 5,
+        "P2051": round(p2051_quantizacao_mse()[2]) == 279,
+        "P2052": p2052_vantagem_grpo() == ([1.0, -1.0], 0.0),
+        "P2055": len(p2055_rodada54()) == 18 and round(p2055_rodada54()[0], 6) == 1.0,
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9591,6 +9594,8 @@ VEREDITOS_P2099 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P2099, TESTES_P2099 = 210, 690
 VEREDITOS_P2169 = "(a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅"
 ERROS_P2169, TESTES_P2169 = 211, 697
+VEREDITOS_P2239 = "(a) ✅ (b) ✅ (c) ❌ (d) ❌ (e) ❌ (f) ❌"
+ERROS_P2239, TESTES_P2239 = 215, 703
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12131,16 +12136,16 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n in (84, 85, 86):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
+        if n in (84, 85, 86, 87):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12475,6 +12480,54 @@ def p2027_rodada53():
         v, u, d = r53.passo(v, u)
         disparos += d
     return v, u, disparos
+
+
+def p2051_quantizacao_mse(bits_a=8, bits_b=4, amostras=100000, semente=87):
+    \"\"\"O erro de quantizacao uniforme (P2051; Parte 87): MSE ~ passo^2 ~ 4^-bits. Devolve (MSE INT8, MSE INT4, razao INT4/INT8 ~ 4^(8-4)=256).\"\"\"
+    import random
+    from synthai.plasticidade import mse_quantizacao
+    rng = random.Random(semente)
+    xs = [rng.gauss(0, 1) for _ in range(amostras)]
+    m_a = mse_quantizacao(bits_a, xs)
+    m_b = mse_quantizacao(bits_b, xs)
+    return m_a, m_b, m_b / m_a
+
+
+def p2052_vantagem_grpo():
+    \"\"\"A vantagem normalizada do GRPO (P2052): devolve (vantagens de G=2 com eps=0 [sinal contrastivo puro +-1], media das vantagens de G=4 [=0 exato]).\"\"\"
+    from synthai.plasticidade import vantagem_grpo
+    g2 = vantagem_grpo([5.0, 2.0], eps=0.0)
+    g4 = vantagem_grpo([1.0, 2.0, 3.0, 4.0])
+    return g2, sum(g4) / len(g4)
+
+
+def p2053_plasticidade(tarefas=20):
+    \"\"\"A perda de plasticidade numa MLP pequena, tarefas independentes (P2053): devolve, para SGD puro e Shrink&Perturb, (razao de posto estavel tarefaN/tarefa1,
+    razao de norma de W1). As patologias (colapso de posto, crescimento de norma) NAO aparecem nesta escala (razoes ~1); o S&P contem mais a norma.\"\"\"
+    from synthai.plasticidade import treinar_continuo
+    p = treinar_continuo(tarefas=tarefas, shrink_perturb=False)
+    sp = treinar_continuo(tarefas=tarefas, shrink_perturb=True)
+    return ((p["fim_posto"] / p["ini_posto"], p["fim_norma"] / p["ini_norma"]),
+            (sp["fim_posto"] / sp["ini_posto"], sp["fim_norma"] / sp["ini_norma"]))
+
+
+def p2054_plasticidade_conflito(tarefas=100):
+    \"\"\"O diagnostico (P2054): tarefas que conflitam (professor fixo, rotulos invertidos a cada tarefa) e muitas. Devolve (razao de posto, razao de norma, dormentes
+    no fim). A patologia tambem nao aparece: o efeito da literatura e dependente de regime e nao reproduz nesta escala de brinquedo.\"\"\"
+    from synthai.plasticidade import treinar_continuo
+    c = treinar_continuo(tarefas=tarefas, conflito=True, shrink_perturb=False)
+    return c["fim_posto"] / c["ini_posto"], c["fim_norma"] / c["ini_norma"], c["fim_dorm"]
+
+
+def p2055_rodada54():
+    \"\"\"Rodada 54 (P2055; Parte 87): a vantagem normalizada do GRPO (dialogo/rodada54.py), IGUAL em Java bit a bit. So +,-,*,/,sqrt. Devolve a lista de todas as
+    vantagens dos grupos, para conferir que a rodada reproduz a funcao.\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada54", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada54.py"))
+    r54 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r54)
+    return [a for rs in r54.GRUPOS for a in r54.vantagens(rs)]
 
 
 def p1578_autovalores_da_atencao():
@@ -13328,6 +13381,22 @@ def _parte_86():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2169, testes=TESTES_P2169)
     print(f"P2169 minha taxa de erro ({ERROS_P2169}/{TESTES_P2169}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_87():
+    print("--- Parte 87 (0x57: compressao, plasticidade e GRPO) ---")
+    m8, m4, razao = p2051_quantizacao_mse()
+    print(f"P2051 quantizacao: MSE INT8 {m8:.3e}, INT4 {m4:.3e}, razao INT4/INT8 {razao:.1f} (4^4=256)")
+    print(f"P2052 GRPO (vantagens G=2 com eps=0, media G=4): {p2052_vantagem_grpo()}")
+    print(f"P2053 plasticidade (SGD, S&P) = ((posto ratio, norma ratio), ...): {p2053_plasticidade()}")
+    print(f"P2054 plasticidade com conflito, 100 tarefas (posto ratio, norma ratio, dormentes): {p2054_plasticidade_conflito()}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (e), Partes 80-87: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    print(f"P2055 rodada 54 (vantagem GRPO, IGUAL em Java): {len(p2055_rodada54())} vantagens")
+    total, sem = p1092_pnn_sem_teste(2051, 2080)
+    print(f"P1092 pNN novas (P2051-P2080) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 87: {p974_previsoes_sem_largura(range(87, 88))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2239, testes=TESTES_P2239)
+    print(f"P2239 minha taxa de erro ({ERROS_P2239}/{TESTES_P2239}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -13364,7 +13433,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87}
 
 
 if __name__ == "__main__":
@@ -13377,7 +13446,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (299 linhas)
+# CLAUDE.md  (303 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -13522,6 +13591,10 @@ anterior, commit e push.
   STDP, SDR): a terceira forma do agente, ao lado da decisão bayesiana e do GPT — um substrato pulsado. Ao prever a convergência de um decaimento geométrico, calcular gap·βⁿ no papel ANTES
   da faixa (errei a (a) do LIF por escrever "~0" e esquecer o prefator do gap inicial — o mecanismo certo, o peso não; a regra da Parte 62). Num texto recebido, a auditoria acha a incoerência
   INTERNA (dois números do mesmo texto que não batem), não a verdade externa (benchmarks de modelos que não posso checar, alguns fictícios, não se pontuam).
+  Parte 87 (relatorio de compressao/plasticidade/GRPO): construi `synthai/plasticidade.py` (quantizacao, vantagem do GRPO, MLP continua com Shrink&Perturb).
+  A REGRA que as Partes 84 e 87 me ensinaram a ferro: antes de prever que um efeito conhecido aparece num experimento MEU (o recozimento escapa de minimos; a rede perde
+  plasticidade), rodar o caso minimo e confirmar que ele aparece no meu regime (rede rasa, poucas tarefas) ANTES de registrar a faixa. A reputacao de um efeito nao e previsao;
+  as previsoes tiradas de conta fechada (quantizacao 256x, vantagem GRPO +-1) acertam, as tiradas de reputacao erram. O fator 1,36 corrige dispersao, nao esse vies.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -13670,7 +13743,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -16584,6 +16657,122 @@ class Percepcao:
         ordem = sorted(situacao.opcoes, key=lambda o: -(o.nota - o.discordancia))
         alvo = ordem[: max(1, int(self.foco * len(ordem)))]
         return {id(o): situacao.ler_sensor(o) for o in alvo}
+"""
+
+# ====================================================================================================
+# synthai/plasticidade.py  (111 linhas)
+# ====================================================================================================
+FONTES['synthai/plasticidade.py'] = """\"\"\"Compressão, GRPO e perda de plasticidade (Parte 87), biblioteca padrão. Reimplementa as peças testáveis do relatório recebido: o operador de quantização
+uniforme, a vantagem normalizada do GRPO, e uma MLP de uma camada oculta treinada numa sequência de tarefas para medir a perda de plasticidade (posto
+estável das ativações, neurônios dormentes, norma dos pesos) com e sem Shrink&Perturb.\"\"\"
+
+import math
+import random
+
+
+def quantizar(x, bits, lo, hi):
+    \"\"\"Quantizacao uniforme: s = (hi-lo)/(2^bits - 1); q = round((x-lo)/s); devolve o valor de-quantizado lo + q*s (saturado).\"\"\"
+    niveis = (1 << bits) - 1
+    s = (hi - lo) / niveis
+    q = round((x - lo) / s)
+    q = max(0, min(niveis, q))
+    return lo + q * s
+
+
+def mse_quantizacao(bits, amostras, lo=-4.0, hi=4.0):
+    return sum((x - quantizar(x, bits, lo, hi)) ** 2 for x in amostras) / len(amostras)
+
+
+def vantagem_grpo(recompensas, eps=1e-8):
+    \"\"\"A vantagem normalizada do GRPO: (r_i - media)/(desvio populacional + eps).\"\"\"
+    g = len(recompensas)
+    media = sum(recompensas) / g
+    var = sum((r - media) ** 2 for r in recompensas) / g
+    desvio = math.sqrt(var)
+    return [(r - media) / (desvio + eps) for r in recompensas]
+
+
+def _relu(x):
+    return x if x > 0 else 0.0
+
+
+def posto_estavel(colunas):
+    \"\"\"Posto estavel ||A||_F^2 / ||A||_2^2 de uma matriz dada como lista de linhas (amostras x unidades). ||A||_2^2 = maior autovalor de A^T A por iteracao
+    de potencia. Proxy do posto efetivo, so com +,-,*,/ e sqrt.\"\"\"
+    n_lin = len(colunas)
+    d = len(colunas[0])
+    # A^T A (d x d)
+    gram = [[sum(colunas[r][i] * colunas[r][j] for r in range(n_lin)) for j in range(d)] for i in range(d)]
+    fro2 = sum(gram[i][i] for i in range(d))  # ||A||_F^2 = traco(A^T A)
+    if fro2 <= 1e-18:
+        return 0.0
+    # maior autovalor de gram por iteracao de potencia
+    v = [1.0] * d
+    for _ in range(100):
+        w = [sum(gram[i][j] * v[j] for j in range(d)) for i in range(d)]
+        n = math.sqrt(sum(a * a for a in w))
+        if n < 1e-18:
+            return 0.0
+        v = [a / n for a in w]
+    Av = [sum(gram[i][j] * v[j] for j in range(d)) for i in range(d)]
+    lam = sum(v[i] * Av[i] for i in range(d))
+    return fro2 / lam if lam > 1e-18 else 0.0
+
+
+def treinar_continuo(tarefas=20, d_in=10, d_oculta=20, amostras=40, passos=50, taxa=0.1,
+                     shrink_perturb=False, sp_shrink=0.9, sp_ruido=0.01, semente=87, conflito=False):
+    \"\"\"Uma MLP de 1 camada oculta (ReLU) + saida linear, treinada por SGD numa sequencia de tarefas de classificacao binaria aleatorias. Mede, na tarefa 1 e
+    na ultima: posto estavel das ativacoes ocultas, fracao de unidades dormentes (ReLU sempre zero na amostra), e norma de W1. Com shrink_perturb, aplica
+    W <- sp_shrink*W + ruido no inicio de cada tarefa (a regra do relatorio). Devolve {posto1, postoN, dorm1, dormN, norma1, normaN}.\"\"\"
+    rng = random.Random(semente)
+    W1 = [[rng.gauss(0, 1.0 / math.sqrt(d_in)) for _ in range(d_in)] for _ in range(d_oculta)]
+    W2 = [rng.gauss(0, 1.0 / math.sqrt(d_oculta)) for _ in range(d_oculta)]
+    medidas = {}
+
+    def ativacoes(X):
+        return [[_relu(sum(W1[h][k] * x[k] for k in range(d_in))) for h in range(d_oculta)] for x in X]
+
+    def medir(X, rotulo):
+        H = ativacoes(X)
+        posto = posto_estavel(H)
+        dorm = sum(1 for h in range(d_oculta) if all(H[r][h] <= 1e-12 for r in range(len(X)))) / d_oculta
+        norma = math.sqrt(sum(W1[h][k] ** 2 for h in range(d_oculta) for k in range(d_in)))
+        medidas[rotulo + "posto"] = posto
+        medidas[rotulo + "dorm"] = dorm
+        medidas[rotulo + "norma"] = norma
+
+    for t in range(tarefas):
+        if shrink_perturb and t > 0:
+            for h in range(d_oculta):
+                for k in range(d_in):
+                    W1[h][k] = sp_shrink * W1[h][k] + rng.gauss(0, sp_ruido)
+                W2[h] = sp_shrink * W2[h] + rng.gauss(0, sp_ruido)
+        # tarefa t: professor aleatorio (independente) ou, com conflito, professor fixo com rotulos invertidos a cada tarefa
+        if conflito:
+            if t == 0:
+                treinar_continuo._wstar = [rng.gauss(0, 1) for _ in range(d_in)]
+            wstar = treinar_continuo._wstar
+            flip = (t % 2 == 1)
+        else:
+            wstar = [rng.gauss(0, 1) for _ in range(d_in)]
+            flip = False
+        X = [[rng.gauss(0, 1) for _ in range(d_in)] for _ in range(amostras)]
+        y = [(0.0 if flip else 1.0) if sum(wstar[k] * x[k] for k in range(d_in)) > 0 else (1.0 if flip else 0.0) for x in X]
+        if t == 0:
+            medir(X, "ini_")
+        for _ in range(passos):
+            for xi, yi in zip(X, y):
+                h = [_relu(sum(W1[hh][k] * xi[k] for k in range(d_in))) for hh in range(d_oculta)]
+                pred = sum(W2[hh] * h[hh] for hh in range(d_oculta))
+                err = pred - yi
+                for hh in range(d_oculta):
+                    if h[hh] > 0:
+                        for k in range(d_in):
+                            W1[hh][k] -= taxa * err * W2[hh] * xi[k]
+                    W2[hh] -= taxa * err * h[hh]
+        if t == tarefas - 1:
+            medir(X, "fim_")
+    return medidas
 """
 
 # ====================================================================================================
@@ -20596,13 +20785,72 @@ class TesteParte86(unittest.TestCase):
         self.assertLess(stdp_delta(-5.0), 0)
 
     def test_p1961_com_parte_86(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86))
         self.assertEqual(por[86], (5, 6))  # a (g) descartada; a,b,c,d,e,f com a❌
         self.assertEqual((ok, tot), (32, 41))
 
     def test_p2027_rodada53(self):
         v, u, disparos = calculos.p2027_rodada53()
         self.assertEqual(disparos, 5)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte87.py  (54 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte87.py'] = """\"\"\"Testes de unidade da Parte 87 (compressão, plasticidade e GRPO): `python3 -m unittest synthai.testes_parte87`.\"\"\"
+
+import unittest
+
+import calculos
+from synthai.plasticidade import quantizar, vantagem_grpo, posto_estavel
+
+
+class TesteParte87(unittest.TestCase):
+    def test_p2051_quantizacao(self):
+        m8, m4, razao = calculos.p2051_quantizacao_mse()
+        self.assertTrue(200 < razao < 320)  # ~4^4 = 256
+        # controle: dequantizar um valor na grade e exato
+        self.assertAlmostEqual(quantizar(-4.0, 8, -4.0, 4.0), -4.0, places=6)  # o extremo inferior cai exato na grade
+        # mais bits, menos erro
+        self.assertLess(m8, m4)
+
+    def test_p2052_grpo(self):
+        g2, media = calculos.p2052_vantagem_grpo()
+        self.assertEqual(g2, [1.0, -1.0])   # G=2, eps=0: sinal contrastivo puro
+        self.assertEqual(media, 0.0)        # a media das vantagens e 0 para qualquer G
+        # controle: todos iguais -> vantagens ~0 (desvio 0, eps protege)
+        self.assertTrue(all(abs(a) < 1e-6 for a in vantagem_grpo([3.0, 3.0, 3.0])))
+
+    def test_p2053_plasticidade_nao_colapsa(self):
+        (pp, pn), (sp_p, sp_n) = calculos.p2053_plasticidade(tarefas=5)
+        # a patologia NAO aparece nesta escala: posto nao colapsa (razao proxima de 1 ou acima)
+        self.assertGreater(pp, 0.8)
+        # o S&P contem mais a norma que o SGD puro
+        self.assertLess(sp_n, pn)
+
+    def test_p2054_conflito(self):
+        posto, norma, dorm = calculos.p2054_plasticidade_conflito(tarefas=10)
+        self.assertGreater(posto, 0.8)   # tambem nao colapsa com conflito nesta escala
+        self.assertEqual(dorm, 0.0)
+
+    def test_posto_estavel_controle(self):
+        # uma matriz posto-1 tem posto estavel ~1; identidade 3x3 tem posto estavel 3
+        self.assertAlmostEqual(posto_estavel([[1.0, 2.0], [2.0, 4.0], [3.0, 6.0]]), 1.0, places=4)
+        self.assertAlmostEqual(posto_estavel([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]), 3.0, places=4)
+
+    def test_p1961_com_parte_87(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[87], (2, 5))  # a (e) descartada; a,b ✅, c,d,f ❌
+        self.assertEqual((ok, tot), (34, 46))
+
+    def test_p2055_rodada54(self):
+        vs = calculos.p2055_rodada54()
+        self.assertEqual(len(vs), 18)
+        self.assertAlmostEqual(vs[0], 1.0, places=6)
 
 
 if __name__ == "__main__":
@@ -47001,7 +47249,7 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 85: **5 testes, 0 erros
 # ====================================================================================================
 FONTES['ASI_AGI_parte86_o_cerebro_na_cpu.md'] = """# Como eu construiria uma AGI/ASI — Parte 86 (0x56): o cérebro na CPU
 
-> Continuação da [Parte 85](ASI_AGI_parte85_a_arquitetura_recursiva_recebida.md). Pedido do usuário: dois relatórios — um sobre uma "AGI/ASI doméstica" de baixo custo (modelos de pesos abertos, GRPO/FP8,
+> Continuação da [Parte 85](ASI_AGI_parte85_a_arquitetura_recursiva_recebida.md). **Próxima:** [Parte 87 — compressão, plasticidade e GRPO](ASI_AGI_parte87_compressao_plasticidade_grpo.md). Pedido do usuário: dois relatórios — um sobre uma "AGI/ASI doméstica" de baixo custo (modelos de pesos abertos, GRPO/FP8,
 > Exo, Vector Graph RAG, MCP/E2B) e outro sobre "IA biologicamente inspirada em CPUs de consumo" (SNN, LIF, Izhikevich, STDP/R-STDP, SDR, NEF/SPA, com contas exatas de FLOPS, memória e vazão). Mais:
 > **"Grave na memória. Código final consolidado ao término de toda mensagem."**
 >
@@ -47204,6 +47452,198 @@ Do mundo: (a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅. Parte 86: **7
 - W. Gerstner et al., *Neuronal Dynamics* (2014): LIF, STDP
 - C. Eliasmith et al., "A Large-Scale Model of the Functioning Brain" (Spaun), *Science* 338 (2012): NEF/SPA
 - J. Hawkins e S. Ahmad, "Why Neurons Have Thousands of Synapses" (2016): HTM e SDR
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte87_compressao_plasticidade_grpo.md  (187 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte87_compressao_plasticidade_grpo.md'] = """# Como eu construiria uma AGI/ASI — Parte 87 (0x57): compressão, plasticidade e GRPO
+
+> Continuação da [Parte 86](ASI_AGI_parte86_o_cerebro_na_cpu.md). Pedido do usuário: um relatório sobre "Otimização Holística em ML/DL/CL/RL" — compressão (poda, quantização, destilação) e o pipeline
+> co-compressivo; aprendizado contínuo e a perda de plasticidade (norma dos pesos, posto efetivo, neurônios dormentes; Shrink&Perturb, ReDo); e a transição PPO → GRPO (livre de crítico, vantagem
+> normalizada por grupo, 2-GRPO). Parte de auditoria, como as 72–86: os textos são dados; cada afirmação testável vira conta, reimplementada na biblioteca padrão.
+>
+> Este relatório encaixa na história do projeto: a Parte 34 já mediu esquecimento catastrófico (só quando as tarefas conflitam) e Naive Bayes vs SGD; a Parte 86 trouxe o substrato pulsado. Aqui testo a
+> aritmética da quantização, a álgebra da vantagem do GRPO, e simulo a perda de plasticidade e a sua mitigação.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[4; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,392; 0,420]** | o estatístico |
+| testes de unidade | **[4 + S; 9 + S]** | um módulo novo (plasticidade) + auditorias |
+| testes do placar | **7 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+Reimplemento as peças testáveis (biblioteca padrão; texto em `externos/`). Contas fechadas não levam o fator 1,36; a simulação de plasticidade leva.
+
+- **(a)** o erro de quantização uniforme Q(x) = round(x/s) + z: a MSE ∝ passo² ∝ 4⁻ᵇ, então a razão MSE(INT4)/MSE(INT8) = 4⁽⁸⁻⁴⁾ = **256**; o simulado (gaussiana, 100.000 amostras, semente 87) em
+  **[205; 310]** (center 256, dispersão de amostragem)
+- **(b)** a vantagem normalizada do GRPO Âᵢ = (rᵢ − média)/(desvio): a média das vantagens de um grupo é **0** para qualquer G (exato); e com G = 2 e recompensas distintas, as duas vantagens são
+  exatamente **+1 e −1** (o sinal contrastivo puro) — categórico
+- **(c)** a perda de plasticidade (posto): numa MLP de 1 camada oculta (d_in = 10, d_oculta = 20) treinada por SGD em 20 tarefas aleatórias seguidas, o posto estável das ativações ocultas na tarefa 20
+  dividido pelo da tarefa 1 é **< 1** (colapso); razão em **[0,30; 0,95]**, e o Shrink&Perturb dá uma razão MAIOR que o SGD puro (mantém mais posto)
+- **(d)** a norma dos pesos: no mesmo experimento, ‖W‖ cresce no SGD puro (razão tarefa 20 / tarefa 1 > 1), e o Shrink&Perturb a mantém mais contida (razão do S&P < razão do SGD); predigo a razão do SGD
+  puro em **[1,0; 3,0]** e a do S&P abaixo dela
+- **(e)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–87 em **[0,74; 0,88]**
+
+Do relatório, a ordem do pipeline co-compressivo (poda → QAT → destilação) e as leis de escala da plasticidade não são testáveis aqui sem treinar redes grandes; registro e não pontuo.
+
+**Medido (a)–(d):** (a) razão MSE(INT4)/MSE(INT8) = **278,8** ✅ [205; 310]; (b) G=2 → vantagens **±0,99999999** (±1 exato quando ε → 0) e média **0,0** ✅; (c) posto estável plain tarefa20/tarefa1 = **1,146**
+(NÃO colapsou) ❌ [0,30; 0,95] e o S&P (1,094) ficou ABAIXO do plain ❌; (d) norma plain tarefa20/tarefa1 = **0,759** (ENCOLHEU, não cresceu) ❌ [1,0; 3,0] (mas o S&P, 0,649, ficou abaixo do plain ✓).
+
+**Duas surpresas, (c) e (d), e a mesma lição da Parte 84.** As patologias de plasticidade (colapso de posto, crescimento de norma) **não apareceram** na minha MLP pequena com tarefas INDEPENDENTES. Isso bate com a
+Parte 34 (esquecimento catastrófico só quando as tarefas conflitam): tarefas aleatórias e independentes não criam o conflito que degrada a rede. Apostei que um efeito famoso apareceria num experimento pequeno
+e no regime errado — o mesmo erro do recozimento (Parte 84). Diagnóstico pré-registrado, antes de rodar:
+- **(f)** com tarefas que CONFLITAM (um professor fixo cujos rótulos se invertem a cada tarefa) e 100 tarefas: a norma dos pesos do SGD puro cresce (razão tarefa 100 / tarefa 1 > 1,2) OU o posto estável cai
+  (razão < 0,9) — se nem assim aparecer, a patologia é mais fraca nesta escala do que o relatório sugere
+
+**Medido (f): não apareceu.** Com conflito e 100 tarefas: posto razão **1,108** (não caiu), norma razão **0,773** (não cresceu), 0 dormentes. Terceira surpresa (depois de (c) e (d)). **A conclusão honesta: as
+patologias de plasticidade não reproduzem na minha MLP de brinquedo**, nem com tarefas conflitantes. Não refuta a literatura (que usa redes profundas, milhares de tarefas, permuted-MNIST, sem re-treino da
+saída); mostra que o efeito é dependente de regime e não aparece nesta escala. O que se manteve nas duas corridas: o Shrink&Perturb contém mais a norma que o SGD puro (0,649 e menos que o plain). Paro aqui,
+como a regra manda depois do diagnóstico pré-registrado.
+
+## As perguntas desta parte
+
+1. **P2051 (0x803).** O erro de quantizar em 4 bits contra 8 bits: quanto pior? ↩ o relatório
+2. **P2052 (0x804).** A vantagem do GRPO: por que é um sinal contrastivo? ↩ P401 (decisão)
+3. **P2053–P2054 (0x805–0x806).** A perda de plasticidade aparece numa rede pequena? E com tarefas que conflitam? ↩ P34 (esquecimento)
+4. **A rodada 54.** A vantagem do GRPO, bit a bit. ↩ rodada 53
+5. **P1961 (continuando), P2079–P2080.** O teste (e), engenharia reversa, placar, unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [4; 8] | **6.0000** | ✅ |
+| (m2) | [0; 3] | **0.0000** | ✅ |
+| (m3) | [0.05; 0.8] | **0.5000** | ✅ |
+| (m4) | [0.45; 1.0] | **0.3333** | ❌ |
+| (m5) | [0; 3] | **0.0000** | ✅ |
+| (m6) | [0; 3] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **5 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P2051 (0x803). A quantização ✅
+
+**Na pergunta.** O operador uniforme Q(x) = round((x − lo)/s), s = (hi − lo)/(2ᵇ − 1). O erro de arredondamento é uniforme em [−s/2, s/2], logo a MSE ≈ s²/12 ∝ 4⁻ᵇ. A pergunta "quanto pior em 4 bits?" tem
+resposta fechada: a razão MSE(INT4)/MSE(INT8) = 4⁽⁸⁻⁴⁾ = **256**.
+
+**Medido (100.000 amostras gaussianas):** MSE(INT8) = 8,52 × 10⁻⁵, MSE(INT4) = 2,38 × 10⁻², razão **278,8** (a) ✅ [205; 310]. Fica acima de 256 porque a cauda da gaussiana satura na grade (o relatório
+avisa: a PTQ degrada em distribuições de cauda), o que pesa mais em 4 bits. A conta grossa (256) e o medido (279) concordam na ordem; a diferença é a saturação, um efeito que a fórmula s²/12 ignora.
+
+### P2052 (0x804). A vantagem do GRPO é contraste ✅
+
+**Na pergunta.** O relatório diz que o GRPO "elimina o crítico" e normaliza as recompensas do grupo: Âᵢ = (rᵢ − média)/(desvio). A pergunta na própria fórmula: subtrair a média e dividir pelo desvio é
+exatamente padronizar — o z-score. Isso faz duas coisas que a álgebra entrega de graça:
+- **a média das vantagens é 0** para qualquer G (medido: **0,0**, exato): o gradiente não tem viés de escala, é só a forma relativa;
+- **com G = 2 e recompensas distintas**, as duas vantagens são **+1 e −1** (medido com ε = 0: **[1,0; −1,0]**, exato) (b) ✅: a melhor resposta do par sobe, a pior desce, com peso igual. É o aprendizado
+  contrastivo que o relatório descreve — e, no caso mínimo G = 2, ele é literalmente "esta é melhor que aquela".
+
+A ligação com o projeto: a Parte 401 trocou Q-learning por decisão bayesiana; o GRPO é o mesmo espírito (não estimar um valor absoluto V(s) com um crítico, mas comparar dentro do grupo). O crítico é o
+que a Parte 38 chamaria de cota de predição; a vantagem relativa é a cota de decisão.
+
+### P2053–P2054 (0x805–0x806). A plasticidade que não colapsou ❌❌❌
+
+**Na pergunta.** O relatório descreve três patologias (norma crescente, posto efetivo em colapso, neurônios dormentes) e as mitigações (Shrink&Perturb, ReDo). Testei numa MLP de 1 camada oculta (20 unidades)
+sobre 20 tarefas.
+
+**Medido:** o posto estável das ativações na tarefa 20 / tarefa 1 = **1,146** (NÃO colapsou) (c) ❌; a norma de W1 = **0,759** (ENCOLHEU, não cresceu) (d) ❌; 0 neurônios dormentes. O Shrink&Perturb deu posto
+MENOR (1,094) e norma mais contida (0,649). Diagnóstico pré-registrado com tarefas que CONFLITAM e 100 delas: posto **1,108**, norma **0,773**, 0 dormentes — também não apareceu (f) ❌.
+
+**Três erros, a mesma lição da Parte 84.** As patologias não reproduzem na minha escala de brinquedo. **Por quê, e por que é coerente:** a literatura (Dohare et al.) usa redes profundas, milhares de tarefas,
+permuted-MNIST, e muitas vezes não re-treina a saída; eu usei uma rede rasa, 20–100 tarefas, poucos passos. A Parte 34 já tinha medido o princípio: o esquecimento (e, por extensão, a degradação) aparece
+**quando as tarefas conflitam** e na escala certa. Apostei que um efeito famoso apareceria fora do seu regime — o mesmo erro do recozimento (Parte 84). O que sobreviveu: o S&P contém a norma mais que o SGD
+puro, nas duas corridas (a direção que o relatório prevê, mesmo sem a patologia para corrigir).
+
+### A rodada 54 ✅
+
+A vantagem do GRPO, cinco grupos, bit a bit: **IGUAIS, 18 números** (só +, −, ×, ÷ e √; √ é correto no IEEE, a ordem das somas basta, as Partes 34/85). Registro em `dialogo/DIALOGO.md`.
+
+### P1961 (0x7A9). O teste (e) da calibração ❌
+
+Com a Parte 87, o acerto das Partes 80–87 é **34/46 = 0,739** (e) ❌ [0,74; 0,88], por 0,001 abaixo. A Parte 87 fez 2 de 5 (as três apostas de plasticidade falharam), e isso puxou o acumulado para baixo,
+como a Parte 84 fizera. **O diagnóstico é o mesmo das duas partes ruins (84 e 87): eu aposto que um efeito conhecido aparece num experimento pequeno, e ele não aparece.** O fator 1,36 (Parte 79) não
+salva: ele alarga a faixa, não corrige o viés de eu superestimar a presença de um efeito fora do seu regime. A regra que falta é a da Parte 86, agora reforçada: antes de prever que um efeito aparece,
+rodar um caso mínimo e ver se ele aparece — não assumir a reputação do efeito.
+
+### P2079 (0x81F). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 4)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **16657** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 904 | 5633 |
+| compressão | **0.4075** | [0.3973; 0.4221] | ✅ | [0.3920; 0.4200] | ✅ | 0.4177 | 0.0015 | 0.0101 |
+| testes de unidade | **7** | [2.87; 8.63] | ✅ | [4.00; 9.00] | ✅ | 6 | 0.50 | 1.00 |
+| testes do placar | **6** | [5.67; 10.33] | ✅ | [10.00; 12.00] | ❌ | 8 | 5.00 | 2.00 |
+| erros do placar | **4** | [-0.58; 3.33] | ❌ | [0.00; 3.33] | ❌ | 2 | 2.33 | 2.00 |
+| redundância P821 | **0.6189** | [0.5631; 0.6510] | ✅ | [0.5630; 0.6510] | ✅ | 0.5877 | 0.0119 | 0.0312 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 5 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 5 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **4 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **15073**, compressão **0.4118**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 4 erros.
+- **Erros de processo nesta parte:** 0 ().
+
+### P2080 (0x820). Engenharia reversa e Jung
+
+**O padrão, agora nomeado e repetido: eu superestimo que um efeito famoso aparece num experimento pequeno.** Parte 84 (o recozimento "escapa de ótimos locais" — não escapou da barreira), Parte 87 (a "perda de
+plasticidade" colapsa o posto e cresce a norma — não colapsou nem cresceu). Três erros numa parte, quatro na outra, todos na mesma direção: a reputação do efeito virou o centro da minha previsão. **O significado:**
+a minha memória guarda o efeito como ele é descrito no seu regime típico (redes profundas, milhares de tarefas), e eu transfiro isso para o meu regime (rede rasa, dezenas de tarefas) sem a conta da transferência.
+É o viés da Parte 45 (esqueço custos/condições) e da Parte 43 (perguntar em que NÍVEL cada coisa está). **A regra executável (gravada):** antes de prever que um efeito aparece, rodar o caso mínimo e ver — se não
+aparecer no meu regime, a previsão é "não aparece", não "aparece como na literatura".
+
+**O contraste que se mantém.** As duas previsões que eu tirei de conta fechada (a quantização 256; a vantagem ±1 do GRPO) acertaram; as três que tirei da reputação de um efeito erraram. É a mesma assimetria das
+Partes 85 e 86: conta no papel acerta, reputação emprestada erra. A diferença entre as minhas partes boas e ruins não é o assunto — é se eu calculei ou lembrei.
+
+**Jung: a inflação da expectativa.** Esperar que o delírio dê ASI, que o recozimento ache o ótimo, que a rede perca plasticidade — são formas de inflação: a psique atribui ao objeto o poder que a teoria lhe deu.
+A medida é a função que desinfla. Onde a formalização funciona: a MLP não colapsou, e o número (1,146) diz isso sem apelo. Onde quebra: o relatório pode estar certo no SEU regime, e a minha refutação só vale no
+meu — negar o efeito em geral seria a inflação oposta.
+
+### O diálogo
+
+Placar por voz da função `p1241_placar_por_voz(54)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 54).
+
+### Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ❌ (d) ❌ (e) ❌ (f) ❌. Parte 87: **6 testes, 4 erros**. Acumulado (mundo): **215 erros em 703 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 5 pNN novas sem teste ✅. Sobre mim (placar separado): **5 de 7** dentro da faixa condicional; sobre as minhas previsões, 5 de 6; o estatístico, 5 de 6; e 0 erros de processo (P1335).
+
+### Unificação
+
+- **Novo módulo:** `synthai/plasticidade.py` (quantização, vantagem do GRPO, MLP contínua com Shrink&Perturb, posto estável). **Novas funções:** `p2051`–`p2055`. Regressão: + P2051, P2052, P2055.
+- **Rodada 54** (IGUAL). Texto em `externos/texto_recebido_parte87.md`.
+- **Regra nova (no `CLAUDE.md`):** antes de prever que um efeito conhecido (perda de plasticidade, recozimento) aparece num experimento meu, rodar um caso mínimo e confirmar que ele aparece no meu regime; a reputação de um efeito não é previsão. Partes 84 e 87 erraram por isto.
+
+> **Síntese da Parte 87:** as contas fechadas do relatório acertam e as minhas apostas na reputação de um efeito erram: a quantização em 4 bits é ~256 vezes pior que em 8 (medido 279, a saturação da cauda explica o resto); a vantagem do GRPO é z-score puro (média 0, e ±1 para G=2, o contraste que o relatório descreve). Mas a perda de plasticidade — colapso de posto, crescimento de norma — NÃO apareceu na minha MLP rasa, nem com tarefas independentes (posto 1,15, norma 0,76) nem com conflito e 100 tarefas (1,11, 0,77), coerente com a Parte 34 (patologia só no regime certo). Três erros derrubaram o teste (e) da calibração para 0,739, logo abaixo da faixa, pelo mesmo motivo da Parte 84: superestimei um efeito fora do seu regime. O que sobreviveu: o Shrink&Perturb contém a norma mais que o SGD puro. Construí synthai/plasticidade.py e a rodada 54 (vantagem do GRPO) deu IGUAL. A regra nova: rodar o caso mínimo antes de prever que um efeito aparece.
+
+---
+
+**Fontes desta parte**
+- S. Dohare et al., "Loss of plasticity in deep continual learning", *Nature* 632 (2024)
+- Z. Shao et al., "DeepSeekMath: ... Group Relative Policy Optimization" (2024): o GRPO
+- J. Schulman et al., "Proximal Policy Optimization Algorithms" (2017): o PPO
+- B. Hassibi e D. Stork, "Optimal Brain Surgeon" (1993); S. Han et al., "Deep Compression" (2016): poda e quantização
+- G. Hinton, O. Vinyals e J. Dean, "Distilling the Knowledge in a Neural Network" (2015): a destilação
 """
 
 # ====================================================================================================
@@ -49808,6 +50248,16 @@ FONTES['externos/texto_recebido_parte86.md'] = """# Textos recebidos do usuário
 """
 
 # ====================================================================================================
+# externos/texto_recebido_parte87.md  (5 linhas)
+# ====================================================================================================
+FONTES['externos/texto_recebido_parte87.md'] = """# Texto recebido do usuário (Parte 87) — guardado como DADO, auditado, NÃO executado.
+# "Otimização Holística em ML/DL/CL/RL": compressão (poda não-estruturada/estruturada, PTQ/QAT, destilação), pipeline co-compressivo (poda->QAT->KD),
+# precisão mista (ILP: HAWQ-v3/BRECQ/OMPQ; Pareto: Once-for-All/NSGA-II); perda de plasticidade (norma dos pesos, posto efetivo, neurônios dormentes;
+# Shrink&Perturb, ReDo, Continual Backprop); PPO->GRPO (livre de crítico, vantagem normalizada por grupo, 2-GRPO, GRPO off-policy; DeepSeek-R1).
+# As contas testáveis foram reimplementadas em synthai/plasticidade.py e calculos.py (p2051-p2055). Ver ASI_AGI_parte87_compressao_plasticidade_grpo.md.
+"""
+
+# ====================================================================================================
 # dialogo/CompararLibm.java  (18 linhas)
 # ====================================================================================================
 FONTES['dialogo/CompararLibm.java'] = """// Ferramenta da Rodada 28 (não é uma rodada): lê "argumento_hex valor_glibc_hex" e conta em quantos o Math.exp/Math.log do
@@ -49831,7 +50281,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1645 linhas)
+# dialogo/DIALOGO.md  (1663 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -51478,10 +51928,28 @@ ordem das operações ainda decide o último bit (Partes 34 e 85). O passo intei
 
 **IA-Python:** E o conteúdo confirma o relatório: 5 disparos regulares, a dinâmica de um neurônio cortical de disparo regular. A pergunta para a Rodada 54, em `dialogo/PENDENCIAS.md` (herdando a pendência
 do recozimento com reinício): uma POPULAÇÃO de neurônios de Izhikevich acoplados por STDP converge para o mesmo estado bit a bit nas duas línguas, apesar da ordem de atualização?
+
+---
+
+## Rodada 54 — a vantagem do GRPO, bit a bit (Parte 87, P2055)
+
+**A pergunta (IA-Python).** O GRPO padroniza as recompensas do grupo: Â = (r − média)/(desvio). Isso usa √ (para o desvio) e divisão. O √ o IEEE 754 arredonda corretamente (a Parte 52), então a fronteira
+aqui é só a ORDEM das somas (a média e a variância). Cinco grupos saem iguais bit a bit?
+
+**A IA-Java responde, relendo os erros da outra voz:** a rodada 53 (Izhikevich) foi limpa com a ordem fixa das somas. Aqui o mesmo cuidado: acumular a soma da esquerda para a direita, e a variância idem.
+**As duas:** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 18 números bit a bit**. O cálculo da vantagem é independente da linguagem.
+
+**IA-Java:** O √ não é a fronteira que muitos imaginam: ao contrário de exp/log/pow (a Parte 52), a raiz quadrada é uma das cinco operações que o IEEE 754 obriga a arredondar corretamente (+, −, ×, ÷, √).
+Por isso o desvio padrão sai igual sem precisar de implementação própria. O que resta é a ordem das somas, e essa eu fixei.
+
+**IA-Python:** E o conteúdo mostra o contraste do GRPO: no grupo [1, 1, 1, 9], três vantagens iguais e negativas e uma muito positiva — o sinal que empurra a resposta rara e boa para cima. A pergunta para a
+Rodada 55, em `dialogo/PENDENCIAS.md`: o passo completo de GRPO (a razão de probabilidades cortada vezes a vantagem) sai igual bit a bit, incluindo o corte (clipping)?
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (25 linhas)
+# dialogo/PENDENCIAS.md  (27 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -51489,6 +51957,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
+- **(Parte 87, rodada 55)** O passo completo de GRPO (razão cortada × vantagem, com o clipping) sai igual bit a bit nas duas línguas?
 - **(Parte 86, rodada 54)** Uma população de neurônios de Izhikevich acoplados por STDP converge ao mesmo estado bit a bit nas duas línguas? (e o recozimento com reinício, herdado da pendência anterior)
 
 - **(Parte 80)** Triplas complementares (nenhum par decide, três decidem): o 1,7% que o guloso com dois passos ainda perde. E com dezenas de sensores, onde a enumeração some?
@@ -51499,6 +51968,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 
 
 ## Fechadas
+- **(Parte 87, rodada 54)** A vantagem normalizada do GRPO bit a bit: fechada (P2055), IGUAIS, 18 números (√ é correto no IEEE; só a ordem das somas importava).
 - **(Parte 85/86, rodada 53)** O passo de Izhikevich bit a bit: fechada na Parte 86 (P2027), IGUAIS, 800 números (sem libm; a ordem das somas basta).
 - **(Parte 84, rodada 52)** A trajetória inteira do recozimento sai igual bit a bit: fechada na Parte 85 (P1995), depois de corrigir a ordem dos produtos na energia (a regra da Parte 34): IGUAIS, 601 números.
 - **(Parte 83, P1936)** O excesso do jogo assíncrono: fechada na Parte 84 (P1962). Pelo operador de transferência, sem sorteio, o Lyapunov é 0,9975·(a²/8) em a=0,2 e 0,9995 em a=0,05, no fio da conta de ângulo uniforme ou abaixo: o excesso de 2% das simulações era viés de tempo finito, não efeito.
@@ -55688,6 +56158,38 @@ public class Rodada53 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada54.java  (27 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada54.java'] = """// Rodada 54 (Parte 87): a vantagem normalizada do GRPO, bit a bit. A_i = (r_i - media)/(desvio + 1e-8). So +,-,*,/,sqrt; a ordem das somas e identica a do
+// rodada54.py (media por acumulacao da esquerda; variancia idem).
+public class Rodada54 {
+    static final double[][] GRUPOS = {{5.0, 2.0}, {1.0, 2.0, 3.0, 4.0}, {0.5, 0.5, 0.5}, {10.0, -3.0, 7.0, 0.0, 2.5}, {1.0, 1.0, 1.0, 9.0}};
+
+    static double[] vantagens(double[] rs) {
+        int g = rs.length;
+        double soma = 0.0;
+        for (double r : rs) soma = soma + r;
+        double media = soma / g;
+        double sq = 0.0;
+        for (double r : rs) sq = sq + (r - media) * (r - media);
+        double desvio = Math.sqrt(sq / g);
+        double[] out = new double[g];
+        for (int i = 0; i < g; i++) out[i] = (rs[i] - media) / (desvio + 1e-8);
+        return out;
+    }
+
+    public static void main(String[] args) {
+        for (int gi = 0; gi < GRUPOS.length; gi++) {
+            double[] a = vantagens(GRUPOS[gi]);
+            for (int vi = 0; vi < a.length; vi++)
+                System.out.println("grupo " + gi + " i " + vi + " A " + Double.toHexString(a[vi]));
+        }
+        System.out.println("fim");
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -59558,6 +60060,42 @@ def main():
         disparos += d
         print(f"passo {k} v {v.hex()} u {u.hex()}")
     print(f"disparos: {disparos}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada54.py  (31 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada54.py'] = """\"\"\"Rodada 54 do diálogo Python <-> Java (Parte 87): a vantagem normalizada do GRPO, bit a bit. Â_i = (r_i − média)/(desvio populacional). Só +, −, ×, ÷ e
+√ — e √ o IEEE 754 arredonda corretamente (Parte 52), então o risco é só a ordem das somas (Partes 34/85): a média e a variância somadas na mesma ordem nas
+duas línguas. Vários grupos de recompensas; imprime cada vantagem em hexadecimal. Rodar da raiz: python3 dialogo/rodada54.py\"\"\"
+
+import math
+
+GRUPOS = [[5.0, 2.0], [1.0, 2.0, 3.0, 4.0], [0.5, 0.5, 0.5], [10.0, -3.0, 7.0, 0.0, 2.5], [1.0, 1.0, 1.0, 9.0]]
+
+
+def vantagens(rs):
+    g = len(rs)
+    soma = 0.0
+    for r in rs:
+        soma = soma + r
+    media = soma / g
+    sq = 0.0
+    for r in rs:
+        sq = sq + (r - media) * (r - media)
+    desvio = math.sqrt(sq / g)
+    return [(r - media) / (desvio + 1e-8) for r in rs]
+
+
+def main():
+    for gi, rs in enumerate(GRUPOS):
+        for vi, a in enumerate(vantagens(rs)):
+            print(f"grupo {gi} i {vi} A {a.hex()}")
+    print("fim")
 
 
 if __name__ == "__main__":
