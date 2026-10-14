@@ -7496,6 +7496,9 @@ def testes_de_regressao():
         "P1991": p1991_cosseno_duplicado_recebido() == [1.3, 0.5, -0.3, -0.5, -0.7],
         "P1993": len(p1993_buraco_do_escrutinio()) == 3,
         "P1995": p1995_rodada52()[:2] == (15, 0.0),
+        "P2022": p2022_izhikevich_tipos() == (22, 73),
+        "P2024": p2024_gsops() == (10000, 10000000, 10.0),
+        "P2027": p2027_rodada53()[2] == 5,
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9548,6 +9551,8 @@ VEREDITOS_P2019 = "(a) ✅ (b) ❌ (c) ❌ (d) ❌ (e) ❌ (f) ✅ (g) ❌ (h) �
 ERROS_P2019, TESTES_P2019 = 210, 685
 VEREDITOS_P2099 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P2099, TESTES_P2099 = 210, 690
+VEREDITOS_P2169 = "(a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅"
+ERROS_P2169, TESTES_P2169 = 211, 697
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12088,16 +12093,16 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n in (84, 85):  # a (e) e o proprio teste de calibracao: contar a (e) na sua propria entrada seria circular
+        if n in (84, 85, 86):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12361,6 +12366,77 @@ def p1995_rodada52():
         if r52.energia(i) < melhor_e:
             melhor_i, melhor_e = i, r52.energia(i)
     return melhor_i, melhor_e, mudancas
+
+
+def p2021_lif_ponto_fixo(tau=10.0, i_ext=20.0, passos=200):
+    """O LIF discretizado (P2021; Parte 86) converge ao ponto fixo analitico u_rest + R*I. Devolve (erro apos `passos`, o decaimento previsto gap*beta^passos).
+    O erro NAO e ~0: e o gap inicial (20) vezes beta^passos (a lição: o prefator conta)."""
+    from synthai.pulsado import NeuronioLIF
+    lif = NeuronioLIF(tau=tau, u_rest=-65.0, r=1.0, limiar=1e9, dt=1.0)
+    alvo = lif.ponto_fixo(i_ext)
+    gap0 = abs(lif.u - alvo)
+    for _ in range(passos):
+        lif.passo(i_ext)
+    return abs(lif.u - alvo), gap0 * lif.beta ** passos
+
+
+def p2022_izhikevich_tipos(i_ext=10.0, ms=1000.0):
+    """O neuronio de Izhikevich (P2022) com (a,b,c,d) diferentes da padroes diferentes: devolve (disparos regular-spiking, disparos chattering). CH > RS."""
+    from synthai.pulsado import NeuronioIzhikevich, contar_disparos
+    rs = NeuronioIzhikevich(a=0.02, b=0.2, c=-65.0, d=8.0)
+    ch = NeuronioIzhikevich(a=0.02, b=0.2, c=-50.0, d=2.0)
+    return contar_disparos(rs, i_ext, ms), contar_disparos(ch, i_ext, ms)
+
+
+def p2023_memoria_relatorio():
+    """Audita a aritmetica de memoria do relatorio da Parte 86 (P2023). Devolve (estado dos neuronios em MB, grafo sinaptico em GB, total em GB, incoerencias).
+    1M*32B=32MB; 1e9*6B=6GB; total 6,03GB (certo). Incoerencias: texto diz 7% de sobretaxa, tabela diz 1,2x (20%); HTM diz 8,5GB, a regra de 6B/sinapse da 7,2GB."""
+    neuronios_mb = 1_000_000 * 32 / 1e6
+    sinapses_gb = 1_000_000_000 * 6 / 1e9
+    total_gb = neuronios_mb / 1000 + sinapses_gb
+    incoerencias = {}
+    incoerencias["padded_csr"] = ("texto 7%", "tabela 20% (1,2x)", 0.07 != 0.20)
+    htm_rule = 1_200_000_000 * 6 / 1e9  # 7,2 GB
+    incoerencias["htm"] = ("relatorio 8,5 GB", f"regra 6B/sinapse {htm_rule:.1f} GB", abs(8.5 - htm_rule) > 0.5)
+    return round(neuronios_mb, 1), round(sinapses_gb, 2), round(total_gb, 3), incoerencias
+
+
+def p2024_gsops(neuronios=1_000_000, hz=10, sinapses_por=1000):
+    """A cadeia de vazao do relatorio (P2024): neuronios*hz/1000 disparam por ms; *sinapses_por = sinapses/ms; *1000 = sinapses/s. Devolve
+    (disparos por ms, sinapses por ms, GSOPS). O relatorio diz 10 GSOPS."""
+    por_ms = neuronios * hz / 1000
+    sin_ms = por_ms * sinapses_por
+    return int(por_ms), int(sin_ms), sin_ms * 1000 / 1e9
+
+
+def p2025_sdr_sobreposicao(n=2048, k=40, pares=10000, semente=86):
+    """A sobreposicao de duas SDRs independentes (P2025): devolve (media simulada, valor teorico k^2/n). Acelerada em hardware por AND + POPCNT (aqui, conjuntos)."""
+    import random
+    from synthai.pulsado import sdr_aleatoria, sobreposicao
+    rng = random.Random(semente)
+    s = sum(sobreposicao(sdr_aleatoria(n, k, rng), sdr_aleatoria(n, k, rng)) for _ in range(pares))
+    return s / pares, k * k / n
+
+
+def p2026_stdp_liquido():
+    """A STDP (P2026): devolve (liquido simetrico A+=A-, liquido assimetrico A-=0,12). Simetrico ~0 (areas se cancelam); assimetrico < 0 (estabilizadora)."""
+    from synthai.pulsado import stdp_liquido
+    return stdp_liquido(), stdp_liquido(a_menos=0.12)
+
+
+def p2027_rodada53():
+    """Rodada 53 (P2027; Parte 86): o passo de Izhikevich (dialogo/rodada53.py), IGUAL em Java bit a bit. So +,-,*,/, mas a ordem das operacoes e identica.
+    Devolve (v final, u final, total de disparos) de um neuronio RS sob I=10, 400 passos de 0,5 ms."""
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada53", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada53.py"))
+    r53 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r53)
+    v, u, disparos = r53.C, r53.B * r53.C, 0
+    for _ in range(r53.PASSOS):
+        v, u, d = r53.passo(v, u)
+        disparos += d
+    return v, u, disparos
 
 
 def p1578_autovalores_da_atencao():
@@ -13196,6 +13272,24 @@ def _parte_85():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2099, testes=TESTES_P2099)
     print(f"P2099 minha taxa de erro ({ERROS_P2099}/{TESTES_P2099}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_86():
+    print("--- Parte 86 (0x56: o cerebro na CPU) ---")
+    erro, previsto = p2021_lif_ponto_fixo()
+    print(f"P2021 LIF erro do ponto fixo apos 200 passos: {erro:.3e} (previsto gap*beta^200 = {previsto:.3e})")
+    print(f"P2022 Izhikevich (RS, CH) disparos em 1000ms: {p2022_izhikevich_tipos()}")
+    print(f"P2023 memoria do relatorio (MB neuronios, GB sinapses, GB total, incoerencias): {p2023_memoria_relatorio()}")
+    print(f"P2024 cadeia de vazao (disparos/ms, sinapses/ms, GSOPS): {p2024_gsops()}")
+    print(f"P2025 sobreposicao de SDRs (media, teorico k^2/n): {p2025_sdr_sobreposicao()}")
+    print(f"P2026 STDP liquido (simetrico, assimetrico): {p2026_stdp_liquido()}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (e)/(g), Partes 80-86: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    print(f"P2027 rodada 53 (Izhikevich, IGUAL em Java): {p2027_rodada53()}")
+    total, sem = p1092_pnn_sem_teste(2021, 2050)
+    print(f"P1092 pNN novas (P2021-P2050) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 86: {p974_previsoes_sem_largura(range(86, 87))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2169, testes=TESTES_P2169)
+    print(f"P2169 minha taxa de erro ({ERROS_P2169}/{TESTES_P2169}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -13232,7 +13326,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86}
 
 
 if __name__ == "__main__":

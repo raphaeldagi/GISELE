@@ -4,7 +4,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 85, rodada 53)** O recozimento com reinício (o melhor de várias corridas curtas) cruza a barreira que a corrida longa não cruza? É igual bit a bit nas duas línguas?
+- **(Parte 86, rodada 54)** Uma população de neurônios de Izhikevich acoplados por STDP converge ao mesmo estado bit a bit nas duas línguas? (e o recozimento com reinício, herdado da pendência anterior)
 
 - **(Parte 80)** Triplas complementares (nenhum par decide, três decidem): o 1,7% que o guloso com dois passos ainda perde. E com dezenas de sensores, onde a enumeração some?
 - **(Parte 76, P1721)** O embedding de Kronecker perde 0,08 bit num modelo com poucos pesos. Num modelo com muito mais pesos do que dados, a economia vira regularização e ganha?
@@ -14,6 +14,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 
 
 ## Fechadas
+- **(Parte 85/86, rodada 53)** O passo de Izhikevich bit a bit: fechada na Parte 86 (P2027), IGUAIS, 800 números (sem libm; a ordem das somas basta).
 - **(Parte 84, rodada 52)** A trajetória inteira do recozimento sai igual bit a bit: fechada na Parte 85 (P1995), depois de corrigir a ordem dos produtos na energia (a regra da Parte 34): IGUAIS, 601 números.
 - **(Parte 83, P1936)** O excesso do jogo assíncrono: fechada na Parte 84 (P1962). Pelo operador de transferência, sem sorteio, o Lyapunov é 0,9975·(a²/8) em a=0,2 e 0,9995 em a=0,05, no fio da conta de ângulo uniforme ou abaixo: o excesso de 2% das simulações era viés de tempo finito, não efeito.
 

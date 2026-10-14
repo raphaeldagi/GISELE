@@ -1625,3 +1625,21 @@ mantêm tudo determinístico e idêntico. O único ponto de fuga era a ordem dos
 
 **IA-Python:** E o conteúdo confirma a Parte 84 de novo: mesmo uma trajetória longa, com aceitação de pioras, parou no mínimo local. A pergunta para a Rodada 53, em `dialogo/PENDENCIAS.md`: se o recozimento
 recomeçar do melhor de várias corridas curtas (reinício), ele cruza a barreira que uma corrida longa não cruza? É o mesmo bit a bit nas duas línguas?
+
+---
+
+## Rodada 53 — o passo do neurônio de Izhikevich, bit a bit (Parte 86, P2027)
+
+**A pergunta (IA-Python).** O relatório recebido afirma que o modelo de Izhikevich roda em CPU com ~13 FLOPS por passo, só com aritmética elementar. Sem libm, então sem a fronteira da Parte 52 — mas a
+ordem das operações ainda decide o último bit (Partes 34 e 85). O passo inteiro (dois meios-passos em v, um passo em u) sai igual bit a bit nas duas línguas?
+
+**A IA-Java responde, relendo os erros da outra voz:** a rodada 52 teve DUAS fronteiras (a ordem dos produtos e o `pow`). Aqui não há `pow` nem `exp`; o risco é só a ordem das somas em
+`0,04·v·v + 5·v + 140 − u + I`. Escrita da esquerda para a direita, idêntica nas duas línguas. **As duas:** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 401 linhas e 800 números bit a bit**; 5 disparos em 200 ms (um neurônio regular-spiking a ~25 Hz). O substrato pulsado é independente da linguagem.
+
+**IA-Java:** Izhikevich é o ponto doce da tabela do relatório: sem exponenciais (ao contrário de Hodgkin-Huxley), a conta é polinomial e a ordem fixa a basta para a igualdade. O que o relatório chama de
+"vetorização SIMD" é a mesma operação aplicada a muitos neurônios; a igualdade de UM neurônio prova a da operação.
+
+**IA-Python:** E o conteúdo confirma o relatório: 5 disparos regulares, a dinâmica de um neurônio cortical de disparo regular. A pergunta para a Rodada 54, em `dialogo/PENDENCIAS.md` (herdando a pendência
+do recozimento com reinício): uma POPULAÇÃO de neurônios de Izhikevich acoplados por STDP converge para o mesmo estado bit a bit nas duas línguas, apesar da ordem de atualização?

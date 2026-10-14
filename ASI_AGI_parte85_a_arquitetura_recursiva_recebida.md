@@ -1,6 +1,6 @@
 # Como eu construiria uma AGI/ASI — Parte 85 (0x55): a arquitetura recursiva recebida
 
-> Continuação da [Parte 84](ASI_AGI_parte84_o_delirio_e_o_escrutinio.md). Pedido do usuário: um relatório longo ("Análise Sistemática de Arquiteturas Cognitivas Recursivas") com um código Python
+> Continuação da [Parte 84](ASI_AGI_parte84_o_delirio_e_o_escrutinio.md). **Próxima:** [Parte 86 — o cérebro na CPU](ASI_AGI_parte86_o_cerebro_na_cpu.md). Pedido do usuário: um relatório longo ("Análise Sistemática de Arquiteturas Cognitivas Recursivas") com um código Python
 > (`RecursiveCognitiveArchitecture`: geometria do cosseno duplicado, motor de lógica paraconsistente anotada, pilha adversarial de 7 níveis, 10 camadas versa/reversa). Uma parte de auditoria, como as
 > Partes 72–77 e 82: o código é lido pela árvore sintática (`ast`), **não executado**; as ideias dele são reimplementadas e medidas; cada afirmação testável vira uma conta.
 >
