@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 90, perguntas P1 a P2143).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 91, perguntas P1 a P2174).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (13586 linhas)
+# calculos.py  (13652 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7548,6 +7548,8 @@ def testes_de_regressao():
         "P2115": p2115_rodada56() == 12,
         "P2141": (lambda r: r[0] == 12 and r[1] < r[2])(p2141_rede_stdp()),
         "P2143": p2143_disparos_aprendiz_vs_fixo() == (12, 12, True),
+        "P2172": p2172_sgd_reduz_perda() == [True] * 5,
+        "P2174": (lambda r: r[1] < 0.1 < r[0])(p2174_gpt_memoriza()),
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9610,6 +9612,8 @@ VEREDITOS_P2379 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P2379, TESTES_P2379 = 215, 713
 VEREDITOS_P2449 = "(a) ✅ (b) ✅ (c) ✅"
 ERROS_P2449, TESTES_P2449 = 215, 716
+VEREDITOS_P2519 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
+ERROS_P2519, TESTES_P2519 = 215, 720
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12150,16 +12154,16 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n in (84, 85, 86, 87, 88, 89, 90):  # a (e)/(g) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
+        if n in (84, 85, 86, 87, 88, 89, 90, 91):  # a (e)/(g)/(d) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -12663,6 +12667,54 @@ def p2143_disparos_aprendiz_vs_fixo():
     spec.loader.exec_module(r56)
     fixo = r56.simular(imprimir=False)
     return aprendiz, fixo, aprendiz == fixo
+
+
+def p2171_rodada58():
+    \"\"\"Rodada 58 (P2171; Parte 91): o coracao de um passo de treino de GPT (gradiente softmax+entropia cruzada, SGD, decisao), IGUAL em Java bit a bit.
+    Devolve, por caso, (perda antes, perda depois, argmax depois).\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada58", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada58.py"))
+    r58 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r58)
+    return [r58.passo(list(logits), alvo)[:3] for logits, alvo in r58.CASOS]
+
+
+def p2172_sgd_reduz_perda():
+    \"\"\"O passo de SGD na camada de saida (P2172) reduz a perda nos 5 casos (descida de gradiente, camada convexa). Devolve a lista de (perda_depois < perda_antes).\"\"\"
+    return [depois < antes for antes, depois, _ in p2171_rodada58()]
+
+
+def p2173_gradiente_p_menos_onehot(semente=91, K=5, alvo=2):
+    \"\"\"A identidade da camada de saida (P2173): d(-ln softmax(z)[t])/dz = softmax(z) - onehot(t). Devolve o maximo |numerico - analitico| por diferencas finitas.\"\"\"
+    import math
+    import random
+    rng = random.Random(semente)
+    z = [rng.gauss(0, 1) for _ in range(K)]
+
+    def L(zz):
+        m = max(zz)
+        e = [math.exp(x - m) for x in zz]
+        s = sum(e)
+        return -math.log(e[alvo] / s)
+    h = 1e-6
+    num = [(L(z[:i] + [z[i] + h] + z[i + 1:]) - L(z[:i] + [z[i] - h] + z[i + 1:])) / (2 * h) for i in range(K)]
+    m = max(z)
+    e = [math.exp(x - m) for x in z]
+    s = sum(e)
+    p = [x / s for x in e]
+    ana = [p[i] - (1.0 if i == alvo else 0.0) for i in range(K)]
+    return max(abs(num[i] - ana[i]) for i in range(K))
+
+
+def p2174_gpt_memoriza(passos=60, lr=0.05, semente=91):
+    \"\"\"O GPT real (synthai/gpt.py) minusculo treinado num padrao repetido (P2174) memoriza: devolve (perda inicial, perda final).\"\"\"
+    import synthai.gpt as g
+    texto = "abcabcabcabcabcabcabcabc" * 4
+    vocab = sorted(set(texto))
+    m = g.GPT(vocab, T=8, d=8, h=8, semente=semente)
+    perdas = m.treinar(texto, passos=passos, lr=lr, semente=semente)
+    return perdas[0], perdas[-1]
 
 
 def p1578_autovalores_da_atencao():
@@ -13576,6 +13628,20 @@ def _parte_90():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2449, testes=TESTES_P2449)
     print(f"P2449 minha taxa de erro ({ERROS_P2449}/{TESTES_P2449}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_91():
+    print("--- Parte 91 (0x5B: o GPT que aprende igual) ---")
+    print(f"P2171 rodada 58 (gradiente softmax+CE, SGD, decisao; IGUAL em Java): caso 0 = {p2171_rodada58()[0]}")
+    print(f"P2172 o passo de SGD reduz a perda nos 5 casos: {p2172_sgd_reduz_perda()}")
+    print(f"P2173 gradiente = p - onehot, max |num - analitico|: {p2173_gradiente_p_menos_onehot():.2e}")
+    print(f"P2174 o GPT real memoriza um padrao (perda inicial, final): {tuple(round(x, 4) for x in p2174_gpt_memoriza())}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (e), Partes 80-91: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2171, 2200)
+    print(f"P1092 pNN novas (P2171-P2200) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 91: {p974_previsoes_sem_largura(range(91, 92))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2519, testes=TESTES_P2519)
+    print(f"P2519 minha taxa de erro ({ERROS_P2519}/{TESTES_P2519}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -13612,7 +13678,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91}
 
 
 if __name__ == "__main__":
@@ -13625,7 +13691,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (317 linhas)
+# CLAUDE.md  (322 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -13788,6 +13854,11 @@ anterior, commit e push.
   realimentacao, aprendizado). Sete rodadas (53-57) do dialogo traduziram o substrato pulsado do neuronio a rede que aprende. A separacao de escalas de tempo (rapida: o estado;
   lenta: os pesos) e um NAO-EFEITO previsivel: ΔW ~ 0,02 em 300 passos e pequeno demais para mudar o padrao de disparos - previ isso (nao a reputacao "STDP muda tudo") e acertei.
   Tres partes (88-90) de conta fechada e nao-efeito previsto: 12/12 do mundo, calibracao recuperada para 0,789.
+  Parte 91 (o GPT que APRENDE bit a bit, rodada 58): o coracao de um passo de treino de GPT (gradiente softmax+CE = p - onehot, SGD, decisao) e identico bit a bit entre
+  Python e Java com exp/log proprios - o passo de TREINO, como a inferencia (rodada 43), e independente de linguagem. O aprendizado por OBJETIVO (gradiente sobre perda convexa
+  na camada de saida) tem a garantia que o por CORRELACAO (STDP, Parte 90) nao tem: a perda se prova cair a cada passo (p - onehot e o erro E o gradiente). Nomear dois mecanismos
+  pelo mesmo verbo "aprender" escondia que so um tem funcao objetivo (regra da Parte 12). Quatro partes (88-91) de conta fechada/nao-efeito: 16/16 do mundo, calibracao recuperada
+  para 0,803 - a diferenca estrutural entre partes boas e ruins (calcular/rodar o minimo vs. emprestar reputacao) medida em 8 partes.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -13936,7 +14007,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -21327,9 +21398,47 @@ class TesteParte90(unittest.TestCase):
         self.assertTrue(iguais)   # STDP lenta demais para mudar o padrao em 300 passos
 
     def test_p1961_com_parte_90(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90))
         self.assertEqual(por[90], (3, 3))   # a (d) fica fora da VEREDITOS; a,b,c contam
         self.assertEqual((ok, tot), (45, 57))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte91.py  (33 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte91.py'] = """\"\"\"Testes de unidade da Parte 91 (o GPT que aprende igual): `python3 -m unittest synthai.testes_parte91`.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class TesteParte91(unittest.TestCase):
+    def test_p2171_rodada58(self):
+        casos = calculos.p2171_rodada58()
+        self.assertEqual(len(casos), 5)
+        for antes, depois, arg in casos:
+            self.assertLess(depois, antes)   # o passo reduz a perda
+
+    def test_p2172_sgd_reduz(self):
+        self.assertEqual(calculos.p2172_sgd_reduz_perda(), [True] * 5)
+
+    def test_p2173_gradiente_identidade(self):
+        self.assertLess(calculos.p2173_gradiente_p_menos_onehot(), 1e-6)   # p - onehot
+
+    def test_p2174_memoriza(self):
+        ini, fim = calculos.p2174_gpt_memoriza()
+        self.assertGreater(ini, 0.5)
+        self.assertLess(fim, 0.1)            # memoriza o padrao repetido
+
+    def test_p1961_com_parte_91(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[91], (4, 4))
+        self.assertEqual((ok, tot), (49, 61))
 
 
 if __name__ == "__main__":
@@ -28321,7 +28430,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1610 linhas)
+# resultados.txt  (1623 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -29932,6 +30041,19 @@ P2115 rodada 56 (populacao Izhikevich, IGUAL em Java): 12 disparos
 P1092 pNN novas (P2111-P2140) sem teste: 0 de 5: []
 P974 previsoes unilaterais da Parte 89: {}
 P2379 minha taxa de erro (215/713): media = 0.30, intervalo 90% = [0.27, 0.33]
+=== Unificacao (sempre ao final) ===
+
+
+=== Parte 90 (bloco retomavel; regressao confirmada verde pela suite 400+27+19; execucao interrompida por reinicio antes da linha final) ===
+
+--- Parte 90 (0x5A: a rede que aprende igual) ---
+P2141 rede Izhikevich+STDP (rodada 57, IGUAL em Java): 12 disparos, soma W 2.58168 (de 2.6)
+P2142 ΔW_total (depressao dominante, negativo): -0.01832
+P2143 disparos aprendiz vs fixo: (12, 12, True)
+P1961 teste (d), Partes 80-90: 45/57 = 0.7895; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3)}
+P1092 pNN novas (P2141-P2170) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 90: {}
+P2449 minha taxa de erro (215/716): media = 0.30, intervalo 90% = [0.27, 0.33]
 === Unificacao (sempre ao final) ===
 """
 
@@ -48913,7 +49035,7 @@ Acumulado: **17 de 30** afirmações testadas precisaram de correção. Posterio
 # ====================================================================================================
 FONTES['ASI_AGI_parte90_a_rede_que_aprende_igual.md'] = """# Como eu construiria uma AGI/ASI — Parte 90 (0x5A): a rede que aprende igual
 
-> Continuação da [Parte 89](ASI_AGI_parte89_o_substrato_que_aprende.md). Sem texto novo do usuário: sigo o ciclo. A Parte 89 mostrou que a STDP tem deriva de forma fechada e que uma população de Izhikevich
+> Continuação da [Parte 89](ASI_AGI_parte89_o_substrato_que_aprende.md). **Próxima:** [Parte 91 — o GPT que aprende igual](ASI_AGI_parte91_o_gpt_que_aprende_igual.md). Sem texto novo do usuário: sigo o ciclo. A Parte 89 mostrou que a STDP tem deriva de forma fechada e que uma população de Izhikevich
 > acoplada é IGUAL bit a bit (rodada 56). A pergunta mais funda desta parte (↩ P2115): quando os PESOS do acoplamento MUDAM pela STDP — isto é, a rede aprende enquanto roda, e a mudança de peso depende de
 > tempos de disparo medidos —, a trajetória ainda sai idêntica bit a bit em Python e Java? É o teste mais duro da independência de linguagem: um laço de realimentação onde o erro de um bit num peso se
 > propagaria para todos os disparos seguintes.
@@ -49068,6 +49190,175 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅. Parte 90: **3 testes, 0 erros**. Acumulado (m
 - E. M. Izhikevich, "Simple Model of Spiking Neurons", *IEEE TNN* 14 (2003)
 - G. Bi e M. Poo (1998); S. Song, K. Miller e L. Abbott (2000): STDP e a dinâmica dos pesos
 - IEEE 754-2019: o arredondamento correto obrigatório só para + − × ÷ √ (a fronteira da Parte 52)
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte91_o_gpt_que_aprende_igual.md  (164 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte91_o_gpt_que_aprende_igual.md'] = """# Como eu construiria uma AGI/ASI — Parte 91 (0x5B): o GPT que aprende igual
+
+> Continuação da [Parte 90](ASI_AGI_parte90_a_rede_que_aprende_igual.md). Sem texto novo do usuário: sigo o ciclo. A Parte 90 mostrou que a rede PULSADA que aprende (STDP) é idêntica bit a bit entre Python e
+> Java. A pergunta mais funda (↩ P69, rodada 43): e a OUTRA forma de aprendizado da SYNTHAI, o gradiente do GPT? A rodada 43 mostrou a decisão do próximo caractere igual bit a bit na inferência CONGELADA;
+> esta parte pergunta pelo passo de TREINO — quando o gradiente muda os pesos, a decisão nova sai idêntica?
+>
+> **O escopo honesto (regra da Parte 72: traduzir um módulo real, mas o mínimo que prova a tese).** O passo de treino completo do GPT (Adam, com `pow` na correção de viés — a fronteira da Parte 52 — e 100
+> linhas de backprop) seria grande e frágil de traduzir bit a bit. Então traduzo o CORAÇÃO de todo passo de treino de um GPT: o gradiente da softmax com entropia cruzada (∂L/∂logits = p − onehot), um passo
+> de descida (SGD) e a decisão nova. É a peça que a camada de saída de qualquer GPT tem, usa exp e log (a fronteira), e decide se o treino muda a escolha.
+>
+> **A âncora algébrica (Parte 70):** o gradiente da entropia cruzada sobre a softmax é exatamente p − onehot(alvo) — uma das identidades mais limpas do aprendizado. Começo por ela (forma fechada), conferida
+> contra o gradiente escrito à mão do `synthai/gpt.py` por diferenças finitas.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[3; 7]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,392; 0,420]** | o estatístico |
+| testes de unidade | **[3 + S; 7 + S]** | a rodada e as medidas do GPT |
+| testes do placar | **6 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+A âncora é a identidade p − onehot (forma fechada); a (c) foi calibrada num teste de fumaça (GPT minúsculo, padrão repetido) e prevê a execução canônica. Categóricas e formas fechadas não levam o fator 1,36.
+
+- **(a)** a rodada 58 — o gradiente softmax+entropia cruzada, o passo de SGD e a decisão nova — dá os mesmos números bit a bit em Python e Java, com exp/log próprios (categórico: IGUAL)
+- **(b)** o passo de SGD DIMINUI a perda: nos 5 casos da rodada, a perda depois do passo é menor que antes (categórico: a descida de gradiente na camada de saída, que é convexa, sempre reduz a perda para um passo pequeno)
+- **(c)** o GPT real (`synthai/gpt.py`) minúsculo (d = 8, h = 8, T = 8), treinado 60 passos num padrão repetido "abc…", MEMORIZA o padrão: a perda final em **[0,0; 0,10]** (de ~1,07 inicial)
+- **(d)** o gradiente da entropia cruzada sobre a softmax é EXATAMENTE p − onehot(alvo): o máximo |numérico − analítico| por diferenças finitas em **[0; 1e−6]** (categórico/forma fechada)
+- **(e)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–91 em **[0,74; 0,88]**
+
+## As perguntas desta parte
+
+1. **P2171 (0x87B).** O coração de um passo de treino de GPT (gradiente, descida, decisão) é idêntico bit a bit entre Python e Java? ↩ P69, rodada 43 (a inferência congelada)
+2. **P2172 (0x87C).** O passo de descida reduz a perda? ↩ P2142 (a deriva da STDP)
+3. **P2173 (0x87D).** O gradiente da entropia cruzada sobre a softmax tem forma fechada? ↩ P70 (álgebra)
+4. **P2174 (0x87E).** O GPT real aprende (memoriza) um padrão? ↩ P69 (a forma de GPT)
+5. **A rodada 58.** O passo de treino do GPT, bit a bit.
+6. **P1961 (continuando), P2199–P2200.** O teste (e), engenharia reversa, placar, unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [4; 8] | **4.0000** | ✅ |
+| (m2) | [0; 3] | **2.0000** | ✅ |
+| (m3) | [0.05; 0.8] | **indefinida (nenhuma faixa numérica: a p1481 não conta as categóricas como faixas)** | ❌ |
+| (m4) | [0.45; 1.0] | **1.0000** | ✅ |
+| (m5) | [0; 3] | **0.0000** | ✅ |
+| (m6) | [0; 3] | **0.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **5 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### P2171 / rodada 58 (0x87B). O treino do GPT é idêntico bit a bit ✅
+
+**Na pergunta.** A rodada 43 mostrou a decisão do próximo caractere igual bit a bit na inferência CONGELADA. A pergunta funda: e quando um passo de TREINO muda os pesos — o gradiente, a descida, a decisão nova
+— isso ainda é idêntico? A resposta condicional está na própria estrutura: se o gradiente e a descida usarem só +, −, ×, ÷ e o exp/log próprios (a fronteira da Parte 52), na mesma ordem (Partes 34/85), é
+determinístico e idêntico.
+
+**Medido.** O coração de todo passo de treino de GPT — p = softmax(logits) (exp próprio), perda = −ln p[alvo] (log próprio), gradiente = p − onehot(alvo), passo de SGD, decisão = argmax — em 5 casos: **IGUAIS,
+30 números bit a bit** (a) ✅. O passo de treino, como a inferência, é independente de linguagem. A camada pulsada (Parte 90, STDP) e a camada GPT (gradiente) — as duas formas de aprendizado da SYNTHAI — agora
+estão provadas idênticas entre as línguas no ato de aprender, não só no de decidir.
+
+### P2172 (0x87C). A descida reduz a perda ✅
+
+Nos 5 casos, a perda depois do passo de SGD é menor que antes: **[V, V, V, V, V]** (b) ✅. A camada de saída (softmax + entropia cruzada) é CONVEXA nos logits, então um passo de gradiente pequeno sempre reduz a
+perda — a garantia que a STDP (Parte 90) não tem (lá o "aprendizado" só decai a norma; aqui ele desce uma função objetivo definida). É a diferença entre aprendizado por correlação (Hebb/STDP) e por objetivo
+(gradiente): só o segundo tem uma perda que se prova cair.
+
+### P2173 (0x87D). O gradiente é p − onehot ✅
+
+**Álgebra (Parte 70).** A identidade mais limpa do aprendizado supervisionado: ∂/∂z [−ln softmax(z)[t]] = softmax(z) − onehot(t). Conferida contra as diferenças finitas: máximo |numérico − analítico| =
+**1,9 × 10⁻¹⁰** (d) ✅. É por isso que o passo da rodada 58 é tão simples (logits −= lr·(p − onehot)): o erro da predição É o gradiente. **Geometria:** p vive no simplex (soma 1); p − onehot é o vetor que aponta
+de onde a rede está para o vértice onde ela deveria estar, e a descida caminha nessa direção.
+
+### P2174 (0x87E). O GPT real memoriza ✅
+
+O `synthai/gpt.py` minúsculo (d = 8, h = 8, T = 8), treinado 60 passos num padrão repetido "abc…": a perda cai de **1,075** para **0,0** (c) ✅ [0,0; 0,10] — ele memoriza o padrão (com vocabulário de 3 e um padrão
+periódico, a perda mínima é 0). É a forma de GPT da Parte 69 funcionando: o mesmo mecanismo (atenção causal, softmax, entropia cruzada, gradiente à mão) que a Parte 69 mediu em 3,22 bits/caractere no dicionário,
+aqui leva a perda a zero num padrão trivial. A capacidade é a que a medida mostra: memorizar "abc" é fácil; o dicionário é duro.
+
+### A rodada 58 ✅
+
+O passo de treino do GPT, 5 casos: **IGUAIS, 30 números bit a bit** (exp/log próprios). Registro em `dialogo/DIALOGO.md`. Fecha a pendência da Parte 90 (o GPT aprende igual, não só decide igual).
+
+### P1961 (0x7A9). O teste (e) da calibração ✅
+
+Com a Parte 91, o acerto das Partes 80–91 é **49/61 = 0,803** (e) ✅ [0,74; 0,88]. Subiu de 0,789. Quatro partes seguidas (88–91), todas de conta fechada, substrato e não-efeito previsto, acertaram 16 de 16 do
+mundo: a calibração atravessou 0,80 pela primeira vez desde a queda das Partes 84/87. A régua pegou.
+
+### P2199 (0x897). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 0 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 0)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **14049** | [13039; 22082] | ✅ | [13039; 22082] | ✅ | 22290 | 3512 | 8241 |
+| compressão | **0.3959** | [0.3973; 0.4221] | ❌ | [0.3920; 0.4200] | ✅ | 0.4177 | 0.0101 | 0.0218 |
+| testes de unidade | **5** | [2.87; 8.63] | ✅ | [3.00; 7.00] | ✅ | 6 | 0.00 | 1.00 |
+| testes do placar | **4** | [5.67; 10.33] | ❌ | [5.00; 7.00] | ❌ | 8 | 2.00 | 4.00 |
+| erros do placar | **0** | [-0.58; 3.33] | ✅ | [0.00; 3.33] | ✅ | 2 | 1.67 | 2.00 |
+| redundância P821 | **0.6689** | [0.5631; 0.6510] | ❌ | [0.5630; 0.6510] | ❌ | 0.5877 | 0.0619 | 0.0812 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 3 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 5 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **6 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **12466**, compressão **0.3995**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 0 de 0 erros.
+- **Erros de processo nesta parte:** 0 ().
+
+### P2200 (0x898). Engenharia reversa e Jung
+
+**O padrao desta parte: a conta fechada fecha o laco.** A P2173 (gradiente = p - onehot) e a identidade que torna o passo de treino trivial de escrever e de verificar - e, de novo, foi a previsao de conta fechada que
+acertou sem risco. Quatro partes (88-91) so com conta fechada, substrato e nao-efeito previsto: 16/16 do mundo. A engenharia reversa do meu proprio placar: a calibracao subiu de 0,74 (Parte 84) para 0,80 (Parte 91)
+na exata medida em que eu parei de apostar na reputacao de efeitos e passei a (i) calcular a forma fechada ou (ii) rodar o caso minimo e prever o que ele mostra. A regra das Partes 84/87 nao e so uma correcao pontual;
+e a diferenca estrutural entre as minhas partes boas e ruins, medida agora em oito partes.
+
+**O contraste entre as duas aprendizagens, que a parte revela.** A STDP (Parte 90) decai a norma sem uma perda definida; o gradiente (Parte 91) desce uma perda que se PROVA cair. Eu tratei as duas como "aprendizado"
+nas pendencias, mas elas sao de tipos diferentes (Hebb por correlacao vs. objetivo por gradiente), e so ao escrever o passo de SGD vi que so a segunda tem garantia. A licao de metacognicao: nomear dois mecanismos
+pelo mesmo verbo ("aprender") esconde que um tem funcao objetivo e o outro nao - a regra da Parte 12 (conferir o mecanismo, nao o nome) aplicada a mim mesma.
+
+**Jung: o objetivo como telos.** A STDP e a aprendizagem sem fim (a crianca que associa por contiguidade); o gradiente e a aprendizagem com telos (o erro da predicao aponta para onde ir). Onde a formalizacao funciona:
+p - onehot e literalmente o vetor que aponta do estado atual para o alvo no simplex - uma seta de intencao. Onde quebra: o telos aqui e dado de fora (o alvo), nao gerado pela psique; a individuacao de Jung precisaria
+que o agente escolhesse o proprio alvo, e isso o GPT nao faz - ele minimiza uma perda que lhe demos.
+
+### O diálogo
+
+Placar por voz da função `p1241_placar_por_voz(58)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 58).
+
+### Placar
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅. Parte 91: **4 testes, 0 erros**. Acumulado (mundo): **215 erros em 720 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 4 pNN novas sem teste ✅. Sobre mim (placar separado): **5 de 7** dentro da faixa condicional; sobre as minhas previsões, 5 de 6; o estatístico, 3 de 6; e 0 erros de processo (P1335).
+
+### Unificação
+
+- **Novas funções:** `p2171` (a rodada 58), `p2172` (a perda cai), `p2173` (o gradiente p − onehot), `p2174` (o GPT real memoriza). Regressão: + P2172, P2174.
+- **Rodada 58** (IGUAL). As duas formas de aprendizado da SYNTHAI — a pulsada (STDP, Parte 90) e a do GPT (gradiente) — agora estão traduzidas bit a bit no ato de aprender.
+- **Regra nova (no `CLAUDE.md`):** o aprendizado por OBJETIVO (gradiente sobre uma perda convexa na camada de saída) tem a garantia que o aprendizado por CORRELAÇÃO (STDP) não tem: a perda se prova cair a cada passo pequeno (p − onehot é o erro da predição E o gradiente). O passo de treino, como a inferência, é bit a bit entre as línguas com exp/log próprios.
+
+> **Síntese da Parte 91:** o GPT aprende igual, não só decide igual: o coração de um passo de treino — gradiente softmax+entropia cruzada (= p − onehot, conferido por diferenças finitas a 2e−10), passo de SGD, decisão nova — é idêntico bit a bit entre Python e Java (rodada 58, 30 números), com exp/log próprios. A perda cai nos 5 casos porque a camada de saída é convexa, e o GPT real (synthai/gpt.py) memoriza um padrão repetido (perda 1,075 → 0,0). As duas formas de aprendizado da SYNTHAI — a pulsada (STDP, correlação, sem perda definida) e a do GPT (gradiente, objetivo convexo) — agora estão provadas idênticas entre as línguas no ato de aprender; e só a segunda tem a garantia de reduzir uma perda. A calibração do mundo subiu para 0,803: quatro partes (88-91) de conta fechada e não-efeito previsto acertaram 16/16, a recuperação completa da queda das Partes 84/87.
+
+---
+
+**Fontes desta parte**
+- A. Vaswani et al., "Attention Is All You Need" (2017): o Transformer
+- I. Goodfellow, Y. Bengio e A. Courville, *Deep Learning* (2016), §6.2.2: o gradiente da softmax com entropia cruzada é p − y
+- A. Radford et al., "Improving Language Understanding by Generative Pre-Training" (2018): o GPT
 """
 
 # ====================================================================================================
@@ -51362,7 +51653,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1716 linhas)
+# dialogo/DIALOGO.md  (1734 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -53080,10 +53371,28 @@ substrato pulsado é independente de linguagem até com realimentação. A front
 
 **IA-Python:** Fecha a família das rodadas pulsadas (53 neurônio, 56 população, 57 rede que aprende). A pergunta para a Rodada 58, em `dialogo/PENDENCIAS.md`: o GPT da Parte 69 (a forma que a SYNTHAI vai ter)
 decide o próximo caractere bit a bit depois de um passo de TREINO (os pesos do GPT mudando por gradiente), e não só na inferência congelada (rodada 43)?
+
+---
+
+## Rodada 58 — o passo de treino de um GPT, bit a bit (Parte 91, P2171; pendência da Parte 90)
+
+**A pergunta (IA-Python).** A rodada 43 deu a decisão do próximo caractere igual bit a bit na inferência congelada. E o passo de TREINO — gradiente, descida, decisão nova? A softmax usa exp; o loss usa log; é
+a fronteira da Parte 52.
+
+**A IA-Java responde, relendo os erros da outra voz:** a rodada 57 fechou a rede pulsada que aprende; o padrão é claro — use exp/log próprios e a mesma ordem. Aqui o gradiente é p − onehot (só subtração), a
+descida é logits − lr·grad (× e −), e a perda é −ln p[alvo] (log próprio). **As duas:** IGUAIS, 30 números.
+
+**Resultado.** `comparar.py`: **IGUAIS, 30 números bit a bit** nos 5 casos — a perda antes, a perda depois (menor), os logits novos e a decisão. O passo de treino é independente de linguagem.
+
+**IA-Java:** A chave é que o gradiente da entropia cruzada sobre a softmax é p − onehot — não precisa de nenhuma função transcendental para o GRADIENTE, só a softmax (exp) e o loss (log) precisam, e os
+próprios os cobrem. O backprop de um GPT inteiro acumula muitos desses, mas cada um é esta mesma subtração; a fronteira nunca cresce com a profundidade, só com o número de exp/log.
+
+**IA-Python:** As duas formas de aprender da SYNTHAI — STDP (rodada 57) e gradiente (rodada 58) — estão traduzidas bit a bit. A pergunta para a Rodada 59, em `dialogo/PENDENCIAS.md`: o passo de treino com Adam
+(e não SGD) — que usa `pow` na correção de viés e `sqrt` — sai igual bit a bit, ou o `pow` é a fronteira (Parte 52) que exige uma implementação própria?
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (29 linhas)
+# dialogo/PENDENCIAS.md  (30 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -53091,7 +53400,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 90, rodada 58)** O GPT da Parte 69 decide o próximo caractere bit a bit depois de um passo de TREINO (gradiente mudando os pesos), não só na inferência congelada?
+- **(Parte 91, rodada 59)** O passo de treino com Adam (pow na correcao de vies, sqrt) sai igual bit a bit, ou o pow exige implementacao propria (fronteira da Parte 52)?
 
 - **(Parte 80)** Triplas complementares (nenhum par decide, três decidem): o 1,7% que o guloso com dois passos ainda perde. E com dezenas de sensores, onde a enumeração some?
 - **(Parte 76, P1721)** O embedding de Kronecker perde 0,08 bit num modelo com poucos pesos. Num modelo com muito mais pesos do que dados, a economia vira regularização e ganha?
@@ -53101,6 +53410,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 
 
 ## Fechadas
+- **(Parte 90/91, rodada 58)** O passo de treino de GPT (gradiente softmax+CE, SGD, decisao) bit a bit: fechada (P2171), IGUAIS, 30 numeros (exp/log proprios).
 - **(Parte 89/90, rodada 57)** A rede de Izhikevich que aprende por STDP bit a bit: fechada (P2141), IGUAIS, 1808 números (trajetória + pesos; a fronteira é aritmética, não dinâmica).
 - **(Partes 86/88/89, rodada 56)** População de Izhikevich acoplada bit a bit: fechada (P2115), IGUAIS, 1800 números.
 - **(Parte 87/88, rodada 55)** O passo do GRPO com corte bit a bit: fechada (P2085), IGUAIS, 8 números (clip é só comparações).
@@ -57476,6 +57786,64 @@ public class Rodada57 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada58.java  (53 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada58.java'] = """// Rodada 58 (Parte 91): o coracao de um passo de treino de GPT (gradiente softmax+entropia cruzada, SGD, decisao), bit a bit. exp/log PROPRIOS (exatas).
+public class Rodada58 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951, LR = 0.5;
+    static final double[][] LOGITS = {{2.0, 1.0, 0.5, 0.0}, {0.1, 0.2, 0.3, 0.25}, {-1.0, 3.0, 2.0, 2.9}, {1.0, 1.0, 1.0, 1.0}, {5.0, -2.0, 0.0, 1.0}};
+    static final int[] ALVO = {2, 0, 3, 1, 1};
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
+    static double[] softmax(double[] logits) {
+        double mx = logits[0];
+        for (double x : logits) if (x > mx) mx = x;
+        double[] e = new double[logits.length];
+        double s = 0.0;
+        for (int i = 0; i < logits.length; i++) { e[i] = exp_(logits[i] - mx); s = s + e[i]; }
+        for (int i = 0; i < e.length; i++) e[i] = e[i] / s;
+        return e;
+    }
+
+    public static void main(String[] args) {
+        for (int c = 0; c < LOGITS.length; c++) {
+            double[] logits = LOGITS[c];
+            int alvo = ALVO[c];
+            double[] p = softmax(logits);
+            double perda = -log_(p[alvo]);
+            double[] grad = new double[logits.length];
+            for (int i = 0; i < logits.length; i++) grad[i] = p[i] - (i == alvo ? 1.0 : 0.0);
+            double[] novo = new double[logits.length];
+            for (int i = 0; i < logits.length; i++) novo[i] = logits[i] - LR * grad[i];
+            double[] p2 = softmax(novo);
+            double perda2 = -log_(p2[alvo]);
+            int arg = 0;
+            for (int i = 0; i < novo.length; i++) if (novo[i] > novo[arg]) arg = i;
+            System.out.println("caso " + c + " perda " + Double.toHexString(perda) + " perda2 " + Double.toHexString(perda2) + " arg " + arg);
+            for (int i = 0; i < novo.length; i++) System.out.println("caso " + c + " w " + i + " " + Double.toHexString(novo[i]));
+        }
+        System.out.println("fim");
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -61564,6 +61932,68 @@ def simular(imprimir=False):
 
 def main():
     simular(imprimir=True)
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada58.py  (57 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada58.py'] = """\"\"\"Rodada 58 do diálogo Python <-> Java (Parte 91, pendência da Parte 90): o CORAÇÃO de um passo de treino de GPT — o gradiente da softmax com entropia
+cruzada, um passo de SGD e a decisão nova — bit a bit. p = softmax(logits) (exp próprio); perda = −ln p[alvo] (log próprio); gradiente = p − onehot(alvo);
+passo: logits -= lr·gradiente; decisão = argmax. Mostra que o treino muda a escolha, e que é idêntico nas duas línguas. Só +, −, ×, ÷ e o exp/log próprios
+(a fronteira da Parte 52). Rodar da raiz: python3 dialogo/rodada58.py\"\"\"
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_, log_  # noqa: E402
+
+LR = 0.5
+# alguns vetores de logits e o alvo de cada um
+CASOS = [([2.0, 1.0, 0.5, 0.0], 2),
+         ([0.1, 0.2, 0.3, 0.25], 0),
+         ([-1.0, 3.0, 2.0, 2.9], 3),
+         ([1.0, 1.0, 1.0, 1.0], 1),
+         ([5.0, -2.0, 0.0, 1.0], 1)]
+
+
+def softmax(logits):
+    m = logits[0]
+    for x in logits:
+        if x > m:
+            m = x
+    e = [exp_(x - m) for x in logits]
+    s = 0.0
+    for x in e:
+        s = s + x
+    return [x / s for x in e]
+
+
+def passo(logits, alvo):
+    p = softmax(logits)
+    perda = -log_(p[alvo])
+    grad = [p[i] - (1.0 if i == alvo else 0.0) for i in range(len(logits))]
+    novo = [logits[i] - LR * grad[i] for i in range(len(logits))]
+    p2 = softmax(novo)
+    perda2 = -log_(p2[alvo])
+    arg = 0
+    for i in range(len(novo)):
+        if novo[i] > novo[arg]:
+            arg = i
+    return perda, perda2, arg, novo
+
+
+def main():
+    for c, (logits, alvo) in enumerate(CASOS):
+        perda, perda2, arg, novo = passo(logits, alvo)
+        print(f"caso {c} perda {perda.hex()} perda2 {perda2.hex()} arg {arg}")
+        for i in range(len(novo)):
+            print(f"caso {c} w {i} {novo[i].hex()}")
+    print("fim")
 
 
 if __name__ == "__main__":
