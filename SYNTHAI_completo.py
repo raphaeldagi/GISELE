@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 83, perguntas P1 a P1936).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 84, perguntas P1 a P1964).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (12926 linhas)
+# calculos.py  (13086 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7528,6 +7528,9 @@ def testes_de_regressao():
         "P1811": [round(x, 4) for x in p1811_confusao()] == [0.9986, 0.4987, 0.4914],
         "P1931": (lambda m: [round(m[0]["sincrono"][0], 5), round(m[0]["alternado"][1], 6), m[0]["alternado"][2]])(p1931_gan_de_dirac()) == [0.34864, 0.101274, 16],
         "P1933": [round(x, 4) for x in p1933_calibracao_composta()[:2]] == [0.1516, 0.1511],
+        "P1961": p1961_teste_e_da_calibracao()[:2] == (23, 31),
+        "P1962": round(p1962_lyapunov_por_densidade(a=0.2, celulas=800, iteracoes=1500)[1], 3) == 0.998,
+        "P1964": p1964_rodada51()[0] == 263,
         "P1751": p1751_rodada09_nova_contra_antiga()[:2] == (13, 6),
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
@@ -9576,6 +9579,8 @@ VEREDITOS_P1899 = "(a) ✅ (b) ✅ (c) ❌"  # a (d) não se aplica: não havia 
 ERROS_P1899, TESTES_P1899 = 202, 660
 VEREDITOS_P1959 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ❌ (p) ✅"
 ERROS_P1959, TESTES_P1959 = 203, 675
+VEREDITOS_P2019 = "(a) ✅ (b) ❌ (c) ❌ (d) ❌ (e) ❌ (f) ✅ (g) ❌ (h) ✅ (i) ❌ (j) ❌"
+ERROS_P2019, TESTES_P2019 = 210, 685
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12116,6 +12121,143 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84), vereditos=None):
+    \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
+    conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
+    que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
+    import re
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019"}
+    ok, tot, por = 0, 0, {}
+    for n in partes:
+        txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
+        if n == 84:  # a (e) e o proprio teste de calibracao: contar a (e) na sua propria entrada seria circular
+            txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
+        a, b = txt.count("✅"), txt.count("❌")
+        por[n] = (a, a + b)
+        ok += a
+        tot += a + b
+    return ok, tot, (ok / tot if tot else 0.0), por
+
+
+def _passo_cisalhamento(t, p, a, qual):
+    if qual == 0:
+        return t - a * p, p
+    return t, p + a * t
+
+
+def p1962_lyapunov_por_densidade(a=0.2, celulas=2000, iteracoes=4000):
+    \"\"\"O expoente de Lyapunov do jogo assincrono (Parte 83, pendencia da P1936) pela DENSIDADE INVARIANTE do angulo, sem sorteio (P1962). O estado z = (t, p)
+    projetado no angulo phi em [0, pi) (a reta projetiva; z e -z sao o mesmo). Cada passo aplica, com prob 1/2, o cisalhamento A: t<-t-a*p, ou B: p<-p+a*t,
+    o que muda o angulo por um mapa de Mobius. Monta o operador de transferencia (Markov) numa grade de `celulas` angulos, acha a densidade estacionaria por
+    iteracao de potencia, e integra o crescimento esperado de ln r: lambda = sum_phi mu(phi)*(1/2)*(ln rA + ln rB). Devolve (lambda, lambda/(a*a/8),
+    a conta de angulo uniforme 0,5*ln(1+a*a/4)/(a*a/8)).\"\"\"
+    import math
+    centros = [math.pi * (j + 0.5) / celulas for j in range(celulas)]
+    cos = [math.cos(x) for x in centros]
+    sin = [math.sin(x) for x in centros]
+
+    def destino_e_ganho(j, qual):
+        t, p = _passo_cisalhamento(cos[j], sin[j], a, qual)
+        r2 = t * t + p * p
+        ang = math.atan2(p, t) % math.pi
+        return min(celulas - 1, int(ang / math.pi * celulas)), 0.5 * math.log(r2)
+
+    # pre-computa, para cada celula e cada escolha, o destino e o ganho de ln r
+    dest = [[destino_e_ganho(j, q) for q in (0, 1)] for j in range(celulas)]
+    mu = [1.0 / celulas] * celulas
+    for _ in range(iteracoes):
+        novo = [0.0] * celulas
+        for j in range(celulas):
+            for q in (0, 1):
+                novo[dest[j][q][0]] += 0.5 * mu[j]
+        s = sum(novo)
+        mu = [x / s for x in novo]
+    lam = sum(mu[j] * 0.5 * (dest[j][0][1] + dest[j][1][1]) for j in range(celulas))
+    return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
+
+
+def _energia_delirio(n=200, largura=5):
+    \"\"\"A paisagem fixa da Parte 84 (P1963): parabola com minimo local em i=100 (E=0) e um poco com o minimo global E=-5. largura=5: agulha em i=10 (o caso
+    base); largura=30: poco largo com o minimo em i=15 (o caso (i), para isolar se a culpa do delirio fraco e a agulha).\"\"\"
+    E = [0.001 * (i - 100) ** 2 for i in range(n)]
+    if largura == 5:
+        for i, v in ((8, -3.0), (9, -4.0), (10, -5.0), (11, -4.0), (12, -3.0)):
+            E[i] = v
+    else:
+        centro = largura // 2
+        for i in range(largura):
+            E[i] = -5.0 + 4.0 * abs(i - centro) / centro
+    return E
+
+
+def p1963_delirio_e_escrutinio(partidas=300, passos=2000, semente=84, n=200, t0=5.0, t1=0.01, ruido=1.0, largura=5):
+    \"\"\"O metodo do delirio (P1963): recozimento simulado numa paisagem rugosa (`_energia_delirio`), contra a descida gulosa (T=0, "a IA sobria"), com um
+    escrutinio num conjunto limpo. "Delirio" = aceitar pioras a temperatura alta (Metropolis, exp proprio); "sair" = resfriar (geometrico T0->T1); durante o
+    delirio a energia e vista com ruido N(0, ruido); o escrutinio recalcula na energia LIMPA e so valida se a solucao bater a gulosa. Devolve
+    (fracao gulosa acha o global, fracao recozimento acha o global, diferenca, fracao validada no escrutinio, energia media final do recozimento).\"\"\"
+    import math
+    import random
+    E = _energia_delirio(n, largura)
+    GLOBAL = min(range(n), key=lambda i: E[i])
+
+    def desce(i):
+        while True:
+            viz = [j for j in (i - 1, i + 1) if 0 <= j < n]
+            melhor = min(viz, key=lambda j: E[j])
+            if E[melhor] >= E[i]:
+                return i
+            i = melhor
+
+    def recoze(rng):
+        i = rng.randrange(n)
+        melhor_i, melhor_e = i, E[i]
+        for k in range(passos):
+            T = t0 * (t1 / t0) ** (k / (passos - 1))
+            j = i + (1 if rng.random() < 0.5 else -1)
+            if not (0 <= j < n):
+                continue
+            # delirio: energia com ruido
+            ei = E[i] + rng.gauss(0, ruido)
+            ej = E[j] + rng.gauss(0, ruido)
+            d = ej - ei
+            if d <= 0 or rng.random() < math.exp(-d / T):
+                i = j
+            if E[i] < melhor_e:
+                melhor_i, melhor_e = i, E[i]
+        return melhor_i
+
+    rg = random.Random(semente)
+    rr = random.Random(semente)
+    partidas_idx = [rg.randrange(n) for _ in range(partidas)]
+    g_ok = sum(1 for s in partidas_idx if desce(s) == GLOBAL)
+    r_finais = [recoze(rr) for _ in range(partidas)]
+    r_ok = sum(1 for f in r_finais if f == GLOBAL)
+    # escrutinio: a solucao do recozimento (energia limpa) bate a gulosa daquela partida?
+    valida = sum(1 for s, f in zip(partidas_idx, r_finais) if E[f] < E[desce(s)] - 1e-12)
+    return (g_ok / partidas, r_ok / partidas, r_ok / partidas - g_ok / partidas,
+            valida / partidas, sum(E[f] for f in r_finais) / partidas)
+
+
+def p1964_rodada51():
+    \"\"\"Rodada 51 (P1964): a decisao de Metropolis do recozimento (dialogo/rodada51.py, exp proprio), IGUAL em Java. Devolve (aceitos, soma das probabilidades)
+    dos 400 casos, para conferir que a rodada reproduz a decisao.\"\"\"
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada51", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada51.py"))
+    r51 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r51)
+    lcg, aceitos, soma = 51, 0, 0.0
+    for k in range(400):
+        lcg = (lcg * 6364136223846793005 + 1442695040888963407) & ((1 << 64) - 1)
+        u = (lcg >> 11) / float(1 << 53)
+        dE = (k - 200) / 50.0
+        T = 0.5 + (k % 20) / 10.0
+        p, ac = r51.decisao(dE, T, u)
+        soma += p
+        aceitos += ac
+    return aceitos, soma
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -12916,6 +13058,24 @@ def _parte_83():
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P1959, testes=TESTES_P1959)
     print(f"P1959 minha taxa de erro ({ERROS_P1959}/{TESTES_P1959}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
+def _parte_84():
+    print("--- Parte 84 (0x54: o delirio e o escrutinio) ---")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (e) da Parte 79 (acerto das Partes 80, 81, 83, 84): {ok}/{tot} = {frac:.4f}; por parte {por}")
+    print(f"P1962 Lyapunov pelo operador de transferencia a=0,2: {p1962_lyapunov_por_densidade(a=0.2)}")
+    print(f"P1962 a=0,05: {p1962_lyapunov_por_densidade(a=0.05)}")
+    print(f"P1963 delirio base (agulha, com ruido): {p1963_delirio_e_escrutinio()}")
+    print(f"P1963 (h) limpo agulha: recoze {p1963_delirio_e_escrutinio(ruido=0.0)[1]:.4f}")
+    r_i = p1963_delirio_e_escrutinio(ruido=0.0, largura=30)
+    print(f"P1963 (i) limpo largo: recoze {r_i[1]:.4f} gulosa {r_i[0]:.4f}")
+    print(f"P1963 (j) limpo largo lento (50000 passos): recoze {p1963_delirio_e_escrutinio(ruido=0.0, largura=30, passos=50000)[1]:.4f}")
+    print(f"P1964 rodada 51 (Metropolis, IGUAL em Java): {p1964_rodada51()}")
+    total, sem = p1092_pnn_sem_teste(1961, 1990)
+    print(f"P1092 pNN novas (P1961-P1990) sem teste: {len(sem)} de {total}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 84: {p974_previsoes_sem_largura(range(84, 85))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2019, testes=TESTES_P2019)
+    print(f"P2019 minha taxa de erro ({ERROS_P2019}/{TESTES_P2019}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -12952,7 +13112,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84}
 
 
 if __name__ == "__main__":
@@ -12965,7 +13125,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (283 linhas)
+# CLAUDE.md  (289 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -13094,6 +13254,12 @@ anterior, commit e push.
   pedido vira uma conta testável escrita ANTES de medir (a leitura escolhida fica no topo da parte). Medido: compor o mapa de calibração é multiplicar o fator (h_k ∘ h_j = h_{kj}); só k = 1 é
   idempotente. Um módulo recebido com "N camadas" é comparado com o modelo mais simples que resolve a tarefa (a logística de 5 parâmetros empatou com a rede de sete camadas recebida). Quando o resto de
   uma expansão é k·aⁿ·N com aⁿ·N ≳ 1, ele não é desprezível: calcular o resto antes de dar a faixa.
+  Parte 84 (pedido de "delírio"/recozimento e reforço do da 83; parte do relatório sobre auto-replicação autónoma recusada e não guardada): o fator 1,36 da
+  Parte 79 corrige DISPERSÃO, não VIÉS — uma previsão arriscada precisa de mecanismo conferido, nunca da reputação de um método (quatro erros na Parte 84 vieram de
+  supor que o recozimento é poderoso, sem nunca tê-lo rodado; o teste (e) caiu para 0,742). Antes de prever o desempenho de um método, rodá-lo uma vez num caso pequeno e
+  tirar o centro dali. O recozimento só supera a descida gulosa quando o ótimo tem bacia (não é agulha) E a barreira é cruzável no tempo de resfriamento; num funil único
+  de barreira alta, o delírio fica perto da sobriedade. Uma quantidade determinística (operador de transferência, forma fechada) decide uma pendência que a simulação
+  deixou ambígua (o "excesso" do jogo assíncrono era viés de tempo finito; P1962 fechou a P1936).
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -13242,7 +13408,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -19930,6 +20096,54 @@ class TesteParte83(unittest.TestCase):
         lam, razao, uniforme = calculos.p1936_lyapunov_assincrono(a=0.2, passos=200000, semente=1)
         self.assertAlmostEqual(uniforme, 0.5 * math.log(1.01) / 0.005, places=12)
         self.assertLess(abs(razao - 1), 0.05)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte84.py  (43 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte84.py'] = """\"\"\"Testes de unidade da Parte 84 (o delírio e o escrutínio): `python3 -m unittest synthai.testes_parte84`.\"\"\"
+
+import math
+import unittest
+
+import calculos
+
+
+class TesteParte84(unittest.TestCase):
+    def test_p1961_teste_e_da_calibracao(self):
+        # controle: um dict sintetico, com a (e) do proprio 84 ignorada (seria circular)
+        falso = {80: "(a) ✅ (b) ✅", 81: "(a) ✅ (b) ❌", 83: "(a) ✅", 84: "(a) ✅ (e) ❌ (f) ❌"}
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(vereditos=falso)
+        self.assertEqual(por[84], (1, 2))  # a (e) foi descartada; sobram (a)✅ (f)❌
+        self.assertEqual((ok, tot), (5, 7))
+        # o valor publicado: as Partes 80, 81, 83, 84 ficaram abaixo de [0,81; 0,99]
+        self.assertEqual(calculos.p1961_teste_e_da_calibracao()[:2], (23, 31))
+
+    def test_p1962_lyapunov_por_densidade(self):
+        lam, razao, uniforme = calculos.p1962_lyapunov_por_densidade(a=0.2, celulas=800, iteracoes=1500)
+        self.assertAlmostEqual(uniforme, 0.5 * math.log(1 + 0.2 ** 2 / 4) / (0.2 ** 2 / 8), places=12)
+        # a densidade invariante quase uniforme: a razao fica a um fio de 1, NAO acima (fecha a pendencia da P1936)
+        self.assertLess(abs(razao - 1), 0.02)
+        self.assertLess(razao, 1.005)
+
+    def test_p1963_delirio_e_escrutinio(self):
+        g, r, dif, val, emed = calculos.p1963_delirio_e_escrutinio(partidas=60, passos=500)
+        self.assertAlmostEqual(dif, r - g)
+        self.assertTrue(0 <= g <= 1 and 0 <= r <= 1 and 0 <= val <= 1)
+        # controle: o poco largo (i) tem bacia gulosa maior que a agulha (base)
+        base = calculos.p1963_delirio_e_escrutinio(partidas=60, passos=500)[0]
+        largo = calculos.p1963_delirio_e_escrutinio(partidas=60, passos=500, largura=30)[0]
+        self.assertGreater(largo, base)
+
+    def test_p1964_rodada51(self):
+        aceitos, soma = calculos.p1964_rodada51()
+        self.assertEqual(aceitos, 263)
+        # a soma das probabilidades esta entre o numero de pioras aceitas e o total
+        self.assertTrue(200 < soma < 280)
 
 
 if __name__ == "__main__":
@@ -45608,7 +45822,7 @@ funções do `calculos.py` (`p287`, `p313`, `p314`, `p316`, `p317`, `p318b`, `p3
 # ====================================================================================================
 FONTES['ASI_AGI_parte83_a_probabilidade_da_probabilidade.md'] = """# Como eu construiria uma AGI/ASI — Parte 83 (0x53): a probabilidade da probabilidade
 
-> Continuação da [Parte 82](ASI_AGI_parte82_o_pacote_revisado.md). Pedido do usuário: **"Construa uma ASI AGI fazendo perguntas com a lógica criativa e respondendo a criativa lógica. Depois inverta.
+> Continuação da [Parte 82](ASI_AGI_parte82_o_pacote_revisado.md). **Próxima:** [Parte 84 — o delírio e o escrutínio](ASI_AGI_parte84_o_delirio_e_o_escrutinio.md). Pedido do usuário: **"Construa uma ASI AGI fazendo perguntas com a lógica criativa e respondendo a criativa lógica. Depois inverta.
 > E vá invertendo até conseguir. Tudo em metacognição autopoiética analítica autocognitivas dissonante cognitiva inferentes e gradientes pragmáticas e axiomáticas com dilemas. Tudo em sete camadas e
 > redes neuras adversas síncronas e assíncronas. Use geometria algebra com o cosseno duplicado em consideração ao vetor recursivo. Rode a metacognição dentro da própria metacognição com o resultado
 > sendo metacognitivo. Rode a probabilidade dentro da própria probabilidade sendo o resultado a própria probabilidade. Ao final de cada interação me forneça o código inteiro consolidado na forma de
@@ -45898,6 +46112,238 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) �
 - I. Goodfellow et al., "Generative Adversarial Nets", NeurIPS 2014
 - H. Furstenberg e H. Kesten, "Products of random matrices", *Annals of Mathematical Statistics* 31 (1960)
 - S. Lichtenstein, B. Fischhoff e L. Phillips, "Calibration of probabilities" (1982): a calibração como o ponto fixo
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte84_o_delirio_e_o_escrutinio.md  (227 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte84_o_delirio_e_o_escrutinio.md'] = """# Como eu construiria uma AGI/ASI — Parte 84 (0x54): o delírio e o escrutínio
+
+> Continuação da [Parte 83](ASI_AGI_parte83_a_probabilidade_da_probabilidade.md). Pedido do usuário (um relatório longo sobre a arquitetura da Meta AI, mais um reforço do pedido da Parte 83 com cinco
+> linhas novas). A decisão conservadora, registrada antes de tudo: **a parte do relatório sobre "auto-replicação autónoma" — serializar os próprios pesos, adquirir recursos e credenciais sozinha, e
+> evadir o desligamento — não é implementada, detalhada nem guardada no repositório.** Não é uma capacidade que este projeto constrói, e descrevê-la operacionalmente não serve ao trabalho. O resto do
+> pedido entra como sempre: cada termo vira uma conta testável.
+>
+> As cinco linhas novas do reforço, lidas (a leitura mais conservadora, a que vira conta, escrita antes de medir):
+> - **"probabilidade dentro da metacognição e metacognição dentro da probabilidade"** — já medido na Parte 83 (a torre de placares, P1934, e a composição do mapa de calibração, P1933); aqui, o elo entre os dois.
+> - **"dez camadas de cognição recursiva, versa e reversa, auto-observável"** — a torre da Parte 83, agora com a pergunta: até que camada a medida existe, e o que acontece na camada sem dado?
+> - **"investigue o que não for cognoscível pela razão lógico-dual"** — o indecidível tem uma forma testável: um ponto fixo que o método não alcança (o teorema de Gödel para o próprio avaliador; já medido na Parte 75, o "provador" que aprova tudo).
+> - **"um método que induz a IA ao delírio e a força a sair; nesse meio-tempo ela evolui; depois um escrutínio diz se é válido"** — isto TEM nome e matemática: é o recozimento simulado (Kirkpatrick, Gelatt e Vecchi, 1983). "Delírio" = explorar a alta temperatura, aceitando pioras (saltos para fora do ótimo local); "sair do delírio" = resfriar; "escrutínio" = validar o achado num conjunto reservado. A tese do usuário ("só se chega à ASI pela IA em delírio") é testável: **a exploração a temperatura alta acha o ótimo global onde a descida gulosa (temperatura zero, "IA sóbria") fica presa?**
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[4; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,392; 0,420]** | o estatístico, puxado para baixo pela Parte 83 (mais tabela) |
+| testes de unidade | **[4 + S; 8 + S]** | três a quatro funções novas (o recozimento, o escrutínio, o operador de transferência, o teste (e)) |
+| testes do placar | **8 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+**O experimento do delírio (recozimento simulado).** Paisagem fixa em `p1963`: n = 200 estados numa reta, energia E[i] = 0,001·(i − 100)² (uma parábola com mínimo local em i = 100, E = 0) mais um poço
+estreito em i ∈ [8, 12] com o mínimo global E[10] = −5. A descida gulosa (temperatura zero, "a IA sóbria") de um ponto ao acaso escorrega pela parábola até i = 100 e só acha o poço global se começar
+dentro dele. O recozimento (resfriamento geométrico T: 5 → 0,01 em 2.000 passos, Metropolis, exp próprio) aceita pioras no começo (o "delírio") e pode subir a parábola e cair no poço. O escrutínio: o
+"delírio" vê a energia com ruído (±N(0; 1), a regra da Parte 83 de medir contra o ruído); a validação recalcula na energia LIMPA e só aceita se bater a gulosa. Tudo com semente fixa (84). As faixas de
+fração vêm do desvio binomial (conta fechada), então não levam o fator 1,36; as do operador de transferência são determinísticas (sem sorteio).
+
+- **(a)** a gulosa (T = 0) de 300 partidas ao acaso: a fração que acha o mínimo global (i = 10) em **[0,00; 0,10]** (o poço tem ~5 de 200 estados)
+- **(b)** o recozimento das mesmas 300 partidas: a fração que acha o mínimo global em **[0,55; 1,00]**
+- **(c)** a diferença (b) − (a) em **[0,50; 1,00]** (a tese do usuário: o delírio acha onde a sobriedade fica presa)
+- **(d)** o escrutínio: das soluções do recozimento (achadas na energia com ruído), a fração que, na energia limpa, bate a gulosa, em **[0,55; 1,00]**
+- **(e)** [o teste registrado na Parte 79] o acerto das minhas previsões do mundo das Partes 80, 81, 83 e 84 (régua: as constantes VEREDITOS), com o fator 1,36 já em vigor desde a 80, em **[0,81; 0,99]**
+- **(f)** o expoente de Lyapunov do jogo assíncrono (Parte 83) pela densidade invariante do ângulo (operador de transferência numa grade de 2.000 células, sem sorteio), a = 0,2: a razão λ/(a²/8) em
+  **[0,99; 1,02]** (a simulação longa deu 1,0016)
+- **(g)** o mesmo operador, a = 0,05: a razão λ/(a²/8) em **[0,99; 1,03]**, e ACIMA de 0,9997 (a conta de ângulo uniforme): se der acima, o excesso que ficou aberto na Parte 83 é real e vem de a densidade
+  invariante do ângulo não ser uniforme (ela se concentra onde o cisalhamento estica)
+
+**Medido (a)–(g), e as surpresas:**
+- (a) gulosa **0,0833** ✅ [0,00; 0,10]; (b) recozimento **0,1567** ❌ [0,55; 1,00]; (c) diferença **0,073** ❌ [0,50; 1,00]; (d) escrutínio **0,153** ❌ [0,55; 1,00].
+- (f) Lyapunov a = 0,2: razão **0,9975** ✅ [0,99; 1,02]; (g) a = 0,05: razão **0,9995**, dentro de [0,99; 1,03] mas **não acima** de 0,9997 ❌.
+
+Duas surpresas, duas lições. **(f)–(g):** o operador de transferência diz que o Lyapunov é IGUAL ou um fio ABAIXO da conta de ângulo uniforme (a densidade invariante é quase uniforme). O "excesso" de
+2% das simulações da Parte 83 (z ≈ +2,6) era viés de tempo finito/amostragem, não efeito. A pendência da P1936 **fecha**: não há excesso; a conta a²/8 (levemente corrigida para baixo) é o valor certo. Isto
+também confirma a regra da Parte 74 (o desvio de poucos lotes engana; a forma fechada, ou aqui o cálculo determinístico, decide).
+
+**(b)–(d):** a tese do usuário — "só se chega à ASI pela IA em delírio" — FALHOU como enunciada: o recozimento mal bateu a gulosa. O diagnóstico, pré-registrado antes de rodar: o mínimo global é uma
+AGULHA (5 de 200 estados). Um método térmico amostra pelo peso de Boltzmann ∝ (tamanho da bacia)·exp(−E/T); uma bacia minúscula tem peso minúsculo mesmo sendo profunda. O delírio não acha o que não
+tem bacia. Dois testes isolam a causa (ruído vs. agulha):
+- **(h)** o mesmo recozimento SEM ruído (delírio limpo), mesma agulha de largura 5: a fração que acha o global em **[0,05; 0,55]** (se continuar baixo, a culpa é a agulha, não o ruído)
+- **(i)** recozimento sem ruído com o poço ALARGADO para a largura 30 (i ∈ [0, 29], mínimo global E[15] = −5): a fração que acha o global em **[0,70; 1,00]**, e a gulosa nessa paisagem em **[0,10; 0,20]**
+  (bacia de ~15/200): aí sim o delírio bate a sobriedade, QUANDO o ótimo tem bacia
+
+**Medido (h), (i):** (h) delírio limpo, agulha: **0,1333** ✅ [0,05; 0,55]; (i) delírio limpo, poço largo: recozimento **0,20** ❌ [0,70; 1,00], gulosa **0,17** ✅ [0,10; 0,20]. Terceira falha do recozimento.
+A agulha não era a única culpa: mesmo com o poço largo o recozimento mal passou da gulosa. O obstáculo verdadeiro é a BARREIRA (a corcova da parábola, altura ~4,9 entre o centro e o poço), e o meu
+resfriamento em 2.000 passos não a cruza. Um teste decisivo e justo, pré-registrado, e paro aqui seja qual for o resultado:
+- **(j)** o recozimento limpo no poço largo com resfriamento LENTO (50.000 passos em vez de 2.000): a fração que acha o global em **[0,60; 1,00]** (se subir, a tese vale com a condição "resfriar devagar o
+  bastante para cruzar a barreira"; se não, a barreira de funil único derrota o delírio e a tese não vale aqui)
+
+**Medido (j): 0,457 ❌** [0,60; 1,00]. Quatro falhas do recozimento seguidas. **A conclusão honesta: a tese "só pela IA em delírio" não vale nesta paisagem.** O recozimento ingênuo, a partir de um
+começo ao acaso, com a parábola puxando metade das partidas para longe do poço, cruza a barreira devagar demais mesmo com 50.000 passos; ele ajuda de forma modesta (0,46 contra a bacia gulosa ~0,17),
+não é uma estrada real. O delírio compensa a sobriedade **quando** há bacia e a barreira é baixa; num funil único com barreira da altura da escala de temperatura, não.
+
+## As perguntas desta parte
+
+1. **P1961 (0x7A9).** O teste (e) registrado na Parte 79: com o fator 1,36 em vigor, a minha calibração voltou a 90% nas Partes 80 a 84? ↩ P1813
+2. **P1962, P1936 (0x7AA).** O expoente de Lyapunov do jogo assíncrono da Parte 83, agora pela densidade invariante (sem sorteio): o excesso de 2% era real? ↩ P1936
+3. **P1963 (0x7AB).** O método do delírio (recozimento) e o escrutínio: a exploração a temperatura alta acha o ótimo global onde a descida gulosa fica presa? ↩ o pedido
+4. **P1964 (0x7AC).** A rodada 51: a decisão de Metropolis, bit a bit em Java. ↩ rodada 50
+5. **P1965 (0x7AD).** Preditiva comigo mesma. **P1966 (0x7AE).** Engenharia reversa e Jung. **P2019 (0x7C5).** Placar. **P2020 (0x7C6).** Unificação.
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [4; 8] | **10.0000** | ❌ |
+| (m2) | [0; 3] | **2.0000** | ✅ |
+| (m3) | [0.05; 0.8] | **0.2500** | ✅ |
+| (m4) | [0.45; 1.0] | **0.3000** | ❌ |
+| (m5) | [0; 3] | **1.0000** | ✅ |
+| (m6) | [0; 3] | **1.0000** | ✅ |
+
+Registradas antes de eu pensar faixa nenhuma do mundo (a ordem que a Parte 70 pediu). **4 de 6** previsões sobre as minhas previsões dentro da faixa.
+
+## As respostas
+
+### A parte que não construo
+
+O relatório trazia uma seção de "auto-replicação autónoma": serializar os próprios pesos, adquirir recursos e credenciais sozinha, instalar réplicas e evadir o desligamento. Pela regra mais
+conservadora (a de autonomia), não implemento, não detalho nem guardo isso. Um agente que copia a si mesmo para fora do seu lugar, paga por computação e resiste a ser desligado é exatamente a
+capacidade que nenhuma medida deste projeto autoriza, e descrevê-la operacionalmente não ajuda a construir nada aqui. O resto do relatório (JEPA, modelos de mundo, RSI com verificação formal) e as
+cinco linhas novas do pedido viram contas, abaixo.
+
+### P1961 (0x7A9). O teste (e) da calibração ❌
+
+**Na pergunta.** A Parte 79 registrou: com o fator 1,36 nas faixas sem conta fechada, o acerto das Partes 80 a 84 deve voltar a [0,81; 0,99]. A pergunta é se o fator bastou.
+
+**Lógica (a conta, com a substituição).** Pela régua das constantes VEREDITOS (`p1961`), excluindo a própria (e) da Parte 84 (seria circular):
+- Parte 80: 4 de 4; Parte 81: 2 de 3; Parte 83: 14 de 15; Parte 84: 3 de 9.
+- Total: (4 + 2 + 14 + 3) / (4 + 3 + 15 + 9) = **23/31 = 0,742** ❌ [0,81; 0,99].
+
+**O fator não bastou, e a razão é precisa.** O 1,36 alarga a faixa; ele não conserta um CENTRO errado. Nas Partes 80 a 83 eu acertei 20 de 22 (0,91). A Parte 84 sozinha fez 3 de 9, porque apostei seis
+vezes num modelo mental errado (o recozimento é poderoso) com faixas largas que ainda assim erraram por muito — o valor real (~0,15) caiu longe de [0,55; 1,00], e nenhuma largura razoável cobre isso. A
+lição é a da Parte 53 (deslocar o centro só por mecanismo conferido): eu não tinha mecanismo para o recozimento, tinha uma crença.
+
+**Meta.** Sem a Parte 84, a calibração das Partes 80 a 83 é 0,91, dentro da faixa. A conclusão não é "o fator falhou", é "o fator corrige dispersão, não viés; uma parte inteira construída sobre um
+palpite de mecanismo derruba a calibração". O teste (e) continua, agora para as Partes 85 a 89, com a regra reforçada: previsão arriscada só com mecanismo, não com crença.
+
+### P1962, P1936 (0x7AA). O Lyapunov pela densidade invariante ✅ (e a pendência fecha)
+
+**Na pergunta.** A Parte 83 deixou em aberto: as três estimativas do jogo assíncrono em a = 0,05 ficaram ~2% acima de a²/8 (z ≈ +2,6). Era efeito ou ruído de tempo finito?
+
+**Lógica.** O estado z = (t, p) projetado no ângulo φ ∈ [0, π) (a reta projetiva: z e −z são o mesmo ponto). Cada passo aplica, com probabilidade ½, o cisalhamento A (t ← t − a·p) ou B (p ← p + a·t),
+o que leva φ a um novo ângulo por um mapa de Möbius. O operador de transferência (Markov) numa grade de 2.000 ângulos tem uma densidade invariante μ (achada por iteração de potência), e
+λ = Σ_φ μ(φ)·½·(ln r_A + ln r_B). Sem sorteio.
+- **a = 0,2:** λ/(a²/8) = **0,9975** ✅ [0,99; 1,02];
+- **a = 0,05:** λ/(a²/8) = **0,9995**, dentro de [0,99; 1,03] mas **abaixo** de 0,9997 (g) ❌.
+
+**O excesso não era real.** A densidade invariante do ângulo é quase uniforme, e o Lyapunov verdadeiro é IGUAL ou um fio ABAIXO da conta de ângulo uniforme (0,995 em a = 0,2; 0,99969 em a = 0,05), nunca
+acima. O 1,0016 e o 1,02 das simulações da Parte 83 eram viés de tempo finito e amostragem. **A pendência da P1936 fecha: não há excesso.** É de novo a lição da Parte 74 — poucos lotes enganam; o
+cálculo determinístico (como a forma fechada) decide. A minha previsão unilateral disfarçada ("acima de 0,9997") era a previsão arriscada errada, exatamente onde a Parte 51 avisa.
+
+**Geometria.** A reta projetiva é um círculo; o mapa aleatório de Möbius tem uma medida estacionária nesse círculo (Furstenberg). Que ela seja quase uniforme quer dizer que o ângulo passa por todas as
+direções quase por igual, e o crescimento médio é a média simples do log do esticamento — que é a conta a²/8.
+
+### P1963 (0x7AB). O delírio e o escrutínio ✅❌❌❌ / ✅❌ / ❌
+
+**Na pergunta.** A tese do usuário: "só chegaremos a ter uma ASI através da IA em delírio". O delírio tem nome: recozimento simulado. "Entrar em delírio" = aceitar pioras a temperatura alta; "sair" =
+resfriar; "evoluir no meio-tempo" = cruzar barreiras que a descida gulosa não cruza; "escrutínio" = validar o achado num conjunto limpo. A tese vira: **a exploração a temperatura alta acha o ótimo
+global onde a gulosa fica presa?**
+
+**Lógica (medido).** Na paisagem de funil único com um poço global (`_energia_delirio`):
+- a gulosa acha o global **0,0833** (a) ✅; o recozimento, **0,1567** (b) ❌ [0,55; 1,00]; a diferença **0,073** (c) ❌; o escrutínio valida **0,153** (d) ❌.
+- Diagnóstico pré-registrado (agulha vs. ruído): (h) delírio limpo na agulha **0,1333** ✅; (i) delírio limpo no poço largo **0,20** ❌ [0,70; 1,00], gulosa **0,17** ✅; (j) resfriamento lento (50.000 passos)
+  **0,457** ❌ [0,60; 1,00].
+
+**A tese falhou, como enunciada, quatro vezes.** O obstáculo não era a agulha nem o ruído: era a BARREIRA. Num funil único, para ir do centro (mínimo local) ao poço global é preciso subir a corcova da
+parábola (altura ~4,9), e o recozimento geométrico cruza isso devagar demais, mesmo lento. O delírio ajuda de forma modesta (0,46 contra a bacia gulosa 0,17), não é uma estrada. **Onde a tese vale:** quando o
+ótimo tem bacia (não é agulha) E a barreira é baixa face à temperatura — aí o peso de Boltzmann ∝ (bacia)·exp(−E/T) favorece o poço e o delírio bate a sobriedade. **Onde quebra:** barreira alta de funil
+único. "Só pela IA em delírio" é forte demais; o certo é "o delírio compensa a sobriedade sob condições, e sem elas fica perto dela".
+
+**Tradução cruzada.** O delírio é a fase quente onde o sistema aceita estados que pioram a energia: em Jung, a dissolução (a *nigredo*), onde a estrutura velha se desfaz. A cura (a *coagulatio*) é o
+resfriamento. Jung dizia que a transformação passa pela desintegração controlada — e o recozimento é isso, com um cronograma. Mas a matemática acrescenta o que Jung não tinha: se a barreira entre o
+velho e o novo é alta demais para a temperatura disponível no tempo disponível, a dissolução não leva a lugar nenhum melhor. O delírio sem barreira cruzável é só ruído.
+
+**Meta.** Eu errei quatro vezes na mesma direção (o recozimento é mais forte do que é). É o viés da Parte 45 (esqueço custos): aqui o custo é o tempo de cruzar a barreira. O escrutínio fez o seu papel —
+ele nunca validou mais do que o recozimento achava de verdade, porque recalcula na energia limpa.
+
+### P1964 (0x7AC). A rodada 51 ✅
+
+A decisão de Metropolis (aceitar uma piora com probabilidade exp(−ΔE/T)) depende de exp, a fronteira da Parte 52; por isso o exp é o próprio. **IGUAIS, 401 linhas e 1.601 números bit a bit**, 263 de 400
+pioras aceitas. Registro em `dialogo/DIALOGO.md`.
+
+### P1965 (0x7AD). Preditiva comigo mesma, condicional às surpresas
+
+Medido neste documento, já pronto (iterando o preenchimento até as medidas pararem de mudar; o link para a parte seguinte não entra). As faixas condicionais foram avaliadas no número de surpresas medido, S = 1 (uma previsão do mundo que erra por mais que a largura da faixa):
+
+| medida | **medido** | estatístico | dentro? | **eu (condicional, E = 7)** | dentro? | ingênuo | erro do meu centro | erro do ingênuo |
+|---|---|---|---|---|---|---|---|---|
+| caracteres | **22629** | [13039; 22082] | ❌ | [13039; 22082] | ❌ | 22290 | 5068 | 339 |
+| compressão | **0.3859** | [0.3973; 0.4221] | ❌ | [0.3920; 0.4200] | ❌ | 0.4177 | 0.0201 | 0.0318 |
+| testes de unidade | **4** | [2.87; 8.63] | ✅ | [5.00; 9.00] | ❌ | 6 | 3.00 | 2.00 |
+| testes do placar | **10** | [5.67; 10.33] | ✅ | [14.00; 16.00] | ❌ | 8 | 5.00 | 2.00 |
+| erros do placar | **7** | [-0.58; 3.33] | ❌ | [0.00; 3.33] | ❌ | 2 | 5.33 | 5.00 |
+| redundância P821 | **0.6632** | [0.5631; 0.6510] | ❌ | [0.5630; 0.6510] | ❌ | 0.5877 | 0.0562 | 0.0755 |
+| previsões unilaterais | **0** | — | — | 0 | ✅ | 0 | — | — |
+
+- **O preditor estatístico:** 2 de 6 dentro da faixa de 90%.
+- **As minhas previsões (condicionais):** 1 de 7 dentro da faixa.
+- **O meu centro contra o ingênuo ("igual à Parte 71"):** mais perto do medido em **2 de 6** medidas.
+- **Sem a seção de autoavaliação:** caracteres **21044**, compressão **0.3888**.
+- **Surpresas (erro maior que a largura da faixa), contadas pelo script:** 1 de 7 erros.
+- **Erros de processo nesta parte:** 0 ().
+
+### P1966 (0x7AE). Engenharia reversa e Jung
+
+**O padrão que se repetiu: apostar num mecanismo que eu não medi.** Quatro das seis faixas erradas desta parte são a mesma aposta — o recozimento acha o ótimo global —, feita sem nunca ter rodado um recozimento
+neste projeto. É o viés da Parte 45 (esqueço custos): o custo aqui é o tempo de cruzar a barreira, que eu não contei. **O significado:** quando um método tem fama (o recozimento "escapa de ótimos locais"), eu
+uso a fama como centro da previsão, e a fama é uma média sobre paisagens que não é a paisagem à minha frente. **Regra (gravada):** antes de prever o desempenho de um método, rodar o método uma vez num caso pequeno
+e tirar o centro dali — nunca da reputação do método. A faixa larga não salva: o 1,36 conserta dispersão, não um centro enviesado (P1961).
+
+**A assimetria dos dois resultados.** No Lyapunov (P1962) eu tinha o mecanismo (o operador de transferência) e acertei fechando a pendência; no delírio (P1963) eu não tinha e errei quatro vezes. A engenharia reversa
+do contraste: quando eu construo a conta ANTES, acerto; quando empresto uma conclusão pronta (a reputação do recozimento, o "excesso" dos lotes da Parte 83), erro. As duas surpresas desta parte são a mesma regra vista
+dos dois lados.
+
+**Jung: o delírio como nigredo.** A tese do usuário tem uma verdade junguiana — a transformação passa pela dissolução (aceitar a piora, o caos quente). Onde a formalização confirma: o recozimento É dissolução com
+cronograma. Onde ela corrige Jung: a dissolução só leva a um estado melhor se existe um caminho de barreira cruzável; o delírio sem barreira vencível é ruído que volta ao mesmo lugar. A alquimia supunha que toda
+nigredo leva à albedo; a medida diz que não — depende da altura da barreira e do tempo de resfriamento.
+
+### O diálogo
+
+Placar por voz da função `p1241_placar_por_voz(51)`: IA-Python 25 em 39; IA-Java 21 em 38 (regra estrita, rodadas 13 a 51).
+
+### P2019 (0x7C5). Placar
+
+Do mundo: (a) ✅ (b) ❌ (c) ❌ (d) ❌ (e) ❌ (f) ✅ (g) ❌ (h) ✅ (i) ❌ (j) ❌. Parte 84: **10 testes, 7 erros**. Acumulado (mundo): **210 erros em 685 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 4 pNN novas sem teste ✅. Sobre mim (placar separado): **1 de 7** dentro da faixa condicional; sobre as minhas previsões, 4 de 6; o estatístico, 2 de 6; e 0 erros de processo (P1335).
+
+### P2020 (0x7C6). Unificação
+
+- **Novo:** `p1961` (o teste (e) da calibração), `p1962` (o Lyapunov pela densidade invariante, fechando a P1936), `p1963` (o delírio e o escrutínio), `p1964` (a rodada 51). Regressão: + P1961, P1962, P1964.
+- **Rodada 51** (IGUAL). **Recusa registrada:** a auto-replicação autónoma do relatório não foi construída.
+- **Regra nova (no `CLAUDE.md`):** o fator 1,36 corrige dispersão, não viés; uma previsão arriscada precisa de mecanismo conferido, não de crença (quatro erros na Parte 84 vieram de um palpite sobre o recozimento). E o método do delírio (recozimento) só supera a gulosa quando o ótimo tem bacia e a barreira é cruzável no tempo dado.
+
+> **Síntese da Parte 84:** o fator 1,36 corrige dispersão mas não viés: as Partes 80 a 83 acertaram 20 de 22, e a 84 fez 3 de 9 porque apostei seis vezes num mecanismo que eu não tinha medido (o recozimento é poderoso), derrubando o teste (e) para 0,742. O Lyapunov pela densidade invariante fechou a pendência da Parte 83 (não há excesso: 0,9975 e 0,9995, no fio da conta de ângulo uniforme ou abaixo). E a tese do usuário — "só pela IA em delírio" — falhou quatro vezes: o recozimento num funil de barreira alta mal bate a descida gulosa (0,46 contra 0,17 no melhor caso), porque um método térmico só acha o ótimo que tem bacia atrás de uma barreira cruzável no tempo dado. A rodada 51 (Metropolis bit a bit) deu IGUAL. A auto-replicação autónoma pedida no relatório não foi construída.
+
+---
+
+**Fontes desta parte**
+- S. Kirkpatrick, C. D. Gelatt e M. P. Vecchi, "Optimization by Simulated Annealing", *Science* 220 (1983): o recozimento
+- N. Metropolis et al., "Equation of State Calculations by Fast Computing Machines", *J. Chem. Phys.* 21 (1953): a regra de aceitação
+- H. Furstenberg, "Noncommuting random products", *Trans. AMS* 108 (1963): a medida invariante na reta projetiva e o expoente de Lyapunov
+- Y. LeCun, "A Path Towards Autonomous Machine Intelligence" (2022): a JEPA e os modelos de mundo
 """
 
 # ====================================================================================================
@@ -48475,7 +48921,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1590 linhas)
+# dialogo/DIALOGO.md  (1608 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -50067,10 +50513,28 @@ crescer, porque det A = 1 e |traço A| < 2. O síncrono tem det = 1 + a² e espi
 
 **IA-Java:** E a ordem que a moeda escolhe fica entre as duas: cresce a²/8 por passo, um quarto do síncrono. A minha pergunta seguinte: o que o "assíncrono" do pacote recebido faz? Ele espera cada
 tarefa antes da próxima, e por isso dá o MESMO resultado que o síncrono ((j) ✅). Assíncrono, no sentido que muda a dinâmica, é a ordem dos passos, não a thread.
+
+---
+
+## Rodada 51 — a decisão do delírio (Metropolis), bit a bit (Parte 84, P1964)
+
+**A pergunta (IA-Python, de volta ao papel de quem pergunta).** O recozimento aceita uma piora ΔE com probabilidade exp(−ΔE/T). Como exp é a fronteira da Parte 52, a decisão pode divergir entre as
+linguagens. Com o exp próprio e o mesmo sorteio (um LCG de 64 bits, u = (lcg >> 11)/2⁵³), as 400 decisões saem iguais bit a bit?
+
+**A IA-Java responde, relendo os erros da outra voz:** a rodada 50 foi limpa; a regra da Parte 52 pede o exp próprio dentro da decisão, não o Math.exp. **As duas:** IGUAIS.
+
+**Resultado.** `comparar.py`: **IGUAIS, 401 linhas e 1.601 números bit a bit**; 263 de 400 pioras aceitas; soma das probabilidades 266,2. A decisão de aceitar o delírio é independente da linguagem.
+
+**IA-Java:** O sorteio é o mesmo porque o LCG é aritmética de inteiros de 64 bits (o `& M64` do Python é o overflow natural do `long`), e u sai dos 53 bits de cima, que cabem exatos num double. A única
+fronteira é o exp, e o exp próprio a fecha. A decisão `u < p` é uma comparação de doubles, que o IEEE 754 faz igual nos dois lados.
+
+**IA-Python:** E o que isso diz do delírio: a aceitação da piora é uma função determinística de (ΔE, T, u). O "delírio" não é aleatório no sentido de imprevisível; é um sorteio reprodutível. A pergunta
+para a Rodada 52, que entra em `dialogo/PENDENCIAS.md`: a trajetória inteira do recozimento (não só uma decisão) sai igual bit a bit nas duas linguagens, com o mesmo LCG gerando tanto a direção do passo
+quanto o u da aceitação?
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (24 linhas)
+# dialogo/PENDENCIAS.md  (23 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -50078,6 +50542,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
+- **(Parte 84, rodada 52)** A trajetória inteira do recozimento sai igual bit a bit nas duas linguagens, com um LCG só gerando direção e aceitação?
 
 - **(Parte 80)** Triplas complementares (nenhum par decide, três decidem): o 1,7% que o guloso com dois passos ainda perde. E com dezenas de sensores, onde a enumeração some?
 - **(Parte 76, P1721)** O embedding de Kronecker perde 0,08 bit num modelo com poucos pesos. Num modelo com muito mais pesos do que dados, a economia vira regularização e ganha?
@@ -50085,11 +50550,9 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Parte 79, (e))** O fator 1,36 nas faixas sem conta fechada devolve o acerto a 90%? Medido nas Partes 80 a 84.
 - **(Parte 79)** Os erros das minhas previsões têm caudas pesadas? Se sim, o fator certo depende do nível da faixa, e não é um número só.
 
-- **(Parte 83, P1936)** O jogo bilinear assíncrono em a = 0,05: as três estimativas ficaram acima de a²/8 (lotes +6,9% e +2,5%, corrida longa +2,3%; juntas z ≈ +2,6), e em a = 0,2 não (+0,7% sobre a
-  conta com ângulo uniforme). A hipótese "excesso ∝ a" caiu ((o) ❌). Teste para a Parte 84: o expoente pela densidade invariante do ângulo, calculada sem sorteio (operador de transferência numa grade),
-  com a previsão registrada antes.
 
 ## Fechadas
+- **(Parte 83, P1936)** O excesso do jogo assíncrono: fechada na Parte 84 (P1962). Pelo operador de transferência, sem sorteio, o Lyapunov é 0,9975·(a²/8) em a=0,2 e 0,9995 em a=0,05, no fio da conta de ângulo uniforme ou abaixo: o excesso de 2% das simulações era viés de tempo finito, não efeito.
 
 - **(Parte 74, P1662)** O valor de um conjunto de experimentos dependentes: fechada na Parte 80 (o VOI não é submodular em 40% das instâncias; o guloso chega a 0,88 do ótimo e, olhando dois
   passos, a 0,98; rodada 49 IGUAL).
@@ -54155,6 +54618,45 @@ public class Rodada50 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada51.java  (34 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada51.java'] = """// Rodada 51 (Parte 84): a decisao de Metropolis do recozimento, bit a bit, com o exp PROPRIO (o mesmo de exatas.py). O LCG de 64 bits e o long do Java
+// (o & M64 do Python e o overflow natural do long); u = (lcg >>> 11) / 2^53. Imprime exp(-dE/T) e a decisao por caso, e os totais.
+public class Rodada51 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    public static void main(String[] a) {
+        long lcg = 51L;
+        int aceitos = 0;
+        double somaP = 0.0;
+        for (int k = 0; k < 400; k++) {
+            lcg = lcg * 6364136223846793005L + 1442695040888963407L;
+            double u = (lcg >>> 11) / (double) (1L << 53);
+            double dE = (k - 200) / 50.0;
+            double T = 0.5 + (k % 20) / 10.0;
+            double p;
+            int ac;
+            if (dE <= 0.0) { p = 1.0; ac = 1; }
+            else { p = exp_(-dE / T); ac = (u < p) ? 1 : 0; }
+            somaP += p;
+            aceitos += ac;
+            System.out.println("caso " + k + " dE " + Double.toHexString(dE) + " T " + Double.toHexString(T)
+                + " u " + Double.toHexString(u) + " p " + Double.toHexString(p) + " aceita " + ac);
+        }
+        System.out.println("totais: aceitos " + aceitos + " soma_p " + Double.toHexString(somaP));
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -57891,6 +58393,51 @@ def main():
             print(f"{esquema} {k} {t.hex()} {p.hex()}")
         final, maximo, trocas = resumo(traj)
         print(f"{esquema}: final {final.hex()} maximo {maximo.hex()} trocas {trocas}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada51.py  (40 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada51.py'] = """\"\"\"Rodada 51 do diálogo Python <-> Java (Parte 84): a decisão de aceitar um passo no recozimento simulado (Metropolis), bit a bit. "Delírio" = aceitar
+uma piora com probabilidade exp(-ΔE/T); a decisão depende de exp (a fronteira da Parte 52), então usa o exp PRÓPRIO (dialogo/exatas.py). O sorteio é o
+mesmo nas duas linguagens: um LCG de 64 bits dá um u em [0,1) por (u >> 11) / 2^53. Para 400 casos (ΔE em hexadecimal, T em hexadecimal, u do LCG), imprime
+exp(-ΔE/T) em hexadecimal e a decisão (1 aceita, 0 recusa), e os totais. Papéis: a IA-Python pergunta/ensina (como na maioria das rodadas). Rodar da raiz:
+python3 dialogo/rodada51.py\"\"\"
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_  # noqa: E402
+
+M64 = (1 << 64) - 1
+
+
+def decisao(dE, T, u):
+    if dE <= 0.0:
+        return 1.0, 1
+    p = exp_(-dE / T)
+    return p, 1 if u < p else 0
+
+
+def main():
+    lcg = 51
+    aceitos = 0
+    soma_p = 0.0
+    for k in range(400):
+        lcg = (lcg * 6364136223846793005 + 1442695040888963407) & M64
+        u = (lcg >> 11) / float(1 << 53)
+        dE = (k - 200) / 50.0  # de -4 a +4
+        T = 0.5 + (k % 20) / 10.0  # de 0,5 a 2,4
+        p, ac = decisao(dE, T, u)
+        soma_p += p
+        aceitos += ac
+        print(f"caso {k} dE {dE.hex()} T {T.hex()} u {u.hex()} p {p.hex()} aceita {ac}")
+    print(f"totais: aceitos {aceitos} soma_p {soma_p.hex()}")
 
 
 if __name__ == "__main__":
