@@ -9580,6 +9580,8 @@ VEREDITOS_P2519 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
 ERROS_P2519, TESTES_P2519 = 215, 720
 VEREDITOS_P2589 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
 ERROS_P2589, TESTES_P2589 = 215, 724
+VEREDITOS_P2659 = "(a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅"
+ERROS_P2659, TESTES_P2659 = 216, 730
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12120,17 +12122,19 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n in (84, 85, 86, 87, 88, 89, 90, 91, 92):  # a (e)/(g)/(d) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
+        if n in (84, 85, 86, 87, 88, 89, 90, 91, 92):  # a (e) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
+        if n == 93:  # na Parte 93 a letra da calibracao e a (g)
+            txt = re.sub(r"\(g\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
         ok += a
@@ -13749,13 +13753,33 @@ def _parte_92():
     print(f"P2202 produto por multiplicacao repetida (pow inteiro, portavel): t=10 -> {p2202_produto_portavel()[9]}")
     print(f"P2203 rodada 59 (passo de Adam, IGUAL em Java): perdas finais = {[round(x, 4) for x in p2203_rodada59()]}")
     print(f"P2204 o passo de Adam reduz a perda nos 5 casos: {p2204_adam_reduz_perda()}")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92))
     print(f"P1961 teste (e), Partes 80-92: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2201, 2230)
     print(f"P1092 pNN novas (P2201-P2230) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 92: {p974_previsoes_sem_largura(range(92, 93))}")
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2589, testes=TESTES_P2589)
     print(f"P2589 minha taxa de erro ({ERROS_P2589}/{TESTES_P2589}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_93():
+    print("--- Parte 93 (0x5D: o modelo de mundo que planeja) ---")
+    print(f"P2231 recuperacao do modelo de mundo (minimos quadrados, mundo linear): erro = {p2231_recuperar_modelo():.2e}")
+    m_mpc, m_re, razao, por_c = p2232_mpc_vs_reativo_painel()
+    print(f"P2232 painel MPC x reativo (4 condicoes): custo medio MPC = {m_mpc:.4f}, reativo = {m_re:.4f}, razao = {razao:.4f}")
+    cm, cr, rz = p2233_mpc_regime_velocidade(s0=(-1.0, 1.5), alvo=-0.5, semente=23)
+    print(f"P2233 regime cego a velocidade (NOVA condicao): custo MPC = {cm:.4f}, reativo = {cr:.4f}, razao = {rz:.4f}")
+    custos, melhor, mc = p2234_horizonte_nao_monotono()
+    print(f"P2234 horizonte nao-monotono (H=1,3,6,12): custos = {[round(x, 3) for x in custos]}; melhor H = {(1, 3, 6, 12)[melhor]}")
+    custos2, mono = p2235_shooting_converge()
+    print(f"P2235 tiro aleatorio converge (K=8,32,128,512): custos = {[round(x, 3) for x in custos2]}; nao-crescente = {mono}")
+    print(f"P2236 recusa da auto-operacao autonoma (ast; subprocess/Popen, urllib/http): {p2236_recusa_autoreplicacao()} -> capacidade RECUSADA")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (g), Partes 80-93: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2231, 2260)
+    print(f"P1092 pNN novas (P2231-P2260) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 93: {p974_previsoes_sem_largura(range(93, 94))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2659, testes=TESTES_P2659)
+    print(f"P2659 minha taxa de erro ({ERROS_P2659}/{TESTES_P2659}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -13793,7 +13817,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93}
 
 
 if __name__ == "__main__":

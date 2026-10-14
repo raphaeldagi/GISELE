@@ -26,7 +26,7 @@ class TesteParte92(unittest.TestCase):
         self.assertEqual(calculos.p2204_adam_reduz_perda(), [True] * 5)
 
     def test_p1961_com_parte_92(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92))
         self.assertEqual(por[92], (4, 4))
         self.assertEqual((ok, tot), (53, 65))
 

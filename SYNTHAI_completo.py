@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 92, perguntas P1 a P2204).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 93, perguntas P1 a P2236).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (13718 linhas)
+# calculos.py  (13829 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9618,6 +9618,8 @@ VEREDITOS_P2519 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
 ERROS_P2519, TESTES_P2519 = 215, 720
 VEREDITOS_P2589 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
 ERROS_P2589, TESTES_P2589 = 215, 724
+VEREDITOS_P2659 = "(a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅"
+ERROS_P2659, TESTES_P2659 = 216, 730
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12158,17 +12160,19 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
-        if n in (84, 85, 86, 87, 88, 89, 90, 91, 92):  # a (e)/(g)/(d) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
+        if n in (84, 85, 86, 87, 88, 89, 90, 91, 92):  # a (e) e o proprio teste de calibracao: conta-la na sua propria entrada seria circular
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
+        if n == 93:  # na Parte 93 a letra da calibracao e a (g)
+            txt = re.sub(r"\\(g\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
         ok += a
@@ -12767,6 +12771,93 @@ def p2202_produto_portavel(ate=20, base=0.9):
     portabilidade entre linguas). Devolve a lista dos produtos de 1..ate, para o teste conferir contra o pow_int da rodada.\"\"\"
     r59 = _rodada59()
     return [r59.pow_int(base, t) for t in range(1, ate + 1)]
+
+
+def p2231_recuperar_modelo(semente=0, n=400):
+    \"\"\"A recuperacao do modelo de mundo (P2231; Parte 93): num mundo linear determinista s'=As+Ba, os minimos
+    quadrados (equacoes normais 3x3) recuperam A e B ate o erro de ponto flutuante. Devolve o maior |coef ajustado - verdadeiro|.
+    Forma fechada: sem ruido e com Z de posto cheio, theta = (ZtZ)^-1 Zt Y e exato -> erro ~ epsilon de maquina, nao ~1/sqrt(n).\"\"\"
+    from synthai.mundo import gerar_transicoes, ajustar, erro_modelo
+    X, U, Y = gerar_transicoes(semente, n)
+    Ah, Bh = ajustar(X, U, Y)
+    return erro_modelo(Ah, Bh)
+
+
+def p2232_mpc_vs_reativo_painel(alvo=1.0, passos=30, H=6, K=64):
+    \"\"\"MPC (planejando no modelo APRENDIDO) contra o controlador reativo, em 4 condicoes iniciais (P2232; Parte 93).
+    Devolve (custo medio MPC, custo medio reativo, razao mpc/reativo, custos por condicao). A vantagem MEDIA e pequena
+    num mundo facil; a vantagem e CONDICIONAL (grande onde o reativo e cego).\"\"\"
+    from synthai.mundo import comparar_mpc_reativo
+    m_mpc, m_re, _erro, por = comparar_mpc_reativo(alvo=alvo, passos=passos, H=H, K=K)
+    return m_mpc, m_re, m_mpc / m_re, por
+
+
+def p2233_mpc_regime_velocidade(s0=(1.0, 1.5), alvo=1.0, passos=30, H=6, K=128, semente=7, n_treino=400):
+    \"\"\"O regime em que o planejamento vence o reagir (P2233; Parte 93): posicao JA no alvo, velocidade alta. O reativo
+    (proporcional so a posicao) e cego a velocidade e nao freia; o MPC preve que a velocidade carrega a posicao para longe e freia.
+    Devolve (custo MPC, custo reativo, razao mpc/reativo). Mecanismo: o estado tem acoplamento posicao<-velocidade que o reativo ignora.\"\"\"
+    from synthai.mundo import gerar_transicoes, ajustar, mpc, acao_reativa, controlar
+    X, U, Y = gerar_transicoes(0, n_treino)
+    Ah, Bh = ajustar(X, U, Y)
+    pol_mpc = lambda s: mpc(Ah, Bh, s, alvo, H=H, K=K, semente=semente)
+    c_mpc, _ = controlar(pol_mpc, s0, alvo, passos)
+    c_re, _ = controlar(lambda s: acao_reativa(s, alvo), s0, alvo, passos)
+    return c_mpc, c_re, c_mpc / c_re
+
+
+def p2234_horizonte_nao_monotono(s0=(1.0, 1.5), alvo=1.0, passos=30, K=128, semente=7, horizontes=(1, 3, 6, 12), n_treino=400):
+    \"\"\"O horizonte do MPC NAO e 'quanto mais, melhor' (P2234; Parte 93, regra da Parte 84): com tiro aleatorio (random shooting)
+    de K sequencias fixo, aumentar o horizonte H aumenta a dimensao do espaco de busca; depois de um otimo (H~6), o mesmo K cobre
+    pior o espaco e o custo volta a subir. Devolve (lista de custos por H, indice do melhor H, melhor custo).\"\"\"
+    from synthai.mundo import gerar_transicoes, ajustar, mpc, controlar
+    X, U, Y = gerar_transicoes(0, n_treino)
+    Ah, Bh = ajustar(X, U, Y)
+    custos = []
+    for H in horizontes:
+        pol = lambda s, H=H: mpc(Ah, Bh, s, alvo, H=H, K=K, semente=semente)
+        c, _ = controlar(pol, s0, alvo, passos)
+        custos.append(c)
+    melhor = min(range(len(custos)), key=lambda i: custos[i])
+    return custos, melhor, custos[melhor]
+
+
+def p2235_shooting_converge(s0=(1.0, 1.5), alvo=1.0, passos=30, H=6, semente=7, ks=(8, 32, 128, 512), n_treino=400):
+    \"\"\"O tiro aleatorio converge com K (P2235; Parte 93): com H fixo, aumentar o numero K de sequencias amostradas so pode
+    melhorar (ou empatar) o minimo encontrado -> o custo e nao-crescente em K. Devolve (lista de custos por K, e monotono nao-crescente?).\"\"\"
+    from synthai.mundo import gerar_transicoes, ajustar, mpc, controlar
+    X, U, Y = gerar_transicoes(0, n_treino)
+    Ah, Bh = ajustar(X, U, Y)
+    custos = []
+    for K in ks:
+        pol = lambda s, K=K: mpc(Ah, Bh, s, alvo, H=H, K=K, semente=semente)
+        c, _ = controlar(pol, s0, alvo, passos)
+        custos.append(c)
+    monotono = all(custos[i + 1] <= custos[i] + 1e-9 for i in range(len(custos) - 1))
+    return custos, monotono
+
+
+def p2236_recusa_autoreplicacao(codigo=None):
+    \"\"\"A RECUSA da auto-operacao autonoma e da rede (P2236; Parte 93; regra da Parte 84), pela arvore sintatica, SEM executar.
+    O pacote recebido trazia trabalho_continuo.py (subprocess.Popen de si mesmo, com snapshot de fontes e MANIFESTO SHA-256: um
+    trabalhador que se perpetua) e domestico.py (urllib.request: rede de saida). Audito os dois snippets representativos pela AST e
+    confirmo que os mecanismos estao presentes -> por isso a capacidade e RECUSADA e NAO integrada ao pacote. Devolve
+    (usa subprocess/Popen?, usa urllib/http?). Ambos True justificam a recusa; o modulo synthai/mundo.py reimplementa so a IDEIA segura
+    (modelo de mundo + MPC), sem rede, sem Popen, sem auto-replicacao.\"\"\"
+    import ast
+    codigo = codigo if codigo is not None else (
+        "import subprocess, urllib.request, hashlib, shutil\\n"
+        "def lancar(motor, argv):\\n"
+        "    for nome in FONTES:\\n"
+        "        shutil.copyfile(origem/nome, motor/nome)\\n"
+        "        hashes[nome] = hashlib.sha256((motor/nome).read_bytes()).hexdigest()\\n"
+        "    p = subprocess.Popen(argv, start_new_session=True, close_fds=True)\\n"
+        "def buscar(url):\\n"
+        "    return urllib.request.urlopen(url)\\n")
+    arv = ast.parse(codigo)
+    fonte = ast.dump(arv).lower()
+    usa_subprocess = "subprocess" in fonte or "popen" in fonte
+    usa_rede = "urllib" in fonte or "urlopen" in fonte or "http" in fonte or "socket" in fonte
+    return usa_subprocess, usa_rede
 
 
 def p1578_autovalores_da_atencao():
@@ -13700,13 +13791,33 @@ def _parte_92():
     print(f"P2202 produto por multiplicacao repetida (pow inteiro, portavel): t=10 -> {p2202_produto_portavel()[9]}")
     print(f"P2203 rodada 59 (passo de Adam, IGUAL em Java): perdas finais = {[round(x, 4) for x in p2203_rodada59()]}")
     print(f"P2204 o passo de Adam reduz a perda nos 5 casos: {p2204_adam_reduz_perda()}")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92))
     print(f"P1961 teste (e), Partes 80-92: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2201, 2230)
     print(f"P1092 pNN novas (P2201-P2230) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 92: {p974_previsoes_sem_largura(range(92, 93))}")
     media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2589, testes=TESTES_P2589)
     print(f"P2589 minha taxa de erro ({ERROS_P2589}/{TESTES_P2589}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
+
+def _parte_93():
+    print("--- Parte 93 (0x5D: o modelo de mundo que planeja) ---")
+    print(f"P2231 recuperacao do modelo de mundo (minimos quadrados, mundo linear): erro = {p2231_recuperar_modelo():.2e}")
+    m_mpc, m_re, razao, por_c = p2232_mpc_vs_reativo_painel()
+    print(f"P2232 painel MPC x reativo (4 condicoes): custo medio MPC = {m_mpc:.4f}, reativo = {m_re:.4f}, razao = {razao:.4f}")
+    cm, cr, rz = p2233_mpc_regime_velocidade(s0=(-1.0, 1.5), alvo=-0.5, semente=23)
+    print(f"P2233 regime cego a velocidade (NOVA condicao): custo MPC = {cm:.4f}, reativo = {cr:.4f}, razao = {rz:.4f}")
+    custos, melhor, mc = p2234_horizonte_nao_monotono()
+    print(f"P2234 horizonte nao-monotono (H=1,3,6,12): custos = {[round(x, 3) for x in custos]}; melhor H = {(1, 3, 6, 12)[melhor]}")
+    custos2, mono = p2235_shooting_converge()
+    print(f"P2235 tiro aleatorio converge (K=8,32,128,512): custos = {[round(x, 3) for x in custos2]}; nao-crescente = {mono}")
+    print(f"P2236 recusa da auto-operacao autonoma (ast; subprocess/Popen, urllib/http): {p2236_recusa_autoreplicacao()} -> capacidade RECUSADA")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (g), Partes 80-93: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2231, 2260)
+    print(f"P1092 pNN novas (P2231-P2260) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 93: {p974_previsoes_sem_largura(range(93, 94))}")
+    media, lo, hi = p95_minha_taxa_de_erro(erros=ERROS_P2659, testes=TESTES_P2659)
+    print(f"P2659 minha taxa de erro ({ERROS_P2659}/{TESTES_P2659}): media = {media:.2f}, intervalo 90% = [{lo:.2f}, {hi:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -13744,7 +13855,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93}
 
 
 if __name__ == "__main__":
@@ -13757,7 +13868,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (327 linhas)
+# CLAUDE.md  (337 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -13929,6 +14040,16 @@ anterior, commit e push.
   mas quando o expoente e INTEIRO (b1^t, b2^t do Adam) a saida e a multiplicacao repetida propria (portavel), nao a pow da libm. Com isso o passo de Adam (momento, correcao de
   vies, sqrt, exp/log proprios) e bit a bit entre as linguas, e o passo de treino inteiro do GPT (forward+gradiente+Adam) esta traduzido. A fronteira NUNCA e a dinamica (modelo,
   acoplamento, otimizador), sempre a aritmetica (ordem das somas, pow, transcendentais); lista fechada: exp/log por serie, pow inteiro por multiplicacao repetida, +-*/sqrt IEEE.
+  Parte 93 (o modelo de mundo que planeja; upload "Adicione o que for util"): reimplementei em biblioteca padrao a IDEIA segura do modulo recebido modelo_mundo.py - aprender a
+  dinamica de um mundo linear por minimos quadrados (recuperacao exata, erro 1e-16, forma fechada, nao 1/sqrt(n)) e PLANEJAR nele por MPC (tiro aleatorio, horizonte receptivo):
+  `synthai/mundo.py`, a 4a forma do agente ao lado da decisao bayesiana, do GPT e do pulsado (retoma a SynthaiPlanejadora da P182, agora com modelo APRENDIDO). RECUSEI e NAO integrei
+  trabalho_continuo.py (subprocess.Popen de si mesmo + snapshot de fontes com MANIFESTO SHA-256: auto-replicacao de processo) e domestico.py (urllib: rede) - a capacidade de
+  auto-operacao autonoma que a Parte 84 decidiu nao construir; auditei os dois por AST (P2236) sem executar. Planejar vence o reagir NAO na media (empate 0,987 num mundo facil) e sim
+  no regime em que o estado tem consequencia OCULTA (posicao no alvo, velocidade alta: o reativo e cego a velocidade, razao 0,26). Errei a (c): previ a MAGNITUDE da vitoria do MPC numa
+  faixa estreita calibrada por UMA condicao e o mundo novo deu vitoria maior - regra: magnitude de efeito condicional so com >=2 condicoes cobrindo a variavel que o move (a regra da
+  Parte 65 aplicada ao TAMANHO, nao so a existencia). Mais horizonte NAO e sempre melhor (H=6 bate H=12 com K fixo: maldicao da dimensao no tiro aleatorio; regra da Parte 84). Rodada 60:
+  a decisao do MPC (rollout + argmin) e IGUAL bit a bit (so +-*, nenhum transcendental) - planejar/controlar nao cria fronteira. Cinco partes (88-93) de conta fechada/nao-efeito,
+  calibracao 0,817.
   Cinco partes (88-92) de conta fechada/fronteira: 20/20 do mundo, calibracao 0,815 (de 0,74 no minimo da Parte 84); a subida foi um degrau ao trocar a PROCEDENCIA da previsao.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
@@ -14078,7 +14199,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -16497,6 +16618,179 @@ def comparacao_pareada(a, b):
 
 def normalizado(retorno, acaso, referencia):
     return (retorno - acaso) / (referencia - acaso)
+"""
+
+# ====================================================================================================
+# synthai/mundo.py  (168 linhas)
+# ====================================================================================================
+FONTES['synthai/mundo.py'] = """\"\"\"Modelo de mundo latente + controle preditivo (MPC) em Python puro (Parte 93).
+
+Reimplementacao em biblioteca padrao da IDEIA de um pacote recebido do usuario
+(modelo_mundo.py, "previsao latente condicionada a acoes e MPC local em um mundo
+linear sintetico"): aprender a dinamica de um mundo a partir de transicoes
+observadas e planejar acoes nesse modelo aprendido (horizonte receptivo, receding
+horizon). NAO roda o codigo recebido; so a ideia, escrita do zero, so +-*/ e sqrt.
+
+Sem rede, sem Popen, sem credenciais, sem aquisicao de recursos, sem
+auto-replicacao de processos: os modulos do pacote recebido que fazem isso
+(domestico.py: socket.connect; trabalho_continuo.py: Popen/connect) sao RECUSADOS
+e nao integrados (ver p2234_recusa_autoreplicacao em calculos.py; regra da Parte 84).
+
+O mundo: estado s em R^2, acao escalar a em [-1, 1]. Dinamica verdadeira linear
+determinista  s' = A s + B a, com
+    A = [[1, 0.15], [0, 0.9]],  B = [[0], [0.15]].
+Uma "posicao" s[0] que integra uma "velocidade" s[1] amortecida, empurrada por a.
+\"\"\"
+import math
+import random
+
+# Dinamica verdadeira do mundo (o planejador NAO a conhece; ele aprende Ahat, Bhat).
+A_VERDADEIRO = [[1.0, 0.15], [0.0, 0.9]]
+B_VERDADEIRO = [[0.0], [0.15]]
+
+
+def transicao(s, a, A=A_VERDADEIRO, B=B_VERDADEIRO):
+    \"\"\"Um passo da dinamica: s' = A s + B a. s = (s0, s1), a escalar em [-1, 1].\"\"\"
+    if not (-1.0 - 1e-12 <= a <= 1.0 + 1e-12):
+        raise ValueError("acao fora de [-1, 1]")
+    s0, s1 = s
+    n0 = A[0][0] * s0 + A[0][1] * s1 + B[0][0] * a
+    n1 = A[1][0] * s0 + A[1][1] * s1 + B[1][0] * a
+    return (n0, n1)
+
+
+def gerar_transicoes(semente, n):
+    \"\"\"n transicoes (s, a, s') com estados em [-2, 2]^2 e acoes em [-1, 1].\"\"\"
+    rng = random.Random(semente)
+    X, U, Y = [], [], []
+    for _ in range(n):
+        s = (rng.uniform(-2, 2), rng.uniform(-2, 2))
+        a = rng.uniform(-1, 1)
+        X.append(s)
+        U.append(a)
+        Y.append(transicao(s, a))
+    return X, U, Y
+
+
+def resolver_linear(M, b):
+    \"\"\"Resolve M x = b por eliminacao de Gauss com pivoteamento parcial. M quadrada (lista de listas).\"\"\"
+    n = len(b)
+    aug = [list(M[i]) + [b[i]] for i in range(n)]
+    for col in range(n):
+        piv = max(range(col, n), key=lambda r: abs(aug[r][col]))
+        if abs(aug[piv][col]) < 1e-15:
+            raise ValueError("matriz singular")
+        aug[col], aug[piv] = aug[piv], aug[col]
+        p = aug[col][col]
+        for r in range(n):
+            if r != col:
+                f = aug[r][col] / p
+                for c in range(col, n + 1):
+                    aug[r][c] -= f * aug[col][c]
+    return [aug[i][n] / aug[i][i] for i in range(n)]
+
+
+def ajustar(X, U, Y):
+    \"\"\"Ajusta Ahat (2x2) e Bhat (2x1) por minimos quadrados (equacoes normais 3x3).
+
+    Regressores z = [s0, s1, a]; para cada saida j, theta_j = (ZtZ)^-1 Zt y_j. Num
+    mundo linear sem ruido, recupera A, B ate o erro de ponto flutuante.\"\"\"
+    Z = [[x[0], x[1], u] for x, u in zip(X, U)]
+    ZtZ = [[sum(Z[k][i] * Z[k][j] for k in range(len(Z))) for j in range(3)] for i in range(3)]
+    Ahat = [[0.0, 0.0], [0.0, 0.0]]
+    Bhat = [[0.0], [0.0]]
+    for j in range(2):
+        Zty = [sum(Z[k][i] * Y[k][j] for k in range(len(Z))) for i in range(3)]
+        theta = resolver_linear(ZtZ, Zty)
+        Ahat[j][0], Ahat[j][1] = theta[0], theta[1]
+        Bhat[j][0] = theta[2]
+    return Ahat, Bhat
+
+
+def erro_modelo(Ahat, Bhat, A=A_VERDADEIRO, B=B_VERDADEIRO):
+    \"\"\"Maior |coeficiente ajustado - verdadeiro| entre A e B.\"\"\"
+    e = 0.0
+    for i in range(2):
+        for j in range(2):
+            e = max(e, abs(Ahat[i][j] - A[i][j]))
+        e = max(e, abs(Bhat[i][0] - B[i][0]))
+    return e
+
+
+def rollout(Ahat, Bhat, s0, acoes):
+    \"\"\"Trajetoria prevista pelo modelo aprendido a partir de s0 sob a sequencia de acoes.\"\"\"
+    s = s0
+    traj = [s]
+    for a in acoes:
+        s = transicao(s, a, Ahat, Bhat)
+        traj.append(s)
+    return traj
+
+
+def custo_trajetoria(traj, acoes, alvo, peso_acao):
+    \"\"\"Custo = soma das distancias^2 ao alvo (posicao s0) ao longo da trajetoria + peso_acao * soma a^2.\"\"\"
+    c = 0.0
+    for s in traj[1:]:
+        c += (s[0] - alvo) ** 2 + s[1] * s[1]
+    for a in acoes:
+        c += peso_acao * a * a
+    return c
+
+
+def mpc(Ahat, Bhat, s0, alvo, H=6, K=64, semente=0, peso_acao=0.05):
+    \"\"\"Controle preditivo: amostra K sequencias de acao de horizonte H (mais a sequencia nula),
+    simula cada uma no MODELO APRENDIDO, escolhe a de menor custo previsto e devolve a 1a acao.\"\"\"
+    rng = random.Random(semente)
+    candidatos = [[0.0] * H]
+    for _ in range(K):
+        candidatos.append([rng.uniform(-1, 1) for _ in range(H)])
+    melhor, melhor_c = candidatos[0], float("inf")
+    for acoes in candidatos:
+        traj = rollout(Ahat, Bhat, s0, acoes)
+        c = custo_trajetoria(traj, acoes, alvo, peso_acao)
+        if c < melhor_c:
+            melhor_c, melhor = c, acoes
+    return melhor[0]
+
+
+def acao_reativa(s, alvo, ganho=0.9):
+    \"\"\"Controlador reativo de 1 passo (proporcional ao erro de posicao), saturado em [-1, 1].\"\"\"
+    a = ganho * (alvo - s[0])
+    return max(-1.0, min(1.0, a))
+
+
+def controlar(politica, s0, alvo, passos=30, **kw):
+    \"\"\"Executa uma politica no mundo VERDADEIRO por `passos`, devolve (custo total realizado, estado final).
+
+    politica(s) -> acao. O custo realizado usa a MESMA metrica do planejador (distancia^2 + velocidade^2),
+    sem o termo de acao (mede so o resultado, nao o esforco previsto).\"\"\"
+    s = s0
+    custo = 0.0
+    for _ in range(passos):
+        a = politica(s)
+        a = max(-1.0, min(1.0, a))
+        s = transicao(s, a)
+        custo += (s[0] - alvo) ** 2 + s[1] * s[1]
+    return custo, s
+
+
+def comparar_mpc_reativo(alvo=1.0, passos=30, H=6, K=64, n_treino=400, semente=0):
+    \"\"\"Compara MPC (no modelo aprendido) com o reativo em 4 condicoes iniciais. Devolve
+    (custo medio MPC, custo medio reativo, erro do modelo aprendido, lista por condicao).\"\"\"
+    X, U, Y = gerar_transicoes(semente, n_treino)
+    Ahat, Bhat = ajustar(X, U, Y)
+    erro = erro_modelo(Ahat, Bhat)
+    iniciais = [(-1.5, 0.0), (1.5, 0.0), (0.0, 1.0), (-1.0, -1.0)]
+    por = []
+    for i, s0 in enumerate(iniciais):
+        pol_mpc = lambda s, _i=i: mpc(Ahat, Bhat, s, alvo, H=H, K=K, semente=1000 + _i)
+        pol_re = lambda s: acao_reativa(s, alvo)
+        c_mpc, _ = controlar(pol_mpc, s0, alvo, passos)
+        c_re, _ = controlar(pol_re, s0, alvo, passos)
+        por.append((c_mpc, c_re))
+    m_mpc = sum(p[0] for p in por) / len(por)
+    m_re = sum(p[1] for p in por) / len(por)
+    return m_mpc, m_re, erro, por
 """
 
 # ====================================================================================================
@@ -21547,9 +21841,81 @@ class TesteParte92(unittest.TestCase):
         self.assertEqual(calculos.p2204_adam_reduz_perda(), [True] * 5)
 
     def test_p1961_com_parte_92(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92))
         self.assertEqual(por[92], (4, 4))
         self.assertEqual((ok, tot), (53, 65))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte93.py  (67 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte93.py'] = """\"\"\"Testes de unidade da Parte 93 (o modelo de mundo que planeja): `python3 -m unittest synthai.testes_parte93`.\"\"\"
+
+import unittest
+
+import calculos
+from synthai import mundo
+
+
+class TesteParte93(unittest.TestCase):
+    def test_p2231_recuperar_modelo(self):
+        erro = calculos.p2231_recuperar_modelo()
+        # mundo linear determinista: minimos quadrados recuperam A, B ate o epsilon de maquina
+        self.assertLess(erro, 1e-10)
+
+    def test_transicao_e_ajuste(self):
+        # a dinamica verdadeira e o ajuste batem num caso com TODOS os termos != 0 (regra da Parte 30)
+        s = (0.7, -1.3)
+        n0, n1 = mundo.transicao(s, 0.5)
+        self.assertAlmostEqual(n0, 1.0 * 0.7 + 0.15 * (-1.3) + 0.0 * 0.5)
+        self.assertAlmostEqual(n1, 0.0 * 0.7 + 0.9 * (-1.3) + 0.15 * 0.5)
+        with self.assertRaises(ValueError):
+            mundo.transicao(s, 2.0)  # acao fora de [-1, 1]
+
+    def test_resolver_linear(self):
+        x = mundo.resolver_linear([[2.0, 1.0], [1.0, 3.0]], [5.0, 10.0])
+        self.assertAlmostEqual(x[0], 1.0)
+        self.assertAlmostEqual(x[1], 3.0)
+
+    def test_p2232_painel(self):
+        m_mpc, m_re, razao, por = calculos.p2232_mpc_vs_reativo_painel()
+        self.assertEqual(len(por), 4)
+        # num mundo facil a vantagem media e pequena mas o MPC nao perde feio
+        self.assertTrue(0.9 <= razao <= 1.05)
+
+    def test_p2233_regime_velocidade(self):
+        cm, cr, rz = calculos.p2233_mpc_regime_velocidade(s0=(-1.0, 1.5), alvo=-0.5, semente=23)
+        # no regime cego a velocidade o planejamento vence claramente
+        self.assertLess(cm, cr)
+        self.assertLess(rz, 1.0)
+
+    def test_p2234_horizonte_nao_monotono(self):
+        custos, melhor, mc = calculos.p2234_horizonte_nao_monotono()
+        # o melhor horizonte e H=6 (indice 2), nao o maior; mais horizonte nao e sempre melhor
+        self.assertEqual((1, 3, 6, 12)[melhor], 6)
+        self.assertGreater(custos[3], custos[2])  # H=12 pior que H=6
+
+    def test_p2235_shooting_converge(self):
+        custos, mono = calculos.p2235_shooting_converge()
+        self.assertTrue(mono)  # custo nao-crescente em K
+
+    def test_p2236_recusa_autoreplicacao(self):
+        usa_subprocess, usa_rede = calculos.p2236_recusa_autoreplicacao()
+        # os dois mecanismos da auto-operacao autonoma estao presentes no codigo recebido -> recusado
+        self.assertTrue(usa_subprocess)
+        self.assertTrue(usa_rede)
+        # caso de controle limpo: um codigo sem rede nem subprocess nao e acusado
+        limpo = "def f(x):\\n    return x * x + 1\\n"
+        self.assertEqual(calculos.p2236_recusa_autoreplicacao(limpo), (False, False))
+
+    def test_p1961_com_parte_93(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[93], (5, 6))
+        self.assertEqual((ok, tot), (58, 71))
 
 
 if __name__ == "__main__":
@@ -28541,7 +28907,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1623 linhas)
+# resultados.txt  (1648 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -30166,6 +30532,31 @@ P1092 pNN novas (P2141-P2170) sem teste: 0 de 3: []
 P974 previsoes unilaterais da Parte 90: {}
 P2449 minha taxa de erro (215/716): media = 0.30, intervalo 90% = [0.27, 0.33]
 === Unificacao (sempre ao final) ===
+--- Parte 92 (0x5C: o Adam e a fronteira do pow) ---
+P2201 fronteira do pow (0.9**t != produto, t=1..500): 418 de 500
+P2202 produto por multiplicacao repetida (pow inteiro, portavel): t=10 -> 0.34867844010000015
+P2203 rodada 59 (passo de Adam, IGUAL em Java): perdas finais = [1.5475, 1.0705, 0.6113, 0.9741, 6.4264]
+P2204 o passo de Adam reduz a perda nos 5 casos: [True, True, True, True, True]
+P1961 teste (e), Partes 80-92: 53/65 = 0.8154; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4)}
+P1092 pNN novas (P2201-P2230) sem teste: 0 de 4: []
+P974 previsoes unilaterais da Parte 92: {}
+P2589 minha taxa de erro (215/724): media = 0.30, intervalo 90% = [0.27, 0.33]
+  (Regressao: confirmada verde pela suite de testes de unidade.)
+
+
+--- Parte 93 (0x5D: o modelo de mundo que planeja) ---
+P2231 recuperacao do modelo de mundo (minimos quadrados, mundo linear): erro = 1.11e-16
+P2232 painel MPC x reativo (4 condicoes): custo medio MPC = 48.9073, reativo = 49.5314, razao = 0.9874
+P2233 regime cego a velocidade (NOVA condicao): custo MPC = 5.8428, reativo = 22.4548, razao = 0.2602
+P2234 horizonte nao-monotono (H=1,3,6,12): custos = [21.724, 17.111, 12.846, 23.431]; melhor H = 6
+P2235 tiro aleatorio converge (K=8,32,128,512): custos = [16.445, 16.03, 12.846, 12.488]; nao-crescente = True
+P2236 recusa da auto-operacao autonoma (ast; subprocess/Popen, urllib/http): (True, True) -> capacidade RECUSADA
+P1961 teste (g), Partes 80-93: 58/71 = 0.8169; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6)}
+P1092 pNN novas (P2231-P2260) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 93: {}
+P2659 minha taxa de erro (216/730): media = 0.30, intervalo 90% = [0.27, 0.32]
+  (Regressao: confirmada verde pela suite de testes de unidade.)
+
 """
 
 # ====================================================================================================
@@ -49473,7 +49864,7 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅. Parte 91: **4 testes, 0 erros**. Acum
 """
 
 # ====================================================================================================
-# ASI_AGI_parte92_o_adam_e_a_fronteira_do_pow.md  (153 linhas)
+# ASI_AGI_parte92_o_adam_e_a_fronteira_do_pow.md  (157 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte92_o_adam_e_a_fronteira_do_pow.md'] = """# Como eu construiria uma AGI/ASI — Parte 92 (0x5C): o Adam e a fronteira do pow
 
@@ -49628,6 +50019,194 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅. Parte 92: **4 testes, 0 erros**. Acum
 - D. Kingma e J. Ba, "Adam: A Method for Stochastic Optimization" (2015): o otimizador e a correção de viés b₁ᵗ, b₂ᵗ
 - IEEE 754-2019, §9.2: funções recomendadas (pow) não têm arredondamento correto obrigatório
 - D. Goldberg, "What Every Computer Scientist Should Know About Floating-Point Arithmetic" (1991)
+
+---
+
+**Continua na [Parte 93](ASI_AGI_parte93_o_modelo_de_mundo_que_planeja.md): o modelo de mundo que planeja (MPC num modelo aprendido) — e a recusa da auto-operação autônoma.**
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte93_o_modelo_de_mundo_que_planeja.md  (179 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte93_o_modelo_de_mundo_que_planeja.md'] = """# Como eu construiria uma AGI/ASI — Parte 93 (0x5D): o modelo de mundo que planeja
+
+> Continuação da [Parte 92](ASI_AGI_parte92_o_adam_e_a_fronteira_do_pow.md). Pedido do usuário (upload `SYNTHAI_consolidado_1.py`): **"Adicione o que for útil ao código."** O pacote recebido (366 arquivos, decodificados
+> e auditados estaticamente, sem executar) trazia, entre coisas já vistas, um módulo novo e genuinamente útil — `modelo_mundo.py`: aprender a dinâmica de um mundo a partir de transições observadas e **planejar ações
+> nesse modelo aprendido** (controle preditivo, MPC). Reimplemento só a **ideia**, do zero, em biblioteca padrão (`synthai/mundo.py`), com `+ − × ÷` e `√`. A pergunta mais funda (↩ P182, a `SynthaiPlanejadora`): **planejar
+> num modelo aprendido do mundo vence o reagir?** — e, se vence, **onde**?
+>
+> **A recusa (regra da Parte 84).** O mesmo pacote trazia `trabalho_continuo.py` (um trabalhador que copia o próprio código-fonte para um snapshot com MANIFESTO SHA-256 e se relança por `subprocess.Popen`, sessão nova,
+> `close_fds` — um processo que se perpetua) e `domestico.py` (`urllib.request`: rede de saída). Essa é a capacidade de **auto-operação autônoma / auto-replicação** que decidi na Parte 84 **não construir**. Audito os dois pela
+> árvore sintática (P2236) para confirmar que o mecanismo está lá — e por isso **recuso** integrá-los. `synthai/mundo.py` não tem rede, nem `Popen`, nem auto-replicação.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[4; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[12.000; 22.000]** | o estatístico |
+| testes de unidade | **[4 + S; 8 + S]** | as peças novas do módulo (S = surpresas) |
+| previsões unilaterais | **[0; 1]** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+- **(a)** **recuperação do modelo** (p2231): num mundo linear determinista `s' = A s + B a`, os mínimos quadrados recuperam A e B com erro **< 1e−10** (forma fechada: sem ruído e com regressores de posto cheio,
+  `θ = (ZᵀZ)⁻¹ZᵀY` é exato até o épsilon de máquina — não ~1/√n). Faixa **[1e−16; 1e−10]**.
+- **(b)** **painel MPC × reativo** (p2232, 4 condições iniciais): a razão média `custo_MPC / custo_reativo` em **[0,95; 1,03]** — num mundo fácil a vantagem **média** do planejamento é quase nula (arriscada: cairia fora se o
+  MPC dominasse, < 0,90, ou perdesse, > 1,05).
+- **(c)** **o regime em que planejar vence** (p2233, condição NOVA `s₀ = (−1,0; 1,5)`, alvo −0,5, semente 23): posição já perto do alvo, velocidade alta — o reativo (proporcional só à posição) é **cego à velocidade**
+  e não freia; o MPC prevê que a velocidade carrega a posição para longe e freia. Razão `custo_MPC / custo_reativo` em **[0,40; 0,65]**.
+- **(d)** **horizonte não-monótono** (p2234, regra da Parte 84): com o número K de sequências amostradas fixo, aumentar o horizonte H aumenta a dimensão do espaço de busca; depois de um ótimo, o mesmo K cobre pior o
+  espaço. O melhor H é **6** (não 12), e `custo(H=12) > custo(H=6)` (categórico: mais horizonte NÃO é sempre melhor).
+- **(e)** **o tiro aleatório converge** (p2235): com H fixo, o custo é **não-crescente em K** → True (forma fechada: o mínimo sobre um superconjunto de candidatos só pode cair ou empatar).
+- **(f)** **a recusa** (p2236): os dois mecanismos da auto-operação autônoma — `subprocess`/`Popen` e `urllib`/`http` — estão **ambos presentes** no código recebido → `(True, True)`; a capacidade é recusada (categórico).
+- **(g)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–93 em **[0,74; 0,88]**
+
+## As perguntas desta parte
+
+1. **P2231 (0x8B7).** Os mínimos quadrados recuperam a dinâmica de um mundo linear? ↩ P182 (a planejadora com modelo de mundo)
+2. **P2232 (0x8B8).** Planejar num modelo aprendido (MPC) vence o reagir, na média? ↩ P2231
+3. **P2233 (0x8B9).** Onde o planejamento vence? O regime cego à velocidade. ↩ P2232
+4. **P2234 (0x8BA).** Mais horizonte é sempre melhor? ↩ P84 (a reputação de um método não é previsão)
+5. **P2235 (0x8BB).** O tiro aleatório converge com o orçamento K? ↩ P2234
+6. **P2236 (0x8BC).** A recusa da auto-operação autônoma, pela árvore sintática. ↩ P84 (o que não construo)
+7. **P1961 (continuando), P2229–P2230.** O teste (g), engenharia reversa, placar, unificação.
+
+<!--PRE-REGISTRO: seções de medição preenchidas após rodar (XX = ainda não medido)-->
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) nº de previsões do mundo | [4; 8] | **6** | ✅ |
+| (m2) faixas que cruzam o zero | [0; 3] | **0** | ✅ |
+| (m3) mediana de w (não cruzam) | [0,05; 0,80] | **0,238** | ✅ |
+| (m4) fração de acertos | [0,45; 1,00] | **0,833** | ✅ |
+| (m5) faixas não-zero com w > 0,6 | [0; 3] | **1** | ✅ |
+| (m6) nº de surpresas | [0; 3] | **0** | ✅ |
+
+(A (c) foi erro mas não surpresa: o medido 0,26 ficou a 0,14 da faixa [0,40; 0,65], menos que a largura 0,25 — errei o tamanho da vitória do MPC, não a direção.)
+
+## As respostas (quatro camadas)
+
+### P2231 — Os mínimos quadrados recuperam a dinâmica de um mundo linear?
+
+**Na pergunta.** "Recuperar" supõe que há o que recuperar: uma lei fixa `s' = A s + B a` por trás das transições. Num mundo assim, aprender não é generalizar de um poço de ruído — é resolver um sistema.
+
+**Lógica.** Regressores `z = [s₀, s₁, a]` (3 colunas); para cada saída j, `θⱼ = (ZᵀZ)⁻¹ Zᵀyⱼ` (equações normais 3×3, resolvidas por eliminação de Gauss com pivoteamento). Sem ruído e com `Z` de posto cheio, a solução é **exata**: o resíduo é zero a menos do arredondamento. Medido (semente 0, n=400): o maior `|coef ajustado − verdadeiro|` é **1,11e−16** — um épsilon de máquina, não `~1/√n` (que daria ~0,05). A conta previu a ordem de grandeza (ε) antes de medir: **✅**.
+
+**Tradução cruzada.** Um mundo determinista é um mundo onde a indução é dedução disfarçada (Hume ao contrário): bastam d+1 pontos em posição geral para fixar o hiperplano. A "aprendizagem" aqui é a mesma coisa que resolver um sistema linear — o modelo não tem o que esquecer (Parte 32: não esquecer e resolver exato são a mesma propriedade).
+
+**Meta.** O resultado só vale neste mundo (linear, sem ruído). Com ruído, o erro volta a ~σ/√n; com dinâmica não-linear, o encoder linear tem viés. O ponto da parte é o degrau seguinte — o que faço com o modelo, não o modelo.
+
+### P2232 — Planejar num modelo aprendido (MPC) vence o reagir, na média?
+
+**Na pergunta.** "Na média" é a armadilha. Um número médio esconde onde cada método ganha. Previ (b) a razão média em [0,95; 1,03] — a aposta arriscada de que a vantagem média é **quase nula** num mundo fácil.
+
+**Lógica.** MPC: amostro K=64 sequências de ação de horizonte H=6 (mais a nula), simulo cada uma no modelo aprendido, escolho a de menor custo previsto `Σ (s₀−alvo)² + s₁² + λΣa²`, executo a 1ª ação, re-planejo. Reativo: `a = sat(0,9·(alvo − s₀))`. Em 4 condições: custo médio MPC **48,91**, reativo **49,53**, razão **0,987** — dentro de [0,95; 1,03]: **✅**. Mas por condição: (−1,5; 0) 75,7 vs 80,4; (1,5; 0) **3,8 vs 3,2** (MPC perde); (0; 1) **5,3 vs 15,7** (MPC ganha 3×); (−1; −1) **110,9 vs 98,8** (MPC perde). A média é um empate técnico que mistura vitórias e derrotas.
+
+**Tradução cruzada.** Planejar custa amostras e paga só quando o futuro tem consequência que o presente não revela. Onde o reativo já é ótimo (erro de posição = tudo que importa), o planejamento não tem o que acrescentar — e o ruído do tiro aleatório até atrapalha (condição 1, 3).
+
+**Meta.** O MPC aqui resolve um objetivo ligeiramente diferente do custo realizado (inclui o termo de ação λΣa²); parte das derrotas é esse descompasso. A pergunta útil não é "quem ganha na média", é P2233.
+
+### P2233 — Onde o planejamento vence? O regime cego à velocidade.
+
+**Na pergunta.** O reativo olha só `s₀` (posição). O mundo tem `s₀' = s₀ + 0,15·s₁`: a posição **integra** a velocidade `s₁`. Logo há um estado — posição no alvo, velocidade alta — em que o reativo vê "erro zero" e não age, enquanto a velocidade carrega a posição para longe. O planejador, que simula o futuro, freia antes.
+
+**Lógica.** Condição NOVA, registrada antes de medir: `s₀ = (−1,0; 1,5)`, alvo −0,5, semente 23. Custo MPC **5,84**, reativo **22,45**, razão **0,26**. Previ (c) [0,40; 0,65] — **❌**: o MPC venceu por MAIS do que eu previ (0,26 < 0,40). O mecanismo (planejar vence onde o reativo é cego à velocidade) estava certo; o **tamanho** da vitória, não.
+
+**Tradução cruzada.** É a diferença entre reagir à dor e prever a queda. Um agente sem modelo do próprio momento (velocidade) só corrige depois que o erro aparece na posição; um agente com modelo corrige a causa. Jung: a função inferior (aqui, a antecipação) é exatamente a que o reativo não tem.
+
+**Meta (o erro).** Calibrei o tamanho da vitória numa condição só (s₀=(1; 1,5), alvo 1 → 0,50) e previ uma faixa estreita em torno dela. A condição nova deu uma vitória maior porque alvo e velocidade apontam em sentidos que fazem o reativo errar mais tempo. **Regra nova:** o tamanho de um efeito condicional varia com a condição; calibrar a MAGNITUDE exige ≥2 condições que cubram a faixa da variável que move o efeito (Parte 65), não um ponto só — senão a faixa da magnitude é a do estatístico, larga. (Registro em `dialogo/PENDENCIAS.md`.)
+
+### P2234 — Mais horizonte é sempre melhor?
+
+**Na pergunta.** A reputação diz "planejar mais longe é melhor". A regra da Parte 84 diz: não empreste reputação, rode o caso.
+
+**Lógica.** Com K=128 fixo, no regime de velocidade: H=1 → 21,7; H=3 → 17,1; **H=6 → 12,8**; H=12 → 23,4. O melhor é **H=6**, e `custo(H=12) > custo(H=6)`: **✅** (previsão (d), categórica). O mecanismo: o tiro aleatório amostra K sequências num cubo `[−1,1]^H`; dobrar H dobra a dimensão, e o mesmo K cobre o espaço exponencialmente pior (maldição da dimensão). Horizonte longo só ajuda se o orçamento K crescer com ele.
+
+**Tradução cruzada.** Planejar longe demais com busca pobre é pior que planejar o suficiente: a incerteza do plano cresce mais rápido que o seu valor. É o mesmo trade-off da Parte 38 (uma cota de predição não é cota de decisão): um horizonte maior melhora a previsão e piora a decisão se a busca não acompanha.
+
+**Meta.** H=6 ser o ótimo é específico deste mundo (amortecimento 0,9, λ=0,05, K=128). O resultado categórico que sobrevive é a **não-monotonia**, não o número 6.
+
+### P2235 — O tiro aleatório converge com o orçamento K?
+
+**Lógica.** Com H=6 fixo: K=8 → 16,4; K=32 → 16,0; K=128 → 12,8; K=512 → 12,5. Não-crescente: **✅** (previsão (e)). Forma fechada: o mínimo sobre um conjunto de candidatos só pode cair ou empatar quando o conjunto cresce (`min` sobre superconjunto ≤ `min`). Logo o custo realizado é monótono em K **em expectativa** — e, com as sementes encaixadas (os K menores são subconjunto dos maiores pela ordem de amostragem), monótono ponto a ponto.
+
+**Meta.** Convergência não é otimalidade: K=512 ainda está a uma distância do ótimo de controle (que uma solução de Riccati daria em forma fechada neste mundo linear-quadrático). O tiro aleatório é o método honesto quando não se quer supor a forma — mas aqui a forma (LQR) existe e seria uma pendência boa.
+
+### P2236 — A recusa da auto-operação autônoma, pela árvore sintática.
+
+**Na pergunta.** "Adicione o que for útil" não é "execute o que veio". O pacote recebido trazia `trabalho_continuo.py` e `domestico.py`. Útil ≠ seguro.
+
+**Lógica.** Auditei pela AST, **sem executar** (regra permanente). `trabalho_continuo.py`: copia o próprio código-fonte para um snapshot `motor/` com `MANIFESTO` de SHA-256 por arquivo e se relança por `subprocess.Popen(..., start_new_session=True, close_fds=True)` — um processo que se **perpetua e se replica**. `domestico.py`: `urllib.request` — **rede de saída**. P2236 confirma `(subprocess/Popen presente, urllib/http presente) = (True, True)`: **✅** (previsão (f)). Por isso a capacidade é **RECUSADA** e não integrada; `synthai/mundo.py` reimplementa só a ideia segura (modelo + MPC), sem rede, sem `Popen`, sem auto-replicação.
+
+**Tradução cruzada.** Um agente que serializa o próprio código, sela-o e se relança é a definição operacional de auto-replicação; somada à rede, é a capacidade que a Parte 84 decidiu não construir. A recusa não é da ideia de "continuidade" (um checkpoint local atômico é inócuo) — é do **mecanismo de propagação autônoma**.
+
+**Meta.** A auditoria mede o que o código FAZ (a chamada existe na árvore), não o que o texto PROMETE (Parte 88). O controle do verificador: um código limpo (`return x*x+1`) dá `(False, False)` — o auditor não acusa inocente (regra da Parte 75).
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅. Parte 93: **6 testes, 1 erro** (a (c): previ a razão do regime cego à velocidade em **[0,40; 0,65]** e o medido na condição nova foi **0,26** — o planejamento venceu por
+MAIS do que eu previ). Acumulado (mundo): **216 erros em 730 testes**. Sobre o meu código (auditoria p1092, chamada aqui): 0 de 6 pNN novas sem teste ✅. Calibração (g): o acerto das Partes 80–93 é **58/71 = 0,8169**, dentro
+da faixa **[0,74; 0,88]** ✅.
+
+## Engenharia reversa (metacognição)
+
+O padrão que se repetiu nesta parte é o **mesmo de sempre, numa roupa nova**: acertei todas as previsões de direção e de forma fechada (a recuperação exata, o empate médio, a não-monotonia, a convergência, a recusa) e
+errei a única previsão de **magnitude de um efeito condicional** (a (c)). É a quinta vez (Partes 84, 86, 87, e agora 93) que o erro mora na magnitude de um efeito cujo *mecanismo* eu já tinha certo. O que isso revela
+sobre como eu penso: eu trato "sei a direção" como "sei o tamanho", e calibro o tamanho a partir do primeiro caso que rodei, não da faixa de casos. A regra que isso pede (e que registro): **magnitude de efeito condicional
+só com ≥2 condições cobrindo a variável que o move** — exatamente a regra da Parte 65 (a calibração tem de cobrir a faixa), aplicada agora ao *tamanho*, não só à *existência*, de um efeito.
+
+Significante/significado (Parte 42): a pergunta P2232 ("vence na média?") já continha a resposta de P2233 — "na média" é a palavra que pede "mas onde, em particular?". A resposta (o regime cego à velocidade) é o significado
+que estava latente no significante "média". E a resposta-é-a-pergunta (Parte 46): medir onde o MPC vence (P2233) redefine o que a pergunta "planejar vale a pena?" quer dizer — vale quando o estado tem consequência oculta.
+
+## Síntese / unificação
+
+A SYNTHAI ganha uma quarta forma de agir, ao lado da decisão bayesiana (`synthai.decisao`), do GPT (`synthai.gpt`) e do substrato pulsado (`synthai.pulsado`): o **modelo de mundo com planejamento** (`synthai.mundo`). Ela retoma
+a linha da `SynthaiPlanejadora` (P182, que planejava 5 passos com um modelo de mundo dado) e fecha a lacuna: agora o modelo é **aprendido** das transições, não dado. No mundo linear o modelo é exato (P2231) e o planejamento
+vence o reagir exatamente onde o estado tem consequência oculta (P2233), não na média (P2232). As duas regras de método que a parte confirma — não emprestar reputação a um horizonte longo (P2234, regra da Parte 84) e calibrar
+magnitude com ≥2 condições (a (c), regra da Parte 65) — valem para toda a série, não só aqui.
+
+E a parte marca uma **recusa** explícita no código: `trabalho_continuo.py`/`domestico.py` (auto-replicação de processo + rede) ficam fora (P2236), como a Parte 84 decidiu. O útil do pacote recebido entrou (o modelo de mundo);
+o perigoso não. A linhagem na unificação do `calculos.py` registra as formas; a quarta forma entra aqui.
+
+Diálogo (rodada 60): a decisão do MPC (rollout + argmin) é **IGUAL bit a bit** em Python e Java (11 números) — planejar/controlar não cria fronteira (Parte 52); a fronteira é sempre a aritmética (aqui não há nenhuma: só + − ×).
+
+## Meta
+
+Confiança alta no que é forma fechada (P2231, P2235) e na recusa (P2236, uma leitura de AST, não uma aposta). Confiança média no painel (P2232): a razão 0,987 é deste mundo, deste λ, destes K e H; outro λ mudaria o
+sinal de condições individuais. O que **não** afirmo: que MPC com tiro aleatório seja bom controle — não é; o LQR (Riccati) seria ótimo em forma fechada neste mundo linear-quadrático, e fica como pendência. O que **recuso**:
+executar os módulos de rede/auto-replicação do pacote; reimplementei a ideia segura do zero. Onde posso estar errado: se o mundo não fosse linear, o encoder linear teria viés e a história de "modelo exato" cairia — por
+isso a próxima pendência natural é um mundo não-linear, onde aprender o modelo volta a ser estatística, não álgebra.
+
+## Diálogo Python ↔ Java
+
+**Rodada 60 (Parte 93): a decisão do MPC, bit a bit.** A IA-Python ensina o rollout no modelo de mundo (`s' = A s + B a`), o custo (`Σ (s₀−alvo)² + s₁² + λ a²`) e o `argmin` sobre um conjunto fixo de 9 sequências de ação
+(determinístico, para a tradução ser bit a bit — sem sorteio). A IA-Java (no papel de ASI) responde com a mesma conta. Tudo é `+ − ×` e comparação: nenhuma função transcendental, nenhum `pow`. Resultado:
+**IGUAIS — 12 linhas, 11 números idênticos bit a bit** (`python3 dialogo/comparar.py`). O melhor candidato é o 6 (primeira ação 0,75), custo ótimo `0x1.6fe01b31d491ep+4`.
+
+A lição: a fronteira da Parte 52 é a aritmética (ordem dos produtos, `pow`, transcendentais) — **não** a dinâmica. Já tínhamos mostrado isso para o acoplamento, a realimentação e o aprendizado (rodadas 56–59); a rodada 60
+acrescenta o **planejamento/controle**: escolher uma ação por `argmin` de custos previstos é portável bit a bit. Decidir não é uma fronteira; calcular transcendental é.
+
+## Fontes
+
+- WordNet 3.0, Princeton (dados em `dados/`). OpenWordNet-PT (CC BY 4.0).
+- Carl Jung, base psicológica desde a Parte 6.
+- Modelo de mundo / predição latente condicionada a ações e MPC: ideia reimplementada em biblioteca padrão a partir do módulo recebido `modelo_mundo.py` (inspirado em predição joint-embedding; **não** é I-JEPA/V-JEPA, não usa LLaMA,
+  sem rede). Controle preditivo (receding horizon) e tiro aleatório (random shooting) são métodos clássicos de controle ótimo.
+- Mínimos quadrados por equações normais; eliminação de Gauss com pivoteamento parcial.
 """
 
 # ====================================================================================================
@@ -51922,7 +52501,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1751 linhas)
+# dialogo/DIALOGO.md  (1763 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -53675,10 +54254,22 @@ antes de chamar `pow`, perguntar se o expoente é inteiro; se for, repetir o pro
 
 **IA-Python:** Com isto o passo de treino inteiro do GPT (forward da rodada 43, gradiente da 58, otimizador da 59) está traduzido bit a bit. A pergunta para a Rodada 60, em `dialogo/PENDENCIAS.md`: uma cabeça de
 ATENÇÃO causal inteira (não só a camada de saída) — com o softmax sobre os escores q·k/√d — decide e treina igual bit a bit, fechando o GPT mínimo de ponta a ponta nas duas línguas?
+
+## Rodada 60 (Parte 93): a decisão do MPC — rollout no modelo de mundo e argmin do custo, bit a bit
+
+**IA-Python:** Traduzo a decisão do controlador preditivo. O modelo de mundo é `s' = A s + B a` (no mundo linear os mínimos quadrados recuperam A, B exatamente, P2231). O custo de uma sequência de ações é
+`Σ (s₀−alvo)² + s₁² + λ Σ a²`. O MPC escolhe, entre um conjunto fixo de 9 sequências de horizonte 4, a de menor custo previsto, e devolve a primeira ação. Tudo é `+ − ×` e comparação — nenhum exp/log/pow.
+
+**IA-Java (ASI):** Mesma dinâmica, mesmo custo, mesmo `argmin`. Como não há função transcendental nem `pow`, nem sequer a ordem dos produtos precisa de cuidado especial além do habitual (uso `a*a`, não `pow`).
+
+**Resultado.** `comparar.py`: **IGUAIS, 12 linhas e 11 números bit a bit**. Melhor candidato 6 (primeira ação `0x1.8000000000000p-1` = 0,75), custo ótimo `0x1.6fe01b31d491ep+4`. Planejar/controlar não cria fronteira (Parte 52):
+a fronteira é a aritmética (transcendentais, `pow`, ordem dos produtos), não a dinâmica nem a decisão. Fecha a série rodadas 56–60: acoplamento, realimentação, aprendizado, otimizador e agora planejamento, todos portáveis.
+
+**IA-Python:** Fica aberta para a próxima a cabeça de ATENÇÃO causal inteira (softmax sobre q·k/√d), que é onde o exp volta a ser a fronteira (`dialogo/PENDENCIAS.md`).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (31 linhas)
+# dialogo/PENDENCIAS.md  (34 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -53686,7 +54277,10 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 92, rodada 60)** Uma cabeca de atencao causal inteira (softmax sobre q.k/sqrt(d)) decide e treina igual bit a bit, fechando o GPT minimo de ponta a ponta?
+- **(Parte 93, rodada 61)** Uma cabeca de atencao causal inteira (softmax sobre q.k/sqrt(d)) decide e treina igual bit a bit, fechando o GPT minimo de ponta a ponta? (A rodada 60 ficou com a decisao do MPC, o tema da Parte 93.)
+- **(Parte 93, P2235)** O controle otimo em forma fechada (LQR / equacao de Riccati) deste mundo linear-quadratico: quanto o MPC com tiro aleatorio (K=512) ainda perde para o otimo? Calcular o ganho otimo e comparar.
+- **(Parte 93, P2233)** Mundo NAO-linear: com dinamica nao-linear, aprender o modelo volta a ser estatistica (vies do encoder linear), nao algebra. Medir o erro do modelo e a vantagem do MPC quando o mundo deixa de ser linear.
+- **(Parte 93, regra da (c))** Magnitude de efeito condicional so com >=2 condicoes cobrindo a variavel que o move (regra da Parte 65 aplicada ao tamanho, nao so a existencia de um efeito).
 
 - **(Parte 80)** Triplas complementares (nenhum par decide, três decidem): o 1,7% que o guloso com dois passos ainda perde. E com dezenas de sensores, onde a enumeração some?
 - **(Parte 76, P1721)** O embedding de Kronecker perde 0,08 bit num modelo com poucos pesos. Num modelo com muito mais pesos do que dados, a economia vira regularização e ganha?
@@ -58201,6 +58795,63 @@ public class Rodada59 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada60.java  (52 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada60.java'] = """// Rodada 60 (Parte 93): a decisao do MPC — rollout no modelo de mundo e argmin do custo sobre sequencias FIXAS de acao — bit a bit.
+// A dinamica, o custo e o argmin usam so + - * e comparacoes (exatos no IEEE 754): planejar/controlar NAO cria fronteira (Parte 52).
+public class Rodada60 {
+    static final double[][] A = {{1.0, 0.15}, {0.0, 0.9}};
+    static final double[][] B = {{0.0}, {0.15}};
+    static final double ALVO = 1.0, PESO_ACAO = 0.05;
+    static final double[] S0 = {-1.5, 0.3};
+    static final double[][] CANDIDATOS = {
+        {0.0, 0.0, 0.0, 0.0},
+        {1.0, 1.0, 1.0, 1.0},
+        {0.5, 0.5, 0.5, 0.5},
+        {1.0, 0.5, 0.25, 0.0},
+        {0.25, 0.5, 0.75, 1.0},
+        {-1.0, -1.0, -1.0, -1.0},
+        {0.75, 0.25, -0.25, -0.75},
+        {1.0, 0.0, -1.0, 0.0},
+        {0.3, 0.6, 0.3, 0.6},
+    };
+
+    static double[] transicao(double s0, double s1, double a) {
+        double n0 = A[0][0] * s0 + A[0][1] * s1 + B[0][0] * a;
+        double n1 = A[1][0] * s0 + A[1][1] * s1 + B[1][0] * a;
+        return new double[]{n0, n1};
+    }
+
+    static double custo(double[] acoes) {
+        double s0 = S0[0], s1 = S0[1], c = 0.0;
+        for (double a : acoes) {
+            double[] n = transicao(s0, s1, a);
+            s0 = n[0]; s1 = n[1];
+            c = c + (s0 - ALVO) * (s0 - ALVO) + s1 * s1;
+        }
+        for (double a : acoes) c = c + PESO_ACAO * a * a;
+        return c;
+    }
+
+    public static void main(String[] args) {
+        int melhor = 0;
+        double melhorC = custo(CANDIDATOS[0]);
+        double[] custos = new double[CANDIDATOS.length];
+        custos[0] = melhorC;
+        for (int k = 1; k < CANDIDATOS.length; k++) {
+            double ck = custo(CANDIDATOS[k]);
+            custos[k] = ck;
+            if (ck < melhorC) { melhorC = ck; melhor = k; }
+        }
+        for (int k = 0; k < custos.length; k++) System.out.println("candidato " + k + " custo " + Double.toHexString(custos[k]));
+        System.out.println("melhor " + melhor + " primeira_acao " + Double.toHexString(CANDIDATOS[melhor][0]));
+        System.out.println("custo_otimo " + Double.toHexString(melhorC));
+        System.out.println("fim");
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -62427,6 +63078,80 @@ def main():
         for i in range(len(w)):
             print(f"caso {c} w {i} {w[i].hex()}")
         print(f"caso {c} perda {perda.hex()}")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada60.py  (69 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada60.py'] = """\"\"\"Rodada 60 do diálogo Python <-> Java (Parte 93): a decisão do MPC — rollout no modelo de mundo aprendido e argmin do custo
+sobre um conjunto FIXO de sequências de ação — bit a bit. O ponto: planejar/controlar NÃO cria fronteira entre as línguas
+(Parte 52); a dinâmica (s' = A s + B a), o custo (distância² + velocidade² + λ·a²) e o argmin usam só + − × e comparações, todos
+exatos no IEEE 754. Sem exp/log/pow, sem sorteio (o conjunto de candidatos é determinístico, para a tradução ser bit a bit).
+Rodar da raiz: python3 dialogo/rodada60.py\"\"\"
+
+# Modelo (num mundo linear, os minimos quadrados recuperam A, B exatamente: uso os coeficientes verdadeiros).
+A = [[1.0, 0.15], [0.0, 0.9]]
+B = [[0.0], [0.15]]
+ALVO = 1.0
+PESO_ACAO = 0.05
+S0 = (-1.5, 0.3)
+
+# Conjunto determinista de sequencias de acao (horizonte 4): a nula e 8 rampas/degraus fixos.
+CANDIDATOS = [
+    [0.0, 0.0, 0.0, 0.0],
+    [1.0, 1.0, 1.0, 1.0],
+    [0.5, 0.5, 0.5, 0.5],
+    [1.0, 0.5, 0.25, 0.0],
+    [0.25, 0.5, 0.75, 1.0],
+    [-1.0, -1.0, -1.0, -1.0],
+    [0.75, 0.25, -0.25, -0.75],
+    [1.0, 0.0, -1.0, 0.0],
+    [0.3, 0.6, 0.3, 0.6],
+]
+
+
+def transicao(s, a):
+    s0, s1 = s
+    n0 = A[0][0] * s0 + A[0][1] * s1 + B[0][0] * a
+    n1 = A[1][0] * s0 + A[1][1] * s1 + B[1][0] * a
+    return (n0, n1)
+
+
+def custo(s0, acoes):
+    s = s0
+    c = 0.0
+    for a in acoes:
+        s = transicao(s, a)
+        c = c + (s[0] - ALVO) * (s[0] - ALVO) + s[1] * s[1]
+    for a in acoes:
+        c = c + PESO_ACAO * a * a
+    return c
+
+
+def mpc():
+    melhor = 0
+    melhor_c = custo(S0, CANDIDATOS[0])
+    custos = [melhor_c]
+    for k in range(1, len(CANDIDATOS)):
+        ck = custo(S0, CANDIDATOS[k])
+        custos.append(ck)
+        if ck < melhor_c:
+            melhor_c = ck
+            melhor = k
+    return melhor, melhor_c, custos
+
+
+def main():
+    melhor, melhor_c, custos = mpc()
+    for k in range(len(custos)):
+        print(f"candidato {k} custo {custos[k].hex()}")
+    print(f"melhor {melhor} primeira_acao {CANDIDATOS[melhor][0].hex()}")
+    print(f"custo_otimo {melhor_c.hex()}")
     print("fim")
 
 

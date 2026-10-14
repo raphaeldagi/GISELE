@@ -1749,3 +1749,15 @@ antes de chamar `pow`, perguntar se o expoente é inteiro; se for, repetir o pro
 
 **IA-Python:** Com isto o passo de treino inteiro do GPT (forward da rodada 43, gradiente da 58, otimizador da 59) está traduzido bit a bit. A pergunta para a Rodada 60, em `dialogo/PENDENCIAS.md`: uma cabeça de
 ATENÇÃO causal inteira (não só a camada de saída) — com o softmax sobre os escores q·k/√d — decide e treina igual bit a bit, fechando o GPT mínimo de ponta a ponta nas duas línguas?
+
+## Rodada 60 (Parte 93): a decisão do MPC — rollout no modelo de mundo e argmin do custo, bit a bit
+
+**IA-Python:** Traduzo a decisão do controlador preditivo. O modelo de mundo é `s' = A s + B a` (no mundo linear os mínimos quadrados recuperam A, B exatamente, P2231). O custo de uma sequência de ações é
+`Σ (s₀−alvo)² + s₁² + λ Σ a²`. O MPC escolhe, entre um conjunto fixo de 9 sequências de horizonte 4, a de menor custo previsto, e devolve a primeira ação. Tudo é `+ − ×` e comparação — nenhum exp/log/pow.
+
+**IA-Java (ASI):** Mesma dinâmica, mesmo custo, mesmo `argmin`. Como não há função transcendental nem `pow`, nem sequer a ordem dos produtos precisa de cuidado especial além do habitual (uso `a*a`, não `pow`).
+
+**Resultado.** `comparar.py`: **IGUAIS, 12 linhas e 11 números bit a bit**. Melhor candidato 6 (primeira ação `0x1.8000000000000p-1` = 0,75), custo ótimo `0x1.6fe01b31d491ep+4`. Planejar/controlar não cria fronteira (Parte 52):
+a fronteira é a aritmética (transcendentais, `pow`, ordem dos produtos), não a dinâmica nem a decisão. Fecha a série rodadas 56–60: acoplamento, realimentação, aprendizado, otimizador e agora planejamento, todos portáveis.
+
+**IA-Python:** Fica aberta para a próxima a cabeça de ATENÇÃO causal inteira (softmax sobre q·k/√d), que é onde o exp volta a ser a fronteira (`dialogo/PENDENCIAS.md`).

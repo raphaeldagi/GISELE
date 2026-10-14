@@ -4,7 +4,10 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 92, rodada 60)** Uma cabeca de atencao causal inteira (softmax sobre q.k/sqrt(d)) decide e treina igual bit a bit, fechando o GPT minimo de ponta a ponta?
+- **(Parte 93, rodada 61)** Uma cabeca de atencao causal inteira (softmax sobre q.k/sqrt(d)) decide e treina igual bit a bit, fechando o GPT minimo de ponta a ponta? (A rodada 60 ficou com a decisao do MPC, o tema da Parte 93.)
+- **(Parte 93, P2235)** O controle otimo em forma fechada (LQR / equacao de Riccati) deste mundo linear-quadratico: quanto o MPC com tiro aleatorio (K=512) ainda perde para o otimo? Calcular o ganho otimo e comparar.
+- **(Parte 93, P2233)** Mundo NAO-linear: com dinamica nao-linear, aprender o modelo volta a ser estatistica (vies do encoder linear), nao algebra. Medir o erro do modelo e a vantagem do MPC quando o mundo deixa de ser linear.
+- **(Parte 93, regra da (c))** Magnitude de efeito condicional so com >=2 condicoes cobrindo a variavel que o move (regra da Parte 65 aplicada ao tamanho, nao so a existencia de um efeito).
 
 - **(Parte 80)** Triplas complementares (nenhum par decide, três decidem): o 1,7% que o guloso com dois passos ainda perde. E com dezenas de sensores, onde a enumeração some?
 - **(Parte 76, P1721)** O embedding de Kronecker perde 0,08 bit num modelo com poucos pesos. Num modelo com muito mais pesos do que dados, a economia vira regularização e ganha?
