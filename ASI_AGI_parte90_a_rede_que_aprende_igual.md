@@ -16,3 +16,27 @@
 - **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
 - **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
 - **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[13.039; 22.082]** | o estatístico (até a 71) |
+| compressão | **[0,392; 0,420]** | o estatístico |
+| testes de unidade | **[3 + S; 7 + S]** | a rodada e as medidas da rede |
+| testes do placar | **6 + E ± 1** | as letras, mais uma por erro de mecanismo |
+| erros do placar | **[0; 3,33]** | o estatístico |
+| redundância P821 | **[0,563; 0,651]** | o estatístico |
+| previsões unilaterais | **0** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+As (b) e (c) foram calibradas num teste de fumaça (semente única do próprio problema determinístico) e PREVEEM a execução canônica; contas de sinal e categóricas não levam o fator 1,36.
+
+- **(a)** a rodada 57 — a rede de Izhikevich acoplada que APRENDE por STDP (pesos mudando pela ordem dos disparos, com o exp próprio) — dá a MESMA trajetória E a mesma matriz de pesos final, bit a bit, em Python e
+  Java (categórico: IGUAL). É o teste mais duro: um erro de um bit num peso realimentaria todos os disparos seguintes
+- **(b)** a STDP está ativa e é de depressão dominante: a soma dos pesos CAI da inicial (2,6); a variação ΔW_total em **[−0,03; −0,005]** (calibrada na fumaça: −0,018; negativa porque A₋ > A₊)
+- **(c)** mesmo com a STDP ativa, em 300 passos o aprendizado é lento demais para mudar o PADRÃO de disparos: a rede que aprende dá o MESMO número de disparos que a rede de pesos fixos da rodada 56 (**12**) (categórico:
+  igual, porque ΔW ≈ 0,02 é pequeno demais para cruzar um limiar de disparo)
+- **(d)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–90 em **[0,74; 0,88]**
