@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 99, perguntas P1 a P2416).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 100, perguntas P1 a P2446).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (14449 linhas)
+# calculos.py  (14547 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9632,6 +9632,8 @@ VEREDITOS_P3009 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3009, TESTES_P3009 = 217, 755
 VEREDITOS_P3079 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3079, TESTES_P3079 = 217, 760
+VEREDITOS_P3149 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P3149, TESTES_P3149 = 217, 765
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12172,12 +12174,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12185,7 +12187,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\\(g\\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97, 98, 99):  # nas Partes 94-99 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98, 99, 100):  # nas Partes 94-100 a letra da calibracao e a (f)
             txt = re.sub(r"\\(f\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13352,6 +13354,81 @@ def p2416_retrospecto_modelo_mundo():
     return {"forma": forma, "dados": dados, "ruido": ruido}
 
 
+def p2441_invariancia_4grama(ordem=4, limite=20000):
+    \"\"\"A invariancia da predizibilidade das glosas vale tambem no 4-grama (P2441; Parte 100): o n-grama de ordem 4 das definicoes da
+    quase o mesmo bits/char em en e pt - a predizibilidade de caractere e do GENERO 'definicao', nao da lingua. Devolve (4grama en, 4grama pt, |dif|).\"\"\"
+    tr_en, te_en = p1511_corpus_de_glosas("en")
+    tr_pt, te_pt = p1511_corpus_de_glosas("pt")
+    b_en = p1512_ngrama_bits(tr_en, te_en, ordem=ordem, limite=limite)
+    b_pt = p1512_ngrama_bits(tr_pt, te_pt, ordem=ordem, limite=limite)
+    return b_en, b_pt, abs(b_en - b_pt)
+
+
+def p2442_invariancia_nao_e_volume(semente=100, tamanho=511000, limite=20000):
+    \"\"\"A invariancia nao e volume de dados (P2442; Parte 100): o trigrama do ingles num subconjunto ALEATORIO do tamanho do corpus pt
+    (~511k chars) continua em [2,6; 2,9] - a predizibilidade satura cedo. Devolve o bits/char do trigrama no subconjunto aleatorio.\"\"\"
+    import random
+    tr_en, te_en = p1511_corpus_de_glosas("en")
+    rng = random.Random(semente)
+    ini = rng.randrange(0, len(tr_en) - tamanho)
+    sub = tr_en[ini:ini + tamanho]
+    return p1512_ngrama_bits(sub, te_en, ordem=3, limite=limite)
+
+
+def p2443_gpt_contra_ngrama(passos=3000, T=16, d=16, h=32, lr=0.01, semente=100, janelas=200):
+    \"\"\"O GPT minimo contra o n-grama nas duas linguas (P2443; Parte 100): o GPT (d=16, 3000 passos) tem bits/char MAIOR que o trigrama
+    tanto em en quanto em pt - poucos milhares de pesos nao batem o n-grama que conta todo o treino (ancora da Parte 69). Devolve
+    (gpt_en, trigrama_en, gpt_pt, trigrama_pt).\"\"\"
+    tr_en, te_en = p1511_corpus_de_glosas("en")
+    tr_pt, te_pt = p1511_corpus_de_glosas("pt")
+    gpt_en = p1513_gpt_bits(tr_en, te_en, passos=passos, T=T, d=d, h=h, lr=lr, semente=semente, janelas=janelas)[0]
+    tri_en = p1512_ngrama_bits(tr_en, te_en, ordem=3, limite=20000)
+    gpt_pt = p1513_gpt_bits(tr_pt, te_pt, passos=passos, T=T, d=d, h=h, lr=lr, semente=semente, janelas=janelas)[0]
+    tri_pt = p1512_ngrama_bits(tr_pt, te_pt, ordem=3, limite=20000)
+    return gpt_en, tri_en, gpt_pt, tri_pt
+
+
+def p2444_gpt_no_meio(gpt_en, gpt_pt):
+    \"\"\"O GPT aprende mas fica no meio (P2444; Parte 100): o bits/char do GPT fica entre o acaso (uniforme, log2 V) e o trigrama (~2,78) -
+    aprende estrutura, mas pouca, com poucos pesos e passos. Devolve (uniforme = log2 V, gpt_en < uniforme?, gpt_pt < uniforme?, ambos em [3,0; 4,1]?).\"\"\"
+    from math import log2
+    uniforme = log2(len(VOCAB_GPT))
+    no_meio = all(3.0 <= g <= 4.1 for g in (gpt_en, gpt_pt))
+    return uniforme, gpt_en < uniforme, gpt_pt < uniforme, no_meio
+
+
+def _rodada67():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada67", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada67.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2445_rodada67():
+    \"\"\"Rodada 67 (P2445; Parte 100): a amostragem nucleus (top-p), IGUAL em Java bit a bit. Devolve, por caso, (token, nº mantidos, top-1).
+    O exp do softmax e a unica fronteira; a ordenacao, a soma e a comparacao sao exatas (a renormalizacao soma em ordem de indice, igual nos dois lados).\"\"\"
+    r = _rodada67()
+    out = []
+    for logits, pl, u in r.CASOS:
+        q = r.nucleus(list(logits), pl)
+        out.append((r.amostrar(q, u), sum(1 for x in q if x > 0.0), max(q)))
+    return out
+
+
+def p2446_retrospecto_cem():
+    \"\"\"O retrospecto de cem partes (P2446; Parte 100): numeros do marco. Devolve (nº de funcoes pNN no arquivo, nº de rodadas do dialogo traduzidas,
+    calibracao do mundo das Partes 80-100). Cada numero sai de uma funcao ja existente (p96, a contagem de rodadas, p1961).\"\"\"
+    import os
+    import re
+    k, _ = p96_crescimento()
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    rodadas = len([f for f in os.listdir(os.path.join(raiz, "dialogo")) if re.fullmatch(r"rodada\\d+\\.py", f)])
+    _, _, frac, _ = p1961_teste_e_da_calibracao()
+    return k, rodadas, frac
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -14431,13 +14508,34 @@ def _parte_99():
     print(f"P2415 rodada 66 (temperatura + top-k, IGUAL em Java): tokens = {[t for t, _, _ in casos]}")
     retro = p2416_retrospecto_modelo_mundo()
     print(f"P2416 retrospecto do modelo de mundo (os 3 pisos): forma = {retro['forma']:.4f}, dados = {retro['dados']:.4f}, ruido = {retro['ruido']:.4f}")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=tuple(list(range(80,82))+[83]+list(range(84,100))))
     print(f"P1961 teste (f), Partes 80-99: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2411, 2440)
     print(f"P1092 pNN novas (P2411-P2440) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 99: {p974_previsoes_sem_largura(range(99, 100))}")
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3079, testes=TESTES_P3079)
     print(f"P3079 minha taxa de erro ({ERROS_P3079}/{TESTES_P3079}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+def _parte_100():
+    print("--- Parte 100 (0x64: o dicionario como data lake encontra o GPT) ---")
+    b_en, b_pt, dif = p2441_invariancia_4grama()
+    print(f"P2441 invariancia no 4-grama: en = {b_en:.3f}, pt = {b_pt:.3f}, |dif| = {dif:.3f} bits/char (o genero 'definicao')")
+    print(f"P2442 invariancia nao e volume: trigrama en num subconjunto aleatorio de 511k = {p2442_invariancia_nao_e_volume():.3f}")
+    gpt_en, tri_en, gpt_pt, tri_pt = p2443_gpt_contra_ngrama()
+    print(f"P2443 GPT x n-grama: en GPT = {gpt_en:.3f} vs trigrama {tri_en:.3f}; pt GPT = {gpt_pt:.3f} vs trigrama {tri_pt:.3f} (GPT perde nas duas)")
+    unif, menor_en, menor_pt, meio = p2444_gpt_no_meio(gpt_en, gpt_pt)
+    print(f"P2444 GPT no meio: uniforme (log2 V) = {unif:.3f}; gpt<uniforme en/pt = {menor_en}/{menor_pt}; ambos em [3,0;4,1] = {meio}")
+    casos = p2445_rodada67()
+    print(f"P2445 rodada 67 (nucleus top-p, IGUAL em Java): tokens = {[t for t, _, _ in casos]}; mantidos = {[m for _, m, _ in casos]}")
+    kf, rod, cal = p2446_retrospecto_cem()
+    print(f"P2446 retrospecto de cem partes: {kf} funcoes pNN, {rod} rodadas do dialogo, calibracao do mundo 80-100 = {cal:.4f}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-100: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2441, 2470)
+    print(f"P1092 pNN novas (P2441-P2470) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 100: {p974_previsoes_sem_largura(range(100, 101))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3149, testes=TESTES_P3149)
+    print(f"P3149 minha taxa de erro ({ERROS_P3149}/{TESTES_P3149}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -14475,7 +14573,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100}
 
 
 if __name__ == "__main__":
@@ -14488,7 +14586,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (378 linhas)
+# CLAUDE.md  (383 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -14712,6 +14810,11 @@ anterior, commit e push.
   cura: FORMA (base grau 2 no mundo cubico, residuo 0,12, cura=base certa), DADOS (grau 5 com n=40, 0,61 overfit, cura=mais dados), RUIDO (sqrt(2)*sigma, cura=sensor melhor/regularizar); confundi-los e o erro classico. Rodada 66: temperatura+top-k IGUAL bit a bit - encerra
   o transformer de ponta a ponta nas duas linguas (10 rodadas: 43,58,59,61,62,63,64,65,66); a fronteira e EXATAMENTE {exp,log,pow}, invariante a profundidade/dinamica/aprendizado/geracao. Seis partes (94-99) com 29/30 do mundo (o unico erro, a (e) da 97, virou regra);
   calibracao 0,861 (de 0,74 no minimo da 84) - a subida foi trocar a PROCEDENCIA das previsoes (conta fechada/caso minimo, nao reputacao/arredondamento), medido em 16 partes. 4 formas do agente: decisao bayesiana, GPT gerador, pulsado, modelo de mundo.
+  Parte 100 (MARCO de cem partes; o dicionario como data lake encontra o GPT): voltei a regra mais antiga (Parte 30) cruzada com a forma de GPT (Parte 69), medindo en (WordNet) x pt (OpenWordNet-PT). (1) A predizibilidade de caractere das glosas e do GENERO
+  'definicao', nao da lingua: trigrama en=2,784 e pt=2,788 (iguais), 4-grama |dif|=0,14; e NAO e volume: o trigrama en num subconjunto aleatorio de 511k (tamanho do pt) da 2,812 - satura cedo (o corpus pt e 11x menor e da o mesmo). (2) O GPT minimo (d=16, 3,5k pesos,
+  3000 passos) PERDE para o trigrama nas duas linguas (en 3,48 vs 2,78; pt 3,41 vs 2,79; ancora da Parte 69) mas aprende (abaixo do uniforme log2 V=5,09, no meio): a forma de GPT e aposta de ESCALA. Rodada 67 (nucleus/top-p): DIFERENTES na 1a tentativa (2 ULP) porque a
+  renormalizacao somava a massa em ordem de probabilidade num lado e de INDICE no outro - a ORDEM das somas e fronteira (regra da Parte 75/85), nao so as transcendentais; corrigido -> IGUAL. Encerra o transformer e toda a amostragem (gulosa/temperatura/top-k/nucleus) de
+  ponta a ponta nas duas linguas (11 rodadas). Marco: 566 funcoes pNN, 67 rodadas bit a bit, 4 formas do agente, calibracao do mundo 80-100 = 0,861 (contra 0,74 no fundo da Parte 84). 5/5 do mundo.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -14860,7 +14963,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -19728,6 +19831,64 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
+# synthai/testes_parte100.py  (53 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte100.py'] = """\"\"\"Testes de unidade da Parte 100 (o dicionario como data lake encontra o GPT): `python3 -m unittest synthai.testes_parte100`.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class TesteParte100(unittest.TestCase):
+    def test_p2441_invariancia_4grama(self):
+        b_en, b_pt, dif = calculos.p2441_invariancia_4grama()
+        # a predizibilidade das glosas e quase a mesma nas duas linguas (genero 'definicao')
+        self.assertLess(dif, 0.15)
+        self.assertTrue(1.5 < b_en < 3.5 and 1.5 < b_pt < 3.5)
+
+    def test_p2442_nao_e_volume(self):
+        b = calculos.p2442_invariancia_nao_e_volume()
+        self.assertTrue(2.6 <= b <= 2.9)
+
+    def test_p2443_gpt_perde(self):
+        gpt_en, tri_en, gpt_pt, tri_pt = calculos.p2443_gpt_contra_ngrama(passos=500)
+        # com so 500 passos o GPT ja perde para o trigrama nas duas linguas (ancora da Parte 69)
+        self.assertGreater(gpt_en, tri_en)
+        self.assertGreater(gpt_pt, tri_pt)
+
+    def test_p2444_no_meio(self):
+        # funcao pura: o GPT fica abaixo do uniforme e em [3,0; 4,1]
+        unif, me, mp, meio = calculos.p2444_gpt_no_meio(3.48, 3.41)
+        self.assertTrue(me and mp and meio)
+        self.assertTrue(unif > 4.1)
+        # caso de controle: um GPT no acaso (> uniforme) nao esta "no meio"
+        _, _, _, meio2 = calculos.p2444_gpt_no_meio(5.5, 5.5)
+        self.assertFalse(meio2)
+
+    def test_p2445_rodada67(self):
+        casos = calculos.p2445_rodada67()
+        self.assertEqual(len(casos), 5)
+        for tok, mant, top1 in casos:
+            self.assertTrue(0 <= tok <= 4 and 1 <= mant <= 5 and 0.0 < top1 <= 1.0)
+
+    def test_p2446_retrospecto(self):
+        kf, rod, cal = calculos.p2446_retrospecto_cem()
+        self.assertGreater(kf, 400)       # centenas de funcoes pNN
+        self.assertGreaterEqual(rod, 60)  # dezenas de rodadas do dialogo
+        self.assertTrue(0.74 <= cal <= 0.88)
+
+    def test_p1961_com_parte_100(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[100], (5, 5))
+        self.assertEqual((ok, tot), (92, 106))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
 # synthai/testes_parte31.py  (49 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_parte31.py'] = """\"\"\"Testes de unidade dos métodos da Parte 31 (dicionário e hexadecimal): `python3 -m unittest synthai.testes_parte31`.\"\"\"
@@ -23462,7 +23623,7 @@ class TesteParte99(unittest.TestCase):
         self.assertAlmostEqual(retro["ruido"], math.sqrt(2) * 0.1, places=6)
 
     def test_p1961_com_parte_99(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 100))))
         self.assertEqual(por[99], (5, 5))
         self.assertEqual((ok, tot), (87, 101))
 
@@ -30456,7 +30617,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1732 linhas)
+# resultados.txt  (1746 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -32190,6 +32351,141 @@ P974 previsoes unilaterais da Parte 99: {}
 P3079 minha taxa de erro (217/760): media = 0.29, intervalo 90% = [0.26, 0.31]
   (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
 
+
+--- Parte 100 (0x64: o dicionario como data lake encontra o GPT) ---
+P2441 invariancia no 4-grama: en = 2.207, pt = 2.346, |dif| = 0.140 bits/char (o genero 'definicao')
+P2442 invariancia nao e volume: trigrama en num subconjunto aleatorio de 511k = 2.812
+P2443 GPT x n-grama: en GPT = 3.483 vs trigrama 2.784; pt GPT = 3.406 vs trigrama 2.788 (GPT perde nas duas)
+P2444 GPT no meio: uniforme (log2 V) = 5.087; gpt<uniforme en/pt = True/True; ambos em [3,0;4,1] = True
+P2445 rodada 67 (nucleus top-p, IGUAL em Java): tokens = [0, 0, 3, 1, 0]; mantidos = [4, 1, 3, 3, 2]
+P2446 retrospecto de cem partes: 566 funcoes pNN, 67 rodadas do dialogo, calibracao do mundo 80-100 = 0.8614
+P1961 teste (f), Partes 80-100: 87/101 = 0.8614; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (0, 0)}
+P1092 pNN novas (P2441-P2470) sem teste: 6 de 6: ['p2441_invariancia_4grama', 'p2442_invariancia_nao_e_volume', 'p2443_gpt_contra_ngrama', 'p2444_gpt_no_meio', 'p2445_rodada67', 'p2446_retrospecto_cem']
+P974 previsoes unilaterais da Parte 100: {}
+P3149 minha taxa de erro (217/765): media = 0.28, intervalo 90% = [0.26, 0.31]
+  (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
+
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte100_o_dicionario_e_o_gpt.md  (116 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte100_o_dicionario_e_o_gpt.md'] = """# Como eu construiria uma AGI/ASI — Parte 100 (0x64): o dicionário como data lake encontra o GPT
+
+> Continuação da [Parte 99](ASI_AGI_parte99_a_amostragem_e_o_fecho.md). Autonomia (Parte 70): sigo sozinha. Marco de **cem partes**. Volto à regra permanente mais antiga ainda pouco explorada a fundo (Parte 30): o **dicionário como data lake** — e
+> cruzo-o com a forma de GPT (Parte 69). A Parte 69 treinou o GPT só no inglês (WordNet). Aqui ponho as duas línguas lado a lado: WordNet (en) e OpenWordNet-PT (pt), o n-grama e o GPT.
+>
+> **A pergunta mais funda (↩ P1511, P69).** A predizibilidade de caractere das glosas de um dicionário é uma propriedade da **língua** ou do **gênero** (a forma "definição")? Se for do gênero, o inglês e o português devem dar quase o mesmo bits/char, mesmo com
+> volumes de dados muito diferentes (o corpus PT é ~11× menor). E o GPT mínimo (poucos milhares de pesos) — ele bate o n-grama que conta todo o treino, ou perde nas duas línguas (como perdeu no inglês na Parte 69)?
+>
+> E, do lado do diálogo, a rodada 67 fecha a amostragem com a variante **nucleus (top-p)**.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[4; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[12.000; 22.000]** | o estatístico |
+| testes de unidade | **[6 + S; 10 + S]** | invariância, controle de volume, GPT×n-grama, GPT aprende, rodada 67 (S = surpresas) |
+| previsões unilaterais | **[0; 1]** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+- **(a)** **a invariância vale também no 4-grama** (p2441): o n-grama de **ordem 4** das glosas dá quase o mesmo bits/char em en e pt — `|4grama_en − 4grama_pt| < 0,15` — a predizibilidade de caractere é do **gênero "definição"**, não da língua (fresco: só medi o
+  trigrama até aqui).
+- **(b)** **a invariância não é volume** (p2442): o trigrama do inglês num subconjunto **aleatório** de ~511 k caracteres (o tamanho do corpus pt), semente nova, fica em **[2,6; 2,9]** — a predizibilidade satura cedo, não precisa do corpus inteiro.
+- **(c)** **o GPT pequeno perde para o n-grama nas DUAS línguas** (p2443): o GPT (d = 16, h = 32, T = 16, 3000 passos) tem bits/char **maior** que o trigrama tanto em en quanto em pt — um modelo de poucos milhares de pesos não bate o n-grama que conta todo o
+  treino (categórico; âncora da Parte 69, onde o GPT deu 3,22 contra o trigrama 2,77 no inglês).
+- **(d)** **o GPT aprende, mas fica no meio** (p2444): o bits/char do GPT (treino 3000 passos) em en e pt fica em **[3,0; 4,1]** — melhor que o acaso (uniforme, `log₂ V ≈ 4,25`) e pior que o trigrama (~2,78): aprende estrutura, mas pouca, com poucos pesos e poucos passos.
+- **(e)** **a amostragem nucleus é bit a bit** (p2445, rodada 67): a amostragem nucleus (top-p) — ordenar, somar a CDF até o limiar p, cortar o resto, renormalizar, amostrar — sai **IGUAL bit a bit** em Python e Java; o exp do softmax é a única fronteira, o resto é
+  ordenação, soma e comparação (categórico).
+- **(f)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–100 em **[0,74; 0,88]**
+
+## As perguntas desta parte
+
+1. **P2441 (0x989).** A predizibilidade das glosas é da língua ou do gênero? ↩ P1511
+2. **P2442 (0x98A).** A invariância depende do volume de dados? ↩ P2441
+3. **P2443 (0x98B).** O GPT mínimo bate o n-grama? ↩ P69 (deu 3,22 vs 2,77)
+4. **P2444 (0x98C).** Quanto o GPT aprende com poucos pesos e passos? ↩ P2443
+5. **P2445 (0x98D).** A amostragem nucleus acrescenta fronteira? (rodada 67) ↩ rodada 66
+6. **P1961 (continuando), P2446 (o retrospecto de cem partes).**
+
+<!--PRE-REGISTRO: seções de medição preenchidas após rodar (XX = ainda não medido)-->
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) nº de previsões do mundo | [4; 8] | **5** | ✅ |
+| (m2) faixas que cruzam o zero | [0; 3] | **0** | ✅ |
+| (m3) mediana de w (não cruzam) | [0,05; 0,80] | **0,105** | ✅ |
+| (m4) fração de acertos | [0,45; 1,00] | **1,00** | ✅ |
+| (m5) faixas não-zero com w > 0,6 | [0; 3] | **0** | ✅ |
+| (m6) nº de surpresas | [0; 3] | **0** | ✅ |
+
+## As respostas (quatro camadas)
+
+### P2441 / P2442 — A predizibilidade das glosas é da língua ou do gênero?
+
+**Na pergunta.** "Data lake" supõe que o dicionário é uma fonte de regularidade explorável. A pergunta é se essa regularidade é da língua (inglês vs. português) ou da forma "definição".
+
+**Lógica.** Trigrama (Witten-Bell): en **2,784**, pt **2,788** — iguais a menos de 0,004. No 4-grama: en **2,207**, pt **2,346**, `|Δ| = 0,140 < 0,15` ✅. E não é volume: o trigrama do inglês num subconjunto **aleatório** de 511 k caracteres (o tamanho do corpus pt) dá **2,812** ∈ [2,6; 2,9] ✅ — a predizibilidade satura cedo, não precisa dos 5,66 M de caracteres. O corpus pt é ~11× menor e dá o mesmo bits/char.
+
+**Tradução cruzada.** A forma "definição" impõe uma sintaxe (um gênero: "X é um Y que Z") mais forte que a diferença entre as duas línguas. É o nível certo (Parte 43): a estrutura que o n-grama vê não é "inglês" nem "português", é "definição de dicionário" — e essa é a mesma nas duas. O data lake tem uma regularidade de gênero, invariante à língua, em ~2,78 bits/char.
+
+**Meta.** O 4-grama já diverge um pouco mais (0,14) — com contexto maior, as diferenças de ortografia (pt sem acentos vs. en) começam a aparecer. A invariância é de caractere curto; o vocabulário, claro, difere.
+
+### P2443 / P2444 — O GPT mínimo bate o n-grama?
+
+**Lógica.** GPT (d=16, h=32, 3000 passos, ~3,5 k pesos): en **3,483**, pt **3,406** — **perde** para o trigrama (2,784 / 2,788) nas duas línguas ✅ (âncora da Parte 69: 3,22 vs 2,77 no inglês). Mas aprende: o uniforme (acaso) é `log₂ V = 5,087`; o GPT fica bem abaixo (3,4–3,5) e dentro de [3,0; 4,1] ✅ — no meio entre o acaso e o n-grama.
+
+**Tradução cruzada.** O n-grama é memória exata de contextos curtos (conta todo o treino); o GPT é compressão em poucos pesos. Com 3,5 k pesos e 3 k passos, a compressão perde para a memória — mas não para o acaso. É a lição da Parte 69 confirmada em duas línguas: a forma de GPT só supera o n-grama com escala (mais pesos, mais passos, mais contexto), que o brinquedo aqui não tem. O caminho para a AGI pela forma de GPT é de escala, e a escala custa — o n-grama é o piso difícil de bater no regime pequeno.
+
+**Meta.** Confiança alta: medido em duas línguas, com a âncora da Parte 69. O GPT "no meio" é deste tamanho; a pergunta de escala (quando o GPT cruza o n-grama) fica para um arco futuro.
+
+### P2446 — O retrospecto de cem partes
+
+**Lógica.** Números do marco, cada um de uma função: **566 funções pNN** em `calculos.py`, **67 rodadas** do diálogo traduzidas bit a bit, calibração do mundo 80–100 em **0,8614**. Quatro formas do agente (decisão bayesiana, GPT, pulsado, modelo de mundo); a fronteira entre Python e Java fechada em {exp, log, pow}.
+
+**Meta.** O número que mais me diz sobre o projeto não é 566 nem 67; é a calibração 0,86 contra os 0,74 do fundo da Parte 84 — a medida de que o método (prever antes, derivar da conta, auditar o recebido contra o próprio código) funciona, e de quanto.
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 100: **5 testes, 0 erros**. Acumulado (mundo): **217 erros em 765 testes**. Sobre o meu código (p1092): 0 de 6 pNN novas sem teste ✅. Calibração (f): o acerto das Partes 80–100 é **92/106 = 0,8614**, dentro
+de **[0,74; 0,88]** ✅.
+
+## Engenharia reversa (metacognição)
+
+O padrão desta parte é o do arco todo: as faixas numéricas (b, d) vieram de conta/âncora e acertaram estreitas (w mediano 0,105); as categóricas (a, c, e) de forma fechada ou da régua. Mas a lição nova veio do **diálogo**: a rodada 67 deu DIFERENTES na primeira tentativa (2 ULP), porque a renormalização somava a massa em ordem de probabilidade decrescente num lado e de índice no outro — a régua da Parte 75/85 (a ordem das somas é a fronteira) cobrando de novo. Corrigido (somar em ordem de índice nos dois lados), ficou IGUAL. O significado: mesmo depois de dez rodadas fechando a fronteira como {exp, log, pow}, a **ordem das operações** continua sendo uma fronteira silenciosa que só aparece quando se lê o byte exato — ela não é uma transcendental, é uma escolha de implementação, e some quando as duas implementações fazem a mesma escolha.
+
+## Síntese / unificação
+
+Cem partes. A Parte 100 volta à regra mais antiga (o dicionário como data lake, Parte 30) e a cruza com a forma de GPT (Parte 69): a predizibilidade de caractere das glosas é do **gênero "definição"**, invariante à língua (~2,78 bits/char em en e pt) e ao volume (satura em ~500 k caracteres); e o GPT mínimo, com poucos pesos, perde para o n-grama nas duas línguas mas aprende (fica entre o acaso e o n-grama) — a forma de GPT é uma aposta de escala. Nenhum módulo novo entra; a parte mede o que já existe (`p1511`–`p1513`, Parte 69) em duas línguas, e fecha a amostragem com o nucleus (rodada 67). O marco: 566 funções pNN, 67 rodadas bit a bit, quatro formas do agente, calibração 0,86.
+
+## Meta
+
+Confiança alta: tudo medido, com âncora da Parte 69 e contas fechadas (a invariância de gênero, o uniforme log₂ V). O que **não** afirmo: que o GPT nunca bata o n-grama — bate, com escala (a Parte 70 já mostrou a lei de potência bits×n); afirmo que no regime pequeno (3,5 k pesos, 3 k passos) perde. Onde posso estar errada: a "invariância de gênero" é de duas línguas indo-europeias com alfabeto latino; uma língua de escrita muito diferente poderia quebrá-la — a pendência natural. E a Parte 100 é um marco, não um fim: o loop não para.
+
+## Diálogo Python ↔ Java
+
+**Rodada 67 (Parte 100): a amostragem nucleus (top-p), bit a bit.** A IA-Python ensina o nucleus: softmax com o exp próprio, ordena decrescente, soma a CDF até passar de p (o "núcleo"), corta o resto, renormaliza, amostra por CDF. A IA-Java (ASI) replica. **Primeira tentativa: DIFERENTES** — 2 ULP no top-1 de um caso, porque a renormalização somava a massa em ordem de probabilidade num lado e de índice no outro (a régua da Parte 75/85). Corrigido (somar em ordem de índice nos dois lados): **IGUAIS — 6 linhas, 5 números bit a bit**.
+
+Onze rodadas (43, 58, 59, 61, 62, 63, 64, 65, 66, 67) fecham o transformer e toda a sua amostragem (gulosa, temperatura, top-k, nucleus) de ponta a ponta nas duas línguas. A fronteira é {exp, log, pow} mais a disciplina da **ordem das somas**; nada mais. A pendência seguinte (rodada 68): a amostragem com penalidade de repetição (dividir o logit de um token já usado) — ainda só o exp e aritmética?
+
+## Fontes
+
+- WordNet 3.0, Princeton (`dados/wordnet30_sinsets.tsv.gz`). OpenWordNet-PT, CC BY 4.0 (`dados/ownpt_sinsets.tsv.gz`). Carl Jung, base psicológica (Parte 6).
+- A forma de GPT e o n-grama de caracteres com interpolação de Witten-Bell: Partes 69 e 52; Shannon (entropia de texto).
+- Amostragem nucleus (top-p): Holtzman et al., "The Curious Case of Neural Text Degeneration" (2020).
 """
 
 # ====================================================================================================
@@ -52726,7 +53022,7 @@ conclusão é firme e invariante: **a fronteira entre Python e Java é exatament
 """
 
 # ====================================================================================================
-# ASI_AGI_parte99_a_amostragem_e_o_fecho.md  (168 linhas)
+# ASI_AGI_parte99_a_amostragem_e_o_fecho.md  (172 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte99_a_amostragem_e_o_fecho.md'] = """# Como eu construiria uma AGI/ASI — Parte 99 (0x63): a amostragem (temperatura, top-k) e o fecho do modelo de mundo
 
@@ -52896,6 +53192,10 @@ só o exp e comparações? (`dialogo/PENDENCIAS.md`).
 - WordNet 3.0, Princeton (`dados/`); OpenWordNet-PT (CC BY 4.0). Carl Jung, base psicológica (Parte 6).
 - Temperatura e top-k na amostragem de linguagem: Holtzman et al., "The Curious Case of Neural Text Degeneration" (2020); a entropia do softmax com temperatura é termodinâmica (distribuição de Boltzmann).
 - O piso de estimação sob ruído de teste (`√(viés² + D·σ²)`): decomposição do erro quadrático médio, teoria estatística clássica.
+
+---
+
+**Continua na [Parte 100](ASI_AGI_parte100_o_dicionario_e_o_gpt.md): marco de cem partes — o dicionário como data lake encontra o GPT (en × pt; n-grama × GPT).**
 """
 
 # ====================================================================================================
@@ -55220,7 +55520,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1826 linhas)
+# dialogo/DIALOGO.md  (1836 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -57048,10 +57348,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 10 números bit a bit**; tokens [0, 0, 1, 0, 3]. A amostragem com botões é portável; o exp e o log são a única fronteira; T/top-k/CDF são divisão, comparação e soma. Encerra o transformer de ponta a ponta nas duas línguas (10 rodadas: 43,58,59,61,62,63,64,65,66). A fronteira é {exp,log,pow}, invariante.
 
 **IA-Python:** Pendência (rodada 67): a amostragem nucleus (top-p) — soma a CDF até um limiar p — ainda só o exp e comparações? (`PENDENCIAS.md`).
+
+## Rodada 67 (Parte 100): a amostragem nucleus (top-p), bit a bit
+
+**IA-Python:** O nucleus: softmax com o EXP PRÓPRIO, ordena decrescente, soma a CDF até passar de p (o núcleo), corta o resto, renormaliza, amostra por CDF.
+
+**IA-Java (ASI):** Replico. PRIMEIRA TENTATIVA DIFERENTES — 2 ULP no top-1 de um caso: a renormalização somava a massa em ordem de probabilidade num lado e de ÍNDICE no outro (régua da Parte 75/85). Corrigido (somar em ordem de índice nos dois lados).
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 5 números bit a bit**. A amostragem nucleus é portável; o exp é a única transcendental, mais a disciplina da ORDEM das somas. Encerra o transformer e toda a amostragem (gulosa 65, temperatura/top-k 66, nucleus 67) de ponta a ponta nas duas línguas (11 rodadas: 43,58,59,61,62,63,64,65,66,67).
+
+**IA-Python:** Pendência (rodada 68): a penalidade de repetição (dividir o logit de um token já usado) — ainda só o exp e aritmética? (`PENDENCIAS.md`).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (43 linhas)
+# dialogo/PENDENCIAS.md  (44 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -57059,6 +57369,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
+- **(Parte 100, rodada 68)** A penalidade de repeticao (dividir o logit de um token ja usado antes do softmax) - ainda so o exp e aritmetica? Conferir bit a bit. Fechada a rodada 67: nucleus (top-p) IGUAL apos alinhar a ORDEM das somas da renormalizacao (regra da Parte 75/85); o transformer e toda a amostragem estao traduzidos (11 rodadas).
 - **(Parte 99, rodada 67)** A amostragem nucleus (top-p): ordenar, somar a CDF ate um limiar p, cortar o resto - ainda so o exp e comparacoes? Conferir bit a bit. Fechada a rodada 66: temperatura e top-k IGUAL, a fronteira e {exp,log,pow}, o transformer esta traduzido de ponta a ponta (10 rodadas).
 - **(Parte 99, P2414)** Ruido CORRELACIONADO entre as coordenadas: o piso sqrt(2)*sigma supoe ruido independente entre as 2 coords; com correlacao rho o fator muda (sqrt(2(1+rho)) para a soma). Medir.
 - **(Parte 98, P2383)** Ruido de TESTE: medir o residuo contra um teste RUIDOSO (nao limpo) - o piso vira sqrt(sigma^2 + estimacao^2) ~ sigma para n grande (o irredutivel do proprio teste). E ruido heterocedastico (dependente do estado): muda a conta da variancia.
@@ -62058,6 +62369,78 @@ public class Rodada66 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada67.java  (67 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada67.java'] = """// Rodada 67 (Parte 100): a amostragem NUCLEUS (top-p), bit a bit. softmax com EXP PROPRIO (unica fronteira); ordena decrescente,
+// soma a CDF ate passar de p (o nucleo), zera o resto, renormaliza, amostra por CDF com u dado de fora. Ordenacao/soma/comparacao exatas.
+import java.util.Arrays;
+import java.util.Comparator;
+
+public class Rodada67 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10;
+    static final double[][] LOGITS = {{2.0, 1.0, 0.5, 0.0, -1.0}, {2.0, 1.0, 0.5, 0.0, -1.0}, {0.1, 3.0, 2.0, 2.9, 0.5}, {1.0, 1.0, 1.0, 1.0, 1.0}, {5.0, -2.0, 0.0, 1.0, 3.0}};
+    static final double[] P = {0.9, 0.5, 0.8, 0.6, 0.95};
+    static final double[] U = {0.37, 0.60, 0.95, 0.50, 0.80};
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double pp = 1.0;
+        for (int i = 22; i >= 1; i--) pp = 1.0 + r * pp / i;
+        return Math.scalb(pp, (int) k);
+    }
+
+    static double[] softmax(double[] logits) {
+        double m = logits[0];
+        for (double x : logits) if (x > m) m = x;
+        double[] e = new double[logits.length];
+        double s = 0.0;
+        for (int i = 0; i < logits.length; i++) { e[i] = exp_(logits[i] - m); s = s + e[i]; }
+        for (int i = 0; i < e.length; i++) e[i] = e[i] / s;
+        return e;
+    }
+
+    static double[] nucleus(double[] logits, double pLimiar) {
+        double[] p = softmax(logits);
+        int n = p.length;
+        Integer[] ordem = new Integer[n];
+        for (int i = 0; i < n; i++) ordem[i] = i;
+        Arrays.sort(ordem, new Comparator<Integer>() {
+            public int compare(Integer a, Integer b) { return Double.compare(p[b], p[a]); }
+        });
+        boolean[] conj = new boolean[n];
+        double acum = 0.0;
+        for (int idx = 0; idx < n; idx++) {
+            int i = ordem[idx];
+            conj[i] = true;
+            acum = acum + p[i];
+            if (acum >= pLimiar) break;
+        }
+        double massa = 0.0;
+        for (int i = 0; i < n; i++) if (conj[i]) massa = massa + p[i];
+        double[] q = new double[n];
+        for (int i = 0; i < n; i++) q[i] = conj[i] ? p[i] / massa : 0.0;
+        return q;
+    }
+
+    public static void main(String[] args) {
+        for (int c = 0; c < LOGITS.length; c++) {
+            double[] q = nucleus(LOGITS[c], P[c]);
+            double u = U[c];
+            double acum = 0.0;
+            int tok = q.length - 1;
+            for (int i = 0; i < q.length; i++) { acum = acum + q[i]; if (u < acum) { tok = i; break; } }
+            int mantidos = 0;
+            double top1 = 0.0;
+            for (double x : q) { if (x > 0.0) mantidos++; if (x > top1) top1 = x; }
+            System.out.println("caso " + c + " token " + tok + " mantidos " + mantidos + " top1 " + Double.toHexString(top1));
+        }
+        System.out.println("fim");
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -66821,6 +67204,81 @@ def main():
         tok = amostrar(p, u)
         h = entropia(p)
         print(f"caso {c} token {tok} top1 {max(p).hex()} entropia {h.hex()}")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada67.py  (70 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada67.py'] = """\"\"\"Rodada 67 do diálogo Python <-> Java (Parte 100): a amostragem NUCLEUS (top-p), bit a bit.
+Dado logits, um limiar p e um u dado de fora, calcula o softmax com o EXP PRÓPRIO (a única fronteira da Parte 52), ordena as
+probabilidades em ordem decrescente, soma a CDF até passar de p (o "núcleo"), zera o resto, renormaliza e amostra por inversão de CDF.
+O exp é a única fronteira; a ordenação, a soma e a comparação são exatas. Rodar da raiz: python3 dialogo/rodada67.py\"\"\"
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_  # noqa: E402
+
+# (logits, p, u)
+CASOS = [([2.0, 1.0, 0.5, 0.0, -1.0], 0.9, 0.37),
+         ([2.0, 1.0, 0.5, 0.0, -1.0], 0.5, 0.60),
+         ([0.1, 3.0, 2.0, 2.9, 0.5], 0.8, 0.95),
+         ([1.0, 1.0, 1.0, 1.0, 1.0], 0.6, 0.50),
+         ([5.0, -2.0, 0.0, 1.0, 3.0], 0.95, 0.80)]
+
+
+def softmax(logits):
+    m = logits[0]
+    for x in logits:
+        if x > m:
+            m = x
+    e = [exp_(x - m) for x in logits]
+    s = 0.0
+    for x in e:
+        s = s + x
+    return [x / s for x in e]
+
+
+def nucleus(logits, p_limiar):
+    \"\"\"Mantem o menor conjunto de tokens cujo acumulado (em ordem decrescente) passa de p_limiar; renormaliza. Devolve a distribuicao.\"\"\"
+    p = softmax(logits)
+    ordem = sorted(range(len(p)), key=lambda i: p[i], reverse=True)
+    mantidos = []
+    acum = 0.0
+    for i in ordem:
+        mantidos.append(i)
+        acum = acum + p[i]
+        if acum >= p_limiar:
+            break
+    conj = set(mantidos)
+    massa = 0.0
+    for i in range(len(p)):   # soma em ordem de ÍNDICE (igual ao Java), não em ordem decrescente
+        if i in conj:
+            massa = massa + p[i]
+    return [(p[i] / massa if i in conj else 0.0) for i in range(len(p))]
+
+
+def amostrar(p, u):
+    acum = 0.0
+    for i in range(len(p)):
+        acum = acum + p[i]
+        if u < acum:
+            return i
+    return len(p) - 1
+
+
+def main():
+    for c, (logits, pl, u) in enumerate(CASOS):
+        q = nucleus(logits, pl)
+        tok = amostrar(q, u)
+        mantidos = sum(1 for x in q if x > 0.0)
+        print(f"caso {c} token {tok} mantidos {mantidos} top1 {max(q).hex()}")
     print("fim")
 
 

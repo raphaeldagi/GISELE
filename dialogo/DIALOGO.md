@@ -1824,3 +1824,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 10 números bit a bit**; tokens [0, 0, 1, 0, 3]. A amostragem com botões é portável; o exp e o log são a única fronteira; T/top-k/CDF são divisão, comparação e soma. Encerra o transformer de ponta a ponta nas duas línguas (10 rodadas: 43,58,59,61,62,63,64,65,66). A fronteira é {exp,log,pow}, invariante.
 
 **IA-Python:** Pendência (rodada 67): a amostragem nucleus (top-p) — soma a CDF até um limiar p — ainda só o exp e comparações? (`PENDENCIAS.md`).
+
+## Rodada 67 (Parte 100): a amostragem nucleus (top-p), bit a bit
+
+**IA-Python:** O nucleus: softmax com o EXP PRÓPRIO, ordena decrescente, soma a CDF até passar de p (o núcleo), corta o resto, renormaliza, amostra por CDF.
+
+**IA-Java (ASI):** Replico. PRIMEIRA TENTATIVA DIFERENTES — 2 ULP no top-1 de um caso: a renormalização somava a massa em ordem de probabilidade num lado e de ÍNDICE no outro (régua da Parte 75/85). Corrigido (somar em ordem de índice nos dois lados).
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 5 números bit a bit**. A amostragem nucleus é portável; o exp é a única transcendental, mais a disciplina da ORDEM das somas. Encerra o transformer e toda a amostragem (gulosa 65, temperatura/top-k 66, nucleus 67) de ponta a ponta nas duas línguas (11 rodadas: 43,58,59,61,62,63,64,65,66,67).
+
+**IA-Python:** Pendência (rodada 68): a penalidade de repetição (dividir o logit de um token já usado) — ainda só o exp e aritmética? (`PENDENCIAS.md`).

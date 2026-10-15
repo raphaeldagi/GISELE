@@ -4,6 +4,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
+- **(Parte 100, rodada 68)** A penalidade de repeticao (dividir o logit de um token ja usado antes do softmax) - ainda so o exp e aritmetica? Conferir bit a bit. Fechada a rodada 67: nucleus (top-p) IGUAL apos alinhar a ORDEM das somas da renormalizacao (regra da Parte 75/85); o transformer e toda a amostragem estao traduzidos (11 rodadas).
 - **(Parte 99, rodada 67)** A amostragem nucleus (top-p): ordenar, somar a CDF ate um limiar p, cortar o resto - ainda so o exp e comparacoes? Conferir bit a bit. Fechada a rodada 66: temperatura e top-k IGUAL, a fronteira e {exp,log,pow}, o transformer esta traduzido de ponta a ponta (10 rodadas).
 - **(Parte 99, P2414)** Ruido CORRELACIONADO entre as coordenadas: o piso sqrt(2)*sigma supoe ruido independente entre as 2 coords; com correlacao rho o fator muda (sqrt(2(1+rho)) para a soma). Medir.
 - **(Parte 98, P2383)** Ruido de TESTE: medir o residuo contra um teste RUIDOSO (nao limpo) - o piso vira sqrt(sigma^2 + estimacao^2) ~ sigma para n grande (o irredutivel do proprio teste). E ruido heterocedastico (dependente do estado): muda a conta da variancia.

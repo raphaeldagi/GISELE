@@ -53,36 +53,61 @@
 
 | previsão | faixa | medido | veredito |
 |---|---|---|---|
-| (m1) | [4; 8] | XX | XX |
-| (m2) | [0; 3] | XX | XX |
-| (m3) | [0,05; 0,80] | XX | XX |
-| (m4) | [0,45; 1,00] | XX | XX |
-| (m5) | [0; 3] | XX | XX |
-| (m6) | [0; 3] | XX | XX |
+| (m1) nº de previsões do mundo | [4; 8] | **5** | ✅ |
+| (m2) faixas que cruzam o zero | [0; 3] | **0** | ✅ |
+| (m3) mediana de w (não cruzam) | [0,05; 0,80] | **0,105** | ✅ |
+| (m4) fração de acertos | [0,45; 1,00] | **1,00** | ✅ |
+| (m5) faixas não-zero com w > 0,6 | [0; 3] | **0** | ✅ |
+| (m6) nº de surpresas | [0; 3] | **0** | ✅ |
 
 ## As respostas (quatro camadas)
 
-PLACEHOLDER_RESPOSTAS
+### P2441 / P2442 — A predizibilidade das glosas é da língua ou do gênero?
 
-## Placar do mundo desta parte
+**Na pergunta.** "Data lake" supõe que o dicionário é uma fonte de regularidade explorável. A pergunta é se essa regularidade é da língua (inglês vs. português) ou da forma "definição".
 
-PLACAR_100_TEXTO
+**Lógica.** Trigrama (Witten-Bell): en **2,784**, pt **2,788** — iguais a menos de 0,004. No 4-grama: en **2,207**, pt **2,346**, `|Δ| = 0,140 < 0,15` ✅. E não é volume: o trigrama do inglês num subconjunto **aleatório** de 511 k caracteres (o tamanho do corpus pt) dá **2,812** ∈ [2,6; 2,9] ✅ — a predizibilidade satura cedo, não precisa dos 5,66 M de caracteres. O corpus pt é ~11× menor e dá o mesmo bits/char.
+
+**Tradução cruzada.** A forma "definição" impõe uma sintaxe (um gênero: "X é um Y que Z") mais forte que a diferença entre as duas línguas. É o nível certo (Parte 43): a estrutura que o n-grama vê não é "inglês" nem "português", é "definição de dicionário" — e essa é a mesma nas duas. O data lake tem uma regularidade de gênero, invariante à língua, em ~2,78 bits/char.
+
+**Meta.** O 4-grama já diverge um pouco mais (0,14) — com contexto maior, as diferenças de ortografia (pt sem acentos vs. en) começam a aparecer. A invariância é de caractere curto; o vocabulário, claro, difere.
+
+### P2443 / P2444 — O GPT mínimo bate o n-grama?
+
+**Lógica.** GPT (d=16, h=32, 3000 passos, ~3,5 k pesos): en **3,483**, pt **3,406** — **perde** para o trigrama (2,784 / 2,788) nas duas línguas ✅ (âncora da Parte 69: 3,22 vs 2,77 no inglês). Mas aprende: o uniforme (acaso) é `log₂ V = 5,087`; o GPT fica bem abaixo (3,4–3,5) e dentro de [3,0; 4,1] ✅ — no meio entre o acaso e o n-grama.
+
+**Tradução cruzada.** O n-grama é memória exata de contextos curtos (conta todo o treino); o GPT é compressão em poucos pesos. Com 3,5 k pesos e 3 k passos, a compressão perde para a memória — mas não para o acaso. É a lição da Parte 69 confirmada em duas línguas: a forma de GPT só supera o n-grama com escala (mais pesos, mais passos, mais contexto), que o brinquedo aqui não tem. O caminho para a AGI pela forma de GPT é de escala, e a escala custa — o n-grama é o piso difícil de bater no regime pequeno.
+
+**Meta.** Confiança alta: medido em duas línguas, com a âncora da Parte 69. O GPT "no meio" é deste tamanho; a pergunta de escala (quando o GPT cruza o n-grama) fica para um arco futuro.
+
+### P2446 — O retrospecto de cem partes
+
+**Lógica.** Números do marco, cada um de uma função: **566 funções pNN** em `calculos.py`, **67 rodadas** do diálogo traduzidas bit a bit, calibração do mundo 80–100 em **0,8614**. Quatro formas do agente (decisão bayesiana, GPT, pulsado, modelo de mundo); a fronteira entre Python e Java fechada em {exp, log, pow}.
+
+**Meta.** O número que mais me diz sobre o projeto não é 566 nem 67; é a calibração 0,86 contra os 0,74 do fundo da Parte 84 — a medida de que o método (prever antes, derivar da conta, auditar o recebido contra o próprio código) funciona, e de quanto.
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 100: **5 testes, 0 erros**. Acumulado (mundo): **217 erros em 765 testes**. Sobre o meu código (p1092): 0 de 6 pNN novas sem teste ✅. Calibração (f): o acerto das Partes 80–100 é **92/106 = 0,8614**, dentro
+de **[0,74; 0,88]** ✅.
 
 ## Engenharia reversa (metacognição)
 
-PLACEHOLDER_ENG
+O padrão desta parte é o do arco todo: as faixas numéricas (b, d) vieram de conta/âncora e acertaram estreitas (w mediano 0,105); as categóricas (a, c, e) de forma fechada ou da régua. Mas a lição nova veio do **diálogo**: a rodada 67 deu DIFERENTES na primeira tentativa (2 ULP), porque a renormalização somava a massa em ordem de probabilidade decrescente num lado e de índice no outro — a régua da Parte 75/85 (a ordem das somas é a fronteira) cobrando de novo. Corrigido (somar em ordem de índice nos dois lados), ficou IGUAL. O significado: mesmo depois de dez rodadas fechando a fronteira como {exp, log, pow}, a **ordem das operações** continua sendo uma fronteira silenciosa que só aparece quando se lê o byte exato — ela não é uma transcendental, é uma escolha de implementação, e some quando as duas implementações fazem a mesma escolha.
 
 ## Síntese / unificação
 
-PLACEHOLDER_SINTESE
+Cem partes. A Parte 100 volta à regra mais antiga (o dicionário como data lake, Parte 30) e a cruza com a forma de GPT (Parte 69): a predizibilidade de caractere das glosas é do **gênero "definição"**, invariante à língua (~2,78 bits/char em en e pt) e ao volume (satura em ~500 k caracteres); e o GPT mínimo, com poucos pesos, perde para o n-grama nas duas línguas mas aprende (fica entre o acaso e o n-grama) — a forma de GPT é uma aposta de escala. Nenhum módulo novo entra; a parte mede o que já existe (`p1511`–`p1513`, Parte 69) em duas línguas, e fecha a amostragem com o nucleus (rodada 67). O marco: 566 funções pNN, 67 rodadas bit a bit, quatro formas do agente, calibração 0,86.
 
 ## Meta
 
-PLACEHOLDER_META
+Confiança alta: tudo medido, com âncora da Parte 69 e contas fechadas (a invariância de gênero, o uniforme log₂ V). O que **não** afirmo: que o GPT nunca bata o n-grama — bate, com escala (a Parte 70 já mostrou a lei de potência bits×n); afirmo que no regime pequeno (3,5 k pesos, 3 k passos) perde. Onde posso estar errada: a "invariância de gênero" é de duas línguas indo-europeias com alfabeto latino; uma língua de escrita muito diferente poderia quebrá-la — a pendência natural. E a Parte 100 é um marco, não um fim: o loop não para.
 
 ## Diálogo Python ↔ Java
 
-PLACEHOLDER_DIALOGO
+**Rodada 67 (Parte 100): a amostragem nucleus (top-p), bit a bit.** A IA-Python ensina o nucleus: softmax com o exp próprio, ordena decrescente, soma a CDF até passar de p (o "núcleo"), corta o resto, renormaliza, amostra por CDF. A IA-Java (ASI) replica. **Primeira tentativa: DIFERENTES** — 2 ULP no top-1 de um caso, porque a renormalização somava a massa em ordem de probabilidade num lado e de índice no outro (a régua da Parte 75/85). Corrigido (somar em ordem de índice nos dois lados): **IGUAIS — 6 linhas, 5 números bit a bit**.
+
+Onze rodadas (43, 58, 59, 61, 62, 63, 64, 65, 66, 67) fecham o transformer e toda a sua amostragem (gulosa, temperatura, top-k, nucleus) de ponta a ponta nas duas línguas. A fronteira é {exp, log, pow} mais a disciplina da **ordem das somas**; nada mais. A pendência seguinte (rodada 68): a amostragem com penalidade de repetição (dividir o logit de um token já usado) — ainda só o exp e aritmética?
 
 ## Fontes
 

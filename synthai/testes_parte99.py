@@ -59,7 +59,7 @@ class TesteParte99(unittest.TestCase):
         self.assertAlmostEqual(retro["ruido"], math.sqrt(2) * 0.1, places=6)
 
     def test_p1961_com_parte_99(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 100))))
         self.assertEqual(por[99], (5, 5))
         self.assertEqual((ok, tot), (87, 101))
 

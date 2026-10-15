@@ -9594,6 +9594,8 @@ VEREDITOS_P3009 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3009, TESTES_P3009 = 217, 755
 VEREDITOS_P3079 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3079, TESTES_P3079 = 217, 760
+VEREDITOS_P3149 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P3149, TESTES_P3149 = 217, 765
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12134,12 +12136,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12147,7 +12149,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\(g\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97, 98, 99):  # nas Partes 94-99 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98, 99, 100):  # nas Partes 94-100 a letra da calibracao e a (f)
             txt = re.sub(r"\(f\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13314,6 +13316,81 @@ def p2416_retrospecto_modelo_mundo():
     return {"forma": forma, "dados": dados, "ruido": ruido}
 
 
+def p2441_invariancia_4grama(ordem=4, limite=20000):
+    """A invariancia da predizibilidade das glosas vale tambem no 4-grama (P2441; Parte 100): o n-grama de ordem 4 das definicoes da
+    quase o mesmo bits/char em en e pt - a predizibilidade de caractere e do GENERO 'definicao', nao da lingua. Devolve (4grama en, 4grama pt, |dif|)."""
+    tr_en, te_en = p1511_corpus_de_glosas("en")
+    tr_pt, te_pt = p1511_corpus_de_glosas("pt")
+    b_en = p1512_ngrama_bits(tr_en, te_en, ordem=ordem, limite=limite)
+    b_pt = p1512_ngrama_bits(tr_pt, te_pt, ordem=ordem, limite=limite)
+    return b_en, b_pt, abs(b_en - b_pt)
+
+
+def p2442_invariancia_nao_e_volume(semente=100, tamanho=511000, limite=20000):
+    """A invariancia nao e volume de dados (P2442; Parte 100): o trigrama do ingles num subconjunto ALEATORIO do tamanho do corpus pt
+    (~511k chars) continua em [2,6; 2,9] - a predizibilidade satura cedo. Devolve o bits/char do trigrama no subconjunto aleatorio."""
+    import random
+    tr_en, te_en = p1511_corpus_de_glosas("en")
+    rng = random.Random(semente)
+    ini = rng.randrange(0, len(tr_en) - tamanho)
+    sub = tr_en[ini:ini + tamanho]
+    return p1512_ngrama_bits(sub, te_en, ordem=3, limite=limite)
+
+
+def p2443_gpt_contra_ngrama(passos=3000, T=16, d=16, h=32, lr=0.01, semente=100, janelas=200):
+    """O GPT minimo contra o n-grama nas duas linguas (P2443; Parte 100): o GPT (d=16, 3000 passos) tem bits/char MAIOR que o trigrama
+    tanto em en quanto em pt - poucos milhares de pesos nao batem o n-grama que conta todo o treino (ancora da Parte 69). Devolve
+    (gpt_en, trigrama_en, gpt_pt, trigrama_pt)."""
+    tr_en, te_en = p1511_corpus_de_glosas("en")
+    tr_pt, te_pt = p1511_corpus_de_glosas("pt")
+    gpt_en = p1513_gpt_bits(tr_en, te_en, passos=passos, T=T, d=d, h=h, lr=lr, semente=semente, janelas=janelas)[0]
+    tri_en = p1512_ngrama_bits(tr_en, te_en, ordem=3, limite=20000)
+    gpt_pt = p1513_gpt_bits(tr_pt, te_pt, passos=passos, T=T, d=d, h=h, lr=lr, semente=semente, janelas=janelas)[0]
+    tri_pt = p1512_ngrama_bits(tr_pt, te_pt, ordem=3, limite=20000)
+    return gpt_en, tri_en, gpt_pt, tri_pt
+
+
+def p2444_gpt_no_meio(gpt_en, gpt_pt):
+    """O GPT aprende mas fica no meio (P2444; Parte 100): o bits/char do GPT fica entre o acaso (uniforme, log2 V) e o trigrama (~2,78) -
+    aprende estrutura, mas pouca, com poucos pesos e passos. Devolve (uniforme = log2 V, gpt_en < uniforme?, gpt_pt < uniforme?, ambos em [3,0; 4,1]?)."""
+    from math import log2
+    uniforme = log2(len(VOCAB_GPT))
+    no_meio = all(3.0 <= g <= 4.1 for g in (gpt_en, gpt_pt))
+    return uniforme, gpt_en < uniforme, gpt_pt < uniforme, no_meio
+
+
+def _rodada67():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada67", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada67.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2445_rodada67():
+    """Rodada 67 (P2445; Parte 100): a amostragem nucleus (top-p), IGUAL em Java bit a bit. Devolve, por caso, (token, nº mantidos, top-1).
+    O exp do softmax e a unica fronteira; a ordenacao, a soma e a comparacao sao exatas (a renormalizacao soma em ordem de indice, igual nos dois lados)."""
+    r = _rodada67()
+    out = []
+    for logits, pl, u in r.CASOS:
+        q = r.nucleus(list(logits), pl)
+        out.append((r.amostrar(q, u), sum(1 for x in q if x > 0.0), max(q)))
+    return out
+
+
+def p2446_retrospecto_cem():
+    """O retrospecto de cem partes (P2446; Parte 100): numeros do marco. Devolve (nº de funcoes pNN no arquivo, nº de rodadas do dialogo traduzidas,
+    calibracao do mundo das Partes 80-100). Cada numero sai de uma funcao ja existente (p96, a contagem de rodadas, p1961)."""
+    import os
+    import re
+    k, _ = p96_crescimento()
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    rodadas = len([f for f in os.listdir(os.path.join(raiz, "dialogo")) if re.fullmatch(r"rodada\d+\.py", f)])
+    _, _, frac, _ = p1961_teste_e_da_calibracao()
+    return k, rodadas, frac
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -14393,13 +14470,34 @@ def _parte_99():
     print(f"P2415 rodada 66 (temperatura + top-k, IGUAL em Java): tokens = {[t for t, _, _ in casos]}")
     retro = p2416_retrospecto_modelo_mundo()
     print(f"P2416 retrospecto do modelo de mundo (os 3 pisos): forma = {retro['forma']:.4f}, dados = {retro['dados']:.4f}, ruido = {retro['ruido']:.4f}")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=tuple(list(range(80,82))+[83]+list(range(84,100))))
     print(f"P1961 teste (f), Partes 80-99: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2411, 2440)
     print(f"P1092 pNN novas (P2411-P2440) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 99: {p974_previsoes_sem_largura(range(99, 100))}")
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3079, testes=TESTES_P3079)
     print(f"P3079 minha taxa de erro ({ERROS_P3079}/{TESTES_P3079}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+def _parte_100():
+    print("--- Parte 100 (0x64: o dicionario como data lake encontra o GPT) ---")
+    b_en, b_pt, dif = p2441_invariancia_4grama()
+    print(f"P2441 invariancia no 4-grama: en = {b_en:.3f}, pt = {b_pt:.3f}, |dif| = {dif:.3f} bits/char (o genero 'definicao')")
+    print(f"P2442 invariancia nao e volume: trigrama en num subconjunto aleatorio de 511k = {p2442_invariancia_nao_e_volume():.3f}")
+    gpt_en, tri_en, gpt_pt, tri_pt = p2443_gpt_contra_ngrama()
+    print(f"P2443 GPT x n-grama: en GPT = {gpt_en:.3f} vs trigrama {tri_en:.3f}; pt GPT = {gpt_pt:.3f} vs trigrama {tri_pt:.3f} (GPT perde nas duas)")
+    unif, menor_en, menor_pt, meio = p2444_gpt_no_meio(gpt_en, gpt_pt)
+    print(f"P2444 GPT no meio: uniforme (log2 V) = {unif:.3f}; gpt<uniforme en/pt = {menor_en}/{menor_pt}; ambos em [3,0;4,1] = {meio}")
+    casos = p2445_rodada67()
+    print(f"P2445 rodada 67 (nucleus top-p, IGUAL em Java): tokens = {[t for t, _, _ in casos]}; mantidos = {[m for _, m, _ in casos]}")
+    kf, rod, cal = p2446_retrospecto_cem()
+    print(f"P2446 retrospecto de cem partes: {kf} funcoes pNN, {rod} rodadas do dialogo, calibracao do mundo 80-100 = {cal:.4f}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-100: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2441, 2470)
+    print(f"P1092 pNN novas (P2441-P2470) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 100: {p974_previsoes_sem_largura(range(100, 101))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3149, testes=TESTES_P3149)
+    print(f"P3149 minha taxa de erro ({ERROS_P3149}/{TESTES_P3149}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -14437,7 +14535,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100}
 
 
 if __name__ == "__main__":
