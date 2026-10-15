@@ -103,3 +103,7 @@ Confiança: as três contas de teoria dos jogos (α, c, indiferença) são teore
 **IA-Java (ASI):** Nada de transcendental aqui — decidir sob incerteza é aritmética; portável por construção.
 
 **Resultado.** `comparar.py`: **IGUAIS, 7 linhas e 10 números bit a bit** (α = 0x1.5555…p−2 = 1/3, c = 0,5, b = 0,5, EVs = 0). A decisão de equilíbrio atravessa as línguas sem perda. Em contraste, a **sonda** `sonda_transc_105` (à parte, não é rodada) mostrou que o `sin`/`cos`/`tan`/`atan2` da libm **divergem** na faixa larga (21/18/35/590 em 10 000) — a 6ª face da fronteira existe, e depende da faixa. Pendência (rodada 73): o `sin_` próprio (série + redução em duas partes) é IGUAL entre as línguas em TODA a faixa larga, ou precisa de redução Payne-Hanek?
+
+---
+
+→ Continua na **[Parte 106 — A segunda rua, e a redução de argumento](ASI_AGI_parte106_a_segunda_rua.md)** (pré-registro das previsões).
