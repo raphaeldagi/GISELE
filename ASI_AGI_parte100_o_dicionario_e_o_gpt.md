@@ -114,3 +114,7 @@ Onze rodadas (43, 58, 59, 61, 62, 63, 64, 65, 66, 67) fecham o transformer e tod
 - WordNet 3.0, Princeton (`dados/wordnet30_sinsets.tsv.gz`). OpenWordNet-PT, CC BY 4.0 (`dados/ownpt_sinsets.tsv.gz`). Carl Jung, base psicológica (Parte 6).
 - A forma de GPT e o n-grama de caracteres com interpolação de Witten-Bell: Partes 69 e 52; Shannon (entropia de texto).
 - Amostragem nucleus (top-p): Holtzman et al., "The Curious Case of Neural Text Degeneration" (2020).
+
+---
+
+**Continua na [Parte 101](ASI_AGI_parte101_delirio_dez_camadas.md): dez camadas, a recursão que contrai (Banach), e o caos que não comprime — medindo só o que é novo no pedido do delírio.**
