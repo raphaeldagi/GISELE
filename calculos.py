@@ -9604,6 +9604,8 @@ VEREDITOS_P3359 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3359, TESTES_P3359 = 217, 780
 VEREDITOS_P3429 = "(a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ✅"
 ERROS_P3429, TESTES_P3429 = 218, 785
+VEREDITOS_P3499 = "(a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ✅"
+ERROS_P3499, TESTES_P3499 = 219, 790
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12144,12 +12146,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12157,7 +12159,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\(g\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104):  # nas Partes 94-104 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105):  # nas Partes 94-105 a letra da calibracao e a (f)
             txt = re.sub(r"\(f\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13672,6 +13674,54 @@ def p2566_rodada71(pos=13):
     return _rodada71().pe(pos, True)
 
 
+def p2591_frequencia_do_blefe(n=40000, semente=105):
+    """A frequencia de blefe no equilibrio (P2591; Parte 105): alpha = B/(P+2B) = 1/3 para aposta do tamanho do pote; a
+    melhor-resposta simulada bate ~1/3. Devolve (alpha analitico, alpha simulado)."""
+    from synthai.blefe import alpha_blefe, simular_equilibrio
+    return alpha_blefe(), simular_equilibrio(n, semente)[0]
+
+
+def p2592_frequencia_de_pagar(n=40000, semente=105):
+    """A frequencia de pagar (defesa minima) no equilibrio (P2592; Parte 105): c = P/(P+B) = 1/2 para aposta do tamanho do
+    pote. Devolve (c analitico, c simulado)."""
+    from synthai.blefe import freq_pagar, simular_equilibrio
+    return freq_pagar(), simular_equilibrio(n, semente)[1]
+
+
+def p2593_indiferenca(P=2.0, B=2.0):
+    """O equilibrio e um ponto de indiferenca (P2593; Parte 105): no alpha* o pagador e indiferente (EV(pagar)=0) e no c* o
+    apostador e indiferente (EV(blefar)=0); e a melhor-resposta do ar e plana (ninguem melhora desviando). Devolve
+    (|EV(pagar)|, |EV(blefar)|, amplitude da melhor-resposta)."""
+    from synthai.blefe import indiferenca, melhor_resposta_plana
+    ip, ib = indiferenca(P, B)
+    return ip, ib, melhor_resposta_plana(P, B)
+
+
+def p2594_fronteira_das_trigonometricas(n=2000):
+    """A 6a face da fronteira EXISTE, agora MEDIDA na faixa larga (P2594; Parte 105; corrige a Parte 104): a `math.sin` da
+    libm difere da referencia de 40 digitos em `contar` de n argumentos x=k/1000 - a faixa larga, onde a reducao mod 2pi
+    importa. A Parte 104 viu 0 porque usou argumentos pequenos e benignos (PE); aqui ha divergencia. A sonda cross-language
+    `sonda_transc_105` mediu, em 10000 args, sin=21, cos=18, tan=35, atan2=590 divergencias entre Python e Java. Devolve o
+    `contar` local de sin (> 0 confirma que sin NAO e corretamente arredondada na faixa larga)."""
+    from synthai.posicional import contar_fora_wide
+    return contar_fora_wide("sin", n)
+
+
+def _rodada72():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada72", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada72.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2595_rodada72():
+    """Rodada 72 (P2595; Parte 105): a decisao de equilibrio do blefe (alpha, c, b, EVs), IGUAL em Java bit a bit - so +,-,*,/
+    e comparacoes, nenhuma transcendental (portavel por construcao). Devolve (alpha, c, b, ev_pagar, ev_blefar)."""
+    return _rodada72().equilibrio()
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -14866,6 +14916,26 @@ def _parte_104():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3429, testes=TESTES_P3429)
     print(f"P3429 minha taxa de erro ({ERROS_P3429}/{TESTES_P3429}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_105():
+    print("--- Parte 105 (0x69: o blefe; o equilibrio de indiferenca, e a fronteira medida do seno) ---")
+    a, asim = p2591_frequencia_do_blefe()
+    print(f"P2591 frequencia de blefe: alpha = {a:.4f} (B/(P+2B)=1/3), simulado = {asim:.4f}")
+    c, csim = p2592_frequencia_de_pagar()
+    print(f"P2592 frequencia de pagar: c = {c:.4f} (P/(P+B)=1/2), simulado = {csim:.4f}")
+    ip, ib, plana = p2593_indiferenca()
+    print(f"P2593 indiferenca: |EV(pagar)| = {ip:.2e}, |EV(blefar)| = {ib:.2e}, melhor-resposta plana = {plana:.2e}")
+    difs = p2594_fronteira_das_trigonometricas()
+    print(f"P2594 a 6a face EXISTE (MEDIDO, corrige a Parte 104): math.sin difere da referencia em {difs} de 2000 args na faixa larga (k/1000); a sonda_transc_105 mediu sin=21 cos=18 tan=35 atan2=590 divergencias Python x Java em 10000 args - o 6o rosto da fronteira depende da FAIXA (reducao mod 2pi)")
+    al, cc, b, evp, evb = p2595_rodada72()
+    print(f"P2595 rodada 72 (decisao de equilibrio, IGUAL em Java): alpha={al:.4f} c={cc:.4f} b={b:.4f} ev_pagar={evp:.2e} ev_blefar={evb:.2e}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-105: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2591, 2620)
+    print(f"P1092 pNN novas (P2591-P2620) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 105: {p974_previsoes_sem_largura(range(105, 106))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3499, testes=TESTES_P3499)
+    print(f"P3499 minha taxa de erro ({ERROS_P3499}/{TESTES_P3499}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -14902,7 +14972,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105}
 
 
 if __name__ == "__main__":

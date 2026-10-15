@@ -42,8 +42,8 @@ class TesteParte104(unittest.TestCase):
         self.assertEqual(len(saida), 8)   # d=8
 
     def test_p1961_com_parte_104(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
-        self.assertEqual(por[104], (4, 5))   # (d) foi um erro honesto: sin nao e fronteira aqui
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 105))))
+        self.assertEqual(por[104], (4, 5))   # (d) foi um erro honesto: sin nao e fronteira nos args benignos da Parte 104
         self.assertEqual((ok, tot), (111, 126))
 
 

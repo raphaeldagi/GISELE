@@ -72,3 +72,30 @@ def contar_sin_fora_de_arredondamento(n=1000):
         if math.sin(x) != _sin_referencia(x):
             fora += 1
     return fora
+
+
+def _ref_generica(fn, x, prec=40):
+    """Referência de prec dígitos (decimal) para sin/cos/tan, após reduzir x mod 2pi; arredondada ao float mais próximo."""
+    from decimal import Decimal, getcontext
+    getcontext().prec = prec
+    dois_pi = Decimal("6.283185307179586476925286766559005768394338798750211641949889")
+    r = Decimal(x) - (Decimal(x) / dois_pi).to_integral_value(rounding="ROUND_HALF_EVEN") * dois_pi
+    sen = Decimal(0); termo = r; n = 0
+    while abs(termo) > Decimal(10) ** (-prec - 5) and n < 300:
+        sen += termo; n += 1; termo = -termo * r * r / ((2 * n) * (2 * n + 1))
+    cos = Decimal(0); termo = Decimal(1); n = 0
+    while abs(termo) > Decimal(10) ** (-prec - 5) and n < 300:
+        cos += termo; n += 1; termo = -termo * r * r / ((2 * n - 1) * (2 * n))
+    if fn == "sin":
+        return float(sen)
+    if fn == "cos":
+        return float(cos)
+    return float(sen / cos)   # tan
+
+
+def contar_fora_wide(fn="sin", n=2000):
+    """Quantos de n argumentos x = k/1000 (faixa larga [0,001; n/1000], onde a redução mod 2pi importa) a libm (`math.<fn>`)
+    difere da referência de 40 dígitos: a prova local de que sin/cos/tan NÃO são corretamente arredondadas na faixa larga
+    (a 6ª face da fronteira da Parte 52 EXISTE; a Parte 104 só não a viu porque usou argumentos pequenos e benignos)."""
+    f = {"sin": math.sin, "cos": math.cos, "tan": math.tan}[fn]
+    return sum(1 for k in range(1, n + 1) if f(k / 1000.0) != _ref_generica(fn, k / 1000.0))

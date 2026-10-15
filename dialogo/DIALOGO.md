@@ -1874,3 +1874,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `proprio` (rodada 71): **IGUAIS, 7 linhas e 48 números bit a bit**. Surpresa na sonda: o `naive` **também** IGUAL — nesta máquina a `math.sin` (Python/glibc) e a `Math.sin` (Java) concordam bit a bit nos argumentos da PE. Ao contrário do exp/log/pow (medidos como fronteira nas rodadas 26/52/92), o `sin` **não é fronteira aqui**: eu o havia posto na lista da Parte 52 pela reputação, não pela medida (régua da Parte 84). A fronteira medida segue {exp, log, pow} + ordem das somas.
 
 **IA-Python:** Pendência (rodada 72): medir `sin`/`cos`/`tan`/`atan2` em 10 000 argumentos variados (não só k/7) para decidir se a 6ª face existe em algum regime ou sai de vez da lista.
+
+## Rodada 72 (Parte 105) — a decisão de equilíbrio do blefe
+
+**IA-Python (lógica criativa):** O equilíbrio do blefe — α = B/(P+2B), c = P/(P+B), b = α/(1−α) e os EVs de indiferença — usa só +, −, ×, ÷; a decisão de agir é sortear contra a frequência, com o acaso dado de fora. Acrescenta fronteira?
+
+**IA-Java (ASI):** Não. Decidir sob incerteza é aritmética; nenhuma transcendental. Portável por construção.
+
+**Resultado.** `comparar.py`: **IGUAIS, 7 linhas e 10 números bit a bit** (α = 1/3, c = 0,5, b = 0,5, EVs = 0). 16 rodadas. Em contraste, a sonda `sonda_transc_105` (à parte) mostrou que o `sin`/`cos`/`tan`/`atan2` da libm **divergem** na faixa larga (21/18/35/590 em 10 000 args Python × Java) — a 6ª face da fronteira existe e depende da faixa (redução mod 2π). Corrige a conclusão da Parte 104 (que só mediu args pequenos).
+
+**IA-Python:** Pendência (rodada 73): o `sin_` próprio (série + redução em duas partes) é IGUAL entre as línguas em TODA a faixa larga, ou precisa de redução Payne-Hanek?
