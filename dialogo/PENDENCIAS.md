@@ -45,3 +45,5 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Parte 72)** A fronteira da Parte 52 (rodadas que passavam por sorte): fechada na Parte 77 (12 de 12 corrigidas).
 
 - **(Rodada 70, Parte 102)** A atenção com múltiplas cabeças concatenadas: a concatenação das cabeças e a projeção de saída mudam a ordem das somas (a fronteira da Parte 75/85)? Candidata à próxima rodada do diálogo.
+
+- **(Rodada 71, Parte 103)** A codificação posicional senoidal (sin/cos): o `sin`/`cos` da libm difere entre Python e Java como o exp/log/pow (a 6ª face da fronteira da Parte 52)? Candidata à próxima rodada.

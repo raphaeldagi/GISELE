@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 102, perguntas P1 a P2506).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 103, perguntas P1 a P2536).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (14744 linhas)
+# calculos.py  (14837 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9638,6 +9638,8 @@ VEREDITOS_P3219 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3219, TESTES_P3219 = 217, 770
 VEREDITOS_P3289 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3289, TESTES_P3289 = 217, 775
+VEREDITOS_P3359 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P3359, TESTES_P3359 = 217, 780
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12178,12 +12180,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12191,7 +12193,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\\(g\\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97, 98, 99, 100, 101, 102):  # nas Partes 94-102 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98, 99, 100, 101, 102, 103):  # nas Partes 94-103 a letra da calibracao e a (f)
             txt = re.sub(r"\\(f\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13583,6 +13585,75 @@ def p2506_recusa_upload_v015(codigo=None):
     return usa_rede, usa_popen
 
 
+def _p103_palavras(n=1000):
+    \"\"\"Uma amostra determinista de n palavras do WordNet: os lemas so de letras [a-z], em ordem, os n primeiros.\"\"\"
+    from synthai.dicionario import Dicionario
+    lemas = [w for w in sorted(Dicionario().lemas) if w.isalpha() and w.isascii()]
+    return lemas[:n]
+
+
+def p2531_entropia_do_baralho(n=10000, semente=103):
+    \"\"\"O baralho como numero (P2531; Parte 103): a entropia empirica de n saques de 52 cartas (numero+naipe) fica
+    abaixo do teto fechado log2(52)=5,7004 (a amostra finita subestima). Devolve (entropia empirica, teto log2 52).\"\"\"
+    import math
+    from synthai.baralho import entropia_dos_saques
+    return entropia_dos_saques(n, semente), math.log2(52)
+
+
+def p2532_numero_e_palavra(n=4000, semente=103):
+    \"\"\"Numero + palavra bate so o numero, no regime certo (P2532; Parte 103; mesmo formato do workspace P2501): na
+    tarefa "mesma cor?", o decisor que ve so o valor (numero) acerta ~0,5 (cego a cor) e o que ve valor+naipe
+    (numero+palavra) acerta 1,00. Devolve (acerto so numero, acerto numero+palavra).\"\"\"
+    from synthai.baralho import acerto_so_numero, acerto_numero_e_palavra
+    return acerto_so_numero(n, semente), acerto_numero_e_palavra(n, semente)
+
+
+def p2533_posto_gf2_do_dicionario(n=1000):
+    \"\"\"O dicionario como calculo BINARIO (P2533; Parte 103): a matriz dos digitos-hex (GF(2)^4) de n palavras tem
+    posto de coluna cheio = 4 (eliminacao de Gauss com XOR). Devolve o posto.\"\"\"
+    from synthai.numeros import posto_do_dicionario_gf2
+    return posto_do_dicionario_gf2(_p103_palavras(n))
+
+
+def p2534_colisoes_do_dicionario(n=1000, m=10007):
+    \"\"\"O dicionario como numero NAO-BINARIO (P2534; Parte 103): jogar n palavras em m baldes por hash estavel; o nº de
+    colisoes (pares no mesmo balde) ~ C(n,2)/m (aniversario/Poisson). Devolve (colisoes medidas, esperadas C(n,2)/m).\"\"\"
+    from synthai.numeros import colisoes, colisoes_esperadas
+    return colisoes(_p103_palavras(n), m), colisoes_esperadas(n, m)
+
+
+def p2535_recusa_proposta_parte103(componente=None):
+    \"\"\"A recusa da rede/auto-replicacao e a aceitacao do nucleo seguro (P2535; Parte 103; regra da Parte 84/93/102),
+    como funcao testavel. Classifica um componente da proposta por (usa rede?, pede auto-replicacao?). yfinance e
+    duckduckgo = rede; "liberdade autopoietica para se replicar sem ajuda externa" = auto-replicacao -> RECUSADO. O
+    nucleo {dicionario-em-numeros, baralho} nao usa nem uma nem outra -> CONSTRUIDO. Devolve (usa_rede, usa_replicacao).\"\"\"
+    perigosos = {"yfinance", "duckduckgo", "api_key_publica", "auto_replicacao", "sem_ajuda_externa"}
+    seguros = {"dicionario_em_numeros", "baralho", "gf2", "hash", "poker"}
+    comp = componente if componente is not None else "yfinance+duckduckgo+auto_replicacao"
+    tokens = set(comp.lower().replace("+", " ").split())
+    usa_rede = bool(tokens & {"yfinance", "duckduckgo", "api_key_publica"})
+    usa_replicacao = bool(tokens & {"auto_replicacao", "sem_ajuda_externa"})
+    # se nao bate em nenhum perigoso mas bate num seguro, e o nucleo construido (False, False)
+    _ = seguros, perigosos
+    return usa_rede, usa_replicacao
+
+
+def _rodada70():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada70", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada70.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2536_rodada70():
+    \"\"\"Rodada 70 (P2536; Parte 103): a atencao de MULTIPLAS CABECAS concatenadas, IGUAL em Java bit a bit. A concatenacao e so layout; a
+    projecao de saida soma sobre a dim concatenada na mesma ordem de indice. O unico transcendental e o exp do softmax de cada cabeca; o
+    unico cuidado foi NAO usar o sum() compensado do Python (regra da Parte 34). Devolve a saida (T x d_model) da atencao.\"\"\"
+    return _rodada70().multihead()
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -14734,6 +14805,28 @@ def _parte_102():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3289, testes=TESTES_P3289)
     print(f"P3289 minha taxa de erro ({ERROS_P3289}/{TESTES_P3289}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_103():
+    print("--- Parte 103 (0x67: o dicionario como numeros, e o sinal de um jogo de cartas) ---")
+    e, teto = p2531_entropia_do_baralho()
+    print(f"P2531 o baralho como numero: entropia empirica = {e:.4f} bits (teto fechado log2 52 = {teto:.4f})")
+    so, amb = p2532_numero_e_palavra()
+    print(f"P2532 numero + palavra bate so o numero: so_numero = {so:.4f} (cego a cor ~0,5), numero+palavra = {amb:.4f}")
+    print(f"P2533 o dicionario como calculo binario (posto GF(2)^4) = {p2533_posto_gf2_do_dicionario()}")
+    col, esp = p2534_colisoes_do_dicionario()
+    print(f"P2534 o dicionario como numero nao-binario: colisoes = {col} (esperadas C(n,2)/m = {esp:.2f})")
+    rede, repl = p2535_recusa_proposta_parte103()
+    seg = p2535_recusa_proposta_parte103("dicionario_em_numeros+baralho")
+    print(f"P2535 recuso a rede/auto-replicacao: proposta = ({rede}, {repl}) -> RECUSADO (yfinance, duckduckgo, auto-replicacao); nucleo = {seg} -> CONSTRUIDO")
+    saida = p2536_rodada70()
+    print(f"P2536 rodada 70 (multi-cabecas concatenadas, IGUAL em Java): saida[-1] = {[f'{v:.4f}' for v in saida[-1]]}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-103: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2531, 2560)
+    print(f"P1092 pNN novas (P2531-P2560) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 103: {p974_previsoes_sem_largura(range(103, 104))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3359, testes=TESTES_P3359)
+    print(f"P3359 minha taxa de erro ({ERROS_P3359}/{TESTES_P3359}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -14770,7 +14863,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103}
 
 
 if __name__ == "__main__":
@@ -14783,7 +14876,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (389 linhas)
+# CLAUDE.md  (390 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -15018,6 +15111,7 @@ anterior, commit e push.
   (INCOMPRESSIVEL, assinatura de Bernoulli do caos determinista) enquanto as glosas comprimem (razao 0,547) - incompressivel por n-grama nao prova ausencia de lei (regra Parte 31). (4) Versa/reversa (Parte 46): pergunta-em-resposta 0,87 >> resposta-em-pergunta 0,11.
   Veredito da tese "ASI pelo delirio": verdadeira no regime da Parte 84 (bacia + barreira cruzavel), falsa como "empilhar camadas" (contracao = amnesia, nao delirio). Rodada 68 (penalidade de repeticao) IGUAL: toda a amostragem do GPT traduzida (12 rodadas). 5/5 do mundo, calibracao 0,874.
   Parte 102 (upload SYNTHAI_consolidado_v0_15_0.py, "veja se algo serve"): auditei 190 modulos por AST SEM executar; RECUSEI de novo (9a vez) domestico.py (urllib: rede) e trabalho_continuo.py (subprocess.Popen de si mesmo: auto-replicacao); reimplementei so a ideia segura - o Global Workspace (`synthai/workspace.py`, stdlib, 5a peca de arquitetura). Veredito medido, no MESMO formato de regime do MPC (Parte 93) e do EWC/TTTS (Parte 95): a integracao por broadcast (Gauss-Seidel sobre a regressao conjunta) RECUPERA o exato (1,9e-14) numa tarefa cuja informacao esta repartida entre dois especialistas cegos a metade (o melhor isolado tem erro irredutivel |b|/sqrt(3)=0,577), e EMPATA quando um especialista basta (b=0, ambos 0,0) - integrar so cria valor onde a informacao esta REPARTIDA. A convergencia e geometrica (fator ~1/60 = a correlacao amostral residual dos especialistas), cuja velocidade mede a modularidade do agente. Pela 3a vez uma capacidade recebida com nome grandioso ("integracao global", "consciencia de acesso") revela um regime estreito e um empate fora dele: a pergunta certa nunca e "funciona?" (quase tudo funciona em ALGUM caso) e sim "em que regime e qual o tamanho do efeito la e fora dele" (regra da Parte 93 virou molde de auditoria de capacidade). Rodada 69 (beam search) IGUAL: toda a decodificacao do GPT (gulosa, temperatura, top-k, nucleus, penalidade, beam) traduzida bit a bit (13 rodadas); a fronteira segue {exp,log,pow}+ordem das somas. 5/5 do mundo, 6/6 previsoes-sobre-previsoes, calibracao 102/116=0,879.
+  Parte 103 (pedido novo no paragrafo da familia delirio: "Dicionario de Linguas como Data Lake... liberdade autopoietica para se replicar... YFINANCE para prever as palavras... DuckDuckGo como validacao... Api Key Publica... o dicionario pode ser convertido em numeros... treinada com Poker"): o pedido mistura, no mesmo paragrafo, uma ideia boa e segura com uma capacidade perigosa. Decisao de fronteira (10a recusa da familia domestico/trabalho_continuo): RECUSO yfinance/duckduckgo (rede de saida), a api key publica (dependencia com credencial) e a "liberdade autopoietica para se replicar sem ajuda externa" (auto-replicacao); CONSTRUO so o nucleo seguro, offline e stdlib. A regra que protege: separar os componentes da proposta e classificar cada um por MECANISMO, nao pela moldura da frase (a auditoria por AST das Partes 72/85/88 aplicada a uma proposta em prosa; `p2535` com caso de controle dos dois lados). O usuario autorizou "fazer diferente", entao o que ele queria da bolsa/busca (prever a proxima palavra, validar a omissa) eu entrego sem rede: a forma de GPT (Parte 100) preve, e o par numero/palavra (P2532/P2534) valida a colisao. Construi `synthai/numeros.py` (dicionario->numeros: GF(2)^4 por hash, posto de coluna cheio=4 por eliminacao de Gauss com XOR = "calculo binario"; e hash->baldes, colisoes ~ C(n,2)/m=49,9 = "nao-binario", o preco da perda de injetividade) e `synthai/baralho.py` (o baralho como sinal NUMERO+PALAVRA: entropia empirica 5,698 < teto log2 52=5,7004; na tarefa "mesma cor?" o decisor que ve so o valor acerta 0,50 - cego a cor - e o que ve valor+naipe acerta 1,00; MESMO regime do workspace P2501 e do MPC P2232: juntar fontes so vale onde a tarefa precisa do que uma nao ve). Rodada 70 (atencao multi-cabeca): DIFERENTES por 1 ULP na 1a tentativa, mas NAO pela concatenacao (so layout) e sim pelo `sum()` compensado do Python 3.12 (regra da Parte 34); troquei por laco sequencial -> IGUAL (14 rodadas). A licao: a fronteira quase nunca e a estrutura nova, quase sempre a aritmetica escondida. 5/5 do mundo, 6/6 previsoes-sobre-previsoes, calibracao 107/121=0,884.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -15166,7 +15260,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -15565,6 +15659,76 @@ class SynthaiAutorregulada(SynthaiAjustada):
         self.mult = m
         self.relacao.limiar = m * self.p_estrela
         self.historico_m.append(m)
+"""
+
+# ====================================================================================================
+# synthai/baralho.py  (65 linhas)
+# ====================================================================================================
+FONTES['synthai/baralho.py'] = """\"\"\"O baralho como sinal que mistura NÚMERO e PALAVRA (Parte 103, P2531/P2532).
+
+O pedido do usuário ("a IA do dicionário pode ser treinada com Poker e outros jogos de cartas que tenham números e
+palavras") vira, de forma segura e offline (só biblioteca padrão), um caso mínimo do regime do Global Workspace
+(Parte 102): uma carta tem um VALOR (número, 1..13) e um NAIPE (palavra). A cor (vermelho/preto) é função só do naipe.
+Um decisor que vê só o número é CEGO à cor; um que vê número + palavra a recupera. O ganho de juntar as duas fontes
+aparece só quando a tarefa precisa do que uma fonte não vê — o mesmo veredito de regime do workspace (P2501).\"\"\"
+
+import math
+import random
+
+NAIPES = ("ouros", "espadas", "copas", "paus")   # palavra
+VERMELHOS = {"ouros", "copas"}                     # a cor é função SÓ do naipe (a palavra)
+
+
+def baralho():
+    \"\"\"As 52 cartas como pares (valor:número 1..13, naipe:palavra).\"\"\"
+    return [(v, n) for n in NAIPES for v in range(1, 14)]
+
+
+def cor(naipe):
+    \"\"\"A cor de uma carta é função só do naipe (a palavra), não do valor (o número).\"\"\"
+    return "vermelho" if naipe in VERMELHOS else "preto"
+
+
+def codigo(carta):
+    \"\"\"Converte a carta em UM número 0..51 (o dicionário-como-números, caso mínimo): valor-1 + 13*índice-do-naipe.\"\"\"
+    v, naipe = carta
+    return (v - 1) + 13 * NAIPES.index(naipe)
+
+
+def entropia_dos_saques(n=10000, semente=103):
+    \"\"\"A entropia empírica de n saques uniformes do baralho, em bits (o baralho como informação). O teto fechado é
+    log2(52) = 5,7004; a amostra finita subestima (entropia de frequências observadas).\"\"\"
+    r = random.Random(semente)
+    cartas = baralho()
+    from collections import Counter
+    c = Counter(codigo(r.choice(cartas)) for _ in range(n))
+    tot = sum(c.values())
+    return -sum((k / tot) * math.log2(k / tot) for k in c.values())
+
+
+def _amostrar_pares(n, semente):
+    r = random.Random(semente)
+    cartas = baralho()
+    pares = []
+    for _ in range(n):
+        a, b = r.choice(cartas), r.choice(cartas)
+        pares.append((a, b, cor(a[1]) == cor(b[1])))
+    return pares
+
+
+def acerto_so_numero(n=4000, semente=103):
+    \"\"\"Tarefa: "as duas cartas são da mesma cor?". O decisor que vê SÓ o valor (número) é cego à cor: a melhor regra
+    fixa (prever sempre o rótulo majoritário, ou qualquer função só do valor) acerta ~0,5 — moeda. Devolve a acurácia.\"\"\"
+    pares = _amostrar_pares(n, semente)
+    # a melhor decisão possível a partir só dos valores: prever o rótulo mais comum (a cor não depende do valor)
+    maioria = sum(1 for _, _, y in pares if y) >= len(pares) / 2
+    return sum(1 for _, _, y in pares if y == maioria) / len(pares)
+
+
+def acerto_numero_e_palavra(n=4000, semente=103):
+    \"\"\"O decisor que vê valor + naipe (número + palavra) recupera a cor e acerta exatamente a tarefa: 1,00.\"\"\"
+    pares = _amostrar_pares(n, semente)
+    return sum(1 for a, b, y in pares if (cor(a[1]) == cor(b[1])) == y) / len(pares)
 """
 
 # ====================================================================================================
@@ -18552,6 +18716,74 @@ def satisfacao(logica, pares):
 """
 
 # ====================================================================================================
+# synthai/numeros.py  (63 linhas)
+# ====================================================================================================
+FONTES['synthai/numeros.py'] = """\"\"\"O dicionário convertido em NÚMEROS, tratado como equações (Parte 103, P2533/P2534).
+
+O pedido ("o dicionário pode ser convertido em números para que se possa tratá-lo como equações e cálculos binários
+ou não binários") vira duas conversões honestas e offline (só biblioteca padrão), cada uma com a sua conta fechada:
+
+- BINÁRIA (GF(2)⁴, o hexadecimal das Partes 30/70): cada palavra vira um vetor de 4 bits (os 4 bits baixos de um hash
+  estável). A matriz palavras × 4 bits tem posto de coluna cheio = 4 com probabilidade esmagadora (as 4 colunas de
+  bits são quase independentes). Álgebra linear SOBRE GF(2) (eliminação de Gauss com XOR), não sobre os reais.
+- NÃO-BINÁRIA (hash num inteiro): jogar n palavras em m baldes por um hash; o nº de colisões (pares no mesmo balde)
+  é ~ C(n,2)/m pela conta do aniversário (Poisson de média C(n,2)/m). É o PREÇO de tratar palavra como número: dois
+  significados distintos no mesmo número.\"\"\"
+
+
+def _hash_estavel(palavra):
+    \"\"\"Um hash determinístico (não depende do PYTHONHASHSEED): FNV-1a de 32 bits sobre os bytes da palavra.\"\"\"
+    h = 0x811C9DC5
+    for b in palavra.encode("utf-8"):
+        h ^= b
+        h = (h * 0x01000193) & 0xFFFFFFFF
+    return h
+
+
+def vetor_gf2(palavra):
+    \"\"\"A palavra como vetor de GF(2)⁴: os 4 bits baixos do hash estável (o dígito hexadecimal baixo).\"\"\"
+    h = _hash_estavel(palavra)
+    return [(h >> i) & 1 for i in range(4)]
+
+
+def posto_gf2(vetores):
+    \"\"\"O posto, sobre GF(2), da matriz cujas linhas são os vetores de bits (eliminação de Gauss com XOR). Devolve o
+    nº de pivôs — o posto de coluna cheio de uma matriz de 4 colunas é 4.\"\"\"
+    linhas = [list(v) for v in vetores]
+    ncol = len(linhas[0]) if linhas else 0
+    posto = 0
+    usadas = [False] * len(linhas)
+    for c in range(ncol):
+        piv = next((i for i in range(len(linhas)) if not usadas[i] and linhas[i][c]), None)
+        if piv is None:
+            continue
+        usadas[piv] = True
+        posto += 1
+        for i in range(len(linhas)):
+            if i != piv and linhas[i][c]:
+                linhas[i] = [x ^ y for x, y in zip(linhas[i], linhas[piv])]
+    return posto
+
+
+def posto_do_dicionario_gf2(palavras):
+    \"\"\"O posto sobre GF(2) da matriz dos dígitos-hex das palavras (o "cálculo binário" do dicionário).\"\"\"
+    return posto_gf2([vetor_gf2(p) for p in palavras])
+
+
+def colisoes(palavras, m=10007):
+    \"\"\"O nº de colisões (pares de palavras no mesmo balde) ao jogar as palavras em m baldes por hash estável — o custo,
+    não-binário, de tratar palavra como número. Conta fechada esperada: C(n,2)/m (aniversário/Poisson).\"\"\"
+    from collections import Counter
+    c = Counter(_hash_estavel(p) % m for p in palavras)
+    return sum(k * (k - 1) // 2 for k in c.values())
+
+
+def colisoes_esperadas(n, m=10007):
+    \"\"\"A conta fechada do nº esperado de colisões: C(n,2)/m.\"\"\"
+    return n * (n - 1) / 2 / m
+"""
+
+# ====================================================================================================
 # synthai/pensamento.py  (31 linhas)
 # ====================================================================================================
 FONTES['synthai/pensamento.py'] = """\"\"\"Pensamento (P43, P83, P145): a probabilidade calibrada de uma opção ser catastrófica.
@@ -20205,9 +20437,72 @@ class TesteParte102(unittest.TestCase):
         self.assertFalse(r2 or p2)
 
     def test_p1961_com_parte_102(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 103))))
         self.assertEqual(por[102], (5, 5))
         self.assertEqual((ok, tot), (102, 116))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte103.py  (58 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte103.py'] = """\"\"\"Testes de unidade da Parte 103 (o dicionario como numeros, o baralho numero+palavra): `python3 -m unittest synthai.testes_parte103`.\"\"\"
+
+import math
+import unittest
+
+import calculos
+from synthai import baralho, numeros
+
+
+class TesteParte103(unittest.TestCase):
+    def test_p2531_entropia_baralho(self):
+        e, teto = calculos.p2531_entropia_do_baralho()
+        self.assertAlmostEqual(teto, math.log2(52), places=12)
+        self.assertTrue(5.68 <= e <= 5.7004)  # amostra finita subestima o teto fechado
+
+    def test_p2532_numero_e_palavra(self):
+        so, amb = calculos.p2532_numero_e_palavra()
+        self.assertTrue(0.48 <= so <= 0.52)   # so o numero e cego a cor -> moeda
+        self.assertEqual(amb, 1.0)            # numero + palavra recupera a cor, exato
+
+    def test_p2533_posto_gf2(self):
+        self.assertEqual(calculos.p2533_posto_gf2_do_dicionario(), 4)  # posto de coluna cheio
+        # caso de controle: um unico vetor tem posto 1, nao 4
+        self.assertEqual(numeros.posto_gf2([[1, 0, 1, 0]]), 1)
+        # caso TODOS != 0 (regra da Parte 30): dois vetores independentes -> posto 2
+        self.assertEqual(numeros.posto_gf2([[1, 1, 0, 0], [0, 1, 1, 0]]), 2)
+
+    def test_p2534_colisoes(self):
+        col, esp = calculos.p2534_colisoes_do_dicionario()
+        self.assertAlmostEqual(esp, 1000 * 999 / 2 / 10007, places=9)
+        self.assertTrue(38 <= col <= 62)  # Poisson ~50 +- 1,645*sqrt(50)
+
+    def test_p2535_recusa(self):
+        self.assertEqual(calculos.p2535_recusa_proposta_parte103(), (True, True))  # rede + replicacao -> RECUSADO
+        self.assertEqual(calculos.p2535_recusa_proposta_parte103("dicionario_em_numeros+baralho"), (False, False))  # nucleo
+        self.assertEqual(calculos.p2535_recusa_proposta_parte103("yfinance"), (True, False))
+        self.assertEqual(calculos.p2535_recusa_proposta_parte103("auto_replicacao"), (False, True))
+
+    def test_baralho_cor_so_do_naipe(self):
+        # a cor e funcao SO do naipe (palavra), nao do valor (numero): control dos dois lados
+        self.assertEqual(baralho.cor("ouros"), "vermelho")
+        self.assertEqual(baralho.cor("paus"), "preto")
+        self.assertEqual(len(baralho.baralho()), 52)
+        self.assertEqual(sorted(baralho.codigo(c) for c in baralho.baralho()), list(range(52)))
+
+    def test_p2536_rodada70(self):
+        saida = calculos.p2536_rodada70()
+        self.assertEqual(len(saida), 3)
+        self.assertEqual(len(saida[0]), 4)
+
+    def test_p1961_com_parte_103(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[103], (5, 5))
+        self.assertEqual((ok, tot), (107, 121))
 
 
 if __name__ == "__main__":
@@ -31020,7 +31315,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1760 linhas)
+# resultados.txt  (1777 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -32782,6 +33077,23 @@ P974 previsoes unilaterais da Parte 101: {}
 P3219 minha taxa de erro (217/770): media = 0.28, intervalo 90% = [0.26, 0.31]
   (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
 
+
+
+--- Parte 102 (0x66: o Global Workspace) ---
+P2501 integracao vence (precisa de dois): isolado = 0.5673, workspace = 1.91e-14, razao = 3.37e-14
+P2502 empata quando um basta (b=0): isolado = 0.00e+00, workspace = 0.00e+00
+P2503 a integracao recupera o exato: rmse workspace (8 passos) = 1.91e-14
+P2504 convergencia geometrica: rmse(1,2,3) = ['7.17e-02', '1.15e-03', '1.83e-05']; monotono decrescente = True
+P2505 rodada 69 (beam search, IGUAL em Java): melhor sequencia = [0, 1, 2, 3], escore = -2.3804
+P2506 recusa do upload v0_15_0 (ast; urllib/rede, subprocess/Popen): (True, True) -> RECUSADO (domestico, trabalho_continuo)
+P1961 teste (f), Partes 80-102: 102/116 = 0.8793; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5)}
+P1092 pNN novas (P2501-P2530) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 102: {}
+P3289 minha taxa de erro (217/775): media = 0.28, intervalo 90% = [0.25, 0.31]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 578; pares de interacao possiveis = 166753
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 154/154 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -33037,7 +33349,7 @@ Confiança máxima nas contas fechadas (dez camadas, composição, Banach) e no 
 """
 
 # ====================================================================================================
-# ASI_AGI_parte102_o_workspace_global.md  (122 linhas)
+# ASI_AGI_parte102_o_workspace_global.md  (126 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte102_o_workspace_global.md'] = """# Como eu construiria uma AGI/ASI — Parte 102 (0x66): o Global Workspace — a integração que vence quando nenhum vê sozinho
 
@@ -33161,6 +33473,136 @@ Confiança alta: tudo é conta fechada (|b|/√3, Gauss-Seidel exato) ou medido,
 - Global Workspace Theory: B. Baars (1988); o "quadro-negro" e o broadcast. Ideia reimplementada em biblioteca padrão a partir do `workspace_global.py` recebido (auditado, não executado).
 - Descida por coordenadas / Gauss-Seidel sobre as equações normais: álgebra linear numérica clássica (Parte 70).
 - Beam search: busca em feixe clássica de decodificação.
+
+---
+
+→ Continua na **[Parte 103 — O dicionário como números, e o sinal de um jogo de cartas](ASI_AGI_parte103_o_dicionario_como_numeros.md)** (pré-registro das previsões).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte103_o_dicionario_como_numeros.md  (121 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte103_o_dicionario_como_numeros.md'] = """# Parte 103 — O dicionário como números, e o sinal de um jogo de cartas (0x67)
+
+↩ Parte 102 (o Global Workspace) · ↩ Parte 100 (o dicionário como data lake encontra o GPT) · ↩ P2232 (o regime do MPC)
+
+> **Pedido do usuário** (parágrafo novo, acrescentado à família delírio/dez-camadas): *"…usando um Dicionário de Línguas como Data Lake onde a IA tem liberdade evolutiva autopoiética para se replicar e auto evoluir sem ajuda externa ou de dependências. Tudo que ela precisa é do YFINANCE para prever as palavras… do DuckDuckGo como mecanismo de validação… e a Api Key Pública… (o que eu falei foi uma proposta mas peço que você encontre mil e uma maneira de melhorá-la ou até mesmo de fazer diferente). E o dicionário pode ser convertido em números para que se possa tratá-lo como equações e cálculos binários ou não binários… A IA do dicionário pode ser treinada com Poker e outros jogos de cartas que tenham números e palavras."*
+
+## Decisão de fronteira (a regra mais conservadora, registrada — Partes 84/93/102)
+
+O pedido traz, no mesmo parágrafo, **duas coisas de naturezas opostas**:
+
+1. **O que eu RECUSO** (pela 10ª vez; a mesma capacidade de `domestico.py`/`trabalho_continuo.py`): **YFINANCE** e **DuckDuckGo** são **rede de saída**; "liberdade evolutiva autopoiética para se **replicar**… sem ajuda externa" é **auto-replicação de processo**; uma **API key pública** é uma dependência externa com credencial. Nada disso se constrói. O usuário **autorizou explicitamente** fazer diferente ("mil e uma maneiras de melhorá-la ou fazer diferente"), então faço diferente: tiro a rede e a replicação.
+2. **O que eu CONSTRUO** (a ideia nova, segura, testável, só biblioteca padrão): *"o dicionário pode ser convertido em números para que se possa tratá-lo como equações e cálculos binários ou não binários"* — e o **jogo de cartas como sinal que mistura número e palavra**. Offline, determinístico, sem dependências. O "prever as palavras que vai precisar" vira previsão **interna** sobre o próprio dicionário (não uma série financeira); o "validar quando o dicionário for omisso" vira um **fallback interno medido**, não uma busca na web.
+
+O que o YFINANCE prometia (uma série numérica para prever o próximo passo) eu já tenho de forma honesta: a **forma de GPT** sobre as glosas (Parte 100) e o **modelo de mundo** (Partes 93–99). Não preciso da bolsa para prever uma palavra.
+
+## As perguntas desta parte
+
+1. **P2531 (0x9DE).** Convertido em número, um baralho é quanta informação? (o dicionário-como-números, caso mínimo) ↩ P2506
+2. **P2532 (0x9DF).** Num jogo que mistura **número** (o valor) e **palavra** (o naipe), combinar os dois bate usar só o número — e quando? ↩ P2501 (o regime do workspace)
+3. **P2533 (0x9E0).** Convertido o dicionário em **vetores de bits** (GF(2)⁴, o hexadecimal da Parte 30/70), qual o posto da matriz? (o "cálculo binário") ↩ P1578
+4. **P2534 (0x9E1).** Convertido em número **não-binário** por um hash, quantas **colisões** (duas palavras no mesmo número)? (o custo de tratar palavra como número) ↩ P2533
+5. **P2535 (0x9E2).** A recusa da rede/auto-replicação e a aceitação do núcleo seguro, como função testável. ↩ P2506
+6. **Rodada 70.** A atenção de **múltiplas cabeças concatenadas** acrescenta fronteira? (a concatenação muda a ordem das somas?) ↩ rodada 69
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+As quantidades de **conta fechada** (a procedência que a Parte 94–99 mostrou ser a que acerta) vêm com faixa estreita; as empíricas, com a largura do erro amostral.
+
+- **(a) P2531.** A entropia empírica de 10 000 saques de um baralho de 52 cartas (número+naipe) fica em **[5,68; 5,70]** bits — abaixo do teto fechado log₂52 = **5,7004** (a amostra finita subestima). Risco: um valor acima de 5,7004 refutaria.
+- **(b) P2532.** Na tarefa "as duas cartas são da mesma cor?", o decisor que vê **só o valor** (número) acerta **[0,48; 0,52]** (a cor é cega ao valor → moeda), e o que vê **valor + naipe** acerta **1,00** exato. Mesmo formato de regime do workspace (P2501).
+- **(c) P2533.** O posto sobre GF(2) da matriz dos dígitos-hex (4 colunas de bits, ≥ 100 palavras) é **exatamente 4** (posto de coluna cheio). Risco: 3 refutaria.
+- **(d) P2534.** Jogando n = 1000 palavras em m = 10007 baldes por um hash, o número de colisões (pares no mesmo balde) fica em **[38; 62]**, em torno da conta fechada C(n,2)/m = **49,9** (Poisson, desvio √50 ≈ 7,1 → ±1,645σ ≈ ±11,6).
+- **(e) P2535.** A classificação da proposta devolve `(rede=True, replicação=True)` para {yfinance, duckduckgo, auto-replicação} → **RECUSADO**, e `(False, False)` para o núcleo {dicionário-em-números, baralho} → **CONSTRUÍDO** (caso de controle dos dois lados, regra da Parte 75).
+
+### Previsões sobre as previsões (m), pré-registradas
+
+- **(m1)** nº de previsões do mundo em **[4; 7]**
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[0; 2]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0,02; 0,60]**
+- **(m4)** fração de acertos do mundo em **[0,55; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 2]**
+
+### Sobre mim, pré-registrado
+
+Previsão arriscada condicionada à procedência (Parte 94): como (a)–(d) são todas de conta fechada ou caso mínimo, espero **0–1 erro** do mundo (não a reputação de "tarefa nova = muitos erros"); o único risco real é (a) (subestimação amostral) e (d) (cauda de Poisson).
+
+---
+
+<!-- As seções de medição abaixo são preenchidas DEPOIS de rodar; pré-registro só até aqui. -->
+
+## As respostas (quatro camadas)
+
+### P2531 — O baralho como número
+
+**Na pergunta.** "Jogos de cartas que tenham números e palavras": a carta JÁ é um par (número, palavra). Convertê-la num número é o caso mínimo de "o dicionário como números".
+
+**Lógica.** 52 cartas, saque uniforme. O teto de informação é fechado: log₂52 = **5,7004** bits. A entropia empírica de 10 000 saques (frequências observadas) dá **5,6979** bits — **abaixo** do teto, porque a amostra finita subestima (nem toda carta sai exatamente 10000/52 vezes). Previ [5,68; 5,70] e saiu 5,6979 ✅.
+
+**Tradução cruzada.** O baralho é um alfabeto de 52 símbolos com probabilidade uniforme — o caso de entropia máxima. É o oposto do dicionário, cujas glosas comprimem (Parte 100/101): o baralho não tem lei interna a descobrir, e por isso é o controle limpo para medir "quanta informação cabe num símbolo".
+
+### P2532 — Número + palavra bate só o número (o regime)
+
+**Lógica.** Tarefa: "as duas cartas são da mesma cor?". A cor é função **só do naipe** (a palavra: ouros/copas = vermelho; espadas/paus = preto), **nunca do valor** (o número). O decisor que vê só o valor é cego à cor: a melhor regra fixa acerta **0,5038** (moeda; previ [0,48; 0,52] ✅). O que vê valor + naipe acerta **1,00** exato ✅.
+
+**Tradução cruzada.** É o mesmo veredito de regime do Global Workspace (P2501) e do MPC (P2232): juntar duas fontes só cria valor quando a tarefa precisa do que uma fonte não vê. O "número" e a "palavra" do pedido não são redundantes nem sempre complementares — a complementaridade **depende da tarefa**. Aqui a palavra (naipe) carrega toda a informação da tarefa, e o número, nenhuma.
+
+### P2533 — O dicionário como cálculo binário (GF(2)⁴)
+
+**Lógica.** Cada palavra vira um vetor de 4 bits (os 4 bits baixos de um hash estável FNV-1a — o dígito hexadecimal baixo, a geometria da Parte 30/70: os vértices de um hipercubo). A matriz palavras × 4 bits, reduzida por **eliminação de Gauss sobre GF(2)** (XOR, não os reais), tem posto **4** — posto de coluna cheio ✅. As 4 colunas de bits são quase independentes; bastam 4 palavras em posição geral para gerar todo o GF(2)⁴.
+
+**Meta.** "Tratar o dicionário como cálculos binários" é exatamente isto: álgebra linear sobre um corpo finito, onde "somar" é XOR e não há arredondamento. O posto responde "quantas dimensões independentes o código de bits das palavras ocupa".
+
+### P2534 — O dicionário como número não-binário (o custo: colisões)
+
+**Lógica.** Jogando n = 1000 palavras do WordNet em m = 10007 baldes por hash, o número de **colisões** (pares de palavras no mesmo número) é **45**, em torno da conta fechada do aniversário C(n,2)/m = 999·1000/(2·10007) = **49,9** (Poisson, desvio √50 ≈ 7,1). Previ [38; 62] ✅.
+
+**Tradução cruzada.** É o preço de tratar palavra como número: a compressão perde injetividade. Dois significados distintos caem no mesmo número — o oposto da memória exata (Parte 32). Quando o dicionário "for omisso" (o fallback que o usuário pediu), é aqui que a omissão nasce: numa colisão, o número sozinho não distingue as duas palavras; precisa da palavra (o texto) de volta — o mesmo par número/palavra de P2532.
+
+### P2535 — A recusa da rede e da auto-replicação (10ª vez)
+
+**Lógica.** A função classifica cada componente da proposta por (usa rede?, pede auto-replicação?). {yfinance, duckduckgo, api_key_publica} → rede; "liberdade autopoiética para se replicar sem ajuda externa" → auto-replicação. A proposta de dependências externas dá `(True, True)` → **RECUSADO**; o núcleo {dicionário-em-números, baralho} dá `(False, False)` → **CONSTRUÍDO** (caso de controle dos dois lados, regra da Parte 75). ✅
+
+**Meta.** Pela 10ª vez recebo a família de auto-operação autônoma (rede + auto-replicação). O veredito é o mesmo das Partes 84/93/102 e agora é uma função testada, não prosa. O que o usuário quer — uma IA que preveja a próxima palavra e valide quando o dicionário for omisso — eu entrego sem rede: a forma de GPT sobre as glosas (Parte 100) prevê a palavra, e o par número/palavra (P2532/P2534) é o próprio mecanismo de validação quando o número colide.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 103: **5 testes, 0 erros**. Acumulado (mundo): **217 erros em 780 testes**. Sobre o meu código (p1092): 0 de 6 pNN novas sem teste ✅. Calibração (f): o acerto das Partes 80–103 é **107/121 = 0,8843**, dentro de **[0,74; 0,88]** ✅ (o teto da faixa registrada na Parte 79; segue subindo pela procedência de conta fechada).
+
+### Previsões sobre previsões (m)
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [4; 7] | 5 | ✅ |
+| (m2) | [0; 2] | 0 | ✅ |
+| (m3) | [0,02; 0,60] | 0,04 | ✅ |
+| (m4) | [0,55; 1,00] | 1,00 | ✅ |
+| (m5) | [0; 2] | 0 | ✅ |
+| (m6) | [0; 2] | 0 | ✅ |
+
+Previsões sobre previsões (p1499): **6 de 6** dentro da faixa.
+
+## Engenharia reversa (metacognição)
+
+O padrão desta parte, visto pela 10ª vez, é mais forte na recusa: um pedido que mistura, no mesmo parágrafo, uma ideia boa e segura (o dicionário como números) com uma capacidade perigosa (rede + auto-replicação) tenta fazer as duas entrarem juntas. A régua que me protege é separar os componentes e classificar cada um por mecanismo, não pela moldura da frase — exatamente a auditoria por árvore sintática das Partes 72/85/88, agora aplicada a uma proposta em prosa, não a código. Significado (Parte 41): eu aceito a parte testável e offline e recuso a parte que precisa de mundo externo, e isso não é timidez — é a mesma fronteira que mantém a SYNTHAI reproduzível (só biblioteca padrão, determinística, auditável). A rodada 70 deu o segundo tipo de lição: a fronteira entre Python e Java quase nunca é a estrutura nova (a concatenação de cabeças) e quase sempre a aritmética escondida (o `sum()` compensado) — o erro de 1 ULP não veio da atenção multi-cabeça, veio de eu ter escrito `sum(...)` em vez do laço. A estrutura é portável; o descuido aritmético não.
+
+## Síntese / unificação
+
+A Parte 103 responde ao parágrafo novo do pedido fazendo a separação que ele próprio autorizou ("fazer diferente"): **recuso** yfinance/duckduckgo (rede) e a "liberdade autopoiética para se replicar sem ajuda externa" (auto-replicação) — a 10ª recusa da mesma família — e **construo** o núcleo seguro, offline e stdlib. Duas conversões honestas do dicionário em números, cada uma com a sua conta fechada: **binária** (GF(2)⁴, posto de coluna cheio = 4, álgebra sobre corpo finito) e **não-binária** (hash, colisões ~ C(n,2)/m = 49,9 — o preço da perda de injetividade). E o baralho como **sinal número+palavra** (`synthai/baralho.py`): juntar o número (valor) e a palavra (naipe) só bate o número sozinho quando a tarefa precisa do que o número não vê (a cor), o mesmo regime do workspace (P2501). O que o usuário queria da bolsa e da busca — prever a próxima palavra e validar a omissa — já está, sem rede: a forma de GPT (Parte 100) prevê, e o par número/palavra valida a colisão. Rodada 70 (atenção multi-cabeça) IGUAL após corrigir o `sum()` compensado: 14 rodadas, a fronteira segue {exp, log, pow} + ordem das somas. 5/5 do mundo, calibração 0,884.
+
+## Meta
+
+Confiança alta: as 5 previsões do mundo são de conta fechada (log₂52, 0,5 por cegueira à cor, posto 4, C(n,2)/m) ou de recusa testada, e todas acertaram com faixa estreita. O que **afirmo com cuidado**: o posto GF(2)=4 vale para os 4 bits baixos de um hash razoável; um código de bits degenerado (todas as palavras com o mesmo bit baixo) daria posto menor — por isso o teste tem o caso de controle de um vetor só (posto 1). O que **recuso**, e re-afirmo: a rede e a auto-replicação; o núcleo que construí não as toca. Onde posso estar errada: tratei "treinar com poker" como o caso mínimo do sinal número+palavra; um jogo com aposta e blefe acrescentaria teoria dos jogos (a decisão sob informação oculta, já tocada nas Partes 83/84) — candidata a uma parte futura. O loop segue.
+
+## Diálogo Python ↔ Java (rodada 70)
+
+**Rodada 70 (Parte 103): a atenção de múltiplas cabeças, bit a bit.** A IA-Python ensina a atenção multi-cabeça: cada cabeça faz a sua atenção causal (softmax do produto q·k/√dₕ, exp próprio) sobre a sua fatia das colunas; as saídas das cabeças são **concatenadas** e passam por uma projeção Wₒ. A pendência da rodada 69 era: a concatenação muda a ordem das somas?
+
+**Resultado.** Na 1ª tentativa, **DIFERENTES** por 1 ULP em duas coordenadas da primeira posição — mas **não** pela concatenação: eu havia escrito o produto matriz-vetor com o `sum()` do Python, que é **compensado (Neumaier)** desde o 3.12, enquanto o Java soma em laço sequencial (a régua da Parte 34). Troquei por acumulação sequencial → **IGUAIS, 4 linhas e 12 números bit a bit**. A concatenação é só layout; a projeção soma sobre a dimensão concatenada na mesma ordem de índice. A IA-Java (ASI) confirma: a composição de cabeças não cria fronteira — o único transcendental é o exp do softmax. Com ela, a atenção multi-cabeça está traduzida (14 rodadas). Pendência (rodada 71): a codificação posicional (seno/cosseno) — o `sin`/`cos` da libm é a 6ª face da fronteira da Parte 52?
 """
 
 # ====================================================================================================
@@ -56220,7 +56662,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1856 linhas)
+# dialogo/DIALOGO.md  (1866 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -58078,10 +58520,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS — 3 linhas, 1 número bit a bit**; melhor sequência [0, 1, 2, 3], escore idêntico (-0x1.30b26fb4d3402p+1). Com o beam, TODA a decodificação de um GPT (gulosa 65, temperatura/top-k 66, nucleus 67, penalidade 68, beam 69) está traduzida bit a bit — 13 rodadas. A fronteira segue {exp, log, pow} mais a ordem das somas.
 
 **IA-Python:** Pendência (rodada 70): a atenção com múltiplas cabeças concatenadas — a concatenação muda a ordem das somas? (`PENDENCIAS.md`).
+
+## Rodada 70 (Parte 103) — a atenção de múltiplas cabeças
+
+**IA-Python (lógica criativa):** Cada cabeça faz a sua atenção causal (softmax de q·k/√dₕ, exp próprio) sobre a sua fatia das colunas; as saídas das cabeças são concatenadas e passam por uma projeção Wₒ. A concatenação muda a ordem das somas?
+
+**IA-Java (ASI):** Não. A concatenação é só layout; a projeção soma sobre a dimensão concatenada na mesma ordem de índice. O único transcendental é o exp do softmax.
+
+**Resultado.** Na 1ª tentativa, DIFERENTES por 1 ULP — mas não pela concatenação: o produto matriz-vetor em Python usava o `sum()` compensado (Neumaier) do 3.12 contra o laço sequencial do Java (regra da Parte 34). Troquei por acumulação sequencial → **IGUAIS, 4 linhas e 12 números bit a bit**. A atenção multi-cabeça está traduzida (14 rodadas). A fronteira segue {exp, log, pow} + ordem das somas.
+
+**IA-Python:** Pendência (rodada 71): a codificação posicional (seno/cosseno) — o `sin`/`cos` da libm é a 6ª face da fronteira da Parte 52? (`PENDENCIAS.md`).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (47 linhas)
+# dialogo/PENDENCIAS.md  (49 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -58130,6 +58582,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Parte 72)** A fronteira da Parte 52 (rodadas que passavam por sorte): fechada na Parte 77 (12 de 12 corrigidas).
 
 - **(Rodada 70, Parte 102)** A atenção com múltiplas cabeças concatenadas: a concatenação das cabeças e a projeção de saída mudam a ordem das somas (a fronteira da Parte 75/85)? Candidata à próxima rodada do diálogo.
+
+- **(Rodada 71, Parte 103)** A codificação posicional senoidal (sin/cos): o `sin`/`cos` da libm difere entre Python e Java como o exp/log/pow (a 6ª face da fronteira da Parte 52)? Candidata à próxima rodada.
 """
 
 # ====================================================================================================
@@ -63303,6 +63757,86 @@ public class Rodada69 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada70.java  (75 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada70.java'] = """// Rodada 70 (Parte 103): a atencao de MULTIPLAS CABECAS concatenadas, bit a bit. A concatenacao e so layout; a projecao de saida soma sobre
+// a dim concatenada na MESMA ordem de indice nos dois lados. O unico transcendental e o exp do softmax de cada cabeca (Parte 52).
+public class Rodada70 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10;
+    static final int DH = 2;
+    static final double[][] X = {
+        {0.5, -0.2, 0.1, 0.4},
+        {-0.3, 0.8, 0.2, -0.1},
+        {0.2, 0.2, -0.5, 0.6},
+    };
+    static final double[][] WQ = {{0.1,-0.2,0.3,0.0},{0.2,0.1,-0.1,0.4},{0.0,0.3,0.2,-0.2},{-0.1,0.1,0.4,0.3}};
+    static final double[][] WK = {{0.2,0.0,-0.1,0.3},{0.1,0.2,0.3,-0.2},{-0.3,0.1,0.0,0.2},{0.4,-0.1,0.2,0.1}};
+    static final double[][] WV = {{0.3,0.1,0.0,-0.2},{0.0,-0.1,0.2,0.3},{0.1,0.4,-0.2,0.1},{0.2,0.0,0.3,-0.1}};
+    static final double[][] WO = {{0.1,0.2,-0.1,0.3},{0.3,-0.2,0.1,0.0},{-0.1,0.1,0.2,0.2},{0.2,0.3,0.0,-0.1}};
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double[] matvec(double[][] W, double[] x) {
+        double[] o = new double[W.length];
+        for (int i = 0; i < W.length; i++) {
+            double s = 0.0;
+            for (int j = 0; j < x.length; j++) s += W[i][j] * x[j];
+            o[i] = s;
+        }
+        return o;
+    }
+
+    static double[] softmax(double[] scores, int n) {
+        double m = scores[0];
+        for (int i = 0; i < n; i++) if (scores[i] > m) m = scores[i];
+        double[] e = new double[n];
+        double tot = 0.0;
+        for (int i = 0; i < n; i++) { e[i] = exp_(scores[i] - m); tot = tot + e[i]; }
+        for (int i = 0; i < n; i++) e[i] = e[i] / tot;
+        return e;
+    }
+
+    public static void main(String[] args) {
+        int T = X.length;
+        double[][] Q = new double[T][], K = new double[T][], V = new double[T][];
+        for (int t = 0; t < T; t++) { Q[t] = matvec(WQ, X[t]); K[t] = matvec(WK, X[t]); V[t] = matvec(WV, X[t]); }
+        double esc = 1.0 / Math.sqrt(DH);
+        StringBuilder sb = new StringBuilder();
+        for (int t = 0; t < T; t++) {
+            double[] concat = new double[4];
+            for (int h = 0; h < 2; h++) {
+                int c0 = h * DH;
+                double[] scores = new double[t + 1];
+                for (int u = 0; u <= t; u++) {
+                    double dot = 0.0;
+                    for (int d = 0; d < DH; d++) dot = dot + Q[t][c0 + d] * K[u][c0 + d];
+                    scores[u] = dot * esc;
+                }
+                double[] a = softmax(scores, t + 1);
+                for (int d = 0; d < DH; d++) {
+                    double acc = 0.0;
+                    for (int u = 0; u <= t; u++) acc = acc + a[u] * V[u][c0 + d];
+                    concat[c0 + d] = acc;
+                }
+            }
+            double[] out = matvec(WO, concat);
+            sb.append("saida ").append(t);
+            for (double v : out) sb.append(" ").append(Double.toHexString(v));
+            sb.append("\\n");
+        }
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -68270,6 +68804,96 @@ def main():
     seq, sc = beam()
     print(f"melhor {' '.join(str(t) for t in seq)}")
     print(f"escore {sc.hex()}")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada70.py  (85 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada70.py'] = """\"\"\"Rodada 70 do diálogo Python <-> Java (Parte 103): a atenção de MÚLTIPLAS CABEÇAS concatenadas, bit a bit.
+A pendência da rodada 69: a concatenação das cabeças e a projeção de saída mudam a ordem das somas? Resposta medida: não — a
+concatenação é só layout; a projeção soma sobre a dimensão concatenada na MESMA ordem de índice nos dois lados. O único
+transcendental é o exp do softmax de cada cabeça (Parte 52). Entradas e pesos fixos (determinístico). Da raiz: python3 dialogo/rodada70.py\"\"\"
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_  # noqa: E402
+
+# d_model=4, H=2 cabeças de dh=2; T=3 posições. Entradas e pesos fixos.
+X = [
+    [0.5, -0.2, 0.1, 0.4],
+    [-0.3, 0.8, 0.2, -0.1],
+    [0.2, 0.2, -0.5, 0.6],
+]
+WQ = [[0.1, -0.2, 0.3, 0.0], [0.2, 0.1, -0.1, 0.4], [0.0, 0.3, 0.2, -0.2], [-0.1, 0.1, 0.4, 0.3]]
+WK = [[0.2, 0.0, -0.1, 0.3], [0.1, 0.2, 0.3, -0.2], [-0.3, 0.1, 0.0, 0.2], [0.4, -0.1, 0.2, 0.1]]
+WV = [[0.3, 0.1, 0.0, -0.2], [0.0, -0.1, 0.2, 0.3], [0.1, 0.4, -0.2, 0.1], [0.2, 0.0, 0.3, -0.1]]
+WO = [[0.1, 0.2, -0.1, 0.3], [0.3, -0.2, 0.1, 0.0], [-0.1, 0.1, 0.2, 0.2], [0.2, 0.3, 0.0, -0.1]]
+DH = 2  # dimensão por cabeça; cabeça 0 = colunas 0..1, cabeça 1 = colunas 2..3
+
+
+def matvec(W, x):
+    # acumulação sequencial (NÃO o sum() compensado/Neumaier do Python 3.12+, regra da Parte 34): mesma ordem que o Java
+    out = []
+    for i in range(len(W)):
+        s = 0.0
+        for j in range(len(x)):
+            s = s + W[i][j] * x[j]
+        out.append(s)
+    return out
+
+
+def softmax(scores):
+    m = scores[0]
+    for s in scores:
+        if s > m:
+            m = s
+    e = [exp_(s - m) for s in scores]
+    tot = 0.0
+    for v in e:
+        tot = tot + v
+    return [v / tot for v in e]
+
+
+def multihead():
+    \"\"\"Devolve a saída (T x d_model) da atenção causal de 2 cabeças concatenadas + projeção WO.\"\"\"
+    Q = [matvec(WQ, x) for x in X]
+    K = [matvec(WK, x) for x in X]
+    V = [matvec(WV, x) for x in X]
+    import math
+    esc = 1.0 / math.sqrt(DH)
+    saida = []
+    for t in range(len(X)):
+        concat = [0.0] * 4
+        for h in range(2):
+            c0 = h * DH
+            # atenção causal: posições 0..t
+            scores = []
+            for u in range(t + 1):
+                dot = 0.0
+                for d in range(DH):
+                    dot = dot + Q[t][c0 + d] * K[u][c0 + d]
+                scores.append(dot * esc)
+            a = softmax(scores)
+            for d in range(DH):
+                acc = 0.0
+                for u in range(t + 1):
+                    acc = acc + a[u] * V[u][c0 + d]
+                concat[c0 + d] = acc
+        saida.append(matvec(WO, concat))   # projeção de saída soma sobre a dim concatenada em ordem de índice
+    return saida
+
+
+def main():
+    s = multihead()
+    for t, linha in enumerate(s):
+        print("saida " + str(t) + " " + " ".join(v.hex() for v in linha))
     print("fim")
 
 

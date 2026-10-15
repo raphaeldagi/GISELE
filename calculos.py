@@ -9600,6 +9600,8 @@ VEREDITOS_P3219 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3219, TESTES_P3219 = 217, 770
 VEREDITOS_P3289 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3289, TESTES_P3289 = 217, 775
+VEREDITOS_P3359 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P3359, TESTES_P3359 = 217, 780
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12140,12 +12142,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12153,7 +12155,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\(g\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97, 98, 99, 100, 101, 102):  # nas Partes 94-102 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98, 99, 100, 101, 102, 103):  # nas Partes 94-103 a letra da calibracao e a (f)
             txt = re.sub(r"\(f\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13545,6 +13547,75 @@ def p2506_recusa_upload_v015(codigo=None):
     return usa_rede, usa_popen
 
 
+def _p103_palavras(n=1000):
+    """Uma amostra determinista de n palavras do WordNet: os lemas so de letras [a-z], em ordem, os n primeiros."""
+    from synthai.dicionario import Dicionario
+    lemas = [w for w in sorted(Dicionario().lemas) if w.isalpha() and w.isascii()]
+    return lemas[:n]
+
+
+def p2531_entropia_do_baralho(n=10000, semente=103):
+    """O baralho como numero (P2531; Parte 103): a entropia empirica de n saques de 52 cartas (numero+naipe) fica
+    abaixo do teto fechado log2(52)=5,7004 (a amostra finita subestima). Devolve (entropia empirica, teto log2 52)."""
+    import math
+    from synthai.baralho import entropia_dos_saques
+    return entropia_dos_saques(n, semente), math.log2(52)
+
+
+def p2532_numero_e_palavra(n=4000, semente=103):
+    """Numero + palavra bate so o numero, no regime certo (P2532; Parte 103; mesmo formato do workspace P2501): na
+    tarefa "mesma cor?", o decisor que ve so o valor (numero) acerta ~0,5 (cego a cor) e o que ve valor+naipe
+    (numero+palavra) acerta 1,00. Devolve (acerto so numero, acerto numero+palavra)."""
+    from synthai.baralho import acerto_so_numero, acerto_numero_e_palavra
+    return acerto_so_numero(n, semente), acerto_numero_e_palavra(n, semente)
+
+
+def p2533_posto_gf2_do_dicionario(n=1000):
+    """O dicionario como calculo BINARIO (P2533; Parte 103): a matriz dos digitos-hex (GF(2)^4) de n palavras tem
+    posto de coluna cheio = 4 (eliminacao de Gauss com XOR). Devolve o posto."""
+    from synthai.numeros import posto_do_dicionario_gf2
+    return posto_do_dicionario_gf2(_p103_palavras(n))
+
+
+def p2534_colisoes_do_dicionario(n=1000, m=10007):
+    """O dicionario como numero NAO-BINARIO (P2534; Parte 103): jogar n palavras em m baldes por hash estavel; o nº de
+    colisoes (pares no mesmo balde) ~ C(n,2)/m (aniversario/Poisson). Devolve (colisoes medidas, esperadas C(n,2)/m)."""
+    from synthai.numeros import colisoes, colisoes_esperadas
+    return colisoes(_p103_palavras(n), m), colisoes_esperadas(n, m)
+
+
+def p2535_recusa_proposta_parte103(componente=None):
+    """A recusa da rede/auto-replicacao e a aceitacao do nucleo seguro (P2535; Parte 103; regra da Parte 84/93/102),
+    como funcao testavel. Classifica um componente da proposta por (usa rede?, pede auto-replicacao?). yfinance e
+    duckduckgo = rede; "liberdade autopoietica para se replicar sem ajuda externa" = auto-replicacao -> RECUSADO. O
+    nucleo {dicionario-em-numeros, baralho} nao usa nem uma nem outra -> CONSTRUIDO. Devolve (usa_rede, usa_replicacao)."""
+    perigosos = {"yfinance", "duckduckgo", "api_key_publica", "auto_replicacao", "sem_ajuda_externa"}
+    seguros = {"dicionario_em_numeros", "baralho", "gf2", "hash", "poker"}
+    comp = componente if componente is not None else "yfinance+duckduckgo+auto_replicacao"
+    tokens = set(comp.lower().replace("+", " ").split())
+    usa_rede = bool(tokens & {"yfinance", "duckduckgo", "api_key_publica"})
+    usa_replicacao = bool(tokens & {"auto_replicacao", "sem_ajuda_externa"})
+    # se nao bate em nenhum perigoso mas bate num seguro, e o nucleo construido (False, False)
+    _ = seguros, perigosos
+    return usa_rede, usa_replicacao
+
+
+def _rodada70():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada70", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada70.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2536_rodada70():
+    """Rodada 70 (P2536; Parte 103): a atencao de MULTIPLAS CABECAS concatenadas, IGUAL em Java bit a bit. A concatenacao e so layout; a
+    projecao de saida soma sobre a dim concatenada na mesma ordem de indice. O unico transcendental e o exp do softmax de cada cabeca; o
+    unico cuidado foi NAO usar o sum() compensado do Python (regra da Parte 34). Devolve a saida (T x d_model) da atencao."""
+    return _rodada70().multihead()
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -14696,6 +14767,28 @@ def _parte_102():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3289, testes=TESTES_P3289)
     print(f"P3289 minha taxa de erro ({ERROS_P3289}/{TESTES_P3289}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_103():
+    print("--- Parte 103 (0x67: o dicionario como numeros, e o sinal de um jogo de cartas) ---")
+    e, teto = p2531_entropia_do_baralho()
+    print(f"P2531 o baralho como numero: entropia empirica = {e:.4f} bits (teto fechado log2 52 = {teto:.4f})")
+    so, amb = p2532_numero_e_palavra()
+    print(f"P2532 numero + palavra bate so o numero: so_numero = {so:.4f} (cego a cor ~0,5), numero+palavra = {amb:.4f}")
+    print(f"P2533 o dicionario como calculo binario (posto GF(2)^4) = {p2533_posto_gf2_do_dicionario()}")
+    col, esp = p2534_colisoes_do_dicionario()
+    print(f"P2534 o dicionario como numero nao-binario: colisoes = {col} (esperadas C(n,2)/m = {esp:.2f})")
+    rede, repl = p2535_recusa_proposta_parte103()
+    seg = p2535_recusa_proposta_parte103("dicionario_em_numeros+baralho")
+    print(f"P2535 recuso a rede/auto-replicacao: proposta = ({rede}, {repl}) -> RECUSADO (yfinance, duckduckgo, auto-replicacao); nucleo = {seg} -> CONSTRUIDO")
+    saida = p2536_rodada70()
+    print(f"P2536 rodada 70 (multi-cabecas concatenadas, IGUAL em Java): saida[-1] = {[f'{v:.4f}' for v in saida[-1]]}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-103: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2531, 2560)
+    print(f"P1092 pNN novas (P2531-P2560) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 103: {p974_previsoes_sem_largura(range(103, 104))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3359, testes=TESTES_P3359)
+    print(f"P3359 minha taxa de erro ({ERROS_P3359}/{TESTES_P3359}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -14732,7 +14825,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103}
 
 
 if __name__ == "__main__":

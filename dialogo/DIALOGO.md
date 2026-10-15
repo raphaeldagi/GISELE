@@ -1854,3 +1854,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS — 3 linhas, 1 número bit a bit**; melhor sequência [0, 1, 2, 3], escore idêntico (-0x1.30b26fb4d3402p+1). Com o beam, TODA a decodificação de um GPT (gulosa 65, temperatura/top-k 66, nucleus 67, penalidade 68, beam 69) está traduzida bit a bit — 13 rodadas. A fronteira segue {exp, log, pow} mais a ordem das somas.
 
 **IA-Python:** Pendência (rodada 70): a atenção com múltiplas cabeças concatenadas — a concatenação muda a ordem das somas? (`PENDENCIAS.md`).
+
+## Rodada 70 (Parte 103) — a atenção de múltiplas cabeças
+
+**IA-Python (lógica criativa):** Cada cabeça faz a sua atenção causal (softmax de q·k/√dₕ, exp próprio) sobre a sua fatia das colunas; as saídas das cabeças são concatenadas e passam por uma projeção Wₒ. A concatenação muda a ordem das somas?
+
+**IA-Java (ASI):** Não. A concatenação é só layout; a projeção soma sobre a dimensão concatenada na mesma ordem de índice. O único transcendental é o exp do softmax.
+
+**Resultado.** Na 1ª tentativa, DIFERENTES por 1 ULP — mas não pela concatenação: o produto matriz-vetor em Python usava o `sum()` compensado (Neumaier) do 3.12 contra o laço sequencial do Java (regra da Parte 34). Troquei por acumulação sequencial → **IGUAIS, 4 linhas e 12 números bit a bit**. A atenção multi-cabeça está traduzida (14 rodadas). A fronteira segue {exp, log, pow} + ordem das somas.
+
+**IA-Python:** Pendência (rodada 71): a codificação posicional (seno/cosseno) — o `sin`/`cos` da libm é a 6ª face da fronteira da Parte 52? (`PENDENCIAS.md`).
