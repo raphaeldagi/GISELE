@@ -107,3 +107,7 @@ Confiança: as quatro contas fechadas desta parte (1/13, c\*=11, 6/13, identidad
 **Rodada 71 (Parte 104): a codificação posicional, bit a bit.** A IA-Python pergunta a pendência da rodada 70: o `sin`/`cos` é a 6ª face da fronteira da Parte 52? Imprime dois blocos — `proprio` (seno/cosseno por série de Taylor própria, com redução de argumento por 2π em duas partes) e `naive` (a `sin`/`cos` da libm).
 
 **Resultado.** O bloco `proprio` deu **IGUAIS, 7 linhas e 48 números bit a bit** — a PE é portável por construção. Surpresa: o bloco `naive` **também** deu IGUAIS — nesta máquina a `math.sin` do Python (glibc) e a `Math.sin` do Java concordam bit a bit nos argumentos da PE. A IA-Java (ASI) confirma: ao contrário do exp/log/pow (medidos como fronteira nas rodadas 26/52/92), o `sin` **não** é fronteira aqui. A fronteira medida segue {exp, log, pow} + ordem das somas; `sin` estava na lista por reputação. Pendência (rodada 72): medir `sin`/`cos`/`tan`/`atan2` em 10 000 argumentos variados (não só k/7) para decidir se a 6ª face existe em algum regime ou sai de vez da lista.
+
+---
+
+→ Continua na **[Parte 105 — O blefe: o equilíbrio de indiferença, e a fronteira medida do seno](ASI_AGI_parte105_o_blefe.md)** (pré-registro das previsões).
