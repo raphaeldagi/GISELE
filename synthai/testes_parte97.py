@@ -53,7 +53,7 @@ class TesteParte97(unittest.TestCase):
         self.assertLess(max(abs(c) for c in th[0]), 0.1)
 
     def test_p1961_com_parte_97(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97))
         self.assertEqual(por[97], (4, 5))
         self.assertEqual((ok, tot), (77, 91))
 

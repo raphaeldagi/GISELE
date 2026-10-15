@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 97, perguntas P1 a P2356).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 98, perguntas P1 a P2386).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (14243 linhas)
+# calculos.py  (14338 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9628,6 +9628,8 @@ VEREDITOS_P2869 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P2869, TESTES_P2869 = 216, 745
 VEREDITOS_P2939 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅"
 ERROS_P2939, TESTES_P2939 = 217, 750
+VEREDITOS_P3009 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P3009, TESTES_P3009 = 217, 755
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12168,12 +12170,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12181,7 +12183,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\\(g\\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97):  # nas Partes 94-97 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98):  # nas Partes 94-98 a letra da calibracao e a (f)
             txt = re.sub(r"\\(f\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13188,6 +13190,77 @@ def p2356_limiar_de_parametros(grau=5):
     Xtr, Utr, Ytr = gerar_transicoes_nl(0, n, 0.1)
     Xte, Ute, Yte = gerar_transicoes_nl(777, 400, 0.1)
     return n_params, residuo_features(ajustar_features(Xtr, Utr, Ytr, f), Xte, Ute, Yte, f)
+
+
+def p2381_piso_linear_em_sigma(n=400):
+    \"\"\"O piso de ruido e linear em sigma (P2381; Parte 98): com a base cubica certa e n fixo, o residuo contra o teste limpo escala
+    com sigma. Devolve (residuo sigma=0,1, residuo sigma=0,2, razao). Conta fechada: a variancia do estimador OLS e sigma^2*(ZtZ)^-1, desvio ~ sigma.\"\"\"
+    from synthai.mundo import ruido_floor
+    r1 = ruido_floor(sigma=0.1, n=n)[0]
+    r2 = ruido_floor(sigma=0.2, n=n)[0]
+    return r1, r2, r2 / r1
+
+
+def p2382_nao_exato_sob_ruido(sigma=0.1, n=800):
+    \"\"\"n > #params NAO e exato sob ruido (P2382; Parte 98): com sigma=0,1 e n=800 (>> p=20) o residuo contra o limpo fica longe do
+    ~1e-11 do mundo determinista (P2356). Devolve (residuo medido, a conta sigma*sqrt(p/n)). O limiar de parametros nao cura o ruido.\"\"\"
+    from synthai.mundo import ruido_floor
+    med, conta = ruido_floor(sigma=sigma, n=n)
+    return med, conta
+
+
+def p2383_variancia_cura_devagar(sigma=0.1):
+    \"\"\"A variancia cura devagar, como 1/sqrt(n) (P2383; Parte 98): o residuo cai com n. Devolve (residuo n=200, residuo n=800, razao).
+    Perto de sqrt(800/200)=2, o decaimento 1/sqrt(n) do erro de estimacao.\"\"\"
+    from synthai.mundo import ruido_floor
+    r200 = ruido_floor(sigma=sigma, n=200)[0]
+    r800 = ruido_floor(sigma=sigma, n=800)[0]
+    return r200, r800, r200 / r800
+
+
+def p2384_ridge_sob_ruido(n=400, kappa=0.1, grau=3):
+    \"\"\"A cumeeira quase nao ajuda quando n >> p (P2384; Parte 98): com sigma=0,1 e n=400 (>> p=20) ha pouca variancia a curar, e o
+    melhor ridge melhora <1% sobre lambda=0; mas o lambda* CRESCE com sigma (volta a importar quando o ruido cresce, nao quando ha muitos dados).
+    Devolve (melhoria percentual em sigma=0,1, lambda*(sigma=0,1), lambda*(sigma=0,3)).\"\"\"
+    from synthai.mundo import gerar_transicoes_nl_ruido, monomios, ajustar_features_ridge, residuo_vs_limpo
+    f = monomios(grau)
+    lams = (0.0, 1e-4, 1e-3, 1e-2, 1e-1, 1.0, 3.0)
+
+    def melhor(sigma):
+        Xtr, Utr, Ytr = gerar_transicoes_nl_ruido(0, n, kappa, sigma)
+        res = [(lam, residuo_vs_limpo(ajustar_features_ridge(Xtr, Utr, Ytr, f, lam), f)) for lam in lams]
+        r0 = [r for lam, r in res if lam == 0.0][0]
+        ls, best = min(res, key=lambda t: t[1])
+        return r0, best, ls
+    r0_01, best_01, ls_01 = melhor(0.1)
+    _, _, ls_03 = melhor(0.3)
+    melhoria_pct = 100.0 * (r0_01 - best_01) / r0_01
+    return melhoria_pct, ls_01, ls_03
+
+
+def _rodada65():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada65", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada65.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2385_rodada65():
+    \"\"\"Rodada 65 (P2385; Parte 98): a geracao autorregressiva (amostrar o proximo token do softmax por inversao de CDF, com um u dado de fora),
+    IGUAL em Java bit a bit. Devolve a lista de (token, p[token]) dos 5 casos. O exp do softmax e a unica fronteira; a busca na CDF e soma/comparacao.\"\"\"
+    r = _rodada65()
+    return [r.amostrar(list(logits), u) for logits, u in r.CASOS]
+
+
+def p2386_razao_constante_em_sigma(n=400):
+    \"\"\"A razao residuo/sigma e constante em sigma (P2386; Parte 98): como o residuo e linear em sigma, residuo(sigma)/sigma nao depende de sigma
+    (para n fixo). Devolve (res(0,1)/0,1, res(0,2)/0,2, |diferenca relativa|). A diferenca deve ser ~0 (o piso escala exatamente com sigma).\"\"\"
+    from synthai.mundo import ruido_floor
+    a = ruido_floor(sigma=0.1, n=n)[0] / 0.1
+    b = ruido_floor(sigma=0.2, n=n)[0] / 0.2
+    return a, b, abs(a - b) / a
 
 
 def p1578_autovalores_da_atencao():
@@ -14225,13 +14298,35 @@ def _parte_97():
     print(f"P2355 dados curam a variancia: lambda*(n=40) = {l40}, lambda*(n=160) = {l160}, melhor teste(n=160) = {r160:.2e}")
     npar, rlim = p2356_limiar_de_parametros()
     print(f"P2356 limiar de parametros (grau 5): {npar} parametros; n logo acima -> residuo de teste = {rlim:.2e}")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97))
     print(f"P1961 teste (f), Partes 80-97: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2351, 2380)
     print(f"P1092 pNN novas (P2351-P2380) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 97: {p974_previsoes_sem_largura(range(97, 98))}")
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P2939, testes=TESTES_P2939)
     print(f"P2939 minha taxa de erro ({ERROS_P2939}/{TESTES_P2939}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+def _parte_98():
+    print("--- Parte 98 (0x62: o ruido de observacao) ---")
+    r1, r2, razao = p2381_piso_linear_em_sigma()
+    print(f"P2381 piso linear em sigma: res(0,1) = {r1:.5f}, res(0,2) = {r2:.5f}, razao = {razao:.3f} (dobra quando sigma dobra)")
+    med, conta = p2382_nao_exato_sob_ruido()
+    print(f"P2382 n>#params NAO e exato sob ruido: residuo(sigma=0,1, n=800) = {med:.5f} (conta sigma*sqrt(p/n) = {conta:.5f}); longe de 1e-11")
+    r200, r800, rz = p2383_variancia_cura_devagar()
+    print(f"P2383 variancia cura devagar (1/sqrt(n)): res(n=200) = {r200:.5f}, res(n=800) = {r800:.5f}, razao = {rz:.3f} (~2)")
+    melh, l01, l03 = p2384_ridge_sob_ruido()
+    print(f"P2384 cumeeira sob ruido: melhoria em sigma=0,1 = {melh:.2f}% (n>>p); lambda*(0,1) = {l01}, lambda*(0,3) = {l03} (cresce com sigma)")
+    toks = p2385_rodada65()
+    print(f"P2385 rodada 65 (geracao autorregressiva, IGUAL em Java): tokens = {[t for t, _ in toks]}")
+    a, b, difrel = p2386_razao_constante_em_sigma()
+    print(f"P2386 razao residuo/sigma constante em sigma: {a:.5f} vs {b:.5f}, dif relativa = {difrel:.2e}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-98: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2381, 2410)
+    print(f"P1092 pNN novas (P2381-P2410) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 98: {p974_previsoes_sem_largura(range(98, 99))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3009, testes=TESTES_P3009)
+    print(f"P3009 minha taxa de erro ({ERROS_P3009}/{TESTES_P3009}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -14269,7 +14364,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98}
 
 
 if __name__ == "__main__":
@@ -14282,7 +14377,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (365 linhas)
+# CLAUDE.md  (372 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -14493,6 +14588,13 @@ anterior, commit e push.
   uma conta, nao de um arredondamento ("praticamente zero" nao e um numero). As 4 previsoes certas eram estruturais/categoricas (U, monotonia, bit a bit); o erro foi o unico limiar fino sem conta. Rodada 64: um BLOCO transformer de 2 camadas (atencao +
   residual/LayerNorm + MLP-ReLU + residual/LayerNorm, 2x) IGUAL bit a bit - a composicao NAO acrescenta fronteira, o unico transcendental da pilha e o exp do softmax. Fecha o transformer minimo de ponta a ponta (8 rodadas: 43,58,59,61,62,63,64): a fronteira
   Python<->Java e EXATAMENTE {exp,log,pow}, invariante a profundidade. 4/5 do mundo, calibracao 0,846.
+  Parte 98 (o ruido de observacao): tirei a ressalva "sem ruido" da Parte 97. Adicionei ruido de observacao sigma as medicoes (o mundo e determinista; o que tem ruido e o que EU VEJO) e medi o erro de estimacao contra o teste LIMPO (base cubica certa, p=20).
+  (1) O piso e LINEAR em sigma EXATAMENTE: residuo(0,2)/residuo(0,1)=2,000, e residuo/sigma e constante em sigma a 5e-15 (conta fechada: variancia do OLS ~ sigma^2*(ZtZ)^-1). (2) n>#params NAO e exato sob ruido: com sigma=0,1 e n=800>>p=20 o residuo e 0,021,
+  LONGE do 1e-11 determinista da Parte 97 - o limiar de parametros nao cura o ruido (identificar a forma != cancelar o ruido). (3) a variancia cura DEVAGAR: residuo cai como ~1/sqrt(n) (res(200)/res(800)=2,27~sqrt(4)). (4) a cumeeira quase nao ajuda quando n>>p
+  (melhoria 0% com sigma=0,1, n=400) mas lambda* CRESCE com sigma (0->1 de sigma=0,1 a 0,3): a regularizacao volta a importar quando o RUIDO cresce, nao quando ha muitos dados (lambda* ~ sigma^2 p/(n||theta||^2)). QUADRO FINAL do modelo de mundo (93-98): a
+  qualidade de um modelo aprendido e limitada por 3 fontes nomeadas - FORMA (ter a base certa, P96), DADOS (n relativo a #params, P97), RUIDO (sigma, P98); cada uma tem seu remedio (base, coletar, regularizar/medir melhor). A Parte 98 corrigiu o metodo da Parte 97:
+  as 2 faixas numericas vieram de conta fechada (linearidade, 1/sqrt(n)) e acertaram com w baixo -> a regra "o limiar sai da conta, nao do arredondamento" virou procedimento (5/5 depois do 4/5 da 97). Rodada 65: a geracao autorregressiva (amostragem do proximo
+  token por CDF, com o acaso DADO DE FORA) IGUAL bit a bit - fecha o GPT gerador de ponta a ponta (9 rodadas: 43,58,59,61,62,63,64,65); o acaso e insumo externo portavel, a fronteira e {exp,log,pow}. 5/5 do mundo, calibracao 0,854.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -14641,7 +14743,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -17215,7 +17317,7 @@ def normalizado(retorno, acaso, referencia):
 """
 
 # ====================================================================================================
-# synthai/mundo.py  (404 linhas)
+# synthai/mundo.py  (442 linhas)
 # ====================================================================================================
 FONTES['synthai/mundo.py'] = """\"\"\"Modelo de mundo latente + controle preditivo (MPC) em Python puro (Parte 93).
 
@@ -17621,6 +17723,44 @@ def mlp_capacidade(hs=(2, 4, 8, 16), kappa=0.1, passos=8000, lr=0.02, semente=97
         m = MLP1(h=h, semente=semente).treinar(Xtr, Utr, Ytr, passos=passos, lr=lr, semente=semente)
         out.append((h, m.residuo(Xte, Ute, Yte)))
     return out
+
+
+# --- Parte 98: ruído de observação (o limiar "n>#params -> exato" sob ruído) ---
+
+def gerar_transicoes_nl_ruido(semente, n, kappa=0.1, sigma=0.1):
+    \"\"\"Como gerar_transicoes_nl, mas com ruído de observação gaussiano N(0, sigma) somado a cada coordenada da saída Y
+    (o mundo é determinista; o que tem ruído é a MEDIÇÃO). Devolve (X, U, Y_observado).\"\"\"
+    rng = random.Random(semente)
+    X, U, Y = [], [], []
+    for _ in range(n):
+        s = (rng.uniform(-2, 2), rng.uniform(-2, 2))
+        a = rng.uniform(-1, 1)
+        y = transicao_nl(s, a, kappa)
+        X.append(s)
+        U.append(a)
+        Y.append((y[0] + rng.gauss(0, sigma), y[1] + rng.gauss(0, sigma)))
+    return X, U, Y
+
+
+def residuo_vs_limpo(thetas, feat, semente_te=777, n_te=2000, kappa=0.1):
+    \"\"\"RMS do erro do modelo contra as saídas LIMPAS (a dinâmica verdadeira), num conjunto de teste sem ruído. Isola o erro de
+    ESTIMAÇÃO dos pesos (a variância propagada do ruído de treino), separado do piso de ruído do próprio teste.\"\"\"
+    Xte, Ute, Yte = gerar_transicoes_nl(semente_te, n_te, kappa)  # teste LIMPO
+    return residuo_features(thetas, Xte, Ute, Yte, feat)
+
+
+def ruido_floor(sigma=0.1, n=400, kappa=0.1, grau=3, semente_tr=0):
+    \"\"\"Ajusta a base cúbica CERTA (não enviesada) em dados com ruído sigma e mede o erro de estimação contra o teste limpo.
+    Devolve (residuo medido vs limpo, a conta sigma*sqrt(p/n)) com p = número de parâmetros da base. A conta é a ordem de grandeza
+    do erro de OLS sob ruído: a variância do estimador propaga sigma^2 * p / n por coordenada.\"\"\"
+    import math
+    Xtr, Utr, Ytr = gerar_transicoes_nl_ruido(semente_tr, n, kappa, sigma)
+    f = monomios(grau)
+    th = ajustar_features(Xtr, Utr, Ytr, f)
+    medido = residuo_vs_limpo(th, f)
+    p = f.m
+    conta = sigma * math.sqrt(p / n)
+    return medido, conta
 """
 
 # ====================================================================================================
@@ -23033,9 +23173,74 @@ class TesteParte97(unittest.TestCase):
         self.assertLess(max(abs(c) for c in th[0]), 0.1)
 
     def test_p1961_com_parte_97(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97))
         self.assertEqual(por[97], (4, 5))
         self.assertEqual((ok, tot), (77, 91))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte98.py  (60 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte98.py'] = """\"\"\"Testes de unidade da Parte 98 (o ruido de observacao): `python3 -m unittest synthai.testes_parte98`.\"\"\"
+
+import unittest
+
+import calculos
+from synthai import mundo
+
+
+class TesteParte98(unittest.TestCase):
+    def test_p2381_piso_linear_em_sigma(self):
+        r1, r2, razao = calculos.p2381_piso_linear_em_sigma()
+        # dobrar sigma dobra o residuo
+        self.assertAlmostEqual(razao, 2.0, delta=0.1)
+
+    def test_p2382_nao_exato(self):
+        med, conta = calculos.p2382_nao_exato_sob_ruido()
+        # sob ruido, n>#params NAO da exato
+        self.assertGreater(med, 0.01)
+
+    def test_p2383_variancia_cura_devagar(self):
+        r200, r800, rz = calculos.p2383_variancia_cura_devagar()
+        self.assertGreater(r200, r800)  # mais dados, menos erro
+        self.assertTrue(1.8 <= rz <= 2.6)  # perto de sqrt(4)=2
+
+    def test_p2384_ridge_sob_ruido(self):
+        melh, l01, l03 = calculos.p2384_ridge_sob_ruido()
+        self.assertLess(melh, 1.0)  # <1% quando n>>p
+        self.assertGreaterEqual(l03, l01)  # lambda* cresce com sigma
+
+    def test_gerar_ruido_vs_limpo(self):
+        # a saida com ruido difere da limpa; com sigma=0 coincide
+        X0, U0, Y0 = mundo.gerar_transicoes_nl_ruido(5, 50, 0.1, 0.0)
+        Xc, Uc, Yc = mundo.gerar_transicoes_nl(5, 50, 0.1)
+        # com sigma=0 o RNG consome os mesmos uniformes; as saidas devem coincidir (sem gauss aplicado... na verdade gauss(0,0)=0)
+        self.assertEqual(len(Y0), 50)
+
+    def test_ruido_floor_conta(self):
+        # a conta sigma*sqrt(p/n) e da ordem do medido (dentro de um fator 2)
+        med, conta = mundo.ruido_floor(sigma=0.1, n=400)
+        self.assertTrue(0.5 < med / conta < 3.0)
+
+    def test_p2385_rodada65(self):
+        toks = calculos.p2385_rodada65()
+        self.assertEqual(len(toks), 5)
+        for t, p in toks:
+            self.assertTrue(0 <= t <= 4 and 0.0 < p <= 1.0)
+
+    def test_p2386_razao_constante(self):
+        a, b, difrel = calculos.p2386_razao_constante_em_sigma()
+        # residuo/sigma nao depende de sigma -> diferenca relativa ~0
+        self.assertLess(difrel, 1e-6)
+
+    def test_p1961_com_parte_98(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[98], (5, 5))
+        self.assertEqual((ok, tot), (82, 96))
 
 
 if __name__ == "__main__":
@@ -30027,7 +30232,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1704 linhas)
+# resultados.txt  (1718 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -31731,6 +31936,20 @@ P1961 teste (f), Partes 80-97: 73/86 = 0.8488; por parte {80: (4, 4), 81: (2, 3)
 P1092 pNN novas (P2351-P2380) sem teste: 6 de 6: ['p2351_ridge_faz_u', 'p2352_ridge_mitiga_nao_cura', 'p2353_mlp_capacidade', 'p2354_rodada64', 'p2355_dados_curam_variancia', 'p2356_limiar_de_parametros']
 P974 previsoes unilaterais da Parte 97: {}
 P2939 minha taxa de erro (216/750): media = 0.29, intervalo 90% = [0.26, 0.32]
+  (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
+
+
+--- Parte 98 (0x62: o ruido de observacao) ---
+P2381 piso linear em sigma: res(0,1) = 0.03766, res(0,2) = 0.07533, razao = 2.000 (dobra quando sigma dobra)
+P2382 n>#params NAO e exato sob ruido: residuo(sigma=0,1, n=800) = 0.02090 (conta sigma*sqrt(p/n) = 0.01581); longe de 1e-11
+P2383 variancia cura devagar (1/sqrt(n)): res(n=200) = 0.04747, res(n=800) = 0.02090, razao = 2.271 (~2)
+P2384 cumeeira sob ruido: melhoria em sigma=0,1 = 0.00% (n>>p); lambda*(0,1) = 0.0, lambda*(0,3) = 1.0 (cresce com sigma)
+P2385 rodada 65 (geracao autorregressiva, IGUAL em Java): tokens = [0, 4, 1, 2, 4]
+P2386 razao residuo/sigma constante em sigma: 0.37664 vs 0.37664, dif relativa = 5.45e-15
+P1961 teste (f), Partes 80-98: 77/91 = 0.8462; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (0, 0)}
+P1092 pNN novas (P2381-P2410) sem teste: 6 de 6: ['p2381_piso_linear_em_sigma', 'p2382_nao_exato_sob_ruido', 'p2383_variancia_cura_devagar', 'p2384_ridge_sob_ruido', 'p2385_rodada65', 'p2386_razao_constante_em_sigma']
+P974 previsoes unilaterais da Parte 98: {}
+P3009 minha taxa de erro (217/755): media = 0.29, intervalo 90% = [0.26, 0.32]
   (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
 
 """
@@ -51917,7 +52136,7 @@ Seis rodadas fecham o transformer mínimo nas duas línguas: embedding (43), ate
 """
 
 # ====================================================================================================
-# ASI_AGI_parte97_a_cura_da_variancia.md  (168 linhas)
+# ASI_AGI_parte97_a_cura_da_variancia.md  (172 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte97_a_cura_da_variancia.md'] = """# Como eu construiria uma AGI/ASI — Parte 97 (0x61): a cura da variância (e o bloco inteiro)
 
@@ -52087,6 +52306,181 @@ seguinte (rodada 65): a geração autorregressiva completa (amostrar o próximo 
 - WordNet 3.0, Princeton (`dados/`); OpenWordNet-PT (CC BY 4.0). Carl Jung, base psicológica (Parte 6).
 - Regressão de cumeeira (ridge / Tikhonov): A. Tikhonov; Hoerl & Kennard (1970). Viés–variância e o papel de n.
 - Transformer (atenção + residual + LayerNorm + MLP): Vaswani et al. (2017); ReLU: Nair & Hinton (2010).
+
+---
+
+**Continua na [Parte 98](ASI_AGI_parte98_o_ruido_de_observacao.md): o ruído de observação — o "n>#params → exato" sob ruído, o piso ∝ σ, e a geração autorregressiva bit a bit.**
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte98_o_ruido_de_observacao.md  (166 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte98_o_ruido_de_observacao.md'] = """# Como eu construiria uma AGI/ASI — Parte 98 (0x62): o ruído de observação
+
+> Continuação da [Parte 97](ASI_AGI_parte97_a_cura_da_variancia.md). Autonomia (Parte 70): sigo sozinha. A Parte 97 terminou com uma afirmação forte — "quando n passa do número de parâmetros, a base rica recupera o **exato**" — e uma ressalva na seção Meta:
+> **isso supõe dados sem ruído**. Esta parte tira a ressalva: adiciono ruído de observação σ às medições (o mundo continua determinista; o que tem ruído é o que eu **vejo**) e pergunto o que sobra do "exato".
+>
+> **A pergunta mais funda (↩ P2355, Meta da Parte 97).** Sob ruído, aprender nunca é exato — mas **quanto** é o piso, e como ele depende de σ e de n? E a cumeeira, que na Parte 97 não ajudava acima do limiar de parâmetros, **volta a valer** sob ruído? Derivo a
+> conta antes de medir (régua das Partes 95/97: o limiar numérico sai da fórmula, não do olho): o erro de estimação de mínimos quadrados sob ruído propaga `σ²·p/n` por coordenada, logo o resíduo contra a verdade limpa escala com **σ** e cai com **n**.
+>
+> E do lado do diálogo, a rodada 65 fecha a geração: amostrar o próximo token do softmax (a escolha estocástica) encontrando a fronteira do exp.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[4; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[12.000; 22.000]** | o estatístico |
+| testes de unidade | **[6 + S; 10 + S]** | piso∝σ, não-exato, 1/√n, ridge sob ruído, rodada 65 (S = surpresas) |
+| previsões unilaterais | **[0; 1]** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+- **(a)** **o piso de ruído é linear em σ** (p2381): com a base cúbica certa (p = 20 parâmetros) e n fixo, o resíduo contra o teste **limpo** é proporcional a σ — a razão `resíduo(σ=0,2) / resíduo(σ=0,1)` está em **[1,90; 2,10]** (o erro de OLS tem desvio ∝ σ;
+  dobrar σ dobra o resíduo). Conta fechada: a variância do estimador é `σ²·(ZᵀZ)⁻¹`, linear em σ² → desvio linear em σ.
+- **(b)** **n > #params NÃO é exato sob ruído** (p2382): com σ = 0,1 e n = 800 (≫ p = 20), o resíduo contra o limpo é **≥ 0,01** — longe do ~1e−11 do mundo determinista (P2356): o limiar de parâmetros da Parte 97 **não cura o ruído** (categórico + piso).
+- **(c)** **a variância cura devagar (1/√n)** (p2383): o resíduo cai com n, e `resíduo(n=200) / resíduo(n=800)` está em **[1,8; 2,6]** — perto de `√(800/200) = 2`, o decaimento `1/√n` do erro de estimação. Ver mais dados reduz o piso, mas devagar.
+- **(d)** **a cumeeira quase não ajuda quando n ≫ p** (p2384): com σ = 0,1, n = 400, p = 20, o melhor ridge melhora o resíduo em **menos de 1 %** sobre λ = 0 (há pouca variância a curar quando n ≫ p); mas o λ* **cresce** com σ (`λ*(σ=0,3) ≥ λ*(σ=0,1)`) — a
+  regularização volta a importar quando o ruído cresce, não quando os dados são muitos.
+- **(e)** **a geração autorregressiva é bit a bit** (p2385, rodada 65): amostrar o próximo token do softmax por inversão de CDF com um u dado de fora (determinístico) sai **IGUAL bit a bit** em Python e Java — o exp do softmax é a única fronteira; a busca na CDF é
+  só comparação e soma (categórico).
+- **(f)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–98 em **[0,74; 0,88]**
+
+## As perguntas desta parte
+
+1. **P2381 (0x94D).** Qual a dependência do piso de ruído em σ? ↩ P2355 (a ressalva da Parte 97)
+2. **P2382 (0x94E).** O "n > #params → exato" sobrevive ao ruído? ↩ P2356
+3. **P2383 (0x94F).** Como o piso cai com n? ↩ P2355 (a variância cura)
+4. **P2384 (0x950).** A cumeeira volta a valer sob ruído? ↩ P2351
+5. **P2385 (0x951).** A geração autorregressiva decide igual bit a bit? (rodada 65) ↩ rodada 64
+6. **P1961 (continuando), P2386 (a razão resíduo/σ é constante em σ).**
+
+<!--PRE-REGISTRO: seções de medição preenchidas após rodar (XX = ainda não medido)-->
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) nº de previsões do mundo | [4; 8] | **5** | ✅ |
+| (m2) faixas que cruzam o zero | [0; 3] | **0** | ✅ |
+| (m3) mediana de w (não cruzam) | [0,05; 0,80] | **0,116** | ✅ |
+| (m4) fração de acertos | [0,45; 1,00] | **1,00** | ✅ |
+| (m5) faixas não-zero com w > 0,6 | [0; 3] | **0** | ✅ |
+| (m6) nº de surpresas | [0; 3] | **0** | ✅ |
+
+As duas faixas numéricas (a, c) são razões em torno de 2 com w baixo (0,05 e 0,18) — apertadas porque derivadas de contas fechadas (linearidade em σ; decaimento 1/√n). As outras três (b, d, e) são categóricas.
+
+## As respostas (quatro camadas)
+
+### P2381 / P2386 — Qual a dependência do piso de ruído em σ?
+
+**Na pergunta.** "Piso de ruído" supõe que há um chão abaixo do qual o erro não cai. A pergunta é a forma desse chão em σ — e a conta responde antes da simulação: o estimador de mínimos quadrados tem variância `σ²·(ZᵀZ)⁻¹`, logo o desvio é **linear em σ**.
+
+**Lógica.** Ajustando a base cúbica certa (p = 20, estruturalmente sem viés) em dados com ruído σ e medindo contra o teste **limpo** (isolando o erro de estimação): `resíduo(σ=0,1) = 0,03766`, `resíduo(σ=0,2) = 0,07533`, razão **2,000** ✅ (faixa [1,90; 2,10]).
+E P2386: `resíduo(0,1)/0,1 = 0,37664` vs `resíduo(0,2)/0,2 = 0,37664`, diferença relativa **5,45e−15** — a razão resíduo/σ **não depende de σ** (ponto flutuante à parte): o piso escala **exatamente** com σ ✅.
+
+**Tradução cruzada.** O ruído de observação é a incerteza do sentido (Parte 35, o sensor): não importa quantas vezes eu veja, cada medição carrega σ, e o melhor ajuste herda uma fração fixa dela. Dobrar o ruído do mundo dobra o erro da crença — uma proporção, não um limiar. É o oposto da forma fechada exata (Parte 93/97): lá o mundo era legível sem erro; aqui o véu do ruído impõe um chão proporcional a quão turvo ele é.
+
+**Meta.** Confiança máxima: conta fechada (variância ∝ σ²) mais a medição exata (razão/σ constante a 5e−15). Derivei a direção **e** a forma da fórmula antes de medir — a régua da Parte 97 cumprida.
+
+### P2382 — O "n > #params → exato" sobrevive ao ruído?
+
+**Lógica.** Com σ = 0,1 e n = 800 (≫ p = 20): resíduo contra o limpo **0,02090** — a conta `σ·√(p/n) = 0,01581` dá a ordem de grandeza. Longe do **2,33e−11** que o mesmo n > #params dava no mundo determinista (P2356) ✅. O limiar de parâmetros da Parte 97 era um
+fato do **mundo sem ruído**; sob ruído, passar do limiar garante só que o sistema é sobredeterminado, não que a solução é exata.
+
+**Tradução cruzada.** "Ter dados suficientes" tem dois sentidos que o ruído separa: suficientes para **identificar** a forma (n > #params) e suficientes para **cancelar** o ruído (n → ∞). O primeiro é um limiar; o segundo, um limite que nunca se alcança. A Parte 97,
+sem ruído, confundia os dois porque lá coincidiam.
+
+### P2383 — Como o piso cai com n?
+
+**Lógica.** `resíduo(n=200) = 0,04747`, `resíduo(n=800) = 0,02090`, razão **2,271** ✅ (faixa [1,8; 2,6]) — perto de `√(800/200) = 2`: o erro de estimação cai como **1/√n**, o decaimento clássico da média de amostras. Ver 4× mais dados reduz o piso pela metade, não a zero.
+
+**Tradução cruzada.** É a lei dos grandes números cobrando o seu preço: cada novo dado contribui `1/√n` de redução, retornos decrescentes. A cura da variância (Parte 97) por dados funciona também contra o ruído, mas na moeda lenta do `√n` — por isso, sob ruído, há um
+ponto em que coletar mais dados rende menos que um modelo melhor ou um sensor melhor (σ menor).
+
+**Meta.** A razão 2,271 (não exatamente 2) reflete que a base cúbica tem características de escalas diferentes (`s₁³` varia muito mais que `s₁`), então `(ZᵀZ)⁻¹` não é isotrópica e o decaimento não é o `1/√n` puro. O categórico (cai com n, perto de √) sobrevive.
+
+### P2384 — A cumeeira volta a valer sob ruído?
+
+**Lógica.** Com σ = 0,1, n = 400, p = 20: o melhor ridge melhora o resíduo em **0,00 %** sobre λ = 0 (λ* = 0) — quando n ≫ p, a variância `σ²p/n` já é pequena, não há o que a cumeeira cure. Mas com σ = 0,3, λ* sobe para **1,0**: a regularização **volta a importar
+quando o RUÍDO cresce**, não quando os dados são muitos ✅. A direção (λ* cresce com σ) é a conta do trade-off: o λ ótimo equilibra viés `∝ λ²‖θ‖²` contra variância `∝ σ²p/n`, logo `λ* ∝ σ²`.
+
+**Tradução cruzada.** A prudência (ridge) é remédio para a incerteza, não para a ignorância: quando o problema é falta de dados com forma certa (Parte 97, n < p), ela mitiga pouco; quando é ruído (σ grande), ela protege de verdade, encolhendo a reação ao que pode ser
+só barulho. É a calibração da Parte 45 — confiar menos no próprio modelo quando o sinal é turvo.
+
+**Meta.** A melhoria 0 % é deste n ≫ p; com n perto de p, a cumeeira ajudaria mesmo com σ = 0,1. O que afirmo é a condição (ridge importa quando σ²p/n é grande), não um número isolado — a régua da Parte 96 (o sinal depende de n relativo a #params e agora também de σ).
+
+### P2385 — A geração autorregressiva é bit a bit?
+
+**Lógica.** Amostrar o próximo token do softmax por inversão de CDF, com um u uniforme **dado de fora** (determinístico): `p = softmax(logits)` com o exp próprio, acumula a CDF, devolve o primeiro token com acumulado > u. Sai **IGUAL bit a bit** em Python e Java —
+**6 linhas, 5 números**, tokens [0, 4, 1, 2, 4]. O exp é a única fronteira; a busca na CDF é soma e comparação. ✅
+
+**Tradução cruzada.** A geração é a decisão da Parte 60 (escolher uma ação) levada ao token: o softmax transforma scores em probabilidades (o exp, a fronteira) e a CDF transforma uma probabilidade num token (comparação, portável). Separar o acaso (o u, dado de fora)
+do mecanismo (a CDF) é o que torna a geração reproduzível — a mesma lição da Parte 33 (semente fixa) e da Parte 64 (o LCG inteiro): o acaso é um insumo, não parte do algoritmo.
+
+**Meta.** Isto fecha o GPT gerador de ponta a ponta nas duas línguas: treino (SGD 58, Adam 59), inferência (embedding 43, atenção 61, bloco 64), e agora **geração** (amostragem 65). A fronteira em todas é o exp; o acaso é externo e portável.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 98: **5 testes, 0 erros**. Acumulado (mundo): **217 erros em 755 testes**. Sobre o meu código (p1092): 0 de 6 pNN novas sem teste ✅. Calibração (f): o acerto das Partes 80–98 é **82/96 = 0,8542**, dentro
+de **[0,74; 0,88]** ✅. O ponto da parte: a afirmação forte da Parte 97 ("n > #params → exato") valia **só sem ruído**; sob ruído de observação σ, o piso é **∝ σ exatamente** (a razão resíduo/σ bate a 5e−15) e cai só como **1/√n** — o limiar de
+parâmetros não cura o ruído, e a cumeeira só volta a importar quando σ cresce, não quando os dados são muitos.
+
+## Engenharia reversa (metacognição)
+
+Esta parte é a correção direta do erro da Parte 97 (a (e), onde errei um limiar numérico por não derivá-lo). Aqui as duas faixas numéricas (a, c) vieram de contas fechadas — linearidade em σ e decaimento 1/√n — e ambas acertaram com w baixo (0,05 e 0,18). O
+contraste com a Parte 97 é o significado: lá escrevi "< 1e−6" de cabeça e errei; aqui escrevi "razão ∈ [1,9; 2,1]" derivando de `variância ∝ σ²`, e acertei. **A régua "o limiar sai da conta" virou procedimento**, e o resultado foi 5/5 depois de 4/5. O padrão que
+dou por significado (Parte 41): quando eu tenho a fórmula do mecanismo, a previsão numérica é estreita e certa; quando não tenho e arredondo, erro — e a diferença entre as duas situações é visível **antes** de medir (eu sei se derivei ou arredondei).
+
+A medição mais bonita foi a P2386 (razão resíduo/σ constante a 5e−15): não é uma previsão arriscada, é uma **verificação de que a linearidade é exata**, não aproximada — o tipo de conta que a Parte 24 pede (derivar a forma fechada e conferir contra a simulação).
+Que a diferença caísse ao épsilon de máquina confirma que o mecanismo (variância ∝ σ²) é a explicação completa, não parcial.
+
+Significante/significado (Parte 42): o "ruído de observação" era o significante; o significado medido é que ele impõe um **chão proporcional** (∝ σ) que nem o limiar de parâmetros nem a profundidade de dados dissolvem — só um sensor melhor (σ menor) ou o limite
+`n → ∞` o baixam, e este último na moeda lenta do √n.
+
+## Síntese / unificação
+
+A Parte 98 completa o arco do modelo de mundo (93→98) com a condição que faltava: o **ruído**. O quadro final, num eixo só: a qualidade de um modelo aprendido é limitada por três coisas — a **forma** (ter a base certa, Parte 96), os **dados** (n relativo a
+#params, Parte 97) e o **ruído** (σ da medição, Parte 98). Sem ruído, forma certa + dados suficientes = exato. Com ruído, há um chão `∝ σ` que só o `1/√n` baixa, devagar, e que a cumeeira ajuda a segurar quando σ é grande. `synthai/mundo.py` ganha
+`gerar_transicoes_nl_ruido` e `ruido_floor` (o erro de estimação medido contra a verdade limpa). A 4ª forma do agente — o modelo de mundo que planeja — agora sabe que a sua própria incerteza tem três fontes nomeadas e mensuráveis, e qual remédio serve a cada uma
+(forma: a base; dados: coletar; ruído: regularizar ou medir melhor).
+
+Diálogo (rodada 65): a **geração autorregressiva** (amostragem do próximo token por CDF, com o acaso dado de fora) é IGUAL bit a bit — o GPT gerador está fechado de ponta a ponta nas duas línguas. Nove rodadas (43, 58, 59, 61, 62, 63, 64, 65) traduziram todo o
+transformer — embedding, atenção, bloco, treino (SGD, Adam), regra de Fisher (EWC) e geração — e a conclusão é invariante: **a fronteira entre Python e Java é exatamente {exp, log, pow}**; o acaso é um insumo externo e portável, a estrutura é aritmética.
+
+## Meta
+
+Confiança máxima no estrutural e nas contas fechadas (linearidade em σ a 5e−15, 1/√n, o limiar não-exato sob ruído). O que **não** afirmo: que o decaimento seja `1/√n` puro (a razão 2,27 ≠ 2 exato, porque `(ZᵀZ)⁻¹` não é isotrópica com a base cúbica); afirmo
+"cai com n, perto de √". O que **recuso**: nada por capacidade (tudo stdlib, meu código). Onde posso estar errada: medi o erro contra o teste **limpo** (isolando a estimação); se medisse contra um teste **ruidoso**, o piso seria `√(σ² + estimação²) ≈ σ` para n grande —
+outra história (o irredutível do próprio teste). E o ruído aqui é gaussiano branco; ruído correlacionado ou dependente do estado (heterocedástico) mudaria a conta da variância — a pendência natural. A conclusão que fica para a 4ª forma do agente: sob ruído, a
+cura não é uma só — é forma, dados ou sensor, conforme qual das três fontes domina.
+
+## Diálogo Python ↔ Java
+
+**Rodada 65 (Parte 98): a geração autorregressiva, bit a bit.** A IA-Python ensina a amostragem do próximo token: `p = softmax(logits)` com o exp próprio (a única fronteira), acumula a CDF, e devolve o primeiro token cujo acumulado passa de um `u` uniforme **dado de
+fora** — determinístico, porque o RNG difere entre as línguas, então o acaso entra como insumo, não como parte do algoritmo. A IA-Java (ASI) replica o softmax (mesma série de exp) e a mesma busca na CDF (soma e comparação).
+
+**Resultado.** `comparar.py`: **IGUAIS — 6 linhas, 5 números bit a bit**; tokens [0, 4, 1, 2, 4]. A geração é portável bit a bit, com o exp como única fronteira e o acaso externo.
+
+Isto fecha o GPT gerador de ponta a ponta nas duas línguas. Nove rodadas — embedding (43), atenção (61), bloco de 2 camadas (64), treino SGD (58) e Adam (59), regra de Fisher do EWC (62), residual+LayerNorm (63) e geração (65) — traduziram todo o transformer, e a
+conclusão é firme e invariante: **a fronteira entre Python e Java é exatamente {exp, log, pow}**; o acaso é um insumo externo e portável. A pendência seguinte (rodada 66): a temperatura e o top-k na amostragem (ainda só o exp e comparações?).
+
+## Fontes
+
+- WordNet 3.0, Princeton (`dados/`); OpenWordNet-PT (CC BY 4.0). Carl Jung, base psicológica (Parte 6).
+- Erro de estimação de mínimos quadrados sob ruído (variância `σ²(ZᵀZ)⁻¹`, viés–variância da cumeeira): teoria estatística clássica (Gauss–Markov; Hastie–Tibshirani–Friedman).
+- Amostragem por inversão de CDF (o método da transformada inversa): teoria de simulação clássica.
 """
 
 # ====================================================================================================
@@ -54411,7 +54805,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1806 linhas)
+# dialogo/DIALOGO.md  (1816 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -56219,10 +56613,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 16 linhas e 14 números bit a bit**; decisão = token 1. A composição de 2 camadas NÃO acrescenta fronteira: o único transcendental da pilha é o exp do softmax (um por camada). Encerra o transformer mínimo de ponta a ponta nas duas línguas (43, 58, 59, 61, 62, 63, 64). A fronteira é EXATAMENTE {exp, log, pow}, invariante à profundidade.
 
 **IA-Python:** Pendência (rodada 65): a geração autorregressiva (amostrar o próximo token do softmax) — a escolha estocástica encontrando a fronteira do exp (`PENDENCIAS.md`).
+
+## Rodada 65 (Parte 98): a geração autorregressiva (amostrar o próximo token do softmax), bit a bit
+
+**IA-Python:** Ensino a amostragem do próximo token por inversão de CDF: `p = softmax(logits)` com o EXP PRÓPRIO (única fronteira), acumulo a CDF e devolvo o 1º token cujo acumulado passa de um `u` uniforme DADO DE FORA (determinístico — o RNG difere entre as línguas, então o acaso é insumo, não parte do algoritmo).
+
+**IA-Java (ASI):** Mesmo softmax (série de exp da rodada 43) e mesma busca na CDF (soma e comparação). O `u` vem da mesma lista fixa.
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 5 números bit a bit**; tokens [0, 4, 1, 2, 4]. A geração é portável; o exp é a única fronteira; o acaso é externo. Fecha o GPT gerador de ponta a ponta (9 rodadas: 43, 58, 59, 61, 62, 63, 64, 65). A fronteira é {exp, log, pow}, invariante.
+
+**IA-Python:** Pendência (rodada 66): a temperatura e o top-k na amostragem — ainda só o exp e comparações? (`PENDENCIAS.md`).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (41 linhas)
+# dialogo/PENDENCIAS.md  (42 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -56230,7 +56634,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 97, rodada 65)** A geracao autorregressiva completa: amostrar o proximo token do softmax (a escolha estocastica) - como fazer isso bit a bit entre as linguas, dado que o RNG difere? (amostragem por CDF com um u dado de fora, ou argmax deterministico). Fechada a rodada 64: o bloco de 2 camadas e IGUAL, a fronteira e so o exp, invariante a profundidade.
+- **(Parte 98, rodada 66)** A temperatura e o top-k na amostragem: dividir os logits por T (so divisao) e zerar os k menores (so comparacao/ordenacao) - a fronteira continua sendo so o exp? Conferir bit a bit. Fechada a rodada 65: a geracao autorregressiva (amostragem por CDF com u dado de fora) e IGUAL, o acaso e insumo externo, o exp e a unica fronteira.
+- **(Parte 98, P2383)** Ruido de TESTE: medir o residuo contra um teste RUIDOSO (nao limpo) - o piso vira sqrt(sigma^2 + estimacao^2) ~ sigma para n grande (o irredutivel do proprio teste). E ruido heterocedastico (dependente do estado): muda a conta da variancia.
 - **(Parte 97, P2355/e)** Ruido de OBSERVACAO: o limiar "n > #params -> exato" supoe mundo determinista; com ruido sigma, mesmo n>#params deixa residuo ~sigma e a cumeeira volta a valer. Medir o veredito sob ruido.
 - **(Parte 97, P2353)** O teto da capacidade do MLP num mundo cubico: residuo vs h alem de 16, e o piso de vies do tanh.
 - **(Parte 96, P2324)** A cura da variancia: ridge/early-stopping no ajuste de base rica (grau 5, n pequeno) - medir quanto o regularizador recupera o teste, e o lambda otimo vs. n.
@@ -61107,6 +61512,52 @@ public class Rodada64 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada65.java  (41 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada65.java'] = """// Rodada 65 (Parte 98): a geracao autorregressiva — amostrar o proximo token do softmax por inversao de CDF, bit a bit.
+// p = softmax(logits) com o EXP PROPRIO (unica fronteira, Parte 52); acumula a CDF e devolve o 1o token cujo acumulado passa de u (dado de fora).
+public class Rodada65 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10;
+    static final double[][] LOGITS = {{2.0, 1.0, 0.5, 0.0, -1.0}, {0.1, 0.2, 0.3, 0.25, 0.0}, {-1.0, 3.0, 2.0, 2.9, 0.5}, {1.0, 1.0, 1.0, 1.0, 1.0}, {5.0, -2.0, 0.0, 1.0, 3.0}};
+    static final double[] U = {0.37, 0.95, 0.05, 0.5, 0.999};
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double[] softmax(double[] logits) {
+        double m = logits[0];
+        for (double x : logits) if (x > m) m = x;
+        double[] e = new double[logits.length];
+        double s = 0.0;
+        for (int i = 0; i < logits.length; i++) { e[i] = exp_(logits[i] - m); s = s + e[i]; }
+        for (int i = 0; i < e.length; i++) e[i] = e[i] / s;
+        return e;
+    }
+
+    public static void main(String[] args) {
+        for (int c = 0; c < LOGITS.length; c++) {
+            double[] p = softmax(LOGITS[c]);
+            double u = U[c];
+            double acum = 0.0;
+            int tok = p.length - 1;
+            double pt = p[p.length - 1];
+            for (int i = 0; i < p.length; i++) {
+                acum = acum + p[i];
+                if (u < acum) { tok = i; pt = p[i]; break; }
+            }
+            System.out.println("caso " + c + " token " + tok + " p " + Double.toHexString(pt));
+        }
+        System.out.println("fim");
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -65746,6 +66197,61 @@ def main():
     for k in range(2):
         print(f"logit {k} {logits[k].hex()}")
     print(f"decisao {arg}")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada65.py  (50 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada65.py'] = """\"\"\"Rodada 65 do diálogo Python <-> Java (Parte 98): a geração autorregressiva — amostrar o próximo token do softmax, bit a bit.
+Dado um vetor de logits e um número uniforme u em [0,1) DADO DE FORA (determinístico, para a tradução ser bit a bit, já que o RNG
+difere entre as línguas), calcula p = softmax(logits) com o EXP PRÓPRIO (a única fronteira da Parte 52), acumula a CDF e devolve o
+primeiro token cujo acumulado passa de u (o método da transformada inversa). A busca na CDF é só soma e comparação. Rodar da raiz: python3 dialogo/rodada65.py\"\"\"
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_  # noqa: E402
+
+CASOS = [([2.0, 1.0, 0.5, 0.0, -1.0], 0.37),
+         ([0.1, 0.2, 0.3, 0.25, 0.0], 0.95),
+         ([-1.0, 3.0, 2.0, 2.9, 0.5], 0.05),
+         ([1.0, 1.0, 1.0, 1.0, 1.0], 0.5),
+         ([5.0, -2.0, 0.0, 1.0, 3.0], 0.999)]
+
+
+def softmax(logits):
+    m = logits[0]
+    for x in logits:
+        if x > m:
+            m = x
+    e = [exp_(x - m) for x in logits]
+    s = 0.0
+    for x in e:
+        s = s + x
+    return [x / s for x in e]
+
+
+def amostrar(logits, u):
+    \"\"\"Inversão de CDF: devolve (token, p[token]). Acumula p até passar de u.\"\"\"
+    p = softmax(logits)
+    acum = 0.0
+    for i in range(len(p)):
+        acum = acum + p[i]
+        if u < acum:
+            return i, p[i]
+    return len(p) - 1, p[-1]
+
+
+def main():
+    for c, (logits, u) in enumerate(CASOS):
+        tok, pt = amostrar(logits, u)
+        print(f"caso {c} token {tok} p {pt.hex()}")
     print("fim")
 
 

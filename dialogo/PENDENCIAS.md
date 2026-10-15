@@ -4,7 +4,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 97, rodada 65)** A geracao autorregressiva completa: amostrar o proximo token do softmax (a escolha estocastica) - como fazer isso bit a bit entre as linguas, dado que o RNG difere? (amostragem por CDF com um u dado de fora, ou argmax deterministico). Fechada a rodada 64: o bloco de 2 camadas e IGUAL, a fronteira e so o exp, invariante a profundidade.
+- **(Parte 98, rodada 66)** A temperatura e o top-k na amostragem: dividir os logits por T (so divisao) e zerar os k menores (so comparacao/ordenacao) - a fronteira continua sendo so o exp? Conferir bit a bit. Fechada a rodada 65: a geracao autorregressiva (amostragem por CDF com u dado de fora) e IGUAL, o acaso e insumo externo, o exp e a unica fronteira.
+- **(Parte 98, P2383)** Ruido de TESTE: medir o residuo contra um teste RUIDOSO (nao limpo) - o piso vira sqrt(sigma^2 + estimacao^2) ~ sigma para n grande (o irredutivel do proprio teste). E ruido heterocedastico (dependente do estado): muda a conta da variancia.
 - **(Parte 97, P2355/e)** Ruido de OBSERVACAO: o limiar "n > #params -> exato" supoe mundo determinista; com ruido sigma, mesmo n>#params deixa residuo ~sigma e a cumeeira volta a valer. Medir o veredito sob ruido.
 - **(Parte 97, P2353)** O teto da capacidade do MLP num mundo cubico: residuo vs h alem de 16, e o piso de vies do tanh.
 - **(Parte 96, P2324)** A cura da variancia: ridge/early-stopping no ajuste de base rica (grau 5, n pequeno) - medir quanto o regularizador recupera o teste, e o lambda otimo vs. n.

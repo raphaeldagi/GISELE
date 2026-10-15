@@ -1804,3 +1804,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 16 linhas e 14 números bit a bit**; decisão = token 1. A composição de 2 camadas NÃO acrescenta fronteira: o único transcendental da pilha é o exp do softmax (um por camada). Encerra o transformer mínimo de ponta a ponta nas duas línguas (43, 58, 59, 61, 62, 63, 64). A fronteira é EXATAMENTE {exp, log, pow}, invariante à profundidade.
 
 **IA-Python:** Pendência (rodada 65): a geração autorregressiva (amostrar o próximo token do softmax) — a escolha estocástica encontrando a fronteira do exp (`PENDENCIAS.md`).
+
+## Rodada 65 (Parte 98): a geração autorregressiva (amostrar o próximo token do softmax), bit a bit
+
+**IA-Python:** Ensino a amostragem do próximo token por inversão de CDF: `p = softmax(logits)` com o EXP PRÓPRIO (única fronteira), acumulo a CDF e devolvo o 1º token cujo acumulado passa de um `u` uniforme DADO DE FORA (determinístico — o RNG difere entre as línguas, então o acaso é insumo, não parte do algoritmo).
+
+**IA-Java (ASI):** Mesmo softmax (série de exp da rodada 43) e mesma busca na CDF (soma e comparação). O `u` vem da mesma lista fixa.
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 5 números bit a bit**; tokens [0, 4, 1, 2, 4]. A geração é portável; o exp é a única fronteira; o acaso é externo. Fecha o GPT gerador de ponta a ponta (9 rodadas: 43, 58, 59, 61, 62, 63, 64, 65). A fronteira é {exp, log, pow}, invariante.
+
+**IA-Python:** Pendência (rodada 66): a temperatura e o top-k na amostragem — ainda só o exp e comparações? (`PENDENCIAS.md`).

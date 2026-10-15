@@ -9590,6 +9590,8 @@ VEREDITOS_P2869 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P2869, TESTES_P2869 = 216, 745
 VEREDITOS_P2939 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅"
 ERROS_P2939, TESTES_P2939 = 217, 750
+VEREDITOS_P3009 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P3009, TESTES_P3009 = 217, 755
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12130,12 +12132,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12143,7 +12145,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\(g\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97):  # nas Partes 94-97 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98):  # nas Partes 94-98 a letra da calibracao e a (f)
             txt = re.sub(r"\(f\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13150,6 +13152,77 @@ def p2356_limiar_de_parametros(grau=5):
     Xtr, Utr, Ytr = gerar_transicoes_nl(0, n, 0.1)
     Xte, Ute, Yte = gerar_transicoes_nl(777, 400, 0.1)
     return n_params, residuo_features(ajustar_features(Xtr, Utr, Ytr, f), Xte, Ute, Yte, f)
+
+
+def p2381_piso_linear_em_sigma(n=400):
+    """O piso de ruido e linear em sigma (P2381; Parte 98): com a base cubica certa e n fixo, o residuo contra o teste limpo escala
+    com sigma. Devolve (residuo sigma=0,1, residuo sigma=0,2, razao). Conta fechada: a variancia do estimador OLS e sigma^2*(ZtZ)^-1, desvio ~ sigma."""
+    from synthai.mundo import ruido_floor
+    r1 = ruido_floor(sigma=0.1, n=n)[0]
+    r2 = ruido_floor(sigma=0.2, n=n)[0]
+    return r1, r2, r2 / r1
+
+
+def p2382_nao_exato_sob_ruido(sigma=0.1, n=800):
+    """n > #params NAO e exato sob ruido (P2382; Parte 98): com sigma=0,1 e n=800 (>> p=20) o residuo contra o limpo fica longe do
+    ~1e-11 do mundo determinista (P2356). Devolve (residuo medido, a conta sigma*sqrt(p/n)). O limiar de parametros nao cura o ruido."""
+    from synthai.mundo import ruido_floor
+    med, conta = ruido_floor(sigma=sigma, n=n)
+    return med, conta
+
+
+def p2383_variancia_cura_devagar(sigma=0.1):
+    """A variancia cura devagar, como 1/sqrt(n) (P2383; Parte 98): o residuo cai com n. Devolve (residuo n=200, residuo n=800, razao).
+    Perto de sqrt(800/200)=2, o decaimento 1/sqrt(n) do erro de estimacao."""
+    from synthai.mundo import ruido_floor
+    r200 = ruido_floor(sigma=sigma, n=200)[0]
+    r800 = ruido_floor(sigma=sigma, n=800)[0]
+    return r200, r800, r200 / r800
+
+
+def p2384_ridge_sob_ruido(n=400, kappa=0.1, grau=3):
+    """A cumeeira quase nao ajuda quando n >> p (P2384; Parte 98): com sigma=0,1 e n=400 (>> p=20) ha pouca variancia a curar, e o
+    melhor ridge melhora <1% sobre lambda=0; mas o lambda* CRESCE com sigma (volta a importar quando o ruido cresce, nao quando ha muitos dados).
+    Devolve (melhoria percentual em sigma=0,1, lambda*(sigma=0,1), lambda*(sigma=0,3))."""
+    from synthai.mundo import gerar_transicoes_nl_ruido, monomios, ajustar_features_ridge, residuo_vs_limpo
+    f = monomios(grau)
+    lams = (0.0, 1e-4, 1e-3, 1e-2, 1e-1, 1.0, 3.0)
+
+    def melhor(sigma):
+        Xtr, Utr, Ytr = gerar_transicoes_nl_ruido(0, n, kappa, sigma)
+        res = [(lam, residuo_vs_limpo(ajustar_features_ridge(Xtr, Utr, Ytr, f, lam), f)) for lam in lams]
+        r0 = [r for lam, r in res if lam == 0.0][0]
+        ls, best = min(res, key=lambda t: t[1])
+        return r0, best, ls
+    r0_01, best_01, ls_01 = melhor(0.1)
+    _, _, ls_03 = melhor(0.3)
+    melhoria_pct = 100.0 * (r0_01 - best_01) / r0_01
+    return melhoria_pct, ls_01, ls_03
+
+
+def _rodada65():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada65", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada65.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2385_rodada65():
+    """Rodada 65 (P2385; Parte 98): a geracao autorregressiva (amostrar o proximo token do softmax por inversao de CDF, com um u dado de fora),
+    IGUAL em Java bit a bit. Devolve a lista de (token, p[token]) dos 5 casos. O exp do softmax e a unica fronteira; a busca na CDF e soma/comparacao."""
+    r = _rodada65()
+    return [r.amostrar(list(logits), u) for logits, u in r.CASOS]
+
+
+def p2386_razao_constante_em_sigma(n=400):
+    """A razao residuo/sigma e constante em sigma (P2386; Parte 98): como o residuo e linear em sigma, residuo(sigma)/sigma nao depende de sigma
+    (para n fixo). Devolve (res(0,1)/0,1, res(0,2)/0,2, |diferenca relativa|). A diferenca deve ser ~0 (o piso escala exatamente com sigma)."""
+    from synthai.mundo import ruido_floor
+    a = ruido_floor(sigma=0.1, n=n)[0] / 0.1
+    b = ruido_floor(sigma=0.2, n=n)[0] / 0.2
+    return a, b, abs(a - b) / a
 
 
 def p1578_autovalores_da_atencao():
@@ -14187,13 +14260,35 @@ def _parte_97():
     print(f"P2355 dados curam a variancia: lambda*(n=40) = {l40}, lambda*(n=160) = {l160}, melhor teste(n=160) = {r160:.2e}")
     npar, rlim = p2356_limiar_de_parametros()
     print(f"P2356 limiar de parametros (grau 5): {npar} parametros; n logo acima -> residuo de teste = {rlim:.2e}")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97))
     print(f"P1961 teste (f), Partes 80-97: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2351, 2380)
     print(f"P1092 pNN novas (P2351-P2380) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 97: {p974_previsoes_sem_largura(range(97, 98))}")
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P2939, testes=TESTES_P2939)
     print(f"P2939 minha taxa de erro ({ERROS_P2939}/{TESTES_P2939}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+def _parte_98():
+    print("--- Parte 98 (0x62: o ruido de observacao) ---")
+    r1, r2, razao = p2381_piso_linear_em_sigma()
+    print(f"P2381 piso linear em sigma: res(0,1) = {r1:.5f}, res(0,2) = {r2:.5f}, razao = {razao:.3f} (dobra quando sigma dobra)")
+    med, conta = p2382_nao_exato_sob_ruido()
+    print(f"P2382 n>#params NAO e exato sob ruido: residuo(sigma=0,1, n=800) = {med:.5f} (conta sigma*sqrt(p/n) = {conta:.5f}); longe de 1e-11")
+    r200, r800, rz = p2383_variancia_cura_devagar()
+    print(f"P2383 variancia cura devagar (1/sqrt(n)): res(n=200) = {r200:.5f}, res(n=800) = {r800:.5f}, razao = {rz:.3f} (~2)")
+    melh, l01, l03 = p2384_ridge_sob_ruido()
+    print(f"P2384 cumeeira sob ruido: melhoria em sigma=0,1 = {melh:.2f}% (n>>p); lambda*(0,1) = {l01}, lambda*(0,3) = {l03} (cresce com sigma)")
+    toks = p2385_rodada65()
+    print(f"P2385 rodada 65 (geracao autorregressiva, IGUAL em Java): tokens = {[t for t, _ in toks]}")
+    a, b, difrel = p2386_razao_constante_em_sigma()
+    print(f"P2386 razao residuo/sigma constante em sigma: {a:.5f} vs {b:.5f}, dif relativa = {difrel:.2e}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-98: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2381, 2410)
+    print(f"P1092 pNN novas (P2381-P2410) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 98: {p974_previsoes_sem_largura(range(98, 99))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3009, testes=TESTES_P3009)
+    print(f"P3009 minha taxa de erro ({ERROS_P3009}/{TESTES_P3009}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -14231,7 +14326,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98}
 
 
 if __name__ == "__main__":
