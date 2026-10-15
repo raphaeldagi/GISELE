@@ -30,7 +30,7 @@ class TesteParte107(unittest.TestCase):
         self.assertTrue(0.3 <= ve <= 1.2)
 
     def test_p1961_com_parte_107(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 108))))
         self.assertEqual(por[107], (5, 5))
         self.assertEqual((ok, tot), (125, 141))
 

@@ -55,3 +55,5 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 74, Parte 106)** Traduzir a decisão de duas ruas do pôquer (backward induction entre ruas): a recursão acrescenta fronteira, ou continua aritmética (só +, −, ×, ÷ e comparações)?
 
 - **(Rodada 75, Parte 107)** O equilíbrio de um jogo de soma zero por programação linear (minimax / simplex): o pivô (divisão por um elemento escolhido) acrescenta fronteira, ou continua +−×÷ e comparação (portável)?
+
+- **(Rodada 76, Parte 108)** Um jogo de soma zero n×m resolvido por simplex próprio: o pivô (divisão pelo elemento-pivô escolhido pela razão mínima) acrescenta fronteira, ou continua +−×÷ e comparação (portável)?
