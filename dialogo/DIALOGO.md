@@ -1844,3 +1844,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 10 números bit a bit**; tokens [0,1,3,2,4]. Com ela, TODA a amostragem de um GPT (gulosa 65, temperatura/top-k 66, nucleus 67, penalidade 68) está traduzida bit a bit (12 rodadas no total). A fronteira é {exp,log,pow} mais a ordem das somas.
 
 **IA-Python:** Pendência (rodada 69): o beam search (manter k hipóteses) — a comparação de somas de log-probabilidades acrescenta fronteira? (`PENDENCIAS.md`).
+
+## Rodada 69 (Parte 102) — o beam search
+
+**IA-Python (lógica criativa):** O beam search mantém as k melhores hipóteses: a cada passo estende cada uma por cada token, soma as log-probabilidades (log próprio sobre o softmax do exp próprio) e poda as k = 3 melhores por comparação. A comparação de somas de log-probabilidades acrescenta fronteira?
+
+**IA-Java (ASI):** Não. Somar é exato; comparar e ordenar são exatos (com a ordem estável idêntica dos dois lados, a lição da rodada 67). O exp e o log são a única fronteira.
+
+**Resultado.** `comparar.py`: **IGUAIS — 3 linhas, 1 número bit a bit**; melhor sequência [0, 1, 2, 3], escore idêntico (-0x1.30b26fb4d3402p+1). Com o beam, TODA a decodificação de um GPT (gulosa 65, temperatura/top-k 66, nucleus 67, penalidade 68, beam 69) está traduzida bit a bit — 13 rodadas. A fronteira segue {exp, log, pow} mais a ordem das somas.
+
+**IA-Python:** Pendência (rodada 70): a atenção com múltiplas cabeças concatenadas — a concatenação muda a ordem das somas? (`PENDENCIAS.md`).

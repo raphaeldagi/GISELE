@@ -43,3 +43,5 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 
 - **(Rodada 45, Parte 71)** Quanto se perde ao trocar a atenção pela aproximação de posto 1? Fechada na Parte 78: 0,02 a 0,04 bit.
 - **(Parte 72)** A fronteira da Parte 52 (rodadas que passavam por sorte): fechada na Parte 77 (12 de 12 corrigidas).
+
+- **(Rodada 70, Parte 102)** A atenção com múltiplas cabeças concatenadas: a concatenação das cabeças e a projeção de saída mudam a ordem das somas (a fronteira da Parte 75/85)? Candidata à próxima rodada do diálogo.

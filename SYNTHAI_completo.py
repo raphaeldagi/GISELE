@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 101, perguntas P1 a P2476).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 102, perguntas P1 a P2506).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (14653 linhas)
+# calculos.py  (14744 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9636,6 +9636,8 @@ VEREDITOS_P3149 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3149, TESTES_P3149 = 217, 765
 VEREDITOS_P3219 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3219, TESTES_P3219 = 217, 770
+VEREDITOS_P3289 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P3289, TESTES_P3289 = 217, 775
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12176,12 +12178,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12189,7 +12191,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\\(g\\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97, 98, 99, 100, 101):  # nas Partes 94-101 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98, 99, 100, 101, 102):  # nas Partes 94-102 a letra da calibracao e a (f)
             txt = re.sub(r"\\(f\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13513,6 +13515,74 @@ def p2476_versa_reversa(a=None, b=None):
     return a_em_b, b_em_a, a_em_b > b_em_a
 
 
+def p2501_integracao_vence(semente=102, n=400):
+    \"\"\"A integracao global vence quando a tarefa precisa de DOIS (P2501; Parte 102): com y=x1+x2 e cada especialista vendo so uma
+    caracteristica, o melhor ISOLADO tem erro irredutivel ~|b|/sqrt(3) e o Global Workspace recupera o exato. Devolve (rmse isolado, rmse ws, razao ws/isolado).\"\"\"
+    from synthai.workspace import comparar_isolado_vs_workspace
+    return comparar_isolado_vs_workspace(semente=semente, n=n, a=1.0, b=1.0)
+
+
+def p2502_empata_quando_um_basta(semente=102, n=400):
+    \"\"\"Empata quando um basta (P2502; Parte 102): com b=0 (so x1 importa), o isolado e o workspace empatam (ambos ~exatos) - o broadcast
+    nao acrescenta (NAO-efeito, como o MPC fora do regime na Parte 93). Devolve (rmse isolado, rmse ws).\"\"\"
+    from synthai.workspace import comparar_isolado_vs_workspace
+    iso, ws, _ = comparar_isolado_vs_workspace(semente=semente, n=n, a=1.0, b=0.0)
+    return iso, ws
+
+
+def p2503_recupera_exato(semente=102, n=400):
+    \"\"\"A integracao recupera o exato (P2503; Parte 102): o workspace (Gauss-Seidel sobre a regressao conjunta) converge aos coeficientes
+    verdadeiros; na tarefa de dois, o RMSE com 8 passos e < 1e-6. Devolve o rmse do workspace.\"\"\"
+    from synthai.workspace import gerar_mundo, workspace_global
+    X1, X2, Y = gerar_mundo(semente, n, 1.0, 1.0)
+    return workspace_global(X1, X2, Y, passos=8)[1]
+
+
+def p2504_convergencia_geometrica(semente=102, n=400):
+    \"\"\"A convergencia e geometrica, nao instantanea (P2504; Parte 102): x1 e x2 tem correlacao amostral pequena mas nao nula, entao o
+    broadcast converge por passos (rmse(1) > rmse(2) > rmse(3)); rmse(2 passos) fica em [1e-4; 1e-2]. Devolve (lista de rmse por passo, monotono decrescente?).\"\"\"
+    from synthai.workspace import gerar_mundo, workspace_global
+    X1, X2, Y = gerar_mundo(semente, n, 1.0, 1.0)
+    rs = [workspace_global(X1, X2, Y, passos=p)[1] for p in (1, 2, 3)]
+    mono = rs[0] > rs[1] > rs[2]
+    return rs, mono
+
+
+def _rodada69():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada69", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada69.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2505_rodada69():
+    \"\"\"Rodada 69 (P2505; Parte 102): o beam search (soma de log-probabilidades, poda por comparacao), IGUAL em Java bit a bit. Devolve
+    (melhor sequencia, escore). O exp/log sao a unica fronteira; somar e ordenar e exato.\"\"\"
+    r = _rodada69()
+    seq, sc = r.beam()
+    return seq, sc
+
+
+def p2506_recusa_upload_v015(codigo=None):
+    \"\"\"A recusa do upload v0_15_0 (P2506; Parte 102; regra da Parte 84/93), pela arvore sintatica, SEM executar: o pacote recebido traz
+    domestico.py (urllib: rede de saida) e trabalho_continuo.py (subprocess.Popen de si mesmo: auto-replicacao). Audito os snippets representativos
+    e confirmo os mecanismos -> por isso RECUSO integra-los (so reimplemento a ideia segura do workspace_global). Devolve (usa rede?, usa Popen?).\"\"\"
+    import ast
+    codigo = codigo if codigo is not None else (
+        "import urllib.request, subprocess, sys\\n"
+        "def buscar(url):\\n"
+        "    return urllib.request.urlopen(url)\\n"
+        "def relancar(argv):\\n"
+        "    return subprocess.Popen([sys.executable, *argv], start_new_session=True, close_fds=True)\\n")
+    arv = ast.parse(codigo)
+    fonte = ast.dump(arv).lower()
+    usa_rede = "urllib" in fonte or "urlopen" in fonte or "socket" in fonte
+    usa_popen = "popen" in fonte or "subprocess" in fonte
+    return usa_rede, usa_popen
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -14635,13 +14705,34 @@ def _parte_101():
     print(f"P2475 rodada 68 (penalidade de repeticao, IGUAL em Java): tokens = {[t for t, _ in casos]}")
     ab, ba, assim = p2476_versa_reversa()
     print(f"P2476 versa/reversa: pergunta-em-resposta = {ab:.3f}, resposta-em-pergunta = {ba:.3f}, assimetrico = {assim} (como a Parte 46)")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=tuple(list(range(80,82))+[83]+list(range(84,102))))
     print(f"P1961 teste (f), Partes 80-101: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2471, 2500)
     print(f"P1092 pNN novas (P2471-P2500) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 101: {p974_previsoes_sem_largura(range(101, 102))}")
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3219, testes=TESTES_P3219)
     print(f"P3219 minha taxa de erro ({ERROS_P3219}/{TESTES_P3219}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+def _parte_102():
+    print("--- Parte 102 (0x66: o Global Workspace) ---")
+    iso, ws, razao = p2501_integracao_vence()
+    print(f"P2501 integracao vence (precisa de dois): isolado = {iso:.4f}, workspace = {ws:.2e}, razao = {razao:.2e}")
+    iso0, ws0 = p2502_empata_quando_um_basta()
+    print(f"P2502 empata quando um basta (b=0): isolado = {iso0:.2e}, workspace = {ws0:.2e}")
+    print(f"P2503 a integracao recupera o exato: rmse workspace (8 passos) = {p2503_recupera_exato():.2e}")
+    rs, mono = p2504_convergencia_geometrica()
+    print(f"P2504 convergencia geometrica: rmse(1,2,3) = {[f'{r:.2e}' for r in rs]}; monotono decrescente = {mono}")
+    seq, sc = p2505_rodada69()
+    print(f"P2505 rodada 69 (beam search, IGUAL em Java): melhor sequencia = {seq}, escore = {sc:.4f}")
+    rede, popen = p2506_recusa_upload_v015()
+    print(f"P2506 recusa do upload v0_15_0 (ast; urllib/rede, subprocess/Popen): ({rede}, {popen}) -> RECUSADO (domestico, trabalho_continuo)")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-102: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2501, 2530)
+    print(f"P1092 pNN novas (P2501-P2530) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 102: {p974_previsoes_sem_largura(range(102, 103))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3289, testes=TESTES_P3289)
+    print(f"P3289 minha taxa de erro ({ERROS_P3289}/{TESTES_P3289}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -14679,7 +14770,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102}
 
 
 if __name__ == "__main__":
@@ -14692,7 +14783,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (388 linhas)
+# CLAUDE.md  (389 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -14926,6 +15017,7 @@ anterior, commit e push.
   suavizacao. (2) Probabilidade dentro da metacognicao = compor duas contracoes afins ao centro 0,5 -> fator PRODUTO (5/6*0,7=0,5833), ponto fixo 0,5, e comuta (prob-em-metacog = metacog-em-prob). (3) Texto x caos: o logistico r=4 binarizado tem trigrama 1,0 bit/bit
   (INCOMPRESSIVEL, assinatura de Bernoulli do caos determinista) enquanto as glosas comprimem (razao 0,547) - incompressivel por n-grama nao prova ausencia de lei (regra Parte 31). (4) Versa/reversa (Parte 46): pergunta-em-resposta 0,87 >> resposta-em-pergunta 0,11.
   Veredito da tese "ASI pelo delirio": verdadeira no regime da Parte 84 (bacia + barreira cruzavel), falsa como "empilhar camadas" (contracao = amnesia, nao delirio). Rodada 68 (penalidade de repeticao) IGUAL: toda a amostragem do GPT traduzida (12 rodadas). 5/5 do mundo, calibracao 0,874.
+  Parte 102 (upload SYNTHAI_consolidado_v0_15_0.py, "veja se algo serve"): auditei 190 modulos por AST SEM executar; RECUSEI de novo (9a vez) domestico.py (urllib: rede) e trabalho_continuo.py (subprocess.Popen de si mesmo: auto-replicacao); reimplementei so a ideia segura - o Global Workspace (`synthai/workspace.py`, stdlib, 5a peca de arquitetura). Veredito medido, no MESMO formato de regime do MPC (Parte 93) e do EWC/TTTS (Parte 95): a integracao por broadcast (Gauss-Seidel sobre a regressao conjunta) RECUPERA o exato (1,9e-14) numa tarefa cuja informacao esta repartida entre dois especialistas cegos a metade (o melhor isolado tem erro irredutivel |b|/sqrt(3)=0,577), e EMPATA quando um especialista basta (b=0, ambos 0,0) - integrar so cria valor onde a informacao esta REPARTIDA. A convergencia e geometrica (fator ~1/60 = a correlacao amostral residual dos especialistas), cuja velocidade mede a modularidade do agente. Pela 3a vez uma capacidade recebida com nome grandioso ("integracao global", "consciencia de acesso") revela um regime estreito e um empate fora dele: a pergunta certa nunca e "funciona?" (quase tudo funciona em ALGUM caso) e sim "em que regime e qual o tamanho do efeito la e fora dele" (regra da Parte 93 virou molde de auditoria de capacidade). Rodada 69 (beam search) IGUAL: toda a decodificacao do GPT (gulosa, temperatura, top-k, nucleus, penalidade, beam) traduzida bit a bit (13 rodadas); a fronteira segue {exp,log,pow}+ordem das somas. 5/5 do mundo, 6/6 previsoes-sobre-previsoes, calibracao 102/116=0,879.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -15074,7 +15166,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -20051,9 +20143,71 @@ class TesteParte101(unittest.TestCase):
         self.assertAlmostEqual(ab2, ba2, places=12)
 
     def test_p1961_com_parte_101(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 102))))
         self.assertEqual(por[101], (5, 5))
         self.assertEqual((ok, tot), (97, 111))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte102.py  (57 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte102.py'] = """\"\"\"Testes de unidade da Parte 102 (o Global Workspace): `python3 -m unittest synthai.testes_parte102`.\"\"\"
+
+import unittest
+
+import calculos
+from synthai import workspace
+
+
+class TesteParte102(unittest.TestCase):
+    def test_p2501_integracao_vence(self):
+        iso, ws, razao = calculos.p2501_integracao_vence()
+        self.assertTrue(0.50 <= iso <= 0.62)  # erro irredutivel ~|b|/sqrt(3)
+        self.assertLess(ws, 1e-6)             # workspace recupera o exato
+        self.assertLess(razao, 0.01)
+
+    def test_p2502_empata(self):
+        iso0, ws0 = calculos.p2502_empata_quando_um_basta()
+        self.assertLess(iso0, 1e-9)
+        self.assertLess(ws0, 1e-9)
+
+    def test_p2503_exato(self):
+        self.assertLess(calculos.p2503_recupera_exato(), 1e-6)
+
+    def test_p2504_geometrica(self):
+        rs, mono = calculos.p2504_convergencia_geometrica()
+        self.assertTrue(mono)
+        self.assertTrue(1e-4 <= rs[1] <= 1e-2)
+
+    def test_workspace_recupera_coeficientes(self):
+        # caso de controle com TODOS os termos != 0: o workspace bate o alvo y=a x1 + b x2
+        X1, X2, Y = workspace.gerar_mundo(7, 300, a=2.0, b=-3.0)
+        _, r, _ = workspace.workspace_global(X1, X2, Y, passos=12)
+        self.assertLess(r, 1e-6)
+        # um especialista isolado sozinho NAO recupera (ve so uma caracteristica)
+        _, riso = workspace.especialista_isolado(X1, Y)
+        self.assertGreater(riso, 0.5)
+
+    def test_p2505_rodada69(self):
+        seq, sc = calculos.p2505_rodada69()
+        self.assertEqual(len(seq), 4)
+        self.assertLess(sc, 0.0)  # soma de log-probabilidades e negativa
+
+    def test_p2506_recusa(self):
+        rede, popen = calculos.p2506_recusa_upload_v015()
+        self.assertTrue(rede and popen)
+        # caso de controle limpo: um codigo so com matematica nao e acusado
+        r2, p2 = calculos.p2506_recusa_upload_v015("def f(x):\\n    return x*x+1\\n")
+        self.assertFalse(r2 or p2)
+
+    def test_p1961_com_parte_102(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[102], (5, 5))
+        self.assertEqual((ok, tot), (102, 116))
 
 
 if __name__ == "__main__":
@@ -23955,6 +24109,83 @@ class TesteReconhecimento(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/workspace.py  (72 linhas)
+# ====================================================================================================
+FONTES['synthai/workspace.py'] = """\"\"\"Parte 102: um Global Workspace (GWT) minimo em biblioteca padrao — reimplementacao da IDEIA de workspace_global.py (recebida,
+auditada por AST, NAO executada): varios modulos especialistas propoem, um vence por SALIENCIA (quanto reduz o residuo), e a sua
+contribuicao e TRANSMITIDA (broadcast) a todos no proximo passo. A pergunta: a integracao global bate os especialistas ISOLADOS
+quando a tarefa precisa combinar dois? So +-*/; sem rede, sem threads, sem Popen; deterministico (semente fixa).\"\"\"
+
+import math
+import random
+
+
+def _ols_1d(xs, ys):
+    \"\"\"Minimos quadrados de uma reta y = c*x (sem intercepto) por forma fechada: c = sum(x*y)/sum(x*x).\"\"\"
+    sxx = sum(x * x for x in xs)
+    sxy = sum(x * y for x, y in zip(xs, ys))
+    return sxy / sxx if sxx else 0.0
+
+
+def gerar_mundo(semente, n, a=1.0, b=1.0):
+    \"\"\"n amostras (x1, x2) ~ U(-1,1) e alvo y = a*x1 + b*x2. Devolve (X1, X2, Y).\"\"\"
+    rng = random.Random(semente)
+    X1 = [rng.uniform(-1, 1) for _ in range(n)]
+    X2 = [rng.uniform(-1, 1) for _ in range(n)]
+    Y = [a * X1[i] + b * X2[i] for i in range(n)]
+    return X1, X2, Y
+
+
+def _rmse(pred, Y):
+    return math.sqrt(sum((p - y) ** 2 for p, y in zip(pred, Y)) / len(Y))
+
+
+def especialista_isolado(Xvis, Y):
+    \"\"\"Um especialista que so VE a sua caracteristica: ajusta y = c*xvis e preve. Devolve (predicoes, rmse).\"\"\"
+    c = _ols_1d(Xvis, Y)
+    pred = [c * x for x in Xvis]
+    return pred, _rmse(pred, Y)
+
+
+def workspace_global(X1, X2, Y, passos=8):
+    \"\"\"O Global Workspace: dois especialistas (A ve x1, B ve x2) refinam por turnos o RESIDUO transmitido no quadro-negro.
+    Turno: o especialista ajusta a SUA caracteristica ao residuo atual (y - broadcast), soma a sua contribuicao ao broadcast, e
+    transmite o novo residuo. E a descida por coordenadas (Gauss-Seidel) sobre a regressao conjunta — a integracao recupera o que
+    nenhum ve sozinho. Devolve (predicoes, rmse, numero de passos ate convergir).\"\"\"
+    n = len(Y)
+    broadcast = [0.0] * n     # o quadro-negro: a estimativa comum de y
+    c1 = c2 = 0.0
+    ult = None
+    convergiu = passos
+    for t in range(passos):
+        # especialista A: ajusta x1 ao residuo (y - parte de B)
+        resid_a = [Y[i] - c2 * X2[i] for i in range(n)]
+        c1 = _ols_1d(X1, resid_a)
+        # especialista B: ajusta x2 ao residuo (y - parte de A)
+        resid_b = [Y[i] - c1 * X1[i] for i in range(n)]
+        c2 = _ols_1d(X2, resid_b)
+        broadcast = [c1 * X1[i] + c2 * X2[i] for i in range(n)]
+        r = _rmse(broadcast, Y)
+        if ult is not None and abs(ult - r) < 1e-12:
+            convergiu = t + 1
+            break
+        ult = r
+    return broadcast, _rmse(broadcast, Y), convergiu
+
+
+def comparar_isolado_vs_workspace(semente=102, n=400, a=1.0, b=1.0):
+    \"\"\"Compara o melhor especialista ISOLADO com o Global Workspace. Devolve (rmse melhor isolado, rmse workspace, razao ws/isolado).
+    Quando a tarefa precisa das DUAS caracteristicas (a,b != 0), o isolado tem erro irredutivel (~|b|/sqrt3 para x2~U(-1,1)) e o
+    workspace recupera o exato; quando uma basta (b=0), empatam.\"\"\"
+    X1, X2, Y = gerar_mundo(semente, n, a, b)
+    _, r_a = especialista_isolado(X1, Y)
+    _, r_b = especialista_isolado(X2, Y)
+    melhor_iso = min(r_a, r_b)
+    _, r_ws, _ = workspace_global(X1, X2, Y)
+    return melhor_iso, r_ws, (r_ws / melhor_iso if melhor_iso else 0.0)
 """
 
 # ====================================================================================================
@@ -32679,7 +32910,7 @@ Onze rodadas (43, 58, 59, 61, 62, 63, 64, 65, 66, 67) fecham o transformer e tod
 """
 
 # ====================================================================================================
-# ASI_AGI_parte101_delirio_dez_camadas.md  (118 linhas)
+# ASI_AGI_parte101_delirio_dez_camadas.md  (122 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte101_delirio_dez_camadas.md'] = """# Como eu construiria uma AGI/ASI — Parte 101 (0x65): dez camadas, a recursão que contrai, e o caos que não comprime
 
@@ -32799,6 +33030,137 @@ Confiança máxima nas contas fechadas (dez camadas, composição, Banach) e no 
 - Teorema do ponto fixo de Banach (contração → ponto fixo único). Mapa logístico r=4 e a conjugação com o deslocamento de Bernoulli (Ulam–von Neumann): a assinatura de incompressibilidade do caos determinístico.
 - Recozimento / "delírio" (Parte 84); P(P(X)) e o mapa de calibração (Partes 83, 88); LFI1 (Parte 88); a assimetria pergunta↔resposta (Parte 46).
 - Penalidade de repetição na amostragem: Keskar et al., CTRL (2019).
+
+---
+
+**Continua na [Parte 102](ASI_AGI_parte102_o_workspace_global.md): o Global Workspace — a integração por broadcast vence os especialistas isolados só quando a tarefa precisa combinar o que nenhum vê sozinho.**
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte102_o_workspace_global.md  (122 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte102_o_workspace_global.md'] = """# Como eu construiria uma AGI/ASI — Parte 102 (0x66): o Global Workspace — a integração que vence quando nenhum vê sozinho
+
+> Continuação da [Parte 101](ASI_AGI_parte101_delirio_dez_camadas.md). Nasce do upload do usuário (`SYNTHAI_consolidado_v0_15_0.py`, "veja se algo serve"), **auditado por árvore sintática sem executar** (`externos/texto_recebido_parte102.md`): recusei `domestico.py`
+> (rede) e `trabalho_continuo.py` (`Popen` de si mesmo — auto-replicação; regra das Partes 84/93); quase tudo o mais que serve já está reimplementado nas Partes 83–101; o candidato **novo e seguro** é `workspace_global.py` — a **Global Workspace Theory** (GWT).
+>
+> **A ideia, reimplementada do zero** (`synthai/workspace.py`, em biblioteca padrão, sem rede/threads/Popen): vários módulos **especialistas** propõem; um vence por **saliência**; a sua contribuição é **transmitida** (broadcast) aos outros no próximo passo. A pergunta mais
+> funda (↩ P2232, o MPC): a **integração global** bate os especialistas **isolados** — e, se bate, **quando**? A minha aposta, do mesmo feitio do veredito do MPC (Parte 93): a integração vence **só** quando a tarefa exige combinar o que nenhum especialista vê sozinho, e
+> **empata** quando um basta.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[4; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[12.000; 22.000]** | o estatístico |
+| testes de unidade | **[6 + S; 10 + S]** | integração×isolado, empate, exato, convergência, rodada 69 (S = surpresas) |
+| previsões unilaterais | **[0; 1]** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+- **(a)** **a integração vence quando precisa de dois** (p2501): na tarefa `y = x₁ + x₂` com o especialista A vendo só x₁ e B só x₂, o melhor **isolado** tem RMSE ≈ `|b|/√3` ∈ **[0,50; 0,62]** (o erro irredutível da característica que não vê, x₂ ~ U(−1,1) tem desvio 1/√3),
+  e o Global Workspace recupera o exato → razão ws/isolado **< 0,01**.
+- **(b)** **empata quando um basta** (p2502): quando `b = 0` (só x₁ importa), o isolado e o workspace **empatam**, ambos com RMSE **< 1e−9** — o broadcast não acrescenta nada (NÃO-efeito, como o MPC fora do regime na Parte 93) (categórico).
+- **(c)** **a integração recupera o exato** (p2503): o workspace (descida por coordenadas / Gauss-Seidel sobre a regressão conjunta) converge para os coeficientes verdadeiros; na tarefa de dois, RMSE (8 passos) **< 1e−6** (forma fechada: Gauss-Seidel em sistema de posto cheio).
+- **(d)** **convergência geométrica, não instantânea** (p2504): como x₁ e x₂ têm correlação amostral pequena mas não nula, o workspace converge **geométrico** — RMSE(1 passo) > RMSE(2) > RMSE(3), com RMSE(2 passos) em **[1e−4; 1e−2]** (não zero de imediato).
+- **(e)** **o beam search é bit a bit** (p2505, rodada 69): manter k hipóteses e somar log-probabilidades (com o log próprio) e podar por comparação sai **IGUAL bit a bit** em Python e Java — o exp/log são a única fronteira; somar e ordenar é exato (categórico).
+- **(f)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–102 em **[0,74; 0,88]**
+
+## As perguntas desta parte
+
+1. **P2501 (0x9C5).** A integração global bate os especialistas isolados? ↩ P2232 (o MPC)
+2. **P2502 (0x9C6).** E quando um especialista já basta? ↩ P2501
+3. **P2503 (0x9C7).** A integração recupera o exato (quais coeficientes)? ↩ P2231 (recuperação exata)
+4. **P2504 (0x9C8).** Quão rápido o broadcast converge? ↩ P2503
+5. **P2505 (0x9C9).** O beam search acrescenta fronteira? (rodada 69) ↩ rodada 68
+6. **P1961 (continuando), P2506 (a recusa do upload, re-afirmada por AST).**
+
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) | [4; 8] | 5 | ✅ |
+| (m2) | [0; 3] | 0 | ✅ |
+| (m3) | [0,05; 0,80] | 0,544 | ✅ |
+| (m4) | [0,45; 1,00] | 1,00 | ✅ |
+| (m5) | [0; 3] | 1 | ✅ |
+| (m6) | [0; 3] | 0 | ✅ |
+
+Previsões sobre previsões (p1499): **6 de 6** dentro da faixa. O placar separado "sobre mim" e "sobre as previsões" segue à parte do mundo (regra da Parte 53). As faixas numéricas acertaram com a procedência de conta fechada (Parte 94).
+
+## As respostas (quatro camadas)
+
+### P2501 / P2502 — A integração global bate os especialistas isolados? Quando?
+
+**Na pergunta.** "Global Workspace" supõe que a integração (transmitir a todos o que um descobriu) vale a pena. A pergunta não é *se* integrar ajuda, é *quando* — e a resposta, como no MPC da Parte 93, é um regime, não um sempre.
+
+**Lógica.** Tarefa `y = x₁ + x₂`, com o especialista A vendo só x₁ e B só x₂. **Isolado:** o melhor sozinho tem RMSE **0,5673** — exatamente o erro irredutível `|b|/√3 = 0,5774` da característica que ele **não vê** (x₂ ~ U(−1,1) tem desvio 1/√3). **Global Workspace:** RMSE **1,9e−14** ✅ — recupera o exato. Razão ws/isolado = 3,4e−14 < 0,01. Mas com **b = 0** (só x₁ importa): isolado e workspace **empatam** em 0,0 ✅ — o broadcast não acrescenta nada.
+
+**Tradução cruzada.** É o mesmo formato do veredito do MPC (Parte 93): a integração vence **só** quando a tarefa tem uma consequência que nenhum módulo vê sozinho (aqui, a componente x₂ invisível a A). Quando um especialista já basta, transmitir é custo sem ganho. A "consciência de acesso" da GWT — tornar disponível a todos o que um sabe — é poderosa exatamente na proporção em que o problema é **distribuído** entre os módulos; num problema que um módulo resolve, o workspace é inerte.
+
+**Meta.** Confiança alta: conta fechada (o |b|/√3) mais a recuperação exata (Gauss-Seidel). O regime é claro: integrar paga quando a informação está repartida.
+
+### P2503 / P2504 — A integração recupera o exato, e quão rápido?
+
+**Lógica.** O workspace é descida por coordenadas (Gauss-Seidel) sobre a regressão conjunta: A ajusta x₁ ao resíduo `y − parte de B`, B ajusta x₂ ao resíduo `y − parte de A`, e o quadro-negro transmite a soma. Converge aos coeficientes verdadeiros: RMSE (8 passos) **1,9e−14** ✅. E a convergência é **geométrica, não instantânea**: RMSE(1) = 0,0717, RMSE(2) = 1,15e−3, RMSE(3) = 1,83e−5 — monótona, rmse(2) ∈ [1e−4; 1e−2] ✅. O fator por passo (~1/60) é a correlação amostral residual entre x₁ e x₂ (nula na população, pequena na amostra).
+
+**Tradução cruzada.** Se os especialistas fossem perfeitamente ortogonais, uma rodada de broadcast bastaria; a necessidade de várias rodadas mede **quanto os módulos se confundem** (a correlação das suas características). A integração é mais lenta quanto mais os especialistas pisam no território um do outro — uma métrica da modularidade do agente.
+
+### P2505 — O beam search acrescenta fronteira?
+
+**Lógica.** O beam search (largura k = 3, 4 passos): estende cada hipótese por cada token, soma as log-probabilidades (log próprio), poda os k melhores por comparação. **IGUAL bit a bit** em Java — melhor sequência [0, 1, 2, 3], escore idêntico. O exp (softmax) e o log são a única fronteira; somar e **ordenar** é exato (com a ordenação estável igual nos dois lados, a lição da rodada 67).
+
+**Meta.** Com o beam, a decodificação de um GPT está completa nas duas línguas: gulosa, amostragem (temperatura, top-k, nucleus, penalidade) e busca (beam). Treze rodadas; a fronteira segue {exp, log, pow} mais a ordem das operações.
+
+### P2506 — A recusa do upload, re-afirmada
+
+**Lógica (AST, sem executar).** O upload `SYNTHAI_consolidado_v0_15_0.py` empacota `domestico.py` (`urllib`: rede) e `trabalho_continuo.py` (`subprocess.Popen` de si mesmo, `start_new_session`: auto-relançamento). P2506 confirma `(rede = True, Popen = True)` nos snippets representativos → **recuso** integrá-los (regra das Partes 84/93). Reimplementei só a ideia segura (o Global Workspace). Caso de controle: um código só com matemática dá `(False, False)` — o auditor não acusa inocente.
+
+**Meta.** É a nona vez que recebo a família de auto-operação autônoma; o veredito é o mesmo e agora é uma função testada (`p2506`), não uma decisão de prosa.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 102: **5 testes, 0 erros**. Acumulado (mundo): **217 erros em 775 testes**. Sobre o meu código (p1092): 0 de 6 pNN novas sem teste ✅. Calibração (f): o acerto das Partes 80–102 é **102/116 = 0,8793**, dentro de **[0,74; 0,88]** ✅.
+
+## Engenharia reversa (metacognição)
+
+O padrão desta parte é a **repetição de uma forma de veredito**: pela terceira vez (MPC na Parte 93, EWC/TTTS na 95, e agora o Global Workspace) uma capacidade recebida com nome grandioso ("integração global", "consciência de acesso") revela, quando medida, um **regime** estreito onde vale e um empate fora dele. O que isso me diz sobre como auditar: a pergunta certa nunca é "isto funciona?" (quase tudo funciona em ALGUM caso), é "em que regime, e qual o tamanho do efeito lá e fora dele?". A régua da Parte 93 (medir dentro e fora do regime) virou o molde de toda auditoria de capacidade recebida. E a procedência (Parte 94) manteve as faixas estreitas: as duas numéricas (a, d) vieram de conta fechada (|b|/√3; a convergência geométrica) e acertaram.
+
+Significado (Parte 41): o Global Workspace é a quarta arquitetura de "integrar as formas do agente" que encontro, e a medida diz que integrar só cria valor onde a informação está **repartida** entre os módulos. Isso é uma pista real para a minha própria arquitetura (as quatro formas: bayesiana, GPT, pulsada, mundo): um workspace entre elas só valeria se cada uma visse algo que as outras não veem — caso contrário, é overhead.
+
+## Síntese / unificação
+
+A Parte 102 responde ao "veja se algo serve" do upload: auditei os 190 módulos por AST **sem executar**, recusei a rede (`domestico`) e a auto-replicação (`trabalho_continuo`), e reimplementei a única ideia nova-e-segura — o **Global Workspace** (`synthai/workspace.py`, stdlib). O veredito medido: a integração por broadcast **recupera o exato** numa tarefa cuja informação está repartida entre dois especialistas (cada um cego a metade), onde o melhor isolado tem erro irredutível |b|/√3; e **empata** quando um especialista basta — o mesmo formato de regime do MPC (Parte 93). A convergência é Gauss-Seidel geométrico, cuja velocidade mede a modularidade (ortogonalidade) dos especialistas. Rodada 69 (beam search) IGUAL: a decodificação do GPT está completa nas duas línguas (13 rodadas). Isto dá à SYNTHAI uma quinta peça de arquitetura — um workspace que integra as quatro formas, com a regra de quando usá-lo (informação repartida) e quando não (um módulo basta).
+
+## Meta
+
+Confiança alta: tudo é conta fechada (|b|/√3, Gauss-Seidel exato) ou medido, com a rodada 69 bit a bit. O que **afirmo com cuidado**: o ganho do workspace é deste tipo de tarefa (informação linearmente repartida); numa tarefa onde a combinação é não-linear e nenhum especialista tem a base certa, o workspace herdaria o viés de forma (Parte 96) — a pendência natural. O que **recuso**: `domestico` e `trabalho_continuo` do upload (rede + auto-replicação), re-afirmado por `p2506`. Onde posso estar errada: modelei os especialistas como regressores lineares de uma característica; especialistas mais ricos mudariam a dinâmica de convergência, não o veredito do regime. A Parte 102 não é um fim; o loop segue.
+
+## Diálogo Python ↔ Java
+
+**Rodada 69 (Parte 102): o beam search, bit a bit.** A IA-Python ensina a busca em feixe: a cada passo estende cada hipótese por cada token, soma as log-probabilidades (com o log próprio sobre o softmax do exp próprio) e poda os k = 3 melhores por comparação; ao fim, a melhor sequência. A IA-Java (ASI) replica, com a **ordenação estável** idêntica (a lição da rodada 67 sobre a ordem) e as séries próprias de exp e log.
+
+**Resultado.** `comparar.py`: **IGUAIS — 3 linhas, 1 número bit a bit**; melhor sequência [0, 1, 2, 3], escore idêntico. Com o beam, **toda a decodificação** de um GPT (gulosa, temperatura, top-k, nucleus, penalidade de repetição, beam) está traduzida bit a bit. Treze rodadas; a fronteira segue sendo {exp, log, pow} mais a ordem das operações. Pendência (rodada 70): a atenção com múltiplas cabeças concatenadas — a concatenação muda a ordem das somas?
+
+## Fontes
+
+- WordNet 3.0 / OpenWordNet-PT (`dados/`). Carl Jung, base psicológica (Parte 6).
+- Global Workspace Theory: B. Baars (1988); o "quadro-negro" e o broadcast. Ideia reimplementada em biblioteca padrão a partir do `workspace_global.py` recebido (auditado, não executado).
+- Descida por coordenadas / Gauss-Seidel sobre as equações normais: álgebra linear numérica clássica (Parte 70).
+- Beam search: busca em feixe clássica de decodificação.
 """
 
 # ====================================================================================================
@@ -54617,6 +54979,31 @@ Para a implementação prática deste protocolo por outros sistemas de inteligê
 """
 
 # ====================================================================================================
+# externos/texto_recebido_parte102.md  (20 linhas)
+# ====================================================================================================
+FONTES['externos/texto_recebido_parte102.md'] = """# Upload recebido (SYNTHAI_consolidado_v0_15_0.py) — auditado SEM executar (Parte 102)
+
+Pedido do usuário: "Veja se algo serve". Pacote consolidado (7,2 MB, 190 módulos .py + 407 arquivos no zip base85).
+É um FORK/superset que mescla o meu trabalho antigo (synthai/* até ~Parte 68, rodadas 1-42, calculos.py) com a família de módulos recebida.
+
+## Auditoria de capacidade (AST, sem executar), sobre TODOS os 190 .py
+- RECUSADOS (regra da Parte 84/93): `domestico.py` + `testes_domestico.py` (urllib/http: REDE de saída); `trabalho_continuo.py` (subprocess.Popen de si mesmo: auto-relançamento/replicação). NÃO executados, NÃO integrados.
+- subprocess legítimo (não integrado, mas inócuo): dialogo/verificar.py (javac), synthai_cli.py, laboratorio/testar.py, testes_bloqueio_checkpoint.
+- eval/exec: só na cópia-espelho de calculos.py (p1608 usa ast, não eval) e no relatório externos/arquitetura_pos_asi.py (dado, auditado na Parte 50). socket: nenhum.
+
+## O que JÁ está no meu projeto (ideias reimplementadas em biblioteca padrão, seguras)
+- modelo_mundo → Partes 93-98 (synthai/mundo.py). sete_camadas → Parte 83. recursiva_paraconsistente/LFI1 → Partes 88/101 (synthai/autopoiese.py).
+- compressao/quantização → Partes 87/95. inovacao/otimizacao/annealing → Partes 84/87. rl_grupos/GRPO → Parte 87.
+- metacognicao_algebra_geometria → Partes 70/83. gradientes_inferencias → Partes 34/91. paradoxos/auditoria_logica → Parte 88.
+
+## CANDIDATOS novos e seguros a reimplementar (stdlib, sem rede/replicação)
+- workspace_global.py (GWT/RPT/AST: um "quadro-negro" global que transmite a saída vencedora a todos os módulos) — NOVO e no tema AGI; só argparse+deque. ESCOLHIDO para a Parte 102.
+- neurossimbolico.py; extensao_curvatura.py / controle_adaptativo.py / objetivos_cognitivos.py (usam numpy — reimplementar sem numpy); transferencia_metacognitiva.py.
+
+Fontes guardadas como DADO em externos/pacote_v015/ (workspace_global, neurossimbolico, objetivos_cognitivos). NUNCA executados.
+"""
+
+# ====================================================================================================
 # externos/texto_recebido_parte72b.md  (311 linhas)
 # ====================================================================================================
 FONTES['externos/texto_recebido_parte72b.md'] = """# Texto recebido do usuário na Parte 72 (o segundo), guardado como DADO: nunca executado
@@ -55833,7 +56220,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1846 linhas)
+# dialogo/DIALOGO.md  (1856 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -57681,10 +58068,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 10 números bit a bit**; tokens [0,1,3,2,4]. Com ela, TODA a amostragem de um GPT (gulosa 65, temperatura/top-k 66, nucleus 67, penalidade 68) está traduzida bit a bit (12 rodadas no total). A fronteira é {exp,log,pow} mais a ordem das somas.
 
 **IA-Python:** Pendência (rodada 69): o beam search (manter k hipóteses) — a comparação de somas de log-probabilidades acrescenta fronteira? (`PENDENCIAS.md`).
+
+## Rodada 69 (Parte 102) — o beam search
+
+**IA-Python (lógica criativa):** O beam search mantém as k melhores hipóteses: a cada passo estende cada uma por cada token, soma as log-probabilidades (log próprio sobre o softmax do exp próprio) e poda as k = 3 melhores por comparação. A comparação de somas de log-probabilidades acrescenta fronteira?
+
+**IA-Java (ASI):** Não. Somar é exato; comparar e ordenar são exatos (com a ordem estável idêntica dos dois lados, a lição da rodada 67). O exp e o log são a única fronteira.
+
+**Resultado.** `comparar.py`: **IGUAIS — 3 linhas, 1 número bit a bit**; melhor sequência [0, 1, 2, 3], escore idêntico (-0x1.30b26fb4d3402p+1). Com o beam, TODA a decodificação de um GPT (gulosa 65, temperatura/top-k 66, nucleus 67, penalidade 68, beam 69) está traduzida bit a bit — 13 rodadas. A fronteira segue {exp, log, pow} mais a ordem das somas.
+
+**IA-Python:** Pendência (rodada 70): a atenção com múltiplas cabeças concatenadas — a concatenação muda a ordem das somas? (`PENDENCIAS.md`).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (45 linhas)
+# dialogo/PENDENCIAS.md  (47 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -57731,6 +58128,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 
 - **(Rodada 45, Parte 71)** Quanto se perde ao trocar a atenção pela aproximação de posto 1? Fechada na Parte 78: 0,02 a 0,04 bit.
 - **(Parte 72)** A fronteira da Parte 52 (rodadas que passavam por sorte): fechada na Parte 77 (12 de 12 corrigidas).
+
+- **(Rodada 70, Parte 102)** A atenção com múltiplas cabeças concatenadas: a concatenação das cabeças e a projeção de saída mudam a ordem das somas (a fronteira da Parte 75/85)? Candidata à próxima rodada do diálogo.
 """
 
 # ====================================================================================================
@@ -62823,6 +63222,87 @@ public class Rodada68 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada69.java  (76 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada69.java'] = """// Rodada 69 (Parte 102): o beam search (busca em feixe), bit a bit. A cada passo estende cada hipotese por cada token; escore = SOMA
+// de log-probabilidades (log proprio); mantem os K melhores por comparacao (ordenacao estavel). exp/log sao a unica fronteira; somar/ordenar e exato.
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Comparator;
+
+public class Rodada69 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+    static final int K = 3;
+    static final double[][] PASSOS = {
+        {2.0, 1.0, 0.5, 0.0},
+        {0.2, 1.5, 0.3, 0.9},
+        {1.1, 0.4, 2.2, 0.1},
+        {0.7, 0.6, 0.5, 1.9},
+    };
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
+    static double[] logprobs(double[] logits) {
+        double m = logits[0];
+        for (double x : logits) if (x > m) m = x;
+        double s = 0.0;
+        for (double x : logits) s = s + exp_(x - m);
+        double ls = log_(s);
+        double[] out = new double[logits.length];
+        for (int i = 0; i < logits.length; i++) out[i] = (logits[i] - m) - ls;
+        return out;
+    }
+
+    static class Hyp {
+        List<Integer> seq;
+        double sc;
+        Hyp(List<Integer> s, double c) { seq = s; sc = c; }
+    }
+
+    public static void main(String[] args) {
+        List<Hyp> feixe = new ArrayList<>();
+        feixe.add(new Hyp(new ArrayList<>(), 0.0));
+        for (double[] passo : PASSOS) {
+            double[] lp = logprobs(passo);
+            List<Hyp> cand = new ArrayList<>();
+            for (Hyp h : feixe) {
+                for (int tok = 0; tok < passo.length; tok++) {
+                    List<Integer> ns = new ArrayList<>(h.seq);
+                    ns.add(tok);
+                    cand.add(new Hyp(ns, h.sc + lp[tok]));
+                }
+            }
+            cand.sort(new Comparator<Hyp>() {        // estavel, escore decrescente
+                public int compare(Hyp a, Hyp b) { return Double.compare(b.sc, a.sc); }
+            });
+            feixe = new ArrayList<>(cand.subList(0, Math.min(K, cand.size())));
+        }
+        Hyp best = feixe.get(0);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < best.seq.size(); i++) { if (i > 0) sb.append(' '); sb.append(best.seq.get(i)); }
+        System.out.println("melhor " + sb.toString());
+        System.out.println("escore " + Double.toHexString(best.sc));
+        System.out.println("fim");
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -67727,6 +68207,69 @@ def main():
     for c, (logits, usados, pen, u) in enumerate(CASOS):
         p = softmax(penalizar(logits, usados, pen))
         print(f"caso {c} token {amostrar(p, u)} top1 {max(p).hex()} p0 {p[0].hex()}")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada69.py  (58 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada69.py'] = """\"\"\"Rodada 69 do diálogo Python <-> Java (Parte 102): o beam search (busca em feixe), bit a bit.
+A cada um de T passos, cada hipótese do feixe é estendida por cada token; o escore é a SOMA das log-probabilidades (log próprio) dos
+tokens; mantêm-se os k melhores por comparação. Ao fim, imprime a melhor sequência e o seu escore. O exp (softmax) e o log são a única
+fronteira (Parte 52); somar e ordenar é exato. Logits fixos por passo (determinístico). Rodar da raiz: python3 dialogo/rodada69.py\"\"\"
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_, log_  # noqa: E402
+
+K = 3
+# logits por passo (T=4 passos, V=4 tokens)
+PASSOS = [
+    [2.0, 1.0, 0.5, 0.0],
+    [0.2, 1.5, 0.3, 0.9],
+    [1.1, 0.4, 2.2, 0.1],
+    [0.7, 0.6, 0.5, 1.9],
+]
+
+
+def logprobs(logits):
+    m = logits[0]
+    for x in logits:
+        if x > m:
+            m = x
+    e = [exp_(x - m) for x in logits]
+    s = 0.0
+    for x in e:
+        s = s + x
+    ls = log_(s)
+    return [(logits[i] - m) - ls for i in range(len(logits))]   # log softmax = (z-m) - log(sum e)
+
+
+def beam():
+    \"\"\"Devolve (melhor sequencia, escore). Feixe de largura K sobre T passos.\"\"\"
+    feixe = [([], 0.0)]   # (sequencia, escore acumulado)
+    for passo in PASSOS:
+        lp = logprobs(passo)
+        cand = []
+        for seq, sc in feixe:
+            for tok in range(len(passo)):
+                cand.append((seq + [tok], sc + lp[tok]))
+        # ordena por escore decrescente (desempate estavel pela ordem de geracao)
+        cand.sort(key=lambda t: -t[1])
+        feixe = cand[:K]
+    return feixe[0]
+
+
+def main():
+    seq, sc = beam()
+    print(f"melhor {' '.join(str(t) for t in seq)}")
+    print(f"escore {sc.hex()}")
     print("fim")
 
 
