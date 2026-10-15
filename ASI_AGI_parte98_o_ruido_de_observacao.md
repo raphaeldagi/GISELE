@@ -164,3 +164,7 @@ conclusão é firme e invariante: **a fronteira entre Python e Java é exatament
 - WordNet 3.0, Princeton (`dados/`); OpenWordNet-PT (CC BY 4.0). Carl Jung, base psicológica (Parte 6).
 - Erro de estimação de mínimos quadrados sob ruído (variância `σ²(ZᵀZ)⁻¹`, viés–variância da cumeeira): teoria estatística clássica (Gauss–Markov; Hastie–Tibshirani–Friedman).
 - Amostragem por inversão de CDF (o método da transformada inversa): teoria de simulação clássica.
+
+---
+
+**Continua na [Parte 99](ASI_AGI_parte99_a_amostragem_e_o_fecho.md): a amostragem (temperatura, top-k) e o fecho do arco do modelo de mundo.**
