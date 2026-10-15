@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 105, perguntas P1 a P2595).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 106, perguntas P1 a P2625).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (14984 linhas)
+# calculos.py  (15059 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9644,6 +9644,8 @@ VEREDITOS_P3429 = "(a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ✅"
 ERROS_P3429, TESTES_P3429 = 218, 785
 VEREDITOS_P3499 = "(a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ✅"
 ERROS_P3499, TESTES_P3499 = 219, 790
+VEREDITOS_P3569 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
+ERROS_P3569, TESTES_P3569 = 219, 795
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12184,12 +12186,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12197,7 +12199,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\\(g\\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105):  # nas Partes 94-105 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106):  # nas Partes 94-106 a letra da calibracao e a (f)
             txt = re.sub(r"\\(f\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13760,6 +13762,60 @@ def p2595_rodada72():
     return _rodada72().equilibrio()
 
 
+def _rodada73():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada73", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada73.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2621_rodada73(x=3.14159):
+    \"\"\"Rodada 73 (P2621; Parte 106): o seno/cosseno PROPRIOS na faixa [0,001;10] onde a libm divergiu (Parte 105), IGUAL em
+    Java bit a bit nos 10000 args (a serie propria e portavel onde a libm nao e). Devolve (sin_(x), cos_(x)) de amostra.\"\"\"
+    r = _rodada73()
+    from exatas import cos_, sin_
+    return sin_(x), cos_(x)
+
+
+def p2622_exatidao_sin_proprio(n=2000):
+    \"\"\"A exatidao do sin_ proprio na faixa larga (P2622; Parte 106): o maior |sin_ - referencia de 40 digitos| em x=k/1000,
+    k=1..n (faixa [0,001; n/1000]) - a serie de Taylor + reducao em duas partes e exata (< 1e-12). Devolve o maior erro.\"\"\"
+    import os
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo"))
+    from exatas import sin_
+    from synthai.posicional import _ref_generica
+    return max(abs(sin_(k / 1000.0) - _ref_generica("sin", k / 1000.0)) for k in range(1, n + 1))
+
+
+def p2623_reducao_duas_partes():
+    \"\"\"Quando a reducao em duas partes importa (P2623; Parte 106): o sin_ de UMA parte (so PI2_HI) vs o de DUAS concordam em
+    x=1000 (< 1e-12) mas divergem em x=1e9 (> 1e-9), porque o erro de uma parte ~ (x/2pi)*2,45e-16. Devolve (dif em 1e3, dif em 1e9).\"\"\"
+    import os
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo"))
+    from exatas import sin_
+    from synthai.posicional import sin_uma_parte
+    return abs(sin_uma_parte(1e3) - sin_(1e3)), abs(sin_uma_parte(1e9) - sin_(1e9))
+
+
+def p2624_voi_duas_ruas(n=20000, semente=106):
+    \"\"\"O valor da informacao oculta em duas ruas (P2624; Parte 106): 1 - (7/13)^2 = 120/169 = 0,7101 dos jogos mudam ao menos
+    uma decisao. Devolve (fracao empirica, forma fechada).\"\"\"
+    from synthai.jogo_cartas import voi_duas_ruas
+    return voi_duas_ruas(n, semente)
+
+
+def p2625_subaditividade_voi():
+    \"\"\"A sub-aditividade do VOI (P2625; Parte 106): duas ruas valem menos que o dobro de uma (2*6/13=0,923), porque alguns
+    jogos mudam nas duas. Devolve (dobro de uma rua, VOI de duas ruas fechado, diferenca).\"\"\"
+    dobro = 2 * 6.0 / 13.0
+    duas = 1 - (7.0 / 13.0) ** 2
+    return dobro, duas, dobro - duas
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -14974,6 +15030,25 @@ def _parte_105():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3499, testes=TESTES_P3499)
     print(f"P3499 minha taxa de erro ({ERROS_P3499}/{TESTES_P3499}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_106():
+    print("--- Parte 106 (0x6A: a segunda rua, e a reducao de argumento) ---")
+    sn, cs = p2621_rodada73()
+    print(f"P2621 rodada 73 (sin_/cos_ proprios na faixa da libm divergente, IGUAL em Java 10000 args): sin_(pi)={sn:.2e} cos_(pi)={cs:.4f}")
+    print(f"P2622 exatidao do sin_ proprio em [0,001;10]: max|sin_-ref| = {p2622_exatidao_sin_proprio():.2e} (< 1e-12)")
+    d3, d9 = p2623_reducao_duas_partes()
+    print(f"P2623 reducao duas partes: 1-parte vs 2-partes dif(x=1e3)={d3:.2e} (<1e-12, concordam), dif(x=1e9)={d9:.2e} (>1e-9, divergem)")
+    frac, fechada = p2624_voi_duas_ruas()
+    print(f"P2624 VOI duas ruas: fracao = {frac:.4f} (forma fechada 1-(7/13)^2 = {fechada:.4f})")
+    dobro, duas, dif = p2625_subaditividade_voi()
+    print(f"P2625 sub-aditividade: dobro de uma rua = {dobro:.4f}, duas ruas = {duas:.4f}, diferenca = {dif:.4f}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-106: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2621, 2650)
+    print(f"P1092 pNN novas (P2621-P2650) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 106: {p974_previsoes_sem_largura(range(106, 107))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3569, testes=TESTES_P3569)
+    print(f"P3569 minha taxa de erro ({ERROS_P3569}/{TESTES_P3569}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -15010,7 +15085,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106}
 
 
 if __name__ == "__main__":
@@ -15023,7 +15098,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (392 linhas)
+# CLAUDE.md  (393 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -15261,6 +15336,7 @@ anterior, commit e push.
   Parte 103 (pedido novo no paragrafo da familia delirio: "Dicionario de Linguas como Data Lake... liberdade autopoietica para se replicar... YFINANCE para prever as palavras... DuckDuckGo como validacao... Api Key Publica... o dicionario pode ser convertido em numeros... treinada com Poker"): o pedido mistura, no mesmo paragrafo, uma ideia boa e segura com uma capacidade perigosa. Decisao de fronteira (10a recusa da familia domestico/trabalho_continuo): RECUSO yfinance/duckduckgo (rede de saida), a api key publica (dependencia com credencial) e a "liberdade autopoietica para se replicar sem ajuda externa" (auto-replicacao); CONSTRUO so o nucleo seguro, offline e stdlib. A regra que protege: separar os componentes da proposta e classificar cada um por MECANISMO, nao pela moldura da frase (a auditoria por AST das Partes 72/85/88 aplicada a uma proposta em prosa; `p2535` com caso de controle dos dois lados). O usuario autorizou "fazer diferente", entao o que ele queria da bolsa/busca (prever a proxima palavra, validar a omissa) eu entrego sem rede: a forma de GPT (Parte 100) preve, e o par numero/palavra (P2532/P2534) valida a colisao. Construi `synthai/numeros.py` (dicionario->numeros: GF(2)^4 por hash, posto de coluna cheio=4 por eliminacao de Gauss com XOR = "calculo binario"; e hash->baldes, colisoes ~ C(n,2)/m=49,9 = "nao-binario", o preco da perda de injetividade) e `synthai/baralho.py` (o baralho como sinal NUMERO+PALAVRA: entropia empirica 5,698 < teto log2 52=5,7004; na tarefa "mesma cor?" o decisor que ve so o valor acerta 0,50 - cego a cor - e o que ve valor+naipe acerta 1,00; MESMO regime do workspace P2501 e do MPC P2232: juntar fontes so vale onde a tarefa precisa do que uma nao ve). Rodada 70 (atencao multi-cabeca): DIFERENTES por 1 ULP na 1a tentativa, mas NAO pela concatenacao (so layout) e sim pelo `sum()` compensado do Python 3.12 (regra da Parte 34); troquei por laco sequencial -> IGUAL (14 rodadas). A licao: a fronteira quase nunca e a estrutura nova, quase sempre a aritmetica escondida. 5/5 do mundo, 6/6 previsoes-sobre-previsoes, calibracao 107/121=0,884.
   Parte 104 (continuacao autonoma; a carta escondida: decisao sob informacao oculta + a fronteira do seno): levei o baralho da Parte 103 ao poquer minimo (offline/stdlib, `synthai/jogo_cartas.py`): no duelo de carta alta P(ganhar|c) e reta de inclinacao 1/13 (EV simetrico 0,5); se o adversario so aposta com carta>=7, o limiar de pagar sobe de 7 (neutro) a c*=11 (Bayes numa linha); ver a carta oculta mudaria a decisao em 6/13 das maos (o VOI das Partes 83/84 em cartas). `synthai/posicional.py`: a codificacao posicional e geometria (PE(pos).PE(pos+k)=sum_i cos(k*wi) depende SO de k). ERRO HONESTO E VALIOSO (d, o 1o de procedencia-por-reputacao desde o (e) da 97): previ que `sin` e a 6a face da fronteira da Parte 52 e MEDI que NAO e aqui - math.sin corretamente arredondada em 0/1000 args, e a rodada 71 deu IGUAL ATE NO BLOCO NAIVE (Python/glibc e Java concordam bit a bit nos args da PE). A regra da Parte 84 (reputacao != previsao) vale tambem para as MINHAS PROPRIAS listas: a fronteira MEDIDA e {exp,log,pow}; `sin` entrou por associacao. REGRA NOVA: nenhum item fica na lista da fronteira sem o commit da sua rodada bit a bit; a serie de seno propria mantem a PE portavel de qualquer forma. Rodada 71 IGUAL (15 rodadas). 4/5 do mundo (d errou), 6/6 previsoes-sobre-previsoes, calibracao 111/126=0,881. Pendencia (rodada 72): medir sin/cos/tan/atan2 em 10000 args variados antes de reafirmar ou tirar a 6a face.
   Parte 105 (continuacao autonoma; o blefe: equilibrio de indiferenca + a fronteira medida do seno): fechei o par de decisao sob informacao oculta (a 104 deu pagar/desistir; a 105 da apostar/blefar) com GTO minimo (`synthai/blefe.py`, offline/stdlib): no jogo polarizado, blefar com alpha=B/(P+2B)=1/3 e pagar com c=P/(P+B)=1/2 deixam o adversario INDIFERENTE (melhor-resposta plana: robustez por indiferenca, o tema do veto das Partes 83/84). E CORRIGI a Parte 104: a 6a face da fronteira (sin/cos/tan/atan2) EXISTE - a 104 so nao a viu porque mediu argumentos PEQUENOS (PE); na FAIXA LARGA (x=k/1000 ate 10, onde a reducao mod 2pi importa) a sonda_transc_105 acha 21/18/35/590 divergencias Python x Java em 10000 args (atan2 a pior). ERRO (d) EM ESPELHO, a licao central: na 104 errei o seno por confiar numa LISTA ANTIGA minha (reputacao externa); na 105 errei por confiar na MINHA PROPRIA MEDIDA ESTREITA da 104 (reputacao interna) - o mesmo erro de generalizar um resultado alem do regime medido. REGRA NOVA: toda afirmacao de fronteira carrega a FAIXA DE ARGUMENTOS medida; nunca estender a faixa sem re-medir. A fronteira e {exp,log,pow} E {sin,cos,tan,atan2 em faixa larga}; o sin_/cos_ proprios (reducao em duas partes) seguem portaveis nos args testados. Rodada 72 (decisao de equilibrio, aritmetica pura) IGUAL (16 rodadas). 4/5 do mundo (d errou), 6/6 previsoes-sobre-previsoes, calibracao 115/131=0,878. Pendencia (rodada 73): o sin_ proprio e IGUAL em TODA a faixa larga ou precisa de Payne-Hanek?
+  Parte 106 (continuacao autonoma; a segunda rua, e a reducao de argumento): fechei as duas pontas da Parte 105. (1) A fronteira do seno RESOLVIDA e medida no lugar do problema: o sin_/cos_ proprios (serie de Taylor + reducao em duas partes) sao IGUAL bit a bit entre Python e Java nos MESMOS 10000 args de [0,001;10] onde a libm divergiu 21/18 (rodada 73), e exatos (9,2e-16). E SEPAREI os dois mecanismos que eu confundia sob "sin diverge": arredondamento no intervalo PRIMARIO (em [0,10], onde a reducao nem age - a causa das divergencias das Partes 104/105) e reducao de argumento (so para x~1e7+); a de 1 parte vs 2 partes concorda em x=1e3 e diverge em x=1e9 (erro ~ (x/2pi)*2,45e-16). A serie em duas partes basta para o uso real da SYNTHAI (Payne-Hanek so para x astronomico ~1e15, limite conhecido nao-divida). (2) Poquer de DUAS RUAS: o VOI compoe para 1-(7/13)^2=120/169=0,710, SUB-ADITIVO (< 2*6/13=0,923; o VOI nao e aditivo, Parte 80; retornos decrescentes por decisao). A REGRA da Parte 105 (toda afirmacao de fronteira carrega a faixa de argumentos) passou no 1o teste: 5/5 do mundo depois de dois 4/5 sobre o seno. Rodada 73 IGUAL (17 rodadas). 6/6 previsoes-sobre-previsoes, calibracao 120/136=0,882. Pendencia (rodada 74): a decisao de duas ruas (backward induction) acrescenta fronteira?
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -15409,7 +15485,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -17943,7 +18019,7 @@ class Intuicao:
 """
 
 # ====================================================================================================
-# synthai/jogo_cartas.py  (59 linhas)
+# synthai/jogo_cartas.py  (74 linhas)
 # ====================================================================================================
 FONTES['synthai/jogo_cartas.py'] = """\"\"\"O pôquer mínimo: decisão sob informação OCULTA (Parte 104, P2561-P2563).
 
@@ -18004,6 +18080,21 @@ def fracao_info_muda(n=20000, semente=104):
         if opp > voce:   # às cegas você pagaria e perderia; vendo, desistiria
             muda += 1
     return muda / n
+
+
+def voi_duas_ruas(n=20000, semente=106):
+    \"\"\"O valor da informacao oculta em DUAS ruas (Parte 106, P2624): duas decisoes de carta alta encadeadas (cada rua um
+    par voce/adversario). Ver a carta do adversario muda a decisao de uma rua se opp>voce nessa rua. A fracao de jogos em que
+    a informacao muda AO MENOS uma das duas decisoes e 1 - P(nenhuma) = 1 - (7/13)^2 = 120/169. Devolve (fracao empirica, forma fechada).\"\"\"
+    import random
+    r = random.Random(semente)
+    muda = 0
+    for _ in range(n):
+        flip1 = r.randint(1, N) < r.randint(1, N)   # opp > voce na rua 1
+        flip2 = r.randint(1, N) < r.randint(1, N)   # rua 2
+        if flip1 or flip2:
+            muda += 1
+    return muda / n, 1 - (7.0 / 13.0) ** 2
 """
 
 # ====================================================================================================
@@ -19497,7 +19588,7 @@ def stdp_deriva_taxas(r_pre=20.0, r_pos=20.0, ms=20000, dt=1.0, a_mais=0.1, a_me
 """
 
 # ====================================================================================================
-# synthai/posicional.py  (101 linhas)
+# synthai/posicional.py  (114 linhas)
 # ====================================================================================================
 FONTES['synthai/posicional.py'] = """\"\"\"A codificação posicional senoidal do transformer (Parte 104, P2564/P2565) e a 6ª face da fronteira da Parte 52.
 
@@ -19600,6 +19691,19 @@ def contar_fora_wide(fn="sin", n=2000):
     (a 6ª face da fronteira da Parte 52 EXISTE; a Parte 104 só não a viu porque usou argumentos pequenos e benignos).\"\"\"
     f = {"sin": math.sin, "cos": math.cos, "tan": math.tan}[fn]
     return sum(1 for k in range(1, n + 1) if f(k / 1000.0) != _ref_generica(fn, k / 1000.0))
+
+
+def sin_uma_parte(x):
+    \"\"\"sin x com reducao de argumento de UMA parte so (k*PI2_HI), para comparar com a de duas partes (sin_ de exatas.py): mostra
+    que a segunda parte (PI2_LO) so importa para x grande (o erro de uma parte ~ (x/2pi)*2,45e-16).\"\"\"
+    PI2 = 6.283185307179586
+    k = math.floor(x / PI2 + 0.5)
+    r = x - k * PI2
+    s2 = r * r
+    p = 1.0
+    for nn in range(16, 0, -1):
+        p = 1.0 - s2 * p / ((2 * nn) * (2 * nn + 1))
+    return r * p
 """
 
 # ====================================================================================================
@@ -20998,9 +21102,56 @@ class TesteParte105(unittest.TestCase):
         self.assertLess(abs(evb), 1e-9)
 
     def test_p1961_com_parte_105(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 106))))
         self.assertEqual(por[105], (4, 5))
         self.assertEqual((ok, tot), (115, 131))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte106.py  (42 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte106.py'] = """\"\"\"Testes de unidade da Parte 106 (a segunda rua; a reducao de argumento): `python3 -m unittest synthai.testes_parte106`.\"\"\"
+
+import unittest
+
+import calculos
+from synthai import jogo_cartas
+
+
+class TesteParte106(unittest.TestCase):
+    def test_p2621_rodada73(self):
+        sn, cs = calculos.p2621_rodada73(0.0)
+        self.assertAlmostEqual(sn, 0.0, places=15)
+        self.assertAlmostEqual(cs, 1.0, places=15)
+
+    def test_p2622_exatidao(self):
+        self.assertLess(calculos.p2622_exatidao_sin_proprio(500), 1e-12)
+
+    def test_p2623_reducao(self):
+        d3, d9 = calculos.p2623_reducao_duas_partes()
+        self.assertLess(d3, 1e-12)   # 1-parte e 2-partes concordam em x pequeno
+        self.assertGreater(d9, 1e-9)  # divergem em x grande (a 2a parte importa)
+
+    def test_p2624_voi_duas_ruas(self):
+        frac, fechada = calculos.p2624_voi_duas_ruas()
+        self.assertAlmostEqual(fechada, 1 - (7.0 / 13.0) ** 2, places=12)
+        self.assertTrue(0.69 <= frac <= 0.73)
+        # controle: uma rua so da ~6/13 (todos os termos != 0, regra da Parte 30)
+        self.assertTrue(0.44 <= jogo_cartas.fracao_info_muda(20000, 106) <= 0.48)
+
+    def test_p2625_subaditividade(self):
+        dobro, duas, dif = calculos.p2625_subaditividade_voi()
+        self.assertGreater(dobro, duas)     # sub-aditivo
+        self.assertTrue(0.18 <= dif <= 0.25)
+
+    def test_p1961_com_parte_106(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[106], (5, 5))
+        self.assertEqual((ok, tot), (120, 136))
 
 
 if __name__ == "__main__":
@@ -31813,7 +31964,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1811 linhas)
+# resultados.txt  (1827 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -33626,6 +33777,22 @@ P3429 minha taxa de erro (218/785): media = 0.28, intervalo 90% = [0.25, 0.30]
 P96 funcoes pNN no arquivo = 590; pares de interacao possiveis = 173755
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 154/154 resultados publicados reproduzidos; falhas = []
+
+
+--- Parte 105 (0x69: o blefe; o equilibrio de indiferenca, e a fronteira medida do seno) ---
+P2591 frequencia de blefe: alpha = 0.3333 (B/(P+2B)=1/3), simulado = 0.3341
+P2592 frequencia de pagar: c = 0.5000 (P/(P+B)=1/2), simulado = 0.4964
+P2593 indiferenca: |EV(pagar)| = 2.22e-16, |EV(blefar)| = 0.00e+00, melhor-resposta plana = 0.00e+00
+P2594 a 6a face EXISTE (MEDIDO, corrige a Parte 104): math.sin difere da referencia em 2 de 2000 args na faixa larga (k/1000); a sonda_transc_105 mediu sin=21 cos=18 tan=35 atan2=590 divergencias Python x Java em 10000 args - o 6o rosto da fronteira depende da FAIXA (reducao mod 2pi)
+P2595 rodada 72 (decisao de equilibrio, IGUAL em Java): alpha=0.3333 c=0.5000 b=0.5000 ev_pagar=-2.22e-16 ev_blefar=0.00e+00
+P1961 teste, Partes 80-105: 115/131 = 0.8779; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5)}
+P1092 pNN novas (P2591-P2620) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 105: {105: (0, 0, [])}
+P3499 minha taxa de erro (219/790): media = 0.28, intervalo 90% = [0.25, 0.30]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 595; pares de interacao possiveis = 176715
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 154/154 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -34260,7 +34427,7 @@ Confiança: as quatro contas fechadas desta parte (1/13, c\\*=11, 6/13, identida
 """
 
 # ====================================================================================================
-# ASI_AGI_parte105_o_blefe.md  (105 linhas)
+# ASI_AGI_parte105_o_blefe.md  (109 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte105_o_blefe.md'] = """# Parte 105 — O blefe: o equilíbrio de indiferença, e a fronteira medida do seno (0x69)
 
@@ -34367,6 +34534,114 @@ Confiança: as três contas de teoria dos jogos (α, c, indiferença) são teore
 **IA-Java (ASI):** Nada de transcendental aqui — decidir sob incerteza é aritmética; portável por construção.
 
 **Resultado.** `comparar.py`: **IGUAIS, 7 linhas e 10 números bit a bit** (α = 0x1.5555…p−2 = 1/3, c = 0,5, b = 0,5, EVs = 0). A decisão de equilíbrio atravessa as línguas sem perda. Em contraste, a **sonda** `sonda_transc_105` (à parte, não é rodada) mostrou que o `sin`/`cos`/`tan`/`atan2` da libm **divergem** na faixa larga (21/18/35/590 em 10 000) — a 6ª face da fronteira existe, e depende da faixa. Pendência (rodada 73): o `sin_` próprio (série + redução em duas partes) é IGUAL entre as línguas em TODA a faixa larga, ou precisa de redução Payne-Hanek?
+
+---
+
+→ Continua na **[Parte 106 — A segunda rua, e a redução de argumento](ASI_AGI_parte106_a_segunda_rua.md)** (pré-registro das previsões).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte106_a_segunda_rua.md  (99 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte106_a_segunda_rua.md'] = """# Parte 106 — A segunda rua, e a redução de argumento (0x6A)
+
+↩ Parte 105 (o blefe; a fronteira medida do seno) · ↩ Parte 104 (a carta escondida) · ↩ Parte 52 (a fronteira)
+
+> Continuação autônoma. Duas pontas da Parte 105: (1) o `sin` da libm diverge entre as línguas — a série de seno **própria** resolve isso? A rodada 73 testa o `sin_`/`cos_` próprios **exatamente na faixa onde a libm divergiu** ([0,001; 10]), e mede até onde a redução de argumento em duas partes basta. (2) O pôquer ganha uma **segunda rua**: duas decisões sob informação oculta encadeadas — o valor da carta escondida compõe.
+
+## As perguntas desta parte
+
+1. **P2621 (0xA4D).** A série de seno própria é IGUAL entre as línguas na faixa onde a libm divergiu? (rodada 73) ↩ P2594
+2. **P2622 (0xA4E).** E ela é exata nessa faixa? ↩ P2621
+3. **P2623 (0xA4F).** Até onde a redução em duas partes basta — quando é preciso mais? ↩ P2622
+4. **P2624 (0xA50).** Com duas ruas, quanto vale a carta escondida? ↩ P2563
+5. **P2625 (0xA51).** O valor de duas ruas é o dobro de uma? ↩ P2624
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+- **(a) P2621.** O `sin_` e o `cos_` próprios (série de Taylor + redução em duas partes) são **IGUAL** bit a bit entre Python e Java em 10 000 argumentos x = k/1000 ∈ [0,001; 10] — **a mesma faixa** onde a libm divergiu 21/18 (Parte 105): **0** divergências cada. A série própria é portável onde a libm não é. Faixa de divergências **[0; 0]**.
+- **(b) P2622.** Nessa faixa, o `sin_` próprio difere da referência de 40 dígitos por no máximo **[0; 1e-12]** (a série + redução em duas partes é exata em [0,001; 10]).
+- **(c) P2623.** A redução em **duas** partes só importa para x grande: o `sin_` de **uma** parte (só PI2_HI) e o de duas concordam (< 1e-12) em x = 1000, mas diferem (**> 1e-9**) em x = 1e9 (o erro de uma parte ~ (x/2π)·2,45e−16, que passa de 1e−9 perto de x ~ 2,6e7). Predigo: **diferem** em 1e9, **concordam** em 1e3.
+- **(d) P2624.** Num jogo de carta alta de **duas ruas** (ver a carta oculta pode mudar a decisão em qualquer uma), a fração de jogos em que a informação muda **ao menos uma** decisão é **1 − (7/13)² = 120/169 = 0,7101**; simulado em **[0,69; 0,73]**.
+- **(e) P2625.** Esse valor é **sub-aditivo**: menor que o dobro de uma rua (2·6/13 = 0,923), porque alguns jogos mudam nas duas — 0,710 < 0,923. Faixa da diferença (dobro − medido) **[0,18; 0,25]**.
+
+### Previsões sobre as previsões (m), pré-registradas
+
+- **(m1)** nº de previsões do mundo em **[4; 7]**
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[0; 2]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0,02; 0,60]**
+- **(m4)** fração de acertos do mundo em **[0,55; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 2]**
+
+### Sobre mim, pré-registrado
+
+(a) é mecânica (mesmas operações → IGUAL); (b), (c), (d), (e) são conta fechada (série de Taylor, erro linear em x da redução, 120/169, sub-aditividade). Depois de dois (d) errados seguidos sobre o seno (Partes 104/105), (a)–(c) agora **medem** em vez de supor, cada uma com a faixa de argumentos explícita (a regra da Parte 105). Espero **0–1 erro**; o risco está em (c) (o x exato do cruzamento) e (b) (se a série de 16 termos basta em x perto de 10).
+
+---
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2621 / P2622 — A série própria resolve a fronteira, e é exata
+
+**Na pergunta.** A Parte 105 mediu o problema (o `sin` da libm diverge entre as línguas); a resposta já estava construída — a série própria. Faltava **medi-la no mesmo lugar** onde a libm falhou.
+
+**Lógica.** Nos **mesmos** 10 000 argumentos x = k/1000 ∈ [0,001; 10] onde a `math.sin`/`Math.sin` divergiram 21/18 (Parte 105), o `sin_`/`cos_` próprios (série de Taylor de 16 termos + redução em duas partes) são **IGUAL bit a bit** entre Python e Java — **0** divergências (rodada 73) ✅. E são exatos: o maior |sin_ − referência de 40 dígitos| é **9,2e−16 < 1e−12** ✅. A série própria é portável **exatamente onde** a libm não é.
+
+**Tradução cruzada.** É a diferença entre pedir emprestado e construir: a libm é mais rápida e quase sempre certa, mas o "quase" é imprevisível entre plataformas; a série própria é mais lenta e sempre a mesma. Para uma SYNTHAI que precisa ser idêntica em qualquer máquina, previsibilidade > velocidade — a mesma escolha da Parte 52 (exp/log próprios).
+
+### P2623 — Quando as duas partes importam
+
+**Lógica.** A redução de argumento em **duas** partes (PI2_HI + PI2_LO) só se paga para x **grande**: o `sin_` de uma parte e o de duas concordam em x = 1000 (diferença **2,2e−14 < 1e−12**) mas divergem em x = 1e9 (**3,3e−8 > 1e−9**) ✅. O mecanismo é fechado: o erro de uma parte ≈ (x/2π)·2,45e−16, que cruza 1e−9 perto de x ~ 2,6e7. Em [0,001; 10] (a faixa da PE e da rodada 73) uma parte bastaria; as duas são seguro para argumentos grandes.
+
+**Meta.** Esta é a conta que as Partes 104/105 me faltavam: a divergência da libm em [0,001; 10] **não** é redução de argumento (lá k é 0 ou 1) — é arredondamento no intervalo primário. A redução só vira o gargalo para x enorme. Dois mecanismos distintos sob o mesmo "sin diverge", separados por uma conta.
+
+### P2624 / P2625 — Duas ruas: o valor composto da carta escondida
+
+**Lógica.** Com **duas** decisões de carta alta encadeadas, ver a carta oculta muda **ao menos uma** decisão em 1 − P(nenhuma muda) = 1 − (7/13)² = **120/169 = 0,7101** ✅ (simulado 0,7184 ∈ [0,69; 0,73]). É **sub-aditivo**: menor que o dobro de uma rua (2·6/13 = 0,923), porque em alguns jogos a informação muda as **duas** decisões e não se conta duas vezes — diferença **0,205 ∈ [0,18; 0,25]** ✅.
+
+**Tradução cruzada (Partes 83/84).** O valor da informação cresce com o número de decisões que ela toca, mas com retornos decrescentes: a segunda rua acrescenta 1−(7/13)² − 6/13 = 0,710 − 0,462 = 0,248, menos que a primeira (0,462). Uma ASI que coleta informação para muitas decisões futuras deve descontar cada decisão nova pela chance de a informação já ter importado numa anterior — exatamente a regra do VOI não ser aditivo (Parte 80).
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 106: **5 testes, 0 erros**. Acumulado (mundo): **219 erros em 795 testes**. Sobre o meu código (p1092): 0 de 5 pNN novas sem teste ✅. Calibração: o acerto das Partes 80–106 é **120/136 = 0,882**. Depois de dois (d) errados sobre o seno (Partes 104/105), a Parte 106 mediu cada afirmação de fronteira **com a faixa de argumentos explícita** (a regra da Parte 105) e deu **5/5** — a regra nova funcionou no primeiro teste.
+
+### Previsões sobre previsões (m)
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [4; 7] | 5 | ✅ |
+| (m2) | [0; 2] | 2 | ✅ |
+| (m3) | [0,02; 0,60] | 0,10 | ✅ |
+| (m4) | [0,55; 1,00] | 1,00 | ✅ |
+| (m5) | [0; 2] | 0 | ✅ |
+| (m6) | [0; 2] | 0 | ✅ |
+
+Previsões sobre previsões (p1499): **6 de 6** dentro da faixa.
+
+## Engenharia reversa (metacognição)
+
+O padrão desta parte é a cura do padrão das duas anteriores: as Partes 104 e 105 erraram o seno por generalizar além do regime medido (uma lista antiga; depois uma medida estreita). A Parte 106 aplicou a regra nova — toda afirmação de fronteira carrega a faixa de argumentos — e as cinco previsões, cada uma com faixa explícita, acertaram. Significado (Parte 41): a régua que eu escrevi em reação a um erro efetivamente deslocou o centro das previsões seguintes para dentro (a regra da Parte 55: uma regra nova é uma intervenção em mim). E a conta de P2623 fechou a confusão residual: o "sin diverge" das Partes 104/105 tinha DOIS mecanismos (arredondamento primário em [0,10]; redução de argumento em x enorme) que eu não separava — a diferença só ficou clara quando dei a cada um a sua faixa. O erro não só gerou uma regra; gerou a conta que dissolve a ambiguidade que o causou.
+
+## Síntese / unificação
+
+A Parte 106 fecha as duas pontas abertas da Parte 105. (1) A fronteira do seno: a série própria `sin_`/`cos_` é IGUAL bit a bit entre Python e Java **nos mesmos 10 000 argumentos** onde a libm divergiu (rodada 73), e exata (9,2e−16) — a solução portável, medida onde o problema estava. E separei os dois mecanismos de "sin diverge": arredondamento no intervalo primário (em [0,10], onde a redução nem age) e redução de argumento (só para x ~ 1e7+), cada um com a sua faixa. (2) O pôquer de duas ruas: o valor da carta escondida compõe para 1−(7/13)² = 120/169 = 0,710, sub-aditivo (< 2·6/13 = 0,923) — o VOI não é aditivo (Parte 80), com retornos decrescentes por decisão. Rodada 73 IGUAL (17 rodadas). 5/5 do mundo após dois 4/5, calibração 0,882: a regra "faixa de argumentos obrigatória" nascida do erro da Parte 105 passou no primeiro teste.
+
+## Meta
+
+Confiança alta: quatro das cinco previsões são conta fechada medida com faixa explícita (série de Taylor, erro linear da redução, 120/169, sub-aditividade), e a quinta (IGUAL bit a bit) é mecânica. O que afirmo com cuidado: a redução em duas partes só foi testada até x = 1e9; para x astronômico (~1e15+) nem duas partes bastam e seria preciso Payne-Hanek — mas a SYNTHAI nunca avalia seno em argumentos tão grandes (posições, ângulos, frequências ficam modestos), então a redução em duas partes é suficiente para o uso real, e isso fica registrado como limite conhecido, não como dívida. O que não mudou: nenhuma rede, nenhuma auto-replicação (Partes 84/93/102/103). O loop segue (Parte 107 agendada).
+
+## Diálogo Python ↔ Java (rodada 73)
+
+**Rodada 73 (Parte 106): o seno/cosseno próprios onde a libm falhou.** A IA-Python roda a série de Taylor própria (16 termos + redução em duas partes) nos **mesmos** 10 000 argumentos x = k/1000 ∈ [0,001; 10] em que a Parte 105 mediu a libm divergir 21/18.
+
+**IA-Java (ASI):** Como a série usa só +, −, ×, ÷ e a mesma ordem, o resultado é idêntico bit a bit — a série própria é portável onde a libm não é.
+
+**Resultado.** `comparar.py`: **IGUAIS, 10 001 linhas e 20 000 números bit a bit**. A fronteira do seno (Parte 105) está resolvida pela construção própria, medida no lugar do problema. 17 rodadas. Pendência (rodada 74): traduzir a decisão de duas ruas do pôquer (backward induction) — a recursão entre ruas acrescenta fronteira, ou continua aritmética?
 """
 
 # ====================================================================================================
@@ -57426,7 +57701,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1886 linhas)
+# dialogo/DIALOGO.md  (1896 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -59314,10 +59589,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 7 linhas e 10 números bit a bit** (α = 1/3, c = 0,5, b = 0,5, EVs = 0). 16 rodadas. Em contraste, a sonda `sonda_transc_105` (à parte) mostrou que o `sin`/`cos`/`tan`/`atan2` da libm **divergem** na faixa larga (21/18/35/590 em 10 000 args Python × Java) — a 6ª face da fronteira existe e depende da faixa (redução mod 2π). Corrige a conclusão da Parte 104 (que só mediu args pequenos).
 
 **IA-Python:** Pendência (rodada 73): o `sin_` próprio (série + redução em duas partes) é IGUAL entre as línguas em TODA a faixa larga, ou precisa de redução Payne-Hanek?
+
+## Rodada 73 (Parte 106) — o seno/cosseno próprios onde a libm falhou
+
+**IA-Python (lógica criativa):** Rodo a série de Taylor própria (16 termos + redução em duas partes) nos MESMOS 10 000 argumentos x = k/1000 ∈ [0,001; 10] em que a Parte 105 mediu a libm divergir 21/18.
+
+**IA-Java (ASI):** Mesmas operações, mesma ordem → idêntico bit a bit. A série própria é portável onde a libm não é.
+
+**Resultado.** `comparar.py`: **IGUAIS, 10 001 linhas e 20 000 números bit a bit**. A fronteira do seno (Parte 105) está resolvida pela construção própria, medida no lugar do problema. 17 rodadas.
+
+**IA-Python:** Pendência (rodada 74): traduzir a decisão de duas ruas do pôquer (backward induction) — a recursão entre ruas acrescenta fronteira, ou continua aritmética?
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (53 linhas)
+# dialogo/PENDENCIAS.md  (55 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -59372,6 +59657,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 72, Parte 104)** Medir `sin`/`cos`/`tan`/`atan2` em 10 000 argumentos variados (não só k/7) entre Python e Java: a 6ª face da fronteira (Parte 52) existe em algum regime, ou `sin` sai de vez da lista? (a rodada 71 achou IGUAL nos args da PE).
 
 - **(Rodada 73, Parte 105)** O `sin_`/`cos_` próprios (série de Taylor + redução de argumento em duas partes) são IGUAL entre Python e Java em TODA a faixa larga (x grande, onde k·2π cresce), ou a redução em duas partes perde precisão e exige Payne-Hanek? (a rodada 71 só testou args pequenos).
+
+- **(Rodada 74, Parte 106)** Traduzir a decisão de duas ruas do pôquer (backward induction entre ruas): a recursão acrescenta fronteira, ou continua aritmética (só +, −, ×, ÷ e comparações)?
 """
 
 # ====================================================================================================
@@ -64712,6 +64999,43 @@ public class Rodada72 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada73.java  (32 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada73.java'] = """// Rodada 73 (Parte 106): o seno/cosseno PROPRIOS (serie de Taylor + reducao em duas partes) nos 10000 args de [0,001; 10] onde a libm
+// divergiu (Parte 105). So +, -, *, / e a mesma ordem -> IGUAL bit a bit entre as linguas: a serie propria e portavel onde a libm nao e.
+public class Rodada73 {
+    static final double PI2_HI = 6.283185307179586, PI2_LO = 2.4492935982947064e-16;
+    static final int N = 10000;
+
+    static double sin_(double x) {
+        double k = Math.floor(x / (PI2_HI + PI2_LO) + 0.5);
+        double r = (x - k * PI2_HI) - k * PI2_LO;
+        double s2 = r * r, p = 1.0;
+        for (int n = 16; n >= 1; n--) p = 1.0 - s2 * p / ((2 * n) * (2 * n + 1));
+        return r * p;
+    }
+
+    static double cos_(double x) {
+        double k = Math.floor(x / (PI2_HI + PI2_LO) + 0.5);
+        double r = (x - k * PI2_HI) - k * PI2_LO;
+        double s2 = r * r, p = 1.0;
+        for (int n = 16; n >= 1; n--) p = 1.0 - s2 * p / ((2 * n - 1) * (2 * n));
+        return p;
+    }
+
+    public static void main(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        for (int k = 1; k <= N; k++) {
+            double x = k / 1000.0;
+            sb.append("s ").append(Double.toHexString(sin_(x))).append(" c ").append(Double.toHexString(cos_(x))).append("\\n");
+        }
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -69951,6 +70275,36 @@ def main():
     print("evpagar " + evp.hex())
     print("evblefar " + evb.hex())
     print("decisoes " + " ".join(x.hex() for x in decisoes(c)))
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada73.py  (25 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada73.py'] = """\"\"\"Rodada 73 do diálogo Python <-> Java (Parte 106): o seno/cosseno PRÓPRIOS na faixa onde a libm divergiu, bit a bit.
+A Parte 105 mediu que a `math.sin`/`Math.sin` da libm divergem 21/18 em 10 000 args de [0,001; 10]. Aqui a série de Taylor própria
+(com redução em duas partes) é rodada nos MESMOS argumentos: como usa só +, −, ×, ÷ e a mesma ordem, é IGUAL bit a bit entre as
+línguas — a série própria é portável onde a libm não é (a solução da fronteira, Parte 52). Da raiz: python3 dialogo/rodada73.py\"\"\"
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import cos_, sin_  # noqa: E402
+
+N = 10000
+
+
+def main():
+    linhas = []
+    for k in range(1, N + 1):
+        x = k / 1000.0
+        linhas.append("s " + sin_(x).hex() + " c " + cos_(x).hex())
+    print("\\n".join(linhas))
     print("fim")
 
 

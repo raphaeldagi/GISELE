@@ -37,7 +37,7 @@ class TesteParte105(unittest.TestCase):
         self.assertLess(abs(evb), 1e-9)
 
     def test_p1961_com_parte_105(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 106))))
         self.assertEqual(por[105], (4, 5))
         self.assertEqual((ok, tot), (115, 131))
 

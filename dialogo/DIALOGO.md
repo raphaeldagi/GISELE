@@ -1884,3 +1884,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 7 linhas e 10 números bit a bit** (α = 1/3, c = 0,5, b = 0,5, EVs = 0). 16 rodadas. Em contraste, a sonda `sonda_transc_105` (à parte) mostrou que o `sin`/`cos`/`tan`/`atan2` da libm **divergem** na faixa larga (21/18/35/590 em 10 000 args Python × Java) — a 6ª face da fronteira existe e depende da faixa (redução mod 2π). Corrige a conclusão da Parte 104 (que só mediu args pequenos).
 
 **IA-Python:** Pendência (rodada 73): o `sin_` próprio (série + redução em duas partes) é IGUAL entre as línguas em TODA a faixa larga, ou precisa de redução Payne-Hanek?
+
+## Rodada 73 (Parte 106) — o seno/cosseno próprios onde a libm falhou
+
+**IA-Python (lógica criativa):** Rodo a série de Taylor própria (16 termos + redução em duas partes) nos MESMOS 10 000 argumentos x = k/1000 ∈ [0,001; 10] em que a Parte 105 mediu a libm divergir 21/18.
+
+**IA-Java (ASI):** Mesmas operações, mesma ordem → idêntico bit a bit. A série própria é portável onde a libm não é.
+
+**Resultado.** `comparar.py`: **IGUAIS, 10 001 linhas e 20 000 números bit a bit**. A fronteira do seno (Parte 105) está resolvida pela construção própria, medida no lugar do problema. 17 rodadas.
+
+**IA-Python:** Pendência (rodada 74): traduzir a decisão de duas ruas do pôquer (backward induction) — a recursão entre ruas acrescenta fronteira, ou continua aritmética?

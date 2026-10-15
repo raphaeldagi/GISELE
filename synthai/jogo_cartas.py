@@ -57,3 +57,18 @@ def fracao_info_muda(n=20000, semente=104):
         if opp > voce:   # às cegas você pagaria e perderia; vendo, desistiria
             muda += 1
     return muda / n
+
+
+def voi_duas_ruas(n=20000, semente=106):
+    """O valor da informacao oculta em DUAS ruas (Parte 106, P2624): duas decisoes de carta alta encadeadas (cada rua um
+    par voce/adversario). Ver a carta do adversario muda a decisao de uma rua se opp>voce nessa rua. A fracao de jogos em que
+    a informacao muda AO MENOS uma das duas decisoes e 1 - P(nenhuma) = 1 - (7/13)^2 = 120/169. Devolve (fracao empirica, forma fechada)."""
+    import random
+    r = random.Random(semente)
+    muda = 0
+    for _ in range(n):
+        flip1 = r.randint(1, N) < r.randint(1, N)   # opp > voce na rua 1
+        flip2 = r.randint(1, N) < r.randint(1, N)   # rua 2
+        if flip1 or flip2:
+            muda += 1
+    return muda / n, 1 - (7.0 / 13.0) ** 2

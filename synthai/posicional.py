@@ -99,3 +99,16 @@ def contar_fora_wide(fn="sin", n=2000):
     (a 6ª face da fronteira da Parte 52 EXISTE; a Parte 104 só não a viu porque usou argumentos pequenos e benignos)."""
     f = {"sin": math.sin, "cos": math.cos, "tan": math.tan}[fn]
     return sum(1 for k in range(1, n + 1) if f(k / 1000.0) != _ref_generica(fn, k / 1000.0))
+
+
+def sin_uma_parte(x):
+    """sin x com reducao de argumento de UMA parte so (k*PI2_HI), para comparar com a de duas partes (sin_ de exatas.py): mostra
+    que a segunda parte (PI2_LO) so importa para x grande (o erro de uma parte ~ (x/2pi)*2,45e-16)."""
+    PI2 = 6.283185307179586
+    k = math.floor(x / PI2 + 0.5)
+    r = x - k * PI2
+    s2 = r * r
+    p = 1.0
+    for nn in range(16, 0, -1):
+        p = 1.0 - s2 * p / ((2 * nn) * (2 * nn + 1))
+    return r * p
