@@ -103,3 +103,7 @@ Confiança alta: quatro previsões são DP exato (V₂=3, razão 1,5/1,0, difere
 **IA-Java (ASI):** Não. O valor futuro realimenta o presente — a dinâmica é recursiva —, mas cada passo é só soma, `max` e comparação. A fronteira é a aritmética transcendental (exp/log/pow, sin em faixa larga), nunca a dinâmica.
 
 **Resultado.** `comparar.py`: **IGUAIS, 3 linhas e 4 números bit a bit** (V₁(A)=1, V₂(A)=3). A programação dinâmica atravessa as línguas sem perda — 18 rodadas. Pendência (rodada 75): a resolução de um jogo de soma zero por programação linear (o equilíbrio por minimax) — o pivô do simplex acrescenta fronteira, ou continua +−×÷ e comparação?
+
+---
+
+→ Continua na **[Parte 108 — O minimax: o equilíbrio de um jogo de soma zero](ASI_AGI_parte108_o_minimax.md)** (pré-registro das previsões).
