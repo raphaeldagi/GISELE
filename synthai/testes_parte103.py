@@ -49,7 +49,7 @@ class TesteParte103(unittest.TestCase):
         self.assertEqual(len(saida[0]), 4)
 
     def test_p1961_com_parte_103(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 104))))
         self.assertEqual(por[103], (5, 5))
         self.assertEqual((ok, tot), (107, 121))
 

@@ -32,3 +32,30 @@ def log_(x):
     for j in range(19, -1, -1):
         p = 1.0 / (2 * j + 1) + s2 * p
     return e * LN2_HI + (e * LN2_LO + 2.0 * s * p)
+
+
+PI2_HI = 6.283185307179586        # 2*pi em duas partes (como o ln2): k*PI2_HI exato para |k| pequeno
+PI2_LO = 2.4492935982947064e-16
+
+
+def sin_(x):
+    """sin x por redução de argumento (k = arredondar(x/2pi), r = x − k·2pi em duas partes, |r| ≤ pi) e série de Taylor (Horner, 16 termos).
+    Só +, −, ×, ÷ próprios — portável bit a bit (a libm não arredonda sin corretamente: a 6ª face da fronteira da Parte 52)."""
+    k = math.floor(x / (PI2_HI + PI2_LO) + 0.5)
+    r = (x - k * PI2_HI) - k * PI2_LO
+    s2 = r * r
+    p = 1.0
+    for n in range(16, 0, -1):
+        p = 1.0 - s2 * p / ((2 * n) * (2 * n + 1))
+    return r * p
+
+
+def cos_(x):
+    """cos x pela mesma redução e série de Taylor (Horner, 16 termos)."""
+    k = math.floor(x / (PI2_HI + PI2_LO) + 0.5)
+    r = (x - k * PI2_HI) - k * PI2_LO
+    s2 = r * r
+    p = 1.0
+    for n in range(16, 0, -1):
+        p = 1.0 - s2 * p / ((2 * n - 1) * (2 * n))
+    return p

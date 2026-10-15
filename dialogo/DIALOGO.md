@@ -1864,3 +1864,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** Na 1ª tentativa, DIFERENTES por 1 ULP — mas não pela concatenação: o produto matriz-vetor em Python usava o `sum()` compensado (Neumaier) do 3.12 contra o laço sequencial do Java (regra da Parte 34). Troquei por acumulação sequencial → **IGUAIS, 4 linhas e 12 números bit a bit**. A atenção multi-cabeça está traduzida (14 rodadas). A fronteira segue {exp, log, pow} + ordem das somas.
 
 **IA-Python:** Pendência (rodada 71): a codificação posicional (seno/cosseno) — o `sin`/`cos` da libm é a 6ª face da fronteira da Parte 52? (`PENDENCIAS.md`).
+
+## Rodada 71 (Parte 104) — a codificação posicional e a fronteira do seno
+
+**IA-Python (lógica criativa):** O `sin`/`cos` da codificação posicional é a 6ª face da fronteira da Parte 52? Imprimo dois blocos: `proprio` (série de Taylor própria, redução por 2π em duas partes) e `naive` (a libm).
+
+**IA-Java (ASI):** O bloco `proprio` é portável por construção. O `naive` dirá se a libm diverge entre as línguas.
+
+**Resultado.** `proprio`: **IGUAIS, 7 linhas e 48 números bit a bit**. Surpresa: `naive` **também** IGUAL — nesta máquina a `math.sin` (Python/glibc) e a `Math.sin` (Java) concordam bit a bit nos argumentos da PE. Ao contrário do exp/log/pow (medidos como fronteira nas rodadas 26/52/92), o `sin` **não é fronteira aqui**: eu o havia posto na lista da Parte 52 pela reputação, não pela medida (régua da Parte 84). A fronteira medida segue {exp, log, pow} + ordem das somas.
+
+**IA-Python:** Pendência (rodada 72): medir `sin`/`cos`/`tan`/`atan2` em 10 000 argumentos variados (não só k/7) para decidir se a 6ª face existe em algum regime ou sai de vez da lista.

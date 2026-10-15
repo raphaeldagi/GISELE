@@ -47,3 +47,5 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 70, Parte 102)** A atenção com múltiplas cabeças concatenadas: a concatenação das cabeças e a projeção de saída mudam a ordem das somas (a fronteira da Parte 75/85)? Candidata à próxima rodada do diálogo.
 
 - **(Rodada 71, Parte 103)** A codificação posicional senoidal (sin/cos): o `sin`/`cos` da libm difere entre Python e Java como o exp/log/pow (a 6ª face da fronteira da Parte 52)? Candidata à próxima rodada.
+
+- **(Rodada 72, Parte 104)** Medir `sin`/`cos`/`tan`/`atan2` em 10 000 argumentos variados (não só k/7) entre Python e Java: a 6ª face da fronteira (Parte 52) existe em algum regime, ou `sin` sai de vez da lista? (a rodada 71 achou IGUAL nos args da PE).
