@@ -1,5 +1,5 @@
-// Rodada 71 (Parte 104): a codificacao posicional senoidal, bit a bit. Dois blocos: 'proprio' (seno/cosseno proprios, serie de Taylor) e
-// 'naive' (Math.sin/Math.cos da libm). O proprio deve ser IGUAL; o naive mostra se a libm difere entre as linguas (6a face da fronteira da Parte 52).
+// Rodada 71 (Parte 104): a codificacao posicional senoidal, bit a bit — versao PORTAVEL (seno/cosseno proprios, serie de Taylor; frequencias sem
+// Math.pow, so sqrt e multiplicacao repetida). Nao depende de nenhuma transcendental da libm (regra da Parte 52/77). A sonda SondaSeno104 mede o naive.
 public class Rodada71 {
     static final double PI2_HI = 6.283185307179586, PI2_LO = 2.4492935982947064e-16;
     static final int D = 8;
@@ -22,32 +22,30 @@ public class Rodada71 {
     }
 
     static double[] freqs() {
+        double r = 1.0 / Math.sqrt(Math.sqrt(10000.0));
         double[] w = new double[D / 2];
-        for (int i = 0; i < D / 2; i++) w[i] = Math.pow(10000.0, -2.0 * i / D);
+        double cur = 1.0;
+        for (int i = 0; i < D / 2; i++) { w[i] = cur; cur = cur * r; }
         return w;
     }
 
-    static double[] pe(int pos, boolean proprio) {
+    static double[] pe(int pos) {
         double[] w = freqs();
         double[] v = new double[D];
         for (int i = 0; i < D / 2; i++) {
             double arg = pos * w[i];
-            v[2 * i] = proprio ? sin_(arg) : Math.sin(arg);
-            v[2 * i + 1] = proprio ? cos_(arg) : Math.cos(arg);
+            v[2 * i] = sin_(arg);
+            v[2 * i + 1] = cos_(arg);
         }
         return v;
     }
 
     public static void main(String[] args) {
         StringBuilder sb = new StringBuilder();
-        String[] rot = {"proprio", "naive"};
-        boolean[] pr = {true, false};
-        for (int j = 0; j < 2; j++) {
-            for (int pos : POS) {
-                sb.append(rot[j]).append(" ").append(pos);
-                for (double v : pe(pos, pr[j])) sb.append(" ").append(Double.toHexString(v));
-                sb.append("\n");
-            }
+        for (int pos : POS) {
+            sb.append("proprio ").append(pos);
+            for (double v : pe(pos)) sb.append(" ").append(Double.toHexString(v));
+            sb.append("\n");
         }
         sb.append("fim");
         System.out.println(sb.toString());

@@ -13642,9 +13642,9 @@ def p2563_valor_info_oculta(n=20000, semente=104):
 def p2564_fronteira_do_seno(n=1000):
     """A 6a face da fronteira da Parte 52? (P2564; Parte 104). MEDIDO, nao suposto: a `math.sin` da libm desta maquina difere de uma
     referencia de 40 digitos em `contar` de n argumentos. Nesta maquina `contar` = 0 (o glibc arredonda sin corretamente nestes
-    argumentos) E a rodada 71 deu IGUAL ja no bloco NAIVE (Python e Java concordam bit a bit) - logo sin NAO e fronteira aqui,
+    argumentos) E a sonda `sonda_seno_104` deu IGUAL no naive (Python e Java concordam bit a bit) - logo sin NAO e fronteira aqui,
     ao contrario do exp/log/pow (MEDIDOS como fronteira). Uma afirmacao da lista da Parte 52 vinda por reputacao, nao por medida
-    (regra da Parte 84). A serie de seno propria mantem a PE portavel de qualquer forma. Devolve o `contar`."""
+    (regra da Parte 84). A serie de seno propria mantem a PE portavel de qualquer forma; a rodada 71 commitada usa so a serie propria. Devolve o `contar`."""
     from synthai.posicional import contar_sin_fora_de_arredondamento
     return contar_sin_fora_de_arredondamento(n)
 
@@ -13667,8 +13667,8 @@ def _rodada71():
 
 
 def p2566_rodada71(pos=13):
-    """Rodada 71 (P2566; Parte 104): a codificacao posicional com seno/cosseno PROPRIOS, IGUAL em Java bit a bit (o bloco naive
-    tambem deu IGUAL nesta maquina: sin nao e fronteira aqui). Devolve o vetor PE(pos) proprio (d=8)."""
+    """Rodada 71 (P2566; Parte 104): a codificacao posicional com seno/cosseno PROPRIOS, IGUAL em Java bit a bit (a sonda_seno_104
+    mostrou que o naive tambem e IGUAL nesta maquina: sin nao e fronteira aqui). Devolve o vetor PE(pos) proprio (d=8)."""
     return _rodada71().pe(pos, True)
 
 
@@ -14853,7 +14853,7 @@ def _parte_104():
     frac, fechada = p2563_valor_info_oculta()
     print(f"P2563 valor da informacao oculta: fracao que muda a decisao = {frac:.4f} (forma fechada 6/13 = {fechada:.4f})")
     contar = p2564_fronteira_do_seno()
-    print(f"P2564 a fronteira do seno (MEDIDO): math.sin difere da referencia em {contar} de 1000 args -> sin NAO e fronteira aqui (reputacao, nao medida: regra da Parte 84); PE com serie propria IGUAL em Java (rodada 71, ate o bloco naive)")
+    print(f"P2564 a fronteira do seno (MEDIDO): math.sin difere da referencia em {contar} de 1000 args -> sin NAO e fronteira aqui (reputacao, nao medida: regra da Parte 84); PE com serie propria IGUAL em Java (rodada 71); a sonda_seno_104 mostra que o naive tambem e IGUAL aqui")
     var, pk, pk2 = p2565_invariancia_translacao()
     print(f"P2565 invariancia de translacao da PE: variancia entre posicoes (k=3) = {var:.2e} (< 1e-12); produto k=3 = {pk:.4f} != k=5 = {pk2:.4f}")
     saida = p2566_rodada71()

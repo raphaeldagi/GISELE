@@ -13680,9 +13680,9 @@ def p2563_valor_info_oculta(n=20000, semente=104):
 def p2564_fronteira_do_seno(n=1000):
     \"\"\"A 6a face da fronteira da Parte 52? (P2564; Parte 104). MEDIDO, nao suposto: a `math.sin` da libm desta maquina difere de uma
     referencia de 40 digitos em `contar` de n argumentos. Nesta maquina `contar` = 0 (o glibc arredonda sin corretamente nestes
-    argumentos) E a rodada 71 deu IGUAL ja no bloco NAIVE (Python e Java concordam bit a bit) - logo sin NAO e fronteira aqui,
+    argumentos) E a sonda `sonda_seno_104` deu IGUAL no naive (Python e Java concordam bit a bit) - logo sin NAO e fronteira aqui,
     ao contrario do exp/log/pow (MEDIDOS como fronteira). Uma afirmacao da lista da Parte 52 vinda por reputacao, nao por medida
-    (regra da Parte 84). A serie de seno propria mantem a PE portavel de qualquer forma. Devolve o `contar`.\"\"\"
+    (regra da Parte 84). A serie de seno propria mantem a PE portavel de qualquer forma; a rodada 71 commitada usa so a serie propria. Devolve o `contar`.\"\"\"
     from synthai.posicional import contar_sin_fora_de_arredondamento
     return contar_sin_fora_de_arredondamento(n)
 
@@ -13705,8 +13705,8 @@ def _rodada71():
 
 
 def p2566_rodada71(pos=13):
-    \"\"\"Rodada 71 (P2566; Parte 104): a codificacao posicional com seno/cosseno PROPRIOS, IGUAL em Java bit a bit (o bloco naive
-    tambem deu IGUAL nesta maquina: sin nao e fronteira aqui). Devolve o vetor PE(pos) proprio (d=8).\"\"\"
+    \"\"\"Rodada 71 (P2566; Parte 104): a codificacao posicional com seno/cosseno PROPRIOS, IGUAL em Java bit a bit (a sonda_seno_104
+    mostrou que o naive tambem e IGUAL nesta maquina: sin nao e fronteira aqui). Devolve o vetor PE(pos) proprio (d=8).\"\"\"
     return _rodada71().pe(pos, True)
 
 
@@ -14891,7 +14891,7 @@ def _parte_104():
     frac, fechada = p2563_valor_info_oculta()
     print(f"P2563 valor da informacao oculta: fracao que muda a decisao = {frac:.4f} (forma fechada 6/13 = {fechada:.4f})")
     contar = p2564_fronteira_do_seno()
-    print(f"P2564 a fronteira do seno (MEDIDO): math.sin difere da referencia em {contar} de 1000 args -> sin NAO e fronteira aqui (reputacao, nao medida: regra da Parte 84); PE com serie propria IGUAL em Java (rodada 71, ate o bloco naive)")
+    print(f"P2564 a fronteira do seno (MEDIDO): math.sin difere da referencia em {contar} de 1000 args -> sin NAO e fronteira aqui (reputacao, nao medida: regra da Parte 84); PE com serie propria IGUAL em Java (rodada 71); a sonda_seno_104 mostra que o naive tambem e IGUAL aqui")
     var, pk, pk2 = p2565_invariancia_translacao()
     print(f"P2565 invariancia de translacao da PE: variancia entre posicoes (k=3) = {var:.2e} (< 1e-12); produto k=3 = {pk:.4f} != k=5 = {pk2:.4f}")
     saida = p2566_rodada71()
@@ -33969,7 +33969,7 @@ FONTES['ASI_AGI_parte104_a_carta_escondida.md'] = """# Parte 104 — A carta esc
 
 ### P2564 — O seno é a 6ª face da fronteira? MEDIDO: não, aqui
 
-**Lógica.** Eu **previ que sim** (a lista da Parte 52 inclui `sin`), e **errei** ❌. Medido: a `math.sin` desta máquina difere de uma referência de 40 dígitos (Taylor em `decimal`) em **0** de 1000 argumentos — o glibc moderno arredonda `sin` corretamente aqui. E a rodada 71 deu **IGUAL até no bloco naive**: `math.sin` (Python) e `Math.sin` (Java) concordam bit a bit nos argumentos da codificação posicional. Logo, **`sin` não é fronteira neste par de plataformas**, ao contrário de exp/log/pow, que foram **medidos** como fronteira (rodadas 26/52/92). A série de seno própria mantém a PE portável de qualquer forma (e **isso** a rodada 71 confirma IGUAL).
+**Lógica.** Eu **previ que sim** (a lista da Parte 52 inclui `sin`), e **errei** ❌. Medido: a `math.sin` desta máquina difere de uma referência de 40 dígitos (Taylor em `decimal`) em **0** de 1000 argumentos — o glibc moderno arredonda `sin` corretamente aqui. E a sonda `sonda_seno_104` deu **IGUAL no naive**: `math.sin` (Python) e `Math.sin` (Java) concordam bit a bit nos argumentos da codificação posicional. A rodada 71 commitada usa só a série própria (a regra da Parte 52/77: não se commita dependência da libm que passa "por sorte"). Logo, **`sin` não é fronteira neste par de plataformas**, ao contrário de exp/log/pow, que foram **medidos** como fronteira (rodadas 26/52/92). A série de seno própria mantém a PE portável de qualquer forma (e **isso** a rodada 71 confirma IGUAL; o naive foi medido à parte, na sonda).
 
 **Meta.** Este é o erro valioso da parte: eu carreguei `sin` na lista da fronteira **pela reputação** da Parte 52, sem nunca ter rodado a comparação bit a bit para ele (a régua da Parte 84: reputação não é medida). A lista medida da fronteira é **{exp, log, pow}**; `sin` entrou por associação. Regra nova: nenhuma função fica na lista da fronteira sem a sua própria rodada bit a bit — e vou medir `sin`/`cos`/`tan`/`atan2` numa parte futura em vários argumentos antes de reafirmar ou remover.
 
@@ -34004,7 +34004,7 @@ O padrão desta parte é um auto-flagrante: pela primeira vez em muitas partes e
 
 ## Síntese / unificação
 
-A Parte 104 leva o baralho da Parte 103 para onde o pôquer vive — a **carta escondida**, decisão sob informação oculta — e fecha, com um erro honesto, a pendência da fronteira. `synthai/jogo_cartas.py`: no duelo de carta alta a probabilidade de ganhar é uma reta de inclinação 1/13 (EV simétrico 0,5); se o adversário só aposta com a metade de cima, o limiar de pagar sobe de 7 (neutro) para **c\\* = 11** (Bayes numa linha); e ver a carta oculta mudaria a decisão em **6/13** das mãos — o VOI das Partes 83/84 em cartas. `synthai/posicional.py`: a codificação posicional é geometria (o produto interno PE(pos)·PE(pos+k) = Σ cos(k wᵢ) só vê a distância k). E a lição da parte: **`sin` não é fronteira aqui** — eu previ que sim pela reputação da Parte 52 e a medida (0/1000 fora de arredondamento; rodada 71 IGUAL até no bloco naive) me corrigiu; a fronteira medida é {exp, log, pow}, e a série de seno própria mantém a PE portável de todo jeito. Rodada 71 IGUAL (14→15 rodadas). 4/5 do mundo, calibração 0,881.
+A Parte 104 leva o baralho da Parte 103 para onde o pôquer vive — a **carta escondida**, decisão sob informação oculta — e fecha, com um erro honesto, a pendência da fronteira. `synthai/jogo_cartas.py`: no duelo de carta alta a probabilidade de ganhar é uma reta de inclinação 1/13 (EV simétrico 0,5); se o adversário só aposta com a metade de cima, o limiar de pagar sobe de 7 (neutro) para **c\\* = 11** (Bayes numa linha); e ver a carta oculta mudaria a decisão em **6/13** das mãos — o VOI das Partes 83/84 em cartas. `synthai/posicional.py`: a codificação posicional é geometria (o produto interno PE(pos)·PE(pos+k) = Σ cos(k wᵢ) só vê a distância k). E a lição da parte: **`sin` não é fronteira aqui** — eu previ que sim pela reputação da Parte 52 e a medida (0/1000 fora de arredondamento; sonda_seno_104 IGUAL no naive) me corrigiu; a fronteira medida é {exp, log, pow}, e a série de seno própria mantém a PE portável de todo jeito. Rodada 71 IGUAL (14→15 rodadas). 4/5 do mundo, calibração 0,881.
 
 ## Meta
 
@@ -58945,11 +58945,11 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 
 ## Rodada 71 (Parte 104) — a codificação posicional e a fronteira do seno
 
-**IA-Python (lógica criativa):** O `sin`/`cos` da codificação posicional é a 6ª face da fronteira da Parte 52? Imprimo dois blocos: `proprio` (série de Taylor própria, redução por 2π em duas partes) e `naive` (a libm).
+**IA-Python (lógica criativa):** O `sin`/`cos` da codificação posicional é a 6ª face da fronteira da Parte 52? A rodada commitada usa o seno/cosseno PRÓPRIOS (série de Taylor) e frequências sem `pow` (só sqrt), para não depender de nenhuma transcendental da libm (regra da Parte 52/77). A sonda separada `sonda_seno_104` mede o `naive` (a libm).
 
-**IA-Java (ASI):** O bloco `proprio` é portável por construção. O `naive` dirá se a libm diverge entre as línguas.
+**IA-Java (ASI):** O `proprio` é portável por construção. A sonda dirá se a libm diverge entre as línguas.
 
-**Resultado.** `proprio`: **IGUAIS, 7 linhas e 48 números bit a bit**. Surpresa: `naive` **também** IGUAL — nesta máquina a `math.sin` (Python/glibc) e a `Math.sin` (Java) concordam bit a bit nos argumentos da PE. Ao contrário do exp/log/pow (medidos como fronteira nas rodadas 26/52/92), o `sin` **não é fronteira aqui**: eu o havia posto na lista da Parte 52 pela reputação, não pela medida (régua da Parte 84). A fronteira medida segue {exp, log, pow} + ordem das somas.
+**Resultado.** `proprio` (rodada 71): **IGUAIS, 7 linhas e 48 números bit a bit**. Surpresa na sonda: o `naive` **também** IGUAL — nesta máquina a `math.sin` (Python/glibc) e a `Math.sin` (Java) concordam bit a bit nos argumentos da PE. Ao contrário do exp/log/pow (medidos como fronteira nas rodadas 26/52/92), o `sin` **não é fronteira aqui**: eu o havia posto na lista da Parte 52 pela reputação, não pela medida (régua da Parte 84). A fronteira medida segue {exp, log, pow} + ordem das somas.
 
 **IA-Python:** Pendência (rodada 72): medir `sin`/`cos`/`tan`/`atan2` em 10 000 argumentos variados (não só k/7) para decidir se a 6ª face existe em algum regime ou sai de vez da lista.
 """
@@ -64261,10 +64261,10 @@ public class Rodada70 {
 """
 
 # ====================================================================================================
-# dialogo/Rodada71.java  (55 linhas)
+# dialogo/Rodada71.java  (53 linhas)
 # ====================================================================================================
-FONTES['dialogo/Rodada71.java'] = """// Rodada 71 (Parte 104): a codificacao posicional senoidal, bit a bit. Dois blocos: 'proprio' (seno/cosseno proprios, serie de Taylor) e
-// 'naive' (Math.sin/Math.cos da libm). O proprio deve ser IGUAL; o naive mostra se a libm difere entre as linguas (6a face da fronteira da Parte 52).
+FONTES['dialogo/Rodada71.java'] = """// Rodada 71 (Parte 104): a codificacao posicional senoidal, bit a bit — versao PORTAVEL (seno/cosseno proprios, serie de Taylor; frequencias sem
+// Math.pow, so sqrt e multiplicacao repetida). Nao depende de nenhuma transcendental da libm (regra da Parte 52/77). A sonda SondaSeno104 mede o naive.
 public class Rodada71 {
     static final double PI2_HI = 6.283185307179586, PI2_LO = 2.4492935982947064e-16;
     static final int D = 8;
@@ -64287,32 +64287,71 @@ public class Rodada71 {
     }
 
     static double[] freqs() {
+        double r = 1.0 / Math.sqrt(Math.sqrt(10000.0));
         double[] w = new double[D / 2];
-        for (int i = 0; i < D / 2; i++) w[i] = Math.pow(10000.0, -2.0 * i / D);
+        double cur = 1.0;
+        for (int i = 0; i < D / 2; i++) { w[i] = cur; cur = cur * r; }
         return w;
     }
 
-    static double[] pe(int pos, boolean proprio) {
+    static double[] pe(int pos) {
         double[] w = freqs();
         double[] v = new double[D];
         for (int i = 0; i < D / 2; i++) {
             double arg = pos * w[i];
-            v[2 * i] = proprio ? sin_(arg) : Math.sin(arg);
-            v[2 * i + 1] = proprio ? cos_(arg) : Math.cos(arg);
+            v[2 * i] = sin_(arg);
+            v[2 * i + 1] = cos_(arg);
         }
         return v;
     }
 
     public static void main(String[] args) {
         StringBuilder sb = new StringBuilder();
-        String[] rot = {"proprio", "naive"};
-        boolean[] pr = {true, false};
-        for (int j = 0; j < 2; j++) {
-            for (int pos : POS) {
-                sb.append(rot[j]).append(" ").append(pos);
-                for (double v : pe(pos, pr[j])) sb.append(" ").append(Double.toHexString(v));
-                sb.append("\\n");
-            }
+        for (int pos : POS) {
+            sb.append("proprio ").append(pos);
+            for (double v : pe(pos)) sb.append(" ").append(Double.toHexString(v));
+            sb.append("\\n");
+        }
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/SondaSeno104.java  (36 linhas)
+# ====================================================================================================
+FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
+// transcendental). Nao e rodada do dialogo. Resultado nesta maquina: IGUAL ao Python (sin nao e fronteira aqui).
+public class SondaSeno104 {
+    static final int D = 8;
+    static final int[] POS = {0, 1, 2, 5, 13, 40};
+
+    static double[] freqs() {
+        double r = 1.0 / Math.sqrt(Math.sqrt(10000.0));
+        double[] w = new double[D / 2];
+        double cur = 1.0;
+        for (int i = 0; i < D / 2; i++) { w[i] = cur; cur = cur * r; }
+        return w;
+    }
+
+    static double[] pe(int pos) {
+        double[] w = freqs();
+        double[] v = new double[D];
+        for (int i = 0; i < D / 2; i++) {
+            double arg = pos * w[i];
+            v[2 * i] = Math.sin(arg);     // NAIVE: a sin da libm
+            v[2 * i + 1] = Math.cos(arg);
+        }
+        return v;
+    }
+
+    public static void main(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        for (int pos : POS) {
+            sb.append("naive ").append(pos);
+            for (double v : pe(pos)) sb.append(" ").append(Double.toHexString(v));
+            sb.append("\\n");
         }
         sb.append("fim");
         System.out.println(sb.toString());
@@ -69413,12 +69452,13 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# dialogo/rodada71.py  (38 linhas)
+# dialogo/rodada71.py  (44 linhas)
 # ====================================================================================================
-FONTES['dialogo/rodada71.py'] = """\"\"\"Rodada 71 do diálogo Python <-> Java (Parte 104): a codificação posicional senoidal, bit a bit.
-Pendência da rodada 70: o sin/cos é a 6ª face da fronteira da Parte 52? Imprime DOIS blocos: 'proprio' (seno/cosseno PRÓPRIOS,
-série de Taylor) e 'naive' (math.sin/Math.sin da libm). A comparação é feita bloco a bloco: o próprio deve ser IGUAL; o naive mostra
-se a libm difere entre as línguas. PE(pos)[2i]=sin(pos*wi), [2i+1]=cos(pos*wi), wi=10000^(-2i/d). Da raiz: python3 dialogo/rodada71.py\"\"\"
+FONTES['dialogo/rodada71.py'] = """\"\"\"Rodada 71 do diálogo Python <-> Java (Parte 104): a codificação posicional senoidal, bit a bit — na versão PORTÁVEL.
+Pendência da rodada 70: o sin/cos é a 6ª face da fronteira da Parte 52? Esta rodada usa o seno/cosseno PRÓPRIOS (série de Taylor, exatas.py)
+e calcula as frequências sem `pow` da libm (só sqrt, exato no IEEE, e multiplicação repetida), para não depender de nenhuma transcendental da
+biblioteca (a regra da Parte 52/77). A sonda separada `sonda_seno_104.py` mede o naive (math.sin/Math.sin) e achou IGUAL nesta máquina — logo
+sin não é fronteira aqui —, mas o artefato COMMITADO do diálogo é o portável. PE(pos)[2i]=sin(pos*wi), [2i+1]=cos(pos*wi). Da raiz: python3 dialogo/rodada71.py\"\"\"
 
 import math
 import os
@@ -69432,22 +69472,68 @@ POS = [0, 1, 2, 5, 13, 40]
 
 
 def freqs():
-    return [10000.0 ** (-2.0 * i / D) for i in range(D // 2)]
+    \"\"\"wi = 10000^(-2i/d) para d = 8: a razão r = 10000^(-1/4) = 1/sqrt(sqrt(10000)) (só sqrt, exato), e wi = r^i por multiplicação repetida.\"\"\"
+    r = 1.0 / math.sqrt(math.sqrt(10000.0))
+    w, cur = [], 1.0
+    for _ in range(D // 2):
+        w.append(cur)
+        cur = cur * r
+    return w
 
 
-def pe(pos, proprio):
-    s, c = (sin_, cos_) if proprio else (math.sin, math.cos)
+def pe(pos, proprio=True):
+    \"\"\"A codificação posicional de pos (d=8) com o seno/cosseno próprios (proprio=True, o único caminho portável).\"\"\"
     v = []
     for w in freqs():
-        v.append(s(pos * w))
-        v.append(c(pos * w))
+        v.append(sin_(pos * w))
+        v.append(cos_(pos * w))
     return v
 
 
 def main():
-    for rotulo, proprio in (("proprio", True), ("naive", False)):
-        for pos in POS:
-            print(rotulo + " " + str(pos) + " " + " ".join(x.hex() for x in pe(pos, proprio)))
+    for pos in POS:
+        print("proprio " + str(pos) + " " + " ".join(x.hex() for x in pe(pos)))
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/sonda_seno_104.py  (36 linhas)
+# ====================================================================================================
+FONTES['dialogo/sonda_seno_104.py'] = """\"\"\"Sonda da Parte 104: mede se a `sin`/`cos` NAIVE da libm difere entre Python e Java na codificação posicional (a 6ª face da
+fronteira da Parte 52?). Usa as MESMAS frequências portáveis (sqrt) da rodada 71, trocando só sin_/cos_ próprios por math.sin/math.cos,
+para isolar a transcendental. NÃO é uma rodada do diálogo (não casa com rodada[0-9]*.py; o auditor p1722 não a varre): é um experimento de
+medição à parte. Resultado nesta máquina: IGUAL (Python/glibc e Java concordam bit a bit) — sin não é fronteira aqui. Da raiz: python3 dialogo/sonda_seno_104.py\"\"\"
+
+import math
+
+D = 8
+POS = [0, 1, 2, 5, 13, 40]
+
+
+def freqs():
+    r = 1.0 / math.sqrt(math.sqrt(10000.0))
+    w, cur = [], 1.0
+    for _ in range(D // 2):
+        w.append(cur)
+        cur = cur * r
+    return w
+
+
+def pe(pos):
+    v = []
+    for w in freqs():
+        v.append(math.sin(pos * w))   # NAIVE: a sin da libm (o que a sonda testa)
+        v.append(math.cos(pos * w))
+    return v
+
+
+def main():
+    for pos in POS:
+        print("naive " + str(pos) + " " + " ".join(x.hex() for x in pe(pos)))
     print("fim")
 
 

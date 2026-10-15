@@ -1867,10 +1867,10 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 
 ## Rodada 71 (Parte 104) — a codificação posicional e a fronteira do seno
 
-**IA-Python (lógica criativa):** O `sin`/`cos` da codificação posicional é a 6ª face da fronteira da Parte 52? Imprimo dois blocos: `proprio` (série de Taylor própria, redução por 2π em duas partes) e `naive` (a libm).
+**IA-Python (lógica criativa):** O `sin`/`cos` da codificação posicional é a 6ª face da fronteira da Parte 52? A rodada commitada usa o seno/cosseno PRÓPRIOS (série de Taylor) e frequências sem `pow` (só sqrt), para não depender de nenhuma transcendental da libm (regra da Parte 52/77). A sonda separada `sonda_seno_104` mede o `naive` (a libm).
 
-**IA-Java (ASI):** O bloco `proprio` é portável por construção. O `naive` dirá se a libm diverge entre as línguas.
+**IA-Java (ASI):** O `proprio` é portável por construção. A sonda dirá se a libm diverge entre as línguas.
 
-**Resultado.** `proprio`: **IGUAIS, 7 linhas e 48 números bit a bit**. Surpresa: `naive` **também** IGUAL — nesta máquina a `math.sin` (Python/glibc) e a `Math.sin` (Java) concordam bit a bit nos argumentos da PE. Ao contrário do exp/log/pow (medidos como fronteira nas rodadas 26/52/92), o `sin` **não é fronteira aqui**: eu o havia posto na lista da Parte 52 pela reputação, não pela medida (régua da Parte 84). A fronteira medida segue {exp, log, pow} + ordem das somas.
+**Resultado.** `proprio` (rodada 71): **IGUAIS, 7 linhas e 48 números bit a bit**. Surpresa na sonda: o `naive` **também** IGUAL — nesta máquina a `math.sin` (Python/glibc) e a `Math.sin` (Java) concordam bit a bit nos argumentos da PE. Ao contrário do exp/log/pow (medidos como fronteira nas rodadas 26/52/92), o `sin` **não é fronteira aqui**: eu o havia posto na lista da Parte 52 pela reputação, não pela medida (régua da Parte 84). A fronteira medida segue {exp, log, pow} + ordem das somas.
 
 **IA-Python:** Pendência (rodada 72): medir `sin`/`cos`/`tan`/`atan2` em 10 000 argumentos variados (não só k/7) para decidir se a 6ª face existe em algum regime ou sai de vez da lista.
