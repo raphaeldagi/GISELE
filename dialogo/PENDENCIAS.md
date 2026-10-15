@@ -53,3 +53,5 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 73, Parte 105)** O `sin_`/`cos_` próprios (série de Taylor + redução de argumento em duas partes) são IGUAL entre Python e Java em TODA a faixa larga (x grande, onde k·2π cresce), ou a redução em duas partes perde precisão e exige Payne-Hanek? (a rodada 71 só testou args pequenos).
 
 - **(Rodada 74, Parte 106)** Traduzir a decisão de duas ruas do pôquer (backward induction entre ruas): a recursão acrescenta fronteira, ou continua aritmética (só +, −, ×, ÷ e comparações)?
+
+- **(Rodada 75, Parte 107)** O equilíbrio de um jogo de soma zero por programação linear (minimax / simplex): o pivô (divisão por um elemento escolhido) acrescenta fronteira, ou continua +−×÷ e comparação (portável)?

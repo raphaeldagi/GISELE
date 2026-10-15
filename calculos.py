@@ -9608,6 +9608,8 @@ VEREDITOS_P3499 = "(a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ✅"
 ERROS_P3499, TESTES_P3499 = 219, 790
 VEREDITOS_P3569 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P3569, TESTES_P3569 = 219, 795
+VEREDITOS_P3639 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
+ERROS_P3639, TESTES_P3639 = 219, 800
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12148,12 +12150,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12161,7 +12163,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\(g\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106):  # nas Partes 94-106 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107):  # nas Partes 94-107 a letra da calibracao e a (f)
             txt = re.sub(r"\(f\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13778,6 +13780,52 @@ def p2625_subaditividade_voi():
     return dobro, duas, dobro - duas
 
 
+def _rodada74():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada74", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada74.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2651_rodada74():
+    """Rodada 74 (P2651; Parte 107): a inducao reversa (iteracao de valor, horizonte 2), IGUAL em Java bit a bit - so +, max e
+    comparacoes; a recursao entre as ruas NAO cria fronteira (como o MPC da Parte 93). Devolve (V1(A), V2(A))."""
+    V = _rodada74().iteracao(2)
+    return V[1]["A"], V[2]["A"]
+
+
+def p2652_valor_otimo_duas_decisoes():
+    """O valor otimo de duas decisoes a partir de A (P2652; Parte 107): a inducao reversa toma a acao 1 primeiro (recompensa 0
+    agora) para chegar a B (que vale 3) -> V2(A) = 3. Devolve V2(A)."""
+    from synthai.duas_ruas import MDP_TESTE, valor_otimo
+    return valor_otimo(MDP_TESTE)
+
+
+def p2653_reversa_vs_miope():
+    """Inducao reversa vs guloso/miope (P2653; Parte 107): no MDP do teste a reversa (3) bate o miope (2), razao 1,5; num MDP
+    separavel por estagio (T(s,a)=s) empatam, razao 1,0. Devolve (razao no teste, razao no separavel)."""
+    from synthai.duas_ruas import MDP_TESTE, mdp_separavel, valor_miope, valor_otimo
+    sep = mdp_separavel()
+    return valor_otimo(MDP_TESTE) / valor_miope(MDP_TESTE), valor_otimo(sep) / valor_miope(sep)
+
+
+def p2654_valor_da_segunda_decisao():
+    """Quanto a segunda decisao acrescenta (P2654; Parte 107): V2(A) - V1(A) = 3 - 1 = 2 (o payoff adiado que a primeira
+    decisao desbloqueia). Devolve (V1(A), V2(A), diferenca)."""
+    from synthai.duas_ruas import MDP_TESTE, iteracao_valor
+    V = iteracao_valor(MDP_TESTE, 2)
+    return V[1]["A"], V[2]["A"], V[2]["A"] - V[1]["A"]
+
+
+def p2655_voi_estado_oculto():
+    """O valor de saber o estado oculto (P2655; Parte 107; VOI das Partes 83/84): com dois MDPs espelhos (preferem primeiras
+    acoes opostas) o VOI > 0; com dois MDPs identicos (controle) o VOI = 0. Devolve (VOI espelho, VOI identico)."""
+    from synthai.duas_ruas import voi_espelho, voi_identico
+    return voi_espelho(), voi_identico()
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -15011,6 +15059,25 @@ def _parte_106():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3569, testes=TESTES_P3569)
     print(f"P3569 minha taxa de erro ({ERROS_P3569}/{TESTES_P3569}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_107():
+    print("--- Parte 107 (0x6B: a inducao reversa; o equilibrio de duas ruas) ---")
+    v1, v2 = p2651_rodada74()
+    print(f"P2651 rodada 74 (inducao reversa, IGUAL em Java): V1(A)={v1:.1f} V2(A)={v2:.1f}")
+    print(f"P2652 valor otimo de duas decisoes a partir de A: V2(A) = {p2652_valor_otimo_duas_decisoes():.1f}")
+    rt, rs = p2653_reversa_vs_miope()
+    print(f"P2653 reversa vs miope: razao no teste = {rt:.2f} (reversa bate), razao no separavel = {rs:.2f} (empatam)")
+    a1, a2, dif = p2654_valor_da_segunda_decisao()
+    print(f"P2654 valor da segunda decisao: V2(A)-V1(A) = {a2:.1f}-{a1:.1f} = {dif:.1f}")
+    ve, vi = p2655_voi_estado_oculto()
+    print(f"P2655 VOI do estado oculto: espelho = {ve:.2f} (> 0), identico = {vi:.2f} (controle = 0)")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-107: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2651, 2680)
+    print(f"P1092 pNN novas (P2651-P2680) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 107: {p974_previsoes_sem_largura(range(107, 108))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3639, testes=TESTES_P3639)
+    print(f"P3639 minha taxa de erro ({ERROS_P3639}/{TESTES_P3639}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -15047,7 +15114,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107}
 
 
 if __name__ == "__main__":

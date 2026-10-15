@@ -33,7 +33,7 @@ class TesteParte106(unittest.TestCase):
         self.assertTrue(0.18 <= dif <= 0.25)
 
     def test_p1961_com_parte_106(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 107))))
         self.assertEqual(por[106], (5, 5))
         self.assertEqual((ok, tot), (120, 136))
 

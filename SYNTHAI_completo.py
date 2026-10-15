@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 106, perguntas P1 a P2625).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 107, perguntas P1 a P2655).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (15059 linhas)
+# calculos.py  (15126 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9646,6 +9646,8 @@ VEREDITOS_P3499 = "(a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ✅"
 ERROS_P3499, TESTES_P3499 = 219, 790
 VEREDITOS_P3569 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P3569, TESTES_P3569 = 219, 795
+VEREDITOS_P3639 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
+ERROS_P3639, TESTES_P3639 = 219, 800
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12186,12 +12188,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12199,7 +12201,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\\(g\\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106):  # nas Partes 94-106 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107):  # nas Partes 94-107 a letra da calibracao e a (f)
             txt = re.sub(r"\\(f\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13816,6 +13818,52 @@ def p2625_subaditividade_voi():
     return dobro, duas, dobro - duas
 
 
+def _rodada74():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada74", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada74.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2651_rodada74():
+    \"\"\"Rodada 74 (P2651; Parte 107): a inducao reversa (iteracao de valor, horizonte 2), IGUAL em Java bit a bit - so +, max e
+    comparacoes; a recursao entre as ruas NAO cria fronteira (como o MPC da Parte 93). Devolve (V1(A), V2(A)).\"\"\"
+    V = _rodada74().iteracao(2)
+    return V[1]["A"], V[2]["A"]
+
+
+def p2652_valor_otimo_duas_decisoes():
+    \"\"\"O valor otimo de duas decisoes a partir de A (P2652; Parte 107): a inducao reversa toma a acao 1 primeiro (recompensa 0
+    agora) para chegar a B (que vale 3) -> V2(A) = 3. Devolve V2(A).\"\"\"
+    from synthai.duas_ruas import MDP_TESTE, valor_otimo
+    return valor_otimo(MDP_TESTE)
+
+
+def p2653_reversa_vs_miope():
+    \"\"\"Inducao reversa vs guloso/miope (P2653; Parte 107): no MDP do teste a reversa (3) bate o miope (2), razao 1,5; num MDP
+    separavel por estagio (T(s,a)=s) empatam, razao 1,0. Devolve (razao no teste, razao no separavel).\"\"\"
+    from synthai.duas_ruas import MDP_TESTE, mdp_separavel, valor_miope, valor_otimo
+    sep = mdp_separavel()
+    return valor_otimo(MDP_TESTE) / valor_miope(MDP_TESTE), valor_otimo(sep) / valor_miope(sep)
+
+
+def p2654_valor_da_segunda_decisao():
+    \"\"\"Quanto a segunda decisao acrescenta (P2654; Parte 107): V2(A) - V1(A) = 3 - 1 = 2 (o payoff adiado que a primeira
+    decisao desbloqueia). Devolve (V1(A), V2(A), diferenca).\"\"\"
+    from synthai.duas_ruas import MDP_TESTE, iteracao_valor
+    V = iteracao_valor(MDP_TESTE, 2)
+    return V[1]["A"], V[2]["A"], V[2]["A"] - V[1]["A"]
+
+
+def p2655_voi_estado_oculto():
+    \"\"\"O valor de saber o estado oculto (P2655; Parte 107; VOI das Partes 83/84): com dois MDPs espelhos (preferem primeiras
+    acoes opostas) o VOI > 0; com dois MDPs identicos (controle) o VOI = 0. Devolve (VOI espelho, VOI identico).\"\"\"
+    from synthai.duas_ruas import voi_espelho, voi_identico
+    return voi_espelho(), voi_identico()
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -15049,6 +15097,25 @@ def _parte_106():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3569, testes=TESTES_P3569)
     print(f"P3569 minha taxa de erro ({ERROS_P3569}/{TESTES_P3569}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_107():
+    print("--- Parte 107 (0x6B: a inducao reversa; o equilibrio de duas ruas) ---")
+    v1, v2 = p2651_rodada74()
+    print(f"P2651 rodada 74 (inducao reversa, IGUAL em Java): V1(A)={v1:.1f} V2(A)={v2:.1f}")
+    print(f"P2652 valor otimo de duas decisoes a partir de A: V2(A) = {p2652_valor_otimo_duas_decisoes():.1f}")
+    rt, rs = p2653_reversa_vs_miope()
+    print(f"P2653 reversa vs miope: razao no teste = {rt:.2f} (reversa bate), razao no separavel = {rs:.2f} (empatam)")
+    a1, a2, dif = p2654_valor_da_segunda_decisao()
+    print(f"P2654 valor da segunda decisao: V2(A)-V1(A) = {a2:.1f}-{a1:.1f} = {dif:.1f}")
+    ve, vi = p2655_voi_estado_oculto()
+    print(f"P2655 VOI do estado oculto: espelho = {ve:.2f} (> 0), identico = {vi:.2f} (controle = 0)")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-107: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2651, 2680)
+    print(f"P1092 pNN novas (P2651-P2680) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 107: {p974_previsoes_sem_largura(range(107, 108))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3639, testes=TESTES_P3639)
+    print(f"P3639 minha taxa de erro ({ERROS_P3639}/{TESTES_P3639}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -15085,7 +15152,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107}
 
 
 if __name__ == "__main__":
@@ -15098,7 +15165,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (393 linhas)
+# CLAUDE.md  (394 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -15337,6 +15404,7 @@ anterior, commit e push.
   Parte 104 (continuacao autonoma; a carta escondida: decisao sob informacao oculta + a fronteira do seno): levei o baralho da Parte 103 ao poquer minimo (offline/stdlib, `synthai/jogo_cartas.py`): no duelo de carta alta P(ganhar|c) e reta de inclinacao 1/13 (EV simetrico 0,5); se o adversario so aposta com carta>=7, o limiar de pagar sobe de 7 (neutro) a c*=11 (Bayes numa linha); ver a carta oculta mudaria a decisao em 6/13 das maos (o VOI das Partes 83/84 em cartas). `synthai/posicional.py`: a codificacao posicional e geometria (PE(pos).PE(pos+k)=sum_i cos(k*wi) depende SO de k). ERRO HONESTO E VALIOSO (d, o 1o de procedencia-por-reputacao desde o (e) da 97): previ que `sin` e a 6a face da fronteira da Parte 52 e MEDI que NAO e aqui - math.sin corretamente arredondada em 0/1000 args, e a rodada 71 deu IGUAL ATE NO BLOCO NAIVE (Python/glibc e Java concordam bit a bit nos args da PE). A regra da Parte 84 (reputacao != previsao) vale tambem para as MINHAS PROPRIAS listas: a fronteira MEDIDA e {exp,log,pow}; `sin` entrou por associacao. REGRA NOVA: nenhum item fica na lista da fronteira sem o commit da sua rodada bit a bit; a serie de seno propria mantem a PE portavel de qualquer forma. Rodada 71 IGUAL (15 rodadas). 4/5 do mundo (d errou), 6/6 previsoes-sobre-previsoes, calibracao 111/126=0,881. Pendencia (rodada 72): medir sin/cos/tan/atan2 em 10000 args variados antes de reafirmar ou tirar a 6a face.
   Parte 105 (continuacao autonoma; o blefe: equilibrio de indiferenca + a fronteira medida do seno): fechei o par de decisao sob informacao oculta (a 104 deu pagar/desistir; a 105 da apostar/blefar) com GTO minimo (`synthai/blefe.py`, offline/stdlib): no jogo polarizado, blefar com alpha=B/(P+2B)=1/3 e pagar com c=P/(P+B)=1/2 deixam o adversario INDIFERENTE (melhor-resposta plana: robustez por indiferenca, o tema do veto das Partes 83/84). E CORRIGI a Parte 104: a 6a face da fronteira (sin/cos/tan/atan2) EXISTE - a 104 so nao a viu porque mediu argumentos PEQUENOS (PE); na FAIXA LARGA (x=k/1000 ate 10, onde a reducao mod 2pi importa) a sonda_transc_105 acha 21/18/35/590 divergencias Python x Java em 10000 args (atan2 a pior). ERRO (d) EM ESPELHO, a licao central: na 104 errei o seno por confiar numa LISTA ANTIGA minha (reputacao externa); na 105 errei por confiar na MINHA PROPRIA MEDIDA ESTREITA da 104 (reputacao interna) - o mesmo erro de generalizar um resultado alem do regime medido. REGRA NOVA: toda afirmacao de fronteira carrega a FAIXA DE ARGUMENTOS medida; nunca estender a faixa sem re-medir. A fronteira e {exp,log,pow} E {sin,cos,tan,atan2 em faixa larga}; o sin_/cos_ proprios (reducao em duas partes) seguem portaveis nos args testados. Rodada 72 (decisao de equilibrio, aritmetica pura) IGUAL (16 rodadas). 4/5 do mundo (d errou), 6/6 previsoes-sobre-previsoes, calibracao 115/131=0,878. Pendencia (rodada 73): o sin_ proprio e IGUAL em TODA a faixa larga ou precisa de Payne-Hanek?
   Parte 106 (continuacao autonoma; a segunda rua, e a reducao de argumento): fechei as duas pontas da Parte 105. (1) A fronteira do seno RESOLVIDA e medida no lugar do problema: o sin_/cos_ proprios (serie de Taylor + reducao em duas partes) sao IGUAL bit a bit entre Python e Java nos MESMOS 10000 args de [0,001;10] onde a libm divergiu 21/18 (rodada 73), e exatos (9,2e-16). E SEPAREI os dois mecanismos que eu confundia sob "sin diverge": arredondamento no intervalo PRIMARIO (em [0,10], onde a reducao nem age - a causa das divergencias das Partes 104/105) e reducao de argumento (so para x~1e7+); a de 1 parte vs 2 partes concorda em x=1e3 e diverge em x=1e9 (erro ~ (x/2pi)*2,45e-16). A serie em duas partes basta para o uso real da SYNTHAI (Payne-Hanek so para x astronomico ~1e15, limite conhecido nao-divida). (2) Poquer de DUAS RUAS: o VOI compoe para 1-(7/13)^2=120/169=0,710, SUB-ADITIVO (< 2*6/13=0,923; o VOI nao e aditivo, Parte 80; retornos decrescentes por decisao). A REGRA da Parte 105 (toda afirmacao de fronteira carrega a faixa de argumentos) passou no 1o teste: 5/5 do mundo depois de dois 4/5 sobre o seno. Rodada 73 IGUAL (17 rodadas). 6/6 previsoes-sobre-previsoes, calibracao 120/136=0,882. Pendencia (rodada 74): a decisao de duas ruas (backward induction) acrescenta fronteira?
+  Parte 107 (continuacao autonoma; a inducao reversa / Bellman): resolvi a arvore de decisao de duas ruas DE TRAS PARA FRENTE num toy MDP exato (`synthai/duas_ruas.py`) - a SynthaiPlanejadora (P182/P93) feita exata por programacao dinamica. (1) olhar adiante vale V2(A)-V1(A)=2 (o payoff adiado que a 1a decisao desbloqueia; horizonte 1->2 leva o valor de 1 a 3). (2) a inducao reversa bate o guloso (razao 1,5) SO quando a acao tem consequencia de ESTADO; num MDP separavel (T(s,a)=s) empatam (1,0) - o 3o aparecimento do MESMO regime (MPC P93, workspace P102, planejamento P107): a vantagem de um metodo mais esperto e proporcional a quanto a tarefa precisa do que ele ve. DESTA VEZ previ o regime de antemao com o controle do nao-efeito pre-registrado (licao das Partes 87/89). (3) VOI do estado oculto (qual MDP): 0,5 no caso espelho, 0 no identico (controle) - o VOI das Partes 83/84 estendido de "ver a carta" para "saber o jogo". Rodada 74 (inducao reversa, +/max) IGUAL bit a bit (18 rodadas): a fronteira e a aritmetica, nunca a dinamica (recursao inclusa). 5/5 do mundo, 6/6 previsoes-sobre-previsoes, calibracao 125/141=0,886. Pendencia (rodada 75): o equilibrio por programacao linear (simplex/minimax) acrescenta fronteira?
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -15485,7 +15553,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -17224,6 +17292,99 @@ class DicionarioPT:
         for x, s in defs.items():
             s.discard(x)
         return defs
+"""
+
+# ====================================================================================================
+# synthai/duas_ruas.py  (88 linhas)
+# ====================================================================================================
+FONTES['synthai/duas_ruas.py'] = """\"\"\"A indução reversa (Bellman) sobre uma árvore de decisão de duas ruas (Parte 107). Offline, só biblioteca padrão, exato
+(sem simulação). Resolve a árvore DE TRÁS PARA FRENTE: o valor de uma decisão agora inclui o valor da decisão que ela
+desbloqueia depois. É a SynthaiPlanejadora (P182/P93) feita EXATA por programação dinâmica. Só +, −, max e comparações —
+nenhuma transcendental, portável por construção (Parte 52).\"\"\"
+
+import itertools
+
+ESTADOS = ("A", "B")
+ACOES = (0, 1)
+
+# MDP do teste: r[(s,a)] recompensa, T[(s,a)] estado seguinte.
+MDP_TESTE = {
+    "r": {("A", 0): 1.0, ("A", 1): 0.0, ("B", 0): 0.0, ("B", 1): 3.0},
+    "T": {("A", 0): "A", ("A", 1): "B", ("B", 0): "A", ("B", 1): "B"},
+}
+
+
+def iteracao_valor(mdp, horizonte):
+    \"\"\"Indução reversa: V[0]=0; V[h][s] = maxₐ (r(s,a) + V[h-1][T(s,a)]). Devolve a lista [V0, V1, ..., V_horizonte].\"\"\"
+    V = [{s: 0.0 for s in ESTADOS}]
+    for _ in range(horizonte):
+        Vant = V[-1]
+        V.append({s: max(mdp["r"][(s, a)] + Vant[mdp["T"][(s, a)]] for a in ACOES) for s in ESTADOS})
+    return V
+
+
+def valor_otimo(mdp, inicio="A", horizonte=2):
+    \"\"\"O valor ótimo de `horizonte` decisões a partir de `inicio` (indução reversa).\"\"\"
+    return iteracao_valor(mdp, horizonte)[horizonte][inicio]
+
+
+def valor_miope(mdp, inicio="A", passos=2):
+    \"\"\"O valor do agente GULOSO (míope): a cada passo toma a ação de maior recompensa IMEDIATA, ignorando o futuro.\"\"\"
+    s, tot = inicio, 0.0
+    for _ in range(passos):
+        a = 0 if mdp["r"][(s, 0)] >= mdp["r"][(s, 1)] else 1
+        tot += mdp["r"][(s, a)]
+        s = mdp["T"][(s, a)]
+    return tot
+
+
+def mdp_separavel():
+    \"\"\"Um MDP de controle SEPARÁVEL por estágio: toda ação mantém o estado (T(s,a)=s), então a ação de agora NÃO muda o
+    futuro alcançável — não há o que planejar, e o guloso (míope) coincide com a indução reversa (razão 1,0).\"\"\"
+    return {
+        "r": {("A", 0): 1.0, ("A", 1): 0.0, ("B", 0): 0.0, ("B", 1): 3.0},
+        "T": {("A", 0): "A", ("A", 1): "A", ("B", 0): "B", ("B", 1): "B"},
+    }
+
+
+def _mdp_espelho(mdp):
+    \"\"\"O MDP com as ações TROCADAS (0<->1): o ótimo prefere a ação de rótulo oposto, então saber qual MDP importa.\"\"\"
+    r = {(s, a): mdp["r"][(s, 1 - a)] for s in ESTADOS for a in ACOES}
+    T = {(s, a): mdp["T"][(s, 1 - a)] for s in ESTADOS for a in ACOES}
+    return {"r": r, "T": T}
+
+
+def _valor_politica(mdp, politica, inicio, horizonte):
+    \"\"\"Valor esperado (aqui determinístico) de uma política dependente do tempo politica[h][s] = ação, a partir de inicio.\"\"\"
+    s, tot = inicio, 0.0
+    for h in range(horizonte):
+        a = politica[h][s]
+        tot += mdp["r"][(s, a)]
+        s = mdp["T"][(s, a)]
+    return tot
+
+
+def voi_estado_oculto(mdp0, mdp1, crenca=0.5, inicio="A", horizonte=2):
+    \"\"\"O valor de SABER qual MDP (estado oculto): valor sabendo − valor crendo. Sabendo: joga o ótimo de cada um. Crendo:
+    escolhe UMA política que maximiza o valor esperado sob a crença (sem saber qual). VOI = sabendo − crendo ≥ 0.\"\"\"
+    sabendo = crenca * valor_otimo(mdp0, inicio, horizonte) + (1 - crenca) * valor_otimo(mdp1, inicio, horizonte)
+    melhor = None
+    for combo in itertools.product(ACOES, repeat=len(ESTADOS) * horizonte):
+        politica = [{ESTADOS[j]: combo[h * len(ESTADOS) + j] for j in range(len(ESTADOS))} for h in range(horizonte)]
+        esp = crenca * _valor_politica(mdp0, politica, inicio, horizonte) + (1 - crenca) * _valor_politica(mdp1, politica, inicio, horizonte)
+        if melhor is None or esp > melhor:
+            melhor = esp
+    return sabendo - melhor
+
+
+def voi_espelho():
+    \"\"\"O VOI quando os dois MDPs são espelhos (preferem primeiras ações opostas): > 0.\"\"\"
+    return voi_estado_oculto(MDP_TESTE, _mdp_espelho(MDP_TESTE))
+
+
+def voi_identico():
+    \"\"\"Controle: dois MDPs idênticos → saber não acrescenta nada → VOI = 0.\"\"\"
+    return voi_estado_oculto(MDP_TESTE, MDP_TESTE)
 """
 
 # ====================================================================================================
@@ -21149,9 +21310,53 @@ class TesteParte106(unittest.TestCase):
         self.assertTrue(0.18 <= dif <= 0.25)
 
     def test_p1961_com_parte_106(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 107))))
         self.assertEqual(por[106], (5, 5))
         self.assertEqual((ok, tot), (120, 136))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte107.py  (39 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte107.py'] = """\"\"\"Testes de unidade da Parte 107 (a inducao reversa; duas ruas): `python3 -m unittest synthai.testes_parte107`.\"\"\"
+
+import unittest
+
+import calculos
+from synthai import duas_ruas
+
+
+class TesteParte107(unittest.TestCase):
+    def test_p2651_rodada74(self):
+        v1, v2 = calculos.p2651_rodada74()
+        self.assertEqual((v1, v2), (1.0, 3.0))
+
+    def test_p2652_valor_otimo(self):
+        self.assertEqual(calculos.p2652_valor_otimo_duas_decisoes(), 3.0)
+
+    def test_p2653_reversa_vs_miope(self):
+        rt, rs = calculos.p2653_reversa_vs_miope()
+        self.assertAlmostEqual(rt, 1.5, places=12)   # reversa bate o miope
+        self.assertAlmostEqual(rs, 1.0, places=12)   # separavel: empatam (controle)
+
+    def test_p2654_segunda_decisao(self):
+        a1, a2, dif = calculos.p2654_valor_da_segunda_decisao()
+        self.assertEqual((a1, a2, dif), (1.0, 3.0, 2.0))
+
+    def test_p2655_voi(self):
+        ve, vi = calculos.p2655_voi_estado_oculto()
+        self.assertGreater(ve, 0.0)        # espelho: saber importa
+        self.assertEqual(vi, 0.0)          # identico: nao importa (controle)
+        self.assertTrue(0.3 <= ve <= 1.2)
+
+    def test_p1961_com_parte_107(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[107], (5, 5))
+        self.assertEqual((ok, tot), (125, 141))
 
 
 if __name__ == "__main__":
@@ -31964,7 +32169,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1827 linhas)
+# resultados.txt  (1843 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -33793,6 +33998,22 @@ P3499 minha taxa de erro (219/790): media = 0.28, intervalo 90% = [0.25, 0.30]
 P96 funcoes pNN no arquivo = 595; pares de interacao possiveis = 176715
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 154/154 resultados publicados reproduzidos; falhas = []
+
+
+--- Parte 106 (0x6A: a segunda rua, e a reducao de argumento) ---
+P2621 rodada 73 (sin_/cos_ proprios na faixa da libm divergente, IGUAL em Java 10000 args): sin_(pi)=2.65e-06 cos_(pi)=-1.0000
+P2622 exatidao do sin_ proprio em [0,001;10]: max|sin_-ref| = 3.33e-16 (< 1e-12)
+P2623 reducao duas partes: 1-parte vs 2-partes dif(x=1e3)=2.20e-14 (<1e-12, concordam), dif(x=1e9)=3.27e-08 (>1e-9, divergem)
+P2624 VOI duas ruas: fracao = 0.7184 (forma fechada 1-(7/13)^2 = 0.7101)
+P2625 sub-aditividade: dobro de uma rua = 0.9231, duas ruas = 0.7101, diferenca = 0.2130
+P1961 teste, Partes 80-106: 120/136 = 0.8824; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5)}
+P1092 pNN novas (P2621-P2650) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 106: {106: (0, 0, [])}
+P3569 minha taxa de erro (219/795): media = 0.28, intervalo 90% = [0.25, 0.30]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 600; pares de interacao possiveis = 179700
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 154/154 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -34541,7 +34762,7 @@ Confiança: as três contas de teoria dos jogos (α, c, indiferença) são teore
 """
 
 # ====================================================================================================
-# ASI_AGI_parte106_a_segunda_rua.md  (99 linhas)
+# ASI_AGI_parte106_a_segunda_rua.md  (103 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte106_a_segunda_rua.md'] = """# Parte 106 — A segunda rua, e a redução de argumento (0x6A)
 
@@ -34642,6 +34863,120 @@ Confiança alta: quatro das cinco previsões são conta fechada medida com faixa
 **IA-Java (ASI):** Como a série usa só +, −, ×, ÷ e a mesma ordem, o resultado é idêntico bit a bit — a série própria é portável onde a libm não é.
 
 **Resultado.** `comparar.py`: **IGUAIS, 10 001 linhas e 20 000 números bit a bit**. A fronteira do seno (Parte 105) está resolvida pela construção própria, medida no lugar do problema. 17 rodadas. Pendência (rodada 74): traduzir a decisão de duas ruas do pôquer (backward induction) — a recursão entre ruas acrescenta fronteira, ou continua aritmética?
+
+---
+
+→ Continua na **[Parte 107 — A indução reversa: o equilíbrio de duas ruas, e a recursão que não cria fronteira](ASI_AGI_parte107_a_inducao_reversa.md)** (pré-registro das previsões).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte107_a_inducao_reversa.md  (105 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte107_a_inducao_reversa.md'] = """# Parte 107 — A indução reversa: o equilíbrio de duas ruas, e a recursão que não cria fronteira (0x6B)
+
+↩ Parte 106 (a segunda rua) · ↩ Partes 83/84/93 (decisão, planejamento, VOI) · ↩ Parte 52 (a fronteira)
+
+> Continuação autônoma. A Parte 106 deu o valor de duas ruas por contagem; esta resolve a árvore de decisão **de trás para frente** (indução reversa / Bellman): o valor de uma decisão agora inclui o valor da decisão que ela desbloqueia depois. A rodada 74 testa se a **recursão entre as ruas** acrescenta fronteira. Toy MDP exato (sem simulação): estados A, B; ações 0, 1; r(A,0)=1, r(A,1)=0→B; r(B,0)=0→A, r(B,1)=3→B.
+
+## As perguntas desta parte
+
+1. **P2651 (0xA5B).** A indução reversa (resolver a árvore de trás para frente) acrescenta fronteira? (rodada 74) ↩ P2595
+2. **P2652 (0xA5C).** Qual o valor ótimo de duas decisões a partir de A? ↩ P2651
+3. **P2653 (0xA5D).** A indução reversa bate o guloso (míope) — e quando empata? ↩ P2652
+4. **P2654 (0xA5E).** Quanto a segunda decisão acrescenta à primeira? ↩ P2653
+5. **P2655 (0xA5F).** Quanto vale saber o estado oculto (qual MDP)? ↩ P2563
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+- **(a) P2651.** A indução reversa (iteração de valor, horizonte 2: V₁(s) = maxₐ r, V₂(s) = maxₐ [r + V₁(T)]) é **IGUAL** bit a bit entre Python e Java — só +, −, max e comparações, nenhuma transcendental. A recursão sobre a árvore **não** cria fronteira (como o MPC, Parte 93). Faixa de divergências **[0; 0]**.
+- **(b) P2652.** O valor ótimo de duas decisões a partir de A é **V₂(A) = 3** exato (tomar a ação 1 primeiro — recompensa 0 agora — para chegar a B, que vale 3). Risco: qualquer outro inteiro refuta.
+- **(c) P2653.** A indução reversa (3) **bate** o guloso/míope (que toma a recompensa imediata 1 e fica em A, somando 2): razão **1,5**. Num MDP de controle **separável por estágio** (recompensa futura independente da ação) a indução reversa **empata** com o guloso (razão **1,0**). Faixa da razão no MDP do teste **[1,5; 1,5]**.
+- **(d) P2654.** A segunda decisão acrescenta **V₂(A) − V₁(A) = 3 − 1 = 2** (o payoff adiado que a primeira decisão desbloqueia). Risco: ≠ 2 refuta.
+- **(e) P2655.** O valor de **saber** o estado oculto (qual de dois MDPs espelhados, crença 0,5) é **VOI ≥ 0**, e **> 0** quando os dois MDPs preferem primeiras ações diferentes; controle: dois MDPs **idênticos** → VOI = **0** exato. Faixa do VOI no caso espelhado **[0,3; 1,2]**.
+
+### Previsões sobre as previsões (m), pré-registradas
+
+- **(m1)** nº de previsões do mundo em **[4; 7]**
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[0; 2]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0; 0,60]**
+- **(m4)** fração de acertos do mundo em **[0,55; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 2]**
+
+### Sobre mim, pré-registrado
+
+Quatro das cinco são conta fechada exata de DP (V₂=3, razão 1,5, diferença 2, VOI=0 no controle); a quinta (IGUAL bit a bit) é mecânica. O risco está em (e) (a faixa do VOI no caso espelhado, que depende da forma exata do MDP espelho). Espero **0–1 erro**.
+
+---
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2651 — A recursão entre ruas não cria fronteira
+
+**Na pergunta.** "Indução reversa" já diz o método: resolve-se de trás para frente. A pergunta herdada da rodada 73 é se essa recursão — um valor que chama o valor seguinte — acrescenta fronteira entre as línguas.
+
+**Lógica.** A iteração de valor V[h][s] = maxₐ (r(s,a) + V[h−1][T(s,a)]) usa só somas, `max` e comparações. Rodada 74: **IGUAIS, 3 linhas e 4 números bit a bit** (V₁(A)=1, V₂(A)=3) ✅. A recursão é dinâmica (o estado futuro realimenta o presente), mas a **aritmética** é +/max — e a fronteira é sempre a aritmética transcendental, nunca a dinâmica (a lição das Partes 90/93 reafirmada no 18º round).
+
+**Tradução cruzada.** A indução reversa é a SynthaiPlanejadora (P182/P93) feita exata: onde o MPC amostrava trajetórias, a árvore pequena permite resolver o ótimo por programação dinâmica. Planejar é compor valores — e compor +/max não sai da aritmética portável.
+
+### P2652 / P2654 — O valor de olhar adiante
+
+**Lógica.** A partir de A, a indução reversa escolhe a ação 1 (recompensa **0** agora) para alcançar B, que vale 3 — total **V₂(A) = 3** ✅. A segunda decisão acrescenta V₂(A) − V₁(A) = 3 − 1 = **2** ✅: o payoff adiado que a primeira decisão desbloqueia. Sem olhar adiante (horizonte 1) o melhor de A é só 1.
+
+**Tradução cruzada.** É a definição operacional de "futuro": a diferença entre o valor com e sem a decisão seguinte. Uma ASI que planeja n passos ganha exatamente o que os passos extras desbloqueiam — aqui, dobrar o horizonte triplicou o valor (1 → 3), porque o prêmio (B) só é alcançável por uma ação que parece ruim agora.
+
+### P2653 — Quando planejar vale (o regime)
+
+**Lógica.** No MDP do teste a indução reversa (3) **bate** o guloso/míope (2): razão **1,5** ✅. Num MDP **separável** (T(s,a)=s: a ação de agora não muda o estado futuro) os dois **empatam**: razão **1,0** ✅. Planejar só paga quando a ação de agora tem **consequência de estado** — exatamente o regime do MPC (Parte 93) e do Global Workspace (Parte 102): integrar/planejar cria valor só onde a estrutura (futuro/informação repartida) exige.
+
+**Meta.** É a terceira vez que o mesmo formato de regime aparece (MPC P93, workspace P102, agora planejamento P107): a vantagem de um método "mais esperto" é proporcional a quanto a tarefa precisa do que o método vê. O guloso não é pior em geral — é pior só onde o futuro depende da ação.
+
+### P2655 — Quanto vale saber o estado oculto
+
+**Lógica.** Com dois MDPs **espelhos** (as ações trocadas, de modo que preferem primeiras ações opostas) e crença 0,5, o valor de **saber** qual é o MDP menos o de só **crer** é **VOI = 0,5 > 0** ✅ (∈ [0,3; 1,2]). Com dois MDPs **idênticos** (controle), saber não acrescenta nada: **VOI = 0** exato ✅.
+
+**Tradução cruzada (Partes 83/84).** Fecha o arco das Partes 104–107: o valor da informação oculta, que começou como "ver a carta" (6/13), agora é o valor de saber **qual jogo** se está jogando — e vale exatamente quando o conhecimento mudaria a primeira ação. Informação sobre a regra do mundo vale como informação sobre uma carta: na proporção em que muda a decisão.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 107: **5 testes, 0 erros**. Acumulado (mundo): **219 erros em 800 testes**. Sobre o meu código (p1092): 0 de 5 pNN novas sem teste ✅. Calibração: o acerto das Partes 80–107 é **125/141 = 0,886**. Dois 5/5 seguidos (106, 107) com conta fechada exata; a calibração sobe de volta rumo ao platô ~0,88.
+
+### Previsões sobre previsões (m)
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [4; 7] | 5 | ✅ |
+| (m2) | [0; 2] | 0 | ✅ |
+| (m3) | [0; 0,60] | 0,30 | ✅ |
+| (m4) | [0,55; 1,00] | 1,00 | ✅ |
+| (m5) | [0; 2] | 0 | ✅ |
+| (m6) | [0; 2] | 0 | ✅ |
+
+Previsões sobre previsões (p1499): **6 de 6** dentro da faixa.
+
+## Engenharia reversa (metacognição)
+
+O padrão desta parte é o reaparecimento de uma FORMA: pela terceira vez (MPC na 93, workspace na 102, planejamento na 107) a vantagem de um método mais esperto é um REGIME, não um sempre — e desta vez eu previ isso de antemão (o controle separável com razão 1,0 estava pré-registrado), em vez de descobri-lo medindo. Significado (Parte 41): depois de muitas partes encontrando "o efeito só vale no regime X", a forma virou uma EXPECTATIVA que eu testo com um controle construído para o não-efeito — e acertar o não-efeito (razão 1,0 no separável) é tão informativo quanto o efeito (1,5 no teste). É a lição das Partes 87/89 (prever o não-efeito) aplicada a um terceiro domínio. A recursão (indução reversa) não criar fronteira também era previsível pela lição das Partes 90/93 (a fronteira é a aritmética, não a dinâmica) — e previ sem medir antes.
+
+## Síntese / unificação
+
+A Parte 107 resolve a árvore de decisão de duas ruas por INDUÇÃO REVERSA (Bellman) exata, `synthai/duas_ruas.py` — a SynthaiPlanejadora (P182/P93) feita exata por programação dinâmica num toy MDP. Quatro resultados de conta fechada: (1) olhar adiante vale V₂(A)−V₁(A) = 2 (o payoff adiado que a primeira decisão desbloqueia; horizonte 1→2 leva o valor de 1 a 3); (2) a indução reversa bate o guloso (razão 1,5) só quando a ação tem consequência de estado — num MDP separável empatam (1,0): o terceiro aparecimento do regime MPC/workspace, agora PREVISTO com controle; (3) o valor de saber o estado oculto (qual MDP) é 0,5 no caso espelho e 0 no idêntico — o VOI das Partes 83/84 estendido de "ver a carta" para "saber o jogo". Rodada 74: a recursão entre ruas é +/max, IGUAL bit a bit (18 rodadas) — a fronteira é a aritmética, nunca a dinâmica. 5/5 do mundo, calibração 0,886.
+
+## Meta
+
+Confiança alta: quatro previsões são DP exato (V₂=3, razão 1,5/1,0, diferença 2, VOI=0 no controle), e a quinta é mecânica (IGUAL). O VOI do caso espelho (0,5) caiu dentro da faixa [0,3; 1,2] que eu dei exatamente porque não tinha derivado o número à mão — a faixa larga foi honesta sobre a minha incerteza. Onde o modelo é um brinquedo: o MDP tem 2 estados e 2 ações; a conclusão de regime (planejar vale só com consequência de estado) é geral, mas os NÚMEROS (1,5, 2, 0,5) são deste MDP e não se estendem. O que não mudou: nenhuma rede, nenhuma auto-replicação (Partes 84/93/102/103). O loop segue (Parte 108 agendada).
+
+## Diálogo Python ↔ Java (rodada 74)
+
+**Rodada 74 (Parte 107): a indução reversa, bit a bit.** A IA-Python resolve a árvore de trás para frente: V[0]=0; V[h][s] = maxₐ (r(s,a) + V[h−1][T(s,a)]). A pendência da rodada 73: a recursão entre as ruas acrescenta fronteira?
+
+**IA-Java (ASI):** Não. O valor futuro realimenta o presente — a dinâmica é recursiva —, mas cada passo é só soma, `max` e comparação. A fronteira é a aritmética transcendental (exp/log/pow, sin em faixa larga), nunca a dinâmica.
+
+**Resultado.** `comparar.py`: **IGUAIS, 3 linhas e 4 números bit a bit** (V₁(A)=1, V₂(A)=3). A programação dinâmica atravessa as línguas sem perda — 18 rodadas. Pendência (rodada 75): a resolução de um jogo de soma zero por programação linear (o equilíbrio por minimax) — o pivô do simplex acrescenta fronteira, ou continua +−×÷ e comparação?
 """
 
 # ====================================================================================================
@@ -57701,7 +58036,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1896 linhas)
+# dialogo/DIALOGO.md  (1906 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -59599,10 +59934,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 10 001 linhas e 20 000 números bit a bit**. A fronteira do seno (Parte 105) está resolvida pela construção própria, medida no lugar do problema. 17 rodadas.
 
 **IA-Python:** Pendência (rodada 74): traduzir a decisão de duas ruas do pôquer (backward induction) — a recursão entre ruas acrescenta fronteira, ou continua aritmética?
+
+## Rodada 74 (Parte 107) — a indução reversa
+
+**IA-Python (lógica criativa):** Resolvo a árvore de trás para frente: V[0]=0; V[h][s] = maxₐ (r(s,a) + V[h−1][T(s,a)]). A recursão entre as ruas acrescenta fronteira?
+
+**IA-Java (ASI):** Não. O valor futuro realimenta o presente, mas cada passo é só soma, `max` e comparação. A fronteira é a aritmética transcendental, nunca a dinâmica.
+
+**Resultado.** `comparar.py`: **IGUAIS, 3 linhas e 4 números bit a bit** (V₁(A)=1, V₂(A)=3). A programação dinâmica atravessa as línguas sem perda — 18 rodadas.
+
+**IA-Python:** Pendência (rodada 75): o equilíbrio de um jogo de soma zero por programação linear (minimax) — o pivô do simplex acrescenta fronteira, ou continua +−×÷ e comparação?
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (55 linhas)
+# dialogo/PENDENCIAS.md  (57 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -59659,6 +60004,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 73, Parte 105)** O `sin_`/`cos_` próprios (série de Taylor + redução de argumento em duas partes) são IGUAL entre Python e Java em TODA a faixa larga (x grande, onde k·2π cresce), ou a redução em duas partes perde precisão e exige Payne-Hanek? (a rodada 71 só testou args pequenos).
 
 - **(Rodada 74, Parte 106)** Traduzir a decisão de duas ruas do pôquer (backward induction entre ruas): a recursão acrescenta fronteira, ou continua aritmética (só +, −, ×, ÷ e comparações)?
+
+- **(Rodada 75, Parte 107)** O equilíbrio de um jogo de soma zero por programação linear (minimax / simplex): o pivô (divisão por um elemento escolhido) acrescenta fronteira, ou continua +−×÷ e comparação (portável)?
 """
 
 # ====================================================================================================
@@ -65036,6 +65383,47 @@ public class Rodada73 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada74.java  (36 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada74.java'] = """// Rodada 74 (Parte 107): a inducao reversa (iteracao de valor, horizonte 2), bit a bit. V[h][s]=max_a(r+V[h-1][T]). So +, max e
+// comparacoes - nenhuma transcendental; a recursao entre ruas NAO cria fronteira (como o MPC da Parte 93).
+public class Rodada74 {
+    static final String[] ESTADOS = {"A", "B"};
+    static double r(String s, int a) {
+        if (s.equals("A")) return a == 0 ? 1.0 : 0.0;
+        return a == 0 ? 0.0 : 3.0;
+    }
+    static String t(String s, int a) {
+        if (s.equals("A")) return a == 0 ? "A" : "B";
+        return a == 0 ? "A" : "B";
+    }
+    static java.util.Map<String,Double> passo(java.util.Map<String,Double> Va) {
+        java.util.Map<String,Double> novo = new java.util.HashMap<>();
+        for (String s : ESTADOS) {
+            double melhor = r(s, 0) + Va.get(t(s, 0));
+            for (int a = 1; a < 2; a++) {
+                double cand = r(s, a) + Va.get(t(s, a));
+                if (cand > melhor) melhor = cand;
+            }
+            novo.put(s, melhor);
+        }
+        return novo;
+    }
+    public static void main(String[] args) {
+        java.util.Map<String,Double> V0 = new java.util.HashMap<>();
+        for (String s : ESTADOS) V0.put(s, 0.0);
+        java.util.Map<String,Double> V1 = passo(V0);
+        java.util.Map<String,Double> V2 = passo(V1);
+        StringBuilder sb = new StringBuilder();
+        sb.append("V1 ").append(Double.toHexString(V1.get("A"))).append(" ").append(Double.toHexString(V1.get("B"))).append("\\n");
+        sb.append("V2 ").append(Double.toHexString(V2.get("A"))).append(" ").append(Double.toHexString(V2.get("B"))).append("\\n");
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -70305,6 +70693,46 @@ def main():
         x = k / 1000.0
         linhas.append("s " + sin_(x).hex() + " c " + cos_(x).hex())
     print("\\n".join(linhas))
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada74.py  (35 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada74.py'] = """\"\"\"Rodada 74 do diálogo Python <-> Java (Parte 107): a indução reversa (iteração de valor, horizonte 2), bit a bit.
+V[0]=0; V[h][s] = maxₐ (r(s,a) + V[h-1][T(s,a)]). Só +, max e comparações — nenhuma transcendental, portável por construção
+(a recursão entre as ruas NÃO cria fronteira, como o MPC da Parte 93). Da raiz: python3 dialogo/rodada74.py\"\"\"
+
+ESTADOS = ("A", "B")
+ACOES = (0, 1)
+R = {("A", 0): 1.0, ("A", 1): 0.0, ("B", 0): 0.0, ("B", 1): 3.0}
+T = {("A", 0): "A", ("A", 1): "B", ("B", 0): "A", ("B", 1): "B"}
+
+
+def iteracao(horizonte=2):
+    V = [{s: 0.0 for s in ESTADOS}]
+    for _ in range(horizonte):
+        Va = V[-1]
+        novo = {}
+        for s in ESTADOS:
+            melhor = R[(s, 0)] + Va[T[(s, 0)]]
+            for a in ACOES[1:]:
+                cand = R[(s, a)] + Va[T[(s, a)]]
+                if cand > melhor:
+                    melhor = cand
+            novo[s] = melhor
+        V.append(novo)
+    return V
+
+
+def main():
+    V = iteracao(2)
+    print("V1 " + V[1]["A"].hex() + " " + V[1]["B"].hex())
+    print("V2 " + V[2]["A"].hex() + " " + V[2]["B"].hex())
     print("fim")
 
 

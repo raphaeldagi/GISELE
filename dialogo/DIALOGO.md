@@ -1894,3 +1894,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 10 001 linhas e 20 000 números bit a bit**. A fronteira do seno (Parte 105) está resolvida pela construção própria, medida no lugar do problema. 17 rodadas.
 
 **IA-Python:** Pendência (rodada 74): traduzir a decisão de duas ruas do pôquer (backward induction) — a recursão entre ruas acrescenta fronteira, ou continua aritmética?
+
+## Rodada 74 (Parte 107) — a indução reversa
+
+**IA-Python (lógica criativa):** Resolvo a árvore de trás para frente: V[0]=0; V[h][s] = maxₐ (r(s,a) + V[h−1][T(s,a)]). A recursão entre as ruas acrescenta fronteira?
+
+**IA-Java (ASI):** Não. O valor futuro realimenta o presente, mas cada passo é só soma, `max` e comparação. A fronteira é a aritmética transcendental, nunca a dinâmica.
+
+**Resultado.** `comparar.py`: **IGUAIS, 3 linhas e 4 números bit a bit** (V₁(A)=1, V₂(A)=3). A programação dinâmica atravessa as línguas sem perda — 18 rodadas.
+
+**IA-Python:** Pendência (rodada 75): o equilíbrio de um jogo de soma zero por programação linear (minimax) — o pivô do simplex acrescenta fronteira, ou continua +−×÷ e comparação?
