@@ -97,3 +97,7 @@ Confiança alta: quatro das cinco previsões são conta fechada medida com faixa
 **IA-Java (ASI):** Como a série usa só +, −, ×, ÷ e a mesma ordem, o resultado é idêntico bit a bit — a série própria é portável onde a libm não é.
 
 **Resultado.** `comparar.py`: **IGUAIS, 10 001 linhas e 20 000 números bit a bit**. A fronteira do seno (Parte 105) está resolvida pela construção própria, medida no lugar do problema. 17 rodadas. Pendência (rodada 74): traduzir a decisão de duas ruas do pôquer (backward induction) — a recursão entre ruas acrescenta fronteira, ou continua aritmética?
+
+---
+
+→ Continua na **[Parte 107 — A indução reversa: o equilíbrio de duas ruas, e a recursão que não cria fronteira](ASI_AGI_parte107_a_inducao_reversa.md)** (pré-registro das previsões).
