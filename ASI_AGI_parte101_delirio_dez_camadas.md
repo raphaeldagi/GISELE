@@ -116,3 +116,7 @@ Confiança máxima nas contas fechadas (dez camadas, composição, Banach) e no 
 - Teorema do ponto fixo de Banach (contração → ponto fixo único). Mapa logístico r=4 e a conjugação com o deslocamento de Bernoulli (Ulam–von Neumann): a assinatura de incompressibilidade do caos determinístico.
 - Recozimento / "delírio" (Parte 84); P(P(X)) e o mapa de calibração (Partes 83, 88); LFI1 (Parte 88); a assimetria pergunta↔resposta (Parte 46).
 - Penalidade de repetição na amostragem: Keskar et al., CTRL (2019).
+
+---
+
+**Continua na [Parte 102](ASI_AGI_parte102_o_workspace_global.md): o Global Workspace — a integração por broadcast vence os especialistas isolados só quando a tarefa precisa combinar o que nenhum vê sozinho.**
