@@ -120,3 +120,7 @@ Confiança alta: tudo é conta fechada (|b|/√3, Gauss-Seidel exato) ou medido,
 - Global Workspace Theory: B. Baars (1988); o "quadro-negro" e o broadcast. Ideia reimplementada em biblioteca padrão a partir do `workspace_global.py` recebido (auditado, não executado).
 - Descida por coordenadas / Gauss-Seidel sobre as equações normais: álgebra linear numérica clássica (Parte 70).
 - Beam search: busca em feixe clássica de decodificação.
+
+---
+
+→ Continua na **[Parte 103 — O dicionário como números, e o sinal de um jogo de cartas](ASI_AGI_parte103_o_dicionario_como_numeros.md)** (pré-registro das previsões).
