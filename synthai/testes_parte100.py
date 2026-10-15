@@ -44,7 +44,7 @@ class TesteParte100(unittest.TestCase):
         self.assertTrue(0.74 <= cal <= 0.88)
 
     def test_p1961_com_parte_100(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 101))))
         self.assertEqual(por[100], (5, 5))
         self.assertEqual((ok, tot), (92, 106))
 

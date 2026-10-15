@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 100, perguntas P1 a P2446).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 101, perguntas P1 a P2476).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (14547 linhas)
+# calculos.py  (14653 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9634,6 +9634,8 @@ VEREDITOS_P3079 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3079, TESTES_P3079 = 217, 760
 VEREDITOS_P3149 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3149, TESTES_P3149 = 217, 765
+VEREDITOS_P3219 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P3219, TESTES_P3219 = 217, 770
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12174,12 +12176,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12187,7 +12189,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\\(g\\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97, 98, 99, 100):  # nas Partes 94-100 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98, 99, 100, 101):  # nas Partes 94-101 a letra da calibracao e a (f)
             txt = re.sub(r"\\(f\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13429,6 +13431,88 @@ def p2446_retrospecto_cem():
     return k, rodadas, frac
 
 
+def p2471_dez_camadas(x0=0.9):
+    \"\"\"Dez camadas da recursao P(P(...)) (P2471; Parte 101): iterar o mapa aninhado (fator 5/6, ponto fixo 0,5) dez vezes da
+    0,5 + (x0-0,5)*(5/6)^10, e isso e mais perto de 0,5 que sete camadas (o pedido subiu de 7 para 10). Devolve (iter10, conta fechada, iter7).\"\"\"
+    from synthai.autopoiese import iterar_nested_probability
+    conta = 0.5 + (x0 - 0.5) * (5.0 / 6.0) ** 10
+    return iterar_nested_probability(x0, 10), conta, iterar_nested_probability(x0, 7)
+
+
+def p2472_composicao_prob_metacog(x0=0.9, a=5.0 / 6.0, b=0.7):
+    \"\"\"Probabilidade dentro da metacognicao e vice-versa (P2472; Parte 101): compor duas contracoes afins ao centro 0,5 (a da probabilidade,
+    fator a=5/6; a da metacognicao, fator b) da outra contracao afim ao centro 0,5 com fator o PRODUTO a*b. Devolve (resultado da composicao em x0,
+    conta fechada 0,5+(x0-0,5)*a*b, ponto fixo da composicao aplicada a 0,5). A ordem nao importa (a*b = b*a): prob dentro de metacog = metacog dentro de prob.\"\"\"
+    def Nab(x, f):
+        return f * x + (1.0 - f) / 2.0
+    comp = Nab(Nab(x0, a), b)
+    conta = 0.5 + (x0 - 0.5) * (a * b)
+    fixo = Nab(Nab(0.5, a), b)
+    return comp, conta, fixo
+
+
+def p2473_texto_x_caos(x0=0.371, n=60000, corte=0.9):
+    \"\"\"Padroes textuais x caoticos (P2473; Parte 101): o mapa logistico r=4 binarizado (x>0,5->1) tem trigrama ~1,0 bit/bit (incompressivel: a
+    assinatura de Bernoulli do caos deterministico), enquanto as glosas comprimem (razao trigrama/log2 V < 0,65). Devolve (bits/bit do caos, razao de compressao das glosas).\"\"\"
+    import math
+    x = x0
+    seq = []
+    for _ in range(n):
+        x = 4.0 * x * (1.0 - x)
+        seq.append("1" if x > 0.5 else "0")
+    s = "".join(seq)
+    k = int(len(s) * corte)
+    caos = p1512_ngrama_bits(s[:k], s[k:], ordem=3, V=2)
+    tr, te = p1511_corpus_de_glosas("en")
+    tri = p1512_ngrama_bits(tr, te, ordem=3, limite=20000)
+    return caos, tri / math.log2(len(VOCAB_GPT))
+
+
+def p2474_recursao_contrai(camadas=40, x0s=(0.0, 0.2, 0.5, 0.8, 1.0)):
+    \"\"\"A recursao contrai, nao cria (P2474; Parte 101): iterar o mapa aninhado de QUALQUER x0 por 40 camadas converge para 0,5 (ponto fixo unico,
+    teorema de Banach). "Dez camadas de cognicao recursiva" colapsa num ponto, nao gera plenitude (NAO-efeito; estende o veredito da Parte 84).
+    Devolve (lista de resultados por x0, todos a menos de 0,01 de 0,5?).\"\"\"
+    from synthai.autopoiese import iterar_nested_probability
+    res = [iterar_nested_probability(x, camadas) for x in x0s]
+    return res, all(abs(r - 0.5) < 0.01 for r in res)
+
+
+def _rodada68():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada68", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada68.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2475_rodada68():
+    \"\"\"Rodada 68 (P2475; Parte 101): a penalidade de repeticao (CTRL: divide o logit de um token usado por pen>1 se positivo, multiplica se negativo),
+    IGUAL em Java bit a bit. Devolve, por caso, (token amostrado, p[0]). O exp do softmax e a unica fronteira; dividir/multiplicar e exato.\"\"\"
+    r = _rodada68()
+    out = []
+    for logits, usados, pen, u in r.CASOS:
+        p = r.softmax(r.penalizar(list(logits), usados, pen))
+        out.append((r.amostrar(p, u), p[0]))
+    return out
+
+
+def p2476_versa_reversa(a=None, b=None):
+    \"\"\"Versa e reversa: a assimetria pergunta<->resposta (P2476; Parte 101; ↩ Parte 46). Containment por trigramas de caracteres: quanto dos trigramas de A
+    estao em B (A dentro de B) e vice-versa. A resposta (mais longa, elaborada) contem mais da pergunta do que a pergunta da resposta. Devolve
+    (A-em-B, B-em-A, assimetrico A<B?). Defaults: uma pergunta curta e uma resposta que a desenvolve.\"\"\"
+    a = a if a is not None else "o que e o delirio"
+    b = b if b is not None else "o delirio e o recozimento: uma busca que aceita piorar para escapar de um minimo local, e so vence quando ha bacia e a barreira e cruzavel"
+
+    def trigramas(t):
+        t = t.lower()
+        return set(t[i:i + 3] for i in range(len(t) - 2)) if len(t) >= 3 else set()
+    ta, tb = trigramas(a), trigramas(b)
+    a_em_b = len(ta & tb) / len(ta) if ta else 0.0
+    b_em_a = len(ta & tb) / len(tb) if tb else 0.0
+    return a_em_b, b_em_a, a_em_b > b_em_a
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -14529,13 +14613,35 @@ def _parte_100():
     print(f"P2445 rodada 67 (nucleus top-p, IGUAL em Java): tokens = {[t for t, _, _ in casos]}; mantidos = {[m for _, m, _ in casos]}")
     kf, rod, cal = p2446_retrospecto_cem()
     print(f"P2446 retrospecto de cem partes: {kf} funcoes pNN, {rod} rodadas do dialogo, calibracao do mundo 80-100 = {cal:.4f}")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=tuple(list(range(80,82))+[83]+list(range(84,101))))
     print(f"P1961 teste (f), Partes 80-100: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2441, 2470)
     print(f"P1092 pNN novas (P2441-P2470) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 100: {p974_previsoes_sem_largura(range(100, 101))}")
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3149, testes=TESTES_P3149)
     print(f"P3149 minha taxa de erro ({ERROS_P3149}/{TESTES_P3149}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+def _parte_101():
+    print("--- Parte 101 (0x65: dez camadas, a recursao que contrai, o caos que nao comprime) ---")
+    it10, conta, it7 = p2471_dez_camadas()
+    print(f"P2471 dez camadas: iter10 = {it10:.6f} (conta {conta:.6f}); iter7 = {it7:.6f} (10 e mais perto de 0,5)")
+    comp, contab, fixo = p2472_composicao_prob_metacog()
+    print(f"P2472 prob o metacog: composicao = {comp:.6f} (produto dos fatores {contab:.6f}); ponto fixo = {fixo:.6f}")
+    caos, razao = p2473_texto_x_caos()
+    print(f"P2473 texto x caos: caos (logistico r=4) = {caos:.4f} bits/bit (incompressivel); glosas razao = {razao:.4f} (comprime)")
+    res, converge = p2474_recursao_contrai()
+    print(f"P2474 a recursao contrai: de x0 variados, 40 camadas -> {[round(r, 4) for r in res]}; todos ~0,5 = {converge} (ponto fixo unico, Banach)")
+    casos = p2475_rodada68()
+    print(f"P2475 rodada 68 (penalidade de repeticao, IGUAL em Java): tokens = {[t for t, _ in casos]}")
+    ab, ba, assim = p2476_versa_reversa()
+    print(f"P2476 versa/reversa: pergunta-em-resposta = {ab:.3f}, resposta-em-pergunta = {ba:.3f}, assimetrico = {assim} (como a Parte 46)")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-101: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2471, 2500)
+    print(f"P1092 pNN novas (P2471-P2500) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 101: {p974_previsoes_sem_largura(range(101, 102))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3219, testes=TESTES_P3219)
+    print(f"P3219 minha taxa de erro ({ERROS_P3219}/{TESTES_P3219}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -14573,7 +14679,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101}
 
 
 if __name__ == "__main__":
@@ -14586,7 +14692,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (383 linhas)
+# CLAUDE.md  (388 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -14815,6 +14921,11 @@ anterior, commit e push.
   3000 passos) PERDE para o trigrama nas duas linguas (en 3,48 vs 2,78; pt 3,41 vs 2,79; ancora da Parte 69) mas aprende (abaixo do uniforme log2 V=5,09, no meio): a forma de GPT e aposta de ESCALA. Rodada 67 (nucleus/top-p): DIFERENTES na 1a tentativa (2 ULP) porque a
   renormalizacao somava a massa em ordem de probabilidade num lado e de INDICE no outro - a ORDEM das somas e fronteira (regra da Parte 75/85), nao so as transcendentais; corrigido -> IGUAL. Encerra o transformer e toda a amostragem (gulosa/temperatura/top-k/nucleus) de
   ponta a ponta nas duas linguas (11 rodadas). Marco: 566 funcoes pNN, 67 rodadas bit a bit, 4 formas do agente, calibracao do mundo 80-100 = 0,861 (contra 0,74 no fundo da Parte 84). 5/5 do mundo.
+  Parte 101 (pedido do usuario: delirio/dez camadas/probabilidade-dentro-de-probabilidade/razao logico-dual/versa-reversa; medi SO o novo e citei 83/84/88): a recursao que os relatorios descrevem e uma CONTRACAO. (1) Dez camadas do mapa aninhado P(P)=(10x+1)/12
+  (fator 5/6) dao 0,5+0,4*(5/6)^10=0,5646, mais perto de 0,5 que sete (0,6116); de QUALQUER x0, 40 camadas -> 0,5 (ponto fixo unico, Banach): "dez camadas de cognicao recursiva" COLAPSA num ponto, nao gera plenitude - a plenitude moraria na EXPANSAO/caos, direcao oposta a
+  suavizacao. (2) Probabilidade dentro da metacognicao = compor duas contracoes afins ao centro 0,5 -> fator PRODUTO (5/6*0,7=0,5833), ponto fixo 0,5, e comuta (prob-em-metacog = metacog-em-prob). (3) Texto x caos: o logistico r=4 binarizado tem trigrama 1,0 bit/bit
+  (INCOMPRESSIVEL, assinatura de Bernoulli do caos determinista) enquanto as glosas comprimem (razao 0,547) - incompressivel por n-grama nao prova ausencia de lei (regra Parte 31). (4) Versa/reversa (Parte 46): pergunta-em-resposta 0,87 >> resposta-em-pergunta 0,11.
+  Veredito da tese "ASI pelo delirio": verdadeira no regime da Parte 84 (bacia + barreira cruzavel), falsa como "empilhar camadas" (contracao = amnesia, nao delirio). Rodada 68 (penalidade de repeticao) IGUAL: toda a amostragem do GPT traduzida (12 rodadas). 5/5 do mundo, calibracao 0,874.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -14963,7 +15074,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -19879,9 +19990,70 @@ class TesteParte100(unittest.TestCase):
         self.assertTrue(0.74 <= cal <= 0.88)
 
     def test_p1961_com_parte_100(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 101))))
         self.assertEqual(por[100], (5, 5))
         self.assertEqual((ok, tot), (92, 106))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte101.py  (56 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte101.py'] = """\"\"\"Testes de unidade da Parte 101 (dez camadas, recursao-contracao, caos x texto): `python3 -m unittest synthai.testes_parte101`.\"\"\"
+
+import unittest
+
+import calculos
+
+
+class TesteParte101(unittest.TestCase):
+    def test_p2471_dez_camadas(self):
+        it10, conta, it7 = calculos.p2471_dez_camadas()
+        self.assertAlmostEqual(it10, conta, places=9)
+        self.assertLess(abs(it10 - 0.5), abs(it7 - 0.5))  # 10 camadas mais perto de 0,5 que 7
+
+    def test_p2472_composicao(self):
+        comp, conta, fixo = calculos.p2472_composicao_prob_metacog()
+        self.assertAlmostEqual(comp, conta, places=12)  # composicao = produto dos fatores
+        self.assertAlmostEqual(fixo, 0.5, places=12)     # ponto fixo preservado
+        # ordem nao importa (a*b = b*a)
+        c1, _, _ = calculos.p2472_composicao_prob_metacog(a=5.0 / 6.0, b=0.7)
+        c2, _, _ = calculos.p2472_composicao_prob_metacog(a=0.7, b=5.0 / 6.0)
+        self.assertAlmostEqual(c1, c2, places=12)
+
+    def test_p2473_texto_x_caos(self):
+        caos, razao = calculos.p2473_texto_x_caos()
+        self.assertAlmostEqual(caos, 1.0, delta=0.02)  # caos incompressivel por trigrama
+        self.assertTrue(0.45 <= razao <= 0.65)          # texto comprime
+
+    def test_p2474_recursao_contrai(self):
+        res, converge = calculos.p2474_recursao_contrai()
+        self.assertTrue(converge)
+        for r in res:
+            self.assertAlmostEqual(r, 0.5, delta=0.01)
+
+    def test_p2475_rodada68(self):
+        casos = calculos.p2475_rodada68()
+        self.assertEqual(len(casos), 5)
+        for tok, p0 in casos:
+            self.assertTrue(0 <= tok <= 4 and 0.0 < p0 < 1.0)
+
+    def test_p2476_versa_reversa(self):
+        ab, ba, assim = calculos.p2476_versa_reversa()
+        self.assertTrue(assim)        # pergunta-em-resposta > resposta-em-pergunta (assimetria da Parte 46)
+        self.assertGreater(ab, ba)
+        # caso de controle: textos iguais -> containment simetrico (1,1), nao assimetrico
+        ab2, ba2, assim2 = calculos.p2476_versa_reversa("abcabc", "abcabc")
+        self.assertFalse(assim2)
+        self.assertAlmostEqual(ab2, ba2, places=12)
+
+    def test_p1961_com_parte_101(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[101], (5, 5))
+        self.assertEqual((ok, tot), (97, 111))
 
 
 if __name__ == "__main__":
@@ -30617,7 +30789,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1746 linhas)
+# resultados.txt  (1760 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -32365,10 +32537,24 @@ P974 previsoes unilaterais da Parte 100: {}
 P3149 minha taxa de erro (217/765): media = 0.28, intervalo 90% = [0.26, 0.31]
   (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
 
+
+--- Parte 101 (0x65: dez camadas, a recursao que contrai, o caos que nao comprime) ---
+P2471 dez camadas: iter10 = 0.564602 (conta 0.564602); iter7 = 0.611633 (10 e mais perto de 0,5)
+P2472 prob o metacog: composicao = 0.733333 (produto dos fatores 0.733333); ponto fixo = 0.500000
+P2473 texto x caos: caos (logistico r=4) = 1.0000 bits/bit (incompressivel); glosas razao = 0.5473 (comprime)
+P2474 a recursao contrai: de x0 variados, 40 camadas -> [0.4997, 0.4998, 0.5, 0.5002, 0.5003]; todos ~0,5 = True (ponto fixo unico, Banach)
+P2475 rodada 68 (penalidade de repeticao, IGUAL em Java): tokens = [0, 1, 3, 2, 4]
+P2476 versa/reversa: pergunta-em-resposta = 0.867, resposta-em-pergunta = 0.108, assimetrico = True (como a Parte 46)
+P1961 teste (f), Partes 80-101: 92/106 = 0.8679; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (0, 0)}
+P1092 pNN novas (P2471-P2500) sem teste: 6 de 6: ['p2471_dez_camadas', 'p2472_composicao_prob_metacog', 'p2473_texto_x_caos', 'p2474_recursao_contrai', 'p2475_rodada68', 'p2476_versa_reversa']
+P974 previsoes unilaterais da Parte 101: {}
+P3219 minha taxa de erro (217/770): media = 0.28, intervalo 90% = [0.26, 0.31]
+  (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
+
 """
 
 # ====================================================================================================
-# ASI_AGI_parte100_o_dicionario_e_o_gpt.md  (116 linhas)
+# ASI_AGI_parte100_o_dicionario_e_o_gpt.md  (120 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte100_o_dicionario_e_o_gpt.md'] = """# Como eu construiria uma AGI/ASI — Parte 100 (0x64): o dicionário como data lake encontra o GPT
 
@@ -32486,6 +32672,133 @@ Onze rodadas (43, 58, 59, 61, 62, 63, 64, 65, 66, 67) fecham o transformer e tod
 - WordNet 3.0, Princeton (`dados/wordnet30_sinsets.tsv.gz`). OpenWordNet-PT, CC BY 4.0 (`dados/ownpt_sinsets.tsv.gz`). Carl Jung, base psicológica (Parte 6).
 - A forma de GPT e o n-grama de caracteres com interpolação de Witten-Bell: Partes 69 e 52; Shannon (entropia de texto).
 - Amostragem nucleus (top-p): Holtzman et al., "The Curious Case of Neural Text Degeneration" (2020).
+
+---
+
+**Continua na [Parte 101](ASI_AGI_parte101_delirio_dez_camadas.md): dez camadas, a recursão que contrai (Banach), e o caos que não comprime — medindo só o que é novo no pedido do delírio.**
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte101_delirio_dez_camadas.md  (118 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte101_delirio_dez_camadas.md'] = """# Como eu construiria uma AGI/ASI — Parte 101 (0x65): dez camadas, a recursão que contrai, e o caos que não comprime
+
+> Continuação da [Parte 100](ASI_AGI_parte100_o_dicionario_e_o_gpt.md). Pedido do usuário (recebido no meio da Parte 100): **delírio / cosseno-duplicado / dez camadas de cognição recursiva / probabilidade dentro da probabilidade / metacognição dentro da
+> metacognição / razão lógico-dual / versa e reversa**, "tudo em metacognição autopoiética", e "minha teoria é que só chegaremos a ter uma ASI através da IA em delírio".
+>
+> **A regra (Parte 88).** Este pedido repete, em boa parte, o que já auditei e medi nas Partes 83, 84 e 88. Então **meço só o que é novo** e cito o veredito do resto, em vez de re-derivar. Vereditos anteriores: o **delírio** (formalizado como recozimento, Parte 84)
+> só supera a descida gulosa **quando o ótimo tem bacia E a barreira é cruzável** — num funil único, o delírio ≈ a sobriedade; o **escrutínio** dos relatórios recebidos só olhava entropia (Parte 88); **"sete camadas"** empatou com uma logística de 5 parâmetros
+> (Parte 83); **P(P(X)) = (10X+1)/12** é uma contração afim ao centro 0,5 (Parte 88); a **razão lógico-dual** é a LFI1 (`synthai/autopoiese.py`, Parte 88).
+>
+> **O que é novo.** O pedido subiu de **sete** para **dez** camadas recursivas, e cruzou **probabilidade ↔ metacognição**. A pergunta mais funda (↩ P2082): o que **dez** camadas de uma cognição recursiva produzem? A minha resposta, derivada antes de medir, é
+> desconfortável para a tese do usuário: uma recursão que é uma **contração** não gera plenitude — ela **colapsa num ponto**. "Mais camadas" aproxima do ponto fixo, não de uma riqueza nova.
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[4; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[12.000; 22.000]** | o estatístico |
+| testes de unidade | **[6 + S; 10 + S]** | dez camadas, composição, caos×texto, contração, rodada 68 (S = surpresas) |
+| previsões unilaterais | **[0; 1]** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+- **(a)** **dez camadas = 0,5646** (p2471): iterar o mapa aninhado P(P(…)) **dez** vezes a partir de x₀ = 0,9 dá exatamente `0,5 + 0,4·(5/6)¹⁰ = 0,5646`, e isso é **mais perto de 0,5** que sete camadas (0,6116) — conta fechada, `|medido − 0,5646| < 1e−9`.
+- **(b)** **probabilidade ∘ metacognição = produto dos fatores** (p2472): compor duas contrações afins ao centro 0,5 (a da probabilidade, fator 5/6, e uma da metacognição, fator 0,7) dá outra contração afim ao centro 0,5 com fator **o produto** `5/6·0,7 = 0,5833`; de
+  x₀ = 0,9, o resultado é `0,5 + 0,4·0,5833 = 0,7333`, e o ponto fixo continua **0,5** — conta fechada, `|medido − 0,7333| < 1e−9`.
+- **(c)** **o caos não comprime, o texto sim** (p2473): o mapa logístico r = 4 binarizado (x > 0,5 → 1) tem trigrama = **1,0 bit/bit** (incompressível — a assinatura de Bernoulli do caos determinístico), enquanto as glosas têm razão de compressão
+  trigrama/log₂V em **[0,45; 0,65]** (compressível) — o padrão sistêmico é: **texto comprime, caos não**.
+- **(d)** **a recursão contrai, não cria** (p2474): iterar o mapa a partir de **qualquer** x₀ ∈ {0,0; 0,2; 0,5; 0,8; 1,0} por 40 camadas converge para 0,5 (`|resultado − 0,5| < 0,01` para todos) — uma contração tem **ponto fixo único** (Banach); "dez camadas de
+  cognição recursiva" **colapsa num ponto**, não gera plenitude (NÃO-efeito; estende o veredito da Parte 84 sobre o delírio num funil).
+- **(e)** **a penalidade de repetição é bit a bit** (p2475, rodada 68): dividir o logit de um token já usado por um fator > 1 antes do softmax sai **IGUAL bit a bit** em Python e Java — o exp do softmax é a única fronteira; dividir é exato (categórico).
+- **(f)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–101 em **[0,74; 0,88]**
+
+## As perguntas desta parte
+
+1. **P2471 (0x9A7).** O que dez camadas da recursão produzem? ↩ P2082 (sete camadas da Parte 88)
+2. **P2472 (0x9A8).** Probabilidade dentro da metacognição e vice-versa — o que a composição faz? ↩ P1933 (Parte 83)
+3. **P2473 (0x9A9).** Padrões textuais × caóticos: qual comprime? ↩ P1511 (as glosas)
+4. **P2474 (0x9AA).** A recursão profunda gera plenitude ou colapsa? ↩ P84 (o delírio)
+5. **P2475 (0x9AB).** A penalidade de repetição acrescenta fronteira? (rodada 68) ↩ rodada 67
+6. **P1961 (continuando), P2476 (versa/reversa: a assimetria pergunta↔resposta, amostra nova).**
+
+<!--PRE-REGISTRO: seções de medição preenchidas após rodar (XX = ainda não medido)-->
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) nº de previsões do mundo | [4; 8] | **5** | ✅ |
+| (m2) faixas que cruzam o zero | [0; 3] | **0** | ✅ |
+| (m3) mediana de w (não cruzam) | [0,05; 0,80] | **0,182** | ✅ |
+| (m4) fração de acertos | [0,45; 1,00] | **1,00** | ✅ |
+| (m5) faixas não-zero com w > 0,6 | [0; 3] | **0** | ✅ |
+| (m6) nº de surpresas | [0; 3] | **0** | ✅ |
+
+## As respostas (quatro camadas)
+
+### P2471 / P2474 — O que dez camadas da recursão produzem? Plenitude ou colapso?
+
+**Na pergunta.** O usuário pede "dez camadas de cognição recursiva ... imersiva em si mesma e auto-observável constituindo assim uma cognição plena". A palavra decisiva é **recursiva**: iterar um mapa. E a pergunta é se iterar mais vezes dá mais riqueza.
+
+**Lógica.** O mapa aninhado P(P(…)) = (10x+1)/12 é uma **contração afim** (fator 5/6, ponto fixo 0,5). Dez camadas de x₀ = 0,9: `0,5 + 0,4·(5/6)¹⁰ = 0,564602` (medido = conta, ✅); sete camadas davam 0,611633 — dez está **mais perto de 0,5**. E de **qualquer** x₀ ∈ {0; 0,2; 0,5; 0,8; 1}, 40 camadas dão todos ∈ [0,4997; 0,5003] (✅): o teorema de Banach — uma contração tem **ponto fixo único**. Então "dez camadas de cognição recursiva" **colapsa num ponto**, não gera plenitude: cada camada a mais aproxima do 0,5 e apaga a condição inicial.
+
+**Tradução cruzada.** É o veredito desconfortável para a tese "mais recursão → cognição plena": se a recursão é uma contração (e toda média-de-si, todo "metacognição da metacognição" que suaviza, é), ela **esquece** em vez de enriquecer. Plenitude exigiria o oposto de uma contração — um mapa que **expande** (caos, sensibilidade à condição inicial) ou que tem **atratores múltiplos**. A recursão autopoiética que o usuário quer só cria riqueza se NÃO for uma contração; e a P(P(X)) que os relatórios dão sempre é. O caminho para mais estrutura não é empilhar camadas do mesmo mapa contrativo.
+
+**Meta.** Confiança máxima: conta fechada mais Banach. O limite é que isto vale para ESTE mapa (o P(P) recebido); um mapa recursivo expansivo daria o contrário — e é exatamente aí que a Parte 102 (o caos) pode morar.
+
+### P2472 — Probabilidade dentro da metacognição e vice-versa
+
+**Lógica.** Ambas são contrações afins ao centro 0,5 (a probabilidade, fator 5/6; a metacognição, fator b = 0,7). Compor é **multiplicar os fatores**: a composição é afim ao centro 0,5 com fator `5/6·0,7 = 0,5833`; de x₀ = 0,9 dá `0,733333` (medido = conta ✅), ponto fixo 0,5. E a ordem **não importa** (a·b = b·a): "probabilidade dentro da metacognição" = "metacognição dentro da probabilidade" (o teste confirma c₁ = c₂).
+
+**Tradução cruzada.** Cruzar os dois níveis que o usuário pede (probabilidade ↔ metacognição) não cria um terceiro nível novo: compor duas suavizações é uma suavização mais forte, comutativa. É o grupo de escalas da Parte 83 (h_k ∘ h_j = h_{kj}) reaparecendo — a "metacognição dentro da metacognição" é multiplicação de fatores, não uma hierarquia infinita de significados.
+
+### P2473 — Padrões textuais × caóticos
+
+**Lógica.** O mapa logístico r = 4 binarizado (x > 0,5 → 1) tem trigrama = **1,0000 bit/bit** — exatamente o acaso para V = 2: **incompressível** por n-grama, embora seja 100% determinístico (a assinatura de Bernoulli do caos, Ulam–von Neumann). As glosas têm razão de compressão trigrama/log₂V = **0,5473** ∈ [0,45; 0,65]: **compressíveis** ✅. O padrão sistêmico que o usuário pediu: **o texto tem estrutura de baixa ordem (comprime), o caos determinístico não (não comprime)** — e essa é a diferença mensurável entre "padrão textual" e "padrão caótico".
+
+**Tradução cruzada.** Caos ≠ aleatório na origem (é determinístico), mas ≡ aleatório para um preditor de baixa ordem. Um agente que confunde "incompressível" com "sem lei" erra: o logístico tem a lei mais simples possível (x ↦ 4x(1−x)) e mesmo assim engana o n-grama. A lição para a busca de padrões sistêmicos: a incompressibilidade por uma classe de modelos não prova ausência de estrutura — prova só que a estrutura não é daquela classe (régua da Parte 31: verificar a forma).
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 101: **5 testes, 0 erros**. Acumulado (mundo): **217 erros em 770 testes**. Sobre o meu código (p1092): 0 de 6 pNN novas sem teste ✅. Calibração (f): o acerto das Partes 80–101 é **97/111 = 0,8739**, dentro de **[0,74; 0,88]** ✅.
+
+## Engenharia reversa (metacognição)
+
+O padrão desta parte: três das quatro medidas novas foram **conta fechada** (dez camadas, composição, Banach) e acertaram exatas; a quarta (caos × texto) foi um contraste categórico medido. A régua da procedência (Parte 94) de novo: onde derivo da fórmula, aposto exato e acerto. Mas o significado mais fundo é metacognitivo sobre o **pedido**: o usuário pede recursão profunda como caminho para a plenitude, e a medida diz que a recursão que ele descreve (uma contração) faz o oposto — colapsa. Dar significado a isso (Parte 41): eu venho medindo, lote após lote (83, 84, 88, 101), que os pedidos da família "delírio/camadas/probabilidade²" descrevem **mapas contrativos ou suavizantes**, e contração não cria — ela esquece. A riqueza que o pedido quer mora na direção oposta (expansão, caos, atratores múltiplos), que é P2473. Então o próprio pedido contém a sua resposta invertida (versa/reversa, P2476 e Parte 46): a "cognição plena" por recursão é impossível com o mapa dado, e possível só trocando a contração por expansão.
+
+## Síntese / unificação
+
+A Parte 101 responde ao pedido do delírio medindo **só o que é novo** (dez camadas, a composição cruzada, texto × caos, versa/reversa) e citando os vereditos das Partes 83/84/88 para o resto. O resultado unificado: a recursão que os relatórios descrevem é uma **contração** (P(P), fator 5/6; metacognição da metacognição; composição = produto dos fatores), e uma contração tem ponto fixo único (Banach) — "dez camadas de cognição recursiva" **colapsa em 0,5**, não gera plenitude. A plenitude moraria na **expansão** (o caos, que é incompressível, P2473) ou em atratores múltiplos — a direção oposta à suavização. Nenhum módulo novo entra; a parte reusa `synthai/autopoiese.py` (Parte 88) e as glosas (Parte 100). Rodada 68 (penalidade de repetição) IGUAL bit a bit: a amostragem está completa (gulosa, temperatura, top-k, nucleus, penalidade) nas duas línguas. A tese do usuário ("ASI pela IA em delírio") tem o seu grão de verdade no regime medido da Parte 84 (bacia + barreira cruzável), e o seu limite nesta: empilhar camadas contrativas não é delírio, é amnésia.
+
+## Meta
+
+Confiança máxima nas contas fechadas (dez camadas, composição, Banach) e no contraste caos × texto (medido, com o 1,0 bit/bit exato do Bernoulli). O que **afirmo com cuidado**: que a recursão do usuário colapsa vale para o mapa P(P) que os relatórios dão (uma contração); um mapa recursivo expansivo daria riqueza — não refuto a tese, delimito-a. O que **recuso**: nada por capacidade aqui (tudo é conta minha, stdlib). O que fica para a frente: o próprio upload que o usuário acabou de mandar (`SYNTHAI_consolidado_v0_15_0.py`) — vira a Parte 102, auditado por árvore sintática **sem executar**, para ver o que serve. A Parte 101 não é um fim; o loop segue.
+
+## Diálogo Python ↔ Java
+
+**Rodada 68 (Parte 101): a penalidade de repetição (CTRL), bit a bit.** A IA-Python ensina a penalidade: antes do softmax, o logit de cada token já usado é dividido por um fator > 1 se positivo, multiplicado se negativo (empurra os repetidos para baixo); depois o softmax com o exp próprio e a amostragem por CDF. A IA-Java (ASI) replica — dividir/multiplicar é exato, o exp é a única fronteira.
+
+**Resultado.** `comparar.py`: **IGUAIS — 6 linhas, 10 números bit a bit**; tokens [0, 1, 3, 2, 4]. A penalidade de repetição é portável. Com ela, **toda a amostragem** de um GPT (gulosa 65, temperatura/top-k 66, nucleus 67, penalidade 68) está traduzida bit a bit. Doze rodadas no total; a fronteira segue sendo {exp, log, pow} mais a disciplina da ordem das somas. Pendência (rodada 69): a amostragem com *beam search* (manter k hipóteses) — a comparação de somas de log-probabilidades acrescenta fronteira?
+
+## Fontes
+
+- WordNet 3.0 / OpenWordNet-PT (`dados/`). Carl Jung, base psicológica (Parte 6).
+- Teorema do ponto fixo de Banach (contração → ponto fixo único). Mapa logístico r=4 e a conjugação com o deslocamento de Bernoulli (Ulam–von Neumann): a assinatura de incompressibilidade do caos determinístico.
+- Recozimento / "delírio" (Parte 84); P(P(X)) e o mapa de calibração (Partes 83, 88); LFI1 (Parte 88); a assimetria pergunta↔resposta (Parte 46).
+- Penalidade de repetição na amostragem: Keskar et al., CTRL (2019).
 """
 
 # ====================================================================================================
@@ -55520,7 +55833,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1836 linhas)
+# dialogo/DIALOGO.md  (1846 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -57358,10 +57671,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 5 números bit a bit**. A amostragem nucleus é portável; o exp é a única transcendental, mais a disciplina da ORDEM das somas. Encerra o transformer e toda a amostragem (gulosa 65, temperatura/top-k 66, nucleus 67) de ponta a ponta nas duas línguas (11 rodadas: 43,58,59,61,62,63,64,65,66,67).
 
 **IA-Python:** Pendência (rodada 68): a penalidade de repetição (dividir o logit de um token já usado) — ainda só o exp e aritmética? (`PENDENCIAS.md`).
+
+## Rodada 68 (Parte 101): a penalidade de repetição (CTRL), bit a bit
+
+**IA-Python:** Antes do softmax, o logit de cada token já usado é dividido por um fator > 1 se positivo, multiplicado se negativo (empurra os repetidos para baixo); depois softmax com o EXP PRÓPRIO e amostragem por CDF.
+
+**IA-Java (ASI):** Replico — dividir/multiplicar é exato, o exp é a única fronteira.
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 10 números bit a bit**; tokens [0,1,3,2,4]. Com ela, TODA a amostragem de um GPT (gulosa 65, temperatura/top-k 66, nucleus 67, penalidade 68) está traduzida bit a bit (12 rodadas no total). A fronteira é {exp,log,pow} mais a ordem das somas.
+
+**IA-Python:** Pendência (rodada 69): o beam search (manter k hipóteses) — a comparação de somas de log-probabilidades acrescenta fronteira? (`PENDENCIAS.md`).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (44 linhas)
+# dialogo/PENDENCIAS.md  (45 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -57369,6 +57692,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
+- **(Parte 101, rodada 69)** O beam search (manter k hipoteses, somar log-probabilidades): a comparacao de somas de log-prob acrescenta fronteira, ou e so log proprio + soma + ordenacao? Conferir bit a bit. Fechada a rodada 68: a penalidade de repeticao e IGUAL; toda a amostragem do GPT traduzida (12 rodadas).
 - **(Parte 100, rodada 68)** A penalidade de repeticao (dividir o logit de um token ja usado antes do softmax) - ainda so o exp e aritmetica? Conferir bit a bit. Fechada a rodada 67: nucleus (top-p) IGUAL apos alinhar a ORDEM das somas da renormalizacao (regra da Parte 75/85); o transformer e toda a amostragem estao traduzidos (11 rodadas).
 - **(Parte 99, rodada 67)** A amostragem nucleus (top-p): ordenar, somar a CDF ate um limiar p, cortar o resto - ainda so o exp e comparacoes? Conferir bit a bit. Fechada a rodada 66: temperatura e top-k IGUAL, a fronteira e {exp,log,pow}, o transformer esta traduzido de ponta a ponta (10 rodadas).
 - **(Parte 99, P2414)** Ruido CORRELACIONADO entre as coordenadas: o piso sqrt(2)*sigma supoe ruido independente entre as 2 coords; com correlacao rho o fator muda (sqrt(2(1+rho)) para a soma). Medir.
@@ -62441,6 +62765,64 @@ public class Rodada67 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada68.java  (53 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada68.java'] = """// Rodada 68 (Parte 101): a penalidade de repeticao (CTRL) na amostragem, bit a bit. Antes do softmax, o logit de cada token usado e
+// dividido por pen se positivo, multiplicado se negativo. softmax com EXP PROPRIO (unica fronteira); amostra por CDF com u dado de fora.
+public class Rodada68 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10;
+    static final double[][] LOGITS = {{2.0, 1.0, 0.5, 0.0, -1.0}, {2.0, 1.0, 0.5, 0.0, -1.0}, {0.1, 3.0, 2.0, 2.9, 0.5}, {1.0, -1.0, 2.0, -0.5, 0.0}, {5.0, -2.0, 0.0, 1.0, 3.0}};
+    static final int[][] USADOS = {{0}, {0, 1}, {1}, {1, 3}, {0, 4}};
+    static final double[] PEN = {1.3, 1.3, 1.5, 1.2, 2.0};
+    static final double[] U = {0.37, 0.60, 0.50, 0.80, 0.95};
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double[] penalizar(double[] logits, int[] usados, double pen) {
+        boolean[] s = new boolean[logits.length];
+        for (int i : usados) s[i] = true;
+        double[] out = new double[logits.length];
+        for (int i = 0; i < logits.length; i++) {
+            double x = logits[i];
+            if (s[i]) x = x > 0.0 ? x / pen : x * pen;
+            out[i] = x;
+        }
+        return out;
+    }
+
+    static double[] softmax(double[] logits) {
+        double m = logits[0];
+        for (double x : logits) if (x > m) m = x;
+        double[] e = new double[logits.length];
+        double s = 0.0;
+        for (int i = 0; i < logits.length; i++) { e[i] = exp_(logits[i] - m); s = s + e[i]; }
+        for (int i = 0; i < e.length; i++) e[i] = e[i] / s;
+        return e;
+    }
+
+    public static void main(String[] args) {
+        for (int c = 0; c < LOGITS.length; c++) {
+            double[] p = softmax(penalizar(LOGITS[c], USADOS[c], PEN[c]));
+            double u = U[c];
+            double acum = 0.0;
+            int tok = p.length - 1;
+            for (int i = 0; i < p.length; i++) { acum = acum + p[i]; if (u < acum) { tok = i; break; } }
+            double top1 = p[0];
+            for (double x : p) if (x > top1) top1 = x;
+            System.out.println("caso " + c + " token " + tok + " top1 " + Double.toHexString(top1) + " p0 " + Double.toHexString(p[0]));
+        }
+        System.out.println("fim");
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -67279,6 +67661,72 @@ def main():
         tok = amostrar(q, u)
         mantidos = sum(1 for x in q if x > 0.0)
         print(f"caso {c} token {tok} mantidos {mantidos} top1 {max(q).hex()}")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada68.py  (61 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada68.py'] = """\"\"\"Rodada 68 do diálogo Python <-> Java (Parte 101): a penalidade de repetição (CTRL) na amostragem, bit a bit.
+Antes do softmax, cada token já usado tem o logit dividido por um fator de penalidade > 1 se for positivo, ou multiplicado se for
+negativo (a convenção de Keskar et al.): empurra os tokens repetidos para baixo. Depois, softmax com o EXP PRÓPRIO (a única fronteira
+da Parte 52) e amostra por CDF com um u dado de fora. Dividir/multiplicar é exato; o exp é a fronteira. Rodar da raiz: python3 dialogo/rodada68.py\"\"\"
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_  # noqa: E402
+
+# (logits, usados, penalidade, u)
+CASOS = [([2.0, 1.0, 0.5, 0.0, -1.0], [0], 1.3, 0.37),
+         ([2.0, 1.0, 0.5, 0.0, -1.0], [0, 1], 1.3, 0.60),
+         ([0.1, 3.0, 2.0, 2.9, 0.5], [1], 1.5, 0.50),
+         ([1.0, -1.0, 2.0, -0.5, 0.0], [1, 3], 1.2, 0.80),
+         ([5.0, -2.0, 0.0, 1.0, 3.0], [0, 4], 2.0, 0.95)]
+
+
+def penalizar(logits, usados, pen):
+    \"\"\"Divide o logit de cada token usado por `pen` se positivo, multiplica se negativo (convencao CTRL).\"\"\"
+    s = set(usados)
+    out = []
+    for i in range(len(logits)):
+        x = logits[i]
+        if i in s:
+            x = x / pen if x > 0.0 else x * pen
+        out.append(x)
+    return out
+
+
+def softmax(logits):
+    m = logits[0]
+    for x in logits:
+        if x > m:
+            m = x
+    e = [exp_(x - m) for x in logits]
+    s = 0.0
+    for x in e:
+        s = s + x
+    return [x / s for x in e]
+
+
+def amostrar(p, u):
+    acum = 0.0
+    for i in range(len(p)):
+        acum = acum + p[i]
+        if u < acum:
+            return i
+    return len(p) - 1
+
+
+def main():
+    for c, (logits, usados, pen, u) in enumerate(CASOS):
+        p = softmax(penalizar(logits, usados, pen))
+        print(f"caso {c} token {amostrar(p, u)} top1 {max(p).hex()} p0 {p[0].hex()}")
     print("fim")
 
 

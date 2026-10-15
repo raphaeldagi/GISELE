@@ -9596,6 +9596,8 @@ VEREDITOS_P3079 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3079, TESTES_P3079 = 217, 760
 VEREDITOS_P3149 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3149, TESTES_P3149 = 217, 765
+VEREDITOS_P3219 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P3219, TESTES_P3219 = 217, 770
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12136,12 +12138,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12149,7 +12151,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\(g\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97, 98, 99, 100):  # nas Partes 94-100 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98, 99, 100, 101):  # nas Partes 94-101 a letra da calibracao e a (f)
             txt = re.sub(r"\(f\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13391,6 +13393,88 @@ def p2446_retrospecto_cem():
     return k, rodadas, frac
 
 
+def p2471_dez_camadas(x0=0.9):
+    """Dez camadas da recursao P(P(...)) (P2471; Parte 101): iterar o mapa aninhado (fator 5/6, ponto fixo 0,5) dez vezes da
+    0,5 + (x0-0,5)*(5/6)^10, e isso e mais perto de 0,5 que sete camadas (o pedido subiu de 7 para 10). Devolve (iter10, conta fechada, iter7)."""
+    from synthai.autopoiese import iterar_nested_probability
+    conta = 0.5 + (x0 - 0.5) * (5.0 / 6.0) ** 10
+    return iterar_nested_probability(x0, 10), conta, iterar_nested_probability(x0, 7)
+
+
+def p2472_composicao_prob_metacog(x0=0.9, a=5.0 / 6.0, b=0.7):
+    """Probabilidade dentro da metacognicao e vice-versa (P2472; Parte 101): compor duas contracoes afins ao centro 0,5 (a da probabilidade,
+    fator a=5/6; a da metacognicao, fator b) da outra contracao afim ao centro 0,5 com fator o PRODUTO a*b. Devolve (resultado da composicao em x0,
+    conta fechada 0,5+(x0-0,5)*a*b, ponto fixo da composicao aplicada a 0,5). A ordem nao importa (a*b = b*a): prob dentro de metacog = metacog dentro de prob."""
+    def Nab(x, f):
+        return f * x + (1.0 - f) / 2.0
+    comp = Nab(Nab(x0, a), b)
+    conta = 0.5 + (x0 - 0.5) * (a * b)
+    fixo = Nab(Nab(0.5, a), b)
+    return comp, conta, fixo
+
+
+def p2473_texto_x_caos(x0=0.371, n=60000, corte=0.9):
+    """Padroes textuais x caoticos (P2473; Parte 101): o mapa logistico r=4 binarizado (x>0,5->1) tem trigrama ~1,0 bit/bit (incompressivel: a
+    assinatura de Bernoulli do caos deterministico), enquanto as glosas comprimem (razao trigrama/log2 V < 0,65). Devolve (bits/bit do caos, razao de compressao das glosas)."""
+    import math
+    x = x0
+    seq = []
+    for _ in range(n):
+        x = 4.0 * x * (1.0 - x)
+        seq.append("1" if x > 0.5 else "0")
+    s = "".join(seq)
+    k = int(len(s) * corte)
+    caos = p1512_ngrama_bits(s[:k], s[k:], ordem=3, V=2)
+    tr, te = p1511_corpus_de_glosas("en")
+    tri = p1512_ngrama_bits(tr, te, ordem=3, limite=20000)
+    return caos, tri / math.log2(len(VOCAB_GPT))
+
+
+def p2474_recursao_contrai(camadas=40, x0s=(0.0, 0.2, 0.5, 0.8, 1.0)):
+    """A recursao contrai, nao cria (P2474; Parte 101): iterar o mapa aninhado de QUALQUER x0 por 40 camadas converge para 0,5 (ponto fixo unico,
+    teorema de Banach). "Dez camadas de cognicao recursiva" colapsa num ponto, nao gera plenitude (NAO-efeito; estende o veredito da Parte 84).
+    Devolve (lista de resultados por x0, todos a menos de 0,01 de 0,5?)."""
+    from synthai.autopoiese import iterar_nested_probability
+    res = [iterar_nested_probability(x, camadas) for x in x0s]
+    return res, all(abs(r - 0.5) < 0.01 for r in res)
+
+
+def _rodada68():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada68", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada68.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2475_rodada68():
+    """Rodada 68 (P2475; Parte 101): a penalidade de repeticao (CTRL: divide o logit de um token usado por pen>1 se positivo, multiplica se negativo),
+    IGUAL em Java bit a bit. Devolve, por caso, (token amostrado, p[0]). O exp do softmax e a unica fronteira; dividir/multiplicar e exato."""
+    r = _rodada68()
+    out = []
+    for logits, usados, pen, u in r.CASOS:
+        p = r.softmax(r.penalizar(list(logits), usados, pen))
+        out.append((r.amostrar(p, u), p[0]))
+    return out
+
+
+def p2476_versa_reversa(a=None, b=None):
+    """Versa e reversa: a assimetria pergunta<->resposta (P2476; Parte 101; ↩ Parte 46). Containment por trigramas de caracteres: quanto dos trigramas de A
+    estao em B (A dentro de B) e vice-versa. A resposta (mais longa, elaborada) contem mais da pergunta do que a pergunta da resposta. Devolve
+    (A-em-B, B-em-A, assimetrico A<B?). Defaults: uma pergunta curta e uma resposta que a desenvolve."""
+    a = a if a is not None else "o que e o delirio"
+    b = b if b is not None else "o delirio e o recozimento: uma busca que aceita piorar para escapar de um minimo local, e so vence quando ha bacia e a barreira e cruzavel"
+
+    def trigramas(t):
+        t = t.lower()
+        return set(t[i:i + 3] for i in range(len(t) - 2)) if len(t) >= 3 else set()
+    ta, tb = trigramas(a), trigramas(b)
+    a_em_b = len(ta & tb) / len(ta) if ta else 0.0
+    b_em_a = len(ta & tb) / len(tb) if tb else 0.0
+    return a_em_b, b_em_a, a_em_b > b_em_a
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -14491,13 +14575,35 @@ def _parte_100():
     print(f"P2445 rodada 67 (nucleus top-p, IGUAL em Java): tokens = {[t for t, _, _ in casos]}; mantidos = {[m for _, m, _ in casos]}")
     kf, rod, cal = p2446_retrospecto_cem()
     print(f"P2446 retrospecto de cem partes: {kf} funcoes pNN, {rod} rodadas do dialogo, calibracao do mundo 80-100 = {cal:.4f}")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=tuple(list(range(80,82))+[83]+list(range(84,101))))
     print(f"P1961 teste (f), Partes 80-100: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2441, 2470)
     print(f"P1092 pNN novas (P2441-P2470) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 100: {p974_previsoes_sem_largura(range(100, 101))}")
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3149, testes=TESTES_P3149)
     print(f"P3149 minha taxa de erro ({ERROS_P3149}/{TESTES_P3149}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+def _parte_101():
+    print("--- Parte 101 (0x65: dez camadas, a recursao que contrai, o caos que nao comprime) ---")
+    it10, conta, it7 = p2471_dez_camadas()
+    print(f"P2471 dez camadas: iter10 = {it10:.6f} (conta {conta:.6f}); iter7 = {it7:.6f} (10 e mais perto de 0,5)")
+    comp, contab, fixo = p2472_composicao_prob_metacog()
+    print(f"P2472 prob o metacog: composicao = {comp:.6f} (produto dos fatores {contab:.6f}); ponto fixo = {fixo:.6f}")
+    caos, razao = p2473_texto_x_caos()
+    print(f"P2473 texto x caos: caos (logistico r=4) = {caos:.4f} bits/bit (incompressivel); glosas razao = {razao:.4f} (comprime)")
+    res, converge = p2474_recursao_contrai()
+    print(f"P2474 a recursao contrai: de x0 variados, 40 camadas -> {[round(r, 4) for r in res]}; todos ~0,5 = {converge} (ponto fixo unico, Banach)")
+    casos = p2475_rodada68()
+    print(f"P2475 rodada 68 (penalidade de repeticao, IGUAL em Java): tokens = {[t for t, _ in casos]}")
+    ab, ba, assim = p2476_versa_reversa()
+    print(f"P2476 versa/reversa: pergunta-em-resposta = {ab:.3f}, resposta-em-pergunta = {ba:.3f}, assimetrico = {assim} (como a Parte 46)")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-101: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2471, 2500)
+    print(f"P1092 pNN novas (P2471-P2500) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 101: {p974_previsoes_sem_largura(range(101, 102))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3219, testes=TESTES_P3219)
+    print(f"P3219 minha taxa de erro ({ERROS_P3219}/{TESTES_P3219}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -14535,7 +14641,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101}
 
 
 if __name__ == "__main__":

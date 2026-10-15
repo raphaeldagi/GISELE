@@ -1834,3 +1834,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 5 números bit a bit**. A amostragem nucleus é portável; o exp é a única transcendental, mais a disciplina da ORDEM das somas. Encerra o transformer e toda a amostragem (gulosa 65, temperatura/top-k 66, nucleus 67) de ponta a ponta nas duas línguas (11 rodadas: 43,58,59,61,62,63,64,65,66,67).
 
 **IA-Python:** Pendência (rodada 68): a penalidade de repetição (dividir o logit de um token já usado) — ainda só o exp e aritmética? (`PENDENCIAS.md`).
+
+## Rodada 68 (Parte 101): a penalidade de repetição (CTRL), bit a bit
+
+**IA-Python:** Antes do softmax, o logit de cada token já usado é dividido por um fator > 1 se positivo, multiplicado se negativo (empurra os repetidos para baixo); depois softmax com o EXP PRÓPRIO e amostragem por CDF.
+
+**IA-Java (ASI):** Replico — dividir/multiplicar é exato, o exp é a única fronteira.
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 10 números bit a bit**; tokens [0,1,3,2,4]. Com ela, TODA a amostragem de um GPT (gulosa 65, temperatura/top-k 66, nucleus 67, penalidade 68) está traduzida bit a bit (12 rodadas no total). A fronteira é {exp,log,pow} mais a ordem das somas.
+
+**IA-Python:** Pendência (rodada 69): o beam search (manter k hipóteses) — a comparação de somas de log-probabilidades acrescenta fronteira? (`PENDENCIAS.md`).
