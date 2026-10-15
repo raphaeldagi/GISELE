@@ -166,3 +166,7 @@ só o exp e comparações? (`dialogo/PENDENCIAS.md`).
 - WordNet 3.0, Princeton (`dados/`); OpenWordNet-PT (CC BY 4.0). Carl Jung, base psicológica (Parte 6).
 - Temperatura e top-k na amostragem de linguagem: Holtzman et al., "The Curious Case of Neural Text Degeneration" (2020); a entropia do softmax com temperatura é termodinâmica (distribuição de Boltzmann).
 - O piso de estimação sob ruído de teste (`√(viés² + D·σ²)`): decomposição do erro quadrático médio, teoria estatística clássica.
+
+---
+
+**Continua na [Parte 100](ASI_AGI_parte100_o_dicionario_e_o_gpt.md): marco de cem partes — o dicionário como data lake encontra o GPT (en × pt; n-grama × GPT).**
