@@ -4,7 +4,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 98, rodada 66)** A temperatura e o top-k na amostragem: dividir os logits por T (so divisao) e zerar os k menores (so comparacao/ordenacao) - a fronteira continua sendo so o exp? Conferir bit a bit. Fechada a rodada 65: a geracao autorregressiva (amostragem por CDF com u dado de fora) e IGUAL, o acaso e insumo externo, o exp e a unica fronteira.
+- **(Parte 99, rodada 67)** A amostragem nucleus (top-p): ordenar, somar a CDF ate um limiar p, cortar o resto - ainda so o exp e comparacoes? Conferir bit a bit. Fechada a rodada 66: temperatura e top-k IGUAL, a fronteira e {exp,log,pow}, o transformer esta traduzido de ponta a ponta (10 rodadas).
+- **(Parte 99, P2414)** Ruido CORRELACIONADO entre as coordenadas: o piso sqrt(2)*sigma supoe ruido independente entre as 2 coords; com correlacao rho o fator muda (sqrt(2(1+rho)) para a soma). Medir.
 - **(Parte 98, P2383)** Ruido de TESTE: medir o residuo contra um teste RUIDOSO (nao limpo) - o piso vira sqrt(sigma^2 + estimacao^2) ~ sigma para n grande (o irredutivel do proprio teste). E ruido heterocedastico (dependente do estado): muda a conta da variancia.
 - **(Parte 97, P2355/e)** Ruido de OBSERVACAO: o limiar "n > #params -> exato" supoe mundo determinista; com ruido sigma, mesmo n>#params deixa residuo ~sigma e a cumeeira volta a valer. Medir o veredito sob ruido.
 - **(Parte 97, P2353)** O teto da capacidade do MLP num mundo cubico: residuo vs h alem de 16, e o piso de vies do tanh.

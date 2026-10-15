@@ -145,3 +145,37 @@ def rms_quantizacao(w, bits=8):
     qw, _, passo = quantizar_hex(w, bits)
     rms = math.sqrt(sum((a - b) ** 2 for a, b in zip(w, qw)) / len(w))
     return rms, passo / math.sqrt(12.0)
+
+
+# --- Parte 99: amostragem com temperatura e top-k ---
+
+def softmax_temperatura(logits, T=1.0):
+    """Softmax com temperatura: divide os logits por T antes do softmax. T alto achata (mais entropia), T baixo aguça."""
+    z = [x / T for x in logits]
+    m = max(z)
+    e = [math.exp(x - m) for x in z]
+    s = sum(e)
+    return [x / s for x in e]
+
+
+def entropia_shannon(p):
+    """Entropia de Shannon (nats) de uma distribuicao p."""
+    return -sum(x * math.log(x) for x in p if x > 0.0)
+
+
+def top_k_renormalizado(p, k):
+    """Mantem os k maiores de p, zera o resto e renormaliza. Devolve a nova distribuicao."""
+    ordenado = sorted(range(len(p)), key=lambda i: p[i], reverse=True)
+    mantidos = set(ordenado[:k])
+    massa = sum(p[i] for i in mantidos)
+    return [(p[i] / massa if i in mantidos else 0.0) for i in range(len(p))]
+
+
+def amostrar_cdf(p, u):
+    """Inversao de CDF: o primeiro indice cujo acumulado passa de u."""
+    acum = 0.0
+    for i in range(len(p)):
+        acum += p[i]
+        if u < acum:
+            return i
+    return len(p) - 1

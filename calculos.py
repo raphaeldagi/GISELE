@@ -9592,6 +9592,8 @@ VEREDITOS_P2939 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅"
 ERROS_P2939, TESTES_P2939 = 217, 750
 VEREDITOS_P3009 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3009, TESTES_P3009 = 217, 755
+VEREDITOS_P3079 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P3079, TESTES_P3079 = 217, 760
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12132,12 +12134,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12145,7 +12147,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\(e\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\(g\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97, 98):  # nas Partes 94-98 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98, 99):  # nas Partes 94-99 a letra da calibracao e a (f)
             txt = re.sub(r"\(f\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13225,6 +13227,93 @@ def p2386_razao_constante_em_sigma(n=400):
     return a, b, abs(a - b) / a
 
 
+_LOGITS99 = [2.0, 1.0, 0.5, 0.0, -1.0]
+
+
+def p2411_entropia_cresce_com_T(logits=None):
+    """A entropia do softmax cresce com a temperatura T (P2411; Parte 99): T alto achata a distribuicao (mais entropia), T baixo aguca.
+    Devolve (entropias em T=0,5/1/2, cresce?). T->inf da uniforme (entropia maxima ln V), T->0 da degenerado (entropia 0)."""
+    from synthai.evoluido import softmax_temperatura, entropia_shannon
+    logits = logits if logits is not None else _LOGITS99
+    hs = [entropia_shannon(softmax_temperatura(logits, T)) for T in (0.5, 1.0, 2.0)]
+    cresce = hs[0] < hs[1] < hs[2]
+    return hs, cresce
+
+
+def p2412_T_zero_vira_argmax(logits=None, T=0.01):
+    """No limite T->0 a amostragem vira argmax (P2412; Parte 99): com T minusculo o softmax concentra ~toda a massa no maior logit,
+    e a amostragem por CDF devolve o argmax para qualquer u. Devolve (todos devolvem o argmax?, indice argmax, top1)."""
+    from synthai.evoluido import softmax_temperatura, amostrar_cdf
+    logits = logits if logits is not None else _LOGITS99
+    p = softmax_temperatura(logits, T)
+    arg = max(range(len(logits)), key=lambda i: logits[i])
+    todos = all(amostrar_cdf(p, u) == arg for u in (0.01, 0.25, 0.5, 0.75, 0.99))
+    return todos, arg, max(p)
+
+
+def p2413_top_k_levanta_massa(logits=None, k=2):
+    """O top-k levanta a massa do top-1 (P2413; Parte 99): manter so os k maiores e renormalizar aumenta (ou iguala) a probabilidade do
+    maior token. Devolve (top-1 completo, top-1 apos top-k, levantou?)."""
+    from synthai.evoluido import softmax_temperatura, top_k_renormalizado
+    logits = logits if logits is not None else _LOGITS99
+    p = softmax_temperatura(logits, 1.0)
+    pk = top_k_renormalizado(p, k)
+    return max(p), max(pk), max(pk) >= max(p)
+
+
+def p2414_piso_teste_ruidoso(sigma=0.1, n_tr=2000, n_te=4000, kappa=0.1):
+    """O piso contra um teste RUIDOSO e sqrt(2)*sigma (P2414; Parte 99): com D=2 coordenadas, cada uma com ruido sigma independente, o erro
+    quadratico ganha 2*sigma^2, logo o residuo ~ sqrt(estim^2 + 2 sigma^2) ~ sqrt(2)*sigma para n grande. Devolve (residuo vs ruidoso, residuo vs limpo, sqrt(2)*sigma)."""
+    import math
+    from synthai.mundo import gerar_transicoes_nl_ruido, gerar_transicoes_nl, monomios, ajustar_features, residuo_features
+    f = monomios(3)
+    Xtr, Utr, Ytr = gerar_transicoes_nl_ruido(0, n_tr, kappa, sigma)
+    th = ajustar_features(Xtr, Utr, Ytr, f)
+    Xr, Ur, Yr = gerar_transicoes_nl_ruido(777, n_te, kappa, sigma)   # teste RUIDOSO
+    Xc, Uc, Yc = gerar_transicoes_nl(777, n_te, kappa)                 # teste LIMPO
+    return residuo_features(th, Xr, Ur, Yr, f), residuo_features(th, Xc, Uc, Yc, f), math.sqrt(2.0) * sigma
+
+
+def _rodada66():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada66", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada66.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2415_rodada66():
+    """Rodada 66 (P2415; Parte 99): a amostragem com temperatura e top-k, IGUAL em Java bit a bit. Devolve, por caso, (token, top-1, entropia).
+    O exp do softmax e a unica fronteira; T e divisao, top-k e comparacao, CDF e soma."""
+    r = _rodada66()
+    out = []
+    for logits, T, k, u in r.CASOS:
+        p = r.softmax_top_k(list(logits), T, k)
+        out.append((r.amostrar(p, u), max(p), r.entropia(p)))
+    return out
+
+
+def p2416_retrospecto_modelo_mundo():
+    """O retrospecto do modelo de mundo (P2416; Parte 99): os tres pisos do arco 93-98, cada um um numero caracteristico.
+    FORMA (base grau 2 num mundo cubico, vies irredutivel), DADOS (base grau 5 com n=40, overfit), RUIDO (teste ruidoso, sqrt(2)*sigma).
+    Devolve o dicionario {forma, dados, ruido}. Cada cura e diferente: base certa, mais dados, sensor melhor/regularizar."""
+    import math
+    from synthai.mundo import (gerar_transicoes_nl, gerar_transicoes_nl_ruido, monomios, ajustar_features, residuo_features)
+    # FORMA: grau 2 (sem s1^3) no mundo cubico -> vies que nao some
+    f2 = monomios(2)
+    Xtr, Utr, Ytr = gerar_transicoes_nl(0, 400, 0.1)
+    Xte, Ute, Yte = gerar_transicoes_nl(777, 400, 0.1)
+    forma = residuo_features(ajustar_features(Xtr, Utr, Ytr, f2), Xte, Ute, Yte, f2)
+    # DADOS: grau 5 com n=40 -> overfit
+    f5 = monomios(5)
+    Xf, Uf, Yf = gerar_transicoes_nl(0, 40, 0.1)
+    dados = residuo_features(ajustar_features(Xf, Uf, Yf, f5), Xte, Ute, Yte, f5)
+    # RUIDO: teste ruidoso, piso sqrt(2)*sigma
+    ruido = math.sqrt(2.0) * 0.1
+    return {"forma": forma, "dados": dados, "ruido": ruido}
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -14282,13 +14371,35 @@ def _parte_98():
     print(f"P2385 rodada 65 (geracao autorregressiva, IGUAL em Java): tokens = {[t for t, _ in toks]}")
     a, b, difrel = p2386_razao_constante_em_sigma()
     print(f"P2386 razao residuo/sigma constante em sigma: {a:.5f} vs {b:.5f}, dif relativa = {difrel:.2e}")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98))
     print(f"P1961 teste (f), Partes 80-98: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2381, 2410)
     print(f"P1092 pNN novas (P2381-P2410) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 98: {p974_previsoes_sem_largura(range(98, 99))}")
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3009, testes=TESTES_P3009)
     print(f"P3009 minha taxa de erro ({ERROS_P3009}/{TESTES_P3009}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+def _parte_99():
+    print("--- Parte 99 (0x63: a amostragem e o fecho do modelo de mundo) ---")
+    hs, cresce = p2411_entropia_cresce_com_T()
+    print(f"P2411 entropia cresce com T: T=0,5/1/2 -> {[round(h, 4) for h in hs]}; cresce = {cresce}")
+    todos, arg, top1 = p2412_T_zero_vira_argmax()
+    print(f"P2412 T->0 vira argmax: todos os u dao o argmax {arg}? {todos}; top1(T=0,01) = {top1:.6f}")
+    full, tk, levantou = p2413_top_k_levanta_massa()
+    print(f"P2413 top-k levanta a massa: top1 completo = {full:.4f}, apos top-2 = {tk:.4f}, levantou = {levantou}")
+    rr, rl, s2 = p2414_piso_teste_ruidoso()
+    print(f"P2414 piso do teste ruidoso: vs ruidoso = {rr:.4f}, vs limpo = {rl:.4f}, sqrt(2)*sigma = {s2:.4f}")
+    casos = p2415_rodada66()
+    print(f"P2415 rodada 66 (temperatura + top-k, IGUAL em Java): tokens = {[t for t, _, _ in casos]}")
+    retro = p2416_retrospecto_modelo_mundo()
+    print(f"P2416 retrospecto do modelo de mundo (os 3 pisos): forma = {retro['forma']:.4f}, dados = {retro['dados']:.4f}, ruido = {retro['ruido']:.4f}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-99: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2411, 2440)
+    print(f"P1092 pNN novas (P2411-P2440) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 99: {p974_previsoes_sem_largura(range(99, 100))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3079, testes=TESTES_P3079)
+    print(f"P3079 minha taxa de erro ({ERROS_P3079}/{TESTES_P3079}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -14326,7 +14437,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99}
 
 
 if __name__ == "__main__":

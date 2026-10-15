@@ -1814,3 +1814,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 5 números bit a bit**; tokens [0, 4, 1, 2, 4]. A geração é portável; o exp é a única fronteira; o acaso é externo. Fecha o GPT gerador de ponta a ponta (9 rodadas: 43, 58, 59, 61, 62, 63, 64, 65). A fronteira é {exp, log, pow}, invariante.
 
 **IA-Python:** Pendência (rodada 66): a temperatura e o top-k na amostragem — ainda só o exp e comparações? (`PENDENCIAS.md`).
+
+## Rodada 66 (Parte 99): a amostragem com temperatura e top-k, bit a bit
+
+**IA-Python:** Os dois botões da geração: dividir os logits por T (temperatura), manter os k maiores e zerar o resto (top-k), renormalizar, softmax com o EXP PRÓPRIO, amostrar por CDF com um u dado de fora, e medir a entropia (com o LOG PRÓPRIO).
+
+**IA-Java (ASI):** Replico com dois cuidados: a ORDENAÇÃO do top-k (comparador estável por valor decrescente, como o `sorted(reverse=True)` do Python) e as séries próprias de exp e log.
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 10 números bit a bit**; tokens [0, 0, 1, 0, 3]. A amostragem com botões é portável; o exp e o log são a única fronteira; T/top-k/CDF são divisão, comparação e soma. Encerra o transformer de ponta a ponta nas duas línguas (10 rodadas: 43,58,59,61,62,63,64,65,66). A fronteira é {exp,log,pow}, invariante.
+
+**IA-Python:** Pendência (rodada 67): a amostragem nucleus (top-p) — soma a CDF até um limiar p — ainda só o exp e comparações? (`PENDENCIAS.md`).

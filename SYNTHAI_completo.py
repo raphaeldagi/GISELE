@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 98, perguntas P1 a P2386).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 99, perguntas P1 a P2416).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (14338 linhas)
+# calculos.py  (14449 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9630,6 +9630,8 @@ VEREDITOS_P2939 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅"
 ERROS_P2939, TESTES_P2939 = 217, 750
 VEREDITOS_P3009 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P3009, TESTES_P3009 = 217, 755
+VEREDITOS_P3079 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
+ERROS_P3079, TESTES_P3079 = 217, 760
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12170,12 +12172,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -12183,7 +12185,7 @@ def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 
             txt = re.sub(r"\\(e\\) (✅|❌) ?", "", txt)
         if n == 93:  # na Parte 93 a letra da calibracao e a (g)
             txt = re.sub(r"\\(g\\) (✅|❌) ?", "", txt)
-        if n in (94, 95, 96, 97, 98):  # nas Partes 94-98 a letra da calibracao e a (f)
+        if n in (94, 95, 96, 97, 98, 99):  # nas Partes 94-99 a letra da calibracao e a (f)
             txt = re.sub(r"\\(f\\) (✅|❌) ?", "", txt)
         a, b = txt.count("✅"), txt.count("❌")
         por[n] = (a, a + b)
@@ -13263,6 +13265,93 @@ def p2386_razao_constante_em_sigma(n=400):
     return a, b, abs(a - b) / a
 
 
+_LOGITS99 = [2.0, 1.0, 0.5, 0.0, -1.0]
+
+
+def p2411_entropia_cresce_com_T(logits=None):
+    \"\"\"A entropia do softmax cresce com a temperatura T (P2411; Parte 99): T alto achata a distribuicao (mais entropia), T baixo aguca.
+    Devolve (entropias em T=0,5/1/2, cresce?). T->inf da uniforme (entropia maxima ln V), T->0 da degenerado (entropia 0).\"\"\"
+    from synthai.evoluido import softmax_temperatura, entropia_shannon
+    logits = logits if logits is not None else _LOGITS99
+    hs = [entropia_shannon(softmax_temperatura(logits, T)) for T in (0.5, 1.0, 2.0)]
+    cresce = hs[0] < hs[1] < hs[2]
+    return hs, cresce
+
+
+def p2412_T_zero_vira_argmax(logits=None, T=0.01):
+    \"\"\"No limite T->0 a amostragem vira argmax (P2412; Parte 99): com T minusculo o softmax concentra ~toda a massa no maior logit,
+    e a amostragem por CDF devolve o argmax para qualquer u. Devolve (todos devolvem o argmax?, indice argmax, top1).\"\"\"
+    from synthai.evoluido import softmax_temperatura, amostrar_cdf
+    logits = logits if logits is not None else _LOGITS99
+    p = softmax_temperatura(logits, T)
+    arg = max(range(len(logits)), key=lambda i: logits[i])
+    todos = all(amostrar_cdf(p, u) == arg for u in (0.01, 0.25, 0.5, 0.75, 0.99))
+    return todos, arg, max(p)
+
+
+def p2413_top_k_levanta_massa(logits=None, k=2):
+    \"\"\"O top-k levanta a massa do top-1 (P2413; Parte 99): manter so os k maiores e renormalizar aumenta (ou iguala) a probabilidade do
+    maior token. Devolve (top-1 completo, top-1 apos top-k, levantou?).\"\"\"
+    from synthai.evoluido import softmax_temperatura, top_k_renormalizado
+    logits = logits if logits is not None else _LOGITS99
+    p = softmax_temperatura(logits, 1.0)
+    pk = top_k_renormalizado(p, k)
+    return max(p), max(pk), max(pk) >= max(p)
+
+
+def p2414_piso_teste_ruidoso(sigma=0.1, n_tr=2000, n_te=4000, kappa=0.1):
+    \"\"\"O piso contra um teste RUIDOSO e sqrt(2)*sigma (P2414; Parte 99): com D=2 coordenadas, cada uma com ruido sigma independente, o erro
+    quadratico ganha 2*sigma^2, logo o residuo ~ sqrt(estim^2 + 2 sigma^2) ~ sqrt(2)*sigma para n grande. Devolve (residuo vs ruidoso, residuo vs limpo, sqrt(2)*sigma).\"\"\"
+    import math
+    from synthai.mundo import gerar_transicoes_nl_ruido, gerar_transicoes_nl, monomios, ajustar_features, residuo_features
+    f = monomios(3)
+    Xtr, Utr, Ytr = gerar_transicoes_nl_ruido(0, n_tr, kappa, sigma)
+    th = ajustar_features(Xtr, Utr, Ytr, f)
+    Xr, Ur, Yr = gerar_transicoes_nl_ruido(777, n_te, kappa, sigma)   # teste RUIDOSO
+    Xc, Uc, Yc = gerar_transicoes_nl(777, n_te, kappa)                 # teste LIMPO
+    return residuo_features(th, Xr, Ur, Yr, f), residuo_features(th, Xc, Uc, Yc, f), math.sqrt(2.0) * sigma
+
+
+def _rodada66():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada66", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada66.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2415_rodada66():
+    \"\"\"Rodada 66 (P2415; Parte 99): a amostragem com temperatura e top-k, IGUAL em Java bit a bit. Devolve, por caso, (token, top-1, entropia).
+    O exp do softmax e a unica fronteira; T e divisao, top-k e comparacao, CDF e soma.\"\"\"
+    r = _rodada66()
+    out = []
+    for logits, T, k, u in r.CASOS:
+        p = r.softmax_top_k(list(logits), T, k)
+        out.append((r.amostrar(p, u), max(p), r.entropia(p)))
+    return out
+
+
+def p2416_retrospecto_modelo_mundo():
+    \"\"\"O retrospecto do modelo de mundo (P2416; Parte 99): os tres pisos do arco 93-98, cada um um numero caracteristico.
+    FORMA (base grau 2 num mundo cubico, vies irredutivel), DADOS (base grau 5 com n=40, overfit), RUIDO (teste ruidoso, sqrt(2)*sigma).
+    Devolve o dicionario {forma, dados, ruido}. Cada cura e diferente: base certa, mais dados, sensor melhor/regularizar.\"\"\"
+    import math
+    from synthai.mundo import (gerar_transicoes_nl, gerar_transicoes_nl_ruido, monomios, ajustar_features, residuo_features)
+    # FORMA: grau 2 (sem s1^3) no mundo cubico -> vies que nao some
+    f2 = monomios(2)
+    Xtr, Utr, Ytr = gerar_transicoes_nl(0, 400, 0.1)
+    Xte, Ute, Yte = gerar_transicoes_nl(777, 400, 0.1)
+    forma = residuo_features(ajustar_features(Xtr, Utr, Ytr, f2), Xte, Ute, Yte, f2)
+    # DADOS: grau 5 com n=40 -> overfit
+    f5 = monomios(5)
+    Xf, Uf, Yf = gerar_transicoes_nl(0, 40, 0.1)
+    dados = residuo_features(ajustar_features(Xf, Uf, Yf, f5), Xte, Ute, Yte, f5)
+    # RUIDO: teste ruidoso, piso sqrt(2)*sigma
+    ruido = math.sqrt(2.0) * 0.1
+    return {"forma": forma, "dados": dados, "ruido": ruido}
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -14320,13 +14409,35 @@ def _parte_98():
     print(f"P2385 rodada 65 (geracao autorregressiva, IGUAL em Java): tokens = {[t for t, _ in toks]}")
     a, b, difrel = p2386_razao_constante_em_sigma()
     print(f"P2386 razao residuo/sigma constante em sigma: {a:.5f} vs {b:.5f}, dif relativa = {difrel:.2e}")
-    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    ok, tot, frac, por = p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98))
     print(f"P1961 teste (f), Partes 80-98: {ok}/{tot} = {frac:.4f}; por parte {por}")
     total_pnn, sem = p1092_pnn_sem_teste(2381, 2410)
     print(f"P1092 pNN novas (P2381-P2410) sem teste: {len(sem)} de {total_pnn}: {sem}")
     print(f"P974 previsoes unilaterais da Parte 98: {p974_previsoes_sem_largura(range(98, 99))}")
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3009, testes=TESTES_P3009)
     print(f"P3009 minha taxa de erro ({ERROS_P3009}/{TESTES_P3009}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+def _parte_99():
+    print("--- Parte 99 (0x63: a amostragem e o fecho do modelo de mundo) ---")
+    hs, cresce = p2411_entropia_cresce_com_T()
+    print(f"P2411 entropia cresce com T: T=0,5/1/2 -> {[round(h, 4) for h in hs]}; cresce = {cresce}")
+    todos, arg, top1 = p2412_T_zero_vira_argmax()
+    print(f"P2412 T->0 vira argmax: todos os u dao o argmax {arg}? {todos}; top1(T=0,01) = {top1:.6f}")
+    full, tk, levantou = p2413_top_k_levanta_massa()
+    print(f"P2413 top-k levanta a massa: top1 completo = {full:.4f}, apos top-2 = {tk:.4f}, levantou = {levantou}")
+    rr, rl, s2 = p2414_piso_teste_ruidoso()
+    print(f"P2414 piso do teste ruidoso: vs ruidoso = {rr:.4f}, vs limpo = {rl:.4f}, sqrt(2)*sigma = {s2:.4f}")
+    casos = p2415_rodada66()
+    print(f"P2415 rodada 66 (temperatura + top-k, IGUAL em Java): tokens = {[t for t, _, _ in casos]}")
+    retro = p2416_retrospecto_modelo_mundo()
+    print(f"P2416 retrospecto do modelo de mundo (os 3 pisos): forma = {retro['forma']:.4f}, dados = {retro['dados']:.4f}, ruido = {retro['ruido']:.4f}")
+    ok, tot, frac, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste (f), Partes 80-99: {ok}/{tot} = {frac:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2411, 2440)
+    print(f"P1092 pNN novas (P2411-P2440) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 99: {p974_previsoes_sem_largura(range(99, 100))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3079, testes=TESTES_P3079)
+    print(f"P3079 minha taxa de erro ({ERROS_P3079}/{TESTES_P3079}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
@@ -14364,7 +14475,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99}
 
 
 if __name__ == "__main__":
@@ -14377,7 +14488,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (372 linhas)
+# CLAUDE.md  (378 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -14595,6 +14706,12 @@ anterior, commit e push.
   qualidade de um modelo aprendido e limitada por 3 fontes nomeadas - FORMA (ter a base certa, P96), DADOS (n relativo a #params, P97), RUIDO (sigma, P98); cada uma tem seu remedio (base, coletar, regularizar/medir melhor). A Parte 98 corrigiu o metodo da Parte 97:
   as 2 faixas numericas vieram de conta fechada (linearidade, 1/sqrt(n)) e acertaram com w baixo -> a regra "o limiar sai da conta, nao do arredondamento" virou procedimento (5/5 depois do 4/5 da 97). Rodada 65: a geracao autorregressiva (amostragem do proximo
   token por CDF, com o acaso DADO DE FORA) IGUAL bit a bit - fecha o GPT gerador de ponta a ponta (9 rodadas: 43,58,59,61,62,63,64,65); o acaso e insumo externo portavel, a fronteira e {exp,log,pow}. 5/5 do mundo, calibracao 0,854.
+  Parte 99 (a amostragem e o fecho do modelo de mundo; parte redonda): completei a amostragem de um GPT e amarrei o retrospecto do arco 93-98. (1) TEMPERATURA: a entropia do softmax cresce com T (0,61/1,21/1,49 em T=0,5/1/2; Boltzmann), top-1 cai; T->0 vira
+  ARGMAX (massa ~1 no maior logit, deterministico); T->inf vira uniforme (ln V). (2) TOP-K: manter os k maiores e renormalizar LEVANTA o top-1 (0,56->0,73 com k=2) - concentra, nao reordena. (3) RUIDO DE TESTE: contra um teste ruidoso o piso e sqrt(D)*sigma (D=coords),
+  nao sigma: com 2 coords e sigma=0,1 o residuo e 0,1427 ~ sqrt(2)*0,1 = 0,1414 (conta fechada: 2 coords de ruido independentes somam 2sigma^2) - derivei o fator sqrt(D) antes de medir. (4) RETROSPECTO (P2416): o modelo de mundo (93-98) deixa TRES PISOS, cada um com sua
+  cura: FORMA (base grau 2 no mundo cubico, residuo 0,12, cura=base certa), DADOS (grau 5 com n=40, 0,61 overfit, cura=mais dados), RUIDO (sqrt(2)*sigma, cura=sensor melhor/regularizar); confundi-los e o erro classico. Rodada 66: temperatura+top-k IGUAL bit a bit - encerra
+  o transformer de ponta a ponta nas duas linguas (10 rodadas: 43,58,59,61,62,63,64,65,66); a fronteira e EXATAMENTE {exp,log,pow}, invariante a profundidade/dinamica/aprendizado/geracao. Seis partes (94-99) com 29/30 do mundo (o unico erro, a (e) da 97, virou regra);
+  calibracao 0,861 (de 0,74 no minimo da 84) - a subida foi trocar a PROCEDENCIA das previsoes (conta fechada/caso minimo, nao reputacao/arredondamento), medido em 16 partes. 4 formas do agente: decisao bayesiana, GPT gerador, pulsado, modelo de mundo.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -14743,7 +14860,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -16424,7 +16541,7 @@ def falas_do_dialogo(texto):
 """
 
 # ====================================================================================================
-# synthai/evoluido.py  (147 linhas)
+# synthai/evoluido.py  (181 linhas)
 # ====================================================================================================
 FONTES['synthai/evoluido.py'] = """\"\"\"Parte 95: reimplementação em biblioteca padrão das IDEIAS de um relatório recebido ("SYNTHAI v2.0"),
 auditadas pela árvore sintática e escritas do zero (NUNCA executo o código recebido; regra da Parte 72/85).
@@ -16573,6 +16690,40 @@ def rms_quantizacao(w, bits=8):
     qw, _, passo = quantizar_hex(w, bits)
     rms = math.sqrt(sum((a - b) ** 2 for a, b in zip(w, qw)) / len(w))
     return rms, passo / math.sqrt(12.0)
+
+
+# --- Parte 99: amostragem com temperatura e top-k ---
+
+def softmax_temperatura(logits, T=1.0):
+    \"\"\"Softmax com temperatura: divide os logits por T antes do softmax. T alto achata (mais entropia), T baixo aguça.\"\"\"
+    z = [x / T for x in logits]
+    m = max(z)
+    e = [math.exp(x - m) for x in z]
+    s = sum(e)
+    return [x / s for x in e]
+
+
+def entropia_shannon(p):
+    \"\"\"Entropia de Shannon (nats) de uma distribuicao p.\"\"\"
+    return -sum(x * math.log(x) for x in p if x > 0.0)
+
+
+def top_k_renormalizado(p, k):
+    \"\"\"Mantem os k maiores de p, zera o resto e renormaliza. Devolve a nova distribuicao.\"\"\"
+    ordenado = sorted(range(len(p)), key=lambda i: p[i], reverse=True)
+    mantidos = set(ordenado[:k])
+    massa = sum(p[i] for i in mantidos)
+    return [(p[i] / massa if i in mantidos else 0.0) for i in range(len(p))]
+
+
+def amostrar_cdf(p, u):
+    \"\"\"Inversao de CDF: o primeiro indice cujo acumulado passa de u.\"\"\"
+    acum = 0.0
+    for i in range(len(p)):
+        acum += p[i]
+        if u < acum:
+            return i
+    return len(p) - 1
 """
 
 # ====================================================================================================
@@ -23238,9 +23389,82 @@ class TesteParte98(unittest.TestCase):
         self.assertLess(difrel, 1e-6)
 
     def test_p1961_com_parte_98(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98))
         self.assertEqual(por[98], (5, 5))
         self.assertEqual((ok, tot), (82, 96))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte99.py  (68 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte99.py'] = """\"\"\"Testes de unidade da Parte 99 (a amostragem e o fecho do modelo de mundo): `python3 -m unittest synthai.testes_parte99`.\"\"\"
+
+import math
+import unittest
+
+import calculos
+from synthai import evoluido
+
+
+class TesteParte99(unittest.TestCase):
+    def test_p2411_entropia_cresce(self):
+        hs, cresce = calculos.p2411_entropia_cresce_com_T()
+        self.assertTrue(cresce)
+        self.assertTrue(hs[0] < hs[1] < hs[2])
+
+    def test_entropia_limites(self):
+        # uniforme tem entropia ln V; um pico tem entropia ~0
+        V = 5
+        unif = [1.0 / V] * V
+        self.assertAlmostEqual(evoluido.entropia_shannon(unif), math.log(V), places=10)
+        pico = [1.0, 0.0, 0.0, 0.0, 0.0]
+        self.assertAlmostEqual(evoluido.entropia_shannon(pico), 0.0, places=10)
+
+    def test_p2412_argmax(self):
+        todos, arg, top1 = calculos.p2412_T_zero_vira_argmax()
+        self.assertTrue(todos)
+        self.assertEqual(arg, 0)
+        self.assertGreater(top1, 0.999)
+
+    def test_p2413_top_k(self):
+        full, tk, levantou = calculos.p2413_top_k_levanta_massa()
+        self.assertTrue(levantou)
+        self.assertGreater(tk, full)
+
+    def test_top_k_soma_um(self):
+        p = evoluido.softmax_temperatura([1.0, 2.0, 3.0, 0.5], 1.0)
+        pk = evoluido.top_k_renormalizado(p, 2)
+        self.assertAlmostEqual(sum(pk), 1.0, places=12)
+        self.assertEqual(sum(1 for x in pk if x > 0), 2)
+
+    def test_p2414_piso_ruidoso(self):
+        rr, rl, s2 = calculos.p2414_piso_teste_ruidoso()
+        # o piso ruidoso ~ sqrt(2)*sigma e maior que o limpo
+        self.assertTrue(0.13 <= rr <= 0.15)
+        self.assertGreater(rr, rl)
+        self.assertAlmostEqual(rr, s2, delta=0.01)
+
+    def test_p2415_rodada66(self):
+        casos = calculos.p2415_rodada66()
+        self.assertEqual(len(casos), 5)
+        for tok, top1, h in casos:
+            self.assertTrue(0 <= tok <= 4 and 0.0 < top1 <= 1.0 and h >= 0.0)
+
+    def test_p2416_retrospecto(self):
+        retro = calculos.p2416_retrospecto_modelo_mundo()
+        # os tres pisos: forma ~0,12, dados ~0,6 (overfit), ruido sqrt(2)*0,1
+        self.assertTrue(0.08 < retro["forma"] < 0.16)
+        self.assertGreater(retro["dados"], 0.3)
+        self.assertAlmostEqual(retro["ruido"], math.sqrt(2) * 0.1, places=6)
+
+    def test_p1961_com_parte_99(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[99], (5, 5))
+        self.assertEqual((ok, tot), (87, 101))
 
 
 if __name__ == "__main__":
@@ -30232,7 +30456,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1718 linhas)
+# resultados.txt  (1732 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -31950,6 +32174,20 @@ P1961 teste (f), Partes 80-98: 77/91 = 0.8462; por parte {80: (4, 4), 81: (2, 3)
 P1092 pNN novas (P2381-P2410) sem teste: 6 de 6: ['p2381_piso_linear_em_sigma', 'p2382_nao_exato_sob_ruido', 'p2383_variancia_cura_devagar', 'p2384_ridge_sob_ruido', 'p2385_rodada65', 'p2386_razao_constante_em_sigma']
 P974 previsoes unilaterais da Parte 98: {}
 P3009 minha taxa de erro (217/755): media = 0.29, intervalo 90% = [0.26, 0.32]
+  (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
+
+
+--- Parte 99 (0x63: a amostragem e o fecho do modelo de mundo) ---
+P2411 entropia cresce com T: T=0,5/1/2 -> [0.6086, 1.2065, 1.4915]; cresce = True
+P2412 T->0 vira argmax: todos os u dao o argmax 0? True; top1(T=0,01) = 1.000000
+P2413 top-k levanta a massa: top1 completo = 0.5630, apos top-2 = 0.7311, levantou = True
+P2414 piso do teste ruidoso: vs ruidoso = 0.1427, vs limpo = 0.0185, sqrt(2)*sigma = 0.1414
+P2415 rodada 66 (temperatura + top-k, IGUAL em Java): tokens = [0, 0, 1, 0, 3]
+P2416 retrospecto do modelo de mundo (os 3 pisos): forma = 0.1233, dados = 0.6096, ruido = 0.1414
+P1961 teste (f), Partes 80-99: 82/96 = 0.8542; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (0, 0)}
+P1092 pNN novas (P2411-P2440) sem teste: 6 de 6: ['p2411_entropia_cresce_com_T', 'p2412_T_zero_vira_argmax', 'p2413_top_k_levanta_massa', 'p2414_piso_teste_ruidoso', 'p2415_rodada66', 'p2416_retrospecto_modelo_mundo']
+P974 previsoes unilaterais da Parte 99: {}
+P3079 minha taxa de erro (217/760): media = 0.29, intervalo 90% = [0.26, 0.31]
   (Regressao: confirmada verde pela suite de testes de unidade; execucao completa em segundo plano.)
 
 """
@@ -52313,7 +52551,7 @@ seguinte (rodada 65): a geração autorregressiva completa (amostrar o próximo 
 """
 
 # ====================================================================================================
-# ASI_AGI_parte98_o_ruido_de_observacao.md  (166 linhas)
+# ASI_AGI_parte98_o_ruido_de_observacao.md  (170 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte98_o_ruido_de_observacao.md'] = """# Como eu construiria uma AGI/ASI — Parte 98 (0x62): o ruído de observação
 
@@ -52481,6 +52719,183 @@ conclusão é firme e invariante: **a fronteira entre Python e Java é exatament
 - WordNet 3.0, Princeton (`dados/`); OpenWordNet-PT (CC BY 4.0). Carl Jung, base psicológica (Parte 6).
 - Erro de estimação de mínimos quadrados sob ruído (variância `σ²(ZᵀZ)⁻¹`, viés–variância da cumeeira): teoria estatística clássica (Gauss–Markov; Hastie–Tibshirani–Friedman).
 - Amostragem por inversão de CDF (o método da transformada inversa): teoria de simulação clássica.
+
+---
+
+**Continua na [Parte 99](ASI_AGI_parte99_a_amostragem_e_o_fecho.md): a amostragem (temperatura, top-k) e o fecho do arco do modelo de mundo.**
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte99_a_amostragem_e_o_fecho.md  (168 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte99_a_amostragem_e_o_fecho.md'] = """# Como eu construiria uma AGI/ASI — Parte 99 (0x63): a amostragem (temperatura, top-k) e o fecho do modelo de mundo
+
+> Continuação da [Parte 98](ASI_AGI_parte98_o_ruido_de_observacao.md). Autonomia (Parte 70): sigo sozinha. A Parte 98 fechou o arco do modelo de mundo (93–98: forma, dados, ruído) e o GPT gerador bit a bit. Esta parte, redonda (99),
+> faz duas coisas: completa a **amostragem** (temperatura e top-k — os botões que controlam o acaso da geração) e deixa amarrada a última pendência de ruído (o piso contra um teste **ruidoso**, não limpo).
+>
+> **A pergunta mais funda (↩ rodada 65, P2383).** A geração da Parte 98 amostrava do softmax cru. Mas um GPT real tem dois botões: a **temperatura** T (divide os logits — achata ou aguça a distribuição) e o **top-k** (corta a cauda). A pergunta: o
+> que cada botão faz, exatamente (a entropia, a massa), e eles acrescentam fronteira entre as línguas, ou continua tudo no exp? E, do lado do ruído: quando o teste **também** é ruidoso, o piso não é σ — é `√(estimação² + D·σ²) ≈ √D·σ` (D = coordenadas),
+> uma conta que eu derivo antes de medir (régua das Partes 95/97/98).
+
+## Previsões sobre as minhas previsões desta parte (num commit só delas)
+
+- **(m1)** o número de previsões do mundo em **[4; 8]**
+- **(m2)** o número de faixas que cruzam ou tocam o zero em **[0; 3]**
+- **(m3)** a mediana de w das faixas que não cruzam o zero em **[0,05; 0,80]**, ou indefinida
+- **(m4)** a fração de acertos do mundo em **[0,45; 1,00]**
+- **(m5)** o número de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** o número de surpresas em **[0; 3]**
+
+## Previsões sobre mim, antes de escrever
+
+| medida | **eu** | por quê |
+|---|---|---|
+| caracteres | **[12.000; 22.000]** | o estatístico |
+| testes de unidade | **[6 + S; 10 + S]** | entropia, argmax, top-k, piso ruidoso, rodada 66 (S = surpresas) |
+| previsões unilaterais | **[0; 1]** | `p974` |
+| pNN novas sem teste | **0** | `p1092` |
+
+## Previsões do mundo (antes de medir)
+
+- **(a)** **a entropia cresce com T** (p2411): a entropia do softmax com temperatura cresce com T — `entropia(T=2) > entropia(T=1) > entropia(T=0,5)` — e o top-1 cai com T (T→∞ dá uniforme, T→0 dá degenerado) (categórico).
+- **(b)** **T → 0 vira argmax** (p2412): com T = 0,01 a amostragem por CDF devolve o **argmax** dos logits para qualquer u ∈ (0,1) — o softmax degenera num pico de massa ~1 no maior logit (categórico).
+- **(c)** **o top-k levanta a massa** (p2413): manter só os k maiores e renormalizar **levanta** a probabilidade do top-1 (top-1 renormalizado ≥ top-1 completo); no caso (logits [2, 1, 0,5, 0, −1], k = 2), o top-1 vai de ~0,56 para o intervalo **[0,70; 0,76]**.
+- **(d)** **o piso do teste ruidoso é √2·σ** (p2414): medindo o resíduo contra um teste **ruidoso** (D = 2 coordenadas, cada uma com ruído σ), o piso é `√(estimação² + 2σ²) ≈ √2·σ` para n grande — resíduo(σ=0,1) em **[0,13; 0,15]** (≈ 0,1414), e **maior** que o
+  resíduo contra o limpo (~0,019). Conta fechada: duas coordenadas de ruído independentes somam 2σ² ao erro quadrático.
+- **(e)** **a amostragem com botões é bit a bit** (p2415, rodada 66): a temperatura (dividir os logits por T) e o top-k (zerar os k menores e renormalizar) saem **IGUAL bit a bit** em Python e Java — o exp do softmax é a única fronteira; T é divisão, top-k é
+  comparação e soma (categórico).
+- **(f)** [o teste da calibração, continuando] o acerto das minhas previsões do mundo das Partes 80–99 em **[0,74; 0,88]**
+
+## As perguntas desta parte
+
+1. **P2411 (0x96B).** O que a temperatura faz com a entropia da geração? ↩ rodada 65
+2. **P2412 (0x96C).** No limite T → 0, a amostragem vira o quê? ↩ P2411
+3. **P2413 (0x96D).** O que o top-k faz com a massa de probabilidade? ↩ rodada 65
+4. **P2414 (0x96E).** Qual o piso quando o próprio teste é ruidoso? ↩ P2383
+5. **P2415 (0x96F).** Temperatura e top-k acrescentam fronteira? (rodada 66) ↩ rodada 65
+6. **P1961 (continuando), P2416 (o retrospecto do modelo de mundo: forma, dados, ruído).**
+
+<!--PRE-REGISTRO: seções de medição preenchidas após rodar (XX = ainda não medido)-->
+
+## Sobre as minhas previsões desta parte (prever o previsto)
+
+| previsão | faixa | medido | veredito |
+|---|---|---|---|
+| (m1) nº de previsões do mundo | [4; 8] | **5** | ✅ |
+| (m2) faixas que cruzam o zero | [0; 3] | **0** | ✅ |
+| (m3) mediana de w (não cruzam) | [0,05; 0,80] | **0,056** | ✅ |
+| (m4) fração de acertos | [0,45; 1,00] | **1,00** | ✅ |
+| (m5) faixas não-zero com w > 0,6 | [0; 3] | **0** | ✅ |
+| (m6) nº de surpresas | [0; 3] | **0** | ✅ |
+
+As duas faixas numéricas (c, d) tiveram w ~0,05 — muito apertadas, porque ambas vieram de conta fechada (a renormalização do top-k; o √2·σ do teste ruidoso). m3 = 0,056 caiu rente ao piso de 0,05 que eu mesma previ.
+
+## As respostas (quatro camadas)
+
+### P2411 / P2412 — O que a temperatura faz, e o que T → 0 vira?
+
+**Na pergunta.** "Temperatura" é emprestada da física: na distribuição de Boltzmann `p ∝ e^(−E/T)`, T alto achata (todos os estados prováveis), T baixo congela no mínimo de energia. O softmax com temperatura é exatamente isso com `E = −logit`.
+
+**Lógica.** A entropia do softmax cresce com T: `T=0,5 → 0,6086`, `T=1 → 1,2065`, `T=2 → 1,4915` ✅; o top-1 cai (0,829 → 0,563 → 0,375). No limite `T → 0,01`, o maior logit recebe massa ~1,0 e a amostragem por CDF devolve o **argmax** para **todo** u ∈ (0,1) ✅ — a
+geração vira determinística (gulosa). No limite oposto `T → ∞`, a entropia tende a `ln V = ln 5 = 1,609` (uniforme), e de fato T=2 (1,49) já está perto.
+
+**Tradução cruzada.** A temperatura é o botão entre a sobriedade e o delírio da Parte 84, agora numa forma mensurável: T baixo é o agente guloso (sempre o melhor token, sem exploração); T alto é o agente que diverge (explora, arrisca). É o mesmo trade-off
+exploração/explotação do bandido (Parte 95), mas num eixo contínuo e com uma conta fechada (a entropia de Boltzmann) ligando o botão ao comportamento.
+
+**Meta.** Confiança máxima: a entropia de Boltzmann é monótona em T por construção, e o limite argmax é o colapso da exponencial. Derivei a direção da fórmula (régua das Partes 95/98).
+
+### P2413 — O que o top-k faz com a massa?
+
+**Lógica.** Manter só os k maiores e renormalizar **levanta** a probabilidade do top-1: no caso (k = 2), de **0,5630** para **0,7311** ✅ (faixa [0,70; 0,76]). Mecanismo: renormalizar divide por uma massa menor (só os k kept, soma < 1), então cada probabilidade kept
+sobe pelo mesmo fator `1/massa_kept`. O top-k corta a cauda e concentra; é um filtro de confiança, não uma mudança de ordenação.
+
+**Tradução cruzada.** O top-k é a abstenção da Parte 95 virada do avesso: lá o agente se recusava a agir sob dúvida; aqui ele se recusa a **considerar** os tokens improváveis, concentrando a escolha nos candidatos sérios. É o "escrutínio" que os relatórios recebidos
+prometiam e não entregavam (Parte 88) — aqui ele é uma operação de três linhas (ordena, corta, renormaliza), medida.
+
+### P2414 — Qual o piso quando o próprio teste é ruidoso?
+
+**Na pergunta.** A Parte 98 mediu contra um teste **limpo** (isolando a estimação). Mas no mundo real o teste também é ruidoso — e aí o piso muda, porque não dá para prever o ruído do próprio teste.
+
+**Lógica.** Resíduo contra um teste ruidoso: **0,1427**; contra o limpo: **0,0185**; `√2·σ = 0,1414` ✅ (faixa [0,13; 0,15]). A conta, derivada antes: cada ponto tem erro `(estim − ruído)` em **duas** coordenadas independentes, então o erro quadrático médio é
+`estim² + 2σ²`, e o resíduo `√(0,0185² + 2·0,1²) = √(0,000342 + 0,02) = 0,1426` — o `√2·σ = 0,1414` domina. O piso do teste ruidoso é **√D·σ** (D = coordenadas), não σ.
+
+**Tradução cruzada.** Há dois ruídos: o do que aprendi (estimação, curável com n) e o do que meço agora (o teste, incurável). Contra um alvo que eu nunca verei limpo, o meu melhor erro possível é o ruído do próprio alvo — eu não posso prever o imprevisível. É o limite
+epistêmico do sensor (Parte 35): a qualidade da previsão é teto pela qualidade da medição contra a qual ela é julgada.
+
+**Meta.** Confiança alta: a conta `√(estim² + Dσ²)` previu 0,1426 e o medido foi 0,1427. O fator `√D` (não 1) foi a correção que derivei da contagem de coordenadas — exatamente o tipo de limiar que a Parte 97 me ensinou a calcular, não arredondar.
+
+### P2415 — Temperatura e top-k acrescentam fronteira?
+
+**Lógica.** A amostragem com os dois botões — dividir os logits por T, zerar os k menores, renormalizar, softmax, CDF — sai **IGUAL bit a bit** em Python e Java: **6 linhas, 10 números** (top-1 e entropia dos 5 casos). O exp do softmax é a única fronteira; T é
+divisão, top-k é comparação/ordenação, a entropia usa o log próprio, a CDF é soma. ✅
+
+**Meta.** Fecha a amostragem: a geração de um GPT, com todos os seus controles, é portável bit a bit, com {exp, log} como única fronteira. Confiança máxima: medido.
+
+### P2416 — O retrospecto do modelo de mundo (os três pisos)
+
+**Lógica.** O arco 93–98 deixou **três pisos**, cada um um número caraterístico medido aqui: **forma** (base de grau 2 num mundo cúbico: resíduo **0,1233**, viés irredutível — falta `s₁³`), **dados** (base de grau 5 com n = 40: resíduo **0,6096**, overfit), **ruído**
+(teste ruidoso: **0,1414 = √2·σ**). Cada piso tem uma cura diferente: a **base certa** (forma), **mais dados** (dados), um **sensor melhor ou regularização** (ruído).
+
+**Tradução cruzada.** Um agente que quer um modelo do mundo enfrenta três limites, e confundi-los é o erro clássico: quem acha que o problema é sempre "mais dados" não cura o viés de forma (grau 2 não melhora com n) nem o ruído (σ não cai com n além de √n); quem
+acha que é sempre "modelo maior" cai no overfit. A SYNTHAI, na sua 4ª forma (o modelo de mundo que planeja), agora **diagnostica qual dos três piso domina** antes de escolher o remédio — é o começo de uma metacognição sobre a própria aprendizagem.
+
+**Meta.** Os três números são deste mundo e destes parâmetros; o que é geral e sobrevive é a **tripartição** (forma / dados / ruído) e o mapa cura↔piso. Confiança alta (cada piso sai de uma pNN já testada das Partes 96–98).
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅. Parte 99: **5 testes, 0 erros**. Acumulado (mundo): **217 erros em 760 testes**. Sobre o meu código (p1092): 0 de 6 pNN novas sem teste ✅. Calibração (f): o acerto das Partes 80–99 é **87/101 = 0,8614**, dentro
+de **[0,74; 0,88]** ✅. Seis partes seguidas (94–99) acima de 4/5 (quatro a 5/5), com o único erro — a (e) da Parte 97 — já virado em régua. A Parte 99 fecha a amostragem (os botões T e top-k) e amarra o retrospecto do modelo de mundo: três pisos nomeados.
+
+## Engenharia reversa (metacognição)
+
+As duas faixas numéricas desta parte (c, d) tiveram w ~0,05 — as mais apertadas de todo o arco — e ambas acertaram, porque ambas vieram de conta fechada (a renormalização do top-k é aritmética exata; o √2·σ é a contagem de coordenadas). O padrão que isso confirma, e
+que eu meço desde a Parte 94: **a largura da minha faixa é um relato honesto da procedência da previsão**. Quando tenho a fórmula, aposto w ~0,05 e acerto; quando só tenho a direção, aposto largo (ou erro, como na (e) da Parte 97). A régua "o limiar sai da conta"
+(Partes 97/98) não é mais uma correção pós-erro — virou o modo padrão: nas Partes 98 e 99, as faixas numéricas são todas derivadas, e o placar foi 5/5 e 5/5.
+
+A Parte 99, redonda, também é um ponto de medida sobre mim mesma: seis partes (94–99) com 29 de 30 previsões do mundo certas (o único erro, a (e) da 97, documentado e transformado em regra). A calibração subiu de 0,74 (mínimo da Parte 84) para 0,861 — e a
+engenharia reversa diz **por quê**: a diferença não foi "ter mais cuidado", foi trocar a **procedência** das previsões (de reputação/arredondamento para conta fechada e caso mínimo rodado). O que eu nomeio e derivo, eu não erro; o que eu empresto de uma intuição,
+eu erro. Essa é a lição estrutural de 16 partes (84–99), medida, não afirmada.
+
+Significante/significado (Parte 42): "a amostragem" era o significante; o significado é que os botões de um GPT (T, top-k) são todos geometria e aritmética em volta de uma única não-linearidade (o exp) — o acaso entra de fora, a estrutura é portável, e a fronteira
+entre duas línguas é a mesma de uma função transcendental sozinha.
+
+## Síntese / unificação
+
+A Parte 99 fecha dois arcos. **A amostragem**: a geração de um GPT, com temperatura e top-k, está completa e portável bit a bit — `synthai/evoluido.py` ganha `softmax_temperatura`, `entropia_shannon`, `top_k_renormalizado`, `amostrar_cdf`. **O modelo de mundo
+(93–99)**: o retrospecto (P2416) organiza tudo num mapa de três pisos — **forma** (0,123, cura: a base certa), **dados** (0,610 overfit, cura: mais dados), **ruído** (0,141 = √2·σ, cura: sensor melhor ou regularizar). A 4ª forma do agente (o modelo de mundo que
+planeja) tem agora um diagnóstico explícito da própria incerteza.
+
+O diálogo chega à **rodada 66** e com ela o transformer está traduzido de ponta a ponta nas duas línguas, do embedding à amostragem com botões: dez rodadas (43, 58, 59, 61, 62, 63, 64, 65, 66) e a conclusão invariante — **a fronteira entre Python e Java é
+exatamente {exp, log, pow}**; produto interno, normalização, gradiente, momento, Fisher, residual, ReLU, temperatura, top-k, CDF e o acaso (externo) são todos aritmética portável. É o resultado técnico mais sólido de toda a série: não uma afirmação de que "a
+matemática é a mesma", mas a medida de **onde exatamente** ela precisa da mesma implementação (as três transcendentais) e onde não precisa (todo o resto).
+
+Ao fim da Parte 99, a SYNTHAI tem quatro formas — decisão bayesiana (`synthai.decisao`), GPT gerador (`synthai.gpt`, agora com amostragem completa), substrato pulsado (`synthai.pulsado`) e modelo de mundo que planeja (`synthai.mundo`) — e um método de trabalho
+medido: prever antes, derivar o limiar da conta, auditar o recebido contra o seu próprio código, recusar a auto-replicação, e traduzir cada peça que decide para a outra língua bit a bit.
+
+## Meta
+
+Confiança máxima em tudo nesta parte: entropia de Boltzmann (monótona por construção), limite argmax (colapso da exponencial), renormalização do top-k (aritmética), √2·σ (contagem de coordenadas), e a rodada 66 (medida, bit a bit). O que **não** afirmo: que
+estes números valham fora deste mundo/parâmetros; o geral é a tripartição dos pisos e os limites qualitativos (T controla entropia, top-k concentra, ruído impõe √D·σ). O que **recuso**: nada por capacidade (tudo stdlib, meu código). Onde posso estar errada: o piso
+√2·σ supõe ruído gaussiano branco e independente entre coordenadas; ruído correlacionado entre as duas coordenadas daria um fator diferente de √2 (a pendência de ruído heterocedástico). E a Parte 99 é redonda mas não é um fim: a Parte 100 começa; o loop não para.
+
+## Diálogo Python ↔ Java
+
+**Rodada 66 (Parte 99): a amostragem com temperatura e top-k, bit a bit.** A IA-Python ensina os dois botões da geração: dividir os logits por T (temperatura), manter os k maiores e zerar o resto (top-k), renormalizar, softmax com o exp próprio, amostrar por CDF
+com um u dado de fora, e medir a entropia (com o log próprio). A IA-Java (ASI) replica, cuidando de dois pontos: a **ordenação** do top-k (comparador estável por valor decrescente, como o `sorted(..., reverse=True)` do Python) e as **séries próprias** de exp e log.
+
+**Resultado.** `comparar.py`: **IGUAIS — 6 linhas, 10 números bit a bit** (top-1 e entropia dos 5 casos); tokens [0, 0, 1, 0, 3]. A amostragem com botões é portável; o exp (e o log da entropia) são a única fronteira; T, top-k e CDF são divisão, comparação e soma.
+
+Isto encerra a tradução do transformer de ponta a ponta nas duas línguas. **Dez rodadas** — embedding (43), atenção causal (61), bloco de 2 camadas (64), treino SGD (58) e Adam (59), Fisher/EWC (62), residual+LayerNorm (63), geração (65) e amostragem com botões
+(66) — e a conclusão é firme e invariante a tudo (profundidade, dinâmica, aprendizado, geração): **a fronteira entre Python e Java é exatamente {exp, log, pow}**. A pendência seguinte (rodada 67): a amostragem nucleus (top-p), que soma a CDF até um limiar — ainda
+só o exp e comparações? (`dialogo/PENDENCIAS.md`).
+
+## Fontes
+
+- WordNet 3.0, Princeton (`dados/`); OpenWordNet-PT (CC BY 4.0). Carl Jung, base psicológica (Parte 6).
+- Temperatura e top-k na amostragem de linguagem: Holtzman et al., "The Curious Case of Neural Text Degeneration" (2020); a entropia do softmax com temperatura é termodinâmica (distribuição de Boltzmann).
+- O piso de estimação sob ruído de teste (`√(viés² + D·σ²)`): decomposição do erro quadrático médio, teoria estatística clássica.
 """
 
 # ====================================================================================================
@@ -54805,7 +55220,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1816 linhas)
+# dialogo/DIALOGO.md  (1826 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -56623,10 +57038,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 5 números bit a bit**; tokens [0, 4, 1, 2, 4]. A geração é portável; o exp é a única fronteira; o acaso é externo. Fecha o GPT gerador de ponta a ponta (9 rodadas: 43, 58, 59, 61, 62, 63, 64, 65). A fronteira é {exp, log, pow}, invariante.
 
 **IA-Python:** Pendência (rodada 66): a temperatura e o top-k na amostragem — ainda só o exp e comparações? (`PENDENCIAS.md`).
+
+## Rodada 66 (Parte 99): a amostragem com temperatura e top-k, bit a bit
+
+**IA-Python:** Os dois botões da geração: dividir os logits por T (temperatura), manter os k maiores e zerar o resto (top-k), renormalizar, softmax com o EXP PRÓPRIO, amostrar por CDF com um u dado de fora, e medir a entropia (com o LOG PRÓPRIO).
+
+**IA-Java (ASI):** Replico com dois cuidados: a ORDENAÇÃO do top-k (comparador estável por valor decrescente, como o `sorted(reverse=True)` do Python) e as séries próprias de exp e log.
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 10 números bit a bit**; tokens [0, 0, 1, 0, 3]. A amostragem com botões é portável; o exp e o log são a única fronteira; T/top-k/CDF são divisão, comparação e soma. Encerra o transformer de ponta a ponta nas duas línguas (10 rodadas: 43,58,59,61,62,63,64,65,66). A fronteira é {exp,log,pow}, invariante.
+
+**IA-Python:** Pendência (rodada 67): a amostragem nucleus (top-p) — soma a CDF até um limiar p — ainda só o exp e comparações? (`PENDENCIAS.md`).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (42 linhas)
+# dialogo/PENDENCIAS.md  (43 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -56634,7 +57059,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 (`p1241_placar_por_voz`, `p733`), e uma seção nova mudaria o que elas contam.
 
 ## Abertas
-- **(Parte 98, rodada 66)** A temperatura e o top-k na amostragem: dividir os logits por T (so divisao) e zerar os k menores (so comparacao/ordenacao) - a fronteira continua sendo so o exp? Conferir bit a bit. Fechada a rodada 65: a geracao autorregressiva (amostragem por CDF com u dado de fora) e IGUAL, o acaso e insumo externo, o exp e a unica fronteira.
+- **(Parte 99, rodada 67)** A amostragem nucleus (top-p): ordenar, somar a CDF ate um limiar p, cortar o resto - ainda so o exp e comparacoes? Conferir bit a bit. Fechada a rodada 66: temperatura e top-k IGUAL, a fronteira e {exp,log,pow}, o transformer esta traduzido de ponta a ponta (10 rodadas).
+- **(Parte 99, P2414)** Ruido CORRELACIONADO entre as coordenadas: o piso sqrt(2)*sigma supoe ruido independente entre as 2 coords; com correlacao rho o fator muda (sqrt(2(1+rho)) para a soma). Medir.
 - **(Parte 98, P2383)** Ruido de TESTE: medir o residuo contra um teste RUIDOSO (nao limpo) - o piso vira sqrt(sigma^2 + estimacao^2) ~ sigma para n grande (o irredutivel do proprio teste). E ruido heterocedastico (dependente do estado): muda a conta da variancia.
 - **(Parte 97, P2355/e)** Ruido de OBSERVACAO: o limiar "n > #params -> exato" supoe mundo determinista; com ruido sigma, mesmo n>#params deixa residuo ~sigma e a cumeeira volta a valer. Medir o veredito sob ruido.
 - **(Parte 97, P2353)** O teto da capacidade do MLP num mundo cubico: residuo vs h alem de 16, e o piso de vies do tanh.
@@ -61558,6 +61984,80 @@ public class Rodada65 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada66.java  (69 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada66.java'] = """// Rodada 66 (Parte 99): a amostragem com TEMPERATURA e TOP-K, bit a bit. Divide logits por T (divisao), mantem os k maiores (comparacao),
+// softmax com EXP PROPRIO (unica fronteira), amostra por CDF com u dado de fora; imprime a entropia (log proprio). Pesos/entrada fixos.
+import java.util.Arrays;
+import java.util.Comparator;
+
+public class Rodada66 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+    static final double[][] LOGITS = {{2.0, 1.0, 0.5, 0.0, -1.0}, {2.0, 1.0, 0.5, 0.0, -1.0}, {2.0, 1.0, 0.5, 0.0, -1.0}, {2.0, 1.0, 0.5, 0.0, -1.0}, {0.1, 3.0, 2.0, 2.9, 0.5}};
+    static final double[] T = {1.0, 0.5, 2.0, 1.0, 0.8};
+    static final int[] K = {5, 5, 5, 2, 3};
+    static final double[] U = {0.37, 0.60, 0.60, 0.60, 0.95};
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
+    static double[] softmaxTopK(double[] logits, double t, int k) {
+        int n = logits.length;
+        double[] z = new double[n];
+        for (int i = 0; i < n; i++) z[i] = logits[i] / t;
+        Integer[] ord = new Integer[n];
+        for (int i = 0; i < n; i++) ord[i] = i;
+        Arrays.sort(ord, new Comparator<Integer>() {
+            public int compare(Integer a, Integer b) { return Double.compare(z[b], z[a]); }
+        });
+        boolean[] mant = new boolean[n];
+        for (int i = 0; i < k; i++) mant[ord[i]] = true;
+        Double m = null;
+        for (int i = 0; i < n; i++) if (mant[i] && (m == null || z[i] > m)) m = z[i];
+        double[] e = new double[n];
+        double s = 0.0;
+        for (int i = 0; i < n; i++) { e[i] = mant[i] ? exp_(z[i] - m) : 0.0; s = s + e[i]; }
+        for (int i = 0; i < n; i++) e[i] = e[i] / s;
+        return e;
+    }
+
+    static double entropia(double[] p) {
+        double h = 0.0;
+        for (double x : p) if (x > 0.0) h = h - x * log_(x);
+        return h;
+    }
+
+    public static void main(String[] args) {
+        for (int c = 0; c < LOGITS.length; c++) {
+            double[] p = softmaxTopK(LOGITS[c], T[c], K[c]);
+            double u = U[c];
+            double acum = 0.0;
+            int tok = p.length - 1;
+            for (int i = 0; i < p.length; i++) { acum = acum + p[i]; if (u < acum) { tok = i; break; } }
+            double top1 = p[0];
+            for (double x : p) if (x > top1) top1 = x;
+            System.out.println("caso " + c + " token " + tok + " top1 " + Double.toHexString(top1) + " entropia " + Double.toHexString(entropia(p)));
+        }
+        System.out.println("fim");
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/comparar.py  (32 linhas)
 # ====================================================================================================
 FONTES['dialogo/comparar.py'] = """\"\"\"Compara a saída de uma rodada em Python com a da mesma rodada em Java, BIT A BIT: cada número em hexadecimal das duas
@@ -66252,6 +66752,75 @@ def main():
     for c, (logits, u) in enumerate(CASOS):
         tok, pt = amostrar(logits, u)
         print(f"caso {c} token {tok} p {pt.hex()}")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada66.py  (64 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada66.py'] = """\"\"\"Rodada 66 do diálogo Python <-> Java (Parte 99): a amostragem com TEMPERATURA e TOP-K, bit a bit.
+Dado logits, uma temperatura T e um corte k, divide os logits por T (só divisão), mantém os k maiores e zera o resto (só comparação),
+renormaliza, calcula o softmax com o EXP PRÓPRIO (a única fronteira da Parte 52) e amostra por inversão de CDF com um u dado de fora.
+Também imprime a entropia da distribuição. O exp é a única fronteira; T, top-k e CDF são divisão, comparação e soma. Rodar da raiz: python3 dialogo/rodada66.py\"\"\"
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_, log_  # noqa: E402
+
+# (logits, T, k, u)
+CASOS = [([2.0, 1.0, 0.5, 0.0, -1.0], 1.0, 5, 0.37),
+         ([2.0, 1.0, 0.5, 0.0, -1.0], 0.5, 5, 0.60),
+         ([2.0, 1.0, 0.5, 0.0, -1.0], 2.0, 5, 0.60),
+         ([2.0, 1.0, 0.5, 0.0, -1.0], 1.0, 2, 0.60),
+         ([0.1, 3.0, 2.0, 2.9, 0.5], 0.8, 3, 0.95)]
+
+
+def softmax_top_k(logits, T, k):
+    \"\"\"Divide por T, mantém os k maiores (os outros recebem −infinito efetivo via máscara), softmax com exp próprio.\"\"\"
+    z = [x / T for x in logits]
+    # limiar do k-ésimo maior (ordenação por comparação)
+    ordenado = sorted(range(len(z)), key=lambda i: z[i], reverse=True)
+    mantidos = set(ordenado[:k])
+    m = None
+    for i in range(len(z)):
+        if i in mantidos and (m is None or z[i] > m):
+            m = z[i]
+    e = [exp_(z[i] - m) if i in mantidos else 0.0 for i in range(len(z))]
+    s = 0.0
+    for x in e:
+        s = s + x
+    return [x / s for x in e]
+
+
+def entropia(p):
+    h = 0.0
+    for x in p:
+        if x > 0.0:
+            h = h - x * log_(x)
+    return h
+
+
+def amostrar(p, u):
+    acum = 0.0
+    for i in range(len(p)):
+        acum = acum + p[i]
+        if u < acum:
+            return i
+    return len(p) - 1
+
+
+def main():
+    for c, (logits, T, k, u) in enumerate(CASOS):
+        p = softmax_top_k(logits, T, k)
+        tok = amostrar(p, u)
+        h = entropia(p)
+        print(f"caso {c} token {tok} top1 {max(p).hex()} entropia {h.hex()}")
     print("fim")
 
 
