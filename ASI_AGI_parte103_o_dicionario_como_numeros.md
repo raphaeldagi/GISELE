@@ -119,3 +119,7 @@ Confiança alta: as 5 previsões do mundo são de conta fechada (log₂52, 0,5 p
 **Rodada 70 (Parte 103): a atenção de múltiplas cabeças, bit a bit.** A IA-Python ensina a atenção multi-cabeça: cada cabeça faz a sua atenção causal (softmax do produto q·k/√dₕ, exp próprio) sobre a sua fatia das colunas; as saídas das cabeças são **concatenadas** e passam por uma projeção Wₒ. A pendência da rodada 69 era: a concatenação muda a ordem das somas?
 
 **Resultado.** Na 1ª tentativa, **DIFERENTES** por 1 ULP em duas coordenadas da primeira posição — mas **não** pela concatenação: eu havia escrito o produto matriz-vetor com o `sum()` do Python, que é **compensado (Neumaier)** desde o 3.12, enquanto o Java soma em laço sequencial (a régua da Parte 34). Troquei por acumulação sequencial → **IGUAIS, 4 linhas e 12 números bit a bit**. A concatenação é só layout; a projeção soma sobre a dimensão concatenada na mesma ordem de índice. A IA-Java (ASI) confirma: a composição de cabeças não cria fronteira — o único transcendental é o exp do softmax. Com ela, a atenção multi-cabeça está traduzida (14 rodadas). Pendência (rodada 71): a codificação posicional (seno/cosseno) — o `sin`/`cos` da libm é a 6ª face da fronteira da Parte 52?
+
+---
+
+→ Continua na **[Parte 104 — A carta escondida: decisão sob informação oculta, e a fronteira do seno](ASI_AGI_parte104_a_carta_escondida.md)** (pré-registro das previsões).
