@@ -65,6 +65,13 @@ Faixas de taxa: média ± 1,645 × desvio × 1,36 (fator da Parte 79) quando o d
 
 Três pontos de calibração não fixam um desvio (regra da Parte 64), e é ali que mora o risco. (a) e (f) dependem de QUAIS palavras o guloso acha numa semente. (j) é uma razão com ~10 acertos no denominador. (k) e (l) são identidades com a lista escrita ao lado. (b), (i) e (c) são binomiais. Espero **1 a 3 erros**, em (a), (f) ou (j).
 
+### Adendo pré-registrado: os mecanismos de (a) e (f) postos à prova (escrito DEPOIS da 1ª medição, ANTES destes dois)
+
+Pela regra da Parte 110, uma faixa larga que acerta não confirma o mecanismo que eu escrevi dentro dela. Os dois mecanismos viram teste.
+
+- **(n) P2773, ablação.** Na semente 42 e com o embutido, o estimador treinado com a variável Q(PARAR) ZERADA (fixa em 0 nas features; o resto igual). Se o mecanismo de (f) estiver certo, só o vetor da palavra sobra, e ele não sabe se uma palavra de 3 a 5 letras está numa lista de 493. A razão Brier volta para perto de 1: **[0,80; 1,10]**. Se ficar abaixo de 0,80, o vetor da palavra carrega informação e o mecanismo de (f) está errado.
+- **(o) P2771, o mecanismo de (a).** Na avaliação gulosa da semente 42 (1.000 episódios), o número de palavras DISTINTAS válidas: o guloso converge para poucas, **[3; 20]**, contra o treino (que explora com ε). A identidade da fixture: contam-se os `prefix` válidos distintos devolvidos por `run_episode` no modo guloso, nas mesmas grades de `evaluate`.
+
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
