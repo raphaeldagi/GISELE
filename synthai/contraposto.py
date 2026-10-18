@@ -159,14 +159,31 @@ def vetores_de_glosas(quantos, inicio=0):
     return out
 
 
+def pares_sinset_distintos():
+    """(q): os pares (lema sem marcador, sinset) DISTINTOS, e quantos pares do arquivo são repetições dentro do mesmo sinset."""
+    import re
+    vistos, brutos = set(), 0
+    with gzip.open(os.path.join(_raiz(), "dados", "wordnet30_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        for linha in f:
+            c = linha.split("\t")
+            for lema in c[2].split(","):
+                brutos += 1
+                vistos.add((c[0], c[1], re.sub(r"\((a|p|ip)\)$", "", lema)))
+    return len(vistos), brutos - len(vistos)
+
+
 def distorcoes(k, m, semente=1150, inicio=0):
     """m pares (x = v_{2i} − v_{2i+1}), cada um projetado por uma P gaussiana NOVA (k×676, entradas N(0, 1/k)). Devolve as razões ‖Px‖²/‖x‖²."""
     rng = random.Random(semente)
-    vs = vetores_de_glosas(2 * m, inicio)
+    vs = vetores_de_glosas(4 * m + 100, inicio)
     rs = []
-    for i in range(m):
+    i = 0
+    while len(rs) < m:
         x = [a - b for a, b in zip(vs[2 * i], vs[2 * i + 1])]
+        i += 1
         nx = sum(t * t for t in x)
+        if nx == 0.0:      # Parte 115: duas glosas com os mesmos bigramas dão x = 0 (razão 0/0); a fixture registrada não previa isso
+            continue
         s = 1.0 / math.sqrt(k)
         tot = 0.0
         for _ in range(k):

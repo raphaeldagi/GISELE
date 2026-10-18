@@ -74,6 +74,14 @@ Os riscos estão em três lugares:
 
 Espero **1 a 3 erros**, em (f), (g) ou (h).
 
+### Adendo pré-registrado (escrito DEPOIS da 1ª medição, ANTES destes testes)
+
+Duas coisas saíram da 1ª medição.
+- **(g) errou:** 206.978 pares, contra os 206.941 publicados, 37 a mais.
+- **(l) e (n) quebraram:** um par de glosas tem vetores IGUAIS (x = 0, razão 0/0). A fixture não previa vetor nulo, um defeito meu. A correção mais conservadora: pular os pares com ‖x‖ = 0 e seguir lendo glosas até ter m pares válidos. (l), (n) e (o) ficam com as mesmas faixas, medidas na fixture corrigida, e o desvio da fixture fica registrado aqui.
+
+- **(q) P2898.** A hipótese para os 37: Princeton conta pares (lema, sinset) DISTINTOS depois de tirar os marcadores, e o arquivo repete o mesmo lema no mesmo sinset quando ele aparece com e sem marcador (ou duas vezes). Os pares distintos (sem marcador, por sinset) dão **[206.941; 206.941]**. Se não der exato, a explicação é outra.
+
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
