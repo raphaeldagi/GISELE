@@ -251,6 +251,9 @@ class Memoria:
     def guardar_experimento(self, hid, valor, base, meta=None):
         self.conn.execute("INSERT INTO experimentos (hipotese, valor, base, meta) VALUES (?, ?, ?, ?)", (hid, valor, base, json.dumps(meta or {})))
 
+    def fechar(self):
+        self.conn.close()
+
     def experimentos(self, hid):
         return [(v, b) for v, b in self.conn.execute("SELECT valor, base FROM experimentos WHERE hipotese = ? ORDER BY id", (hid,))]
 

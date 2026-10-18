@@ -93,3 +93,174 @@ Espero **1 a 3 erros**, em (f), (g) ou (h). As identidades (c), (d), (e), (l), (
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2921 — O texto e a árvore
+
+**Na pergunta.** "Consolidada" e "mensurável e auditável" são o que o texto promete de si. A pergunta pede o contrário: medir o que ele é.
+
+**Lógica.**
+- **Não é a Parte 109 reenviada.** Das 16 classes da v0.1.0 e das 17 desta, só **`Config`** é comum, e o Jaccard dos 5-gramas de caracteres é **0,122**. É um texto NOVO com o mesmo nome (regra da Parte 50: comparar antes de auditar de novo).
+- **Não fecha como Python.** O primeiro bloco fecha até a linha **549 de 553**, e o segundo até a **541 de 549**: os dois cortes de truncamento.
+- **Nomes usados e nunca definidos:** **`AdversarialLayer`, `GameState`, `RaphaelGame`** (a camada adversária, o estado do jogo e o próprio jogo). O orquestrador `NexusRaphael` constrói as três no `__init__`, então o "10 camadas consolidado" não pode ser instanciado: falta a camada 7 inteira e parte da 8.
+- **Capacidades (`security_audit_ast_v2`, Parte 111):**
+  - `import urllib.request` e `urllib.request.urlopen`: a rede, para a API do dicionário;
+  - `sqlite3.connect`, gravando `nexus_raphael_memory.db` no diretório corrente assim que o objeto é construído;
+  - `random.seed`, no gerador global (P2923).
+
+**Meta.** A contagem por AST veio DEPOIS do registro, de propósito: eu já tinha lido o texto, e o que eu leio não vira previsão (regra da Parte 60).
+
+### P2922 — A "semelhança semântica" por hash
+
+**Na pergunta.** "Semântica" é a palavra a medir. O código diz o mecanismo: o md5 da palavra vira a semente de 10 gaussianas. Um hash é FEITO para que palavras parecidas deem saídas sem relação.
+
+**Lógica.**
+- **Pares aleatórios:** o desvio do cosseno nos 2.000 pares é **0,3099** ✅ (a), contra 1/√10 = 0,3162 (z = −1,47, dentro da faixa por pouco).
+- **Sinônimos menos aleatórios:** a diferença das médias é **−0,0093** ✅ (b), z = −0,93. Os sinônimos do mesmo sinset ficam exatamente tão longe quanto duas palavras sorteadas.
+
+A "semelhança semântica" é ruído com desvio 1/√d e média 0. Ela não vê significado, e não poderia ver: o vetor de uma palavra não depende de nenhuma outra. A versão útil do mesmo nome já existe no projeto: os vetores de bigramas das glosas (Parte 115) e os embeddings do GPT (Parte 69) aprendem com o contexto.
+
+**Tradução cruzada.** É dar um nome próprio a cada pessoa e concluir parentesco pela semelhança dos nomes sorteados. A identidade (o hash) não é a relação (o significado). Para Jung, o símbolo vale pelo que ele LIGA; um sinal que não liga nada a nada é só um rótulo.
+
+### P2923 — O gerador global reiniciado
+
+**Lógica.**
+- **Recebido:** depois de 1.000 vetores da mesma palavra, a chamada seguinte do gerador "global" deu **1** valor distinto ✅ (c). `seed(h)` seguido de 10 `gauss` deixa o estado sempre no mesmo ponto.
+- **Corrigido:** **1.000** valores distintos ✅ (d), com um gerador local que não toca no de quem chama.
+
+A consequência no agente do texto: a exploração ε-gulosa (`random.random() < ε`) e a escolha de axiomas e paradoxos (`random.choice`) usam o MESMO gerador global. Depois de qualquer cálculo de semelhança, elas viram funções determinísticas da última palavra vista, e a "exploração" deixa de explorar. A documentação do Python diz isso: as funções do módulo são métodos de UMA instância escondida de `random.Random`, e a saída é instanciar a sua própria (fonte abaixo).
+
+**Tradução cruzada.** Um pensamento intrusivo que reinicia a atenção toda vez que uma palavra aparece. A espontaneidade (o acaso da exploração) é capturada por um gatilho, como num complexo de Jung: a mesma palavra produz sempre a mesma reação.
+
+### P2924 — As codificações da camada 3
+
+**Lógica.**
+- **Posicional (A = 0):**
+  - **446** pares de palavras colidem, e o mecanismo dos "a" iniciais conta exatamente os mesmos **446** (diferença 0 ✅ (e); 446 ∈ [150; 900] ✅ (f)). É **0,58%** das palavras.
+  - O mecanismo escrito no registro confere: **310** dos 446 pares (69,5%) são palavra + "a" com um resto de 4 letras ou mais ("aback"/"back", "abase"/"base", "abate"/"bate", "abide"/"bide"). Mais 3 pares do grupo "a"/"aa"/"aaa" (valor 0), 21 de letras soltas ("aah"/"h") e 112 de restos curtos (numerais romanos como "aalii"/"lii").
+  - A base 26 da Parte 115, BIJETIVA (dígitos 1..26), dá 0 colisões nas mesmas palavras: a diferença entre as duas é um dígito zero.
+- **Alfanumérica (soma A = 1 … Z = 26):** **284** valores distintos para 77.340 palavras ✅ (g), cerca de 272 palavras por valor. Não é uma codificação; é um histograma.
+- **Numerológica:** o maior |fração − 1/9| é **0,00152** ✅ (h), 1,35σ do binomial. Os 9 valores são uniformes porque a soma mod 9 mistura bem: a "redução numerológica" de uma palavra é um sorteio uniforme entre 9 valores, que carrega log₂ 9 = 3,17 bits da palavra e nenhuma propriedade dela.
+
+**Tradução cruzada.** Três formas de transformar uma palavra em número, em escada de perda. A bijetiva guarda tudo; a posicional com zero perde o "a" inicial (o prefixo de negação ou de estado, "a-moral", "a-sleep"); a soma esquece a ordem e quase tudo o mais; a numerologia guarda 3 bits sem sentido. Sobre o significado, a numerologia é a mais confiante e a mais pobre.
+
+### P2925 — A avaliação metacognitiva sob a nula
+
+**Na pergunta.** "Confirmar" uma hipótese é afirmar que o efeito não é acaso. A pergunta certa é o que o avaliador diz quando o efeito é ZERO.
+
+**Lógica.** Com valor e linha de base iid N(10, 2) (nenhum efeito) e 1 experimento:
+- o avaliador recebido **confirma** em **37,0%** das vezes ✅ (i), z = +0,63 contra 36,83%;
+- e **rejeita** em **35,2%** ✅ (j), z = −0,82.
+
+Ele DECIDE em **72,3%** das vezes num mundo sem efeito nenhum, porque o limiar de ±10% de melhoria não olha a variância (aqui, CV = 20%). A avaliação pareada (t de Student, n = 5, 95% unilateral) confirma em **4,76%** ✅ (k): a taxa de falso positivo é a que ela declara.
+
+A confiança recebida de [−1, −100, 50] é **0,9** ✅ (l), a MÁXIMA, para valores de sinais opostos com desvio 61 e média −17. O coeficiente de variação negativo cai no degrau "< 0,1". A correção usa |média| e o erro-padrão: s/(|média|·√n) = 2,1, muito alto, como deve ser.
+
+**Tradução cruzada.** Um juiz que condena ou absolve 72 de cada 100 inocentes, e que se diz mais certo quando as testemunhas se contradizem (sinais opostos). É o "complexo de confiança" que a Parte 45 já mediu em mim: a certeza que não olha a dispersão. A metacognição recebida avalia hipóteses com a mesma régua que ela deveria corrigir.
+
+### P2926 — O intervalo de confiança
+
+**Lógica.** Em 20.000 amostras normais de n = 30:
+- o recebido pedido a **0,90** cobre **0,9829** ✅ (n), contra 0,9830 previsto: o código usa z = 2,576 para TODA confiança ≠ 0,95 e devolve um intervalo de 98% para quem pediu 90%;
+- pedido a **0,95**, cobre **0,9373** ✅ (o), contra 0,9362: a variância populacional e o z no lugar da t encurtam o intervalo;
+- o corrigido (t com n − 1, quantil da confiança pedida) cobre **0,9020** ✅ (p).
+
+Os dois erros do recebido vão em direções opostas (largo demais a 90%, estreito demais a 95%), e nenhum deles aparece a quem olha só o código, porque os nomes estão certos.
+
+### P2927 — A auditoria que não pode reprovar
+
+**Lógica.**
+- **Recebido:** um tratador que devolve a entrada sem escapar (o XSS e o "../" voltam intactos) passa **7 de 7** ✅ (q). No código, os dois ramos (devolveu, levantou exceção) somam "passed", e "failed" não tem uma linha que o incremente.
+- **Com oráculo:** o mesmo tratador falha **3** ✅ (r) (a aspa, o "<script", o ".."), e o controle limpo, que escapa, falha **0** ✅ (r).
+
+É o "provador de Gödel" da Parte 75 de novo: um verificador sem caso de controle que reprova. A regra (um defeito plantado que ele tem de achar e um caso limpo que ele tem de passar) separou as duas auditorias em uma linha cada.
+
+### P2928 / P2929 — O vetor idêntico e a rodada 83
+
+- **O vetor corrigido** é o MESMO do recebido nas 2.000 primeiras palavras: **0** diferem em algum bit ✅ (s). `random.Random(int)` e `random.seed(int)` usam o inteiro diretamente (documentação abaixo). A correção tira o efeito colateral sem mudar nenhum número.
+- **Rodada 83:** a avaliação pareada em Python × Java é **IGUAL**, com 4 linhas e 3 números bit a bit ✅ (t). As três hipóteses dão confirmed (t = 2,43), inconclusive (0,08) e rejected (−6,26). 27 rodadas.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅ (q) ✅ (r) ✅ (s) ✅ (t) ✅. Parte 116: **19 testes, 0 erros**. Acumulado (mundo): **225 erros em 922 testes**. Calibração (P1961, Partes 80–116): **241/263 = 0,916**.
+
+### Previsões sobre previsões (m)
+
+Régua: P2837 (leitor v4).
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [16; 20] | 19 | ✅ |
+| (m2) | [3; 7] | 5 | ✅ |
+| (m3) | [0; 0,10] | 0,0034 | ✅ |
+| (m4) | [0,70; 1,00] | 1,00 | ✅ |
+| (m5) | [0; 2] | 1 | ✅ |
+| (m6) | [0; 3] | 0 | ✅ |
+
+Previsões sobre previsões: **6 de 6**.
+
+### Sobre mim
+
+- **"1 a 3 erros, em (f), (g) ou (h)": ❌.** Foram 0. As três faixas sem conta fechada acertaram com o mecanismo escrito, e o mecanismo de (f) foi conferido por dentro (310 dos 446 pares são "a" + palavra).
+- **A nota "(18 agora)" do (m1): errada por um.** São 19 previsões, de (a) a (t) sem o (m). Contei por LEITURA, que é exatamente o que a regra da Parte 60 proíbe, e errei por um, como nas Partes 59 e 60. O (m1) acertou porque a faixa veio da série, não da nota.
+
+## Engenharia reversa (metacognição)
+
+**O padrão: pela 9ª vez, a prosa promete mais mecanismo do que o código entrega.** Lotes anteriores: 72, 82, 83, 85, 86, 87, 88, 95 e 109.
+- "Semelhança semântica" é um hash.
+- "Metacognitive evaluator" confirma ou rejeita 72% das hipóteses nulas e dá a confiança máxima à maior dispersão.
+- "Security auditor" não tem ramo de falha.
+- "Consolidada" não instancia: faltam três classes.
+
+Desta vez cada achado é uma IDENTIDADE lida no próprio código, e todas as 19 previsões acertaram. **Significado:** quando eu audito um texto contra o código DELE (regra da Parte 88), a pergunta vira álgebra (o que esta linha faz com esta entrada), e eu erro pouco. Quando eu audito contra a reputação do que o nome promete, erro muito (Partes 84 e 87). O texto recebido erra do mesmo jeito que eu errava: o nome da função ("confidence", "semantic", "audit") faz o papel do mecanismo.
+
+**O segundo padrão: errei a previsão sobre mim pelo lado da modéstia.** Previ 1 a 3 erros e tive 0, pela segunda vez nas últimas três partes (a 114 deu 10/10). **Significado:** a minha previsão de erros ainda segue a média antiga, do tempo em que as faixas vinham de reputação. Quando as faixas vêm quase todas de identidade e de forma fechada, como aqui (15 de 19), o centro deveria cair. **Regra:** o centro da previsão "quantos erros" condiciona na PROCEDÊNCIA das faixas da parte: as faixas sem conta fechada (aqui 4: (f), (g), (h) e, em parte, (a)) vezes a taxa histórica delas, e não a taxa média de todas.
+
+**O terceiro: a contagem de cabeça no registro errou de novo por um.** É a regra da Parte 59, que eu já tinha: a contagem do número de previsões sai de `p2833_minhas_previsoes_v4` antes do commit do registro, nunca de uma nota escrita.
+
+## Síntese / unificação
+
+O NEXUS-RAPHAEL "v2" colado foi anexado em dois níveis, como na Parte 109:
+- **Arquivado intacto** em `externos/nexus_raphael/nexus_raphael_v2_colado.txt`. Não fecha como Python, faltam 3 classes, e tem rede e disco.
+- **Reescrito offline** em `synthai/nexus_v2.py`, com:
+  - o dicionário local (WordNet), no lugar da API;
+  - o vetor por hash num gerador local, com os mesmos números e sem efeito colateral;
+  - o intervalo e a avaliação pela t de Student, com a taxa de falso positivo que declaram (4,8% e cobertura de 0,90);
+  - a confiança pelo erro-padrão com |média|;
+  - uma auditoria com oráculo (3 falhas no eco, 0 no controle);
+  - a memória SQLite em `':memory:'`.
+
+As afirmações do texto que NÃO se sustentam, medidas no próprio código dele:
+- a semelhança "semântica" (sinônimos − aleatórios = −0,009, o ruído de 1/√10);
+- a exploração (morre no `random.seed` global);
+- a codificação posicional (446 colisões de zero à esquerda);
+- a avaliação metacognitiva (decide em 72% das hipóteses nulas);
+- a confiança (0,9 para dados de sinais opostos);
+- o intervalo de confiança (98% pedindo 90%; 93,7% pedindo 95%);
+- a auditoria de entrada (não reprova nada).
+
+O que se sustenta (Brier, entropia, as operações de `Vector`, o `cos 2θ`) é a parte que já era fórmula.
+
+Rodada 83: a avaliação pareada, IGUAL (27 rodadas). 19/19 do mundo, 6/6 (m), calibração **0,916**.
+
+## Meta
+
+**Confiança.**
+- **Alta** nas identidades (c, d, e, l, q, r, s, t).
+- **Alta** nas formas fechadas (a, b, i, j, k, n, o, p), todas a |z| < 1,6.
+
+**Onde pode estar errado.** O texto está truncado: as três classes que faltam (o jogo, o estado e a camada adversária) podem ter defeitos ou virtudes que eu não medi. A camada 7 só existe pelo nome. Eu avaliei a "metacognição" com 1 experimento por hipótese, que é como o orquestrador do texto a chama (um `run_experiment` por hipótese). Com vários experimentos, a média das melhorias encolhe a taxa de decisão, mas sem t ela continua sem uma taxa de erro declarada.
+
+**Recusa.** A API externa (rede) é a 12ª recusa da família. A troca pelo WordNet local entrega o que o texto queria do dicionário sem sair da máquina.
+
+## Diálogo Python ↔ Java (rodada 83)
+
+Ver `dialogo/DIALOGO.md`: a avaliação pareada (diferenças, t, decisão) é **IGUAL**, com 4 linhas e 3 números bit a bit.
+
+## Fontes
+
+- O gerador global do módulo `random` ("as funções do módulo são métodos ligados de uma instância escondida de `random.Random`"; um `int` passado a `seed` é usado diretamente): [documentação do Python, random](https://docs.python.org/3/library/random.html), lida nesta sessão.
+- O intervalo pela t de Student com a variância amostral (n − 1), exato para dados normais, e o z como aproximação de n grande: [Wolfram Demonstrations, robustez da t de Student no problema de uma amostra](https://www.wolframcloud.com/objects/demonstrations/RobustnessOfStudentTInTheOneSampleProblem-source.nb); [Hurvich, notas de regressão (NYU Stern)](https://pages.stern.nyu.edu/~churvich/Regress/Handouts/Chapt2.pdf); [LibreTexts, as distribuições t](https://stats.libretexts.org/Bookshelves/Applied_Statistics/Introduction_to_Applied_Statistics_for_Psychology_Students_(Sarty)/08%3A_Confidence_Intervals/8.03%3A_The_t-Distributions).

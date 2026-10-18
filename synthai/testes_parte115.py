@@ -76,7 +76,7 @@ class TesteParte115(unittest.TestCase):
         self.assertEqual(g.hex(), "0x1.32d264963ff7cp-4")
 
     def test_p1961_com_parte_115(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 116))))
         self.assertEqual(por[115], (15, 16))
         self.assertEqual((ok, tot), (222, 244))
 

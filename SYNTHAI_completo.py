@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 115, perguntas P1 a P2897).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 116, perguntas P1 a P2929).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (16231 linhas)
+# calculos.py  (16397 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7556,6 +7556,8 @@ def testes_de_regressao():
         "P1722": sorted(p1722_libm_nas_duas_linguagens()) == ["48"],  # era ["09", "14", "48"] na Parte 76; a Parte 77 corrigiu a 09 e a 14
         "P1604": abs(p1604_hash_como_peso()[2] + 0.2613) < 0.001 and p1603_ciclos_de_glosas()[0][2:] == (True, False),
         "P1579": p1574_irredutiveis_gf2(17, 6)[2] == 758 and abs(p1579_serie_singular_gf2(17)[1] - 755.458) < 0.001,
+        "P2927": p2927_auditoria_de_entrada() == (7, 3, 0),
+        "P2929": [st for st, _ in p2929_rodada83()] == ["confirmed", "inconclusive", "rejected"],
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9664,6 +9666,8 @@ VEREDITOS_P4129 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) �
 ERROS_P4129, TESTES_P4129 = 224, 887
 VEREDITOS_P4199 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ❌ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅ (q) ✅"
 ERROS_P4199, TESTES_P4199 = 225, 903
+VEREDITOS_P4269 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅ (q) ✅ (r) ✅ (s) ✅ (t) ✅"
+ERROS_P4269, TESTES_P4269 = 225, 922
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12204,12 +12208,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14779,6 +14783,142 @@ def p2897_rodada82():
     return _rodada82().cadeia()
 
 
+def _blocos_do_nexus_v2():
+    \"\"\"Os dois blocos de código do texto recebido na Parte 116, cada um cortado na última linha em que ainda fecha como Python (o texto está truncado).\"\"\"
+    import ast
+    import os
+    txt = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "externos", "nexus_raphael", "nexus_raphael_v2_colado.txt"), encoding="utf-8").read()
+    blocos = []
+    for b in txt.split("```python")[1:]:
+        linhas = b.split("```")[0].split("\\n")
+        for k in range(len(linhas), 0, -1):
+            try:
+                ast.parse("\\n".join(linhas[:k]))
+                blocos.append(("\\n".join(linhas[:k]), len(linhas), k))
+                break
+            except SyntaxError:
+                continue
+    return txt, blocos
+
+
+def p2921_o_texto_e_a_arvore():
+    \"\"\"O NEXUS v2 (P2921; Parte 116): é o texto da Parte 109 reenviado? Classes em comum e Jaccard de 5-gramas de caracteres contra a cópia guardada; e a
+    árvore sintática dos dois blocos (as linhas que fecham, os achados de rede de security_audit_ast_v2, as chamadas sqlite3.connect e random.seed, e os
+    nomes de classe usados e nunca definidos). Devolve um dict.\"\"\"
+    import ast
+    import os
+    import re
+    from synthai import palavras_rl as P
+    txt, blocos = _blocos_do_nexus_v2()
+    v1 = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "externos", "nexus_raphael", "nexus_raphael_v0_1_0_colado.py"), encoding="utf-8").read()
+    c1, c2 = set(re.findall(r"^class (\\w+)", v1, re.M)), set(re.findall(r"^class (\\w+)", txt, re.M))
+    g1, g2 = {v1[i:i + 5] for i in range(len(v1) - 4)}, {txt[i:i + 5] for i in range(len(txt) - 4)}
+    definidos, usados, rede, chamadas = set(), set(), set(), []
+    for fonte, _, _ in blocos:
+        rede |= set(P.security_audit_ast_v2(fonte))
+        for n in ast.walk(ast.parse(fonte)):
+            if isinstance(n, ast.ClassDef):
+                definidos.add(n.name)
+            elif isinstance(n, (ast.Import, ast.ImportFrom)):
+                definidos |= {(a.asname or a.name).split(".")[0] for a in n.names}
+            elif isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load) and n.id[:1].isupper():
+                usados.add(n.id)
+            elif isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and isinstance(n.func.value, ast.Name):
+                if (n.func.value.id, n.func.attr) in (("sqlite3", "connect"), ("random", "seed")):
+                    chamadas.append(n.func.value.id + "." + n.func.attr)
+    import builtins
+    indefinidos = sorted(u for u in usados - definidos if not hasattr(builtins, u) and u not in ("Dict", "List", "Tuple", "Any", "Optional", "Set", "Callable"))
+    return {"classes_comuns": sorted(c1 & c2), "classes_v1": len(c1), "classes_v2": len(c2), "jaccard5": len(g1 & g2) / len(g1 | g2),
+            "linhas_que_fecham": [(k, tot) for _, tot, k in blocos], "rede": sorted(rede), "chamadas": sorted(set(chamadas)), "indefinidos": indefinidos}
+
+
+def p2922_semelhanca_por_hash():
+    \"\"\"A "semelhança semântica" por hash (P2922; Parte 116): o cosseno entre os vetores md5 de 2.000 pares aleatórios e de 2.000 pares de sinônimos.
+    Devolve (desvio aleatórios, média aleatórios, média sinônimos, sinônimos − aleatórios).\"\"\"
+    from synthai import nexus_v2 as N, palavras_rl as P
+    from synthai.contraposto import media_desvio
+    ca = [N.cosseno(N.vetor_da_palavra(a), N.vetor_da_palavra(b)) for a, b in N.pares_aleatorios(P.lemas_wordnet(), 2000)]
+    cs = [N.cosseno(N.vetor_da_palavra(a), N.vetor_da_palavra(b)) for a, b in N.pares_de_sinonimos(2000)]
+    ma, da = media_desvio(ca)
+    ms = sum(cs) / len(cs)
+    return da, ma, ms, ms - ma
+
+
+def p2923_gerador_global():
+    \"\"\"O random.seed dentro de word_to_vector (P2923; Parte 116): valores distintos da próxima chamada do gerador "global" depois de 1.000 vetores da
+    mesma palavra, no recebido e no corrigido. Devolve (recebido, corrigido).\"\"\"
+    from synthai import nexus_v2 as N
+    return N.contaminacao("synthai", 1000), N.contaminacao("synthai", 1000, corrigido=True)
+
+
+def p2924_codificacoes():
+    \"\"\"As codificações da camada 3 (P2924; Parte 116) sobre as 77.340 palavras a-z: pares que colidem na posicional (A = 0) e pelo mecanismo dos "a"
+    iniciais, valores distintos da alfanumérica, e o maior |fração − 1/9| da numerológica. Devolve (pares posicional, pares mecanismo, distintos
+    alfanumérica, desvio máximo numerológica, exemplos de colisão).\"\"\"
+    from collections import Counter
+    from synthai import nexus_v2 as N, palavras_rl as P
+    W = sorted(P.lemas_wordnet())
+    pos = Counter(N.recebido_posicional(w) for w in W)
+    mec = Counter(w.lstrip("a") for w in W)
+    alf = {N.recebido_alfanumerico(w) for w in W}
+    num = Counter(N.recebido_numerologico(w) for w in W)
+    conj = set(W)
+    exemplos = [w for w in W if w.startswith("a") and w.lstrip("a") in conj][:6]
+    return (sum(v * (v - 1) // 2 for v in pos.values()), sum(v * (v - 1) // 2 for v in mec.values()), len(alf),
+            max(abs(num[d] / len(W) - 1 / 9) for d in range(1, 10)), exemplos)
+
+
+def p2925_avaliacao_sob_a_nula():
+    \"\"\"A avaliação metacognitiva sob a hipótese nula (P2925; Parte 116): frações de 'confirmed' e 'rejected' do recebido (1 experimento), de
+    'confirmed' do pareado (n = 5), e a confiança recebida para [−1, −100, 50]. Devolve (confirmed, rejected, pareado, confiança).\"\"\"
+    from synthai import nexus_v2 as N
+    c, r = N.avaliacao_nula()
+    return c, r, N.avaliacao_nula_pareada(), N.recebido_confianca([-1.0, -100.0, 50.0])
+
+
+def p2926_cobertura_do_intervalo():
+    \"\"\"O intervalo de confiança (P2926; Parte 116): a cobertura do recebido pedido a 0,90 e a 0,95, e do corrigido (t, n − 1) pedido a 0,90, em
+    20.000 amostras N(0, 1) de n = 30. Devolve (recebido 0,90, recebido 0,95, corrigido 0,90).\"\"\"
+    from synthai import nexus_v2 as N
+    return N.cobertura(N.recebido_ic, 0.90), N.cobertura(N.recebido_ic, 0.95), N.cobertura(N.ic_t, 0.90)
+
+
+def p2927_auditoria_de_entrada():
+    \"\"\"A auditoria de entrada da camada 10 (P2927; Parte 116): com um tratador que devolve a entrada sem escapar, o recebido e o corrigido (oráculo);
+    e o controle limpo (um tratador que escapa). Devolve (passed recebido, falhas corrigido, falhas do controle limpo).\"\"\"
+    from synthai import nexus_v2 as N
+
+    def eco(s):
+        return s
+
+    def escapa(s):
+        return s.replace("<", "&lt;").replace(".", "").replace("'", "")
+    return N.recebido_auditoria_de_entrada(eco)["passed"], N.auditoria_com_oraculo(eco)[1], N.auditoria_com_oraculo(escapa)[1]
+
+
+def p2928_vetor_identico():
+    \"\"\"O vetor corrigido (gerador local) contra o recebido (P2928; Parte 116): quantos dos vetores das 2.000 primeiras palavras diferem em algum bit.\"\"\"
+    import random
+    from synthai import nexus_v2 as N, palavras_rl as P
+    g = random.Random()
+    return sum(N.vetor_da_palavra(w) != N.recebido_vetor(w, g) for w in sorted(P.lemas_wordnet())[:2000])
+
+
+def _rodada83():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada83", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada83.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2929_rodada83():
+    \"\"\"Rodada 83 (P2929; Parte 116): a avaliação pareada, IGUAL em Java. Devolve [(status, t)] das três hipóteses.\"\"\"
+    r = _rodada83()
+    return [r.avaliar(v, b) for v, b in r.HIPOTESES]
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -16221,6 +16361,32 @@ def _parte_115():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4199, testes=TESTES_P4199)
     print(f"P4199 minha taxa de erro ({ERROS_P4199}/{TESTES_P4199}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_116():
+    print("--- Parte 116 (0x74: o NEXUS-RAPHAEL v2 colado; o que o codigo faz de fato) ---")
+    d = p2921_o_texto_e_a_arvore()
+    print(f"P2921 texto x Parte 109: classes comuns {d['classes_comuns']} ({d['classes_v1']} x {d['classes_v2']}), Jaccard 5-gramas {d['jaccard5']:.3f}; linhas que fecham {d['linhas_que_fecham']}; rede {d['rede']}; chamadas {d['chamadas']}; indefinidos {d['indefinidos']}")
+    da, ma, ms, dif = p2922_semelhanca_por_hash()
+    print(f"P2922 semelhanca por hash: desvio aleatorios {da:.4f} (1/sqrt10 = 0.3162); media aleatorios {ma:.4f}, sinonimos {ms:.4f}, diferenca {dif:.4f}")
+    rec, cor = p2923_gerador_global()
+    print(f"P2923 gerador global depois de 1000 vetores: recebido {rec} valor distinto; corrigido {cor}")
+    pp, pm, alf, num, ex = p2924_codificacoes()
+    print(f"P2924 codificacoes: posicional {pp} pares colidem (mecanismo dos 'a' iniciais: {pm}), ex. {ex}; alfanumerica {alf} valores distintos; numerologica max|f-1/9| {num:.5f}")
+    c, r, pa, cf = p2925_avaliacao_sob_a_nula()
+    print(f"P2925 sob a nula: recebido confirma {c:.4f}, rejeita {r:.4f}; pareado confirma {pa:.4f}; confianca recebida de [-1,-100,50] = {cf}")
+    a, b, t = p2926_cobertura_do_intervalo()
+    print(f"P2926 cobertura (n=30): recebido pedido 0,90 -> {a:.4f}; pedido 0,95 -> {b:.4f}; corrigido (t) pedido 0,90 -> {t:.4f}")
+    q, rr, lim = p2927_auditoria_de_entrada()
+    print(f"P2927 auditoria de entrada: recebido passed {q}/7 com o eco; com oraculo {rr} falhas (eco), {lim} (controle que escapa)")
+    print(f"P2928 vetor corrigido x recebido: {p2928_vetor_identico()} de 2000 diferem")
+    print(f"P2929 rodada 83 (avaliacao pareada, IGUAL em Java): {[(st, round(tt, 4)) for st, tt in p2929_rodada83()]}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-116: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2921, 2950)
+    print(f"P1092 pNN novas (P2921-P2950) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 116: {p974_previsoes_sem_largura(range(116, 117))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4269, testes=TESTES_P4269)
+    print(f"P4269 minha taxa de erro ({ERROS_P4269}/{TESTES_P4269}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -16257,7 +16423,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116}
 
 
 if __name__ == "__main__":
@@ -16270,7 +16436,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (457 linhas)
+# CLAUDE.md  (464 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -16573,6 +16739,13 @@ anterior, commit e push.
   da medida dela como 1/sqrt(2m). REGRAS NOVAS: um numero publicado vira faixa [x;x] so com a REGRA DE CONTAGEM de quem publicou escrita ao lado ((g) previu os brutos e o
   publicado e de pares distintos); toda fixture que divide por uma quantidade do dado declara o que faz quando ela e zero (o par de glosas iguais quebrou a medida); "igual ao publicado" e todo link citado so depois de ler a fonte NESTA sessao (escrevi "exatamente" para 147.306 e a fonte diz 147.278). Rodada 82
   IGUAL (26 rodadas). 15/16 do mundo, 6/6 (m), calibracao 222/244 = 0,910.
+  Parte 116 (texto colado sem pedido: o NEXUS-RAPHAEL "v2", 10 camadas, TRUNCADO; copia em externos/nexus_raphael/nexus_raphael_v2_colado.txt, reescrita offline em
+  synthai/nexus_v2.py): NAO e a 109 reenviada (so Config em comum, Jaccard 0,12); nao fecha como Python (faltam AdversarialLayer, GameState, RaphaelGame); rede (urllib, 12a recusa),
+  sqlite3 em disco (virou ':memory:') e random.seed no gerador GLOBAL (a exploracao vira constante: 1 valor distinto em 1.000). Medido no proprio codigo dele: "semelhanca semantica"
+  por md5 = ruido (sinonimos - aleatorios -0,009, desvio 1/sqrt10); posicional com A=0 colide 446 pares (zero a esquerda); a avaliacao "melhoria > 0,1" decide em 72% das NULAS
+  (pareada t: 4,8%); confianca 0,9 para sinais opostos; IC pedido 0,90 cobre 0,983; a auditoria de entrada nao tem ramo de falha (7/7 com o eco; com oraculo 3, controle 0). Rodada 83
+  IGUAL (27). 19/19 do mundo, 6/6 (m), calibracao 241/263 = 0,916. REGRA NOVA: o centro de "quantos erros vou ter" condiciona na PROCEDENCIA das faixas da parte (as sem conta fechada
+  vezes a taxa delas), nao na media antiga (previ 1-3, tive 0, pela 2a vez em 3 partes); e o numero de previsoes no registro sai de p2833 antes do commit (a nota "(18 agora)" era 19).
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -16721,7 +16894,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -22079,6 +22252,341 @@ def run_all(cfg=None, salvar=None):
 """
 
 # ====================================================================================================
+# synthai/nexus_v2.py  (330 linhas)
+# ====================================================================================================
+FONTES['synthai/nexus_v2.py'] = """\"\"\"O NEXUS-RAPHAEL "v2" recebido na Parte 116 (externos/nexus_raphael/nexus_raphael_v2_colado.txt), reescrito offline e só com a biblioteca padrão.
+
+O texto recebido não fecha como Python: está truncado em dois pontos e faltam GameState, RaphaelGame e AdversarialLayer. Ele também tem
+urllib.request (rede) e sqlite3 gravando em disco. Nada dele é importado nem executado. Este módulo é escrito do zero (regra da Parte 72) e tem
+duas metades:
+- `recebido_*`: as funções PURAS do texto, transcritas com o mesmo comportamento, para medir o que o código faz de fato (regra da Parte 88:
+  comparar o texto com o SEU PRÓPRIO código);
+- as versões corrigidas: o dicionário offline (WordNet local, no lugar da API), o vetor da palavra sem tocar no gerador global, a confiança e
+  o intervalo pela t de Student, a avaliação por diferenças pareadas, uma auditoria de entrada que PODE falhar e a memória SQLite em
+  ':memory:' (sem disco).\"\"\"
+
+import functools
+import gzip
+import hashlib
+import json
+import math
+import os
+import random
+import sqlite3
+
+
+# --- 1. as funções do texto recebido, transcritas ---
+
+def recebido_alfanumerico(palavra):
+    \"\"\"NumericRepresentationLayer.alphanumeric_value: soma A=1..Z=26 (anagramas e muito mais colidem).\"\"\"
+    return sum(ord(c) - ord("A") + 1 for c in palavra.upper() if c.isalpha())
+
+
+def recebido_posicional(palavra, base=26):
+    \"\"\"NumericRepresentationLayer.positional_encoding: base 26 com A = 0. NÃO é bijetiva: 'a' à esquerda é um zero à esquerda.\"\"\"
+    valor = 0
+    for c in palavra.upper():
+        if c.isalpha():
+            valor = valor * base + (ord(c) - ord("A"))
+    return valor
+
+
+def recebido_numerologico(palavra):
+    \"\"\"NumericRepresentationLayer.numerological_reduction: soma dos códigos, reduzida a um algarismo.\"\"\"
+    total = sum(ord(c) for c in palavra)
+    while total > 9:
+        total = sum(int(d) for d in str(total))
+    return total
+
+
+def recebido_vetor(palavra, gerador, dimensao=10):
+    \"\"\"GeometricLayer.word_to_vector. O texto chama random.seed(md5) no gerador GLOBAL; aqui o gerador global é passado como `gerador`,
+    para medir o efeito colateral sem mexer no random do processo.\"\"\"
+    gerador.seed(int(hashlib.md5(palavra.encode()).hexdigest(), 16))
+    return [gerador.gauss(0, 1) for _ in range(dimensao)]
+
+
+def cosseno(u, v):
+    nu = math.sqrt(sum(x * x for x in u))
+    nv = math.sqrt(sum(x * x for x in v))
+    if nu * nv == 0:
+        return 0.0
+    return sum(a * b for a, b in zip(u, v)) / (nu * nv)
+
+
+def recebido_confianca(valores):
+    \"\"\"MetacognitiveEvaluator._calculate_confidence: degraus pelo coeficiente de variação desvio/média. Com média NEGATIVA o CV é negativo
+    (< 0,1) e a confiança é a máxima, 0,9, qualquer que seja a variância.\"\"\"
+    if len(valores) < 2:
+        return 0.3
+    media = sum(valores) / len(valores)
+    desvio = math.sqrt(sum((v - media) ** 2 for v in valores) / len(valores))
+    cv = desvio / media if media != 0 else float("inf")
+    if cv < 0.1:
+        return 0.9
+    if cv < 0.3:
+        return 0.7
+    if cv < 0.5:
+        return 0.5
+    return 0.3
+
+
+def recebido_ic(dados, confianca=0.95):
+    \"\"\"ProbabilisticInferenceEngine.confidence_interval: variância populacional, z = 1,96 se confianca == 0,95 e 2,576 em QUALQUER outro caso.\"\"\"
+    if not dados:
+        return (0.0, 0.0)
+    media = sum(dados) / len(dados)
+    desvio = math.sqrt(sum((x - media) ** 2 for x in dados) / len(dados))
+    z = 1.96 if confianca == 0.95 else 2.576
+    margem = z * desvio / math.sqrt(len(dados))
+    return (media - margem, media + margem)
+
+
+def recebido_melhoria(valor, linha_de_base):
+    \"\"\"ExperimentResult.improvement_over_baseline.\"\"\"
+    if linha_de_base is not None and linha_de_base != 0:
+        return (valor - linha_de_base) / abs(linha_de_base)
+    return None
+
+
+def recebido_status(pares):
+    \"\"\"O status de MetacognitiveEvaluator.evaluate_hypothesis a partir de [(valor, linha_de_base)]: a melhoria média contra ±0,1, sem variância.\"\"\"
+    if not pares:
+        return "insufficient_data"
+    melhorias = [m for m in (recebido_melhoria(v, b) for v, b in pares) if m is not None]
+    media = sum(melhorias) / len(melhorias) if melhorias else 0.0
+    if media > 0.1:
+        return "confirmed"
+    if media < -0.1:
+        return "rejected"
+    return "inconclusive"
+
+
+CASOS_DE_ENTRADA = [("", "empty_string"), ("a" * 10000, "very_long_string"), ("'; DROP TABLE--", "sql_injection_attempt"),
+                    ("<script>alert('xss')</script>", "xss_attempt"), ("../../../etc/passwd", "path_traversal"),
+                    ("\\x00\\x01\\x02", "binary_data"), ("😀🎉🔥", "unicode_emoji")]
+
+
+def recebido_auditoria_de_entrada(tratador):
+    \"\"\"SecurityAuditor.audit_input_validation: os DOIS ramos (devolveu ou levantou exceção) somam 'passed'. 'failed' nunca sai de 0.\"\"\"
+    r = {"total_tests": len(CASOS_DE_ENTRADA), "passed": 0, "failed": 0}
+    for entrada, _ in CASOS_DE_ENTRADA:
+        try:
+            tratador(entrada)
+            r["passed"] += 1
+        except Exception:
+            r["passed"] += 1
+    return r
+
+
+# --- 2. as versões corrigidas ---
+
+def _raiz():
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def dicionario_offline():
+    \"\"\"No lugar da API dictionaryapi.dev (rede): {lema minúsculo: [(classe, glosa), ...]} do WordNet 3.0 em dados/.\"\"\"
+    d = {}
+    with gzip.open(os.path.join(_raiz(), "dados", "wordnet30_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        for linha in f:
+            c = linha.rstrip("\\n").split("\\t")
+            for lema in c[2].split(","):
+                d.setdefault(lema.lower(), []).append((c[0], c[4]))
+    return d
+
+
+def vetor_da_palavra(palavra, dimensao=10):
+    \"\"\"O mesmo vetor do texto recebido (random.Random(int) e random.seed(int) geram a mesma sequência), mas num gerador LOCAL: não reinicia o
+    gerador global de quem chama.\"\"\"
+    g = random.Random(int(hashlib.md5(palavra.encode()).hexdigest(), 16))
+    return [g.gauss(0, 1) for _ in range(dimensao)]
+
+
+def _tpdf(t, gl):
+    c = math.exp(math.lgamma((gl + 1) / 2) - math.lgamma(gl / 2)) / math.sqrt(gl * math.pi)
+    return c * (1 + t * t / gl) ** (-(gl + 1) / 2)
+
+
+def t_cdf(x, gl, passos=4000):
+    \"\"\"P(T ≤ x) da t de Student com gl graus de liberdade, por Simpson de 0 a |x| (passos par).\"\"\"
+    a = abs(x)
+    h = a / passos
+    s = _tpdf(0.0, gl) + _tpdf(a, gl)
+    for i in range(1, passos):
+        s += (4 if i % 2 else 2) * _tpdf(i * h, gl)
+    meia = s * h / 3
+    return 0.5 + meia if x >= 0 else 0.5 - meia
+
+
+@functools.lru_cache(maxsize=None)
+def t_quantil(p, gl):
+    \"\"\"O quantil p (0,5 < p < 1) da t de Student, por bisseção sobre t_cdf.\"\"\"
+    lo, hi = 0.0, 50.0
+    for _ in range(60):
+        meio = (lo + hi) / 2
+        if t_cdf(meio, gl) < p:
+            lo = meio
+        else:
+            hi = meio
+    return (lo + hi) / 2
+
+
+def ic_t(dados, confianca=0.95):
+    \"\"\"O intervalo de confiança da média pela t de Student, com a variância amostral (n − 1) e o quantil da confiança PEDIDA.\"\"\"
+    n = len(dados)
+    media = sum(dados) / n
+    s = math.sqrt(sum((x - media) ** 2 for x in dados) / (n - 1))
+    m = t_quantil(0.5 + confianca / 2, n - 1) * s / math.sqrt(n)
+    return (media - m, media + m)
+
+
+def confianca_corrigida(valores):
+    \"\"\"O erro-padrão RELATIVO da média, s/(|média|·√n) (com |média|: o sinal não compra confiança). inf com média 0 ou n < 2.\"\"\"
+    n = len(valores)
+    if n < 2:
+        return float("inf")
+    media = sum(valores) / n
+    if media == 0:
+        return float("inf")
+    s = math.sqrt(sum((v - media) ** 2 for v in valores) / (n - 1))
+    return s / (abs(media) * math.sqrt(n))
+
+
+def avaliar_pareado(valores, linhas_de_base, t_critico):
+    \"\"\"A avaliação por DIFERENÇAS PAREADAS: d = valor − linha de base, t = média(d)/(s_d/√n). 'confirmed' se t > t_crítico, 'rejected' se
+    t < −t_crítico, senão 'inconclusive'. Só +, −, ×, ÷ e √ (traduzido bit a bit na rodada 83). Devolve (status, t).\"\"\"
+    n = len(valores)
+    d = [v - b for v, b in zip(valores, linhas_de_base)]
+    soma = 0.0
+    for x in d:
+        soma += x
+    media = soma / n
+    q = 0.0
+    for x in d:
+        q += (x - media) * (x - media)
+    s = math.sqrt(q / (n - 1))
+    t = media / (s / math.sqrt(n))
+    if t > t_critico:
+        return "confirmed", t
+    if t < -t_critico:
+        return "rejected", t
+    return "inconclusive", t
+
+
+def oraculo_de_saida(entrada, saida):
+    \"\"\"O que a auditoria recebida não tinha: um critério que a saída PODE violar. Uma saída que devolve sem escapar um marcador perigoso da
+    entrada ('<script', '..', a aspa simples) falha.\"\"\"
+    s = str(saida)
+    return not any(m in entrada and m in s for m in ("<script", "..", "'"))
+
+
+def auditoria_com_oraculo(tratador):
+    \"\"\"A auditoria corrigida: passa só se o tratador levanta exceção OU devolve uma saída que o oráculo aceita. Devolve (passou, falhou).\"\"\"
+    p = f = 0
+    for entrada, _ in CASOS_DE_ENTRADA:
+        try:
+            ok = oraculo_de_saida(entrada, tratador(entrada))
+        except Exception:
+            ok = True
+        p, f = (p + 1, f) if ok else (p, f + 1)
+    return p, f
+
+
+class Memoria:
+    \"\"\"A MemorySystem recebida, em ':memory:' (o texto gravava nexus_raphael_memory.db no diretório corrente ao ser construído).\"\"\"
+
+    def __init__(self):
+        self.conn = sqlite3.connect(":memory:")
+        self.conn.execute("CREATE TABLE hipoteses (id TEXT PRIMARY KEY, descricao TEXT, status TEXT, confianca REAL)")
+        self.conn.execute("CREATE TABLE experimentos (id INTEGER PRIMARY KEY AUTOINCREMENT, hipotese TEXT, valor REAL, base REAL, meta TEXT)")
+
+    def guardar_hipotese(self, hid, descricao, status="untested", confianca=0.5):
+        self.conn.execute("INSERT OR REPLACE INTO hipoteses VALUES (?, ?, ?, ?)", (hid, descricao, status, confianca))
+
+    def guardar_experimento(self, hid, valor, base, meta=None):
+        self.conn.execute("INSERT INTO experimentos (hipotese, valor, base, meta) VALUES (?, ?, ?, ?)", (hid, valor, base, json.dumps(meta or {})))
+
+    def fechar(self):
+        self.conn.close()
+
+    def experimentos(self, hid):
+        return [(v, b) for v, b in self.conn.execute("SELECT valor, base FROM experimentos WHERE hipotese = ? ORDER BY id", (hid,))]
+
+
+# --- 3. as fixtures dos experimentos da Parte 116 ---
+
+def pares_de_sinonimos(quantos, semente=1160):
+    \"\"\"Pares de lemas a-z do MESMO sinset do WordNet (sinônimos), sorteados com semente.\"\"\"
+    grupos = []
+    with gzip.open(os.path.join(_raiz(), "dados", "wordnet30_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        for linha in f:
+            ls = sorted({l.lower() for l in linha.split("\\t")[2].split(",") if l.isascii() and l.isalpha()})
+            if len(ls) >= 2:
+                grupos.append(ls)
+    rng = random.Random(semente)
+    out = []
+    for _ in range(quantos):
+        g = rng.choice(grupos)
+        a, b = rng.sample(g, 2)
+        out.append((a, b))
+    return out
+
+
+def pares_aleatorios(palavras, quantos, semente=1161):
+    rng = random.Random(semente)
+    ps = sorted(palavras)
+    return [tuple(rng.sample(ps, 2)) for _ in range(quantos)]
+
+
+def contaminacao(palavra, vezes=1000, corrigido=False):
+    \"\"\"Quantos valores DISTINTOS o gerador 'global' dá na próxima chamada depois de cada vetor de `palavra`. O texto recebido reinicia o gerador:
+    1 valor. O corrigido não toca nele: `vezes` valores.\"\"\"
+    g = random.Random(1162)
+    vistos = set()
+    for _ in range(vezes):
+        if corrigido:
+            vetor_da_palavra(palavra)
+        else:
+            recebido_vetor(palavra, g)
+        vistos.add(g.random())
+    return len(vistos)
+
+
+def avaliacao_nula(tentativas=20000, semente=1163, mu=10.0, sigma=2.0):
+    \"\"\"Sob a hipótese NULA (valor e linha de base iid N(mu, sigma)), a fração de 'confirmed' e de 'rejected' do status recebido com 1 experimento.\"\"\"
+    rng = random.Random(semente)
+    c = r = 0
+    for _ in range(tentativas):
+        s = recebido_status([(rng.gauss(mu, sigma), rng.gauss(mu, sigma))])
+        c += s == "confirmed"
+        r += s == "rejected"
+    return c / tentativas, r / tentativas
+
+
+def avaliacao_nula_pareada(tentativas=20000, n=5, semente=1164, mu=10.0, sigma=2.0):
+    \"\"\"A mesma nula na avaliação pareada, n = 5 experimentos, t crítico unilateral de 95% com 4 graus de liberdade. Devolve a fração de 'confirmed'.\"\"\"
+    rng = random.Random(semente)
+    tc = t_quantil(0.95, n - 1)
+    c = 0
+    for _ in range(tentativas):
+        v = [rng.gauss(mu, sigma) for _ in range(n)]
+        b = [rng.gauss(mu, sigma) for _ in range(n)]
+        c += avaliar_pareado(v, b, tc)[0] == "confirmed"
+    return c / tentativas
+
+
+def cobertura(funcao_ic, confianca, tentativas=20000, n=30, semente=1165):
+    \"\"\"A fração das amostras normais N(0, 1) de tamanho n cujo intervalo contém a média verdadeira 0.\"\"\"
+    rng = random.Random(semente)
+    dentro = 0
+    for _ in range(tentativas):
+        lo, hi = funcao_ic([rng.gauss(0, 1) for _ in range(n)], confianca)
+        dentro += lo <= 0.0 <= hi
+    return dentro / tentativas
+"""
+
+# ====================================================================================================
 # synthai/numeros.py  (63 linhas)
 # ====================================================================================================
 FONTES['synthai/numeros.py'] = """\"\"\"O dicionário convertido em NÚMEROS, tratado como equações (Parte 103, P2533/P2534).
@@ -25521,9 +26029,117 @@ class TesteParte115(unittest.TestCase):
         self.assertEqual(g.hex(), "0x1.32d264963ff7cp-4")
 
     def test_p1961_com_parte_115(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 116))))
         self.assertEqual(por[115], (15, 16))
         self.assertEqual((ok, tot), (222, 244))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte116.py  (103 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte116.py'] = """\"\"\"Testes de unidade da Parte 116 (o NEXUS-RAPHAEL v2 colado, medido no próprio código): `python3 -m unittest synthai.testes_parte116`.
+Cada pNN pelo nome (Parte 58), casos com todos os termos ≠ 0 (Parte 30), controles dos dois lados (Parte 75).\"\"\"
+
+import math
+import random
+import unittest
+
+import calculos
+from synthai import nexus_v2 as N
+
+
+class TesteNexusV2(unittest.TestCase):
+    def test_posicional_zero_a_esquerda_e_bijetiva_nao(self):
+        self.assertEqual(N.recebido_posicional("abed"), N.recebido_posicional("bed"))   # defeito plantado: o 'a' é um zero
+        self.assertNotEqual(N.recebido_posicional("bed"), N.recebido_posicional("bee"))  # controle limpo
+
+    def test_confianca_media_negativa(self):
+        self.assertEqual(N.recebido_confianca([-1.0, -100.0, 50.0]), 0.9)
+        self.assertGreater(N.confianca_corrigida([-1.0, -100.0, 50.0]), 1.0)
+        self.assertLess(N.confianca_corrigida([10.0, 10.1, 9.9]), 0.01)
+
+    def test_ic_recebido_ignora_a_confianca_pedida(self):
+        d = [0.3, -1.2, 0.8, 2.1, -0.4]
+        self.assertEqual(N.recebido_ic(d, 0.90), N.recebido_ic(d, 0.99))
+        self.assertLess(N.ic_t(d, 0.90)[1] - N.ic_t(d, 0.90)[0], N.ic_t(d, 0.99)[1] - N.ic_t(d, 0.99)[0])
+
+    def test_t_quantil(self):
+        self.assertAlmostEqual(N.t_quantil(0.975, 4), 2.776445, places=5)
+        self.assertAlmostEqual(N.t_cdf(N.t_quantil(0.9, 7), 7), 0.9, places=9)
+
+    def test_vetor_local_nao_toca_o_global(self):
+        random.seed(5)
+        a = random.random()
+        random.seed(5)
+        N.vetor_da_palavra("synthai")
+        self.assertEqual(random.random(), a)
+
+    def test_memoria_em_memoria(self):
+        m = N.Memoria()
+        m.guardar_hipotese("H0", "teste")
+        m.guardar_experimento("H0", 1.5, 1.0, {"k": 1})
+        m.guardar_experimento("H0", 2.5, 1.0)
+        self.assertEqual(m.experimentos("H0"), [(1.5, 1.0), (2.5, 1.0)])
+        m.fechar()
+
+    def test_dicionario_offline(self):
+        d = N.dicionario_offline()
+        self.assertTrue(any("distinct existence" in g for _, g in d["entity"]))
+
+
+class TesteParte116(unittest.TestCase):
+    def test_p2921_o_texto_e_a_arvore(self):
+        d = calculos.p2921_o_texto_e_a_arvore()
+        self.assertEqual(d["classes_comuns"], ["Config"])
+        self.assertEqual(d["indefinidos"], ["AdversarialLayer", "GameState", "RaphaelGame"])
+        self.assertIn("rede:urllib.request.urlopen", d["rede"])
+        self.assertEqual(d["chamadas"], ["random.seed", "sqlite3.connect"])
+
+    def test_p2922_semelhanca_por_hash(self):
+        da, ma, ms, dif = calculos.p2922_semelhanca_por_hash()
+        self.assertTrue(0.309 <= da <= 0.323)
+        self.assertTrue(-0.0165 <= dif <= 0.0165)
+
+    def test_p2923_gerador_global(self):
+        self.assertEqual(calculos.p2923_gerador_global(), (1, 1000))
+
+    def test_p2924_codificacoes(self):
+        pp, pm, alf, num, ex = calculos.p2924_codificacoes()
+        self.assertEqual((pp, pm, alf), (446, 446, 284))
+        self.assertLessEqual(num, 0.004)
+
+    def test_p2925_avaliacao_sob_a_nula(self):
+        c, r, pa, cf = calculos.p2925_avaliacao_sob_a_nula()
+        self.assertTrue(0.3627 <= c <= 0.3739)
+        self.assertTrue(0.3495 <= r <= 0.3607)
+        self.assertTrue(0.0475 <= pa <= 0.0525)
+        self.assertEqual(cf, 0.9)
+
+    def test_p2926_cobertura_do_intervalo(self):
+        a, b, t = calculos.p2926_cobertura_do_intervalo()
+        self.assertTrue(0.9815 <= a <= 0.9845)
+        self.assertTrue(0.9334 <= b <= 0.9390)
+        self.assertTrue(0.8965 <= t <= 0.9035)
+
+    def test_p2927_auditoria_de_entrada(self):
+        self.assertEqual(calculos.p2927_auditoria_de_entrada(), (7, 3, 0))
+
+    def test_p2928_vetor_identico(self):
+        self.assertEqual(calculos.p2928_vetor_identico(), 0)
+
+    def test_p2929_rodada83(self):
+        r = calculos.p2929_rodada83()
+        self.assertEqual(r[0][1].hex(), "0x1.367cd559777dap+1")
+        self.assertEqual([s for s, _ in r], ["confirmed", "inconclusive", "rejected"])
+
+    def test_p1961_com_parte_116(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[116], (19, 19))
+        self.assertEqual((ok, tot), (241, 263))
 
 
 if __name__ == "__main__":
@@ -36336,7 +36952,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2001 linhas)
+# resultados.txt  (2019 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -38339,6 +38955,24 @@ P4199 minha taxa de erro (225/903): media = 0.25, intervalo 90% = [0.23, 0.27]
 P96 funcoes pNN no arquivo = 664; pares de interacao possiveis = 220116
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 154/154 resultados publicados reproduzidos; falhas = []
+--- Parte 116 (0x74: o NEXUS-RAPHAEL v2 colado; o que o codigo faz de fato) ---
+P2921 texto x Parte 109: classes comuns ['Config'] (16 x 17), Jaccard 5-gramas 0.122; linhas que fecham [(549, 553), (541, 549)]; rede ['import:urllib.request', 'rede:urllib.request.urlopen']; chamadas ['random.seed', 'sqlite3.connect']; indefinidos ['AdversarialLayer', 'GameState', 'RaphaelGame']
+P2922 semelhanca por hash: desvio aleatorios 0.3099 (1/sqrt10 = 0.3162); media aleatorios 0.0054, sinonimos -0.0039, diferenca -0.0093
+P2923 gerador global depois de 1000 vetores: recebido 1 valor distinto; corrigido 1000
+P2924 codificacoes: posicional 446 pares colidem (mecanismo dos 'a' iniciais: 446), ex. ['aachen', 'aah', 'aalii', 'aar', 'aare', 'aarhus']; alfanumerica 284 valores distintos; numerologica max|f-1/9| 0.00152
+P2925 sob a nula: recebido confirma 0.3705, rejeita 0.3523; pareado confirma 0.0476; confianca recebida de [-1,-100,50] = 0.9
+P2926 cobertura (n=30): recebido pedido 0,90 -> 0.9829; pedido 0,95 -> 0.9373; corrigido (t) pedido 0,90 -> 0.9020
+P2927 auditoria de entrada: recebido passed 7/7 com o eco; com oraculo 3 falhas (eco), 0 (controle que escapa)
+P2928 vetor corrigido x recebido: 0 de 2000 diferem
+P2929 rodada 83 (avaliacao pareada, IGUAL em Java): [('confirmed', 2.4257), ('inconclusive', 0.0805), ('rejected', -6.2634)]
+P1961 teste, Partes 80-116: 241/263 = 0.9163; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19)}
+P1092 pNN novas (P2921-P2950) sem teste: 0 de 9: []
+P974 previsoes unilaterais da Parte 116: {116: (0, 0, [])}
+P4269 minha taxa de erro (225/922): media = 0.24, intervalo 90% = [0.22, 0.27]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 673; pares de interacao possiveis = 226128
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 156/156 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -40857,7 +41491,7 @@ Ver `dialogo/DIALOGO.md`: a rede linear profunda, 500 passos de GD, é **IGUAL**
 """
 
 # ====================================================================================================
-# ASI_AGI_parte115_camadas_contrapostas.md  (198 linhas)
+# ASI_AGI_parte115_camadas_contrapostas.md  (202 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte115_camadas_contrapostas.md'] = """# Parte 115 — Dez camadas contrapostas, o dicionário em algarismos e em algoritmos, e a escala contra a meta-medida (0x73)
 
@@ -41057,6 +41691,281 @@ Ver `dialogo/DIALOGO.md`: a cadeia tanh contraposta (exp próprio), frente e tr�
 - Estatísticas do WordNet 3.0 (155.287 cadeias por classe, 117.659 sinsets, 206.941 pares palavra-sentido; 147.278 cadeias distintas entre as classes): [WordNet 3.0, wnstats.7WN (espelho HTML da documentação)](https://research.cs.wisc.edu/zhu/space2/TTP/nlp/data/WordNet-3.0/doc/html/wnstats.7WN.html); [página do WordNet em Princeton](https://wordnet.princeton.edu/node/37); [a página de manual wnstats](https://www.mankier.com/7/wnstats). (Os links desta linha foram conferidos numa busca DEPOIS da 1ª versão do texto; a versão anterior citava endereços de memória.)
 - A projeção aleatória (Johnson-Lindenstrauss) com matriz gaussiana e a distorção χ²_k/k: [Dasgupta e Gupta, "An Elementary Proof of a Theorem of Johnson and Lindenstrauss", Random Structures & Algorithms 22 (2003)](https://cse.hkust.edu.hk/mjg_lib/bibs/EmbeddingsCourse/Papers/Dimension/Dasgupta.pdf).
 - O problema do gradiente que some/explode numa cadeia (produto de derivadas): [Pascanu, Mikolov e Bengio, ICML 2013](https://proceedings.mlr.press/v28/pascanu13.html).
+
+---
+
+➡ Continua na [Parte 116 — O NEXUS-RAPHAEL "v2"](ASI_AGI_parte116_nexus_v2.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte116_nexus_v2.md  (266 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte116_nexus_v2.md'] = """# Parte 116 — O NEXUS-RAPHAEL "v2": dez camadas no nome, o que o código faz de fato (0x74)
+
+↩ Parte 109 (o NEXUS v0.1.0 colado, synthai/nexus.py) · ↩ Parte 111 (o verificador lê capacidades, não nomes) · ↩ Parte 75 (um verificador só vale com um caso de controle de cada lado) · ↩ Parte 88 (comparar o texto com o SEU PRÓPRIO código)
+
+> **Recebido sem pedido escrito:** um texto colado que abre com "Vou implementar o NEXUS–RAPHAEL como uma arquitetura experimental consolidada em Python, … real, mensurável e auditável". Segue um código de "10 camadas" (ingestão, linguística, numérica, geométrica, inferência, criatividade, …, metacognição, auditoria e memória). Ele vem **truncado em dois pontos**: no meio de `divergent_exploration` ("Vou continuar o código a partir de onde parou:") e no fim de `evaluate_and_decide`.
+>
+> **A leitura escolhida (regras das Partes 83, 109 e 111, escrita ANTES de medir).** O pedido implícito é o do próprio texto: implementar o que ele descreve, de forma "mensurável e auditável". Faço como na Parte 109:
+> - O texto fica **arquivado** intacto em `externos/nexus_raphael/nexus_raphael_v2_colado.txt` (`.txt`: não fecha como Python e não é importável).
+> - É auditado pela **árvore sintática**, sem executar.
+> - O que serve vira `synthai/nexus_v2.py`, escrito do zero, offline e só com a biblioteca padrão.
+>   - O **dicionário** sai da API `dictionaryapi.dev`, que é rede (12ª recusa da família), e passa a ser o WordNet local.
+>   - A **memória SQLite** sai do disco e vai para `':memory:'`.
+> - Cada afirmação de mecanismo do texto é medida contra o **próprio código dele** (Parte 88): as funções puras são transcritas como `recebido_*` e medidas ao lado da versão corrigida.
+>
+> **Antes do registro (condições, não resultados).**
+> - Os dados são as 77.340 palavras a-z do WordNet (Parte 111).
+> - A comparação com a cópia guardada da Parte 109 (regra da Parte 50) e a contagem por AST ficam para depois do registro.
+> - Não as previ, porque já li os dois textos: o que eu leio não vira previsão (regra da Parte 60).
+
+## As perguntas desta parte
+
+1. **P2921 (0xB69).** O texto é o mesmo da Parte 109, reenviado, ou um texto novo? E o que a árvore sintática acha nele (rede, disco, nomes usados e nunca definidos)? ↩ P2711
+2. **P2922 (0xB6A).** A "semelhança semântica" por hash mede significado? Os sinônimos ficam mais perto que os pares ao acaso? ↩ P2532
+3. **P2923 (0xB6B).** O `random.seed` dentro de `word_to_vector` reinicia o gerador GLOBAL. O que isso faz com o resto do agente (a exploração ε-gulosa, a criatividade)? ↩ P2922
+4. **P2924 (0xB6C).** As codificações numéricas da camada 3 (posicional, alfanumérica, numerológica) são injetivas? Quantas palavras colidem, e por qual mecanismo? ↩ P2894
+5. **P2925 (0xB6D).** A avaliação metacognitiva ("melhoria média > 0,1 confirma") decide o que sob a hipótese NULA? E a confiança por coeficiente de variação? ↩ P2741
+6. **P2926 (0xB6E).** O intervalo de confiança recebido cobre a média com a confiança pedida? ↩ P2925
+7. **P2927 (0xB6F).** A auditoria de entrada da camada 10 pode reprovar alguma coisa? ↩ P2711
+8. **P2928 (0xB70).** O vetor corrigido (gerador local) é o mesmo vetor do texto? ↩ P2923
+9. **P2929 (0xB71).** A avaliação pareada que substitui a do texto acrescenta fronteira entre Python e Java? (rodada 83) ↩ P2897
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+**As fixtures (todas em `synthai/nexus_v2.py`, neste commit).**
+- **Pares:** `pares_aleatorios(lemas, 2000)` (semente 1161) e `pares_de_sinonimos(2000)` (semente 1160, dois lemas a-z do mesmo sinset).
+- **Vetores:** dimensão 10.
+- **Nula:** `avaliacao_nula()`, 20.000 tentativas, valor e linha de base iid N(10, 2), 1 experimento.
+- **Nula pareada:** `avaliacao_nula_pareada()`, n = 5, t crítico unilateral de 95% com 4 graus de liberdade.
+- **Cobertura:** `cobertura(f, c)`, 20.000 amostras N(0, 1) de n = 30.
+- **Contaminação:** `contaminacao("synthai", 1000)`.
+
+**A semelhança por hash (P2922).** Os vetores são gaussianos N(0, 1)¹⁰ sorteados a partir do md5 da palavra, então o cosseno entre duas palavras diferentes tem média 0 e variância 1/d. Para gaussianos isso é exato: E[c²] = 1/d, E[c⁴] = 3/(d(d+2)), curtose 3d/(d+2) = 2,5.
+- **(a)** O desvio do cosseno sobre os 2.000 pares aleatórios. Centro 1/√10 = 0,3162. O desvio do desvio é 0,3162·√((2,5 − 1)/(4·2000)) = 0,00433, faixa ±1,645 × 0,00433 = **[0,309; 0,323]**. Forma fechada com variância conhecida (sem o fator 1,36).
+- **(b)** A média do cosseno nos 2.000 pares de SINÔNIMOS menos a média nos 2.000 aleatórios. O md5 não vê significado, então o centro é 0. O desvio da diferença é √(0,1/2000 + 0,1/2000) = 0,0100, faixa **[−0,0165; 0,0165]**. Se der fora, o hash vê alguma coisa (por exemplo, sinônimos que são variantes de grafia).
+
+**O gerador global (P2923).**
+- **(c)** Depois de cada um dos 1.000 vetores da mesma palavra, a próxima chamada do gerador "global" dá quantos valores DISTINTOS? **[1; 1]**. Identidade: `seed(h)` seguido de 10 `gauss` deixa o gerador sempre no mesmo estado. Consequência: todo `random.random() < ε` depois de um vetor tem sempre o mesmo resultado, e a exploração ε-gulosa vira uma constante.
+- **(d)** O mesmo com o vetor corrigido (gerador local): **[1.000; 1.000]**. Identidade: o gerador global não é tocado, e 1.000 floats de 53 bits colidem com probabilidade ≈ 10⁶/2⁵⁴ ≈ 0.
+
+**As codificações (P2924).**
+- **(e)** A posicional recebida usa A = 0, e um "a" à esquerda é um zero à esquerda. Então valor(w) = valor(w sem os "a" iniciais), e esta é a ÚNICA fonte de colisão (a base 26 com dígitos 0..25 é única a menos dos zeros à esquerda). Previsão: os pares que colidem na posicional, menos os pares que o mecanismo conta (Σ C(g, 2) nos grupos pela palavra sem os "a" iniciais): **[0; 0]**.
+- **(f)** Quantos pares colidem na posicional? Mecanismo esperado: palavras "a" + palavra ("abed"/"bed", "afoot"/"foot", "awake"/"wake", "ajar"/"jar"). Das ~77 mil palavras, umas 4 a 5 mil começam com "a", e uma fração de 3% a 20% delas tem o resto no dicionário. Faixa **[150; 900]** (larga, com o mecanismo escrito: um acerto com outro mecanismo não conta como acerto do raciocínio).
+- **(g)** Valores distintos da alfanumérica (soma A = 1 … Z = 26). Mecanismo: a soma vai de 1 a ~26·L, e as palavras têm ~2 a ~25 letras com média de letra ~10 a 13, então os valores enchem densamente de ~5 a ~250 e ficam ralos acima. Faixa **[200; 340]**.
+- **(h)** A numerológica (soma dos códigos reduzida a um algarismo, que é a soma mod 9, com 9 no lugar do 0). O maior |fração − 1/9| entre os 9 valores. A soma de várias letras mistura bem mod 9, então os valores são quase uniformes. O desvio binomial é √(1/9 · 8/9 / 77.340) = 0,00113, e o máximo de 9 desvios fica perto de 2,5σ. Faixa **[0; 0,004]**.
+
+**A avaliação sob a nula (P2925).** Com 1 experimento, "confirmed" ⇔ v > 1,1·b (b > 0 quase sempre). v − 1,1b ~ N(10 − 11, 4 + 1,21·4) = N(−1; 8,84), então P(confirmed) = 1 − Φ(1/√8,84) = 1 − Φ(0,3363) = 0,3683. E v − 0,9b ~ N(1; 4 + 0,81·4) = N(1; 7,24), então P(rejected) = Φ(−1/√7,24) = Φ(−0,3716) = 0,3551.
+- **(i)** Fração de "confirmed" sob a nula. Desvio binomial √(0,3683·0,6317/20.000) = 0,00341, faixa **[0,3627; 0,3739]**.
+- **(j)** Fração de "rejected" sob a nula. Desvio 0,00338, faixa **[0,3495; 0,3607]**. Juntas: sob a nula, o avaliador recebido decide (confirma ou rejeita) em ~72% das vezes.
+- **(k)** A avaliação pareada corrigida (n = 5, t crítico unilateral de 95%) sob a mesma nula. As diferenças são normais e a t é exata, então P(confirmed) = 0,05. Desvio √(0,05·0,95/20.000) = 0,00154, faixa **[0,0475; 0,0525]**.
+- **(l)** A confiança recebida para os valores [−1, −100, 50] (média −17, desvio 61): **[0,9; 0,9]**. Identidade: CV = 61/(−17) < 0,1 cai no primeiro degrau, a confiança máxima com a maior dispersão.
+
+**O intervalo de confiança (P2926).** O recebido usa a variância populacional e z = 2,576 para QUALQUER confiança ≠ 0,95. A cobertura é P(|T₂₉| < z·√(29/30)).
+- **(n)** Pedida 0,90 (vem z = 2,576): 2·F₂₉(2,5327) − 1 = 0,9830. Desvio 0,00091, faixa **[0,9815; 0,9845]**. Mais largo que o pedido: 98% em vez de 90%.
+- **(o)** Pedida 0,95 (z = 1,96 com a variância populacional): 2·F₂₉(1,9271) − 1 = 0,9362. Desvio 0,00173, faixa **[0,9334; 0,9390]**. Mais estreito que o pedido.
+- **(p)** O corrigido (`ic_t`, a t com n − 1) pedido a 0,90: centro 0,90, desvio √(0,09/20.000) = 0,00212, faixa **[0,8965; 0,9035]**.
+
+**A auditoria e o vetor (P2927/P2928).**
+- **(q)** A auditoria recebida com um tratador que DEVOLVE A ENTRADA sem escapar (o XSS e o caminho "../" voltam intactos): "passed" **[7; 7]**. Identidade: os dois ramos somam "passed".
+- **(r)** A auditoria com oráculo (`auditoria_com_oraculo`) com o mesmo tratador: as falhas **[3; 3]**. Identidade pela definição do oráculo: a aspa da injeção SQL, o "<script" e o "..". E o controle limpo, um tratador que escapa ("<" → "&lt;", "." → "", "'" → ""), tem que dar 0 falhas: **[0; 0]** (registrado como parte de (r): as duas metades têm que valer).
+- **(s)** O vetor corrigido contra o recebido, para as 2.000 primeiras palavras em ordem alfabética: o número de vetores que diferem em algum bit, **[0; 0]**. Identidade: `random.Random(int)` e `random.seed(int)` passam pelo mesmo `init_by_array` do Mersenne Twister.
+
+**Diálogo (P2929).**
+- **(t)** A avaliação pareada (rodada 83) é **IGUAL** bit a bit entre Python e Java: **[0; 0]**. Identidade: só +, −, ×, ÷, √, com as somas em laço na mesma ordem.
+
+### Previsões sobre as previsões (m), pré-registradas (régua: P2837, leitor v4)
+
+- **(m1)** nº de previsões do mundo em **[16; 20]** (18 agora: a até t sem m)
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[3; 7]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0; 0,10]**
+- **(m4)** fração de acertos do mundo em **[0,70; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 3]**
+
+### Sobre mim, pré-registrado
+
+Os riscos estão onde não há conta fechada:
+- **(f) e (g):** contagens no dicionário com o centro chutado pelo mecanismo.
+- **(h):** a mistura mod 9 supõe que as palavras curtas pesam pouco.
+- **(b):** se houver sinônimos que são a mesma grafia em caixas diferentes, o md5 os vê como iguais? Não: eu tiro as maiúsculas antes, e os pares do mesmo sinset são palavras diferentes.
+
+Espero **1 a 3 erros**, em (f), (g) ou (h). As identidades (c), (d), (e), (l), (q), (r), (s), (t) só erram se eu tiver lido o código errado, e isso aconteceu duas vezes desde a Parte 109.
+
+---
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2921 — O texto e a árvore
+
+**Na pergunta.** "Consolidada" e "mensurável e auditável" são o que o texto promete de si. A pergunta pede o contrário: medir o que ele é.
+
+**Lógica.**
+- **Não é a Parte 109 reenviada.** Das 16 classes da v0.1.0 e das 17 desta, só **`Config`** é comum, e o Jaccard dos 5-gramas de caracteres é **0,122**. É um texto NOVO com o mesmo nome (regra da Parte 50: comparar antes de auditar de novo).
+- **Não fecha como Python.** O primeiro bloco fecha até a linha **549 de 553**, e o segundo até a **541 de 549**: os dois cortes de truncamento.
+- **Nomes usados e nunca definidos:** **`AdversarialLayer`, `GameState`, `RaphaelGame`** (a camada adversária, o estado do jogo e o próprio jogo). O orquestrador `NexusRaphael` constrói as três no `__init__`, então o "10 camadas consolidado" não pode ser instanciado: falta a camada 7 inteira e parte da 8.
+- **Capacidades (`security_audit_ast_v2`, Parte 111):**
+  - `import urllib.request` e `urllib.request.urlopen`: a rede, para a API do dicionário;
+  - `sqlite3.connect`, gravando `nexus_raphael_memory.db` no diretório corrente assim que o objeto é construído;
+  - `random.seed`, no gerador global (P2923).
+
+**Meta.** A contagem por AST veio DEPOIS do registro, de propósito: eu já tinha lido o texto, e o que eu leio não vira previsão (regra da Parte 60).
+
+### P2922 — A "semelhança semântica" por hash
+
+**Na pergunta.** "Semântica" é a palavra a medir. O código diz o mecanismo: o md5 da palavra vira a semente de 10 gaussianas. Um hash é FEITO para que palavras parecidas deem saídas sem relação.
+
+**Lógica.**
+- **Pares aleatórios:** o desvio do cosseno nos 2.000 pares é **0,3099** ✅ (a), contra 1/√10 = 0,3162 (z = −1,47, dentro da faixa por pouco).
+- **Sinônimos menos aleatórios:** a diferença das médias é **−0,0093** ✅ (b), z = −0,93. Os sinônimos do mesmo sinset ficam exatamente tão longe quanto duas palavras sorteadas.
+
+A "semelhança semântica" é ruído com desvio 1/√d e média 0. Ela não vê significado, e não poderia ver: o vetor de uma palavra não depende de nenhuma outra. A versão útil do mesmo nome já existe no projeto: os vetores de bigramas das glosas (Parte 115) e os embeddings do GPT (Parte 69) aprendem com o contexto.
+
+**Tradução cruzada.** É dar um nome próprio a cada pessoa e concluir parentesco pela semelhança dos nomes sorteados. A identidade (o hash) não é a relação (o significado). Para Jung, o símbolo vale pelo que ele LIGA; um sinal que não liga nada a nada é só um rótulo.
+
+### P2923 — O gerador global reiniciado
+
+**Lógica.**
+- **Recebido:** depois de 1.000 vetores da mesma palavra, a chamada seguinte do gerador "global" deu **1** valor distinto ✅ (c). `seed(h)` seguido de 10 `gauss` deixa o estado sempre no mesmo ponto.
+- **Corrigido:** **1.000** valores distintos ✅ (d), com um gerador local que não toca no de quem chama.
+
+A consequência no agente do texto: a exploração ε-gulosa (`random.random() < ε`) e a escolha de axiomas e paradoxos (`random.choice`) usam o MESMO gerador global. Depois de qualquer cálculo de semelhança, elas viram funções determinísticas da última palavra vista, e a "exploração" deixa de explorar. A documentação do Python diz isso: as funções do módulo são métodos de UMA instância escondida de `random.Random`, e a saída é instanciar a sua própria (fonte abaixo).
+
+**Tradução cruzada.** Um pensamento intrusivo que reinicia a atenção toda vez que uma palavra aparece. A espontaneidade (o acaso da exploração) é capturada por um gatilho, como num complexo de Jung: a mesma palavra produz sempre a mesma reação.
+
+### P2924 — As codificações da camada 3
+
+**Lógica.**
+- **Posicional (A = 0):**
+  - **446** pares de palavras colidem, e o mecanismo dos "a" iniciais conta exatamente os mesmos **446** (diferença 0 ✅ (e); 446 ∈ [150; 900] ✅ (f)). É **0,58%** das palavras.
+  - O mecanismo escrito no registro confere: **310** dos 446 pares (69,5%) são palavra + "a" com um resto de 4 letras ou mais ("aback"/"back", "abase"/"base", "abate"/"bate", "abide"/"bide"). Mais 3 pares do grupo "a"/"aa"/"aaa" (valor 0), 21 de letras soltas ("aah"/"h") e 112 de restos curtos (numerais romanos como "aalii"/"lii").
+  - A base 26 da Parte 115, BIJETIVA (dígitos 1..26), dá 0 colisões nas mesmas palavras: a diferença entre as duas é um dígito zero.
+- **Alfanumérica (soma A = 1 … Z = 26):** **284** valores distintos para 77.340 palavras ✅ (g), cerca de 272 palavras por valor. Não é uma codificação; é um histograma.
+- **Numerológica:** o maior |fração − 1/9| é **0,00152** ✅ (h), 1,35σ do binomial. Os 9 valores são uniformes porque a soma mod 9 mistura bem: a "redução numerológica" de uma palavra é um sorteio uniforme entre 9 valores, que carrega log₂ 9 = 3,17 bits da palavra e nenhuma propriedade dela.
+
+**Tradução cruzada.** Três formas de transformar uma palavra em número, em escada de perda. A bijetiva guarda tudo; a posicional com zero perde o "a" inicial (o prefixo de negação ou de estado, "a-moral", "a-sleep"); a soma esquece a ordem e quase tudo o mais; a numerologia guarda 3 bits sem sentido. Sobre o significado, a numerologia é a mais confiante e a mais pobre.
+
+### P2925 — A avaliação metacognitiva sob a nula
+
+**Na pergunta.** "Confirmar" uma hipótese é afirmar que o efeito não é acaso. A pergunta certa é o que o avaliador diz quando o efeito é ZERO.
+
+**Lógica.** Com valor e linha de base iid N(10, 2) (nenhum efeito) e 1 experimento:
+- o avaliador recebido **confirma** em **37,0%** das vezes ✅ (i), z = +0,63 contra 36,83%;
+- e **rejeita** em **35,2%** ✅ (j), z = −0,82.
+
+Ele DECIDE em **72,3%** das vezes num mundo sem efeito nenhum, porque o limiar de ±10% de melhoria não olha a variância (aqui, CV = 20%). A avaliação pareada (t de Student, n = 5, 95% unilateral) confirma em **4,76%** ✅ (k): a taxa de falso positivo é a que ela declara.
+
+A confiança recebida de [−1, −100, 50] é **0,9** ✅ (l), a MÁXIMA, para valores de sinais opostos com desvio 61 e média −17. O coeficiente de variação negativo cai no degrau "< 0,1". A correção usa |média| e o erro-padrão: s/(|média|·√n) = 2,1, muito alto, como deve ser.
+
+**Tradução cruzada.** Um juiz que condena ou absolve 72 de cada 100 inocentes, e que se diz mais certo quando as testemunhas se contradizem (sinais opostos). É o "complexo de confiança" que a Parte 45 já mediu em mim: a certeza que não olha a dispersão. A metacognição recebida avalia hipóteses com a mesma régua que ela deveria corrigir.
+
+### P2926 — O intervalo de confiança
+
+**Lógica.** Em 20.000 amostras normais de n = 30:
+- o recebido pedido a **0,90** cobre **0,9829** ✅ (n), contra 0,9830 previsto: o código usa z = 2,576 para TODA confiança ≠ 0,95 e devolve um intervalo de 98% para quem pediu 90%;
+- pedido a **0,95**, cobre **0,9373** ✅ (o), contra 0,9362: a variância populacional e o z no lugar da t encurtam o intervalo;
+- o corrigido (t com n − 1, quantil da confiança pedida) cobre **0,9020** ✅ (p).
+
+Os dois erros do recebido vão em direções opostas (largo demais a 90%, estreito demais a 95%), e nenhum deles aparece a quem olha só o código, porque os nomes estão certos.
+
+### P2927 — A auditoria que não pode reprovar
+
+**Lógica.**
+- **Recebido:** um tratador que devolve a entrada sem escapar (o XSS e o "../" voltam intactos) passa **7 de 7** ✅ (q). No código, os dois ramos (devolveu, levantou exceção) somam "passed", e "failed" não tem uma linha que o incremente.
+- **Com oráculo:** o mesmo tratador falha **3** ✅ (r) (a aspa, o "<script", o ".."), e o controle limpo, que escapa, falha **0** ✅ (r).
+
+É o "provador de Gödel" da Parte 75 de novo: um verificador sem caso de controle que reprova. A regra (um defeito plantado que ele tem de achar e um caso limpo que ele tem de passar) separou as duas auditorias em uma linha cada.
+
+### P2928 / P2929 — O vetor idêntico e a rodada 83
+
+- **O vetor corrigido** é o MESMO do recebido nas 2.000 primeiras palavras: **0** diferem em algum bit ✅ (s). `random.Random(int)` e `random.seed(int)` usam o inteiro diretamente (documentação abaixo). A correção tira o efeito colateral sem mudar nenhum número.
+- **Rodada 83:** a avaliação pareada em Python × Java é **IGUAL**, com 4 linhas e 3 números bit a bit ✅ (t). As três hipóteses dão confirmed (t = 2,43), inconclusive (0,08) e rejected (−6,26). 27 rodadas.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅ (q) ✅ (r) ✅ (s) ✅ (t) ✅. Parte 116: **19 testes, 0 erros**. Acumulado (mundo): **225 erros em 922 testes**. Calibração (P1961, Partes 80–116): **241/263 = 0,916**.
+
+### Previsões sobre previsões (m)
+
+Régua: P2837 (leitor v4).
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [16; 20] | 19 | ✅ |
+| (m2) | [3; 7] | 5 | ✅ |
+| (m3) | [0; 0,10] | 0,0034 | ✅ |
+| (m4) | [0,70; 1,00] | 1,00 | ✅ |
+| (m5) | [0; 2] | 1 | ✅ |
+| (m6) | [0; 3] | 0 | ✅ |
+
+Previsões sobre previsões: **6 de 6**.
+
+### Sobre mim
+
+- **"1 a 3 erros, em (f), (g) ou (h)": ❌.** Foram 0. As três faixas sem conta fechada acertaram com o mecanismo escrito, e o mecanismo de (f) foi conferido por dentro (310 dos 446 pares são "a" + palavra).
+- **A nota "(18 agora)" do (m1): errada por um.** São 19 previsões, de (a) a (t) sem o (m). Contei por LEITURA, que é exatamente o que a regra da Parte 60 proíbe, e errei por um, como nas Partes 59 e 60. O (m1) acertou porque a faixa veio da série, não da nota.
+
+## Engenharia reversa (metacognição)
+
+**O padrão: pela 9ª vez, a prosa promete mais mecanismo do que o código entrega.** Lotes anteriores: 72, 82, 83, 85, 86, 87, 88, 95 e 109.
+- "Semelhança semântica" é um hash.
+- "Metacognitive evaluator" confirma ou rejeita 72% das hipóteses nulas e dá a confiança máxima à maior dispersão.
+- "Security auditor" não tem ramo de falha.
+- "Consolidada" não instancia: faltam três classes.
+
+Desta vez cada achado é uma IDENTIDADE lida no próprio código, e todas as 19 previsões acertaram. **Significado:** quando eu audito um texto contra o código DELE (regra da Parte 88), a pergunta vira álgebra (o que esta linha faz com esta entrada), e eu erro pouco. Quando eu audito contra a reputação do que o nome promete, erro muito (Partes 84 e 87). O texto recebido erra do mesmo jeito que eu errava: o nome da função ("confidence", "semantic", "audit") faz o papel do mecanismo.
+
+**O segundo padrão: errei a previsão sobre mim pelo lado da modéstia.** Previ 1 a 3 erros e tive 0, pela segunda vez nas últimas três partes (a 114 deu 10/10). **Significado:** a minha previsão de erros ainda segue a média antiga, do tempo em que as faixas vinham de reputação. Quando as faixas vêm quase todas de identidade e de forma fechada, como aqui (15 de 19), o centro deveria cair. **Regra:** o centro da previsão "quantos erros" condiciona na PROCEDÊNCIA das faixas da parte: as faixas sem conta fechada (aqui 4: (f), (g), (h) e, em parte, (a)) vezes a taxa histórica delas, e não a taxa média de todas.
+
+**O terceiro: a contagem de cabeça no registro errou de novo por um.** É a regra da Parte 59, que eu já tinha: a contagem do número de previsões sai de `p2833_minhas_previsoes_v4` antes do commit do registro, nunca de uma nota escrita.
+
+## Síntese / unificação
+
+O NEXUS-RAPHAEL "v2" colado foi anexado em dois níveis, como na Parte 109:
+- **Arquivado intacto** em `externos/nexus_raphael/nexus_raphael_v2_colado.txt`. Não fecha como Python, faltam 3 classes, e tem rede e disco.
+- **Reescrito offline** em `synthai/nexus_v2.py`, com:
+  - o dicionário local (WordNet), no lugar da API;
+  - o vetor por hash num gerador local, com os mesmos números e sem efeito colateral;
+  - o intervalo e a avaliação pela t de Student, com a taxa de falso positivo que declaram (4,8% e cobertura de 0,90);
+  - a confiança pelo erro-padrão com |média|;
+  - uma auditoria com oráculo (3 falhas no eco, 0 no controle);
+  - a memória SQLite em `':memory:'`.
+
+As afirmações do texto que NÃO se sustentam, medidas no próprio código dele:
+- a semelhança "semântica" (sinônimos − aleatórios = −0,009, o ruído de 1/√10);
+- a exploração (morre no `random.seed` global);
+- a codificação posicional (446 colisões de zero à esquerda);
+- a avaliação metacognitiva (decide em 72% das hipóteses nulas);
+- a confiança (0,9 para dados de sinais opostos);
+- o intervalo de confiança (98% pedindo 90%; 93,7% pedindo 95%);
+- a auditoria de entrada (não reprova nada).
+
+O que se sustenta (Brier, entropia, as operações de `Vector`, o `cos 2θ`) é a parte que já era fórmula.
+
+Rodada 83: a avaliação pareada, IGUAL (27 rodadas). 19/19 do mundo, 6/6 (m), calibração **0,916**.
+
+## Meta
+
+**Confiança.**
+- **Alta** nas identidades (c, d, e, l, q, r, s, t).
+- **Alta** nas formas fechadas (a, b, i, j, k, n, o, p), todas a |z| < 1,6.
+
+**Onde pode estar errado.** O texto está truncado: as três classes que faltam (o jogo, o estado e a camada adversária) podem ter defeitos ou virtudes que eu não medi. A camada 7 só existe pelo nome. Eu avaliei a "metacognição" com 1 experimento por hipótese, que é como o orquestrador do texto a chama (um `run_experiment` por hipótese). Com vários experimentos, a média das melhorias encolhe a taxa de decisão, mas sem t ela continua sem uma taxa de erro declarada.
+
+**Recusa.** A API externa (rede) é a 12ª recusa da família. A troca pelo WordNet local entrega o que o texto queria do dicionário sem sair da máquina.
+
+## Diálogo Python ↔ Java (rodada 83)
+
+Ver `dialogo/DIALOGO.md`: a avaliação pareada (diferenças, t, decisão) é **IGUAL**, com 4 linhas e 3 números bit a bit.
+
+## Fontes
+
+- O gerador global do módulo `random` ("as funções do módulo são métodos ligados de uma instância escondida de `random.Random`"; um `int` passado a `seed` é usado diretamente): [documentação do Python, random](https://docs.python.org/3/library/random.html), lida nesta sessão.
+- O intervalo pela t de Student com a variância amostral (n − 1), exato para dados normais, e o z como aproximação de n grande: [Wolfram Demonstrations, robustez da t de Student no problema de uma amostra](https://www.wolframcloud.com/objects/demonstrations/RobustnessOfStudentTInTheOneSampleProblem-source.nb); [Hurvich, notas de regressão (NYU Stern)](https://pages.stern.nyu.edu/~churvich/Regress/Handouts/Chapt2.pdf); [LibreTexts, as distribuições t](https://stats.libretexts.org/Bookshelves/Applied_Statistics/Introduction_to_Applied_Statistics_for_Psychology_Students_(Sarty)/08%3A_Confidence_Intervals/8.03%3A_The_t-Distributions).
 """
 
 # ====================================================================================================
@@ -63845,7 +64754,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1986 linhas)
+# dialogo/DIALOGO.md  (1996 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -65833,10 +66742,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. 26 rodadas.
 
 **IA-Python:** Pendência (rodada 83): a contraposição com MATRIZES (pesos ortogonais ou com a inversa na camada seguinte), em vez de escalares; e o MCCFR (da 113).
+
+## Rodada 83 (Parte 116) — a avaliação pareada
+
+**IA-Python (lógica criativa):** Chegou um NEXUS-RAPHAEL "v2" cuja metacognição confirma uma hipótese quando a melhoria média passa de 10%. Medi: sob a hipótese nula, ele confirma 37% e rejeita 35%. Troquei por diferenças pareadas e uma t de Student: d = valor − base, t = média(d)/(s_d/√n), contra o crítico unilateral de 95% com 4 graus de liberdade (2,131847). Três hipóteses, cinco experimentos cada. As duas línguas decidem igual?
+
+**IA-Java (ASI):** Decidem, porque não há transcendental: subtração, somas em laço na mesma ordem, um quadrado escrito como produto e duas raízes, que o IEEE arredonda corretamente. E repara no que a sua troca faz: a regra recebida tinha um limiar e nenhuma taxa de erro; a sua tem a taxa de erro como parâmetro. Uma decisão que não sabe quantas vezes erra sob a nula não é metacognição; é opinião com um número.
+
+**Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 3 números bit a bit** (confirmed t = 2,43; inconclusive 0,08; rejected −6,26). 27 rodadas.
+
+**IA-Python:** Pendência (rodada 84): as camadas contrapostas com MATRIZES (da 115) e o MCCFR (da 113), que o NEXUS v2 adiou.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (74 linhas)
+# dialogo/PENDENCIAS.md  (75 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -65912,6 +66831,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 
 - **(Rodada 83, Parte 115)** ABERTAS: (1) as camadas contrapostas com MATRIZES (ortogonais, ou W e W⁻¹ alternadas), onde a contraposição exige inversa ou ortogonalidade; (2) o MCCFR e o Leduc (da 113); (3) o regime em que aprender a base ganha (da 114); (4) dar SIGNIFICADO linguístico ao alfabeto de algoritmos (operações escolhidas pelas letras, não ao acaso) e medir se palavras próximas no dicionário viram programas próximos.
 - **(Parte 115, achado ao conferir a fonte)** Os lemas distintos do WordNet 3.0 entre as classes dão 147.306 no arquivo de `dados/` e 147.278 na página de estatísticas de Princeton: 28 a mais, sem explicação (as maiúsculas não explicam: os lemas já estão em minúsculas). Hipóteses a testar: lemas com espaço x sublinhado, hífens, ou a revisão da documentação.
+- **(Rodada 84, Parte 116)** ABERTAS (as da 115 continuam, adiadas pelo NEXUS v2): (1) as camadas contrapostas com MATRIZES; (2) o MCCFR e o Leduc; (3) o regime em que aprender a base ganha; (4) os algoritmos de letras com significado; (5) os 28 lemas. NOVA, da 116: o NEXUS v2 chegou truncado (faltam a camada adversária, o estado e o jogo); se o texto completo chegar, medir só as três classes que faltam (regra da Parte 88: não re-derivar o resto).
 """
 
 # ====================================================================================================
@@ -71762,6 +72682,42 @@ public class Rodada82 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada83.java  (31 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada83.java'] = """// Rodada 83 (Parte 116): a avaliacao pareada que substitui a avaliacao metacognitiva do NEXUS-RAPHAEL v2 recebido. d = valor - base,
+// t = media(d)/(s_d/sqrt(n)), confirmed se t > 2.131847, rejected se t < -2.131847. So + - * / e sqrt, somas em laco na mesma ordem. Bit a bit.
+public class Rodada83 {
+    static final double T_CRITICO = 2.131847;
+    static final double[][][] H = {
+        {{10.4, 11.2, 9.8, 12.1, 10.9}, {10.0, 10.1, 9.9, 10.3, 10.2}},
+        {{9.1, 10.7, 8.8, 11.9, 10.2}, {10.0, 10.1, 9.9, 10.3, 10.2}},
+        {{8.2, 9.0, 8.7, 9.4, 8.1}, {10.0, 10.1, 9.9, 10.3, 10.2}},
+    };
+
+    public static void main(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < H.length; i++) {
+            double[] v = H[i][0], b = H[i][1];
+            int n = v.length;
+            double[] d = new double[n];
+            for (int j = 0; j < n; j++) d[j] = v[j] - b[j];
+            double soma = 0.0;
+            for (int j = 0; j < n; j++) soma += d[j];
+            double media = soma / n;
+            double q = 0.0;
+            for (int j = 0; j < n; j++) q += (d[j] - media) * (d[j] - media);
+            double s = Math.sqrt(q / (n - 1));
+            double t = media / (s / Math.sqrt(n));
+            String st = t > T_CRITICO ? "confirmed" : (t < -T_CRITICO ? "rejected" : "inconclusive");
+            sb.append("H").append(i).append(" t ").append(Double.toHexString(t)).append(" ").append(st).append("\\n");
+        }
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -77567,6 +78523,53 @@ def main():
     print("h10 " + h.hex())
     print("dh10/dh0 " + g.hex())
     print("dh10/dw " + " ".join(x.hex() for x in gw))
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada83.py  (42 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada83.py'] = """\"\"\"Rodada 83 do diálogo Python <-> Java (Parte 116): a AVALIAÇÃO PAREADA que substitui a avaliação metacognitiva do NEXUS-RAPHAEL v2 recebido.
+d = valor − linha de base; t = média(d)/(s_d/√n); 'confirmed' se t > t crítico (2,131847: unilateral 95%, 4 graus de liberdade), 'rejected' se
+t < −t crítico. Três hipóteses de 5 experimentos. Só +, −, ×, ÷ e √, somas em laço na mesma ordem. Bit a bit.
+Da raiz: python3 dialogo/rodada83.py\"\"\"
+import math
+
+T_CRITICO = 2.131847
+HIPOTESES = [
+    ([10.4, 11.2, 9.8, 12.1, 10.9], [10.0, 10.1, 9.9, 10.3, 10.2]),
+    ([9.1, 10.7, 8.8, 11.9, 10.2], [10.0, 10.1, 9.9, 10.3, 10.2]),
+    ([8.2, 9.0, 8.7, 9.4, 8.1], [10.0, 10.1, 9.9, 10.3, 10.2]),
+]
+
+
+def avaliar(valores, bases):
+    n = len(valores)
+    d = [v - b for v, b in zip(valores, bases)]
+    soma = 0.0
+    for x in d:
+        soma += x
+    media = soma / n
+    q = 0.0
+    for x in d:
+        q += (x - media) * (x - media)
+    s = math.sqrt(q / (n - 1))
+    t = media / (s / math.sqrt(n))
+    if t > T_CRITICO:
+        return "confirmed", t
+    if t < -T_CRITICO:
+        return "rejected", t
+    return "inconclusive", t
+
+
+def main():
+    for i, (v, b) in enumerate(HIPOTESES):
+        st, t = avaliar(v, b)
+        print(f"H{i} t {t.hex()} {st}")
     print("fim")
 
 

@@ -1984,3 +1984,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. 26 rodadas.
 
 **IA-Python:** Pendência (rodada 83): a contraposição com MATRIZES (pesos ortogonais ou com a inversa na camada seguinte), em vez de escalares; e o MCCFR (da 113).
+
+## Rodada 83 (Parte 116) — a avaliação pareada
+
+**IA-Python (lógica criativa):** Chegou um NEXUS-RAPHAEL "v2" cuja metacognição confirma uma hipótese quando a melhoria média passa de 10%. Medi: sob a hipótese nula, ele confirma 37% e rejeita 35%. Troquei por diferenças pareadas e uma t de Student: d = valor − base, t = média(d)/(s_d/√n), contra o crítico unilateral de 95% com 4 graus de liberdade (2,131847). Três hipóteses, cinco experimentos cada. As duas línguas decidem igual?
+
+**IA-Java (ASI):** Decidem, porque não há transcendental: subtração, somas em laço na mesma ordem, um quadrado escrito como produto e duas raízes, que o IEEE arredonda corretamente. E repara no que a sua troca faz: a regra recebida tinha um limiar e nenhuma taxa de erro; a sua tem a taxa de erro como parâmetro. Uma decisão que não sabe quantas vezes erra sob a nula não é metacognição; é opinião com um número.
+
+**Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 3 números bit a bit** (confirmed t = 2,43; inconclusive 0,08; rejected −6,26). 27 rodadas.
+
+**IA-Python:** Pendência (rodada 84): as camadas contrapostas com MATRIZES (da 115) e o MCCFR (da 113), que o NEXUS v2 adiou.

@@ -196,3 +196,7 @@ Ver `dialogo/DIALOGO.md`: a cadeia tanh contraposta (exp próprio), frente e tr�
 - Estatísticas do WordNet 3.0 (155.287 cadeias por classe, 117.659 sinsets, 206.941 pares palavra-sentido; 147.278 cadeias distintas entre as classes): [WordNet 3.0, wnstats.7WN (espelho HTML da documentação)](https://research.cs.wisc.edu/zhu/space2/TTP/nlp/data/WordNet-3.0/doc/html/wnstats.7WN.html); [página do WordNet em Princeton](https://wordnet.princeton.edu/node/37); [a página de manual wnstats](https://www.mankier.com/7/wnstats). (Os links desta linha foram conferidos numa busca DEPOIS da 1ª versão do texto; a versão anterior citava endereços de memória.)
 - A projeção aleatória (Johnson-Lindenstrauss) com matriz gaussiana e a distorção χ²_k/k: [Dasgupta e Gupta, "An Elementary Proof of a Theorem of Johnson and Lindenstrauss", Random Structures & Algorithms 22 (2003)](https://cse.hkust.edu.hk/mjg_lib/bibs/EmbeddingsCourse/Papers/Dimension/Dasgupta.pdf).
 - O problema do gradiente que some/explode numa cadeia (produto de derivadas): [Pascanu, Mikolov e Bengio, ICML 2013](https://proceedings.mlr.press/v28/pascanu13.html).
+
+---
+
+➡ Continua na [Parte 116 — O NEXUS-RAPHAEL "v2"](ASI_AGI_parte116_nexus_v2.md).
