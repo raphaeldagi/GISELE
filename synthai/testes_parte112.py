@@ -52,6 +52,10 @@ class TesteParte112(unittest.TestCase):
         self.assertEqual(ve, F(-5, 12))
         self.assertLessEqual(ef, 1e-12)
         self.assertEqual(lac, 0)
+        # a identidade do minimax: no equilíbrio, p·A·q = v (usa a simplex.valor_contra, que a auditoria P1871 da Parte 113 acusou sem uso)
+        G = simplex.jogo_lcg()
+        v, p, q, _ = simplex.resolver_jogo(G)
+        self.assertEqual(simplex.valor_contra(G, p, q), v)
 
     def test_p2805_rodada79(self):
         v, p, q, k = calculos.p2805_rodada79()
@@ -86,7 +90,7 @@ class TesteParte112(unittest.TestCase):
         self.assertTrue(1.081 <= rl <= 1.121)
 
     def test_p1961_com_parte_112(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 113))))
         self.assertEqual(por[112], (14, 14))
         self.assertEqual((ok, tot), (184, 205))
 

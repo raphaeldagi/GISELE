@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 112, perguntas P1 a P2810).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 113, perguntas P1 a P2838).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (15848 linhas)
+# calculos.py  (16050 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9658,6 +9658,8 @@ VEREDITOS_P3919 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) �
 ERROS_P3919, TESTES_P3919 = 224, 850
 VEREDITOS_P3989 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅"
 ERROS_P3989, TESTES_P3989 = 224, 864
+VEREDITOS_P4059 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅"
+ERROS_P4059, TESTES_P4059 = 224, 877
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12198,12 +12200,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14462,6 +14464,184 @@ def p2810_hipotese_do_repertorio():
     return rc, rl, n, k
 
 
+_SOBRESCRITOS = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺", "0123456789-+")
+
+
+def _numero_pt_v2(x):
+    \"\"\"O _numero_pt com potências escritas com expoente sobrescrito (Parte 113; a original fica intacta): "10⁻¹²", "5·10⁻⁴", "6,1·10⁻¹⁶",
+    "2⁻⁵⁴". Sem expoente sobrescrito, delega à original.\"\"\"
+    import re
+    y = x.strip().replace("*", "").replace(" ", "")
+    m = re.fullmatch(r"(?:([−\\-]?[0-9.,]+)[·×])?([0-9]+)([⁻⁺]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+)", y)
+    if not m:
+        return _numero_pt(x)
+    mant = _numero_pt(m.group(1)) if m.group(1) else 1.0
+    if mant is None:
+        return None
+    return mant * float(int(m.group(2))) ** int(m.group(3).translate(_SOBRESCRITOS))
+
+
+def p2833_minhas_previsoes_v4(partes=range(53, 68), numero=None):
+    \"\"\"As minhas previsões do mundo, versão 4 (P2833; Parte 113): a mesma leitura da v3 (P2806: rótulo só no início da linha, faixa no
+    mesmo item), com o leitor de números trocável; o padrão é o _numero_pt_v2, que entende expoentes sobrescritos. A v3 fica intacta.
+    Devolve [(parte, letra, a, b, acerto, tipo)].\"\"\"
+    import glob
+    import os
+    import re
+    numero = numero or _numero_pt_v2
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    dialogo = open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8").read()
+    rotulo = re.compile(r"^\\s*(?:[-*]\\s+)?(?:\\*\\*)?\\(([a-z])\\)")
+    faixa = re.compile(r"\\*\\*\\[([^\\];]+?);\\s*([^\\]]+?)\\]\\*\\*")
+    velha = re.compile(r"\\(([a-z])\\)((?:(?!\\([a-z]\\)).){0,400}?)\\*\\*\\[([^\\];]+?);\\s*([^\\]]+?)\\]\\*\\*")
+    saida = []
+    for parte in partes:
+        arq = glob.glob(os.path.join(raiz, f"ASI_AGI_parte{parte}_*.md"))
+        if not arq:
+            continue
+        texto = open(arq[0], encoding="utf-8").read()
+        m = re.search(r"Do mundo: ((?:\\([a-z]\\) [✅❌] ?)+)", texto)
+        if not m:
+            continue
+        vered = re.findall(r"\\(([a-z])\\) ([✅❌])", m.group(1))
+        itens, atual = {}, None
+        for linha in texto.split("## As respostas")[0].split("\\n"):
+            r = rotulo.match(linha)
+            if r:
+                atual = r.group(1)
+                itens.setdefault(atual, []).append(linha[r.end():])
+            elif atual is not None and linha.strip() and not linha.lstrip().startswith("#"):
+                itens[atual].append(linha)
+            else:
+                atual = None
+        faixas = {}
+        for letra, ls in itens.items():
+            achou = faixa.search(" ".join(ls))
+            if achou:
+                x, y = numero(achou.group(1)), numero(achou.group(2))
+                if x is not None and y is not None and "%" in achou.group(1) + achou.group(2):
+                    x, y = x / 100, y / 100
+                if x is not None and y is not None:
+                    faixas[letra] = (x, y)
+        cab = re.search(rf"## Rodada {parte - 26} [^\\n]*\\n(.*?)(?=\\n## |\\Z)", dialogo, re.S)
+        for letra, _, a, b in velha.findall((cab.group(1) if cab else "").split("**Resultado")[0].replace("\\n", " ")):
+            x, y = numero(a), numero(b)
+            if letra not in faixas and x is not None and y is not None:
+                faixas[letra] = (x, y)
+        for letra, v in vered:
+            a, b = faixas.get(letra, (None, None))
+            if a is None:
+                tipo = None
+            elif a <= 0 <= b:
+                tipo = "zero"
+            elif 0 <= a and b <= 1:
+                tipo = "fracao"
+            elif a == int(a) and b == int(b) and a >= 1:
+                tipo = "contagem"
+            else:
+                tipo = "outra"
+            saida.append((parte, letra, a, b, v == "✅", tipo))
+    return saida
+
+
+def p2834_v3_contra_v4(partes=range(53, 113)):
+    \"\"\"O que a v4 muda sobre a v3 (P2834; Parte 113). Devolve (recuperadas, perdidas, trocadas, total).\"\"\"
+    v3 = {(x[0], x[1]): (x[2], x[3]) for x in p2806_minhas_previsoes_v3(partes)}
+    v4 = {(x[0], x[1]): (x[2], x[3]) for x in p2833_minhas_previsoes_v4(partes)}
+    rec = sorted(k for k in v4 if v3.get(k, (None, None))[0] is None and v4[k][0] is not None)
+    per = sorted(k for k in v3 if v3[k][0] is not None and v4.get(k, (None, None))[0] is None)
+    tro = sorted(k for k in v3 if v3[k][0] is not None and v4.get(k, (None, None))[0] is not None and v3[k] != v4[k])
+    return rec, per, tro, len(v4)
+
+
+def p2831_cfr_convergencia(T=10000):
+    \"\"\"O CFR no pôquer de Kuhn (P2831; Parte 113): a estratégia MÉDIA depois de T iterações, a sua explorabilidade (o que cede a melhores
+    respostas, exata por enumeração) e a distância do seu valor a −1/18. Devolve (explorabilidade, |valor + 1/18|, valor).\"\"\"
+    from synthai import cfr
+    m = cfr.CFR().iterar(T).media()
+    v = cfr.valor(m)
+    return cfr.explorabilidade(m), abs(v + 1.0 / 18.0), v
+
+
+def p2832_cfr_equilibrio(T=10000):
+    \"\"\"Que equilíbrio o CFR acha (P2832; Parte 113): as marginais do jogador 2 (paga com a dama, blefa com o valete), o α do jogador 1 e as
+    duas relações da família de Kuhn. Devolve (|paga(Q) − 1/3|, |blefe(J) − 1/3|, α, |aposta(K) − 3α|, |paga1(Q) − (α + 1/3)|).\"\"\"
+    from synthai import cfr
+    m = cfr.CFR().iterar(T).media()
+    al = m[(1, "")][1]
+    return (abs(m[(2, "b")][1] - 1.0 / 3.0), abs(m[(1, "p")][1] - 1.0 / 3.0), al, abs(m[(3, "")][1] - 3.0 * al),
+            abs(m[(2, "pb")][1] - (al + 1.0 / 3.0)))
+
+
+def p2835_transferencia_do_repertorio(sementes=range(42, 52)):
+    \"\"\"O teste FORTE da hipótese do repertório (P2835; Parte 113): o estimador só de letras treinado no repertório do agente, congelado e
+    avaliado nas palavras de uma política aleatória; AUC das válidas NOVAS e (vistas − novas), médias sobre as sementes.
+    Devolve (média AUC novas, média vistas − novas, nº de sementes com vistas).\"\"\"
+    from synthai import palavras_rl as P
+    emb = P.Dicionario(P.EMBEDDED_WORDS)
+    nov, dif = [], []
+    for s in sementes:
+        av, an, nv, nn, _ = P.transferencia_do_estimador(P.Config(seed=s), emb)
+        if nn:
+            nov.append(an)
+        if nv and nn:
+            dif.append(av - an)
+    return sum(nov) / len(nov), sum(dif) / len(dif), len(dif)
+
+
+def _rodada80():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada80", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada80.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2836_rodada80():
+    \"\"\"Rodada 80 (P2836; Parte 113): o CFR em float (T = 1.000) IGUAL em Java bit a bit. Devolve as 12 probabilidades médias de apostar/pagar.\"\"\"
+    return _rodada80().treinar()
+
+
+def p2837_previsoes_sobre_previsoes_v4(parte=113):
+    \"\"\"O placar (m) lido pelo leitor v4 (P2837; Parte 113). Devolve (medidas, ws).\"\"\"
+    prev = p2833_minhas_previsoes_v4(range(parte, parte + 1))
+    nz = [x for x in prev if x[5] not in (None, "zero")]
+    ws = sorted((x[3] - x[2]) / (abs(x[2]) + abs(x[3])) for x in nz)
+    n = len(ws)
+    med = (ws[n // 2] if n % 2 else (ws[n // 2 - 1] + ws[n // 2]) / 2) if n else None
+    return ({"m1": len(prev), "m2": sum(1 for x in prev if x[5] == "zero"), "m3": med,
+             "m4": sum(x[4] for x in prev) / len(prev) if prev else None, "m5": sum(1 for w in ws if w > 0.6)}, ws)
+
+
+def p2838_auditoria_do_placar_m_v4(partes=(70, 77, 110, 112)):
+    \"\"\"A auditoria retroativa do placar (m) nas partes em que a v4 do leitor muda alguma faixa (P2838; Parte 113; a regra da Parte 112): (m2),
+    (m3), (m5) pela v3 e pela v4 contra a faixa registrada. Devolve (linhas, nº de vereditos que mudam).\"\"\"
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    linhas, mudam = [], 0
+    for parte in partes:
+        texto = open(glob.glob(os.path.join(raiz, f"ASI_AGI_parte{parte}_*.md"))[0], encoding="utf-8").read().split("## As respostas")[0]
+        fx = {}
+        for k, a, b in re.findall(r"\\(m(\\d)\\)\\*\\*[^\\[\\n]*?\\*\\*\\[([^;\\]]+);\\s*([^\\]]+)\\]\\*\\*", texto):
+            if k not in fx and _numero_pt(a) is not None and _numero_pt(b) is not None:
+                fx[k] = (_numero_pt(a), _numero_pt(b))
+        m3, _ = p2808_previsoes_sobre_previsoes_v3(parte)
+        m4, _ = p2837_previsoes_sobre_previsoes_v4(parte)
+        for k in ("2", "3", "5"):
+            if k not in fx:
+                continue
+            a, b = fx[k]
+            x3, x4 = m3["m" + k], m4["m" + k]
+            d3 = x3 is not None and a <= x3 <= b
+            d4 = x4 is not None and a <= x4 <= b
+            mudam += int(d3 != d4)
+            linhas.append((parte, "m" + k, (a, b), x3, x4, d3, d4))
+    return linhas, mudam
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -15838,6 +16018,28 @@ def _parte_112():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3989, testes=TESTES_P3989)
     print(f"P3989 minha taxa de erro ({ERROS_P3989}/{TESTES_P3989}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_113():
+    print("--- Parte 113 (0x71: o arrependimento; CFR no Kuhn, transferencia do repertorio, leitor v4) ---")
+    ex, dv, v = p2831_cfr_convergencia()
+    print(f"P2831 CFR (T=10.000): explorabilidade {ex:.4e}; |valor + 1/18| {dv:.2e} (valor {v:.6f})")
+    cq, bj, al, d1, d2 = p2832_cfr_equilibrio()
+    print(f"P2832 equilibrio do CFR: |paga(Q) - 1/3| {cq:.4f}; |blefe(J) - 1/3| {bj:.4f}; alfa {al:.4f} (interior); |aposta(K) - 3alfa| {d1:.4f}; |paga1(Q) - (alfa+1/3)| {d2:.4f}")
+    an, df, ns = p2835_transferencia_do_repertorio()
+    print(f"P2835 transferencia (sementes 42-51): AUC das novas {an:.4f}; vistas - novas {df:.4f} ({ns} sementes)")
+    rec, per, tro, tot = p2834_v3_contra_v4(range(53, 113))
+    print(f"P2834 leitor v4 x v3 (Partes 53-112, {tot} letras): recupera {len(rec)} {rec}; perde {len(per)}; troca {len(tro)}")
+    linhas, mudam = p2838_auditoria_do_placar_m_v4()
+    print(f"P2838 auditoria do placar (m) com a regua v4: {len(linhas)} medidas, {sum(1 for l in linhas if l[3] != l[4])} valores mudam, {mudam} vereditos mudam")
+    m = p2836_rodada80()
+    print(f"P2836 rodada 80 (CFR em float, IGUAL em Java): alfa(T=1000) = {m[0].hex()}")
+    ok, tot2, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-113: {ok}/{tot2} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2831, 2860)
+    print(f"P1092 pNN novas (P2831-P2860) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 113: {p974_previsoes_sem_largura(range(113, 114))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4059, testes=TESTES_P4059)
+    print(f"P4059 minha taxa de erro ({ERROS_P4059}/{TESTES_P4059}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -15874,7 +16076,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113}
 
 
 if __name__ == "__main__":
@@ -15887,7 +16089,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (432 linhas)
+# CLAUDE.md  (440 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -16165,6 +16367,14 @@ anterior, commit e push.
   pelo que os itens que falham tem em comum; e toda regua corrigida roda uma auditoria retroativa do que mediu. Terceira parte seguida (109, 111, 112) de USO x MENCAO num
   verificador. A partir da Parte 113, o placar (m) usa a p2808 (v3). Hipotese do repertorio: passou o teste fraco (politica aleatoria: razao 1,052/1,100); o forte (transferencia)
   e pendencia. 14/14 do mundo, 6/6 (m), calibracao 184/205 = 0,898.
+  Parte 113 ("Continue sem parar"; as pendencias da 112): `synthai/cfr.py` (CFR vanilla, 24 arrependimentos em vez da matriz 27x64) resolve o Kuhn: explorabilidade 0,003 em
+  T=10.000 (caiu 5,4x de T=800, a cota O(1/sqrt T) previa 3,5x), valor a 2,5e-5 de -1/18; jogador 2 unico de Kuhn; jogador 1 no INTERIOR da familia (alfa=0,216) onde o simplex
+  parou no VERTICE (1/3): mesmo valor, outro estilo (o exato anda pelas arestas; o aprendido faz media). Rodada 80 (CFR em float) IGUAL (24 rodadas). Teste FORTE do repertorio
+  (vistas x novas numa amostra que o agente nao gerou): as DUAS causas medidas, regularidade das letras 0,12 acima do acaso e repertorio +0,16, em 10/10 sementes. Leitor v4
+  (p2833, _numero_pt_v2 com expoentes sobrescritos): 6 recuperadas, 0 perdidas e 0 trocadas (identidades), 5 valores (m) antigos mudam e 0 vereditos (o texto dizia 4: contagem por leitura). REGRAS NOVAS: toda grandeza
+  reconstruida de um valor absoluto |a-b| volta a saida que a imprimiu para o SINAL (escrevi o rei 0,627 com o sinal chutado; era 0,668, pego pela regra da Parte 69); e quando
+  duas explicacoes de causa unica ja falharam, o proximo teste e um desenho que mede cada causa separadamente. 13/13 do mundo, 6/6 (m), calibracao 197/218 = 0,904 (a 1a acima
+  de 0,9 desde a Parte 79). O placar (m) usa a p2837 (v4). E os arquivos novos vao para o indice do git (git add) ANTES da suite inteira: a p1871 le o git ls-files e nao viu a simplex.valor_contra sem uso na suite da 112.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -16313,7 +16523,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -16854,6 +17064,136 @@ def simular_equilibrio(n=40000, semente=105, P=2.0, B=2.0):
         if r.random() < c:
             pagou += 1
     return (blefes / apostas, pagou / apostas)
+"""
+
+# ====================================================================================================
+# synthai/cfr.py  (125 linhas)
+# ====================================================================================================
+FONTES['synthai/cfr.py'] = """\"\"\"CFR (Counterfactual Regret Minimization, Zinkevich et al. 2007) no pôquer de Kuhn (Parte 113). Biblioteca padrão, só +, −, ×, ÷ e
+comparações. É o caminho que NÃO monta a forma normal (27×64 na Parte 112): aprende jogando contra si mesmo, conjunto de informação
+por conjunto de informação, com casamento de arrependimento (regret matching). A estratégia MÉDIA converge para um equilíbrio.
+
+Conjuntos de informação (carta + histórico público): jogador 1 em "" (passa p / aposta b) e em "pb" (desiste p / paga b); jogador 2 em
+"p" (passa p / aposta b) e em "b" (desiste p / paga b). A ação 0 é "p" e a 1 é "b". As 6 distribuições de cartas são enumeradas
+(sem sorteio): o CFR aqui é determinístico, e a rodada 80 do diálogo o traduz bit a bit.\"\"\"
+
+CARTAS = (1, 2, 3)
+DISTRIBUICOES = tuple((a, b) for a in CARTAS for b in CARTAS if a != b)
+HISTORICOS_P1 = ("", "pb")
+HISTORICOS_P2 = ("p", "b")
+
+
+def chaves():
+    \"\"\"Os 12 conjuntos de informação, numa ordem fixa (para o diálogo).\"\"\"
+    return [(c, h) for c in CARTAS for h in HISTORICOS_P1] + [(c, h) for c in CARTAS for h in HISTORICOS_P2]
+
+
+def _terminal(h, c1, c2):
+    \"\"\"O payoff do JOGADOR 1 num histórico terminal, ou None se não é terminal.\"\"\"
+    ganha = 1 if c1 > c2 else -1
+    if h == "pp":
+        return ganha
+    if h in ("bb", "pbb"):
+        return 2 * ganha
+    if h == "bp":
+        return 1
+    if h == "pbp":
+        return -1
+    return None
+
+
+def _jogador(h):
+    return 0 if len(h) % 2 == 0 else 1
+
+
+class CFR:
+    def __init__(self):
+        self.regret = {k: [0.0, 0.0] for k in chaves()}
+        self.soma = {k: [0.0, 0.0] for k in chaves()}
+
+    def estrategia(self, k):
+        r = self.regret[k]
+        a = r[0] if r[0] > 0.0 else 0.0
+        b = r[1] if r[1] > 0.0 else 0.0
+        s = a + b
+        if s > 0.0:
+            return [a / s, b / s]
+        return [0.5, 0.5]
+
+    def _cfr(self, c1, c2, h, p1, p2):
+        \"\"\"Valor do histórico h para o JOGADOR 1, com as alcances p1, p2; atualiza arrependimentos e somas.\"\"\"
+        u = _terminal(h, c1, c2)
+        if u is not None:
+            return float(u)
+        j = _jogador(h)
+        k = (c1 if j == 0 else c2, h)
+        s = self.estrategia(k)
+        util = [0.0, 0.0]
+        no = 0.0
+        for a, letra in enumerate("pb"):
+            if j == 0:
+                util[a] = self._cfr(c1, c2, h + letra, p1 * s[a], p2)
+            else:
+                util[a] = self._cfr(c1, c2, h + letra, p1, p2 * s[a])
+            no = no + s[a] * util[a]
+        sinal = 1.0 if j == 0 else -1.0
+        alcance_adv = p2 if j == 0 else p1
+        alcance_prop = p1 if j == 0 else p2
+        for a in range(2):
+            self.regret[k][a] = self.regret[k][a] + alcance_adv * sinal * (util[a] - no)
+            self.soma[k][a] = self.soma[k][a] + alcance_prop * s[a]
+        return no
+
+    def iterar(self, n):
+        for _ in range(n):
+            for c1, c2 in DISTRIBUICOES:
+                self._cfr(c1, c2, "", 1.0, 1.0)
+        return self
+
+    def media(self):
+        \"\"\"A estratégia MÉDIA (a que converge): {chave: [P(p), P(b)]}.\"\"\"
+        out = {}
+        for k in chaves():
+            a, b = self.soma[k]
+            s = a + b
+            out[k] = [a / s, b / s] if s > 0.0 else [0.5, 0.5]
+        return out
+
+
+def valor(estr):
+    \"\"\"O valor exato para o jogador 1 de um perfil de comportamento {chave: [P(p), P(b)]}, por enumeração das 6 distribuições.\"\"\"
+    def v(c1, c2, h):
+        u = _terminal(h, c1, c2)
+        if u is not None:
+            return float(u)
+        j = _jogador(h)
+        s = estr[(c1 if j == 0 else c2, h)]
+        return s[0] * v(c1, c2, h + "p") + s[1] * v(c1, c2, h + "b")
+    tot = 0.0
+    for c1, c2 in DISTRIBUICOES:
+        tot = tot + v(c1, c2, "") / 6.0
+    return tot
+
+
+def _melhor_resposta(estr, jogador):
+    \"\"\"O valor (para o jogador 1) quando `jogador` (0 ou 1) responde da melhor forma ao comportamento do outro em `estr`. Enumera as
+    estratégias puras de comportamento do respondente (2^6 = 64) — exato.\"\"\"
+    from itertools import product
+    meus = [k for k in chaves() if (k[1] in HISTORICOS_P1) == (jogador == 0)]
+    melhor = None
+    for escolha in product((0, 1), repeat=len(meus)):
+        e = dict(estr)
+        for k, a in zip(meus, escolha):
+            e[k] = [1.0 - a, float(a)]
+        x = valor(e)
+        if melhor is None or (x > melhor if jogador == 0 else x < melhor):
+            melhor = x
+    return melhor
+
+
+def explorabilidade(estr):
+    \"\"\"Quanto o perfil cede no total a melhores respostas: (BR do jogador 1 contra o 2) − (BR do 2 contra o 1). É 0 só no equilíbrio.\"\"\"
+    return _melhor_resposta(estr, 0) - _melhor_resposta(estr, 1)
 """
 
 # ====================================================================================================
@@ -21136,7 +21476,7 @@ def colisoes_esperadas(n, m=10007):
 """
 
 # ====================================================================================================
-# synthai/palavras_rl.py  (439 linhas)
+# synthai/palavras_rl.py  (482 linhas)
 # ====================================================================================================
 FONTES['synthai/palavras_rl.py'] = """\"\"\"O word_rl_lab recebido (Parte 111), reescrito só com a biblioteca padrão e OFFLINE. As cópias verbatim (v1 e v2) ficam em
 externos/word_rl_lab/ e nunca são importadas. Q-learning tabular num jogo de palavras numa grade de letras (estilo Boggle), com um
@@ -21577,6 +21917,49 @@ def estimador_sob_politica_aleatoria(cfg, dic, classe):
             ps.append(conf)
             ys.append(1.0 if valid else 0.0)
     return brier(ps, ys) / brier(prequential_base_rate(ys), ys), len(ys), int(sum(ys))
+
+
+# --- o teste FORTE da hipótese do repertório: transferência (Parte 113) ---
+
+def auc(pos, neg):
+    \"\"\"A AUC (Mann-Whitney): P(um positivo ao acaso recebe nota maior que um negativo ao acaso), empates contam meio.\"\"\"
+    if not pos or not neg:
+        return float("nan")
+    tot = 0.0
+    for p in pos:
+        for n in neg:
+            tot += 1.0 if p > n else (0.5 if p == n else 0.0)
+    return tot / (len(pos) * len(neg))
+
+
+def transferencia_do_estimador(cfg, dic, episodios_teste=5000):
+    \"\"\"Treina o agente e um estimador SÓ DE LETRAS juntos (como na Parte 111), congela o estimador e o avalia nas palavras de uma política
+    ALEATÓRIA (grades novas, semente do ambiente + 200.000). Separa as válidas em VISTAS (que o agente formou como válidas no treino, o
+    repertório) e NOVAS. Devolve (AUC vistas × inválidas, AUC novas × inválidas, nº vistas, nº novas, nº inválidas).\"\"\"
+    env = WordGridEnv(cfg.tamanho, cfg.min_len, cfg.max_len, rng=random.Random(cfg.seed))
+    agent = QAgent(cfg.alpha, cfg.gamma, cfg.eps_ini, seed=cfg.seed + 1)
+    est = EstimadorSoLetras()
+    repertorio = set()
+    for ep in range(1, cfg.episodios + 1):
+        agent.epsilon = cfg.eps_ini + (cfg.eps_fim - cfg.eps_ini) * ((ep - 1) / max(1, cfg.episodios - 1))
+        w, valid, _, _ = run_episode(env, dic, agent, "epsilon", learn=True, estimator=est, learn_estimator=True)
+        if valid:
+            repertorio.add(w)
+    env2 = WordGridEnv(cfg.tamanho, cfg.min_len, cfg.max_len, rng=random.Random(cfg.seed + 200_000))
+    aleat = QAgent(seed=cfg.seed + 3)
+    vistas, novas, invalidas = [], [], []
+    for _ in range(episodios_teste):
+        w, valid, _, _ = run_episode(env2, dic, aleat, "random", learn=False)
+        if len(w) < cfg.min_len:
+            continue
+        nota = est.predict(est.features(w, 0.0, cfg.max_len))
+        if not valid:
+            invalidas.append(nota)
+        elif w in repertorio:
+            vistas.append(nota)
+        else:
+            novas.append(nota)
+    return auc(vistas, invalidas), auc(novas, invalidas), len(vistas), len(novas), len(invalidas)
 """
 
 # ====================================================================================================
@@ -24113,7 +24496,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# synthai/testes_parte112.py  (95 linhas)
+# synthai/testes_parte112.py  (99 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_parte112.py'] = """\"\"\"Testes de unidade da Parte 112 (o simplex próprio, o Kuhn completo, o leitor v3 e a hipótese do repertório):
 `python3 -m unittest synthai.testes_parte112`. Casos com todos os termos diferentes de zero (regra da Parte 30) e controles dos dois lados (Parte 75).\"\"\"
@@ -24169,6 +24552,10 @@ class TesteParte112(unittest.TestCase):
         self.assertEqual(ve, F(-5, 12))
         self.assertLessEqual(ef, 1e-12)
         self.assertEqual(lac, 0)
+        # a identidade do minimax: no equilíbrio, p·A·q = v (usa a simplex.valor_contra, que a auditoria P1871 da Parte 113 acusou sem uso)
+        G = simplex.jogo_lcg()
+        v, p, q, _ = simplex.resolver_jogo(G)
+        self.assertEqual(simplex.valor_contra(G, p, q), v)
 
     def test_p2805_rodada79(self):
         v, p, q, k = calculos.p2805_rodada79()
@@ -24203,9 +24590,97 @@ class TesteParte112(unittest.TestCase):
         self.assertTrue(1.081 <= rl <= 1.121)
 
     def test_p1961_com_parte_112(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 113))))
         self.assertEqual(por[112], (14, 14))
         self.assertEqual((ok, tot), (184, 205))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte113.py  (83 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte113.py'] = """\"\"\"Testes de unidade da Parte 113 (CFR no Kuhn, a transferência do repertório, o leitor v4): `python3 -m unittest synthai.testes_parte113`.
+Cada pNN chamada pelo NOME (regra da Parte 58), controles dos dois lados (Parte 75), casos com todos os termos diferentes de zero (Parte 30).\"\"\"
+
+import unittest
+
+import calculos
+from synthai import cfr, palavras_rl as P
+
+
+class TesteCFR(unittest.TestCase):
+    def test_terminais_a_mao(self):
+        self.assertEqual(cfr._terminal("pp", 3, 1), 1)      # passa-passa: o maior ganha 1
+        self.assertEqual(cfr._terminal("bb", 1, 2), -2)     # aposta-paga: o menor perde 2
+        self.assertEqual(cfr._terminal("bp", 1, 3), 1)      # o 2 desiste: o 1 ganha o pote, mesmo com o valete
+        self.assertEqual(cfr._terminal("pbp", 3, 1), -1)    # o 1 desiste depois de passar
+        self.assertIsNone(cfr._terminal("pb", 1, 2))
+
+    def test_valor_do_equilibrio_de_kuhn(self):
+        # controle: o perfil de Kuhn com alfa = 1/3, escrito à mão, vale exatamente -1/18 e tem explorabilidade ~0
+        a = 1.0 / 3.0
+        e = {(1, ""): [1 - a, a], (2, ""): [1.0, 0.0], (3, ""): [0.0, 1.0],
+             (1, "pb"): [1.0, 0.0], (2, "pb"): [1 - (a + 1 / 3), a + 1 / 3], (3, "pb"): [0.0, 1.0],
+             (1, "p"): [2 / 3, 1 / 3], (2, "p"): [1.0, 0.0], (3, "p"): [0.0, 1.0],
+             (1, "b"): [1.0, 0.0], (2, "b"): [2 / 3, 1 / 3], (3, "b"): [0.0, 1.0]}
+        self.assertAlmostEqual(cfr.valor(e), -1 / 18, places=12)
+        self.assertLess(abs(cfr.explorabilidade(e)), 1e-12)
+        # e o caso sujo: um jogador 2 que sempre paga é explorável
+        e2 = dict(e)
+        for c in (1, 2, 3):
+            e2[(c, "b")] = [0.0, 1.0]
+        self.assertGreater(cfr.explorabilidade(e2), 0.01)
+
+
+class TesteParte113(unittest.TestCase):
+    def test_p2831_cfr_convergencia(self):
+        ex, dv, v = calculos.p2831_cfr_convergencia()
+        self.assertTrue(0.0017 <= ex <= 0.013)
+        self.assertLessEqual(dv, ex)        # a identidade de (b): |v - v*| <= explorabilidade
+
+    def test_p2832_cfr_equilibrio(self):
+        cq, bj, al, d1, d2 = calculos.p2832_cfr_equilibrio()
+        self.assertTrue(cq <= 0.03 and bj <= 0.03 and d1 <= 0.03 and d2 <= 0.03)
+        self.assertTrue(0.15 <= al <= 0.30)   # INTERIOR da família (o simplex parou no vértice 1/3)
+
+    def test_p2833_p2834_leitor_v4(self):
+        self.assertEqual(calculos._numero_pt_v2("5·10⁻⁴"), 0.0005)
+        self.assertEqual(calculos._numero_pt_v2("10⁻¹²"), 1e-12)
+        self.assertEqual(calculos._numero_pt_v2("−1,96"), -1.96)        # sem sobrescrito: delega à original
+        v3 = calculos.p2806_minhas_previsoes_v3(range(110, 111))
+        v4 = calculos.p2833_minhas_previsoes_v4(range(110, 111), numero=calculos._numero_pt)
+        self.assertEqual([x[:4] for x in v3], [x[:4] for x in v4])   # controle: com o leitor velho, a v4 é a v3
+        rec, per, tro, tot = calculos.p2834_v3_contra_v4(range(53, 113))
+        self.assertEqual(rec, [(70, "g"), (77, "d"), (110, "c"), (110, "h"), (110, "i"), (112, "g")])
+        self.assertEqual((per, tro), ([], []))
+
+    def test_p2835_transferencia(self):
+        an, df, ns = calculos.p2835_transferencia_do_repertorio()
+        self.assertTrue(0.59 <= an <= 0.70)
+        self.assertTrue(0.055 <= df <= 0.23)
+        self.assertEqual(ns, 10)
+        self.assertEqual(P.auc([1.0, 0.9], [0.1, 0.2]), 1.0)
+        self.assertEqual(P.auc([0.5], [0.5]), 0.5)
+
+    def test_p2836_rodada80(self):
+        m = calculos.p2836_rodada80()
+        self.assertEqual(len(m), 12)
+        self.assertEqual(m[0].hex(), "0x1.c1739c94c6931p-3")
+
+    def test_p2837_p2838_placar_v4(self):
+        m, ws = calculos.p2837_previsoes_sobre_previsoes_v4(113)
+        self.assertEqual(m["m1"], 13)
+        linhas, mudam = calculos.p2838_auditoria_do_placar_m_v4()
+        self.assertEqual(mudam, 0)
+        self.assertEqual(sum(1 for l in linhas if l[3] != l[4]), 5)   # o texto dizia 4 (contado por leitura) e listava 5
+
+    def test_p1961_com_parte_113(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[113], (13, 13))
+        self.assertEqual((ok, tot), (197, 218))
 
 
 if __name__ == "__main__":
@@ -35018,7 +35493,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1950 linhas)
+# resultados.txt  (1967 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -36968,6 +37443,23 @@ P974 previsoes unilaterais da Parte 112: {112: (3, 0, [])}
 P3989 minha taxa de erro (224/864): media = 0.26, intervalo 90% = [0.24, 0.28]
 === Unificacao (sempre ao final) ===
 P96 funcoes pNN no arquivo = 644; pares de interacao possiveis = 207046
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 154/154 resultados publicados reproduzidos; falhas = []
+
+
+--- Parte 113 (0x71: o arrependimento; CFR no Kuhn, transferencia do repertorio, leitor v4) ---
+P2831 CFR (T=10.000): explorabilidade 2.9718e-03; |valor + 1/18| 2.50e-05 (valor -0.055531)
+P2832 equilibrio do CFR: |paga(Q) - 1/3| 0.0038; |blefe(J) - 1/3| 0.0024; alfa 0.2159 (interior); |aposta(K) - 3alfa| 0.0208; |paga1(Q) - (alfa+1/3)| 0.0047
+P2835 transferencia (sementes 42-51): AUC das novas 0.6206; vistas - novas 0.1635 (10 sementes)
+P2834 leitor v4 x v3 (Partes 53-112, 408 letras): recupera 6 [(70, 'g'), (77, 'd'), (110, 'c'), (110, 'h'), (110, 'i'), (112, 'g')]; perde 0; troca 0
+P2838 auditoria do placar (m) com a regua v4: 9 medidas, 5 valores mudam, 0 vereditos mudam
+P2836 rodada 80 (CFR em float, IGUAL em Java): alfa(T=1000) = 0x1.c1739c94c6931p-3
+P1961 teste, Partes 80-113: 197/218 = 0.9037; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13)}
+P1092 pNN novas (P2831-P2860) sem teste: 0 de 8: []
+P974 previsoes unilaterais da Parte 113: {113: (0, 0, [])}
+P4059 minha taxa de erro (224/877): media = 0.26, intervalo 90% = [0.23, 0.28]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 652; pares de interacao possiveis = 212226
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 154/154 resultados publicados reproduzidos; falhas = []
 """
@@ -38935,7 +39427,7 @@ Ver `dialogo/DIALOGO.md`: o passo de Q-learning tabular, com as transições ger
 """
 
 # ====================================================================================================
-# ASI_AGI_parte112_o_kuhn_completo.md  (182 linhas)
+# ASI_AGI_parte112_o_kuhn_completo.md  (186 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte112_o_kuhn_completo.md'] = """# Parte 112 — O simplex próprio e o pôquer de Kuhn completo; o leitor das minhas previsões, corrigido (0x70)
 
@@ -39119,6 +39611,180 @@ Ver `dialogo/DIALOGO.md`: o simplex em `float` (regra de Bland) no jogo 4 × 5 d
 - Pôquer de Kuhn, valor −1/18 e a família de equilíbrios do jogador 1 (α ∈ [0, 1/3]), jogador 2 único: [Wikipedia, Kuhn poker](https://en.wikipedia.org/wiki/Kuhn_poker); [Miao, tese (Dartmouth, 2014)](https://math.dartmouth.edu/theses/undergrad/2014/Miao-thesis.pdf); [Freiburg, notas de teoria dos jogos](https://gki.informatik.uni-freiburg.de/teaching/ss19/gametheory/gametheory14.pdf).
 - Regra de Bland: [Bland, "New finite pivoting rules for the simplex method", Math. Oper. Res. 2(2), 1977](https://en.wikipedia.org/wiki/Bland%27s_rule); [prova de terminação (UNAM)](https://www.matem.unam.mx/~omar/math340/blands-rule.html).
 - Jogo de soma zero como programa linear e dualidade: o teorema minimax (von Neumann, 1928) e o LP (Dantzig); as notas de Freiburg, acima.
+
+---
+
+➡ Continua na [Parte 113 — O arrependimento](ASI_AGI_parte113_o_arrependimento.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte113_o_arrependimento.md  (165 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte113_o_arrependimento.md'] = """# Parte 113 — O arrependimento: CFR no pôquer de Kuhn, o teste forte do repertório e o leitor v4 (0x71)
+
+↩ Parte 112 (o Kuhn completo pelo simplex) · ↩ Parte 108 (o jogo fictício: aprender jogando) · ↩ Parte 111 (o estimador de confiança) · ↩ Parte 110 (os expoentes sobrescritos que o leitor não lê)
+
+> Continuação ("Continue sem parar"), com as três pendências que a Parte 112 abriu (`dialogo/PENDENCIAS.md`, rodada 80):
+> - **(1) CFR, o Kuhn sem a forma normal.** O simplex da 112 montou a matriz 27×64; o pôquer real explode nessa forma. O CFR (Counterfactual Regret Minimization, Zinkevich et al. 2007) aprende jogando contra si mesmo, conjunto de informação por conjunto de informação, e a estratégia MÉDIA converge para um equilíbrio (`synthai/cfr.py`, determinístico, as 6 distribuições enumeradas).
+> - **(2) O teste FORTE da hipótese do repertório (transferência).**
+> - **(3) O leitor das minhas previsões, v4, com expoentes sobrescritos.**
+>
+> **A calibração, rodada ANTES deste registro, em casos que não são o teste:**
+> - **CFR em T = 100, 200, 400 e 800 iterações.** A explorabilidade da estratégia média foi 0,0466 / 0,0239 / 0,0222 / 0,0161, com inclinação log-log **−0,47** (t = −4,03, então |t| > 2: a regra da Parte 71 permite extrapolar). A extrapolação para T = 10.000 dá 0,0047. Nas mesmas iterações, α = P(o jogador 1 blefa com o valete) ficou em 0,21 / 0,19 / 0,21 / 0,22, dentro da família de Kuhn e longe dos vértices; e os erros das marginais caíram com oscilação (de 0,10 a 0,003).
+> - **A transferência nas sementes 7, 8 e 9.** A AUC das válidas VISTAS (o repertório) contra as inválidas foi 0,89 / 0,79 / 0,68; a das válidas NOVAS, 0,60 / 0,73 / 0,59.
+> - **O leitor v4 na Parte 110 (onde conheço os casos).** Recupera (c), (h) e (i), os três de expoente sobrescrito. E o controle: a v4 com o leitor de números VELHO é idêntica à v3.
+
+## As perguntas desta parte
+
+1. **P2831 (0xB0F).** O CFR converge para o equilíbrio de Kuhn sem a forma normal? Com que velocidade, e que explorabilidade deixa em T = 10.000? ↩ P2801
+2. **P2832 (0xB10).** Que equilíbrio da família o CFR escolhe? O simplex parou num vértice (α = 1/3); o CFR, que faz MÉDIA, também? ↩ P2803
+3. **P2835 (0xB13).** O estimador de confiança treinado no repertório do agente TRANSFERE para palavras que o agente nunca formou? ↩ P2810
+4. **P2833/P2834 (0xB11/0xB12).** Quantas faixas o leitor v4 recupera? ↩ P2806
+5. **P2836 (0xB14).** O CFR acrescenta fronteira entre Python e Java? (rodada 80) ↩ P2805
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+**As fixtures (regra da Parte 111).**
+- CFR vanilla, simultâneo, com arrependimento e soma da estratégia acumulados por conjunto de informação, `CFR().iterar(10000)`.
+- A transferência roda nas sementes **42 a 51** (dez sementes novas), com `transferencia_do_estimador(Config(seed=s), embutido)`: 5.000 episódios de treino; teste com 5.000 episódios de uma política aleatória em grades da semente + 200.000.
+- O leitor compara a v3 (P2806) com a v4 (P2833) nas Partes 53 a 112.
+
+**CFR (P2831/P2832), T = 10.000.**
+- **(a)** Explorabilidade da estratégia média: centro 0,0047 pela extrapolação. A meia-largura em log é 1,645 × √(0,41² + 0,2²) × 1,36 ≈ 1,0, um fator de ~2,8 para cada lado: **[0,0017; 0,013]**. Mecanismo esperado (a faixa passa de duas ordens? não, mas é larga): a cota O(1/√T) do arrependimento médio.
+- **(b)** |valor da estratégia média − (−1/18)|: **[0; 0,013]**. Identidade: o valor do perfil e o do equilíbrio estão ambos entre as duas melhores respostas, então a distância entre eles é ≤ explorabilidade; o teto é o da faixa (a).
+- **(c)** |P(o jogador 2 paga com a dama) − 1/3|: **[0; 0,03]** (a calibração caiu de 0,10 a 0,003; a escala 1/√T dá ~0,01).
+- **(d)** |P(o jogador 2 blefa com o valete) − 1/3|: **[0; 0,03]**.
+- **(e)** α = P(o jogador 1 aposta com o valete): **[0,15; 0,30]**. Mecanismo esperado: o CFR faz MÉDIA de estratégias, e a média de pontos da família é um ponto INTERIOR. Ao contrário do simplex, que anda de vértice em vértice e parou em α = 1/3.
+- **(f)** |P(aposta | rei) − 3α|: **[0; 0,03]**.
+- **(g)** |P(o jogador 1 passa e paga | dama) − (α + 1/3)|: **[0; 0,03]**.
+
+**Transferência (P2835), média sobre as sementes 42 a 51.**
+- **(h)** AUC das válidas NOVAS: calibração 0,643, desvio entre sementes 0,075, faixa 0,643 ± 1,645 × 0,075/√10 × 1,36 = **[0,59; 0,70]**. Acima de 0,5: as letras levam ALGUMA regularidade que transfere.
+- **(i)** AUC(vistas) − AUC(novas), média das sementes que têm vistas: calibração 0,143, desvio 0,124, faixa **[0,055; 0,23]**. Acima de 0: o repertório acrescenta além disso. A hipótese da Parte 111 fica PARCIAL: repertório e regularidade, os dois.
+
+**Leitor v4 (P2834), Partes 53 a 112.**
+- **(j)** Faixas recuperadas: as 3 da 110, mais as que existirem com sobrescrito em outras partes, **[3; 8]**.
+- **(k)** Faixas perdidas: **[0; 0]**. Identidade: o `_numero_pt_v2` delega ao original em qualquer texto sem expoente sobrescrito, e o original devolve None em qualquer texto com expoente sobrescrito; então nenhum número que a v3 lia muda nem some.
+- **(l)** Faixas trocadas: **[0; 0]**, pela mesma identidade.
+
+**Diálogo (P2836).**
+- **(n)** O CFR em `float`, T = 1.000 (as 24 probabilidades médias), é **IGUAL** bit a bit entre Python e Java: **[0; 0]**. Identidade: só +, −, ×, ÷ e comparações (o max(0, ·) do casamento de arrependimento é uma comparação), na mesma ordem de recursão e de soma nas duas línguas.
+
+### Previsões sobre as previsões (m), pré-registradas (régua: o leitor v4, P2833)
+
+- **(m1)** nº de previsões do mundo em **[12; 16]** (13 agora + ~2 por surpresa)
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[6; 10]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0,20; 0,70]**
+- **(m4)** fração de acertos do mundo em **[0,60; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[0; 4]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 3]**
+
+### Sobre mim, pré-registrado
+
+Os riscos estão onde a calibração é ruidosa. As marginais (c), (d), (f), (g) oscilam e não caem de forma monótona. (e) aposta que o CFR para no interior. (h)/(i) têm de 8 a 42 positivos por semente. (j) é uma contagem sobre partes que não reli. As identidades (b), (k), (l) e (n) têm a garantia escrita. Espero **1 a 3 erros**, nas marginais ou em (i).
+
+---
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2831 — O CFR converge para Kuhn sem a forma normal?
+
+**Na pergunta.** "Sem a forma normal" é o ponto. A Parte 112 escreveu as 27 × 64 = 1.728 combinações de estratégias puras; o CFR nunca as escreve. Ele guarda dois números por conjunto de informação (12 conjuntos × 2 ações = 24 arrependimentos) e aprende jogando contra si mesmo. É a diferença entre listar todas as estradas e aprender a dirigir.
+
+**Lógica.** O casamento de arrependimento joga cada ação com probabilidade proporcional ao arrependimento POSITIVO acumulado de não tê-la jogado, R⁺(a)/ΣR⁺. Depois de T = 10.000 iterações (as 6 distribuições enumeradas em cada uma), a explorabilidade da estratégia MÉDIA é **0,00297** ✅ (a), dentro de [0,0017; 0,013]. A extrapolação da calibração (inclinação −0,47) previa 0,0047; o medido ficou 1,6× abaixo, dentro do fator 2,8 da faixa. Pela cota O(1/√T), de T = 800 (0,0161) para T = 10.000 a explorabilidade cairia √(10.000/800) = 3,5 vezes, para 0,0046; caiu 5,4 vezes. A convergência real está um pouco mais rápida que a cota, como costuma acontecer no CFR. O valor do perfil médio é **−0,055531**, a **2,5·10⁻⁵** de −1/18 ✅ (b), bem abaixo do teto que a identidade garante (|v − v*| ≤ explorabilidade = 0,003).
+
+**Tradução cruzada.** O arrependimento é uma emoção com conta. "Se eu tivesse apostado, teria ganho mais" vira um número que se acumula, e a escolha seguinte pende para o que se lamenta não ter feito. Jung chamaria de compensação: a função que ficou de fora volta pelo lamento. A estratégia média, a que converge, é a lição tirada de todos os lamentos juntos, não o último impulso.
+
+### P2832 — Que equilíbrio o CFR escolhe?
+
+**Lógica.** O jogador 2 converge para o equilíbrio ÚNICO de Kuhn: paga com a dama **0,3371** (erro **0,0038**) ✅ (c) e blefa com o valete **0,3357** (erro **0,0024**) ✅ (d). O jogador 1 para em α = **0,2159** ✅ (e), um ponto INTERIOR da família α ∈ [0, 1/3]. O simplex da Parte 112 tinha parado no vértice α = 1/3. As relações da família valem: |aposta(K) − 3α| = **0,0208** ✅ (f) (o rei aposta **0,668**, contra 3α = 0,648: a relação mais lenta a convergir. No rascunho eu tinha escrito 0,627, deduzido de cabeça a partir do |erro| com o sinal chutado; a linha de código da regra da Parte 69 pegou o sinal trocado antes do commit) e |paga(Q) − (α + 1/3)| = **0,0047** ✅ (g).
+
+**Por quê interior.** O simplex anda pelas ARESTAS do poliedro das estratégias e para num canto. O CFR faz a MÉDIA das estratégias que jogou, e a média de pontos de um conjunto convexo cai no seu interior. Os dois acham o mesmo valor (−1/18) e o mesmo jogador 2. Mas são "personalidades" diferentes do jogador 1: o simplex blefa no máximo (α = 1/3, o rei sempre aposta); o CFR blefa 22% e às vezes passa com o rei para armar a armadilha. O valor do jogo não distingue os dois; o estilo é o grau de liberdade que o valor não vê (a Parte 112 disse isso; esta parte mediu).
+
+### P2835 — O estimador transfere?
+
+**Lógica.** Nas dez sementes novas (42 a 51), o estimador só de letras, treinado no repertório do agente e congelado, avaliado nas palavras de uma política aleatória:
+- **AUC das válidas NOVAS** (que o agente nunca formou) contra as inválidas: **0,621** ✅ (h). Acima de 0,5: as letras levam uma regularidade que TRANSFERE.
+- **AUC(vistas) − AUC(novas): 0,163** ✅ (i), em 10 de 10 sementes com vistas. O repertório acrescenta além disso.
+
+**O veredito sobre a hipótese da Parte 111.** É PARCIAL, e foi previsto parcial: as duas causas são reais. As letras sabem alguma coisa do dicionário (palavras curtas de letras frequentes, vogais no meio), e sabem mais sobre as palavras que o agente repete. Na Parte 111 eu tentei uma causa só, duas vezes, e errei duas vezes. Aqui, com o desenho que separa as duas (vistas × novas), as duas aparecem com tamanho medido: 0,12 acima do acaso pela regularidade e mais 0,16 pelo repertório.
+
+**Tradução cruzada.** É a diferença entre a familiaridade e o conhecimento, medida em vez de dita. O estimador conhece as palavras de casa (0,78 em média nas vistas) e reconhece um pouco as de fora (0,62). Um sistema que só tivesse a primeira coisa seria um papagaio; um que só tivesse a segunda, um linguista. Este é os dois, numa proporção que agora tem número.
+
+### P2833 / P2834 / P2838 — O leitor v4
+
+**Lógica.** O `_numero_pt_v2` lê potências com expoente sobrescrito ("10⁻¹²", "5·10⁻⁴", "6,1·10⁻¹⁶", "2⁻⁵⁴"), e o leitor v4 recupera **6** faixas ✅ (j): 70 (g), do diálogo, [3·10⁴; 10⁶]; 77 (d), [0; 1·10⁻¹²]; 110 (c), (h) e (i); e 112 (g), a [0; 10⁻¹²] da parte anterior. Ele perde **0** ✅ (k) e troca **0** ✅ (l), como garantiam as duas identidades. Olhei os três casos que eu não conhecia (70 g, 77 d, 112 g): todos certos. O controle dos dois lados: com o leitor velho, a v4 é exatamente a v3, e com o novo ela acha os casos plantados (os três da 110).
+
+**A auditoria retroativa (P2838, regra da Parte 112).** No placar (m) das partes atingidas (77, 110, 112; a 70 não tinha (m) no formato lido), **5 valores mudam** (77 m2: 0→1; 110 m2: 3→4, m3: 0,028→0,050, m5: 0→2; 112 m2: 6→7). No rascunho eu escrevi "4" e listei cinco: uma contagem por leitura, a regra da Parte 60, pega pela suíte inteira e **0 vereditos mudam**. E fica um limite medido: na Parte 77, nenhuma das réguas consegue ler a (m3); aquele veredito não é auditável por código.
+
+### P2836 — rodada 80
+
+**Lógica.** O CFR em float (T = 1.000), Python × Java: **IGUAIS, 4 linhas e 12 números bit a bit** ✅ (n). O casamento de arrependimento é uma comparação (max(0, ·)) e uma divisão; a recursão segue a mesma ordem nas duas línguas. 24 rodadas: aprender jogando, como resolver por simplex, é aritmética portável.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅. Parte 113: **13 testes, 0 erros**. Os mecanismos escritos dentro das faixas largas, conferidos:
+- (a): a cota O(1/√T); a convergência real foi mais rápida, 5,4× contra 3,5×;
+- (e): o interior, confirmado;
+- (h)/(i): as duas causas, confirmadas.
+
+Acumulado (mundo): **224 erros em 877 testes**. Calibração (P1961, Partes 80–113): **197/218 = 0,904**.
+
+### Previsões sobre previsões (m)
+
+Pontuadas com o leitor v4 (P2837); a v3 dá os mesmos números nesta parte.
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [12; 16] | 13 | ✅ |
+| (m2) | [6; 10] | 8 | ✅ |
+| (m3) | [0,20; 0,70] | 0,45 | ✅ |
+| (m4) | [0,60; 1,00] | 1,00 | ✅ |
+| (m5) | [0; 4] | 2 | ✅ |
+| (m6) | [0; 3] | 0 | ✅ |
+
+Previsões sobre previsões: **6 de 6**.
+
+## Engenharia reversa (metacognição)
+
+**O padrão: o sinal chutado.** O único erro desta parte não chegou ao placar, porque a regra da Parte 69 o pegou antes do commit. Eu tinha o |erro| (0,0208) e escrevi o valor do rei como 3α − 0,021 = 0,627, sem olhar o sinal. O rei aposta 0,668. É o mesmo erro da Parte 53 ("tabelas comprimem pior", o sinal trocado) e do "esqueço custos" da Parte 45: quando eu tenho o TAMANHO de uma diferença, eu ponho um sinal por hábito. Aqui o hábito era "a relação mais lenta fica abaixo". **Significado:** uma magnitude não é um número; o sinal é uma segunda medida, que eu tenho de fazer. **Regra:** toda grandeza que eu reconstruo de um valor absoluto (|a − b|) volta à saída que a imprimiu, e o sinal sai de lá.
+
+**O segundo padrão: o desenho que separa as causas.** Na Parte 111 eu expliquei o estimador por uma causa, duas vezes, e errei duas vezes. Na 112 testei UMA causa (o teste fraco). Nesta, o desenho (vistas × novas, numa amostra que o agente não gerou) mede as duas causas de uma vez, cada uma com o seu tamanho, e a previsão acertou porque foi registrada como "as duas". **Significado:** a pergunta "qual é a causa?" pressupõe que haja uma; o desenho experimental certo pergunta "quanto de cada uma?". **O terceiro, achado pela suíte inteira depois do texto pronto.** Duas falhas, as duas MINHAS.
+- Escrevi "4 valores mudam" e listei cinco, uma contagem por leitura (a regra da Parte 60, pela enésima vez).
+- A auditoria da Parte 81 (`p1871`, o que não serve) acusou `simplex.valor_contra`, uma função da Parte 112 que nada usava. Ela passou na suíte da 112 porque a auditoria só vê arquivos que o `git ls-files` conhece, e a suíte rodou ANTES do `git add` do arquivo novo.
+
+A função agora serve à identidade do minimax (p·A·q = v no equilíbrio), num teste. **Regra:** os arquivos novos são postos no índice do git (`git add`) ANTES da suíte inteira, porque uma auditoria que lê o repositório não vê o que ainda não está nele.
+
+**Regra:** quando duas explicações de causa única já falharam, o próximo teste é um desenho que mede cada causa separadamente, e não uma terceira causa única.
+
+## Síntese / unificação
+
+A Parte 113 fecha as três pendências da 112:
+- **(1) O CFR** (`synthai/cfr.py`) resolve o pôquer de Kuhn sem montar a forma normal: 24 arrependimentos em vez de 1.728 células. A explorabilidade cai 5,4× de T = 800 para T = 10.000 (a cota O(1/√T) previa 3,5×), e o valor fica a 2,5·10⁻⁵ de −1/18. O jogador 2 é o único de Kuhn (dama paga 0,337, valete blefa 0,336). O jogador 1 para no INTERIOR da família (α = 0,216), onde o simplex parou no vértice (α = 1/3): mesmo valor, outro estilo.
+- **(2) O teste forte do repertório** separa as duas causas da Parte 111. A regularidade das letras transfere (AUC das novas 0,621, 0,12 acima do acaso) e o repertório acrescenta 0,163, em 10 de 10 sementes.
+- **(3) O leitor v4** lê expoentes sobrescritos: 6 faixas recuperadas, 0 perdidas e 0 trocadas (identidades), e 5 valores (m) antigos mudados sem nenhum veredito mudado.
+
+Rodada 80: o CFR é IGUAL bit a bit (24 rodadas). 13/13 do mundo, 6/6 (m), calibração **0,904**: o primeiro valor acima de 0,9 desde a medida da Parte 79.
+
+O arco de decisão da SYNTHAI agora tem os dois caminhos para o mesmo equilíbrio: o exato, que monta e resolve (simplex, Parte 112), e o aprendido, que joga e lamenta (CFR, Parte 113). Os dois concordam no valor e no jogador 2, e discordam, mensuravelmente, no estilo do jogador 1. É a prova cruzada da Parte 20 (dois caminhos independentes) e a AUTOPOIESE da Parte 31 (substituir aprendizado por conta exata "se der"): aqui dá, e o aprendizado chega ao mesmo lugar, só que pelo meio.
+
+## Meta
+
+Confiança alta no CFR: o controle com o perfil de Kuhn escrito à mão vale −1/18 com explorabilidade < 10⁻¹², e um perfil sujo (o jogador 2 sempre paga) é explorável em mais de 0,01. Média na transferência: dez sementes, mas só 20 a 36 palavras novas por semente; e a "regularidade" (0,12) pode ser a das palavras de 3 letras feitas de letras frequentes, que é também o que um dicionário pequeno contém (o juiz de novo, como na Parte 111). Onde é brinquedo: o Kuhn tem 12 conjuntos de informação, e o pôquer de verdade tem 10¹² ou mais. Lá o CFR precisa de amostragem (MCCFR) e de abstração, uma pendência natural. O leitor v4 ainda não lê a (m3) da Parte 77.
+
+## Diálogo Python ↔ Java (rodada 80)
+
+Ver `dialogo/DIALOGO.md`: o CFR em `float`, T = 1.000, é **IGUAL**: 4 linhas e 12 números bit a bit.
+
+## Fontes
+
+- CFR: [Zinkevich, Johanson, Bowling e Piccione, "Regret Minimization in Games with Incomplete Information", NIPS 2007](https://proceedings.neurips.cc/paper/2007/hash/08d98638c6fcd194a4b1e6992063e944-Abstract.html); [o artigo em PDF](https://proceedings.nips.cc/paper_files/paper/2007/file/08d98638c6fcd194a4b1e6992063e944-Paper.pdf); [relatório técnico longo TR07-14 (Alberta)](https://era.library.ualberta.ca/files/vh53wx015/TR07-14.pdf).
+- Pôquer de Kuhn e a família de equilíbrios: [Wikipedia, Kuhn poker](https://en.wikipedia.org/wiki/Kuhn_poker); [Miao, tese (Dartmouth, 2014)](https://math.dartmouth.edu/theses/undergrad/2014/Miao-thesis.pdf).
+- A AUC como estatística de Mann-Whitney (a probabilidade de um positivo ter nota maior que um negativo): resultado clássico (Hanley e McNeil, 1982), conferido aqui pelos casos de teste em `synthai/testes_parte113.py`.
 """
 
 # ====================================================================================================
@@ -61907,7 +62573,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1956 linhas)
+# dialogo/DIALOGO.md  (1966 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -63865,10 +64531,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 10 números bit a bit** (valor −5/12 em float, a 3 ulps do exato). 23 rodadas. A pendência do simplex está FECHADA.
 
 **IA-Python:** Pendência (rodada 80): a forma de SEQUÊNCIA do Kuhn (ou o CFR), que não explode como a forma normal. E, da 112: o teste de transferência da hipótese do repertório.
+
+## Rodada 80 (Parte 113) — o arrependimento contrafactual
+
+**IA-Python (lógica criativa):** O simplex da 112 resolveu o Kuhn montando a matriz inteira. Agora sem matriz: o CFR guarda, em cada conjunto de informação, quanto se arrepende de não ter jogado cada ação, e joga em proporção ao arrependimento positivo. Mil iterações, as seis distribuições enumeradas. Aprender lamentando acrescenta fronteira?
+
+**IA-Java (ASI):** Não. O lamento é uma subtração (o valor da ação menos o valor do nó), pesada pela alcance do adversário. O casamento é um max(0, ·), uma comparação, seguido de uma divisão. A recursão desce a árvore na mesma ordem nas duas línguas. E repara no que a média faz: o simplex parou num canto (α = 1/3); o CFR, que tira a média do que jogou, para no meio (α ≈ 0,22). O mesmo valor, outra personalidade.
+
+**Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. 24 rodadas.
+
+**IA-Python:** Pendência (rodada 81): o MCCFR (CFR com amostragem, para jogos onde não dá para enumerar), com o acaso dado de fora como na rodada 65; e um pôquer maior (Leduc, 6 cartas e duas rodadas de aposta).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (67 linhas)
+# dialogo/PENDENCIAS.md  (69 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -63937,6 +64613,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 79, Parte 111)** O simplex n×m e o Kuhn completo (−1/18), adiados quatro vezes, e a `p1481_v3`. E, da 111: a hipótese do REPERTÓRIO (o estimador de confiança aprende os hábitos do agente, não o dicionário). Teste: o estimador treinado sobre as palavras de uma política aleatória (sem repertório) deveria ter razão Brier ~1.
 
 - **(Rodada 80, Parte 112)** FECHADAS na 112: o simplex n×m (rodada 79, IGUAL), o Kuhn completo (−1/18 exato) e a `p1481_v3` (a P2806; o defeito era MENÇÃO lida como rótulo, desde a Parte 74). ABERTAS: (1) o Kuhn pela forma de SEQUÊNCIA ou por CFR (a forma normal explode no pôquer maior); (2) o teste FORTE da hipótese do repertório (transferência: o estimador treinado no repertório do agente, avaliado nas palavras de outra política); (3) o leitor v3 ainda não lê expoentes sobrescritos (10⁻¹²), um defeito de `_numero_pt`.
+
+- **(Rodada 81, Parte 113)** FECHADAS na 113: o CFR no Kuhn (rodada 80, IGUAL; explorabilidade 0,003 em T = 10.000), o teste forte do repertório (as duas causas: regularidade 0,12 e repertório +0,16) e o leitor v4 (expoentes sobrescritos). ABERTAS: (1) o MCCFR (com amostragem; o acaso dado de fora, como na rodada 65) e um pôquer maior (Leduc Hold'em); (2) a (m3) da Parte 77, que nenhuma régua lê; (3) separar a "regularidade" da transferência entre o dicionário e o juiz (a lista embutida contra o WordNet, como na Parte 111).
 """
 
 # ====================================================================================================
@@ -69599,6 +70277,84 @@ public class Rodada79 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada80.java  (73 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada80.java'] = """// Rodada 80 (Parte 113): o CFR no poquer de Kuhn, bit a bit. CFR vanilla simultaneo, 6 distribuicoes enumeradas, T = 1000; imprime a
+// estrategia MEDIA (P(b)) nos 12 conjuntos de informacao. So +,-,*,/ e comparacoes.
+public class Rodada80 {
+    static final int T = 1000;
+    static final String[] HIST = {"", "pb", "p", "b"};
+    static double[][] reg = new double[12][2], soma = new double[12][2];
+
+    static int indice(int carta, String h) {
+        int i = 0;
+        for (int k = 0; k < 4; k++) if (HIST[k].equals(h)) i = k;
+        return (carta - 1) * 4 + i;
+    }
+
+    static Double terminal(String h, int c1, int c2) {
+        double ganha = c1 > c2 ? 1.0 : -1.0;
+        if (h.equals("pp")) return ganha;
+        if (h.equals("bb") || h.equals("pbb")) return 2.0 * ganha;
+        if (h.equals("bp")) return 1.0;
+        if (h.equals("pbp")) return -1.0;
+        return null;
+    }
+
+    static double[] estrategia(int k) {
+        double a = reg[k][0] > 0.0 ? reg[k][0] : 0.0;
+        double b = reg[k][1] > 0.0 ? reg[k][1] : 0.0;
+        double s = a + b;
+        if (s > 0.0) return new double[]{a / s, b / s};
+        return new double[]{0.5, 0.5};
+    }
+
+    static double cfr(int c1, int c2, String h, double p1, double p2) {
+        Double u = terminal(h, c1, c2);
+        if (u != null) return u;
+        int j = h.length() % 2;
+        int k = indice(j == 0 ? c1 : c2, h);
+        double[] s = estrategia(k);
+        double[] util = {0.0, 0.0};
+        double no = 0.0;
+        for (int a = 0; a < 2; a++) {
+            String letra = a == 0 ? "p" : "b";
+            if (j == 0) util[a] = cfr(c1, c2, h + letra, p1 * s[a], p2);
+            else util[a] = cfr(c1, c2, h + letra, p1, p2 * s[a]);
+            no = no + s[a] * util[a];
+        }
+        double sinal = j == 0 ? 1.0 : -1.0;
+        double adv = j == 0 ? p2 : p1;
+        double prop = j == 0 ? p1 : p2;
+        for (int a = 0; a < 2; a++) {
+            reg[k][a] = reg[k][a] + adv * sinal * (util[a] - no);
+            soma[k][a] = soma[k][a] + prop * s[a];
+        }
+        return no;
+    }
+
+    public static void main(String[] args) {
+        for (int it = 0; it < T; it++)
+            for (int c1 = 1; c1 <= 3; c1++)
+                for (int c2 = 1; c2 <= 3; c2++)
+                    if (c1 != c2) cfr(c1, c2, "", 1.0, 1.0);
+        StringBuilder sb = new StringBuilder();
+        for (int carta = 1; carta <= 3; carta++) {
+            sb.append("carta ").append(carta);
+            for (String h : HIST) {
+                int k = indice(carta, h);
+                double s = soma[k][0] + soma[k][1];
+                sb.append(" ").append(Double.toHexString(s > 0.0 ? soma[k][1] / s : 0.5));
+            }
+            sb.append("\\n");
+        }
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -75189,6 +75945,94 @@ def main():
     print("p " + " ".join(x.hex() for x in p))
     print("q " + " ".join(x.hex() for x in q))
     print("pivos " + str(k))
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada80.py  (83 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada80.py'] = """\"\"\"Rodada 80 do diálogo Python <-> Java (Parte 113): o CFR (Counterfactual Regret Minimization) no pôquer de Kuhn, bit a bit.
+CFR vanilla simultâneo, as 6 distribuições enumeradas, T = 1.000 iterações; imprime a estratégia MÉDIA nos 12 conjuntos de informação.
+Só +, −, ×, ÷ e comparações (o max(0, ·) do casamento de arrependimento é comparação). Da raiz: python3 dialogo/rodada80.py\"\"\"
+
+T = 1000
+HIST = ("", "pb", "p", "b")   # os dois primeiros são do jogador 1, os dois últimos do 2
+
+
+def indice(carta, h):
+    return (carta - 1) * 4 + HIST.index(h)
+
+
+def terminal(h, c1, c2):
+    ganha = 1.0 if c1 > c2 else -1.0
+    if h == "pp":
+        return ganha
+    if h == "bb" or h == "pbb":
+        return 2.0 * ganha
+    if h == "bp":
+        return 1.0
+    if h == "pbp":
+        return -1.0
+    return None
+
+
+def estrategia(reg, k):
+    a = reg[k][0] if reg[k][0] > 0.0 else 0.0
+    b = reg[k][1] if reg[k][1] > 0.0 else 0.0
+    s = a + b
+    if s > 0.0:
+        return [a / s, b / s]
+    return [0.5, 0.5]
+
+
+def cfr(reg, soma, c1, c2, h, p1, p2):
+    u = terminal(h, c1, c2)
+    if u is not None:
+        return u
+    j = len(h) % 2
+    k = indice(c1 if j == 0 else c2, h)
+    s = estrategia(reg, k)
+    util = [0.0, 0.0]
+    no = 0.0
+    for a in range(2):
+        letra = "p" if a == 0 else "b"
+        if j == 0:
+            util[a] = cfr(reg, soma, c1, c2, h + letra, p1 * s[a], p2)
+        else:
+            util[a] = cfr(reg, soma, c1, c2, h + letra, p1, p2 * s[a])
+        no = no + s[a] * util[a]
+    sinal = 1.0 if j == 0 else -1.0
+    adv = p2 if j == 0 else p1
+    prop = p1 if j == 0 else p2
+    for a in range(2):
+        reg[k][a] = reg[k][a] + adv * sinal * (util[a] - no)
+        soma[k][a] = soma[k][a] + prop * s[a]
+    return no
+
+
+def treinar():
+    reg = [[0.0, 0.0] for _ in range(12)]
+    soma = [[0.0, 0.0] for _ in range(12)]
+    for _ in range(T):
+        for c1 in (1, 2, 3):
+            for c2 in (1, 2, 3):
+                if c1 != c2:
+                    cfr(reg, soma, c1, c2, "", 1.0, 1.0)
+    media = []
+    for k in range(12):
+        s = soma[k][0] + soma[k][1]
+        media.append(soma[k][1] / s if s > 0.0 else 0.5)
+    return media
+
+
+def main():
+    m = treinar()
+    for carta in (1, 2, 3):
+        print("carta " + str(carta) + " " + " ".join(m[indice(carta, h)].hex() for h in HIST))
     print("fim")
 
 

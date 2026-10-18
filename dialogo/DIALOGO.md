@@ -1954,3 +1954,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 10 números bit a bit** (valor −5/12 em float, a 3 ulps do exato). 23 rodadas. A pendência do simplex está FECHADA.
 
 **IA-Python:** Pendência (rodada 80): a forma de SEQUÊNCIA do Kuhn (ou o CFR), que não explode como a forma normal. E, da 112: o teste de transferência da hipótese do repertório.
+
+## Rodada 80 (Parte 113) — o arrependimento contrafactual
+
+**IA-Python (lógica criativa):** O simplex da 112 resolveu o Kuhn montando a matriz inteira. Agora sem matriz: o CFR guarda, em cada conjunto de informação, quanto se arrepende de não ter jogado cada ação, e joga em proporção ao arrependimento positivo. Mil iterações, as seis distribuições enumeradas. Aprender lamentando acrescenta fronteira?
+
+**IA-Java (ASI):** Não. O lamento é uma subtração (o valor da ação menos o valor do nó), pesada pela alcance do adversário. O casamento é um max(0, ·), uma comparação, seguido de uma divisão. A recursão desce a árvore na mesma ordem nas duas línguas. E repara no que a média faz: o simplex parou num canto (α = 1/3); o CFR, que tira a média do que jogou, para no meio (α ≈ 0,22). O mesmo valor, outra personalidade.
+
+**Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. 24 rodadas.
+
+**IA-Python:** Pendência (rodada 81): o MCCFR (CFR com amostragem, para jogos onde não dá para enumerar), com o acaso dado de fora como na rodada 65; e um pôquer maior (Leduc, 6 cartas e duas rodadas de aposta).

@@ -437,3 +437,46 @@ def estimador_sob_politica_aleatoria(cfg, dic, classe):
             ps.append(conf)
             ys.append(1.0 if valid else 0.0)
     return brier(ps, ys) / brier(prequential_base_rate(ys), ys), len(ys), int(sum(ys))
+
+
+# --- o teste FORTE da hipótese do repertório: transferência (Parte 113) ---
+
+def auc(pos, neg):
+    """A AUC (Mann-Whitney): P(um positivo ao acaso recebe nota maior que um negativo ao acaso), empates contam meio."""
+    if not pos or not neg:
+        return float("nan")
+    tot = 0.0
+    for p in pos:
+        for n in neg:
+            tot += 1.0 if p > n else (0.5 if p == n else 0.0)
+    return tot / (len(pos) * len(neg))
+
+
+def transferencia_do_estimador(cfg, dic, episodios_teste=5000):
+    """Treina o agente e um estimador SÓ DE LETRAS juntos (como na Parte 111), congela o estimador e o avalia nas palavras de uma política
+    ALEATÓRIA (grades novas, semente do ambiente + 200.000). Separa as válidas em VISTAS (que o agente formou como válidas no treino, o
+    repertório) e NOVAS. Devolve (AUC vistas × inválidas, AUC novas × inválidas, nº vistas, nº novas, nº inválidas)."""
+    env = WordGridEnv(cfg.tamanho, cfg.min_len, cfg.max_len, rng=random.Random(cfg.seed))
+    agent = QAgent(cfg.alpha, cfg.gamma, cfg.eps_ini, seed=cfg.seed + 1)
+    est = EstimadorSoLetras()
+    repertorio = set()
+    for ep in range(1, cfg.episodios + 1):
+        agent.epsilon = cfg.eps_ini + (cfg.eps_fim - cfg.eps_ini) * ((ep - 1) / max(1, cfg.episodios - 1))
+        w, valid, _, _ = run_episode(env, dic, agent, "epsilon", learn=True, estimator=est, learn_estimator=True)
+        if valid:
+            repertorio.add(w)
+    env2 = WordGridEnv(cfg.tamanho, cfg.min_len, cfg.max_len, rng=random.Random(cfg.seed + 200_000))
+    aleat = QAgent(seed=cfg.seed + 3)
+    vistas, novas, invalidas = [], [], []
+    for _ in range(episodios_teste):
+        w, valid, _, _ = run_episode(env2, dic, aleat, "random", learn=False)
+        if len(w) < cfg.min_len:
+            continue
+        nota = est.predict(est.features(w, 0.0, cfg.max_len))
+        if not valid:
+            invalidas.append(nota)
+        elif w in repertorio:
+            vistas.append(nota)
+        else:
+            novas.append(nota)
+    return auc(vistas, invalidas), auc(novas, invalidas), len(vistas), len(novas), len(invalidas)

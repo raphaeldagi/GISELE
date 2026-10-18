@@ -9620,6 +9620,8 @@ VEREDITOS_P3919 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) �
 ERROS_P3919, TESTES_P3919 = 224, 850
 VEREDITOS_P3989 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅"
 ERROS_P3989, TESTES_P3989 = 224, 864
+VEREDITOS_P4059 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅"
+ERROS_P4059, TESTES_P4059 = 224, 877
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12160,12 +12162,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14424,6 +14426,184 @@ def p2810_hipotese_do_repertorio():
     return rc, rl, n, k
 
 
+_SOBRESCRITOS = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺", "0123456789-+")
+
+
+def _numero_pt_v2(x):
+    """O _numero_pt com potências escritas com expoente sobrescrito (Parte 113; a original fica intacta): "10⁻¹²", "5·10⁻⁴", "6,1·10⁻¹⁶",
+    "2⁻⁵⁴". Sem expoente sobrescrito, delega à original."""
+    import re
+    y = x.strip().replace("*", "").replace(" ", "")
+    m = re.fullmatch(r"(?:([−\-]?[0-9.,]+)[·×])?([0-9]+)([⁻⁺]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+)", y)
+    if not m:
+        return _numero_pt(x)
+    mant = _numero_pt(m.group(1)) if m.group(1) else 1.0
+    if mant is None:
+        return None
+    return mant * float(int(m.group(2))) ** int(m.group(3).translate(_SOBRESCRITOS))
+
+
+def p2833_minhas_previsoes_v4(partes=range(53, 68), numero=None):
+    """As minhas previsões do mundo, versão 4 (P2833; Parte 113): a mesma leitura da v3 (P2806: rótulo só no início da linha, faixa no
+    mesmo item), com o leitor de números trocável; o padrão é o _numero_pt_v2, que entende expoentes sobrescritos. A v3 fica intacta.
+    Devolve [(parte, letra, a, b, acerto, tipo)]."""
+    import glob
+    import os
+    import re
+    numero = numero or _numero_pt_v2
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    dialogo = open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8").read()
+    rotulo = re.compile(r"^\s*(?:[-*]\s+)?(?:\*\*)?\(([a-z])\)")
+    faixa = re.compile(r"\*\*\[([^\];]+?);\s*([^\]]+?)\]\*\*")
+    velha = re.compile(r"\(([a-z])\)((?:(?!\([a-z]\)).){0,400}?)\*\*\[([^\];]+?);\s*([^\]]+?)\]\*\*")
+    saida = []
+    for parte in partes:
+        arq = glob.glob(os.path.join(raiz, f"ASI_AGI_parte{parte}_*.md"))
+        if not arq:
+            continue
+        texto = open(arq[0], encoding="utf-8").read()
+        m = re.search(r"Do mundo: ((?:\([a-z]\) [✅❌] ?)+)", texto)
+        if not m:
+            continue
+        vered = re.findall(r"\(([a-z])\) ([✅❌])", m.group(1))
+        itens, atual = {}, None
+        for linha in texto.split("## As respostas")[0].split("\n"):
+            r = rotulo.match(linha)
+            if r:
+                atual = r.group(1)
+                itens.setdefault(atual, []).append(linha[r.end():])
+            elif atual is not None and linha.strip() and not linha.lstrip().startswith("#"):
+                itens[atual].append(linha)
+            else:
+                atual = None
+        faixas = {}
+        for letra, ls in itens.items():
+            achou = faixa.search(" ".join(ls))
+            if achou:
+                x, y = numero(achou.group(1)), numero(achou.group(2))
+                if x is not None and y is not None and "%" in achou.group(1) + achou.group(2):
+                    x, y = x / 100, y / 100
+                if x is not None and y is not None:
+                    faixas[letra] = (x, y)
+        cab = re.search(rf"## Rodada {parte - 26} [^\n]*\n(.*?)(?=\n## |\Z)", dialogo, re.S)
+        for letra, _, a, b in velha.findall((cab.group(1) if cab else "").split("**Resultado")[0].replace("\n", " ")):
+            x, y = numero(a), numero(b)
+            if letra not in faixas and x is not None and y is not None:
+                faixas[letra] = (x, y)
+        for letra, v in vered:
+            a, b = faixas.get(letra, (None, None))
+            if a is None:
+                tipo = None
+            elif a <= 0 <= b:
+                tipo = "zero"
+            elif 0 <= a and b <= 1:
+                tipo = "fracao"
+            elif a == int(a) and b == int(b) and a >= 1:
+                tipo = "contagem"
+            else:
+                tipo = "outra"
+            saida.append((parte, letra, a, b, v == "✅", tipo))
+    return saida
+
+
+def p2834_v3_contra_v4(partes=range(53, 113)):
+    """O que a v4 muda sobre a v3 (P2834; Parte 113). Devolve (recuperadas, perdidas, trocadas, total)."""
+    v3 = {(x[0], x[1]): (x[2], x[3]) for x in p2806_minhas_previsoes_v3(partes)}
+    v4 = {(x[0], x[1]): (x[2], x[3]) for x in p2833_minhas_previsoes_v4(partes)}
+    rec = sorted(k for k in v4 if v3.get(k, (None, None))[0] is None and v4[k][0] is not None)
+    per = sorted(k for k in v3 if v3[k][0] is not None and v4.get(k, (None, None))[0] is None)
+    tro = sorted(k for k in v3 if v3[k][0] is not None and v4.get(k, (None, None))[0] is not None and v3[k] != v4[k])
+    return rec, per, tro, len(v4)
+
+
+def p2831_cfr_convergencia(T=10000):
+    """O CFR no pôquer de Kuhn (P2831; Parte 113): a estratégia MÉDIA depois de T iterações, a sua explorabilidade (o que cede a melhores
+    respostas, exata por enumeração) e a distância do seu valor a −1/18. Devolve (explorabilidade, |valor + 1/18|, valor)."""
+    from synthai import cfr
+    m = cfr.CFR().iterar(T).media()
+    v = cfr.valor(m)
+    return cfr.explorabilidade(m), abs(v + 1.0 / 18.0), v
+
+
+def p2832_cfr_equilibrio(T=10000):
+    """Que equilíbrio o CFR acha (P2832; Parte 113): as marginais do jogador 2 (paga com a dama, blefa com o valete), o α do jogador 1 e as
+    duas relações da família de Kuhn. Devolve (|paga(Q) − 1/3|, |blefe(J) − 1/3|, α, |aposta(K) − 3α|, |paga1(Q) − (α + 1/3)|)."""
+    from synthai import cfr
+    m = cfr.CFR().iterar(T).media()
+    al = m[(1, "")][1]
+    return (abs(m[(2, "b")][1] - 1.0 / 3.0), abs(m[(1, "p")][1] - 1.0 / 3.0), al, abs(m[(3, "")][1] - 3.0 * al),
+            abs(m[(2, "pb")][1] - (al + 1.0 / 3.0)))
+
+
+def p2835_transferencia_do_repertorio(sementes=range(42, 52)):
+    """O teste FORTE da hipótese do repertório (P2835; Parte 113): o estimador só de letras treinado no repertório do agente, congelado e
+    avaliado nas palavras de uma política aleatória; AUC das válidas NOVAS e (vistas − novas), médias sobre as sementes.
+    Devolve (média AUC novas, média vistas − novas, nº de sementes com vistas)."""
+    from synthai import palavras_rl as P
+    emb = P.Dicionario(P.EMBEDDED_WORDS)
+    nov, dif = [], []
+    for s in sementes:
+        av, an, nv, nn, _ = P.transferencia_do_estimador(P.Config(seed=s), emb)
+        if nn:
+            nov.append(an)
+        if nv and nn:
+            dif.append(av - an)
+    return sum(nov) / len(nov), sum(dif) / len(dif), len(dif)
+
+
+def _rodada80():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada80", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada80.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2836_rodada80():
+    """Rodada 80 (P2836; Parte 113): o CFR em float (T = 1.000) IGUAL em Java bit a bit. Devolve as 12 probabilidades médias de apostar/pagar."""
+    return _rodada80().treinar()
+
+
+def p2837_previsoes_sobre_previsoes_v4(parte=113):
+    """O placar (m) lido pelo leitor v4 (P2837; Parte 113). Devolve (medidas, ws)."""
+    prev = p2833_minhas_previsoes_v4(range(parte, parte + 1))
+    nz = [x for x in prev if x[5] not in (None, "zero")]
+    ws = sorted((x[3] - x[2]) / (abs(x[2]) + abs(x[3])) for x in nz)
+    n = len(ws)
+    med = (ws[n // 2] if n % 2 else (ws[n // 2 - 1] + ws[n // 2]) / 2) if n else None
+    return ({"m1": len(prev), "m2": sum(1 for x in prev if x[5] == "zero"), "m3": med,
+             "m4": sum(x[4] for x in prev) / len(prev) if prev else None, "m5": sum(1 for w in ws if w > 0.6)}, ws)
+
+
+def p2838_auditoria_do_placar_m_v4(partes=(70, 77, 110, 112)):
+    """A auditoria retroativa do placar (m) nas partes em que a v4 do leitor muda alguma faixa (P2838; Parte 113; a regra da Parte 112): (m2),
+    (m3), (m5) pela v3 e pela v4 contra a faixa registrada. Devolve (linhas, nº de vereditos que mudam)."""
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    linhas, mudam = [], 0
+    for parte in partes:
+        texto = open(glob.glob(os.path.join(raiz, f"ASI_AGI_parte{parte}_*.md"))[0], encoding="utf-8").read().split("## As respostas")[0]
+        fx = {}
+        for k, a, b in re.findall(r"\(m(\d)\)\*\*[^\[\n]*?\*\*\[([^;\]]+);\s*([^\]]+)\]\*\*", texto):
+            if k not in fx and _numero_pt(a) is not None and _numero_pt(b) is not None:
+                fx[k] = (_numero_pt(a), _numero_pt(b))
+        m3, _ = p2808_previsoes_sobre_previsoes_v3(parte)
+        m4, _ = p2837_previsoes_sobre_previsoes_v4(parte)
+        for k in ("2", "3", "5"):
+            if k not in fx:
+                continue
+            a, b = fx[k]
+            x3, x4 = m3["m" + k], m4["m" + k]
+            d3 = x3 is not None and a <= x3 <= b
+            d4 = x4 is not None and a <= x4 <= b
+            mudam += int(d3 != d4)
+            linhas.append((parte, "m" + k, (a, b), x3, x4, d3, d4))
+    return linhas, mudam
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -15800,6 +15980,28 @@ def _parte_112():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3989, testes=TESTES_P3989)
     print(f"P3989 minha taxa de erro ({ERROS_P3989}/{TESTES_P3989}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_113():
+    print("--- Parte 113 (0x71: o arrependimento; CFR no Kuhn, transferencia do repertorio, leitor v4) ---")
+    ex, dv, v = p2831_cfr_convergencia()
+    print(f"P2831 CFR (T=10.000): explorabilidade {ex:.4e}; |valor + 1/18| {dv:.2e} (valor {v:.6f})")
+    cq, bj, al, d1, d2 = p2832_cfr_equilibrio()
+    print(f"P2832 equilibrio do CFR: |paga(Q) - 1/3| {cq:.4f}; |blefe(J) - 1/3| {bj:.4f}; alfa {al:.4f} (interior); |aposta(K) - 3alfa| {d1:.4f}; |paga1(Q) - (alfa+1/3)| {d2:.4f}")
+    an, df, ns = p2835_transferencia_do_repertorio()
+    print(f"P2835 transferencia (sementes 42-51): AUC das novas {an:.4f}; vistas - novas {df:.4f} ({ns} sementes)")
+    rec, per, tro, tot = p2834_v3_contra_v4(range(53, 113))
+    print(f"P2834 leitor v4 x v3 (Partes 53-112, {tot} letras): recupera {len(rec)} {rec}; perde {len(per)}; troca {len(tro)}")
+    linhas, mudam = p2838_auditoria_do_placar_m_v4()
+    print(f"P2838 auditoria do placar (m) com a regua v4: {len(linhas)} medidas, {sum(1 for l in linhas if l[3] != l[4])} valores mudam, {mudam} vereditos mudam")
+    m = p2836_rodada80()
+    print(f"P2836 rodada 80 (CFR em float, IGUAL em Java): alfa(T=1000) = {m[0].hex()}")
+    ok, tot2, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-113: {ok}/{tot2} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2831, 2860)
+    print(f"P1092 pNN novas (P2831-P2860) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 113: {p974_previsoes_sem_largura(range(113, 114))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4059, testes=TESTES_P4059)
+    print(f"P4059 minha taxa de erro ({ERROS_P4059}/{TESTES_P4059}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -15836,7 +16038,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113}
 
 
 if __name__ == "__main__":

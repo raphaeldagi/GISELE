@@ -180,3 +180,7 @@ Ver `dialogo/DIALOGO.md`: o simplex em `float` (regra de Bland) no jogo 4 × 5 d
 - Pôquer de Kuhn, valor −1/18 e a família de equilíbrios do jogador 1 (α ∈ [0, 1/3]), jogador 2 único: [Wikipedia, Kuhn poker](https://en.wikipedia.org/wiki/Kuhn_poker); [Miao, tese (Dartmouth, 2014)](https://math.dartmouth.edu/theses/undergrad/2014/Miao-thesis.pdf); [Freiburg, notas de teoria dos jogos](https://gki.informatik.uni-freiburg.de/teaching/ss19/gametheory/gametheory14.pdf).
 - Regra de Bland: [Bland, "New finite pivoting rules for the simplex method", Math. Oper. Res. 2(2), 1977](https://en.wikipedia.org/wiki/Bland%27s_rule); [prova de terminação (UNAM)](https://www.matem.unam.mx/~omar/math340/blands-rule.html).
 - Jogo de soma zero como programa linear e dualidade: o teorema minimax (von Neumann, 1928) e o LP (Dantzig); as notas de Freiburg, acima.
+
+---
+
+➡ Continua na [Parte 113 — O arrependimento](ASI_AGI_parte113_o_arrependimento.md).

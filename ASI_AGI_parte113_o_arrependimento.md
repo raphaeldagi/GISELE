@@ -64,3 +64,102 @@ Os riscos estão onde a calibração é ruidosa. As marginais (c), (d), (f), (g)
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2831 — O CFR converge para Kuhn sem a forma normal?
+
+**Na pergunta.** "Sem a forma normal" é o ponto. A Parte 112 escreveu as 27 × 64 = 1.728 combinações de estratégias puras; o CFR nunca as escreve. Ele guarda dois números por conjunto de informação (12 conjuntos × 2 ações = 24 arrependimentos) e aprende jogando contra si mesmo. É a diferença entre listar todas as estradas e aprender a dirigir.
+
+**Lógica.** O casamento de arrependimento joga cada ação com probabilidade proporcional ao arrependimento POSITIVO acumulado de não tê-la jogado, R⁺(a)/ΣR⁺. Depois de T = 10.000 iterações (as 6 distribuições enumeradas em cada uma), a explorabilidade da estratégia MÉDIA é **0,00297** ✅ (a), dentro de [0,0017; 0,013]. A extrapolação da calibração (inclinação −0,47) previa 0,0047; o medido ficou 1,6× abaixo, dentro do fator 2,8 da faixa. Pela cota O(1/√T), de T = 800 (0,0161) para T = 10.000 a explorabilidade cairia √(10.000/800) = 3,5 vezes, para 0,0046; caiu 5,4 vezes. A convergência real está um pouco mais rápida que a cota, como costuma acontecer no CFR. O valor do perfil médio é **−0,055531**, a **2,5·10⁻⁵** de −1/18 ✅ (b), bem abaixo do teto que a identidade garante (|v − v*| ≤ explorabilidade = 0,003).
+
+**Tradução cruzada.** O arrependimento é uma emoção com conta. "Se eu tivesse apostado, teria ganho mais" vira um número que se acumula, e a escolha seguinte pende para o que se lamenta não ter feito. Jung chamaria de compensação: a função que ficou de fora volta pelo lamento. A estratégia média, a que converge, é a lição tirada de todos os lamentos juntos, não o último impulso.
+
+### P2832 — Que equilíbrio o CFR escolhe?
+
+**Lógica.** O jogador 2 converge para o equilíbrio ÚNICO de Kuhn: paga com a dama **0,3371** (erro **0,0038**) ✅ (c) e blefa com o valete **0,3357** (erro **0,0024**) ✅ (d). O jogador 1 para em α = **0,2159** ✅ (e), um ponto INTERIOR da família α ∈ [0, 1/3]. O simplex da Parte 112 tinha parado no vértice α = 1/3. As relações da família valem: |aposta(K) − 3α| = **0,0208** ✅ (f) (o rei aposta **0,668**, contra 3α = 0,648: a relação mais lenta a convergir. No rascunho eu tinha escrito 0,627, deduzido de cabeça a partir do |erro| com o sinal chutado; a linha de código da regra da Parte 69 pegou o sinal trocado antes do commit) e |paga(Q) − (α + 1/3)| = **0,0047** ✅ (g).
+
+**Por quê interior.** O simplex anda pelas ARESTAS do poliedro das estratégias e para num canto. O CFR faz a MÉDIA das estratégias que jogou, e a média de pontos de um conjunto convexo cai no seu interior. Os dois acham o mesmo valor (−1/18) e o mesmo jogador 2. Mas são "personalidades" diferentes do jogador 1: o simplex blefa no máximo (α = 1/3, o rei sempre aposta); o CFR blefa 22% e às vezes passa com o rei para armar a armadilha. O valor do jogo não distingue os dois; o estilo é o grau de liberdade que o valor não vê (a Parte 112 disse isso; esta parte mediu).
+
+### P2835 — O estimador transfere?
+
+**Lógica.** Nas dez sementes novas (42 a 51), o estimador só de letras, treinado no repertório do agente e congelado, avaliado nas palavras de uma política aleatória:
+- **AUC das válidas NOVAS** (que o agente nunca formou) contra as inválidas: **0,621** ✅ (h). Acima de 0,5: as letras levam uma regularidade que TRANSFERE.
+- **AUC(vistas) − AUC(novas): 0,163** ✅ (i), em 10 de 10 sementes com vistas. O repertório acrescenta além disso.
+
+**O veredito sobre a hipótese da Parte 111.** É PARCIAL, e foi previsto parcial: as duas causas são reais. As letras sabem alguma coisa do dicionário (palavras curtas de letras frequentes, vogais no meio), e sabem mais sobre as palavras que o agente repete. Na Parte 111 eu tentei uma causa só, duas vezes, e errei duas vezes. Aqui, com o desenho que separa as duas (vistas × novas), as duas aparecem com tamanho medido: 0,12 acima do acaso pela regularidade e mais 0,16 pelo repertório.
+
+**Tradução cruzada.** É a diferença entre a familiaridade e o conhecimento, medida em vez de dita. O estimador conhece as palavras de casa (0,78 em média nas vistas) e reconhece um pouco as de fora (0,62). Um sistema que só tivesse a primeira coisa seria um papagaio; um que só tivesse a segunda, um linguista. Este é os dois, numa proporção que agora tem número.
+
+### P2833 / P2834 / P2838 — O leitor v4
+
+**Lógica.** O `_numero_pt_v2` lê potências com expoente sobrescrito ("10⁻¹²", "5·10⁻⁴", "6,1·10⁻¹⁶", "2⁻⁵⁴"), e o leitor v4 recupera **6** faixas ✅ (j): 70 (g), do diálogo, [3·10⁴; 10⁶]; 77 (d), [0; 1·10⁻¹²]; 110 (c), (h) e (i); e 112 (g), a [0; 10⁻¹²] da parte anterior. Ele perde **0** ✅ (k) e troca **0** ✅ (l), como garantiam as duas identidades. Olhei os três casos que eu não conhecia (70 g, 77 d, 112 g): todos certos. O controle dos dois lados: com o leitor velho, a v4 é exatamente a v3, e com o novo ela acha os casos plantados (os três da 110).
+
+**A auditoria retroativa (P2838, regra da Parte 112).** No placar (m) das partes atingidas (77, 110, 112; a 70 não tinha (m) no formato lido), **5 valores mudam** (77 m2: 0→1; 110 m2: 3→4, m3: 0,028→0,050, m5: 0→2; 112 m2: 6→7). No rascunho eu escrevi "4" e listei cinco: uma contagem por leitura, a regra da Parte 60, pega pela suíte inteira e **0 vereditos mudam**. E fica um limite medido: na Parte 77, nenhuma das réguas consegue ler a (m3); aquele veredito não é auditável por código.
+
+### P2836 — rodada 80
+
+**Lógica.** O CFR em float (T = 1.000), Python × Java: **IGUAIS, 4 linhas e 12 números bit a bit** ✅ (n). O casamento de arrependimento é uma comparação (max(0, ·)) e uma divisão; a recursão segue a mesma ordem nas duas línguas. 24 rodadas: aprender jogando, como resolver por simplex, é aritmética portável.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅. Parte 113: **13 testes, 0 erros**. Os mecanismos escritos dentro das faixas largas, conferidos:
+- (a): a cota O(1/√T); a convergência real foi mais rápida, 5,4× contra 3,5×;
+- (e): o interior, confirmado;
+- (h)/(i): as duas causas, confirmadas.
+
+Acumulado (mundo): **224 erros em 877 testes**. Calibração (P1961, Partes 80–113): **197/218 = 0,904**.
+
+### Previsões sobre previsões (m)
+
+Pontuadas com o leitor v4 (P2837); a v3 dá os mesmos números nesta parte.
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [12; 16] | 13 | ✅ |
+| (m2) | [6; 10] | 8 | ✅ |
+| (m3) | [0,20; 0,70] | 0,45 | ✅ |
+| (m4) | [0,60; 1,00] | 1,00 | ✅ |
+| (m5) | [0; 4] | 2 | ✅ |
+| (m6) | [0; 3] | 0 | ✅ |
+
+Previsões sobre previsões: **6 de 6**.
+
+## Engenharia reversa (metacognição)
+
+**O padrão: o sinal chutado.** O único erro desta parte não chegou ao placar, porque a regra da Parte 69 o pegou antes do commit. Eu tinha o |erro| (0,0208) e escrevi o valor do rei como 3α − 0,021 = 0,627, sem olhar o sinal. O rei aposta 0,668. É o mesmo erro da Parte 53 ("tabelas comprimem pior", o sinal trocado) e do "esqueço custos" da Parte 45: quando eu tenho o TAMANHO de uma diferença, eu ponho um sinal por hábito. Aqui o hábito era "a relação mais lenta fica abaixo". **Significado:** uma magnitude não é um número; o sinal é uma segunda medida, que eu tenho de fazer. **Regra:** toda grandeza que eu reconstruo de um valor absoluto (|a − b|) volta à saída que a imprimiu, e o sinal sai de lá.
+
+**O segundo padrão: o desenho que separa as causas.** Na Parte 111 eu expliquei o estimador por uma causa, duas vezes, e errei duas vezes. Na 112 testei UMA causa (o teste fraco). Nesta, o desenho (vistas × novas, numa amostra que o agente não gerou) mede as duas causas de uma vez, cada uma com o seu tamanho, e a previsão acertou porque foi registrada como "as duas". **Significado:** a pergunta "qual é a causa?" pressupõe que haja uma; o desenho experimental certo pergunta "quanto de cada uma?". **O terceiro, achado pela suíte inteira depois do texto pronto.** Duas falhas, as duas MINHAS.
+- Escrevi "4 valores mudam" e listei cinco, uma contagem por leitura (a regra da Parte 60, pela enésima vez).
+- A auditoria da Parte 81 (`p1871`, o que não serve) acusou `simplex.valor_contra`, uma função da Parte 112 que nada usava. Ela passou na suíte da 112 porque a auditoria só vê arquivos que o `git ls-files` conhece, e a suíte rodou ANTES do `git add` do arquivo novo.
+
+A função agora serve à identidade do minimax (p·A·q = v no equilíbrio), num teste. **Regra:** os arquivos novos são postos no índice do git (`git add`) ANTES da suíte inteira, porque uma auditoria que lê o repositório não vê o que ainda não está nele.
+
+**Regra:** quando duas explicações de causa única já falharam, o próximo teste é um desenho que mede cada causa separadamente, e não uma terceira causa única.
+
+## Síntese / unificação
+
+A Parte 113 fecha as três pendências da 112:
+- **(1) O CFR** (`synthai/cfr.py`) resolve o pôquer de Kuhn sem montar a forma normal: 24 arrependimentos em vez de 1.728 células. A explorabilidade cai 5,4× de T = 800 para T = 10.000 (a cota O(1/√T) previa 3,5×), e o valor fica a 2,5·10⁻⁵ de −1/18. O jogador 2 é o único de Kuhn (dama paga 0,337, valete blefa 0,336). O jogador 1 para no INTERIOR da família (α = 0,216), onde o simplex parou no vértice (α = 1/3): mesmo valor, outro estilo.
+- **(2) O teste forte do repertório** separa as duas causas da Parte 111. A regularidade das letras transfere (AUC das novas 0,621, 0,12 acima do acaso) e o repertório acrescenta 0,163, em 10 de 10 sementes.
+- **(3) O leitor v4** lê expoentes sobrescritos: 6 faixas recuperadas, 0 perdidas e 0 trocadas (identidades), e 5 valores (m) antigos mudados sem nenhum veredito mudado.
+
+Rodada 80: o CFR é IGUAL bit a bit (24 rodadas). 13/13 do mundo, 6/6 (m), calibração **0,904**: o primeiro valor acima de 0,9 desde a medida da Parte 79.
+
+O arco de decisão da SYNTHAI agora tem os dois caminhos para o mesmo equilíbrio: o exato, que monta e resolve (simplex, Parte 112), e o aprendido, que joga e lamenta (CFR, Parte 113). Os dois concordam no valor e no jogador 2, e discordam, mensuravelmente, no estilo do jogador 1. É a prova cruzada da Parte 20 (dois caminhos independentes) e a AUTOPOIESE da Parte 31 (substituir aprendizado por conta exata "se der"): aqui dá, e o aprendizado chega ao mesmo lugar, só que pelo meio.
+
+## Meta
+
+Confiança alta no CFR: o controle com o perfil de Kuhn escrito à mão vale −1/18 com explorabilidade < 10⁻¹², e um perfil sujo (o jogador 2 sempre paga) é explorável em mais de 0,01. Média na transferência: dez sementes, mas só 20 a 36 palavras novas por semente; e a "regularidade" (0,12) pode ser a das palavras de 3 letras feitas de letras frequentes, que é também o que um dicionário pequeno contém (o juiz de novo, como na Parte 111). Onde é brinquedo: o Kuhn tem 12 conjuntos de informação, e o pôquer de verdade tem 10¹² ou mais. Lá o CFR precisa de amostragem (MCCFR) e de abstração, uma pendência natural. O leitor v4 ainda não lê a (m3) da Parte 77.
+
+## Diálogo Python ↔ Java (rodada 80)
+
+Ver `dialogo/DIALOGO.md`: o CFR em `float`, T = 1.000, é **IGUAL**: 4 linhas e 12 números bit a bit.
+
+## Fontes
+
+- CFR: [Zinkevich, Johanson, Bowling e Piccione, "Regret Minimization in Games with Incomplete Information", NIPS 2007](https://proceedings.neurips.cc/paper/2007/hash/08d98638c6fcd194a4b1e6992063e944-Abstract.html); [o artigo em PDF](https://proceedings.nips.cc/paper_files/paper/2007/file/08d98638c6fcd194a4b1e6992063e944-Paper.pdf); [relatório técnico longo TR07-14 (Alberta)](https://era.library.ualberta.ca/files/vh53wx015/TR07-14.pdf).
+- Pôquer de Kuhn e a família de equilíbrios: [Wikipedia, Kuhn poker](https://en.wikipedia.org/wiki/Kuhn_poker); [Miao, tese (Dartmouth, 2014)](https://math.dartmouth.edu/theses/undergrad/2014/Miao-thesis.pdf).
+- A AUC como estatística de Mann-Whitney (a probabilidade de um positivo ter nota maior que um negativo): resultado clássico (Hanley e McNeil, 1982), conferido aqui pelos casos de teste em `synthai/testes_parte113.py`.
