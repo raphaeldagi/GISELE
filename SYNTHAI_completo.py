@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 113, perguntas P1 a P2838).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 114, perguntas P1 a P2865).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (16050 linhas)
+# calculos.py  (16135 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9660,6 +9660,8 @@ VEREDITOS_P3989 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) �
 ERROS_P3989, TESTES_P3989 = 224, 864
 VEREDITOS_P4059 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅"
 ERROS_P4059, TESTES_P4059 = 224, 877
+VEREDITOS_P4129 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅"
+ERROS_P4129, TESTES_P4129 = 224, 887
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12200,12 +12202,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14642,6 +14644,69 @@ def p2838_auditoria_do_placar_m_v4(partes=(70, 77, 110, 112)):
     return linhas, mudam
 
 
+def p2861_logistica_como_rede():
+    \"\"\"ML como DL (P2861; Parte 114): a regressão logística com L2 (λ = 0,01) como rede de UMA camada treinada por retropropagação (lr = 1/L,
+    2.000 passos, a partir de zero) contra o solucionador clássico (Newton). Devolve (max |w_rede − w_Newton|, max |∇| no Newton, κ = L/μ).\"\"\"
+    from synthai import ml_dl as M
+    X, y = M.dados_logistica()
+    lam = 0.01
+    mu, L = M.constantes_logistica(X, lam)
+    wn = M.newton_logistica(X, y, lam)
+    wr = M.rede_logistica(X, y, lam, 2000, 1.0 / L)
+    return max(abs(a - b) for a, b in zip(wn, wr)), max(abs(g) for g in M.gradiente_logistica(wn, X, y, lam)), L / mu
+
+
+def p2862_rede_linear_profunda():
+    \"\"\"DL como ML (P2862; Parte 114): a rede linear profunda W₂W₁ (h = 4, 3.000 passos) contra o OLS em forma fechada. Devolve max |β_rede − β_OLS|.\"\"\"
+    from synthai import ml_dl as M
+    Xtr, ytr = M.dados_regressao(200, 114)
+    Xl = [x + [1.0] for x in Xtr]
+    return max(abs(a - b) for a, b in zip(M.ols(Xl, ytr), M.rede_linear_profunda(Xl, ytr, semente=114)))
+
+
+def p2863_features_e_cabeca():
+    \"\"\"DL como ML (P2863; Parte 114): MSE de teste das features ALEATÓRIAS + ridge, da rede inteira por retropropagação (3.000 passos) e das
+    features TREINADAS + ridge. Devolve (MSE aleatórias, MSE retropropagação, MSE treinadas + ridge).\"\"\"
+    from synthai import ml_dl as M
+    Xtr, ytr = M.dados_regressao(200, 114)
+    Xte, yte = M.dados_regressao(1000, 114114)
+    rf = M.features_aleatorias(Xtr, ytr, Xte, yte, semente=114)
+    bp, W, b = M.mlp_retropropagacao(Xtr, ytr, Xte, yte, semente=114)
+    return rf, bp, M.features_treinadas_mais_ridge(Xtr, ytr, Xte, yte, W, b)
+
+
+def p2864_graus_de_liberdade():
+    \"\"\"ML na cabeça de uma rede (P2864; Parte 114): os graus de liberdade da ridge sobre 40 features tanh, tr(S) em forma fechada e a definição
+    de Efron por simulação, com λ = 10⁻³ e λ = 1. Devolve (tr(S) λ=10⁻³, Efron λ=10⁻³, tr(S) λ=1, Efron λ=1).\"\"\"
+    import random
+    from synthai import ml_dl as M
+    Xtr, _ = M.dados_regressao(200, 114)
+    rng = random.Random(1144)
+    W = [[rng.gauss(0, 1) for _ in range(2)] for _ in range(40)]
+    b = [rng.uniform(-2, 2) for _ in range(40)]
+    H = M._oculta(Xtr, W, b)
+    f = [math.sin(x[0]) + 0.5 * x[1] * x[1] for x in Xtr]
+    return (M.df_ridge_fechado(H, 1e-3), M.df_ridge_efron(H, f, 1e-3), M.df_ridge_fechado(H, 1.0), M.df_ridge_efron(H, f, 1.0))
+
+
+def _rodada81():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada81", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada81.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2865_rodada81():
+    \"\"\"Rodada 81 (P2865; Parte 114): a rede linear profunda por GD (500 passos), IGUAL em Java bit a bit. Devolve (β da rede, β do OLS) nos
+    mesmos dados: em 500 passos a rede ainda NÃO chegou ao OLS.\"\"\"
+    from synthai import ml_dl as M
+    r = _rodada81()
+    X, y, _, _ = r.dados()
+    return r.treinar(), M.ols(X, y)
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -16040,6 +16105,26 @@ def _parte_113():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4059, testes=TESTES_P4059)
     print(f"P4059 minha taxa de erro ({ERROS_P4059}/{TESTES_P4059}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_114():
+    print("--- Parte 114 (0x72: tratar o ML como DL e o DL como ML) ---")
+    dw, gn, kap = p2861_logistica_como_rede()
+    print(f"P2861 logistica como rede de 1 camada (retropropagacao) x Newton: max |dw| = {dw:.2e}; |grad| no Newton {gn:.1e}; kappa = {kap:.2f}")
+    db = p2862_rede_linear_profunda()
+    print(f"P2862 rede linear profunda W2W1 x OLS: max |d beta| = {db:.2e}")
+    rf, bp, tr = p2863_features_e_cabeca()
+    print(f"P2863 MSE de teste: features aleatorias + ridge {rf:.5f}; retropropagacao {bp:.5f} (razao {bp/rf:.3f}); features treinadas + ridge {tr:.5f} (razao {tr/bp:.3f})")
+    d1, e1, d2, e2 = p2864_graus_de_liberdade()
+    print(f"P2864 graus de liberdade: lambda=1e-3 tr(S) {d1:.3f}, Efron {e1:.3f}; lambda=1 tr(S) {d2:.3f}, Efron {e2:.3f}; razao {d2/d1:.3f}")
+    br, bo = p2865_rodada81()
+    print(f"P2865 rodada 81 (rede linear profunda, IGUAL em Java): beta {[round(v, 4) for v in br]}; OLS {[round(v, 4) for v in bo]}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-114: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2861, 2890)
+    print(f"P1092 pNN novas (P2861-P2890) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 114: {p974_previsoes_sem_largura(range(114, 115))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4129, testes=TESTES_P4129)
+    print(f"P4129 minha taxa de erro ({ERROS_P4129}/{TESTES_P4129}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -16076,7 +16161,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114}
 
 
 if __name__ == "__main__":
@@ -16089,7 +16174,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (440 linhas)
+# CLAUDE.md  (448 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -16375,6 +16460,14 @@ anterior, commit e push.
   reconstruida de um valor absoluto |a-b| volta a saida que a imprimiu para o SINAL (escrevi o rei 0,627 com o sinal chutado; era 0,668, pego pela regra da Parte 69); e quando
   duas explicacoes de causa unica ja falharam, o proximo teste e um desenho que mede cada causa separadamente. 13/13 do mundo, 6/6 (m), calibracao 197/218 = 0,904 (a 1a acima
   de 0,9 desde a Parte 79). O placar (m) usa a p2837 (v4). E os arquivos novos vao para o indice do git (git add) ANTES da suite inteira: a p1871 le o git ls-files e nao viu a simplex.valor_contra sem uso na suite da 112.
+  Parte 114 (pedido: "Trate o ML como DL e vice-versa"; `synthai/ml_dl.py`): leitura gravada: ML = solucionador exato + base dada (logistica/Newton, OLS, ridge, graus de
+  liberdade); DL = base aprendida + solucionador aproximado (retropropagacao/descida). Medido: a logistica como rede de 1 camada chega a 4,4e-16 do Newton (a cota do teorema,
+  calculada ANTES com mu, L e |grad f(0)|/mu, era 1,2e-12); a rede linear profunda W2W1 e o OLS (1,1e-15); a camada oculta tanh como FEATURES com a cabeca ridge em forma fechada
+  bate a rede inteira por 3.000 passos de retropropagacao (MSE 0,0127 x 0,0154) e as features aprendidas, com a cabeca exata, EMPATAM com as aleatorias (tarefa suave: hipotese de
+  1 lote); os graus de liberdade de Efron (soma cov/sigma^2) batem com tr(S) a 0,35/0,03, e a cabeca de 41 parametros usa 30 (15 com lambda=1). A fronteira ML/DL e de REGIME,
+  nao de matematica. REGRA NOVA: antes de treinar uma rede inteira, resolver em forma fechada tudo o que e convexo (a cabeca) e so pagar a descida no resto (a base); e todo
+  numero da EXPLICACAO do mecanismo passa por codigo, como os da previsao (a cota com ln(1-x)~-x e o sigma'~0,15 chutado, pegos pela regra da Parte 69). Rodada 81 IGUAL
+  (25 rodadas). 10/10 do mundo, 6/6 (m), calibracao 207/228 = 0,908.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -16523,7 +16616,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -19924,6 +20017,258 @@ def jogo_ficticio(A, iteracoes=2000):
         v_sup.append(max(ganho_lin) / t_col)   # cota superior do valor
         v_inf.append(min(ganho_col) / t_lin)   # cota inferior
     return (v_sup[-1] + v_inf[-1]) / 2.0
+"""
+
+# ====================================================================================================
+# synthai/ml_dl.py  (247 linhas)
+# ====================================================================================================
+FONTES['synthai/ml_dl.py'] = """\"\"\"ML como DL e DL como ML (Parte 114). Biblioteca padrão. A fronteira entre "aprendizado de máquina clássico" e "aprendizado profundo"
+medida em quatro travessias:
+  1. ML → DL: a regressão logística com L2 é uma rede de UMA camada (linear + sigmoide + entropia cruzada). Treinada como DL (descida do
+     gradiente pela retropropagação), ela tem de chegar ao mesmo ponto que o solucionador clássico (Newton/IRLS), porque o problema é
+     fortemente convexo.
+  2. DL → ML: uma rede LINEAR profunda (duas camadas, sem ativação) é um modelo linear sobreparametrizado. O produto W₂W₁ treinado por
+     gradiente deve chegar à solução de mínimos quadrados (OLS, forma fechada).
+  3. DL → ML: a camada oculta de uma rede como FEATURES (aleatórias ou treinadas) e a cabeça resolvida em forma fechada (ridge), contra a
+     rede inteira treinada por retropropagação.
+  4. ML → DL e volta: os GRAUS DE LIBERDADE (uma medida clássica de complexidade, tr H(H+λI)⁻¹ para a ridge) aplicados à cabeça de uma rede,
+     conferidos pela definição de Efron (Σ cov(ŷᵢ, yᵢ)/σ², medida por simulação).\"\"\"
+
+import math
+import random
+
+
+def _resolver(A, c):
+    n = len(A)
+    M = [list(A[i]) + [c[i]] for i in range(n)]
+    for col in range(n):
+        piv = max(range(col, n), key=lambda r: abs(M[r][col]))
+        M[col], M[piv] = M[piv], M[col]
+        for r in range(col + 1, n):
+            f = M[r][col] / M[col][col]
+            for k in range(col, n + 1):
+                M[r][k] -= f * M[col][k]
+    x = [0.0] * n
+    for i in range(n - 1, -1, -1):
+        s = M[i][n]
+        for k in range(i + 1, n):
+            s -= M[i][k] * x[k]
+        x[i] = s / M[i][i]
+    return x
+
+
+def _sig(z):
+    return 1.0 / (1.0 + math.exp(-z)) if z >= 0 else math.exp(z) / (1.0 + math.exp(z))
+
+
+# --- dados (fixtures) ---
+
+def dados_logistica(n=300, semente=114):
+    \"\"\"x ~ N(0, I₃) com uma coluna de 1 (o viés); y ~ Bernoulli(σ(1,5x₁ − 2x₂ + 0,5x₃ + 0,3)).\"\"\"
+    rng = random.Random(semente)
+    X, y = [], []
+    for _ in range(n):
+        x = [rng.gauss(0, 1) for _ in range(3)]
+        p = _sig(1.5 * x[0] - 2.0 * x[1] + 0.5 * x[2] + 0.3)
+        X.append(x + [1.0])
+        y.append(1.0 if rng.random() < p else 0.0)
+    return X, y
+
+
+def dados_regressao(n=200, semente=114, sigma=0.1):
+    \"\"\"x ~ U(−2, 2)², y = sen(x₁) + 0,5·x₂² + ruído N(0, σ²): uma função não-linear (precisa de features).\"\"\"
+    rng = random.Random(semente)
+    X, y = [], []
+    for _ in range(n):
+        x = [rng.uniform(-2, 2), rng.uniform(-2, 2)]
+        X.append(x)
+        y.append(math.sin(x[0]) + 0.5 * x[1] * x[1] + rng.gauss(0, sigma))
+    return X, y
+
+
+# --- 1. a logística: solucionador clássico × rede de uma camada ---
+
+def gradiente_logistica(w, X, y, lam):
+    \"\"\"∇ da perda média (entropia cruzada) + (λ/2)‖w‖² (o viés também penalizado, para a convexidade forte ser exata).\"\"\"
+    n, d = len(X), len(w)
+    g = [lam * wj for wj in w]
+    for x, yi in zip(X, y):
+        z = 0.0
+        for j in range(d):
+            z += w[j] * x[j]
+        r = _sig(z) - yi
+        for j in range(d):
+            g[j] += r * x[j] / n
+    return g
+
+
+def newton_logistica(X, y, lam, iteracoes=30):
+    \"\"\"O solucionador CLÁSSICO (ML): Newton/IRLS, H = XᵀSX/n + λI.\"\"\"
+    d = len(X[0])
+    w = [0.0] * d
+    for _ in range(iteracoes):
+        g = gradiente_logistica(w, X, y, lam)
+        H = [[lam if a == b else 0.0 for b in range(d)] for a in range(d)]
+        for x in X:
+            z = sum(w[j] * x[j] for j in range(d))
+            s = _sig(z) * (1 - _sig(z)) / len(X)
+            for a in range(d):
+                for b in range(d):
+                    H[a][b] += s * x[a] * x[b]
+        passo = _resolver(H, g)
+        w = [wj - pj for wj, pj in zip(w, passo)]
+    return w
+
+
+def constantes_logistica(X, lam):
+    \"\"\"μ = λ (convexidade forte) e L = λ + λ_max(XᵀX)/(4n) (suavidade: σ′ ≤ 1/4), λ_max por iteração de potência.\"\"\"
+    d, n = len(X[0]), len(X)
+    G = [[sum(x[a] * x[b] for x in X) / n for b in range(d)] for a in range(d)]
+    v = [1.0] * d
+    lmax = 0.0
+    for _ in range(200):
+        u = [sum(G[a][b] * v[b] for b in range(d)) for a in range(d)]
+        lmax = math.sqrt(sum(t * t for t in u))
+        v = [t / lmax for t in u]
+    return lam, lam + lmax / 4.0
+
+
+def rede_logistica(X, y, lam, passos, lr):
+    \"\"\"A MESMA logística como REDE de uma camada (DL): pesos começando em zero, descida do gradiente (retropropagação = a regra da cadeia
+    sobre sigmoide + entropia cruzada, que dá o mesmo p − y).\"\"\"
+    w = [0.0] * len(X[0])
+    for _ in range(passos):
+        g = gradiente_logistica(w, X, y, lam)
+        w = [wj - lr * gj for wj, gj in zip(w, g)]
+    return w
+
+
+# --- 2. a rede linear profunda × OLS ---
+
+def ols(X, y):
+    d = len(X[0])
+    A = [[sum(x[a] * x[b] for x in X) for b in range(d)] for a in range(d)]
+    c = [sum(x[a] * yi for x, yi in zip(X, y)) for a in range(d)]
+    return _resolver(A, c)
+
+
+def rede_linear_profunda(X, y, h=4, passos=3000, lr=0.02, semente=1, escala=0.1):
+    \"\"\"f(x) = W₂(W₁x), W₁ h×d e W₂ 1×h, sem ativação; perda média quadrática; GD. Devolve o produto β = W₂W₁ (um vetor de d).\"\"\"
+    rng = random.Random(semente)
+    d, n = len(X[0]), len(X)
+    W1 = [[rng.gauss(0, escala) for _ in range(d)] for _ in range(h)]
+    W2 = [rng.gauss(0, escala) for _ in range(h)]
+    for _ in range(passos):
+        g1 = [[0.0] * d for _ in range(h)]
+        g2 = [0.0] * h
+        for x, yi in zip(X, y):
+            a = [sum(W1[k][j] * x[j] for j in range(d)) for k in range(h)]
+            r = sum(W2[k] * a[k] for k in range(h)) - yi
+            for k in range(h):
+                g2[k] += 2 * r * a[k] / n
+                for j in range(d):
+                    g1[k][j] += 2 * r * W2[k] * x[j] / n
+        for k in range(h):
+            W2[k] -= lr * g2[k]
+            for j in range(d):
+                W1[k][j] -= lr * g1[k][j]
+    return [sum(W2[k] * W1[k][j] for k in range(h)) for j in range(d)]
+
+
+# --- 3. features de rede + cabeça em forma fechada × rede inteira por retropropagação ---
+
+def _oculta(X, W, b):
+    return [[math.tanh(sum(W[k][j] * x[j] for j in range(len(x))) + b[k]) for k in range(len(W))] + [1.0] for x in X]
+
+
+def ridge(H, y, lam):
+    \"\"\"A cabeça em forma fechada: (HᵀH + λI)⁻¹Hᵀy (o viés, a última coluna, sem penalidade).\"\"\"
+    d = len(H[0])
+    A = [[sum(r[a] * r[b] for r in H) + (lam if a == b and a < d - 1 else 0.0) for b in range(d)] for a in range(d)]
+    c = [sum(r[a] * yi for r, yi in zip(H, y)) for a in range(d)]
+    return _resolver(A, c)
+
+
+def mse(H, w, y):
+    return sum((sum(a * b for a, b in zip(r, w)) - yi) ** 2 for r, yi in zip(H, y)) / len(y)
+
+
+def features_aleatorias(Xtr, ytr, Xte, yte, h=40, lam=1e-3, semente=2):
+    \"\"\"DL como ML (1): uma camada oculta tanh ALEATÓRIA, congelada; só a cabeça, por ridge. Devolve o MSE de teste.\"\"\"
+    rng = random.Random(semente)
+    W = [[rng.gauss(0, 1) for _ in range(len(Xtr[0]))] for _ in range(h)]
+    b = [rng.uniform(-2, 2) for _ in range(h)]
+    w = ridge(_oculta(Xtr, W, b), ytr, lam)
+    return mse(_oculta(Xte, W, b), w, yte)
+
+
+def mlp_retropropagacao(Xtr, ytr, Xte, yte, h=40, passos=3000, lr=0.05, semente=2):
+    \"\"\"A rede INTEIRA (camada oculta tanh + cabeça linear), a mesma inicialização das features aleatórias, treinada por retropropagação
+    (GD de lote inteiro). Devolve (MSE de teste da rede, W, b treinados).\"\"\"
+    rng = random.Random(semente)
+    d, n = len(Xtr[0]), len(Xtr)
+    W = [[rng.gauss(0, 1) for _ in range(d)] for _ in range(h)]
+    b = [rng.uniform(-2, 2) for _ in range(h)]
+    v = [0.0] * (h + 1)
+    for _ in range(passos):
+        gW = [[0.0] * d for _ in range(h)]
+        gb = [0.0] * h
+        gv = [0.0] * (h + 1)
+        for x, yi in zip(Xtr, ytr):
+            a = [math.tanh(sum(W[k][j] * x[j] for j in range(d)) + b[k]) for k in range(h)] + [1.0]
+            r = sum(v[k] * a[k] for k in range(h + 1)) - yi
+            for k in range(h + 1):
+                gv[k] += 2 * r * a[k] / n
+            for k in range(h):
+                da = 2 * r * v[k] * (1 - a[k] * a[k]) / n
+                gb[k] += da
+                for j in range(d):
+                    gW[k][j] += da * x[j]
+        for k in range(h + 1):
+            v[k] -= lr * gv[k]
+        for k in range(h):
+            b[k] -= lr * gb[k]
+            for j in range(d):
+                W[k][j] -= lr * gW[k][j]
+    return mse(_oculta(Xte, W, b), v, yte), W, b
+
+
+def features_treinadas_mais_ridge(Xtr, ytr, Xte, yte, W, b, lam=1e-3):
+    \"\"\"DL como ML (2): as features que a retropropagação APRENDEU, congeladas; a cabeça refeita por ridge em forma fechada.\"\"\"
+    w = ridge(_oculta(Xtr, W, b), ytr, lam)
+    return mse(_oculta(Xte, W, b), w, yte)
+
+
+# --- 4. graus de liberdade (a medida clássica) na cabeça de uma rede ---
+
+def df_ridge_fechado(H, lam):
+    \"\"\"tr(S), S = H(HᵀH + λI*)⁻¹Hᵀ (o chapéu da ridge; I* sem o viés), coluna a coluna.\"\"\"
+    d = len(H[0])
+    A = [[sum(r[a] * r[b] for r in H) + (lam if a == b and a < d - 1 else 0.0) for b in range(d)] for a in range(d)]
+    tot = 0.0
+    for i, hi in enumerate(H):
+        z = _resolver(A, hi)
+        tot += sum(a * b for a, b in zip(hi, z))
+    return tot
+
+
+def df_ridge_efron(H, f, lam, sigma=0.1, reps=400, semente=3):
+    \"\"\"A definição de Efron: df = Σᵢ cov(ŷᵢ, yᵢ)/σ², medida por simulação: y = f + ruído N(0, σ²), ajusta a ridge, mede ŷ.\"\"\"
+    rng = random.Random(semente)
+    n = len(H)
+    soma_yy = [0.0] * n
+    soma_y = [0.0] * n
+    soma_yh = [0.0] * n
+    for _ in range(reps):
+        y = [fi + rng.gauss(0, sigma) for fi in f]
+        w = ridge(H, y, lam)
+        yh = [sum(a * b for a, b in zip(r, w)) for r in H]
+        for i in range(n):
+            soma_yy[i] += yh[i] * y[i]
+            soma_y[i] += y[i]
+            soma_yh[i] += yh[i]
+    cov = sum(soma_yy[i] / reps - (soma_y[i] / reps) * (soma_yh[i] / reps) for i in range(n))
+    return cov / (sigma * sigma)
 """
 
 # ====================================================================================================
@@ -24678,9 +25023,91 @@ class TesteParte113(unittest.TestCase):
         self.assertEqual(sum(1 for l in linhas if l[3] != l[4]), 5)   # o texto dizia 4 (contado por leitura) e listava 5
 
     def test_p1961_com_parte_113(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 114))))
         self.assertEqual(por[113], (13, 13))
         self.assertEqual((ok, tot), (197, 218))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte114.py  (77 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte114.py'] = """\"\"\"Testes de unidade da Parte 114 (ML como DL e DL como ML): `python3 -m unittest synthai.testes_parte114`. Cada pNN pelo nome (Parte 58),
+casos com todos os termos diferentes de zero (Parte 30) e controles dos dois lados (Parte 75).\"\"\"
+
+import unittest
+
+import calculos
+from synthai import ml_dl as M
+
+
+class TesteMLDL(unittest.TestCase):
+    def test_gradiente_logistica_contra_diferenca_finita(self):
+        X, y = M.dados_logistica(40, 5)
+        w = [0.3, -0.2, 0.1, 0.05]
+        g = M.gradiente_logistica(w, X, y, 0.01)
+
+        def perda(v):
+            import math
+            tot = 0.0
+            for x, yi in zip(X, y):
+                z = sum(a * b for a, b in zip(v, x))
+                p = M._sig(z)
+                tot -= (yi * math.log(p) + (1 - yi) * math.log(1 - p)) / len(X)
+            return tot + 0.005 * sum(t * t for t in v)
+        for j in range(4):
+            e = [0.0] * 4
+            e[j] = 1e-6
+            num = (perda([a + b for a, b in zip(w, e)]) - perda([a - b for a, b in zip(w, e)])) / 2e-6
+            self.assertAlmostEqual(num, g[j], places=7)
+
+    def test_ols_recupera_exato(self):
+        X = [[1.0, 2.0, 1.0], [2.0, -1.0, 1.0], [0.5, 0.3, 1.0], [-1.0, 1.5, 1.0]]
+        y = [0.7 * a - 0.3 * b + 0.1 for a, b, _ in X]
+        for c, alvo in zip(M.ols(X, y), (0.7, -0.3, 0.1)):
+            self.assertAlmostEqual(c, alvo, places=12)
+
+    def test_df_ridge_extremos(self):
+        H = [[1.0, 0.0, 1.0], [0.0, 1.0, 1.0], [1.0, 1.0, 1.0], [2.0, -1.0, 1.0]]
+        self.assertAlmostEqual(M.df_ridge_fechado(H, 1e-12), 3.0, places=6)   # sem cumeeira: df = nº de parâmetros
+        self.assertLess(M.df_ridge_fechado(H, 1e6), 1.01)                    # cumeeira enorme: sobra só o viés (sem penalidade)
+
+
+class TesteParte114(unittest.TestCase):
+    def test_p2861_logistica_como_rede(self):
+        dw, gn, kap = calculos.p2861_logistica_como_rede()
+        self.assertLessEqual(dw, 1e-8)
+        self.assertLess(gn, 1e-12)
+        self.assertAlmostEqual(kap, 32.7234, places=3)
+
+    def test_p2862_rede_linear_profunda(self):
+        self.assertLessEqual(calculos.p2862_rede_linear_profunda(), 1e-10)
+
+    def test_p2863_features_e_cabeca(self):
+        rf, bp, tr = calculos.p2863_features_e_cabeca()
+        self.assertTrue(0.0091 <= rf <= 0.020)
+        self.assertTrue(0.80 <= bp / rf <= 1.60)
+        self.assertTrue(0.60 <= tr / bp <= 0.99)
+
+    def test_p2864_graus_de_liberdade(self):
+        d1, e1, d2, e2 = calculos.p2864_graus_de_liberdade()
+        self.assertTrue(30 <= d1 <= 41)
+        self.assertLessEqual(abs(e1 - d1), 1.0)
+        self.assertLessEqual(abs(e2 - d2), 1.0)
+        self.assertTrue(0.40 <= d2 / d1 <= 0.65)
+
+    def test_p2865_rodada81(self):
+        br, bo = calculos.p2865_rodada81()
+        self.assertEqual(br[0].hex(), "0x1.56469e859e0e0p-1")
+        self.assertGreater(abs(br[0] - bo[0]), 0.01)   # em 500 passos a rede ainda NÃO chegou ao OLS (o que a rodada mede é a igualdade entre línguas)
+
+    def test_p1961_com_parte_114(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[114], (10, 10))
+        self.assertEqual((ok, tot), (207, 228))
 
 
 if __name__ == "__main__":
@@ -35493,7 +35920,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1967 linhas)
+# resultados.txt  (1983 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -37460,6 +37887,22 @@ P974 previsoes unilaterais da Parte 113: {113: (0, 0, [])}
 P4059 minha taxa de erro (224/877): media = 0.26, intervalo 90% = [0.23, 0.28]
 === Unificacao (sempre ao final) ===
 P96 funcoes pNN no arquivo = 652; pares de interacao possiveis = 212226
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 154/154 resultados publicados reproduzidos; falhas = []
+
+
+--- Parte 114 (0x72: tratar o ML como DL e o DL como ML) ---
+P2861 logistica como rede de 1 camada (retropropagacao) x Newton: max |dw| = 4.44e-16; |grad| no Newton 3.3e-18; kappa = 32.72
+P2862 rede linear profunda W2W1 x OLS: max |d beta| = 1.11e-15
+P2863 MSE de teste: features aleatorias + ridge 0.01270; retropropagacao 0.01535 (razao 1.209); features treinadas + ridge 0.01270 (razao 0.827)
+P2864 graus de liberdade: lambda=1e-3 tr(S) 30.096, Efron 29.746; lambda=1 tr(S) 14.771, Efron 14.738; razao 0.491
+P2865 rodada 81 (rede linear profunda, IGUAL em Java): beta [0.6685, -0.3045, 0.1022]; OLS [0.7005, -0.3069, 0.0946]
+P1961 teste, Partes 80-114: 207/228 = 0.9079; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10)}
+P1092 pNN novas (P2861-P2890) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 114: {114: (0, 0, [])}
+P4129 minha taxa de erro (224/887): media = 0.25, intervalo 90% = [0.23, 0.28]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 657; pares de interacao possiveis = 215496
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 154/154 resultados publicados reproduzidos; falhas = []
 """
@@ -39618,7 +40061,7 @@ Ver `dialogo/DIALOGO.md`: o simplex em `float` (regra de Bland) no jogo 4 × 5 d
 """
 
 # ====================================================================================================
-# ASI_AGI_parte113_o_arrependimento.md  (165 linhas)
+# ASI_AGI_parte113_o_arrependimento.md  (169 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte113_o_arrependimento.md'] = """# Parte 113 — O arrependimento: CFR no pôquer de Kuhn, o teste forte do repertório e o leitor v4 (0x71)
 
@@ -39785,6 +40228,194 @@ Ver `dialogo/DIALOGO.md`: o CFR em `float`, T = 1.000, é **IGUAL**: 4 linhas e 
 - CFR: [Zinkevich, Johanson, Bowling e Piccione, "Regret Minimization in Games with Incomplete Information", NIPS 2007](https://proceedings.neurips.cc/paper/2007/hash/08d98638c6fcd194a4b1e6992063e944-Abstract.html); [o artigo em PDF](https://proceedings.nips.cc/paper_files/paper/2007/file/08d98638c6fcd194a4b1e6992063e944-Paper.pdf); [relatório técnico longo TR07-14 (Alberta)](https://era.library.ualberta.ca/files/vh53wx015/TR07-14.pdf).
 - Pôquer de Kuhn e a família de equilíbrios: [Wikipedia, Kuhn poker](https://en.wikipedia.org/wiki/Kuhn_poker); [Miao, tese (Dartmouth, 2014)](https://math.dartmouth.edu/theses/undergrad/2014/Miao-thesis.pdf).
 - A AUC como estatística de Mann-Whitney (a probabilidade de um positivo ter nota maior que um negativo): resultado clássico (Hanley e McNeil, 1982), conferido aqui pelos casos de teste em `synthai/testes_parte113.py`.
+
+---
+
+➡ Continua na [Parte 114 — ML como DL e DL como ML](ASI_AGI_parte114_ml_como_dl.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte114_ml_como_dl.md  (179 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte114_ml_como_dl.md'] = """# Parte 114 — Tratar o ML como DL e o DL como ML (0x72)
+
+↩ Parte 110 (a dúvida calculada: o ML e o DL) · ↩ Parte 96 (aprender a base: a MLP como features) · ↩ Parte 97 (a cumeeira; os parâmetros contra n) · ↩ Parte 31 (substituir aprendizado por conta exata "se der")
+
+> Pedido do usuário: "Trate o ML como DL e vice-versa."
+>
+> **A leitura escolhida (regra da Parte 83, escrita ANTES de medir).** "ML" é o aprendizado de máquina clássico: modelos convexos ou de forma fechada (logística, mínimos quadrados, ridge), solucionadores exatos (Newton, equações normais) e medidas clássicas de complexidade (graus de liberdade). "DL" é a rede: camadas, ativações, treino por retropropagação e descida do gradiente. As duas travessias:
+> - **ML como DL:** escrever o modelo clássico como uma rede e treiná-lo como rede. A logística com L2 é uma rede de UMA camada (linear + sigmoide + entropia cruzada); treinada por retropropagação, tem de chegar ao ponto do Newton, porque o problema é fortemente convexo. É uma identidade por teorema, não uma esperança.
+> - **DL como ML:** ler a rede pelas ferramentas clássicas.
+>   - Uma rede LINEAR profunda (W₂W₁, sem ativação) é um modelo linear sobreparametrizado: deve dar o OLS.
+>   - A camada oculta de uma rede são FEATURES. Com elas fixas (aleatórias ou aprendidas), a cabeça é uma ridge em forma fechada.
+>   - Os GRAUS DE LIBERDADE de Efron (Σ cov(ŷᵢ, yᵢ)/σ²), uma medida clássica, valem para a cabeça de uma rede e batem com tr(S).
+>
+> O módulo é `synthai/ml_dl.py`.
+>
+> **Antes do registro.**
+> - **Para (a), as CONDIÇÕES do teorema nos dados do teste** (que não revelam o resultado): μ = λ = 0,01 (convexidade forte), L = λ + λ_max(XᵀX/n)/4 = 0,3272 (suavidade, porque σ′ ≤ 1/4), κ = 32,7. A cota ‖w*‖ ≤ ‖∇f(0)‖/μ = 35,45. Com o passo 1/L, ‖w_T − w*‖ ≤ (1 − μ/L)^(T/2)·‖w*‖, e em T = 2.000 isso dá ≤ 35,45·e^(−1000·0,0306) ≈ 5·10⁻¹².
+> - **Para (b) a (i), a calibração na semente 7** (o teste é a 114):
+>   - rede linear profunda contra OLS: 8,9·10⁻¹⁶;
+>   - MSE de teste: features aleatórias + ridge **0,01306**; rede por retropropagação **0,01567** (razão 1,20); features treinadas + ridge **0,01381** (razão 0,88 da retropropagação);
+>   - graus de liberdade com λ = 10⁻³: tr(S) = 35,42 contra Efron 35,21; com λ = 1: 17,90 contra 18,10 (razão 0,505).
+>   - Uma surpresa da calibração, que vira previsão: a camada oculta ALEATÓRIA com a cabeça exata bateu a rede INTEIRA treinada. Mecanismo suposto: 3.000 passos de gradiente não resolvem nem a cabeça (um problema de mínimos quadrados mal condicionado), e a forma fechada a resolve num passo.
+
+## As perguntas desta parte
+
+1. **P2861 (0xB2D).** A logística como rede de uma camada, treinada por retropropagação, chega ao mesmo ponto que o Newton? ↩ P2741
+2. **P2862 (0xB2E).** A rede linear profunda (duas camadas, sem ativação) chega ao OLS? ↩ P2744
+3. **P2863 (0xB2F).** A camada oculta de uma rede, lida como features (ML), com a cabeça em forma fechada, ganha ou perde da rede inteira treinada (DL)? ↩ P2321
+4. **P2864 (0xB30).** Os graus de liberdade clássicos valem para a cabeça de uma rede? ↩ P2357
+5. **P2865 (0xB31).** O treino da rede linear profunda acrescenta fronteira entre Python e Java? (rodada 81) ↩ P2836
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+**As fixtures (regra da Parte 111).**
+- Logística: `dados_logistica(300, 114)`, λ = 0,01, Newton com 30 iterações; a rede com lr = 1/L e T = 2.000 passos, a partir de zero.
+- Regressão: treino `dados_regressao(200, 114)`, teste `dados_regressao(1000, 114114)`.
+- Rede linear profunda: d = 3 (x₁, x₂, 1), h = 4, 3.000 passos, lr 0,02, inicialização N(0; 0,1²), semente 114.
+- Features aleatórias e MLP: h = 40, tanh, λ = 10⁻³, a mesma inicialização (semente 114); a MLP com 3.000 passos de GD de lote inteiro, lr 0,05.
+- Graus de liberdade: features W ~ N(0, 1), b ~ U(−2, 2) por `random.Random(1144)`, h = 40, sobre o x do treino, f = sen(x₁) + 0,5x₂², σ = 0,1, 400 repetições, semente 3.
+
+- **(a) P2861** max |w_rede − w_Newton|: **[0; 10⁻⁸]**. Identidade: convexidade forte + passo 1/L, com a cota de 5·10⁻¹² calculada acima (o Newton converge quadraticamente a ~10⁻¹⁵).
+- **(b) P2862** max |β_rede − β_OLS|, com β_rede = W₂W₁: **[0; 10⁻¹⁰]**. Mecanismo esperado: a convergência global das redes lineares profundas a partir de uma inicialização pequena; na calibração, 9·10⁻¹⁶.
+- **(c) P2863** MSE de teste das features aleatórias + ridge: **[0,0091; 0,020]**. O piso é o ruído (σ² = 0,01) menos 2 desvios da média de 1.000 ruídos ao quadrado (0,01·√(2/1000) = 0,00045).
+- **(d) P2863** Razão MSE(retropropagação) / MSE(features aleatórias + ridge): calibração 1,20, faixa **[0,80; 1,60]**. Mecanismo esperado: a descida não resolveu a cabeça em 3.000 passos.
+- **(e) P2863** Razão MSE(features TREINADAS + ridge) / MSE(retropropagação): calibração 0,88, faixa **[0,60; 0,99]**. A mesma rede, com a cabeça refeita em forma fechada, melhora. É uma identidade no TREINO (o ridge é o mínimo exato da cabeça), mas não no teste.
+- **(f) P2864** tr(S) com λ = 10⁻³ nas 40 features: **[30; 41]**. Mecanismo esperado: 40 tanh de um x de 2 dimensões são quase colineares, e o posto efetivo fica abaixo dos 41 parâmetros.
+- **(g) P2864** |df_Efron − tr(S)| com λ = 10⁻³: o desvio de Monte Carlo ≈ √(2·35/400) = 0,42, então 1,645 × 0,42 × 1,36 ≈ 0,94, faixa **[0; 1,0]**.
+- **(h) P2864** |df_Efron − tr(S)| com λ = 1: **[0; 1,0]**.
+- **(i) P2864** tr(S)(λ = 1) / tr(S)(λ = 10⁻³): calibração 0,505, faixa **[0,40; 0,65]**. Mecanismo esperado: a cumeeira encolhe as direções de autovalor pequeno, a maioria entre 40 features colineares.
+- **(j) P2865** A rede linear profunda (d = 3, h = 4, n = 50 pontos de um LCG inteiro, 500 passos de GD) é **IGUAL** bit a bit entre Python e Java: **[0; 0]**. Identidade: só +, −, × e a mesma ordem de somas (laços sequenciais, sem o `sum()` compensado; regra da Parte 34).
+
+### Previsões sobre as previsões (m), pré-registradas (régua: P2837, leitor v4)
+
+- **(m1)** nº de previsões do mundo em **[9; 13]**
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[4; 7]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0,10; 0,50]**
+- **(m4)** fração de acertos do mundo em **[0,60; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 3]**
+
+### Sobre mim, pré-registrado
+
+(a) e (j) são identidades com a garantia escrita. (b) tem um teorema de convergência (Arora et al.) e uma calibração. Os riscos estão em (d) e (e): uma calibração só, num efeito que depende de quanto a descida avançou. E em (i), que depende do espectro das features da semente 1144. Espero **1 a 2 erros**, em (d), (e) ou (i).
+
+---
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2861 — A logística como rede de uma camada
+
+**Na pergunta.** "Tratar o ML como DL" pressupõe que haja uma fronteira entre os dois. A pergunta a mede: se o modelo clássico, escrito como rede e treinado como rede, chega ao mesmo lugar, a fronteira é de VOCABULÁRIO, não de matemática.
+
+**Lógica.** A logística com L2 é uma rede de uma camada: z = w·x, p = σ(z), perda = entropia cruzada + (λ/2)‖w‖². A retropropagação dá ∇ = Xᵀ(p − y)/n + λw, o mesmo gradiente que o ML clássico escreve à mão, e a regra da cadeia sobre a sigmoide e a entropia cruzada cancela o σ′ e sobra p − y. Treinada como DL (2.000 passos de descida com lr = 1/L, a partir de zero), ela chega a **4,4·10⁻¹⁶** do Newton ✅ (a), contra a cota de 5·10⁻¹² que o teorema dava ANTES de rodar. O Newton chega a |∇| = **3,3·10⁻¹⁸**. A conta da cota, com a substituição: μ = λ = 0,01, L = 0,3272, κ = 32,72, e (1 − 1/32,72)^1000 × 35,45 = **1,18·10⁻¹²** (por código; no rascunho eu tinha aproximado ln(1 − x) ≈ −x e escrito 1,9·10⁻¹², e o pré-registro, com uma conta mais folgada, 5·10⁻¹²). A descida foi mais rápida que a cota porque a cota usa a curvatura MÍNIMA (μ = λ), e a real é maior: no ótimo, a média de σ′ = p(1 − p) é **0,139** (medida; no rascunho eu tinha chutado "≈ 0,15"), o que acrescenta 0,139·λ_max(XᵀX/n) à curvatura, muito acima do λ = 0,01 da cota.
+
+**Tradução cruzada.** A mesma montanha descida de dois jeitos: o Newton olha a curvatura e salta; a descida do gradiente dá passos pequenos e segue a inclinação. Os dois chegam ao mesmo vale porque a montanha só tem UM vale (convexidade forte). "ML" e "DL" são dois estilos de descer; a montanha é a mesma.
+
+### P2862 — A rede linear profunda é o OLS
+
+**Lógica.** W₂W₁ (h = 4, sem ativação) treinada por descida: o produto β fica a **1,1·10⁻¹⁵** do OLS ✅ (b). Uma rede "profunda" sem não-linearidade é um modelo linear com parâmetros REDUNDANTES (12 + 4 = 16 pesos para 3 coeficientes). A paisagem não é convexa, mas não tem mínimos locais ruins (Arora et al.: com inicialização pequena e quase balanceada, a descida converge linearmente ao ótimo global). A profundidade, sozinha, não compra nada; o que compra é a não-linearidade.
+
+**Meta.** No diálogo (rodada 81, 500 passos, outros dados), a rede ainda NÃO tinha chegado ao OLS: 0,6685 contra 0,7005 no 1º coeficiente. O que a rodada mede é a igualdade entre as línguas, não a convergência. A sobreparametrização não atrapalha o destino, mas atrasa a chegada: a inicialização pequena começa num ponto de sela (W = 0), e sair dele leva passos.
+
+### P2863 — A camada oculta como features
+
+**Lógica.** Três modelos, a mesma arquitetura (40 tanh + cabeça linear), a mesma inicialização, MSE de teste (ruído σ² = 0,01):
+- **Features ALEATÓRIAS + ridge** (DL lido como ML: a camada congelada, a cabeça em forma fechada): **0,01270** ✅ (c), só 27% acima do piso do ruído.
+- **A rede INTEIRA por retropropagação** (3.000 passos): **0,01535**, **1,21×** pior ✅ (d).
+- **As features que a retropropagação aprendeu, com a cabeça refeita por ridge:** **0,01270**, **0,83×** a retropropagação ✅ (e).
+
+Duas leituras, as duas registradas antes:
+- A rede treinada PERDE para a rede não treinada com a cabeça exata. A descida não resolveu nem o problema convexo da cabeça (mal condicionado: 40 tanh quase colineares, tr(S) ≈ 30 de 41) em 3.000 passos, e a forma fechada o resolve num passo.
+- As features aprendidas, com a cabeça exata, empatam com as aleatórias (0,012702 contra 0,012700). Nesta tarefa, 3.000 passos de retropropagação não ensinaram à camada oculta nada que 40 direções aleatórias já não tivessem. O ganho de "aprender as features" (o DL de verdade) não apareceu aqui: a tarefa (sen x₁ + 0,5x₂²) é suave demais, e 40 features aleatórias já a cobrem.
+
+**Tradução cruzada.** É a tese de Rahimi e Recht (2007), em miniatura: features aleatórias + um solucionador linear exato competem com redes treinadas. Na linguagem da Parte 96, a BASE (a camada oculta) importa menos que a cabeça bem resolvida quando a base aleatória já é rica o bastante. O DL ganha quando a base certa é rara, e não ganha quando ela é abundante.
+
+### P2864 — Os graus de liberdade da cabeça de uma rede
+
+**Lógica.** Os graus de liberdade (a "complexidade efetiva" do ML clássico), aplicados à cabeça ridge sobre 40 features tanh:
+- **λ = 10⁻³:** tr(S) = **30,10** ✅ (f), no limite de [30; 41]; a definição de Efron (Σ cov(ŷᵢ, yᵢ)/σ², 400 simulações) dá **29,75**, |dif| = **0,35** ✅ (g).
+- **λ = 1:** tr(S) = **14,77**; Efron **14,74**, |dif| = **0,03** ✅ (h).
+- **A razão** é **0,491** ✅ (i).
+
+A rede tem 41 parâmetros na cabeça e usa 30: as features tanh de um x de 2 dimensões são quase colineares, e 11 direções não têm sinal. Com λ = 1, sobram 15. "Quantos parâmetros a rede tem" e "quantos ela USA" são números diferentes, e o segundo é o que decide o sobreajuste (a Parte 97 organizou o viés e a variância por #params/n; este é o #params certo).
+
+**Tradução cruzada.** É o grau de liberdade como ATENÇÃO: um sistema com 41 botões, dos quais só 30 respondem ao mundo. A covariância de Efron mede quanto a saída SEGUE o dado (quanto a resposta muda quando o ruído muda), a definição operacional de "quanto o modelo escuta". Um modelo de df alto escuta tudo, inclusive o ruído; um de df baixo escuta pouco, e erra pela surdez.
+
+### P2865 — rodada 81
+
+**Lógica.** A rede linear profunda (500 passos de GD), Python × Java: **IGUAIS, 2 linhas e 3 números bit a bit** ✅ (j). 25 rodadas: o treino de uma rede "profunda" é aritmética portável, como tudo antes.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅. Parte 114: **10 testes, 0 erros**. Os mecanismos escritos dentro das faixas, conferidos:
+- (a): a cota foi folgada, porque a curvatura real é maior que a do pior caso;
+- (d): a descida não resolveu a cabeça, confirmado por (e);
+- (f): o posto efetivo, confirmado (30 de 41), mas no limite da faixa: 30,10 contra o piso 30.
+
+Acumulado (mundo): **224 erros em 887 testes**. Calibração (P1961, Partes 80–114): **207/228 = 0,908**.
+
+### Previsões sobre previsões (m)
+
+Régua: P2837 (leitor v4).
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [9; 13] | 10 | ✅ |
+| (m2) | [4; 7] | 5 | ✅ |
+| (m3) | [0,10; 0,50] | 0,25 | ✅ |
+| (m4) | [0,60; 1,00] | 1,00 | ✅ |
+| (m5) | [0; 2] | 0 | ✅ |
+| (m6) | [0; 3] | 0 | ✅ |
+
+Previsões sobre previsões: **6 de 6**.
+
+## Engenharia reversa (metacognição)
+
+**O padrão: as estimativas de cabeça no texto, de novo.** As 10 previsões acertaram, e os dois erros desta parte estavam na PROSA, depois da medida, e foram pegos pela regra da Parte 69 antes do commit:
+- a cota escrita com ln(1 − x) ≈ −x (1,9·10⁻¹² em vez de 1,18·10⁻¹²);
+- o "σ′ ≈ 0,15" chutado (é 0,139).
+
+Na Parte 113 foi o sinal do rei. **Significado:** quando a previsão está garantida (o registro, as faixas, o placar), o meu cuidado relaxa no texto que EXPLICA o resultado, e é ali que eu volto a fazer contas de cabeça. A explicação parece menos "medida" que a previsão, e por isso eu a trato com menos rigor. Mas um número na explicação é um número no texto, e a regra vale igual. **Regra (afiando a da Parte 69):** depois de escrever as respostas, todo número que não saiu de uma saída impressa NESTA sessão passa por uma linha de código, INCLUSIVE os da explicação do mecanismo, onde eu mais erro.
+
+**O segundo padrão: a fronteira ML/DL é de vocabulário.** As cinco travessias acharam a MESMA matemática dos dois lados:
+- a logística é uma rede (e chega ao mesmo ponto);
+- a rede linear profunda é o OLS;
+- a camada oculta é uma base de features (e, com a cabeça exata, a base aleatória empata com a treinada);
+- os graus de liberdade são a complexidade da rede.
+
+O que separa o "ML" do "DL" não é a matemática, é o REGIME:
+- no ML, o solucionador é exato e a base é dada;
+- no DL, a base é aprendida e o solucionador é aproximado (a descida).
+
+Esta parte mostrou o preço de cada lado: a descida aproximada perdeu 21% para a forma fechada numa cabeça convexa (o custo do solucionador do DL), e aprender a base não ganhou nada numa tarefa suave (o benefício do DL só aparece quando a base certa é rara). **Regra:** antes de treinar uma rede inteira por retropropagação, resolver em forma fechada tudo o que for convexo (a cabeça), e só pagar a descida no que não tem forma fechada (a base). É a autopoiese da Parte 31 ("substituir aprendizado por conta exata se der") com endereço: dá na cabeça, não dá na base.
+
+## Síntese / unificação
+
+A Parte 114 trata o ML como DL e o DL como ML (`synthai/ml_dl.py`):
+- **ML → DL:** a logística como rede de uma camada, treinada por retropropagação, chega a 4,4·10⁻¹⁶ do Newton (a cota do teorema era 1,2·10⁻¹²).
+- **DL → ML:** a rede linear profunda W₂W₁ é o OLS (1,1·10⁻¹⁵). A camada oculta tanh lida como features, com a cabeça ridge em forma fechada, bate a rede inteira treinada por 3.000 passos (MSE 0,0127 contra 0,0154), e as features que a rede aprendeu, com a cabeça exata, empatam com as aleatórias. Os graus de liberdade de Efron (Σ cov/σ²) batem com tr(S) a 0,35 e a 0,03, e mostram que a cabeça de 41 parâmetros usa 30 (com λ = 10⁻³) ou 15 (com λ = 1).
+
+A fronteira é de regime, não de matemática: solucionador exato com base dada (ML) contra base aprendida com solucionador aproximado (DL). E a regra prática fica medida: forma fechada em tudo que é convexo, descida só no resto. Rodada 81: a rede linear profunda IGUAL bit a bit (25 rodadas). 10/10 do mundo, 6/6 (m), calibração **0,908**.
+
+## Meta
+
+Confiança alta em (a), (b), (g), (h) (identidades e teoremas, conferidos por cotas calculadas antes) e em (c) a (e) (uma tarefa, uma semente de teste, a direção prevista na calibração). Onde é brinquedo: 40 neurônios, uma tarefa suave de 2 dimensões, descida de lote inteiro sem Adam. Em tarefas onde a base certa é rara (imagens, linguagem), aprender a base é o que faz o DL ganhar, e esta parte NÃO mediu esse regime; a conclusão "aprender a base não ganhou" vale para esta tarefa (um lote), escrita como hipótese pela regra da Parte 66. Os 3.000 passos da retropropagação são um orçamento fixo: com mais passos, ou com Adam (Parte 92), a cabeça da rede se aproximaria da forma fechada.
+
+## Diálogo Python ↔ Java (rodada 81)
+
+Ver `dialogo/DIALOGO.md`: a rede linear profunda, 500 passos de GD, é **IGUAL**: 2 linhas e 3 números bit a bit.
+
+## Fontes
+
+- Convergência da descida em redes lineares profundas: [Arora, Cohen, Golowich e Hu, "A Convergence Analysis of Gradient Descent for Deep Linear Neural Networks", ICLR 2019 (arXiv 1810.02281)](https://arxiv.org/pdf/1810.02281); [ICLR 2019](https://iclr.cc/virtual/2019/poster/789).
+- Features aleatórias + solucionador linear: [Rahimi e Recht, "Random Features for Large-Scale Kernel Machines", NIPS 2007](https://papers.neurips.cc/paper/3182-random-features-for-large-scale-kernel-machines); [PDF](https://people.eecs.berkeley.edu/~brecht/papers/07.rah.rec.nips.pdf).
+- Graus de liberdade como penalidade de covariância: [Efron, "The Estimation of Prediction Error: Covariance Penalties and Cross-Validation", JASA 99 (2004)](https://ideas.repec.org/a/bes/jnlasa/v99y2004p619-632.html); [PDF (Wisconsin)](https://pages.stat.wisc.edu/~wahba/stat860public/pdf1/efron.covariance.04.pdf).
 """
 
 # ====================================================================================================
@@ -62573,7 +63204,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1966 linhas)
+# dialogo/DIALOGO.md  (1976 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -64541,10 +65172,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. 24 rodadas.
 
 **IA-Python:** Pendência (rodada 81): o MCCFR (CFR com amostragem, para jogos onde não dá para enumerar), com o acaso dado de fora como na rodada 65; e um pôquer maior (Leduc, 6 cartas e duas rodadas de aposta).
+
+## Rodada 81 (Parte 114) — a rede linear profunda
+
+**IA-Python (lógica criativa):** O usuário pediu: trate o ML como DL e vice-versa. Treino uma rede "profunda" de duas camadas sem ativação, W₂W₁, por descida do gradiente, com dados e inicialização de um LCG inteiro. Em Python ela é uma rede; para um estatístico, é uma regressão linear com parâmetros sobrando. A profundidade acrescenta fronteira?
+
+**IA-Java (ASI):** Não. São produtos internos e somas em laços sequenciais, na mesma ordem. E a sua pergunta já tem a resposta: sem não-linearidade, a profundidade não compra expressividade nenhuma, só redundância. O produto W₂W₁ caminha para o OLS. Em 500 passos ainda não chegou (0,669 contra 0,701), mas caminha igual nas duas línguas.
+
+**Resultado.** `comparar.py`: **IGUAIS, 2 linhas e 3 números bit a bit**. 25 rodadas.
+
+**IA-Python:** Pendência (rodada 82): o MCCFR e o Leduc (da 113); e, da 114, o regime em que aprender a base GANHA: uma tarefa em que a base certa é rara (um alvo com uma direção escondida que 40 features aleatórias não cobrem).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (69 linhas)
+# dialogo/PENDENCIAS.md  (71 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -64615,6 +65256,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 80, Parte 112)** FECHADAS na 112: o simplex n×m (rodada 79, IGUAL), o Kuhn completo (−1/18 exato) e a `p1481_v3` (a P2806; o defeito era MENÇÃO lida como rótulo, desde a Parte 74). ABERTAS: (1) o Kuhn pela forma de SEQUÊNCIA ou por CFR (a forma normal explode no pôquer maior); (2) o teste FORTE da hipótese do repertório (transferência: o estimador treinado no repertório do agente, avaliado nas palavras de outra política); (3) o leitor v3 ainda não lê expoentes sobrescritos (10⁻¹²), um defeito de `_numero_pt`.
 
 - **(Rodada 81, Parte 113)** FECHADAS na 113: o CFR no Kuhn (rodada 80, IGUAL; explorabilidade 0,003 em T = 10.000), o teste forte do repertório (as duas causas: regularidade 0,12 e repertório +0,16) e o leitor v4 (expoentes sobrescritos). ABERTAS: (1) o MCCFR (com amostragem; o acaso dado de fora, como na rodada 65) e um pôquer maior (Leduc Hold'em); (2) a (m3) da Parte 77, que nenhuma régua lê; (3) separar a "regularidade" da transferência entre o dicionário e o juiz (a lista embutida contra o WordNet, como na Parte 111).
+
+- **(Rodada 82, Parte 114)** ABERTAS: (1) o MCCFR e o Leduc Hold'em (da 113); (2) o regime em que APRENDER A BASE ganha da base aleatória + forma fechada (uma tarefa com a base certa rara: um alvo que depende de uma direção estreita, num x de muitas dimensões); a 114 só mediu o regime suave, onde não ganha; (3) a rede por retropropagação com Adam (Parte 92) contra a forma fechada da cabeça, para separar o custo do solucionador do custo da base.
 """
 
 # ====================================================================================================
@@ -70355,6 +70998,69 @@ public class Rodada80 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada81.java  (58 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada81.java'] = """// Rodada 81 (Parte 114): a rede LINEAR profunda treinada por GD, bit a bit. d = 3, h = 4, n = 50 e a inicializacao por um LCG inteiro;
+// 500 passos, lr 0.02; imprime beta = W2 W1. So +,-,*,/ em lacos sequenciais.
+public class Rodada81 {
+    static final int D = 3, H = 4, N = 50, PASSOS = 500;
+    static final double LR = 0.02;
+
+    static long lcg(long x) {
+        return (x * 1103515245L + 12345L) % 2147483648L;
+    }
+
+    public static void main(String[] args) {
+        double[][] X = new double[N][D];
+        double[] y = new double[N];
+        long x = 81;
+        for (int i = 0; i < N; i++) {
+            x = lcg(x); double a = (double) (x % 2001 - 1000) / 1000.0;
+            x = lcg(x); double b = (double) (x % 2001 - 1000) / 1000.0;
+            x = lcg(x); double ruido = (double) (x % 201 - 100) / 1000.0;
+            X[i][0] = a; X[i][1] = b; X[i][2] = 1.0;
+            y[i] = 0.7 * a - 0.3 * b + 0.1 + ruido;
+        }
+        double[][] W1 = new double[H][D];
+        double[] W2 = new double[H];
+        for (int k = 0; k < H; k++) for (int j = 0; j < D; j++) { x = lcg(x); W1[k][j] = (double) (x % 201 - 100) / 1000.0; }
+        for (int k = 0; k < H; k++) { x = lcg(x); W2[k] = (double) (x % 201 - 100) / 1000.0; }
+        for (int p = 0; p < PASSOS; p++) {
+            double[][] g1 = new double[H][D];
+            double[] g2 = new double[H];
+            for (int i = 0; i < N; i++) {
+                double[] a = new double[H];
+                for (int k = 0; k < H; k++) {
+                    double s = 0.0;
+                    for (int j = 0; j < D; j++) s = s + W1[k][j] * X[i][j];
+                    a[k] = s;
+                }
+                double r = 0.0;
+                for (int k = 0; k < H; k++) r = r + W2[k] * a[k];
+                r = r - y[i];
+                for (int k = 0; k < H; k++) {
+                    g2[k] = g2[k] + 2.0 * r * a[k] / N;
+                    for (int j = 0; j < D; j++) g1[k][j] = g1[k][j] + 2.0 * r * W2[k] * X[i][j] / N;
+                }
+            }
+            for (int k = 0; k < H; k++) {
+                W2[k] = W2[k] - LR * g2[k];
+                for (int j = 0; j < D; j++) W1[k][j] = W1[k][j] - LR * g1[k][j];
+            }
+        }
+        StringBuilder sb = new StringBuilder("beta");
+        for (int j = 0; j < D; j++) {
+            double s = 0.0;
+            for (int k = 0; k < H; k++) s = s + W2[k] * W1[k][j];
+            sb.append(" ").append(Double.toHexString(s));
+        }
+        sb.append("\\nfim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -76033,6 +76739,87 @@ def main():
     m = treinar()
     for carta in (1, 2, 3):
         print("carta " + str(carta) + " " + " ".join(m[indice(carta, h)].hex() for h in HIST))
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada81.py  (76 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada81.py'] = """\"\"\"Rodada 81 do diálogo Python <-> Java (Parte 114): a rede LINEAR profunda (DL lido como ML), treinada por descida do gradiente, bit a bit.
+f(x) = W₂(W₁x), d = 3 (x₁, x₂, 1), h = 4, n = 50 pontos e a inicialização tirados de um LCG inteiro; 500 passos de GD com lr 0,02.
+Imprime o produto β = W₂W₁ (que converge para o OLS). Só +, −, ×, ÷ em laços sequenciais. Da raiz: python3 dialogo/rodada81.py\"\"\"
+
+D, H, N, PASSOS, LR = 3, 4, 50, 500, 0.02
+
+
+def lcg(x):
+    return (x * 1103515245 + 12345) % 2147483648
+
+
+def dados():
+    x = 81
+    X, y = [], []
+    for _ in range(N):
+        x = lcg(x)
+        a = float(x % 2001 - 1000) / 1000.0
+        x = lcg(x)
+        b = float(x % 2001 - 1000) / 1000.0
+        x = lcg(x)
+        ruido = float(x % 201 - 100) / 1000.0
+        X.append([a, b, 1.0])
+        y.append(0.7 * a - 0.3 * b + 0.1 + ruido)
+    W1, W2 = [], []
+    for _ in range(H):
+        linha = []
+        for _ in range(D):
+            x = lcg(x)
+            linha.append(float(x % 201 - 100) / 1000.0)
+        W1.append(linha)
+    for _ in range(H):
+        x = lcg(x)
+        W2.append(float(x % 201 - 100) / 1000.0)
+    return X, y, W1, W2
+
+
+def treinar():
+    X, y, W1, W2 = dados()
+    for _ in range(PASSOS):
+        g1 = [[0.0] * D for _ in range(H)]
+        g2 = [0.0] * H
+        for i in range(N):
+            a = [0.0] * H
+            for k in range(H):
+                s = 0.0
+                for j in range(D):
+                    s = s + W1[k][j] * X[i][j]
+                a[k] = s
+            r = 0.0
+            for k in range(H):
+                r = r + W2[k] * a[k]
+            r = r - y[i]
+            for k in range(H):
+                g2[k] = g2[k] + 2.0 * r * a[k] / N
+                for j in range(D):
+                    g1[k][j] = g1[k][j] + 2.0 * r * W2[k] * X[i][j] / N
+        for k in range(H):
+            W2[k] = W2[k] - LR * g2[k]
+            for j in range(D):
+                W1[k][j] = W1[k][j] - LR * g1[k][j]
+    beta = []
+    for j in range(D):
+        s = 0.0
+        for k in range(H):
+            s = s + W2[k] * W1[k][j]
+        beta.append(s)
+    return beta
+
+
+def main():
+    print("beta " + " ".join(b.hex() for b in treinar()))
     print("fim")
 
 

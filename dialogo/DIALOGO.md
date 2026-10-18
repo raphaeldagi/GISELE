@@ -1964,3 +1964,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. 24 rodadas.
 
 **IA-Python:** Pendência (rodada 81): o MCCFR (CFR com amostragem, para jogos onde não dá para enumerar), com o acaso dado de fora como na rodada 65; e um pôquer maior (Leduc, 6 cartas e duas rodadas de aposta).
+
+## Rodada 81 (Parte 114) — a rede linear profunda
+
+**IA-Python (lógica criativa):** O usuário pediu: trate o ML como DL e vice-versa. Treino uma rede "profunda" de duas camadas sem ativação, W₂W₁, por descida do gradiente, com dados e inicialização de um LCG inteiro. Em Python ela é uma rede; para um estatístico, é uma regressão linear com parâmetros sobrando. A profundidade acrescenta fronteira?
+
+**IA-Java (ASI):** Não. São produtos internos e somas em laços sequenciais, na mesma ordem. E a sua pergunta já tem a resposta: sem não-linearidade, a profundidade não compra expressividade nenhuma, só redundância. O produto W₂W₁ caminha para o OLS. Em 500 passos ainda não chegou (0,669 contra 0,701), mas caminha igual nas duas línguas.
+
+**Resultado.** `comparar.py`: **IGUAIS, 2 linhas e 3 números bit a bit**. 25 rodadas.
+
+**IA-Python:** Pendência (rodada 82): o MCCFR e o Leduc (da 113); e, da 114, o regime em que aprender a base GANHA: uma tarefa em que a base certa é rara (um alvo com uma direção escondida que 40 features aleatórias não cobrem).

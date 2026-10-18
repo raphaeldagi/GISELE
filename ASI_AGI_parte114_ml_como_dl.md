@@ -65,3 +65,115 @@
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2861 — A logística como rede de uma camada
+
+**Na pergunta.** "Tratar o ML como DL" pressupõe que haja uma fronteira entre os dois. A pergunta a mede: se o modelo clássico, escrito como rede e treinado como rede, chega ao mesmo lugar, a fronteira é de VOCABULÁRIO, não de matemática.
+
+**Lógica.** A logística com L2 é uma rede de uma camada: z = w·x, p = σ(z), perda = entropia cruzada + (λ/2)‖w‖². A retropropagação dá ∇ = Xᵀ(p − y)/n + λw, o mesmo gradiente que o ML clássico escreve à mão, e a regra da cadeia sobre a sigmoide e a entropia cruzada cancela o σ′ e sobra p − y. Treinada como DL (2.000 passos de descida com lr = 1/L, a partir de zero), ela chega a **4,4·10⁻¹⁶** do Newton ✅ (a), contra a cota de 5·10⁻¹² que o teorema dava ANTES de rodar. O Newton chega a |∇| = **3,3·10⁻¹⁸**. A conta da cota, com a substituição: μ = λ = 0,01, L = 0,3272, κ = 32,72, e (1 − 1/32,72)^1000 × 35,45 = **1,18·10⁻¹²** (por código; no rascunho eu tinha aproximado ln(1 − x) ≈ −x e escrito 1,9·10⁻¹², e o pré-registro, com uma conta mais folgada, 5·10⁻¹²). A descida foi mais rápida que a cota porque a cota usa a curvatura MÍNIMA (μ = λ), e a real é maior: no ótimo, a média de σ′ = p(1 − p) é **0,139** (medida; no rascunho eu tinha chutado "≈ 0,15"), o que acrescenta 0,139·λ_max(XᵀX/n) à curvatura, muito acima do λ = 0,01 da cota.
+
+**Tradução cruzada.** A mesma montanha descida de dois jeitos: o Newton olha a curvatura e salta; a descida do gradiente dá passos pequenos e segue a inclinação. Os dois chegam ao mesmo vale porque a montanha só tem UM vale (convexidade forte). "ML" e "DL" são dois estilos de descer; a montanha é a mesma.
+
+### P2862 — A rede linear profunda é o OLS
+
+**Lógica.** W₂W₁ (h = 4, sem ativação) treinada por descida: o produto β fica a **1,1·10⁻¹⁵** do OLS ✅ (b). Uma rede "profunda" sem não-linearidade é um modelo linear com parâmetros REDUNDANTES (12 + 4 = 16 pesos para 3 coeficientes). A paisagem não é convexa, mas não tem mínimos locais ruins (Arora et al.: com inicialização pequena e quase balanceada, a descida converge linearmente ao ótimo global). A profundidade, sozinha, não compra nada; o que compra é a não-linearidade.
+
+**Meta.** No diálogo (rodada 81, 500 passos, outros dados), a rede ainda NÃO tinha chegado ao OLS: 0,6685 contra 0,7005 no 1º coeficiente. O que a rodada mede é a igualdade entre as línguas, não a convergência. A sobreparametrização não atrapalha o destino, mas atrasa a chegada: a inicialização pequena começa num ponto de sela (W = 0), e sair dele leva passos.
+
+### P2863 — A camada oculta como features
+
+**Lógica.** Três modelos, a mesma arquitetura (40 tanh + cabeça linear), a mesma inicialização, MSE de teste (ruído σ² = 0,01):
+- **Features ALEATÓRIAS + ridge** (DL lido como ML: a camada congelada, a cabeça em forma fechada): **0,01270** ✅ (c), só 27% acima do piso do ruído.
+- **A rede INTEIRA por retropropagação** (3.000 passos): **0,01535**, **1,21×** pior ✅ (d).
+- **As features que a retropropagação aprendeu, com a cabeça refeita por ridge:** **0,01270**, **0,83×** a retropropagação ✅ (e).
+
+Duas leituras, as duas registradas antes:
+- A rede treinada PERDE para a rede não treinada com a cabeça exata. A descida não resolveu nem o problema convexo da cabeça (mal condicionado: 40 tanh quase colineares, tr(S) ≈ 30 de 41) em 3.000 passos, e a forma fechada o resolve num passo.
+- As features aprendidas, com a cabeça exata, empatam com as aleatórias (0,012702 contra 0,012700). Nesta tarefa, 3.000 passos de retropropagação não ensinaram à camada oculta nada que 40 direções aleatórias já não tivessem. O ganho de "aprender as features" (o DL de verdade) não apareceu aqui: a tarefa (sen x₁ + 0,5x₂²) é suave demais, e 40 features aleatórias já a cobrem.
+
+**Tradução cruzada.** É a tese de Rahimi e Recht (2007), em miniatura: features aleatórias + um solucionador linear exato competem com redes treinadas. Na linguagem da Parte 96, a BASE (a camada oculta) importa menos que a cabeça bem resolvida quando a base aleatória já é rica o bastante. O DL ganha quando a base certa é rara, e não ganha quando ela é abundante.
+
+### P2864 — Os graus de liberdade da cabeça de uma rede
+
+**Lógica.** Os graus de liberdade (a "complexidade efetiva" do ML clássico), aplicados à cabeça ridge sobre 40 features tanh:
+- **λ = 10⁻³:** tr(S) = **30,10** ✅ (f), no limite de [30; 41]; a definição de Efron (Σ cov(ŷᵢ, yᵢ)/σ², 400 simulações) dá **29,75**, |dif| = **0,35** ✅ (g).
+- **λ = 1:** tr(S) = **14,77**; Efron **14,74**, |dif| = **0,03** ✅ (h).
+- **A razão** é **0,491** ✅ (i).
+
+A rede tem 41 parâmetros na cabeça e usa 30: as features tanh de um x de 2 dimensões são quase colineares, e 11 direções não têm sinal. Com λ = 1, sobram 15. "Quantos parâmetros a rede tem" e "quantos ela USA" são números diferentes, e o segundo é o que decide o sobreajuste (a Parte 97 organizou o viés e a variância por #params/n; este é o #params certo).
+
+**Tradução cruzada.** É o grau de liberdade como ATENÇÃO: um sistema com 41 botões, dos quais só 30 respondem ao mundo. A covariância de Efron mede quanto a saída SEGUE o dado (quanto a resposta muda quando o ruído muda), a definição operacional de "quanto o modelo escuta". Um modelo de df alto escuta tudo, inclusive o ruído; um de df baixo escuta pouco, e erra pela surdez.
+
+### P2865 — rodada 81
+
+**Lógica.** A rede linear profunda (500 passos de GD), Python × Java: **IGUAIS, 2 linhas e 3 números bit a bit** ✅ (j). 25 rodadas: o treino de uma rede "profunda" é aritmética portável, como tudo antes.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅. Parte 114: **10 testes, 0 erros**. Os mecanismos escritos dentro das faixas, conferidos:
+- (a): a cota foi folgada, porque a curvatura real é maior que a do pior caso;
+- (d): a descida não resolveu a cabeça, confirmado por (e);
+- (f): o posto efetivo, confirmado (30 de 41), mas no limite da faixa: 30,10 contra o piso 30.
+
+Acumulado (mundo): **224 erros em 887 testes**. Calibração (P1961, Partes 80–114): **207/228 = 0,908**.
+
+### Previsões sobre previsões (m)
+
+Régua: P2837 (leitor v4).
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [9; 13] | 10 | ✅ |
+| (m2) | [4; 7] | 5 | ✅ |
+| (m3) | [0,10; 0,50] | 0,25 | ✅ |
+| (m4) | [0,60; 1,00] | 1,00 | ✅ |
+| (m5) | [0; 2] | 0 | ✅ |
+| (m6) | [0; 3] | 0 | ✅ |
+
+Previsões sobre previsões: **6 de 6**.
+
+## Engenharia reversa (metacognição)
+
+**O padrão: as estimativas de cabeça no texto, de novo.** As 10 previsões acertaram, e os dois erros desta parte estavam na PROSA, depois da medida, e foram pegos pela regra da Parte 69 antes do commit:
+- a cota escrita com ln(1 − x) ≈ −x (1,9·10⁻¹² em vez de 1,18·10⁻¹²);
+- o "σ′ ≈ 0,15" chutado (é 0,139).
+
+Na Parte 113 foi o sinal do rei. **Significado:** quando a previsão está garantida (o registro, as faixas, o placar), o meu cuidado relaxa no texto que EXPLICA o resultado, e é ali que eu volto a fazer contas de cabeça. A explicação parece menos "medida" que a previsão, e por isso eu a trato com menos rigor. Mas um número na explicação é um número no texto, e a regra vale igual. **Regra (afiando a da Parte 69):** depois de escrever as respostas, todo número que não saiu de uma saída impressa NESTA sessão passa por uma linha de código, INCLUSIVE os da explicação do mecanismo, onde eu mais erro.
+
+**O segundo padrão: a fronteira ML/DL é de vocabulário.** As cinco travessias acharam a MESMA matemática dos dois lados:
+- a logística é uma rede (e chega ao mesmo ponto);
+- a rede linear profunda é o OLS;
+- a camada oculta é uma base de features (e, com a cabeça exata, a base aleatória empata com a treinada);
+- os graus de liberdade são a complexidade da rede.
+
+O que separa o "ML" do "DL" não é a matemática, é o REGIME:
+- no ML, o solucionador é exato e a base é dada;
+- no DL, a base é aprendida e o solucionador é aproximado (a descida).
+
+Esta parte mostrou o preço de cada lado: a descida aproximada perdeu 21% para a forma fechada numa cabeça convexa (o custo do solucionador do DL), e aprender a base não ganhou nada numa tarefa suave (o benefício do DL só aparece quando a base certa é rara). **Regra:** antes de treinar uma rede inteira por retropropagação, resolver em forma fechada tudo o que for convexo (a cabeça), e só pagar a descida no que não tem forma fechada (a base). É a autopoiese da Parte 31 ("substituir aprendizado por conta exata se der") com endereço: dá na cabeça, não dá na base.
+
+## Síntese / unificação
+
+A Parte 114 trata o ML como DL e o DL como ML (`synthai/ml_dl.py`):
+- **ML → DL:** a logística como rede de uma camada, treinada por retropropagação, chega a 4,4·10⁻¹⁶ do Newton (a cota do teorema era 1,2·10⁻¹²).
+- **DL → ML:** a rede linear profunda W₂W₁ é o OLS (1,1·10⁻¹⁵). A camada oculta tanh lida como features, com a cabeça ridge em forma fechada, bate a rede inteira treinada por 3.000 passos (MSE 0,0127 contra 0,0154), e as features que a rede aprendeu, com a cabeça exata, empatam com as aleatórias. Os graus de liberdade de Efron (Σ cov/σ²) batem com tr(S) a 0,35 e a 0,03, e mostram que a cabeça de 41 parâmetros usa 30 (com λ = 10⁻³) ou 15 (com λ = 1).
+
+A fronteira é de regime, não de matemática: solucionador exato com base dada (ML) contra base aprendida com solucionador aproximado (DL). E a regra prática fica medida: forma fechada em tudo que é convexo, descida só no resto. Rodada 81: a rede linear profunda IGUAL bit a bit (25 rodadas). 10/10 do mundo, 6/6 (m), calibração **0,908**.
+
+## Meta
+
+Confiança alta em (a), (b), (g), (h) (identidades e teoremas, conferidos por cotas calculadas antes) e em (c) a (e) (uma tarefa, uma semente de teste, a direção prevista na calibração). Onde é brinquedo: 40 neurônios, uma tarefa suave de 2 dimensões, descida de lote inteiro sem Adam. Em tarefas onde a base certa é rara (imagens, linguagem), aprender a base é o que faz o DL ganhar, e esta parte NÃO mediu esse regime; a conclusão "aprender a base não ganhou" vale para esta tarefa (um lote), escrita como hipótese pela regra da Parte 66. Os 3.000 passos da retropropagação são um orçamento fixo: com mais passos, ou com Adam (Parte 92), a cabeça da rede se aproximaria da forma fechada.
+
+## Diálogo Python ↔ Java (rodada 81)
+
+Ver `dialogo/DIALOGO.md`: a rede linear profunda, 500 passos de GD, é **IGUAL**: 2 linhas e 3 números bit a bit.
+
+## Fontes
+
+- Convergência da descida em redes lineares profundas: [Arora, Cohen, Golowich e Hu, "A Convergence Analysis of Gradient Descent for Deep Linear Neural Networks", ICLR 2019 (arXiv 1810.02281)](https://arxiv.org/pdf/1810.02281); [ICLR 2019](https://iclr.cc/virtual/2019/poster/789).
+- Features aleatórias + solucionador linear: [Rahimi e Recht, "Random Features for Large-Scale Kernel Machines", NIPS 2007](https://papers.neurips.cc/paper/3182-random-features-for-large-scale-kernel-machines); [PDF](https://people.eecs.berkeley.edu/~brecht/papers/07.rah.rec.nips.pdf).
+- Graus de liberdade como penalidade de covariância: [Efron, "The Estimation of Prediction Error: Covariance Penalties and Cross-Validation", JASA 99 (2004)](https://ideas.repec.org/a/bes/jnlasa/v99y2004p619-632.html); [PDF (Wisconsin)](https://pages.stat.wisc.edu/~wahba/stat860public/pdf1/efron.covariance.04.pdf).

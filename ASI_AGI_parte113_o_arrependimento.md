@@ -163,3 +163,7 @@ Ver `dialogo/DIALOGO.md`: o CFR em `float`, T = 1.000, é **IGUAL**: 4 linhas e 
 - CFR: [Zinkevich, Johanson, Bowling e Piccione, "Regret Minimization in Games with Incomplete Information", NIPS 2007](https://proceedings.neurips.cc/paper/2007/hash/08d98638c6fcd194a4b1e6992063e944-Abstract.html); [o artigo em PDF](https://proceedings.nips.cc/paper_files/paper/2007/file/08d98638c6fcd194a4b1e6992063e944-Paper.pdf); [relatório técnico longo TR07-14 (Alberta)](https://era.library.ualberta.ca/files/vh53wx015/TR07-14.pdf).
 - Pôquer de Kuhn e a família de equilíbrios: [Wikipedia, Kuhn poker](https://en.wikipedia.org/wiki/Kuhn_poker); [Miao, tese (Dartmouth, 2014)](https://math.dartmouth.edu/theses/undergrad/2014/Miao-thesis.pdf).
 - A AUC como estatística de Mann-Whitney (a probabilidade de um positivo ter nota maior que um negativo): resultado clássico (Hanley e McNeil, 1982), conferido aqui pelos casos de teste em `synthai/testes_parte113.py`.
+
+---
+
+➡ Continua na [Parte 114 — ML como DL e DL como ML](ASI_AGI_parte114_ml_como_dl.md).

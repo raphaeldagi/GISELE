@@ -9622,6 +9622,8 @@ VEREDITOS_P3989 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) �
 ERROS_P3989, TESTES_P3989 = 224, 864
 VEREDITOS_P4059 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅"
 ERROS_P4059, TESTES_P4059 = 224, 877
+VEREDITOS_P4129 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅"
+ERROS_P4129, TESTES_P4129 = 224, 887
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12162,12 +12164,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14604,6 +14606,69 @@ def p2838_auditoria_do_placar_m_v4(partes=(70, 77, 110, 112)):
     return linhas, mudam
 
 
+def p2861_logistica_como_rede():
+    """ML como DL (P2861; Parte 114): a regressão logística com L2 (λ = 0,01) como rede de UMA camada treinada por retropropagação (lr = 1/L,
+    2.000 passos, a partir de zero) contra o solucionador clássico (Newton). Devolve (max |w_rede − w_Newton|, max |∇| no Newton, κ = L/μ)."""
+    from synthai import ml_dl as M
+    X, y = M.dados_logistica()
+    lam = 0.01
+    mu, L = M.constantes_logistica(X, lam)
+    wn = M.newton_logistica(X, y, lam)
+    wr = M.rede_logistica(X, y, lam, 2000, 1.0 / L)
+    return max(abs(a - b) for a, b in zip(wn, wr)), max(abs(g) for g in M.gradiente_logistica(wn, X, y, lam)), L / mu
+
+
+def p2862_rede_linear_profunda():
+    """DL como ML (P2862; Parte 114): a rede linear profunda W₂W₁ (h = 4, 3.000 passos) contra o OLS em forma fechada. Devolve max |β_rede − β_OLS|."""
+    from synthai import ml_dl as M
+    Xtr, ytr = M.dados_regressao(200, 114)
+    Xl = [x + [1.0] for x in Xtr]
+    return max(abs(a - b) for a, b in zip(M.ols(Xl, ytr), M.rede_linear_profunda(Xl, ytr, semente=114)))
+
+
+def p2863_features_e_cabeca():
+    """DL como ML (P2863; Parte 114): MSE de teste das features ALEATÓRIAS + ridge, da rede inteira por retropropagação (3.000 passos) e das
+    features TREINADAS + ridge. Devolve (MSE aleatórias, MSE retropropagação, MSE treinadas + ridge)."""
+    from synthai import ml_dl as M
+    Xtr, ytr = M.dados_regressao(200, 114)
+    Xte, yte = M.dados_regressao(1000, 114114)
+    rf = M.features_aleatorias(Xtr, ytr, Xte, yte, semente=114)
+    bp, W, b = M.mlp_retropropagacao(Xtr, ytr, Xte, yte, semente=114)
+    return rf, bp, M.features_treinadas_mais_ridge(Xtr, ytr, Xte, yte, W, b)
+
+
+def p2864_graus_de_liberdade():
+    """ML na cabeça de uma rede (P2864; Parte 114): os graus de liberdade da ridge sobre 40 features tanh, tr(S) em forma fechada e a definição
+    de Efron por simulação, com λ = 10⁻³ e λ = 1. Devolve (tr(S) λ=10⁻³, Efron λ=10⁻³, tr(S) λ=1, Efron λ=1)."""
+    import random
+    from synthai import ml_dl as M
+    Xtr, _ = M.dados_regressao(200, 114)
+    rng = random.Random(1144)
+    W = [[rng.gauss(0, 1) for _ in range(2)] for _ in range(40)]
+    b = [rng.uniform(-2, 2) for _ in range(40)]
+    H = M._oculta(Xtr, W, b)
+    f = [math.sin(x[0]) + 0.5 * x[1] * x[1] for x in Xtr]
+    return (M.df_ridge_fechado(H, 1e-3), M.df_ridge_efron(H, f, 1e-3), M.df_ridge_fechado(H, 1.0), M.df_ridge_efron(H, f, 1.0))
+
+
+def _rodada81():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada81", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada81.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2865_rodada81():
+    """Rodada 81 (P2865; Parte 114): a rede linear profunda por GD (500 passos), IGUAL em Java bit a bit. Devolve (β da rede, β do OLS) nos
+    mesmos dados: em 500 passos a rede ainda NÃO chegou ao OLS."""
+    from synthai import ml_dl as M
+    r = _rodada81()
+    X, y, _, _ = r.dados()
+    return r.treinar(), M.ols(X, y)
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -16002,6 +16067,26 @@ def _parte_113():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4059, testes=TESTES_P4059)
     print(f"P4059 minha taxa de erro ({ERROS_P4059}/{TESTES_P4059}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_114():
+    print("--- Parte 114 (0x72: tratar o ML como DL e o DL como ML) ---")
+    dw, gn, kap = p2861_logistica_como_rede()
+    print(f"P2861 logistica como rede de 1 camada (retropropagacao) x Newton: max |dw| = {dw:.2e}; |grad| no Newton {gn:.1e}; kappa = {kap:.2f}")
+    db = p2862_rede_linear_profunda()
+    print(f"P2862 rede linear profunda W2W1 x OLS: max |d beta| = {db:.2e}")
+    rf, bp, tr = p2863_features_e_cabeca()
+    print(f"P2863 MSE de teste: features aleatorias + ridge {rf:.5f}; retropropagacao {bp:.5f} (razao {bp/rf:.3f}); features treinadas + ridge {tr:.5f} (razao {tr/bp:.3f})")
+    d1, e1, d2, e2 = p2864_graus_de_liberdade()
+    print(f"P2864 graus de liberdade: lambda=1e-3 tr(S) {d1:.3f}, Efron {e1:.3f}; lambda=1 tr(S) {d2:.3f}, Efron {e2:.3f}; razao {d2/d1:.3f}")
+    br, bo = p2865_rodada81()
+    print(f"P2865 rodada 81 (rede linear profunda, IGUAL em Java): beta {[round(v, 4) for v in br]}; OLS {[round(v, 4) for v in bo]}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-114: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2861, 2890)
+    print(f"P1092 pNN novas (P2861-P2890) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 114: {p974_previsoes_sem_largura(range(114, 115))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4129, testes=TESTES_P4129)
+    print(f"P4129 minha taxa de erro ({ERROS_P4129}/{TESTES_P4129}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -16038,7 +16123,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114}
 
 
 if __name__ == "__main__":

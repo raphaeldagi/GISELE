@@ -74,7 +74,7 @@ class TesteParte113(unittest.TestCase):
         self.assertEqual(sum(1 for l in linhas if l[3] != l[4]), 5)   # o texto dizia 4 (contado por leitura) e listava 5
 
     def test_p1961_com_parte_113(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 114))))
         self.assertEqual(por[113], (13, 13))
         self.assertEqual((ok, tot), (197, 218))
 
