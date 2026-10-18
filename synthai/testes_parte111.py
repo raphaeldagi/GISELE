@@ -88,7 +88,7 @@ class TesteParte111(unittest.TestCase):
         self.assertEqual(d.most_common(1)[0][0], "EAT")
 
     def test_p1961_com_parte_111(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 112))))
         self.assertEqual(por[111], (12, 15))
         self.assertEqual((ok, tot), (170, 191))
 

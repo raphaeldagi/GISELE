@@ -183,3 +183,7 @@ Ver `dialogo/DIALOGO.md`: o passo de Q-learning tabular, com as transições ger
 - Q-learning tabular e a prova de convergência: [Watkins e Dayan, "Technical Note: Q-Learning", Machine Learning 8 (1992)](https://www.springerprofessional.de/en/technical-note/13819926); [Tsitsiklis (1994), convergência assíncrona](https://www.mit.edu/people/jnt/Papers/J052-94-jnt-q.pdf).
 - O intervalo de Wilson (1927), "Probable inference, the law of succession, and statistical inference", JASA 22: [notas de Cousins, arXiv 1807.05996](https://arxiv.org/pdf/1807.05996); [Boost, wilson_interval](https://www.boost.org/doc/libs/master/boost/histogram/utility/wilson_interval.hpp).
 - O escore de Brier (1950), "Verification of forecasts expressed in terms of probability", Monthly Weather Review 78: [scores, tutorial do Brier Score](https://scores.readthedocs.io/en/latest/tutorials/Brier_Score.html); [NOAA, repositório](https://repository.library.noaa.gov/view/noaa/33800).
+
+---
+
+➡ Continua na [Parte 112 — O Kuhn completo](ASI_AGI_parte112_o_kuhn_completo.md).

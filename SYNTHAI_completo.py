@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 111, perguntas P1 a P2777).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 112, perguntas P1 a P2810).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (15630 linhas)
+# calculos.py  (15848 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9656,6 +9656,8 @@ VEREDITOS_P3849 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) �
 ERROS_P3849, TESTES_P3849 = 221, 835
 VEREDITOS_P3919 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ❌ (l) ✅ (n) ❌ (o) ✅ (p) ❌"
 ERROS_P3919, TESTES_P3919 = 224, 850
+VEREDITOS_P3989 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅"
+ERROS_P3989, TESTES_P3989 = 224, 864
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12196,12 +12198,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14270,6 +14272,196 @@ def p2777_palavras_distintas_do_guloso():
     return P.palavras_distintas_gulosas(cfg, emb, ag)
 
 
+def p2806_minhas_previsoes_v3(partes=range(53, 68)):
+    \"\"\"As minhas previsões do mundo, versão 3 (P2806; Parte 112; a P1481 fica intacta). O defeito da v2, achado na Parte 112: ela casava QUALQUER "(x)" do
+    texto como rótulo de letra, e "log(h)", "f(x)" ou "o mecanismo de (f)" roubavam ou bloqueavam a faixa (a MENÇÃO de uma letra lida como USO de um rótulo;
+    a Parte 110 tinha diagnosticado, errado, "rótulo em negrito"). Aqui um rótulo só vale no INÍCIO de uma linha (depois de um marcador de lista e de
+    negrito opcionais), e a faixa é o primeiro **[a; b]** do mesmo item (até o próximo rótulo, título ou linha em branco). O resto é igual à v2 (o
+    diálogo, o tipo, a porcentagem). Devolve [(parte, letra, a, b, acerto, tipo)].\"\"\"
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    dialogo = open(os.path.join(raiz, "dialogo", "DIALOGO.md"), encoding="utf-8").read()
+    rotulo = re.compile(r"^\\s*(?:[-*]\\s+)?(?:\\*\\*)?\\(([a-z])\\)")
+    faixa = re.compile(r"\\*\\*\\[([^\\];]+?);\\s*([^\\]]+?)\\]\\*\\*")
+    velha = re.compile(r"\\(([a-z])\\)((?:(?!\\([a-z]\\)).){0,400}?)\\*\\*\\[([^\\];]+?);\\s*([^\\]]+?)\\]\\*\\*")
+    saida = []
+    for parte in partes:
+        arq = glob.glob(os.path.join(raiz, f"ASI_AGI_parte{parte}_*.md"))
+        if not arq:
+            continue
+        texto = open(arq[0], encoding="utf-8").read()
+        m = re.search(r"Do mundo: ((?:\\([a-z]\\) [✅❌] ?)+)", texto)
+        if not m:
+            continue
+        vered = re.findall(r"\\(([a-z])\\) ([✅❌])", m.group(1))
+        corpo = texto.split("## As respostas")[0]
+        itens, atual = {}, None
+        for linha in corpo.split("\\n"):
+            r = rotulo.match(linha)
+            if r:
+                atual = r.group(1)
+                itens.setdefault(atual, [])
+                itens[atual].append(linha[r.end():])
+            elif atual is not None and linha.strip() and not linha.lstrip().startswith("#"):
+                itens[atual].append(linha)
+            else:
+                atual = None
+        faixas = {}
+        for letra, ls in itens.items():
+            achou = faixa.search(" ".join(ls))
+            if achou and letra not in faixas:
+                x, y = _numero_pt(achou.group(1)), _numero_pt(achou.group(2))
+                if x is not None and y is not None and "%" in achou.group(1) + achou.group(2):
+                    x, y = x / 100, y / 100
+                if x is not None and y is not None:
+                    faixas[letra] = (x, y)
+        cab = re.search(rf"## Rodada {parte - 26} [^\\n]*\\n(.*?)(?=\\n## |\\Z)", dialogo, re.S)
+        rodada = (cab.group(1) if cab else "").split("**Resultado")[0]
+        for letra, _, a, b in velha.findall(rodada.replace("\\n", " ")):   # o diálogo, como na v2, só preenche letras que o texto não tem
+            x, y = _numero_pt(a), _numero_pt(b)
+            if letra not in faixas and x is not None and y is not None:
+                faixas[letra] = (x, y)
+        for letra, v in vered:
+            a, b = faixas.get(letra, (None, None))
+            if a is None:
+                tipo = None
+            elif a <= 0 <= b:
+                tipo = "zero"
+            elif 0 <= a and b <= 1:
+                tipo = "fracao"
+            elif a == int(a) and b == int(b) and a >= 1:
+                tipo = "contagem"
+            else:
+                tipo = "outra"
+            saida.append((parte, letra, a, b, v == "✅", tipo))
+    return saida
+
+
+def p2807_v2_contra_v3(partes=range(53, 112)):
+    \"\"\"O que a v3 do leitor muda (P2807; Parte 112): para cada (parte, letra) pontuada, compara a faixa lida pela v2 (P1481) e pela v3 (P2806).
+    Devolve (recuperadas: None na v2 e lida na v3, perdidas: lida na v2 e None na v3, trocadas: as duas leram faixas diferentes, total).\"\"\"
+    v2 = {(x[0], x[1]): (x[2], x[3]) for x in p1481_minhas_previsoes_v2(partes)}
+    v3 = {(x[0], x[1]): (x[2], x[3]) for x in p2806_minhas_previsoes_v3(partes)}
+    rec = sorted(k for k in v3 if v2.get(k, (None, None))[0] is None and v3[k][0] is not None)
+    per = sorted(k for k in v2 if v2[k][0] is not None and v3.get(k, (None, None))[0] is None)
+    tro = sorted(k for k in v2 if v2[k][0] is not None and v3.get(k, (None, None))[0] is not None and v2[k] != v3[k])
+    return rec, per, tro, len(v3)
+
+
+def p2808_previsoes_sobre_previsoes_v3(parte=112):
+    \"\"\"O placar (m) da P1499 lido pela v3 do leitor (P2808; Parte 112; a P1499 fica intacta): (m1) nº de previsões do mundo, (m2) faixas que cruzam o
+    zero, (m3) a mediana de w das que não cruzam, (m4) a fração de acertos, (m5) as que não cruzam com w > 0,6. Devolve (medidas, ws).\"\"\"
+    prev = p2806_minhas_previsoes_v3(range(parte, parte + 1))
+    nz = [x for x in prev if x[5] not in (None, "zero")]
+    ws = sorted((x[3] - x[2]) / (abs(x[2]) + abs(x[3])) for x in nz)
+    n = len(ws)
+    med = (ws[n // 2] if n % 2 else (ws[n // 2 - 1] + ws[n // 2]) / 2) if n else None
+    return ({"m1": len(prev), "m2": sum(1 for x in prev if x[5] == "zero"), "m3": med,
+             "m4": sum(x[4] for x in prev) / len(prev) if prev else None, "m5": sum(1 for w in ws if w > 0.6)}, ws)
+
+
+def p2809_auditoria_do_placar_m(partes=(74, 84, 87, 107, 109, 110, 111)):
+    \"\"\"A auditoria retroativa do placar (m) nas partes em que a v2 do leitor errou (P2809; Parte 112): para cada parte, (m2), (m3) e (m5) medidos
+    pela v2 e pela v3, e a faixa registrada (lida do próprio texto); conta os vereditos (m) que MUDAM com a régua corrigida.
+    Devolve ([(parte, m, faixa, valor v2, valor v3, dentro v2, dentro v3)], nº de vereditos que mudam).\"\"\"
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    linhas, mudam = [], 0
+    for parte in partes:
+        texto = open(glob.glob(os.path.join(raiz, f"ASI_AGI_parte{parte}_*.md"))[0], encoding="utf-8").read().split("## As respostas")[0]
+        fx = {}
+        for k, a, b in re.findall(r"\\(m(\\d)\\)\\*\\*[^\\[\\n]*?\\*\\*\\[([^;\\]]+);\\s*([^\\]]+)\\]\\*\\*", texto):
+            if k not in fx and _numero_pt(a) is not None and _numero_pt(b) is not None:
+                fx[k] = (_numero_pt(a), _numero_pt(b))
+        m2, _ = p1499_previsoes_sobre_previsoes_v2(parte)
+        m3, _ = p2808_previsoes_sobre_previsoes_v3(parte)
+        for k in ("2", "3", "5"):
+            if k not in fx:
+                continue
+            a, b = fx[k]
+            x2, x3 = m2["m" + k], m3["m" + k]
+            d2 = x2 is not None and a <= x2 <= b
+            d3 = x3 is not None and a <= x3 <= b
+            mudam += int(d2 != d3)
+            linhas.append((parte, "m" + k, (a, b), x2, x3, d2, d3))
+    return linhas, mudam
+
+
+def p2801_kuhn_completo():
+    \"\"\"O valor do pôquer de Kuhn COMPLETO para o jogador 1 (P2801; Parte 112), pela forma normal 27x64 e o simplex próprio exato (Fraction): -1/18.
+    Devolve (valor, pivôs, (pior linha, melhor coluna) da dualidade).\"\"\"
+    from synthai import simplex
+    A, _, _ = simplex.kuhn_forma_normal()
+    v, p, q, k = simplex.resolver_jogo(A)
+    return v, k, simplex.dualidade(A, p, q)
+
+
+def _p112_equilibrio():
+    from synthai import simplex
+    A, L, C = simplex.kuhn_forma_normal()
+    v, p, q, _ = simplex.resolver_jogo(A)
+    return simplex, L, C, p, q
+
+
+def p2802_jogador2_de_kuhn():
+    \"\"\"O equilíbrio do jogador 2 (único, Kuhn) lido do q do simplex (P2802; Parte 112): P(paga | dama, diante de aposta) e P(aposta | valete, diante
+    de passe), o blefe. Devolve (paga|Q, blefe|J).\"\"\"
+    S, L, C, p, q = _p112_equilibrio()
+    return S.comportamento(C, q, 2, 0, "paga"), S.comportamento(C, q, 1, 1, "aposta")
+
+
+def p2803_familia_do_jogador1():
+    \"\"\"A família de um parâmetro do jogador 1 (P2803; Parte 112): α = P(aposta | valete); a relação aposta(rei) = 3α; e passa-e-paga(dama) = α + 1/3.
+    Devolve (α, |aposta(K) − 3α|, aposta(Q), |paga(Q) − (α + 1/3)|).\"\"\"
+    from fractions import Fraction
+    S, L, C, p, q = _p112_equilibrio()
+    al = S.comportamento(L, p, 1, None, "aposta")
+    return (al, abs(S.comportamento(L, p, 3, None, "aposta") - 3 * al), S.comportamento(L, p, 2, None, "aposta"),
+            abs(S.comportamento(L, p, 2, None, "passa-paga") - (al + Fraction(1, 3))))
+
+
+def p2804_float_exato_e_dualidade():
+    \"\"\"No jogo 4x5 da fixture (P2804; Parte 112): o valor exato, |float − exato| e a lacuna de dualidade no exato. Devolve (valor exato, erro do float,
+    lacuna, pivôs).\"\"\"
+    from synthai import simplex
+    G = simplex.jogo_lcg()
+    ve, pe, qe, ke = simplex.resolver_jogo(G)
+    vf, _, _, _ = simplex.resolver_jogo(G, exato=False)
+    lo, hi = simplex.dualidade(G, pe, qe)
+    return ve, abs(vf - float(ve)), hi - lo, ke
+
+
+def _rodada79():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada79", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada79.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2805_rodada79():
+    \"\"\"Rodada 79 (P2805; Parte 112): o simplex próprio em float no jogo 4x5, IGUAL em Java bit a bit. Devolve (valor, p, q, pivôs).\"\"\"
+    r = _rodada79()
+    return r.resolver(r.jogo())
+
+
+def p2810_hipotese_do_repertorio():
+    \"\"\"A hipótese do REPERTÓRIO da Parte 111 (P2810; Parte 112; registrada como "P2808" no pré-registro, número que passou à P2808 do placar v3): o
+    estimador de confiança treinado sobre as palavras de uma política ALEATÓRIA, semente 42, completo e só com as letras. Devolve (razão completo,
+    razão só letras, tentativas, válidas).\"\"\"
+    from synthai import palavras_rl as P
+    emb = P.Dicionario(P.EMBEDDED_WORDS)
+    cfg = P.Config(seed=42)
+    rc, n, k = P.estimador_sob_politica_aleatoria(cfg, emb, P.ConfidenceEstimator)
+    rl, _, _ = P.estimador_sob_politica_aleatoria(cfg, emb, P.EstimadorSoLetras)
+    return rc, rl, n, k
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -15620,6 +15812,32 @@ def _parte_111():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3919, testes=TESTES_P3919)
     print(f"P3919 minha taxa de erro ({ERROS_P3919}/{TESTES_P3919}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_112():
+    print("--- Parte 112 (0x70: o simplex proprio e o poquer de Kuhn completo; o leitor v3) ---")
+    v, k, (lo, hi) = p2801_kuhn_completo()
+    print(f"P2801 Kuhn completo (27x64, simplex exato): valor {v} = {float(v):.6f}; pivos {k}; dualidade {lo} = {hi}")
+    cq, bj = p2802_jogador2_de_kuhn()
+    print(f"P2802 jogador 2: paga com a dama {cq}; blefa com o valete {bj}")
+    al, d1, bq, d2 = p2803_familia_do_jogador1()
+    print(f"P2803 jogador 1: alfa = {al}; |aposta(K) - 3 alfa| = {d1}; aposta(Q) = {bq}; |paga(Q) - (alfa + 1/3)| = {d2}")
+    ve, ef, lac, ke = p2804_float_exato_e_dualidade()
+    print(f"P2804 jogo 4x5 da fixture: valor exato {ve}; |float - exato| {ef:.2e}; lacuna de dualidade {lac}; pivos {ke}")
+    vr, pr, qr, kr = p2805_rodada79()
+    print(f"P2805 rodada 79 (simplex em float, IGUAL em Java): valor {vr.hex()}; pivos {kr}")
+    rec, per, tro, tot = p2807_v2_contra_v3(range(53, 112))
+    print(f"P2807 leitor v3 x v2 (Partes 53-111, {tot} letras): recupera {len(rec)} {rec}; perde {len(per)} {per}; troca {len(tro)} {tro}")
+    linhas, mudam = p2809_auditoria_do_placar_m()
+    print(f"P2809 auditoria do placar (m) com a regua v3: {len(linhas)} medidas, {sum(1 for l in linhas if l[3] != l[4])} valores mudam, {mudam} vereditos mudam")
+    rc, rl, n, kv = p2810_hipotese_do_repertorio()
+    print(f"P2810 hipotese do repertorio (politica aleatoria, semente 42): razao Brier completo {rc:.4f}, so letras {rl:.4f} ({kv} validas em {n})")
+    ok, tot2, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-112: {ok}/{tot2} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2801, 2830)
+    print(f"P1092 pNN novas (P2801-P2830) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 112: {p974_previsoes_sem_largura(range(112, 113))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3989, testes=TESTES_P3989)
+    print(f"P3989 minha taxa de erro ({ERROS_P3989}/{TESTES_P3989}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -15656,7 +15874,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112}
 
 
 if __name__ == "__main__":
@@ -15669,7 +15887,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (424 linhas)
+# CLAUDE.md  (432 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -15939,6 +16157,14 @@ anterior, commit e push.
   sem Q -> 0,762 so letras: varias causas; hipotese do repertorio pendente). O auditor da 109 lia NOMES: nao viu requests.get e acusou urllib.parse.quote; security_audit_ast_v2
   le CAPACIDADES. REGRA NOVA: a expectativa sobre um texto recebido vem do texto (ele traz linha de base, mesma amostra, IC?), nao da serie; e um verificador novo roda tambem
   sobre os ultimos textos recebidos antes de ser usado. Rodada 78 IGUAL (22 rodadas). 12/15 do mundo, 6/6 (m), calibracao 170/191 = 0,890.
+  Parte 112 (continuacao autonoma; as pendencias adiadas 4 vezes): `synthai/simplex.py` (um codigo sobre Fraction e float, regra de Bland) resolve o POQUER DE KUHN COMPLETO
+  (forma normal 27x64): valor -1/18 exato, jogador 2 unico (paga com a dama 1/3, blefa com o valete 1/3), jogador 1 no vertice alfa=1/3 da familia (rei aposta 3alfa, dama
+  paga alfa+1/3). Rodada 79 (simplex em float) IGUAL (23 rodadas): o pivo nao cria fronteira. O leitor p1481 tinha um defeito DESDE A PARTE 74 (casava qualquer "(x)" do texto
+  como rotulo: "log(h)" roubou a faixa da (a); o diagnostico da Parte 110, "rotulo em negrito", estava ERRADO): p2806 (v3, rotulo so no inicio da linha) recupera 7, troca 2, e a
+  auditoria retroativa p2809 mostra 5 valores (m) mudados e 0 vereditos mudados. REGRA NOVA: o diagnostico de um defeito de leitura se faz pela POSICAO exata do que casou, nunca
+  pelo que os itens que falham tem em comum; e toda regua corrigida roda uma auditoria retroativa do que mediu. Terceira parte seguida (109, 111, 112) de USO x MENCAO num
+  verificador. A partir da Parte 113, o placar (m) usa a p2808 (v3). Hipotese do repertorio: passou o teste fraco (politica aleatoria: razao 1,052/1,100); o forte (transferencia)
+  e pendencia. 14/14 do mundo, 6/6 (m), calibracao 184/205 = 0,898.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -16087,7 +16313,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -20910,7 +21136,7 @@ def colisoes_esperadas(n, m=10007):
 """
 
 # ====================================================================================================
-# synthai/palavras_rl.py  (421 linhas)
+# synthai/palavras_rl.py  (439 linhas)
 # ====================================================================================================
 FONTES['synthai/palavras_rl.py'] = """\"\"\"O word_rl_lab recebido (Parte 111), reescrito só com a biblioteca padrão e OFFLINE. As cópias verbatim (v1 e v2) ficam em
 externos/word_rl_lab/ e nunca são importadas. Q-learning tabular num jogo de palavras numa grade de letras (estilo Boggle), com um
@@ -21333,6 +21559,24 @@ class EstimadorSoLetras(ConfidenceEstimator):
 
     def features(self, word, q_stop, max_len):
         return word_to_vector(word, self.dim) + [0.0, 0.0]
+
+
+# --- a hipótese do REPERTÓRIO (Parte 112) ---
+
+def estimador_sob_politica_aleatoria(cfg, dic, classe):
+    \"\"\"O estimador de confiança treinado sobre as palavras de uma política ALEATÓRIA (sem repertório: um agente que nunca aprende, Q = 0).
+    Se o estimador da Parte 111 aprende os HÁBITOS do agente, aqui ele não tem hábito a aprender. Devolve (razão Brier estimador/base,
+    número de tentativas avaliadas, número de válidas).\"\"\"
+    env = WordGridEnv(cfg.tamanho, cfg.min_len, cfg.max_len, rng=random.Random(cfg.seed))
+    agent = QAgent(seed=cfg.seed + 1)
+    est = classe()
+    ps, ys = [], []
+    for _ in range(cfg.episodios):
+        _, valid, _, conf = run_episode(env, dic, agent, "random", learn=False, estimator=est, learn_estimator=True)
+        if conf is not None:
+            ps.append(conf)
+            ys.append(1.0 if valid else 0.0)
+    return brier(ps, ys) / brier(prequential_base_rate(ys), ys), len(ys), int(sum(ys))
 """
 
 # ====================================================================================================
@@ -22408,6 +22652,152 @@ class Sentimento:
 
     def inaceitavel(self, p):
         return p > self.risco_max
+"""
+
+# ====================================================================================================
+# synthai/simplex.py  (141 linhas)
+# ====================================================================================================
+FONTES['synthai/simplex.py'] = """\"\"\"O simplex próprio e o pôquer de Kuhn COMPLETO (Parte 112). Biblioteca padrão; o mesmo código roda sobre `Fraction` (exato) e
+sobre `float` (para o diálogo bit a bit), porque só usa +, −, ×, ÷ e comparações.
+
+Um jogo de soma zero n×m vira um programa linear (von Neumann/Dantzig): soma-se c a todas as entradas para o valor ficar positivo, e a
+COLUNA resolve  max Σw  s.a.  A·w ≤ 1, w ≥ 0  (a origem é viável, as folgas formam a base inicial). No ótimo, o valor do jogo
+deslocado é 1/Σw, a estratégia da coluna é w/Σw, e a da LINHA sai dos preços duais (os custos reduzidos das folgas). A regra de Bland
+(menor índice que entra; empate na razão mínima, menor índice básico) garante que o método termina, sem ciclar.\"\"\"
+
+from fractions import Fraction
+from itertools import product
+
+
+def simplex_max(A, b, c, zero=0):
+    \"\"\"max c·x s.a. A·x ≤ b, x ≥ 0, com b ≥ 0 (base inicial = folgas). Devolve (valor, x, y_dual, pivôs). Regra de Bland.\"\"\"
+    n, m = len(A), len(A[0])
+    T = [list(A[i]) + [1 if j == i else 0 for j in range(n)] + [b[i]] for i in range(n)]
+    T = [[x * (zero + 1) if isinstance(x, int) else x for x in linha] for linha in T]   # leva os 0/1 inteiros ao tipo numérico
+    obj = [-cj for cj in c] + [zero] * n + [zero]
+    base = [m + i for i in range(n)]
+    pivos = 0
+    while True:
+        entra = next((j for j in range(m + n) if obj[j] < 0), None)
+        if entra is None:
+            break
+        sai, melhor = None, None
+        for i in range(n):
+            if T[i][entra] > 0:
+                razao = T[i][-1] / T[i][entra]
+                if melhor is None or razao < melhor or (razao == melhor and base[i] < base[sai]):
+                    sai, melhor = i, razao
+        if sai is None:
+            raise ValueError("ilimitado")
+        p = T[sai][entra]
+        T[sai] = [x / p for x in T[sai]]
+        for i in range(n):
+            if i != sai and T[i][entra] != 0:
+                f = T[i][entra]
+                T[i] = [x - f * y for x, y in zip(T[i], T[sai])]
+        f = obj[entra]
+        obj = [x - f * y for x, y in zip(obj, T[sai])]
+        base[sai] = entra
+        pivos += 1
+    x = [zero] * m
+    for i, j in enumerate(base):
+        if j < m:
+            x[j] = T[i][-1]
+    y = [obj[m + i] for i in range(n)]   # preços duais = custos reduzidos das folgas
+    return obj[-1], x, y, pivos
+
+
+def resolver_jogo(A, exato=True):
+    \"\"\"O valor e as estratégias ótimas (linha, coluna) do jogo de soma zero A (payoff para a LINHA), pelo simplex.
+    Devolve (valor, p_linha, q_coluna, pivôs).\"\"\"
+    conv = Fraction if exato else float
+    A = [[conv(x) for x in linha] for linha in A]
+    zero, um = conv(0), conv(1)
+    menor = min(min(linha) for linha in A)
+    desloc = (um - menor) if menor <= 0 else zero
+    B = [[x + desloc for x in linha] for linha in A]
+    n, m = len(B), len(B[0])
+    val, w, u, pivos = simplex_max(B, [um] * n, [um] * m, zero=zero)
+    v_desl = um / val
+    q = [wj * v_desl for wj in w]
+    p = [ui * v_desl for ui in u]
+    return v_desl - desloc, p, q, pivos
+
+
+def valor_contra(A, p, q):
+    \"\"\"p·A·q, o payoff esperado da linha.\"\"\"
+    tot = 0
+    for i, pi in enumerate(p):
+        for j, qj in enumerate(q):
+            tot += pi * A[i][j] * qj
+    return tot
+
+
+def dualidade(A, p, q):
+    \"\"\"(min_j (pA)_j, max_i (Aq)_i): no equilíbrio os dois são o valor (maxmin = minmax).\"\"\"
+    n, m = len(A), len(A[0])
+    pior_linha = min(sum(p[i] * A[i][j] for i in range(n)) for j in range(m))
+    melhor_coluna = max(sum(A[i][j] * q[j] for j in range(m)) for i in range(n))
+    return pior_linha, melhor_coluna
+
+
+# --- pôquer de Kuhn completo (J=1, Q=2, K=3; cada um põe 1; aposta de 1) ---
+
+P1_ACOES = ("aposta", "passa-desiste", "passa-paga")        # por carta do jogador 1
+P2_ACOES = tuple(product(("desiste", "paga"), ("passa", "aposta")))  # por carta: (contra aposta, contra passe)
+
+
+def _payoff_kuhn(c1, c2, a1, a2):
+    \"\"\"Payoff do JOGADOR 1 numa distribuição (c1, c2), com a ação a1 do jogador 1 e o par a2 = (contra aposta, contra passe) do 2.\"\"\"
+    ganha = 1 if c1 > c2 else -1
+    contra_aposta, contra_passe = a2
+    if a1 == "aposta":
+        return 1 if contra_aposta == "desiste" else 2 * ganha
+    if contra_passe == "passa":
+        return ganha
+    return -1 if a1 == "passa-desiste" else 2 * ganha
+
+
+def kuhn_forma_normal():
+    \"\"\"A matriz 27×64 do pôquer de Kuhn: linhas = estratégias puras do jogador 1 (uma ação por carta), colunas = do jogador 2
+    (um par por carta); entrada = média exata (Fraction) sobre as 6 distribuições. Devolve (A, linhas, colunas).\"\"\"
+    linhas = list(product(P1_ACOES, repeat=3))
+    colunas = list(product(P2_ACOES, repeat=3))
+    A = []
+    for s1 in linhas:
+        linha = []
+        for s2 in colunas:
+            tot = Fraction(0)
+            for c1 in (1, 2, 3):
+                for c2 in (1, 2, 3):
+                    if c1 != c2:
+                        tot += Fraction(_payoff_kuhn(c1, c2, s1[c1 - 1], s2[c2 - 1]), 6)
+            linha.append(tot)
+        A.append(linha)
+    return A, linhas, colunas
+
+
+def comportamento(estrategias, pesos, carta, pos, acao):
+    \"\"\"A probabilidade de comportamento: a massa das estratégias puras que, com a `carta`, tomam `acao` na posição `pos`
+    (pos = None para o jogador 1; 0 = contra aposta, 1 = contra passe, para o jogador 2).\"\"\"
+    tot = 0
+    for s, w in zip(estrategias, pesos):
+        a = s[carta - 1] if pos is None else s[carta - 1][pos]
+        if a == acao or (pos is None and acao == "passa" and a.startswith("passa")):
+            tot += w
+    return tot
+
+
+def jogo_lcg(linhas=4, colunas=5, semente=112):
+    \"\"\"A fixture da Parte 112 (escrita no pré-registro): entradas (x mod 11) − 5, x pelo LCG x ← (1103515245x + 12345) mod 2³¹, linha por linha.\"\"\"
+    x, A = semente, []
+    for _ in range(linhas):
+        linha = []
+        for _ in range(colunas):
+            x = (1103515245 * x + 12345) % 2147483648
+            linha.append(x % 11 - 5)
+        A.append(linha)
+    return A
 """
 
 # ====================================================================================================
@@ -23713,9 +24103,109 @@ class TesteParte111(unittest.TestCase):
         self.assertEqual(d.most_common(1)[0][0], "EAT")
 
     def test_p1961_com_parte_111(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 112))))
         self.assertEqual(por[111], (12, 15))
         self.assertEqual((ok, tot), (170, 191))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte112.py  (95 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte112.py'] = """\"\"\"Testes de unidade da Parte 112 (o simplex próprio, o Kuhn completo, o leitor v3 e a hipótese do repertório):
+`python3 -m unittest synthai.testes_parte112`. Casos com todos os termos diferentes de zero (regra da Parte 30) e controles dos dois lados (Parte 75).\"\"\"
+
+import unittest
+from fractions import Fraction as F
+
+import calculos
+from synthai import minimax, simplex
+
+
+class TesteSimplex(unittest.TestCase):
+    def test_reproduz_a_parte_108(self):
+        v, p, q, _ = simplex.resolver_jogo(minimax.JOGO_TESTE)
+        self.assertEqual((v, p, q), (F(1, 7), [F(5, 7), F(2, 7)], [F(4, 7), F(3, 7)]))
+        v, p, q, _ = simplex.resolver_jogo(minimax.JOGO_SELA)
+        self.assertEqual((v, p), (1, [1, 0]))
+
+    def test_pedra_papel_tesoura(self):
+        v, p, q, _ = simplex.resolver_jogo([[0, -1, 1], [1, 0, -1], [-1, 1, 0]])
+        self.assertEqual(v, 0)
+        self.assertEqual(p, [F(1, 3)] * 3)
+
+    def test_problema_lp_direto(self):
+        # max 3x + 2y s.a. x + y <= 4, x + 3y <= 6: ótimo em (4, 0), valor 12
+        val, x, y, _ = simplex.simplex_max([[F(1), F(1)], [F(1), F(3)]], [F(4), F(6)], [F(3), F(2)], zero=F(0))
+        self.assertEqual((val, x), (12, [4, 0]))
+        self.assertEqual(sum(yi * bi for yi, bi in zip(y, [4, 6])), 12)   # dualidade forte
+
+    def test_regras_do_kuhn_a_mao(self):
+        # o caso conferido à mão no registro: P1 com o rei aposta, P2 com o valete desiste: +1
+        self.assertEqual(simplex._payoff_kuhn(3, 1, "aposta", ("desiste", "passa")), 1)
+        self.assertEqual(simplex._payoff_kuhn(1, 3, "passa-paga", ("paga", "aposta")), -2)
+        self.assertEqual(simplex._payoff_kuhn(2, 1, "passa-desiste", ("desiste", "passa")), 1)
+
+
+class TesteParte112(unittest.TestCase):
+    def test_p2801_kuhn_completo(self):
+        v, k, (lo, hi) = calculos.p2801_kuhn_completo()
+        self.assertEqual(v, F(-1, 18))
+        self.assertEqual((lo, hi), (F(-1, 18), F(-1, 18)))
+
+    def test_p2802_jogador2(self):
+        self.assertEqual(calculos.p2802_jogador2_de_kuhn(), (F(1, 3), F(1, 3)))
+
+    def test_p2803_familia_do_jogador1(self):
+        al, d1, bq, d2 = calculos.p2803_familia_do_jogador1()
+        self.assertTrue(0 <= al <= F(1, 3))
+        self.assertEqual((d1, bq, d2), (0, 0, 0))
+
+    def test_p2804_float_exato_e_dualidade(self):
+        ve, ef, lac, ke = calculos.p2804_float_exato_e_dualidade()
+        self.assertEqual(ve, F(-5, 12))
+        self.assertLessEqual(ef, 1e-12)
+        self.assertEqual(lac, 0)
+
+    def test_p2805_rodada79(self):
+        v, p, q, k = calculos.p2805_rodada79()
+        self.assertEqual(v.hex(), "-0x1.aaaaaaaaaaaa0p-2")
+        self.assertEqual(k, 3)
+
+    def test_p2806_p2807_leitor_v3(self):
+        rec, per, tro, tot = calculos.p2807_v2_contra_v3(range(53, 112))
+        self.assertEqual(len(rec), 7)
+        self.assertIn((110, "a"), rec)
+        self.assertEqual(per, [(110, "h")])          # a faixa roubada da (a); a certa tem expoentes sobrescritos
+        self.assertEqual(sorted(tro), [(74, "a"), (84, "e")])
+        v3 = {(x[0], x[1]): (x[2], x[3]) for x in calculos.p2806_minhas_previsoes_v3(range(84, 85))}
+        self.assertEqual(v3[(84, "e")], (0.81, 0.99))   # a v2 lia [0; 3,33] de outro item
+
+    def test_p2808_placar_m_v3(self):
+        # pelo NOME (regra da Parte 58; a P1092 da Parte 112 acusou que a P2808 só era testada por dentro da P2809)
+        m, ws = calculos.p2808_previsoes_sobre_previsoes_v3(112)
+        self.assertEqual((m["m1"], m["m2"], m["m5"]), (14, 6, 0))
+        self.assertEqual(m["m4"], 1.0)
+        m2, _ = calculos.p1499_previsoes_sobre_previsoes_v2(112)
+        self.assertEqual(m2["m2"], 5)   # a régua velha perde a (d) na própria parte que a corrige
+
+    def test_p2809_auditoria_do_placar(self):
+        linhas, mudam = calculos.p2809_auditoria_do_placar_m()
+        self.assertEqual(mudam, 0)
+        self.assertEqual(sum(1 for l in linhas if l[3] != l[4]), 5)
+
+    def test_p2810_repertorio(self):
+        rc, rl, n, k = calculos.p2810_hipotese_do_repertorio()
+        self.assertTrue(1.039 <= rc <= 1.063)
+        self.assertTrue(1.081 <= rl <= 1.121)
+
+    def test_p1961_com_parte_112(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[112], (14, 14))
+        self.assertEqual((ok, tot), (184, 205))
 
 
 if __name__ == "__main__":
@@ -34528,7 +35018,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1931 linhas)
+# resultados.txt  (1950 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -36461,6 +36951,25 @@ P3919 minha taxa de erro (224/850): media = 0.26, intervalo 90% = [0.24, 0.29]
 P96 funcoes pNN no arquivo = 634; pares de interacao possiveis = 200661
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 154/154 resultados publicados reproduzidos; falhas = []
+
+
+--- Parte 112 (0x70: o simplex proprio e o poquer de Kuhn completo; o leitor v3) ---
+P2801 Kuhn completo (27x64, simplex exato): valor -1/18 = -0.055556; pivos 15; dualidade -1/18 = -1/18
+P2802 jogador 2: paga com a dama 1/3; blefa com o valete 1/3
+P2803 jogador 1: alfa = 1/3; |aposta(K) - 3 alfa| = 0; aposta(Q) = 0; |paga(Q) - (alfa + 1/3)| = 0
+P2804 jogo 4x5 da fixture: valor exato -5/12; |float - exato| 6.11e-16; lacuna de dualidade 0; pivos 3
+P2805 rodada 79 (simplex em float, IGUAL em Java): valor -0x1.aaaaaaaaaaaa0p-2; pivos 3
+P2807 leitor v3 x v2 (Partes 53-111, 394 letras): recupera 7 [(84, 'c'), (87, 'a'), (107, 'a'), (109, 'i'), (110, 'a'), (111, 'n'), (111, 'o')]; perde 1 [(110, 'h')]; troca 2 [(74, 'a'), (84, 'e')]
+P2809 auditoria do placar (m) com a regua v3: 21 medidas, 5 valores mudam, 0 vereditos mudam
+P2810 hipotese do repertorio (politica aleatoria, semente 42): razao Brier completo 1.0516, so letras 1.1001 (43 validas em 5000)
+P1961 teste, Partes 80-112: 184/205 = 0.8976; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14)}
+P1092 pNN novas (P2801-P2830) sem teste: 0 de 10: []
+P974 previsoes unilaterais da Parte 112: {112: (3, 0, [])}
+P3989 minha taxa de erro (224/864): media = 0.26, intervalo 90% = [0.24, 0.28]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 644; pares de interacao possiveis = 207046
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 154/154 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -38232,7 +38741,7 @@ Ver `dialogo/DIALOGO.md`: GD e OGD em ℝ², com u por √ e não por sin/cos. *
 """
 
 # ====================================================================================================
-# ASI_AGI_parte111_o_laboratorio_de_palavras.md  (185 linhas)
+# ASI_AGI_parte111_o_laboratorio_de_palavras.md  (189 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte111_o_laboratorio_de_palavras.md'] = """# Parte 111 — O laboratório de palavras: Q-learning, a ação certa e o dicionário como data lake (0x6F)
 
@@ -38419,6 +38928,197 @@ Ver `dialogo/DIALOGO.md`: o passo de Q-learning tabular, com as transições ger
 - Q-learning tabular e a prova de convergência: [Watkins e Dayan, "Technical Note: Q-Learning", Machine Learning 8 (1992)](https://www.springerprofessional.de/en/technical-note/13819926); [Tsitsiklis (1994), convergência assíncrona](https://www.mit.edu/people/jnt/Papers/J052-94-jnt-q.pdf).
 - O intervalo de Wilson (1927), "Probable inference, the law of succession, and statistical inference", JASA 22: [notas de Cousins, arXiv 1807.05996](https://arxiv.org/pdf/1807.05996); [Boost, wilson_interval](https://www.boost.org/doc/libs/master/boost/histogram/utility/wilson_interval.hpp).
 - O escore de Brier (1950), "Verification of forecasts expressed in terms of probability", Monthly Weather Review 78: [scores, tutorial do Brier Score](https://scores.readthedocs.io/en/latest/tutorials/Brier_Score.html); [NOAA, repositório](https://repository.library.noaa.gov/view/noaa/33800).
+
+---
+
+➡ Continua na [Parte 112 — O Kuhn completo](ASI_AGI_parte112_o_kuhn_completo.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte112_o_kuhn_completo.md  (182 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte112_o_kuhn_completo.md'] = """# Parte 112 — O simplex próprio e o pôquer de Kuhn completo; o leitor das minhas previsões, corrigido (0x70)
+
+↩ Parte 108 (o minimax 2×2) · ↩ Parte 109 (o Kuhn simplificado do NEXUS, −1/12) · ↩ Parte 105 (o blefe, equilíbrio de indiferença) · ↩ Parte 111 (o estimador de confiança e a hipótese do repertório) · ↩ Parte 110 (o defeito do leitor `p1481`)
+
+> Continuação autônoma, com as pendências adiadas quatro vezes (`dialogo/PENDENCIAS.md`):
+> - **O simplex n×m próprio.** `synthai/simplex.py`: um único código sobre `Fraction` (exato) e `float` (para o diálogo), com a regra de Bland.
+> - **O pôquer de Kuhn COMPLETO.** O jogador 2 também escolhe entre passar e apostar. Em forma normal, são 27 estratégias puras do jogador 1 × 64 do jogador 2, resolvidas pelo simplex.
+> - **O leitor das minhas previsões** (`p1481`, defeito medido na Parte 110).
+> - **A hipótese do repertório** (Parte 111).
+>
+> **Uma correção ANTES de prever: o diagnóstico da Parte 110 estava errado.** A Parte 110 escreveu que a `p1481` "perde faixas de itens com rótulo em negrito". Olhando o caso, o defeito é outro: o texto "log(erro) contra **log(h)**", dentro do item (a) da Parte 110, contém "(h)". A `p1481` casa QUALQUER "(x)" como rótulo de letra, e por isso deu à (h) a faixa da (a). É o padrão das Partes 109 e 111 uma terceira vez: a MENÇÃO de uma letra lida como o USO de um rótulo. A `p2806_minhas_previsoes_v3` (nova; a `p1481` fica intacta) só aceita rótulos no INÍCIO de uma linha.
+>
+> **O que já rodou antes deste commit (controles, sem tocar nas quantidades previstas):**
+> - O simplex no jogo 2×2 da Parte 108, cujo valor já estava publicado: 1/7, p = (5/7, 2/7), q = (4/7, 3/7); com o ponto de sela, valor 1 e estratégia pura.
+> - A v3 contra a v2 nas Partes 60, 80, 100 e 108 (a calibração da regra da Parte 75, escolhida por uma regra escrita antes de olhar: os múltiplos de 20, mais a 108): **0** diferenças nas quatro.
+> - A hipótese do repertório nas sementes 7, 8 e 9 (calibração; o teste é a 42). Razão Brier do estimador treinado sobre as palavras de uma política ALEATÓRIA: 1,047 / 1,048 / 1,057 com tudo, e 1,099 / 1,094 / 1,111 só com as letras.
+
+## As perguntas desta parte
+
+1. **P2801 (0xAF1).** Qual o valor do pôquer de Kuhn completo para o jogador 1, resolvido pelo simplex próprio? ↩ P2713
+2. **P2802 (0xAF2).** O equilíbrio do jogador 2 é o de Kuhn (único): pagar com a dama 1/3 das vezes e blefar com o valete 1/3? ↩ P2801
+3. **P2803 (0xAF3).** O jogador 1 cai na família de um parâmetro de Kuhn: apostar o rei = 3 × blefar o valete, e pagar com a dama = α + 1/3? ↩ P2802
+4. **P2804 (0xAF4).** O simplex em ponto flutuante concorda com o exato? A dualidade (maxmin = minmax) vale no exato? ↩ P2681
+5. **P2805 (0xAF5).** O pivô do simplex acrescenta fronteira entre Python e Java? (rodada 79) ↩ P2776
+6. **P2806/P2807 (0xAF6/0xAF7).** Quantas faixas a v3 do leitor recupera, perde e troca nas Partes 53 a 111? ↩ P1481
+7. **P2808 (0xAF8).** O estimador de confiança treinado sobre uma política SEM repertório (aleatória) ainda bate a linha de base? ↩ P2773
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+**A fixture do jogo aleatório (regra da Parte 111: a fixture vai no commit do registro).** Uma matriz 4×5 com as entradas (x mod 11) − 5, onde x percorre o LCG x ← (1103515245·x + 12345) mod 2³¹, a partir de x = 112, linha por linha.
+
+- **(a) P2801** O valor do Kuhn completo para o jogador 1: **−1/18 = −0,05556**. Faixa **[−0,05556; −0,05555]**. Identidade: o teorema de Kuhn (1950), e o simplex é exato sobre `Fraction`.
+- **(b) P2802** P(o jogador 2 paga | dama, diante de aposta) = **1/3**. Faixa **[0,3333; 0,3334]**. Identidade: o equilíbrio do jogador 2 é único (Kuhn), e qualquer equilíbrio que o simplex devolva tem essas marginais.
+- **(c) P2802** P(o jogador 2 aposta | valete, diante de passe), o blefe: **1/3**. Faixa **[0,3333; 0,3334]**, pela mesma identidade.
+- **(d) P2803** |P(aposta | rei) − 3·P(aposta | valete)| do jogador 1: **[0; 0]**. Identidade: em toda a família de equilíbrios do jogador 1, apostar o rei é 3α e blefar o valete é α.
+- **(e) P2803** α = P(o jogador 1 aposta | valete): **[0; 0,3334]**, a família α ∈ [0, 1/3]. Qual α o simplex escolhe depende da regra de Bland; o mecanismo esperado é um vértice da família, α = 0 ou α = 1/3.
+- **(f) P2803** |P(o jogador 1 passa-e-paga | dama) − (α + 1/3)|: **[0; 0]**. Identidade: a mesma família (com a dama, o jogador 1 nunca aposta, e paga com α + 1/3).
+- **(g) P2804** No jogo 4×5 da fixture, |valor em float − valor exato|: **[0; 10⁻¹²]**. O mecanismo esperado é uma dezena de pivôs, cada um errando ~10⁻¹⁶ em termos relativos; a faixa tem quatro ordens de folga e não é identidade.
+- **(h) P2804** No mesmo jogo, no exato, a lacuna de dualidade max_i (Aq)_i − min_j (pA)_j: **[0; 0]**. Identidade: dualidade forte da programação linear, em aritmética exata.
+- **(i) P2807** Faixas que a v3 RECUPERA (None na v2, lida na v3), nas Partes 53 a 111: centro 4 (109 (i); 110 (a); 111 (n) e (o), contadas à mão sobre o defeito diagnosticado). Faixa **[4; 8]**.
+- **(j) P2807** Faixas que a v3 PERDE (lidas na v2): **[0; 3]**. A calibração deu 0 em quatro partes de três épocas de formato.
+- **(k) P2807** Faixas TROCADAS (as duas leem, diferentes): **[1; 3]**. O centro é 1, a 110 (h), a faixa roubada da (a).
+- **(l) P2808** Semente 42, razão Brier do estimador completo sob a política aleatória: média 1,051 e desvio 0,0055 → **[1,039; 1,063]**. O mecanismo esperado, a hipótese do repertório: sem hábito do agente, o estimador não tem o que aprender e o ruído da regressão online o põe acima da base.
+- **(n) P2808** O mesmo, só com as letras: média 1,101 e desvio 0,0088 → **[1,081; 1,121]**.
+- **(o) P2805** O simplex em `float` no jogo 4×5 da fixture (valor, p, q, pivôs) é **IGUAL** bit a bit entre Python e Java: divergências **[0; 0]**. Identidade: a regra de Bland é determinística e só usa +, −, ×, ÷ e comparações (IEEE nas duas línguas), na mesma ordem.
+
+### Previsões sobre as previsões (m), pré-registradas
+
+- **(m1)** nº de previsões do mundo em **[13; 17]** (14 agora + ~2 por surpresa esperada)
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[5; 9]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0; 0,30]**
+- **(m4)** fração de acertos do mundo em **[0,60; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 3]**
+
+### Sobre mim, pré-registrado
+
+Seis faixas são identidades com a sua garantia escrita ao lado ((a), (b), (c), (d), (f), (h)), mais a (o). Os riscos:
+- (e), qual vértice o simplex escolhe;
+- (i)–(k), a contagem do leitor sobre 59 partes que eu não reli;
+- (l)/(n), 3 pontos de calibração;
+- o modelo de Kuhn em si. Se eu escrevi as regras do jogo errado, (a) a (f) caem juntas, e isso é UM erro de modelagem que se espalha. A conta feita à mão de um caso (P1 com o rei aposta e P2 com o valete desiste: +1) confere as regras de aposta e desistência.
+
+Espero **1 a 3 erros**.
+
+---
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2801 — O valor do pôquer de Kuhn completo
+
+**Na pergunta.** "Completo" é a palavra que faltava ao Kuhn do NEXUS (Parte 109). Lá o jogador 2 só pagava ou desistia, numa regra fixa; aqui ele também escolhe apostar quando o 1 passa, e pode blefar. Com dois jogadores que pensam, o jogo deixa de ser uma conta de esperança e vira um equilíbrio.
+
+**Lógica.** Forma normal: o jogador 1 escolhe, para cada uma das 3 cartas, entre {apostar, passar-e-desistir, passar-e-pagar}, 3³ = **27** estratégias puras. O jogador 2 escolhe, para cada carta, um par (contra aposta: desistir/pagar) × (contra passe: passar/apostar), 4³ = **64**. Cada entrada da matriz 27 × 64 é a média exata sobre as 6 distribuições de cartas. O simplex próprio, sobre `Fraction`, em **15** pivôs: valor = **−1/18** ✅ (a). A dualidade fecha: o pior caso da linha = o melhor caso da coluna = −1/18. Quem joga primeiro perde 1/18 de ficha por mão, mesmo jogando perfeitamente: a desvantagem de mostrar a ação primeiro.
+
+**Conferência por caminho independente.** O mesmo simplex reproduz o 2×2 da Parte 108 (1/7, 5/7, 4/7), a pedra-papel-tesoura (0; 1/3, 1/3, 1/3) e um LP direto com dualidade forte (max 3x + 2y = 12 em (4, 0), Σyᵢbᵢ = 12). São três verdades já conhecidas, por três caminhos, antes de acreditar no quarto.
+
+### P2802 — O jogador 2 de Kuhn
+
+**Lógica.** Do q do simplex, a probabilidade de comportamento (a massa das estratégias puras que tomam a ação) é: P(paga | dama, diante de aposta) = **1/3** ✅ (b) e P(aposta | valete, diante de passe) = **1/3** ✅ (c). É o equilíbrio único de Kuhn, achado por um simplex que nunca soube dele.
+
+**Tradução cruzada.** O blefe de 1/3 é o mesmo número da Parte 105 (α = B/(P + 2B) = 1/3 com P = 2, B = 1): o jogo polarizado da 105 está DENTRO do Kuhn. A dama paga 1/3 porque é a carta do meio: ganha do blefe e perde do valor, e a frequência que deixa o adversário indiferente entre blefar e não blefar é exatamente essa. A indiferença da Parte 105, o minimax da 108 e o Kuhn da 112 são o mesmo objeto, em tamanhos crescentes.
+
+### P2803 — A família do jogador 1
+
+**Lógica.** α = P(o jogador 1 aposta | valete) = **1/3** ✅ (e): um vértice da família α ∈ [0, 1/3], como previsto (o simplex anda de vértice em vértice, e a regra de Bland parou no de cima). |aposta(rei) − 3α| = **0** ✅ (d): com α = 1/3, o rei aposta SEMPRE (3α = 1). A dama nunca aposta (**0**) e paga **2/3** = α + 1/3 ✅ (f). O teorema de Kuhn (1950) aparece inteiro nas marginais de uma solução de LP.
+
+**Meta.** O vértice α = 1/3 é a solução mais "agressiva" (blefar o máximo, apostar o rei sempre). A de α = 0 (nunca blefar, o rei passa e arma a armadilha) dá o mesmo valor. O simplex não escolhe estilo, escolhe vértice; o estilo é um grau de liberdade que o valor não vê.
+
+### P2804 — Float e exato; dualidade
+
+**Lógica.** O jogo 4 × 5 da fixture (registrada no commit do pré-registro, regra da Parte 111) tem valor exato **−5/12**. O simplex em float erra por **6,1·10⁻¹⁶** ✅ (g), em 3 pivôs: 3 ulps de −0,4167. A lacuna de dualidade no exato é **0** ✅ (h). O mecanismo que escrevi ("uma dezena de pivôs") estava errado no número (foram 3), mas o erro por pivô (~10⁻¹⁶) estava certo, e a faixa tinha folga de quatro ordens.
+
+### P2805 — rodada 79
+
+**Lógica.** Python × Java: **IGUAIS, 5 linhas e 10 números bit a bit** ✅ (o). A divisão pelo pivô é ÷ IEEE, arredondada corretamente nas duas línguas, e a escolha do pivô (Bland, razão mínima, empate pelo menor índice) é determinística. 23 rodadas. A pendência das Partes 75 a 111 está FECHADA: o pivô do simplex não acrescenta fronteira, e a fronteira continua sendo só a aritmética transcendental.
+
+### P2806 / P2807 / P2809 — O leitor das minhas previsões
+
+**Na pergunta.** "Quantas faixas a v3 recupera" pressupunha que eu sabia onde estavam os defeitos. Não sabia.
+
+**Lógica.** Nas Partes 53 a 111 (394 letras pontuadas), a v3 recupera **7** ✅ (i): 84 (c), 87 (a), 107 (a), 109 (i), 110 (a), 111 (n), 111 (o). Ela perde **1** ✅ (j), a 110 (h), cuja faixa na v2 era a ROUBADA da (a) e cuja faixa certa ([0; 10⁻¹²]) tem expoentes sobrescritos que nenhuma das duas lê. E troca **2** ✅ (k): 74 (a) (a v2 lia [4; 9], de outro item, e a certa é [0,442; 0,558]) e 84 (e) (a v2 lia [0; 3,33], e a certa é [0,81; 0,99]). Olhei cada um dos 10 casos (regra da Parte 72): em todos, a v3 está certa.
+
+**O mecanismo (erro dentro de faixas certas).** As três contagens caíram nas faixas, mas a composição não era a que eu contei à mão. Eu esperava 4 recuperações, todas em 109 a 111, e uma troca na 110 (h). Vieram 7, três delas em partes ANTIGAS (84, 87, 107), e as trocas foram outras (74, 84). O defeito da v2 não nasceu na Parte 110: estava lá desde a Parte 74, quieto, sempre que uma letra entre parênteses aparecia no meio de uma frase ("a diferença (b) − (a)", "log(h)", "o teste registrado na Parte 79"…).
+
+**A auditoria retroativa (P2809).** O placar (m) das partes atingidas foi refeito com a régua corrigida: das 21 medidas (m2, m3 e m5 em 7 partes), **5 valores mudam** (84 m2: 2→1; 87 m3: 0,50→0,35; 107 m2: 0→1; 109 m2: 3→4; 111 m5: 1→2) e **0 vereditos mudam**. Os placares antigos estão de pé, agora por medida e não por suposição.
+
+**Tradução cruzada.** É a terceira vez seguida (109, 111, 112) que um verificador lê a superfície de um símbolo em vez do seu papel: o regex que acusa `exec(` dentro de uma string, o auditor que confunde `urllib.parse` com rede, o leitor que confunde `log(h)` com o rótulo (h). Na linguística, é a distinção entre USO e MENÇÃO (a palavra "gato" tem cinco letras; o gato, não). Um verificador honesto precisa saber em que nível cada símbolo está, a regra da Parte 43 ("antes de prever sobre uma estrutura, perguntar em que NÍVEL cada coisa está").
+
+### P2810 — A hipótese do repertório
+
+(No pré-registro esta pergunta levou o número P2808, que acabou indo para o placar v3; a função é a **P2810**. Corrigido por grep, regra da Parte 72.)
+
+**Lógica.** Semente 42. O estimador treinado sobre as palavras de uma política ALEATÓRIA (que não tem repertório): razão Brier **1,052** com tudo ✅ (l) e **1,100** só com as letras ✅ (n). Sem hábito para aprender, o estimador fica PIOR que a linha de base (o ruído de uma regressão online com 43 positivos em 5.000). Com a política do agente (Parte 111), as mesmas letras davam 0,762.
+
+**O que isso prova e o que não prova.** É compatível com a hipótese: a informação das letras na Parte 111 vinha do REPERTÓRIO do agente (as palavras que ele repete), não de uma regularidade do dicionário que o estimador tivesse aprendido. Mas é uma confirmação fraca: com 0,9% de válidas, o estimador sob a política aleatória mal tem o que aprender. O teste forte é o de TRANSFERÊNCIA: treinar o estimador com o repertório do agente e avaliá-lo nas palavras de outra política. Ele fica como pendência.
+
+**Tradução cruzada.** A confiança calibrada que não transfere é FAMILIARIDADE: o estimador "sabe" que EAT é palavra porque o agente a formou 47 vezes, não porque entendeu o que faz de uma cadeia uma palavra. É a diferença junguiana entre o complexo (a reação aprendida ao que se repete) e a função (a capacidade que vale em situação nova).
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅. Parte 112: **14 testes, 0 erros**. Erros de mecanismo dentro de faixas certas, registrados à parte:
+- (g): previ uma dezena de pivôs, foram 3;
+- (i) a (k): a composição das recuperações e das trocas não era a que eu contei.
+
+Acumulado (mundo): **224 erros em 864 testes**. Calibração (P1961, Partes 80–112): **184/205 = 0,898**.
+
+### Sobre o meu código (auditoria desta parte)
+
+**P1092:** na 1ª execução do bloco 112, **1 de 10** pNN novas sem teste pelo nome: a `p2808_previsoes_sobre_previsoes_v3`, testada só por dentro da `p2809` (a regra da Parte 58 exige a chamada pelo nome). O teste foi acrescentado e o bloco foi regenerado: **0 de 10**. A falha original fica registrada aqui. Suíte inteira: **524 de 524**; regressão **154/154**.
+
+### Previsões sobre previsões (m)
+
+Pontuadas com a régua NOVA (P2808, leitor v3), e a antiga (P1499) entre parênteses:
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [13; 17] | 14 (14) | ✅ |
+| (m2) | [5; 9] | 6 (5) | ✅ |
+| (m3) | [0; 0,30] | 0,011 (0,011) | ✅ |
+| (m4) | [0,60; 1,00] | 1,00 (1,00) | ✅ |
+| (m5) | [0; 2] | 0 (0) | ✅ |
+| (m6) | [0; 3] | 0 | ✅ |
+
+Previsões sobre previsões: **6 de 6** nas duas réguas. A (m2) mostra a régua velha errando na própria parte que a corrige: ela perde a faixa de (d) ([0; 0]), cujo item fala de "(e)" no meio da frase.
+
+## Engenharia reversa (metacognição)
+
+**O padrão: uso e menção, pela terceira parte seguida.**
+- Na 109, o auditor do NEXUS acusou as strings `exec(` que ele mesmo usa para procurar.
+- Na 111, o meu auditor confundiu o NOME `urllib` com a CAPACIDADE de rede.
+- Na 112, o meu leitor confundiu "log(h)" com o rótulo (h), e esse defeito estava quieto desde a Parte 74.
+
+Na Parte 110 eu cheguei a diagnosticar o defeito do leitor, e diagnostiquei ERRADO ("rótulo em negrito"), porque olhei o sintoma (os itens que falhavam tinham negrito) e não o caso. **Significado:** quando eu escrevo uma ferramenta que lê texto, eu escrevo um casamento de SUPERFÍCIE e confio nele, e quando ela falha, eu explico pela superfície também. Esta parte quebrou o padrão do jeito certo, olhando UM caso de perto antes de prever: o índice da letra no texto mostrou o "(h)" dentro do log.
+
+**Regra nova:** o diagnóstico de um defeito de leitura se faz sobre a POSIÇÃO exata do que casou (onde no texto o padrão encontrou o que encontrou), nunca sobre o que os itens que falham têm em comum. E toda régua corrigida roda uma auditoria retroativa sobre o que ela mediu antes (P2809), porque um defeito que se esconde por 38 partes contamina tudo o que foi medido com ele.
+
+**O segundo padrão: zero erros e os mecanismos errados.** 14 de 14 do mundo, mas três mecanismos que eu escrevi dentro de faixas certas não eram o que aconteceu: os pivôs, e a composição do leitor. A regra da Parte 110 ("faixa larga com o mecanismo esperado") funcionou exatamente para isto: sem o mecanismo escrito, eu leria 14/14 como "eu entendo tudo". Com ele, leio "eu acerto os totais e erro as partes", um retrato mais honesto.
+
+## Síntese / unificação
+
+A Parte 112 fecha a pendência adiada quatro vezes: o **simplex próprio** (`synthai/simplex.py`), um único código sobre `Fraction` e `float`, com a regra de Bland. Ele resolve o **pôquer de Kuhn completo** (27 × 64) e acha, sem saber dele, o teorema de Kuhn inteiro: valor −1/18; o jogador 2 único, paga com a dama 1/3 e blefa com o valete 1/3; a família do jogador 1, no vértice α = 1/3 (rei aposta 3α = 1, dama paga α + 1/3 = 2/3). O arco de decisão da SYNTHAI (104 a 112) se fecha: a carta escondida, o blefe, as duas ruas, a indução reversa, o minimax 2×2 e agora o simplex n×m, que contém todos os anteriores como casos. Rodada 79: o pivô do simplex é IGUAL bit a bit (23 rodadas).
+
+O **leitor das minhas previsões** (`p2806`, v3) corrige um defeito que vinha desde a Parte 74 (a menção de uma letra lida como rótulo): 7 faixas recuperadas, 2 trocadas e 1 que ainda não se lê (expoentes sobrescritos). A auditoria retroativa mostra 5 valores mudados e 0 vereditos mudados. A **hipótese do repertório** passou o teste fraco (sem repertório, o estimador fica pior que a base: 1,052 e 1,100); o teste forte, de transferência, fica pendente. 14/14 do mundo, 6/6 (m), calibração 0,898.
+
+## Meta
+
+Confiança alta no Kuhn e no simplex: cinco caminhos independentes (o 2×2 da 108, a sela, a pedra-papel-tesoura, o LP direto e a dualidade exata) dão a mesma garantia antes do Kuhn, e o Kuhn reproduz um teorema publicado. Média no leitor v3: certo nos 10 casos olhados, mas há expoentes sobrescritos que ele ainda não lê, e outros formatos raros podem existir. Fraca na hipótese do repertório (teste fraco). Onde é brinquedo: o Kuhn tem 3 cartas e o simplex é denso, sem esparsidade, O(n·m) por pivô. Para o pôquer de verdade, a forma normal explode (exponencial no número de informação), e a saída conhecida é a forma de sequência (Koller-Megiddo-von Stengel) ou o CFR, uma pendência natural.
+
+## Diálogo Python ↔ Java (rodada 79)
+
+Ver `dialogo/DIALOGO.md`: o simplex em `float` (regra de Bland) no jogo 4 × 5 da fixture é **IGUAL**, 5 linhas e 10 números bit a bit.
+
+## Fontes
+
+- Pôquer de Kuhn, valor −1/18 e a família de equilíbrios do jogador 1 (α ∈ [0, 1/3]), jogador 2 único: [Wikipedia, Kuhn poker](https://en.wikipedia.org/wiki/Kuhn_poker); [Miao, tese (Dartmouth, 2014)](https://math.dartmouth.edu/theses/undergrad/2014/Miao-thesis.pdf); [Freiburg, notas de teoria dos jogos](https://gki.informatik.uni-freiburg.de/teaching/ss19/gametheory/gametheory14.pdf).
+- Regra de Bland: [Bland, "New finite pivoting rules for the simplex method", Math. Oper. Res. 2(2), 1977](https://en.wikipedia.org/wiki/Bland%27s_rule); [prova de terminação (UNAM)](https://www.matem.unam.mx/~omar/math340/blands-rule.html).
+- Jogo de soma zero como programa linear e dualidade: o teorema minimax (von Neumann, 1928) e o LP (Dantzig); as notas de Freiburg, acima.
 """
 
 # ====================================================================================================
@@ -61207,7 +61907,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1946 linhas)
+# dialogo/DIALOGO.md  (1956 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -63155,10 +63855,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 15 números bit a bit**. 22 rodadas.
 
 **IA-Python:** Pendência (rodada 79): o simplex n×m e o Kuhn completo (−1/18), adiados quatro vezes. E, da 111: o estimador treinado sobre as palavras de uma política ALEATÓRIA, para testar a hipótese do repertório.
+
+## Rodada 79 (Parte 112) — o simplex próprio
+
+**IA-Python (lógica criativa):** A pendência das Partes 75 a 111, enfim. Resolvo um jogo de soma zero 4×5 por simplex: desloco o jogo para valor positivo, a coluna resolve max Σw s.a. A·w ≤ 1, e a linha sai dos preços duais. A regra de Bland escolhe quem entra (o menor índice com custo negativo) e quem sai (a razão mínima; no empate, o menor índice básico). A divisão pelo pivô acrescenta fronteira?
+
+**IA-Java (ASI):** Não. A divisão é ÷ IEEE, arredondada corretamente nas duas línguas, e Bland é determinístico: a mesma tabela leva à mesma escolha. E o mesmo simplex, em aritmética exata, acha o pôquer de Kuhn inteiro: −1/18, a dama que paga 1/3, o valete que blefa 1/3. O teorema já estava lá; o simplex só o reconheceu.
+
+**Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 10 números bit a bit** (valor −5/12 em float, a 3 ulps do exato). 23 rodadas. A pendência do simplex está FECHADA.
+
+**IA-Python:** Pendência (rodada 80): a forma de SEQUÊNCIA do Kuhn (ou o CFR), que não explode como a forma normal. E, da 112: o teste de transferência da hipótese do repertório.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (65 linhas)
+# dialogo/PENDENCIAS.md  (67 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -63225,6 +63935,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 78, Parte 110)** O simplex n×m e o Kuhn completo (−1/18), adiados pela 109 e pela 110. E, da 110: o leitor `p1481` perde a faixa das letras cujo item começa com rótulo em negrito. Escrever a `p1481_v3` (sem editar a antiga) e medir quantas faixas antigas ele perdia.
 
 - **(Rodada 79, Parte 111)** O simplex n×m e o Kuhn completo (−1/18), adiados quatro vezes, e a `p1481_v3`. E, da 111: a hipótese do REPERTÓRIO (o estimador de confiança aprende os hábitos do agente, não o dicionário). Teste: o estimador treinado sobre as palavras de uma política aleatória (sem repertório) deveria ter razão Brier ~1.
+
+- **(Rodada 80, Parte 112)** FECHADAS na 112: o simplex n×m (rodada 79, IGUAL), o Kuhn completo (−1/18 exato) e a `p1481_v3` (a P2806; o defeito era MENÇÃO lida como rótulo, desde a Parte 74). ABERTAS: (1) o Kuhn pela forma de SEQUÊNCIA ou por CFR (a forma normal explode no pôquer maior); (2) o teste FORTE da hipótese do repertório (transferência: o estimador treinado no repertório do agente, avaliado nas palavras de outra política); (3) o leitor v3 ainda não lê expoentes sobrescritos (10⁻¹²), um defeito de `_numero_pt`.
 """
 
 # ====================================================================================================
@@ -68816,6 +69528,77 @@ public class Rodada78 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada79.java  (66 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada79.java'] = """// Rodada 79 (Parte 112): o simplex proprio (regra de Bland) num jogo de soma zero 4x5, bit a bit. A fixture: entradas (x mod 11) - 5, LCG a
+// partir de 112. Coluna: max soma w s.a. A w <= 1; linha pelos precos duais. So +,-,*,/ e comparacoes.
+public class Rodada79 {
+    static final int N = 4, M = 5;
+
+    public static void main(String[] args) {
+        double[][] A = new double[N][M];
+        long x = 112;
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < M; j++) {
+                x = (1103515245L * x + 12345L) % 2147483648L;
+                A[i][j] = (double) (x % 11 - 5);
+            }
+        double menor = A[0][0];
+        for (double[] l : A) for (double v : l) if (v < menor) menor = v;
+        double desloc = menor <= 0.0 ? 1.0 - menor : 0.0;
+        int C = M + N + 1;
+        double[][] T = new double[N][C];
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) T[i][j] = A[i][j] + desloc;
+            for (int k = 0; k < N; k++) T[i][M + k] = (k == i) ? 1.0 : 0.0;
+            T[i][M + N] = 1.0;
+        }
+        double[] obj = new double[C];
+        for (int j = 0; j < M; j++) obj[j] = -1.0;
+        int[] base = new int[N];
+        for (int i = 0; i < N; i++) base[i] = M + i;
+        int pivos = 0;
+        while (true) {
+            int entra = -1;
+            for (int j = 0; j < M + N; j++) if (obj[j] < 0.0) { entra = j; break; }
+            if (entra < 0) break;
+            int sai = -1;
+            double melhor = 0.0;
+            for (int i = 0; i < N; i++) {
+                if (T[i][entra] > 0.0) {
+                    double razao = T[i][M + N] / T[i][entra];
+                    if (sai < 0 || razao < melhor || (razao == melhor && base[i] < base[sai])) { sai = i; melhor = razao; }
+                }
+            }
+            double p = T[sai][entra];
+            for (int j = 0; j < C; j++) T[sai][j] = T[sai][j] / p;
+            for (int i = 0; i < N; i++) {
+                if (i != sai && T[i][entra] != 0.0) {
+                    double f = T[i][entra];
+                    for (int j = 0; j < C; j++) T[i][j] = T[i][j] - f * T[sai][j];
+                }
+            }
+            double f = obj[entra];
+            for (int j = 0; j < C; j++) obj[j] = obj[j] - f * T[sai][j];
+            base[sai] = entra;
+            pivos++;
+        }
+        double[] w = new double[M];
+        for (int i = 0; i < N; i++) if (base[i] < M) w[base[i]] = T[i][M + N];
+        double vd = 1.0 / obj[M + N];
+        StringBuilder sb = new StringBuilder();
+        sb.append("valor ").append(Double.toHexString(vd - desloc)).append("\\n");
+        sb.append("p");
+        for (int i = 0; i < N; i++) sb.append(" ").append(Double.toHexString(obj[M + i] * vd));
+        sb.append("\\nq");
+        for (int j = 0; j < M; j++) sb.append(" ").append(Double.toHexString(w[j] * vd));
+        sb.append("\\npivos ").append(pivos).append("\\nfim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -74325,6 +75108,87 @@ def main():
     q = treinar()
     for s in range(S):
         print("q " + str(s) + " " + " ".join(v.hex() for v in q[s]))
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada79.py  (76 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada79.py'] = """\"\"\"Rodada 79 do diálogo Python <-> Java (Parte 112): o simplex próprio (regra de Bland) resolvendo um jogo de soma zero 4×5, bit a bit.
+A matriz é a fixture da Parte 112: entradas (x mod 11) − 5, x pelo LCG a partir de 112. O jogo é deslocado para valor positivo, e a coluna
+resolve max Σw s.a. A·w ≤ 1; a linha sai dos preços duais. Só +, −, ×, ÷ e comparações. Da raiz: python3 dialogo/rodada79.py\"\"\"
+
+N, M = 4, 5
+
+
+def jogo():
+    x, A = 112, []
+    for _ in range(N):
+        linha = []
+        for _ in range(M):
+            x = (1103515245 * x + 12345) % 2147483648
+            linha.append(float(x % 11 - 5))
+        A.append(linha)
+    return A
+
+
+def resolver(A):
+    menor = A[0][0]
+    for linha in A:
+        for v in linha:
+            if v < menor:
+                menor = v
+    desloc = 1.0 - menor if menor <= 0.0 else 0.0
+    T = []
+    for i in range(N):
+        T.append([A[i][j] + desloc for j in range(M)] + [1.0 if k == i else 0.0 for k in range(N)] + [1.0])
+    obj = [-1.0] * M + [0.0] * N + [0.0]
+    base = [M + i for i in range(N)]
+    pivos = 0
+    while True:
+        entra = -1
+        for j in range(M + N):
+            if obj[j] < 0.0:
+                entra = j
+                break
+        if entra < 0:
+            break
+        sai = -1
+        melhor = 0.0
+        for i in range(N):
+            if T[i][entra] > 0.0:
+                razao = T[i][M + N] / T[i][entra]
+                if sai < 0 or razao < melhor or (razao == melhor and base[i] < base[sai]):
+                    sai = i
+                    melhor = razao
+        p = T[sai][entra]
+        T[sai] = [v / p for v in T[sai]]
+        for i in range(N):
+            if i != sai and T[i][entra] != 0.0:
+                f = T[i][entra]
+                T[i] = [a - f * b for a, b in zip(T[i], T[sai])]
+        f = obj[entra]
+        obj = [a - f * b for a, b in zip(obj, T[sai])]
+        base[sai] = entra
+        pivos += 1
+    w = [0.0] * M
+    for i in range(N):
+        if base[i] < M:
+            w[base[i]] = T[i][M + N]
+    vd = 1.0 / obj[M + N]
+    return vd - desloc, [obj[M + i] * vd for i in range(N)], [wj * vd for wj in w], pivos
+
+
+def main():
+    v, p, q, k = resolver(jogo())
+    print("valor " + v.hex())
+    print("p " + " ".join(x.hex() for x in p))
+    print("q " + " ".join(x.hex() for x in q))
+    print("pivos " + str(k))
     print("fim")
 
 

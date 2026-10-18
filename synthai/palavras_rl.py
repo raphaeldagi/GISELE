@@ -419,3 +419,21 @@ class EstimadorSoLetras(ConfidenceEstimator):
 
     def features(self, word, q_stop, max_len):
         return word_to_vector(word, self.dim) + [0.0, 0.0]
+
+
+# --- a hipótese do REPERTÓRIO (Parte 112) ---
+
+def estimador_sob_politica_aleatoria(cfg, dic, classe):
+    """O estimador de confiança treinado sobre as palavras de uma política ALEATÓRIA (sem repertório: um agente que nunca aprende, Q = 0).
+    Se o estimador da Parte 111 aprende os HÁBITOS do agente, aqui ele não tem hábito a aprender. Devolve (razão Brier estimador/base,
+    número de tentativas avaliadas, número de válidas)."""
+    env = WordGridEnv(cfg.tamanho, cfg.min_len, cfg.max_len, rng=random.Random(cfg.seed))
+    agent = QAgent(seed=cfg.seed + 1)
+    est = classe()
+    ps, ys = [], []
+    for _ in range(cfg.episodios):
+        _, valid, _, conf = run_episode(env, dic, agent, "random", learn=False, estimator=est, learn_estimator=True)
+        if conf is not None:
+            ps.append(conf)
+            ys.append(1.0 if valid else 0.0)
+    return brier(ps, ys) / brier(prequential_base_rate(ys), ys), len(ys), int(sum(ys))

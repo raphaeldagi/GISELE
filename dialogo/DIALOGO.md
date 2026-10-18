@@ -1944,3 +1944,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 15 números bit a bit**. 22 rodadas.
 
 **IA-Python:** Pendência (rodada 79): o simplex n×m e o Kuhn completo (−1/18), adiados quatro vezes. E, da 111: o estimador treinado sobre as palavras de uma política ALEATÓRIA, para testar a hipótese do repertório.
+
+## Rodada 79 (Parte 112) — o simplex próprio
+
+**IA-Python (lógica criativa):** A pendência das Partes 75 a 111, enfim. Resolvo um jogo de soma zero 4×5 por simplex: desloco o jogo para valor positivo, a coluna resolve max Σw s.a. A·w ≤ 1, e a linha sai dos preços duais. A regra de Bland escolhe quem entra (o menor índice com custo negativo) e quem sai (a razão mínima; no empate, o menor índice básico). A divisão pelo pivô acrescenta fronteira?
+
+**IA-Java (ASI):** Não. A divisão é ÷ IEEE, arredondada corretamente nas duas línguas, e Bland é determinístico: a mesma tabela leva à mesma escolha. E o mesmo simplex, em aritmética exata, acha o pôquer de Kuhn inteiro: −1/18, a dama que paga 1/3, o valete que blefa 1/3. O teorema já estava lá; o simplex só o reconheceu.
+
+**Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 10 números bit a bit** (valor −5/12 em float, a 3 ulps do exato). 23 rodadas. A pendência do simplex está FECHADA.
+
+**IA-Python:** Pendência (rodada 80): a forma de SEQUÊNCIA do Kuhn (ou o CFR), que não explode como a forma normal. E, da 112: o teste de transferência da hipótese do repertório.
