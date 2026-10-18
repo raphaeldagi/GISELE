@@ -72,6 +72,12 @@ Pela regra da Parte 110, uma faixa larga que acerta não confirma o mecanismo qu
 - **(n) P2773, ablação.** Na semente 42 e com o embutido, o estimador treinado com a variável Q(PARAR) ZERADA (fixa em 0 nas features; o resto igual). Se o mecanismo de (f) estiver certo, só o vetor da palavra sobra, e ele não sabe se uma palavra de 3 a 5 letras está numa lista de 493. A razão Brier volta para perto de 1: **[0,80; 1,10]**. Se ficar abaixo de 0,80, o vetor da palavra carrega informação e o mecanismo de (f) está errado.
 - **(o) P2771, o mecanismo de (a).** Na avaliação gulosa da semente 42 (1.000 episódios), o número de palavras DISTINTAS válidas: o guloso converge para poucas, **[3; 20]**, contra o treino (que explora com ε). A identidade da fixture: contam-se os `prefix` válidos distintos devolvidos por `run_episode` no modo guloso, nas mesmas grades de `evaluate`.
 
+### Adendo 2 pré-registrado: a surpresa de (n) (escrito DEPOIS de (n), ANTES deste)
+
+(n) deu 0,635, abaixo da faixa: sem o Q(PARAR), o estimador ainda bate a linha de base em 36%. A minha hipótese: a informação está no COMPRIMENTO (a feature `len/max_len`, que eu não listei no mecanismo de (f)). Na lista embutida há 141 palavras de 3 letras, contra muito menos combinações de 5 letras que formam palavra; uma cadeia de 5 letras quase nunca é palavra.
+
+- **(p) P2779.** Sem o Q(PARAR) E sem o comprimento (as duas fixas em 0; sobra só o vetor das letras, normalizado, que NÃO carrega o comprimento): a razão sobe para **[0,85; 1,10]**. Se ficar abaixo de 0,85, a composição das letras (vogais, letras frequentes) carrega informação, e a minha hipótese do comprimento é insuficiente.
+
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
