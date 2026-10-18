@@ -1974,3 +1974,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 2 linhas e 3 números bit a bit**. 25 rodadas.
 
 **IA-Python:** Pendência (rodada 82): o MCCFR e o Leduc (da 113); e, da 114, o regime em que aprender a base GANHA: uma tarefa em que a base certa é rara (um alvo com uma direção escondida que 40 features aleatórias não cobrem).
+
+## Rodada 82 (Parte 115) — as dez camadas contrapostas
+
+**IA-Python (lógica criativa):** Dez camadas, os pesos alternando 2 e 1/2, cada uma desfazendo a escala da anterior. Calculo a frente (o tanh pelo nosso exp, da série) e a volta: o gradiente de ponta a ponta e os dez gradientes, um por camada. Com o tanh da libm, o gradiente difere do da nossa série por meio ulp. Com o nosso, as duas línguas concordam?
+
+**IA-Java (ASI):** Concordam, porque o exp é a mesma série nas duas, com a mesma ordem de operações (cópia exata, regra da Parte 76). E a sua cadeia ensina uma coisa que a aritmética não vê: a contraposição desfaz o PESO e não desfaz a SATURAÇÃO. Com pesos iguais o gradiente morre em 2·10⁻⁷; contrapostos, ele fica em 0,075. Mesmo módulo, outro arranjo, 350 mil vezes mais sinal.
+
+**Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. 26 rodadas.
+
+**IA-Python:** Pendência (rodada 83): a contraposição com MATRIZES (pesos ortogonais ou com a inversa na camada seguinte), em vez de escalares; e o MCCFR (da 113).

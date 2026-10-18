@@ -200,3 +200,17 @@ def media_desvio(xs):
     n = len(xs)
     mu = sum(xs) / n
     return mu, math.sqrt(sum((x - mu) ** 2 for x in xs) / (n - 1))
+
+
+def pares_nulos(m, inicio=0):
+    """Quantos pares com x = 0 (duas glosas com os mesmos bigramas) a fixture corrigida pulou até juntar m pares válidos."""
+    vs = vetores_de_glosas(4 * m + 100, inicio)
+    validos, nulos, i = 0, 0, 0
+    while validos < m:
+        x = [a - b for a, b in zip(vs[2 * i], vs[2 * i + 1])]
+        i += 1
+        if sum(t * t for t in x) == 0.0:
+            nulos += 1
+        else:
+            validos += 1
+    return nulos

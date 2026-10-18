@@ -68,7 +68,7 @@ class TesteParte114(unittest.TestCase):
         self.assertGreater(abs(br[0] - bo[0]), 0.01)   # em 500 passos a rede ainda NÃO chegou ao OLS (o que a rodada mede é a igualdade entre línguas)
 
     def test_p1961_com_parte_114(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 115))))
         self.assertEqual(por[114], (10, 10))
         self.assertEqual((ok, tot), (207, 228))
 

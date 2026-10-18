@@ -177,3 +177,7 @@ Ver `dialogo/DIALOGO.md`: a rede linear profunda, 500 passos de GD, é **IGUAL**
 - Convergência da descida em redes lineares profundas: [Arora, Cohen, Golowich e Hu, "A Convergence Analysis of Gradient Descent for Deep Linear Neural Networks", ICLR 2019 (arXiv 1810.02281)](https://arxiv.org/pdf/1810.02281); [ICLR 2019](https://iclr.cc/virtual/2019/poster/789).
 - Features aleatórias + solucionador linear: [Rahimi e Recht, "Random Features for Large-Scale Kernel Machines", NIPS 2007](https://papers.neurips.cc/paper/3182-random-features-for-large-scale-kernel-machines); [PDF](https://people.eecs.berkeley.edu/~brecht/papers/07.rah.rec.nips.pdf).
 - Graus de liberdade como penalidade de covariância: [Efron, "The Estimation of Prediction Error: Covariance Penalties and Cross-Validation", JASA 99 (2004)](https://ideas.repec.org/a/bes/jnlasa/v99y2004p619-632.html); [PDF (Wisconsin)](https://pages.stat.wisc.edu/~wahba/stat860public/pdf1/efron.covariance.04.pdf).
+
+---
+
+➡ Continua na [Parte 115 — Dez camadas contrapostas](ASI_AGI_parte115_camadas_contrapostas.md).

@@ -9624,6 +9624,8 @@ VEREDITOS_P4059 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) �
 ERROS_P4059, TESTES_P4059 = 224, 877
 VEREDITOS_P4129 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅"
 ERROS_P4129, TESTES_P4129 = 224, 887
+VEREDITOS_P4199 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ❌ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅ (q) ✅"
+ERROS_P4199, TESTES_P4199 = 225, 903
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12164,12 +12166,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14669,6 +14671,76 @@ def p2865_rodada81():
     return r.treinar(), M.ols(X, y)
 
 
+def p2891_dez_camadas():
+    """As dez camadas (P2891; Parte 115), h0 = 0,5: o gradiente de ponta a ponta ∂h₁₀/∂h₀ na cadeia linear (pesos 1,2), na linear contraposta
+    (1,2; 1/1,2), na tanh contraposta (2; 1/2) e na tanh de peso igual (2). Devolve (erro relativo contra 1,2¹⁰, |g − 1| contraposta,
+    g tanh contraposta, g tanh igual)."""
+    from synthai import contraposto as C
+    _, g1, _ = C.cadeia([1.2] * 10, 0.5, "linear")
+    _, g2, _ = C.cadeia(C.pesos_contrapostos(1.2), 0.5, "linear")
+    _, g3, _ = C.cadeia(C.pesos_contrapostos(2.0), 0.5)
+    _, g4, _ = C.cadeia([2.0] * 10, 0.5)
+    return abs(g1 - 6.1917364224) / 6.1917364224, abs(g2 - 1.0), g3, g4
+
+
+def p2892_gradientes_sobrepostos():
+    """Os dez gradientes sobrepostos (P2892; Parte 115): o resto |Δh − Σ g_k δw_k| na cadeia tanh contraposta, com ε = 10⁻³ e 10⁻⁴, e a
+    inclinação log-log (2: o resto é de 2ª ordem). Devolve (resto 1e-3, resto 1e-4, inclinação, os 10 gradientes)."""
+    from synthai import contraposto as C
+    w = C.pesos_contrapostos(2.0)
+    r1, r2 = C.superposicao(w, 0.5, 1e-3), C.superposicao(w, 0.5, 1e-4)
+    _, _, gw = C.cadeia(w, 0.5)
+    return r1, r2, (math.log(r1) - math.log(r2)) / (math.log(1e-3) - math.log(1e-4)), gw
+
+
+def p2893_palavras_do_dicionario():
+    """O dicionário contado (P2893; Parte 115): lemas por classe do WordNet 3.0 (sem marcadores), pares (lema, sinset) brutos e distintos, lemas
+    distintos no total, e a OpenWordNet-PT. Devolve (por classe, brutos, distintos, total, (lemas pt, pares pt))."""
+    from synthai import contraposto as C
+    _, limpo, brutos = C.contar_wordnet()
+    distintos, _ = C.pares_sinset_distintos()
+    return ({k: len(v) for k, v in limpo.items()}, brutos, distintos, len(set().union(*limpo.values())), C.contar_ownpt())
+
+
+def p2894_em_algarismos():
+    """O alfabeto em algarismos (P2894; Parte 115): a base 26 bijetiva sobre as 77.340 palavras a-z. Devolve (colisões, ida-e-volta certa,
+    algarismos decimais do maior número)."""
+    from synthai import contraposto as C, palavras_rl as P
+    W = sorted(P.lemas_wordnet())
+    nums = {C.em_algarismos(w) for w in W}
+    return len(W) - len(nums), all(C.de_algarismos(C.em_algarismos(w)) == w for w in W), len(str(max(nums)))
+
+
+def p2895_em_algoritmos():
+    """O alfabeto em algoritmos (P2895; Parte 115): cada letra uma operação mod 1.000.003 e a palavra o programa. Devolve ((distintos, pares que
+    colidem) afins, (distintos, pares que colidem) translações, classes de anagrama)."""
+    from synthai import contraposto as C, palavras_rl as P
+    W = sorted(P.lemas_wordnet())
+    return (C.colisoes(W, C.alfabeto_de_algoritmos(115)), C.colisoes(W, C.alfabeto_de_algoritmos(115, comutam=True)),
+            len({"".join(sorted(w)) for w in W}))
+
+
+def p2896_escala_e_meta_medida():
+    """A escala dos vetores contra a meta-medida (P2896; Parte 115): a distorção da projeção gaussiana (k = 4, m = 2.000) e o oposto (k = 256,
+    m = 20); e quantos pares nulos a fixture corrigida pulou. Devolve ((média, desvio) k=4, (média, desvio) k=256, pares nulos)."""
+    from synthai import contraposto as C
+    return C.media_desvio(C.distorcoes(4, 2000)), C.media_desvio(C.distorcoes(256, 20)), C.pares_nulos(2000)
+
+
+def _rodada82():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada82", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada82.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2897_rodada82():
+    """Rodada 82 (P2897; Parte 115): a cadeia tanh contraposta pelo exp próprio, IGUAL em Java. Devolve (h10, gradiente, os 10 gradientes)."""
+    return _rodada82().cadeia()
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -16087,6 +16159,30 @@ def _parte_114():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4129, testes=TESTES_P4129)
     print(f"P4129 minha taxa de erro ({ERROS_P4129}/{TESTES_P4129}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_115():
+    print("--- Parte 115 (0x73: dez camadas contrapostas; o dicionario em algarismos e algoritmos; a escala contra a meta-medida) ---")
+    e1, e2, g3, g4 = p2891_dez_camadas()
+    print(f"P2891 dez camadas: linear 1,2^10 erro relativo {e1:.1e}; linear contraposta |g-1| {e2:.1e}; tanh contraposta {g3:.5f}; tanh de peso igual {g4:.3e}")
+    r1, r2, incl, gw = p2892_gradientes_sobrepostos()
+    print(f"P2892 superposicao dos 10 gradientes: resto {r1:.3e} (eps=1e-3), {r2:.3e} (eps=1e-4), inclinacao {incl:.5f}; gradientes {[round(x, 4) for x in gw]}")
+    porc, brutos, distintos, total, pt = p2893_palavras_do_dicionario()
+    print(f"P2893 dicionario: por classe {porc}; pares brutos {brutos}, distintos {distintos}; lemas distintos {total}; OpenWordNet-PT {pt[0]} lemas, {pt[1]} pares")
+    col, iv, dig = p2894_em_algarismos()
+    print(f"P2894 em algarismos (base 26 bijetiva): {col} colisoes; ida-e-volta {iv}; o maior numero tem {dig} algarismos")
+    af, tr, A = p2895_em_algoritmos()
+    print(f"P2895 em algoritmos: afins {af[0]} distintos, {af[1]} pares colidem; translacoes {tr[0]} distintos, {tr[1]} pares colidem; classes de anagrama {A}")
+    (m4, s4), (m256, s256), nulos = p2896_escala_e_meta_medida()
+    print(f"P2896 escala x meta-medida: k=4,m=2000 media {m4:.4f} desvio {s4:.4f}; k=256,m=20 media {m256:.4f} desvio {s256:.4f}; pares nulos pulados {nulos}")
+    h, g, _ = p2897_rodada82()
+    print(f"P2897 rodada 82 (cadeia contraposta, exp proprio, IGUAL em Java): h10 {h.hex()}; gradiente {g.hex()}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-115: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2891, 2920)
+    print(f"P1092 pNN novas (P2891-P2920) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 115: {p974_previsoes_sem_largura(range(115, 116))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4199, testes=TESTES_P4199)
+    print(f"P4199 minha taxa de erro ({ERROS_P4199}/{TESTES_P4199}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -16123,7 +16219,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115}
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 114, perguntas P1 a P2865).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 115, perguntas P1 a P2897).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (16135 linhas)
+# calculos.py  (16231 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9662,6 +9662,8 @@ VEREDITOS_P4059 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) �
 ERROS_P4059, TESTES_P4059 = 224, 877
 VEREDITOS_P4129 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅"
 ERROS_P4129, TESTES_P4129 = 224, 887
+VEREDITOS_P4199 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ❌ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅ (q) ✅"
+ERROS_P4199, TESTES_P4199 = 225, 903
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12202,12 +12204,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14707,6 +14709,76 @@ def p2865_rodada81():
     return r.treinar(), M.ols(X, y)
 
 
+def p2891_dez_camadas():
+    \"\"\"As dez camadas (P2891; Parte 115), h0 = 0,5: o gradiente de ponta a ponta ∂h₁₀/∂h₀ na cadeia linear (pesos 1,2), na linear contraposta
+    (1,2; 1/1,2), na tanh contraposta (2; 1/2) e na tanh de peso igual (2). Devolve (erro relativo contra 1,2¹⁰, |g − 1| contraposta,
+    g tanh contraposta, g tanh igual).\"\"\"
+    from synthai import contraposto as C
+    _, g1, _ = C.cadeia([1.2] * 10, 0.5, "linear")
+    _, g2, _ = C.cadeia(C.pesos_contrapostos(1.2), 0.5, "linear")
+    _, g3, _ = C.cadeia(C.pesos_contrapostos(2.0), 0.5)
+    _, g4, _ = C.cadeia([2.0] * 10, 0.5)
+    return abs(g1 - 6.1917364224) / 6.1917364224, abs(g2 - 1.0), g3, g4
+
+
+def p2892_gradientes_sobrepostos():
+    \"\"\"Os dez gradientes sobrepostos (P2892; Parte 115): o resto |Δh − Σ g_k δw_k| na cadeia tanh contraposta, com ε = 10⁻³ e 10⁻⁴, e a
+    inclinação log-log (2: o resto é de 2ª ordem). Devolve (resto 1e-3, resto 1e-4, inclinação, os 10 gradientes).\"\"\"
+    from synthai import contraposto as C
+    w = C.pesos_contrapostos(2.0)
+    r1, r2 = C.superposicao(w, 0.5, 1e-3), C.superposicao(w, 0.5, 1e-4)
+    _, _, gw = C.cadeia(w, 0.5)
+    return r1, r2, (math.log(r1) - math.log(r2)) / (math.log(1e-3) - math.log(1e-4)), gw
+
+
+def p2893_palavras_do_dicionario():
+    \"\"\"O dicionário contado (P2893; Parte 115): lemas por classe do WordNet 3.0 (sem marcadores), pares (lema, sinset) brutos e distintos, lemas
+    distintos no total, e a OpenWordNet-PT. Devolve (por classe, brutos, distintos, total, (lemas pt, pares pt)).\"\"\"
+    from synthai import contraposto as C
+    _, limpo, brutos = C.contar_wordnet()
+    distintos, _ = C.pares_sinset_distintos()
+    return ({k: len(v) for k, v in limpo.items()}, brutos, distintos, len(set().union(*limpo.values())), C.contar_ownpt())
+
+
+def p2894_em_algarismos():
+    \"\"\"O alfabeto em algarismos (P2894; Parte 115): a base 26 bijetiva sobre as 77.340 palavras a-z. Devolve (colisões, ida-e-volta certa,
+    algarismos decimais do maior número).\"\"\"
+    from synthai import contraposto as C, palavras_rl as P
+    W = sorted(P.lemas_wordnet())
+    nums = {C.em_algarismos(w) for w in W}
+    return len(W) - len(nums), all(C.de_algarismos(C.em_algarismos(w)) == w for w in W), len(str(max(nums)))
+
+
+def p2895_em_algoritmos():
+    \"\"\"O alfabeto em algoritmos (P2895; Parte 115): cada letra uma operação mod 1.000.003 e a palavra o programa. Devolve ((distintos, pares que
+    colidem) afins, (distintos, pares que colidem) translações, classes de anagrama).\"\"\"
+    from synthai import contraposto as C, palavras_rl as P
+    W = sorted(P.lemas_wordnet())
+    return (C.colisoes(W, C.alfabeto_de_algoritmos(115)), C.colisoes(W, C.alfabeto_de_algoritmos(115, comutam=True)),
+            len({"".join(sorted(w)) for w in W}))
+
+
+def p2896_escala_e_meta_medida():
+    \"\"\"A escala dos vetores contra a meta-medida (P2896; Parte 115): a distorção da projeção gaussiana (k = 4, m = 2.000) e o oposto (k = 256,
+    m = 20); e quantos pares nulos a fixture corrigida pulou. Devolve ((média, desvio) k=4, (média, desvio) k=256, pares nulos).\"\"\"
+    from synthai import contraposto as C
+    return C.media_desvio(C.distorcoes(4, 2000)), C.media_desvio(C.distorcoes(256, 20)), C.pares_nulos(2000)
+
+
+def _rodada82():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada82", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada82.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2897_rodada82():
+    \"\"\"Rodada 82 (P2897; Parte 115): a cadeia tanh contraposta pelo exp próprio, IGUAL em Java. Devolve (h10, gradiente, os 10 gradientes).\"\"\"
+    return _rodada82().cadeia()
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -16125,6 +16197,30 @@ def _parte_114():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4129, testes=TESTES_P4129)
     print(f"P4129 minha taxa de erro ({ERROS_P4129}/{TESTES_P4129}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_115():
+    print("--- Parte 115 (0x73: dez camadas contrapostas; o dicionario em algarismos e algoritmos; a escala contra a meta-medida) ---")
+    e1, e2, g3, g4 = p2891_dez_camadas()
+    print(f"P2891 dez camadas: linear 1,2^10 erro relativo {e1:.1e}; linear contraposta |g-1| {e2:.1e}; tanh contraposta {g3:.5f}; tanh de peso igual {g4:.3e}")
+    r1, r2, incl, gw = p2892_gradientes_sobrepostos()
+    print(f"P2892 superposicao dos 10 gradientes: resto {r1:.3e} (eps=1e-3), {r2:.3e} (eps=1e-4), inclinacao {incl:.5f}; gradientes {[round(x, 4) for x in gw]}")
+    porc, brutos, distintos, total, pt = p2893_palavras_do_dicionario()
+    print(f"P2893 dicionario: por classe {porc}; pares brutos {brutos}, distintos {distintos}; lemas distintos {total}; OpenWordNet-PT {pt[0]} lemas, {pt[1]} pares")
+    col, iv, dig = p2894_em_algarismos()
+    print(f"P2894 em algarismos (base 26 bijetiva): {col} colisoes; ida-e-volta {iv}; o maior numero tem {dig} algarismos")
+    af, tr, A = p2895_em_algoritmos()
+    print(f"P2895 em algoritmos: afins {af[0]} distintos, {af[1]} pares colidem; translacoes {tr[0]} distintos, {tr[1]} pares colidem; classes de anagrama {A}")
+    (m4, s4), (m256, s256), nulos = p2896_escala_e_meta_medida()
+    print(f"P2896 escala x meta-medida: k=4,m=2000 media {m4:.4f} desvio {s4:.4f}; k=256,m=20 media {m256:.4f} desvio {s256:.4f}; pares nulos pulados {nulos}")
+    h, g, _ = p2897_rodada82()
+    print(f"P2897 rodada 82 (cadeia contraposta, exp proprio, IGUAL em Java): h10 {h.hex()}; gradiente {g.hex()}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-115: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2891, 2920)
+    print(f"P1092 pNN novas (P2891-P2920) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 115: {p974_previsoes_sem_largura(range(115, 116))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4199, testes=TESTES_P4199)
+    print(f"P4199 minha taxa de erro ({ERROS_P4199}/{TESTES_P4199}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -16161,7 +16257,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115}
 
 
 if __name__ == "__main__":
@@ -16174,7 +16270,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (448 linhas)
+# CLAUDE.md  (457 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -16468,6 +16564,15 @@ anterior, commit e push.
   nao de matematica. REGRA NOVA: antes de treinar uma rede inteira, resolver em forma fechada tudo o que e convexo (a cabeca) e so pagar a descida no resto (a base); e todo
   numero da EXPLICACAO do mecanismo passa por codigo, como os da previsao (a cota com ln(1-x)~-x e o sigma'~0,15 chutado, pegos pela regra da Parte 69). Rodada 81 IGUAL
   (25 rodadas). 10/10 do mundo, 6/6 (m), calibracao 207/228 = 0,908.
+  Parte 115 (pedido: "10 camadas contrapostas pra entender 10 gradientes sobrepostos; conte as palavras do dicionario e mude o alfabeto pra algarismos e depois pra algoritmos;
+  reduza a escala de vetores paradigmas e aumente as medidas meta-paradigmas e depois o calculo oposto"; `synthai/contraposto.py`): CONTRAPOSTAS = pesos a, 1/a alternados: o
+  gradiente fica em 1 (linear) ou 0,075 (tanh) contra 6,19 e 2,1e-7 com peso igual (a contraposicao desfaz a ESCALA, nao a SATURACAO); SOBREPOSTOS = os 10 dh/dw_k somam a
+  variacao de 1a ordem, resto de 2a ordem (inclinacao 2,00006). DICIONARIO: 155.287 por classe e 206.941 pares distintos (os numeros de Princeton, depois de tirar os
+  marcadores "(a)/(p)/(ip)" dos adjetivos e as 37 repeticoes); 147.306 distintos no total, 28 ACIMA dos 147.278 publicados (sem explicacao); OWN-PT 45.313. ALGARISMOS: base 26 bijetiva, 0 colisoes. ALGORITMOS: cada letra uma operacao mod p e a
+  palavra o programa: afins (nao comutam) 2.928 colisoes = o aniversario; translacoes (comutam) todo anagrama colide. ESCALA x META: a distorcao cai como sqrt(2/k), a incerteza
+  da medida dela como 1/sqrt(2m). REGRAS NOVAS: um numero publicado vira faixa [x;x] so com a REGRA DE CONTAGEM de quem publicou escrita ao lado ((g) previu os brutos e o
+  publicado e de pares distintos); toda fixture que divide por uma quantidade do dado declara o que faz quando ela e zero (o par de glosas iguais quebrou a medida); "igual ao publicado" e todo link citado so depois de ler a fonte NESTA sessao (escrevi "exatamente" para 147.306 e a fonte diz 147.278). Rodada 82
+  IGUAL (26 rodadas). 15/16 do mundo, 6/6 (m), calibracao 222/244 = 0,910.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -16616,7 +16721,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -17358,6 +17463,227 @@ def composta_rica(semente=0):
     c.fora.pensamento = PensamentoRico()
     c.fora.percepcao.pensamento = c.fora.pensamento
     return c
+"""
+
+# ====================================================================================================
+# synthai/contraposto.py  (216 linhas)
+# ====================================================================================================
+FONTES['synthai/contraposto.py'] = """\"\"\"As três contas da Parte 115 (biblioteca padrão).
+
+1. DEZ CAMADAS CONTRAPOSTAS e DEZ GRADIENTES SOBREPOSTOS. Uma cadeia escalar h_k = φ(w_k·h_{k−1}) de 10 camadas. "Contrapostas": os pesos
+   alternam a e 1/a, cada camada desfazendo a escala da anterior. O gradiente de ponta a ponta é o produto das 10 derivadas locais
+   w_k·φ′(·) (a retropropagação). "Sobrepostos": os 10 gradientes ∂h₁₀/∂w_k, um por camada, se SOMAM na variação de primeira ordem quando
+   os 10 pesos mudam juntos (Δh ≈ Σ g_k·δw_k, o princípio da superposição do diferencial); o resto é de 2ª ordem.
+2. O DICIONÁRIO CONTADO, em ALGARISMOS e em ALGORITMOS. Os lemas do WordNet 3.0 (dados/). Em algarismos: a palavra como número em base 26
+   bijetiva (dígitos 1..26), que é injetiva. Em algoritmos: cada letra é uma operação x ↦ (a·x + b) mod p, e a palavra é o PROGRAMA que
+   aplica as letras em ordem, a partir de x = 1. Com operações que não comutam (afins), a ordem das letras importa; com operações que comutam
+   (só translações), todo anagrama dá o mesmo resultado.
+3. A ESCALA DOS VETORES (paradigma) contra as MEDIDAS META-PARADIGMA. Vetores reais do dicionário (contagem de bigramas de letras das
+   glosas, 676 dimensões) projetados em k dimensões por uma matriz gaussiana N(0, 1/k) nova por par (Johnson-Lindenstrauss). A medida é a
+   distorção r = ‖Px‖²/‖x‖², que tem distribuição χ²_k/k para QUALQUER x (média 1, desvio √(2/k)). A meta-medida é a estimativa desse
+   desvio sobre m pares, e o desvio DELA cai como 1/√m.\"\"\"
+
+import gzip
+import math
+import os
+import random
+
+
+# --- 1. as dez camadas ---
+
+def tanh_(x):
+    \"\"\"tanh por (e^{2x} − 1)/(e^{2x} + 1); o exp é passado de fora (math.exp aqui, o exp_ próprio no diálogo).\"\"\"
+    e = math.exp(2.0 * x)
+    return (e - 1.0) / (e + 1.0)
+
+
+def cadeia(pesos, h0, ativacao="tanh"):
+    \"\"\"Frente e trás numa cadeia escalar. Devolve (h_final, ∂h_final/∂h0, [∂h_final/∂w_k para k = 1..10]).\"\"\"
+    hs, pre = [h0], []
+    for w in pesos:
+        z = w * hs[-1]
+        pre.append(z)
+        hs.append(math.tanh(z) if ativacao == "tanh" else z)
+    deriv = [(1.0 - hs[k + 1] * hs[k + 1]) if ativacao == "tanh" else 1.0 for k in range(len(pesos))]
+    g = 1.0                                   # ∂h_final/∂h_k, de trás para frente
+    gw = [0.0] * len(pesos)
+    for k in range(len(pesos) - 1, -1, -1):
+        gw[k] = g * deriv[k] * hs[k]          # ∂h_final/∂w_k = (∂h_final/∂h_{k+1})·φ′·h_k
+        g = g * deriv[k] * pesos[k]
+    return hs[-1], g, gw
+
+
+def pesos_contrapostos(a, n=10):
+    return [a if k % 2 == 0 else 1.0 / a for k in range(n)]
+
+
+def superposicao(pesos, h0, eps, sinais=None):
+    \"\"\"Δh real (os 10 pesos mudam juntos, δw_k = eps·sinal_k) contra a soma dos 10 gradientes Σ g_k·δw_k. Devolve |Δh − Σ g δw|.\"\"\"
+    sinais = sinais or [1.0 if k % 3 else -1.0 for k in range(len(pesos))]
+    h, _, gw = cadeia(pesos, h0)
+    h2, _, _ = cadeia([w + eps * s for w, s in zip(pesos, sinais)], h0)
+    linear = sum(g * eps * s for g, s in zip(gw, sinais))
+    return abs((h2 - h) - linear)
+
+
+# --- 2. o dicionário contado, em algarismos e em algoritmos ---
+
+def _raiz():
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def contar_wordnet():
+    \"\"\"Lê dados/wordnet30_sinsets.tsv.gz. Devolve {pos: conjunto de lemas, como estão}, o nº de pares (lema, sinset), e o mesmo com os
+    marcadores sintáticos dos adjetivos tirados ('(a)', '(p)', '(ip)' colados ao lema).\"\"\"
+    import re
+    por_pos, por_pos_limpo, pares = {}, {}, 0
+    with gzip.open(os.path.join(_raiz(), "dados", "wordnet30_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        for linha in f:
+            c = linha.split("\\t")
+            pos = "a" if c[0] in ("a", "s") else c[0]
+            for lema in c[2].split(","):
+                pares += 1
+                por_pos.setdefault(pos, set()).add(lema)
+                por_pos_limpo.setdefault(pos, set()).add(re.sub(r"\\((a|p|ip)\\)$", "", lema))
+    return por_pos, por_pos_limpo, pares
+
+
+def contar_ownpt():
+    \"\"\"O português (OpenWordNet-PT, dados/ownpt_sinsets.tsv.gz): nº de lemas distintos e de pares (lema, sinset).\"\"\"
+    lemas, pares = set(), 0
+    with gzip.open(os.path.join(_raiz(), "dados", "ownpt_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        for linha in f:
+            c = linha.rstrip("\\n").split("\\t")
+            if len(c) < 2:
+                continue
+            for lema in c[1].split(","):   # formato: id-pos, lemas (separados por vírgula), glosa
+                if lema:
+                    pares += 1
+                    lemas.add(lema)
+    return len(lemas), pares
+
+
+def em_algarismos(palavra):
+    \"\"\"A palavra (a-z) como número em base 26 BIJETIVA: dígitos 1..26, N = Σ dᵢ·26^(L−1−i). Injetiva: palavras diferentes, números diferentes.\"\"\"
+    n = 0
+    for ch in palavra:
+        n = n * 26 + (ord(ch) - 96)
+    return n
+
+
+def de_algarismos(n):
+    \"\"\"O inverso da base 26 bijetiva.\"\"\"
+    letras = []
+    while n > 0:
+        n, r = divmod(n - 1, 26)
+        letras.append(chr(97 + r))
+    return "".join(reversed(letras))
+
+
+P_PRIMO = 1000003
+
+
+def alfabeto_de_algoritmos(semente=115, comutam=False):
+    \"\"\"Cada letra vira uma operação x ↦ (a·x + b) mod p (a ∈ [1, p−1], b ∈ [0, p−1]); com comutam=True, só translações (a = 1).\"\"\"
+    rng = random.Random(semente)
+    ops = {}
+    for i in range(26):
+        a = 1 if comutam else rng.randrange(1, P_PRIMO)
+        b = rng.randrange(P_PRIMO)
+        ops[chr(97 + i)] = (a, b)
+    return ops
+
+
+def executar(palavra, ops, x=1):
+    \"\"\"A palavra como PROGRAMA: aplica as operações das letras, da esquerda para a direita.\"\"\"
+    for ch in palavra:
+        a, b = ops[ch]
+        x = (a * x + b) % P_PRIMO
+    return x
+
+
+def colisoes(palavras, ops):
+    \"\"\"Quantos resultados distintos e quantos PARES de palavras colidem (mesmo resultado).\"\"\"
+    from collections import Counter
+    c = Counter(executar(w, ops) for w in palavras)
+    return len(c), sum(v * (v - 1) // 2 for v in c.values())
+
+
+# --- 3. a escala dos vetores contra a meta-medida ---
+
+def vetores_de_glosas(quantos, inicio=0):
+    \"\"\"Vetores reais: contagem dos 676 bigramas de letras a-z de cada glosa do WordNet, nas `quantos` glosas a partir de `inicio`.\"\"\"
+    out = []
+    with gzip.open(os.path.join(_raiz(), "dados", "wordnet30_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        for i, linha in enumerate(f):
+            if i < inicio:
+                continue
+            if len(out) == quantos:
+                break
+            g = "".join(ch for ch in linha.split("\\t")[4].lower() if "a" <= ch <= "z" or ch == " ")
+            v = [0.0] * 676
+            for a, b in zip(g, g[1:]):
+                if a != " " and b != " ":
+                    v[(ord(a) - 97) * 26 + ord(b) - 97] += 1.0
+            out.append(v)
+    return out
+
+
+def pares_sinset_distintos():
+    \"\"\"(q): os pares (lema sem marcador, sinset) DISTINTOS, e quantos pares do arquivo são repetições dentro do mesmo sinset.\"\"\"
+    import re
+    vistos, brutos = set(), 0
+    with gzip.open(os.path.join(_raiz(), "dados", "wordnet30_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        for linha in f:
+            c = linha.split("\\t")
+            for lema in c[2].split(","):
+                brutos += 1
+                vistos.add((c[0], c[1], re.sub(r"\\((a|p|ip)\\)$", "", lema)))
+    return len(vistos), brutos - len(vistos)
+
+
+def distorcoes(k, m, semente=1150, inicio=0):
+    \"\"\"m pares (x = v_{2i} − v_{2i+1}), cada um projetado por uma P gaussiana NOVA (k×676, entradas N(0, 1/k)). Devolve as razões ‖Px‖²/‖x‖².\"\"\"
+    rng = random.Random(semente)
+    vs = vetores_de_glosas(4 * m + 100, inicio)
+    rs = []
+    i = 0
+    while len(rs) < m:
+        x = [a - b for a, b in zip(vs[2 * i], vs[2 * i + 1])]
+        i += 1
+        nx = sum(t * t for t in x)
+        if nx == 0.0:      # Parte 115: duas glosas com os mesmos bigramas dão x = 0 (razão 0/0); a fixture registrada não previa isso
+            continue
+        s = 1.0 / math.sqrt(k)
+        tot = 0.0
+        for _ in range(k):
+            y = 0.0
+            for t in x:
+                if t != 0.0:
+                    y += rng.gauss(0, s) * t
+            tot += y * y
+        rs.append(tot / nx)
+    return rs
+
+
+def media_desvio(xs):
+    n = len(xs)
+    mu = sum(xs) / n
+    return mu, math.sqrt(sum((x - mu) ** 2 for x in xs) / (n - 1))
+
+
+def pares_nulos(m, inicio=0):
+    \"\"\"Quantos pares com x = 0 (duas glosas com os mesmos bigramas) a fixture corrigida pulou até juntar m pares válidos.\"\"\"
+    vs = vetores_de_glosas(4 * m + 100, inicio)
+    validos, nulos, i = 0, 0, 0
+    while validos < m:
+        x = [a - b for a, b in zip(vs[2 * i], vs[2 * i + 1])]
+        i += 1
+        if sum(t * t for t in x) == 0.0:
+            nulos += 1
+        else:
+            validos += 1
+    return nulos
 """
 
 # ====================================================================================================
@@ -25105,9 +25431,99 @@ class TesteParte114(unittest.TestCase):
         self.assertGreater(abs(br[0] - bo[0]), 0.01)   # em 500 passos a rede ainda NÃO chegou ao OLS (o que a rodada mede é a igualdade entre línguas)
 
     def test_p1961_com_parte_114(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 115))))
         self.assertEqual(por[114], (10, 10))
         self.assertEqual((ok, tot), (207, 228))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte115.py  (85 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte115.py'] = """\"\"\"Testes de unidade da Parte 115 (dez camadas contrapostas, o dicionário em algarismos e algoritmos, a escala contra a meta-medida):
+`python3 -m unittest synthai.testes_parte115`. Cada pNN pelo nome (Parte 58), casos com todos os termos ≠ 0 (Parte 30), controles dos dois lados (Parte 75).\"\"\"
+
+import unittest
+
+import calculos
+from synthai import contraposto as C
+
+
+class TesteContraposto(unittest.TestCase):
+    def test_gradiente_da_cadeia_contra_diferenca_finita(self):
+        w = [0.9, -1.3, 1.7, 0.6, -0.8, 1.1, 1.4, -0.5, 0.7, 1.2]
+        _, g, gw = C.cadeia(w, 0.4)
+        h1, _, _ = C.cadeia(w, 0.4 + 1e-6)
+        h0, _, _ = C.cadeia(w, 0.4 - 1e-6)
+        self.assertAlmostEqual((h1 - h0) / 2e-6, g, places=8)
+        for k in (0, 4, 9):
+            wp, wm = list(w), list(w)
+            wp[k] += 1e-6
+            wm[k] -= 1e-6
+            self.assertAlmostEqual((C.cadeia(wp, 0.4)[0] - C.cadeia(wm, 0.4)[0]) / 2e-6, gw[k], places=8)
+
+    def test_base26_bijetiva(self):
+        self.assertEqual(C.em_algarismos("a"), 1)
+        self.assertEqual(C.em_algarismos("z"), 26)
+        self.assertEqual(C.em_algarismos("aa"), 27)              # bijetiva: não há "zero à esquerda"
+        self.assertEqual(C.de_algarismos(C.em_algarismos("synthai")), "synthai")
+
+    def test_algoritmos_comutam_e_nao(self):
+        afim = C.alfabeto_de_algoritmos(115)
+        trans = C.alfabeto_de_algoritmos(115, comutam=True)
+        self.assertEqual(C.executar("dog", trans), C.executar("god", trans))   # anagramas: translações comutam
+        self.assertNotEqual(C.executar("dog", afim), C.executar("god", afim))  # afins não comutam: a ordem importa
+
+
+class TesteParte115(unittest.TestCase):
+    def test_p2891_dez_camadas(self):
+        e1, e2, g3, g4 = calculos.p2891_dez_camadas()
+        self.assertLessEqual(e1, 1e-14)
+        self.assertLessEqual(e2, 1e-14)
+        self.assertTrue(0.06 <= g3 <= 0.09)
+        self.assertTrue(1.0e-7 <= g4 <= 4.0e-7)
+
+    def test_p2892_sobrepostos(self):
+        r1, r2, incl, gw = calculos.p2892_gradientes_sobrepostos()
+        self.assertTrue(1.8 <= incl <= 2.2)
+        self.assertEqual(len(gw), 10)
+
+    def test_p2893_dicionario(self):
+        porc, brutos, distintos, total, pt = calculos.p2893_palavras_do_dicionario()
+        self.assertEqual(porc, {"n": 117798, "v": 11529, "a": 21479, "r": 4481})
+        self.assertEqual(brutos, 206978)        # (g) previu 206.941 para os BRUTOS e errou
+        self.assertEqual(distintos, 206941)     # (q): os distintos, sem marcador, dão o número publicado
+        self.assertEqual(total, 147306)
+        self.assertGreater(pt[0], 0)
+
+    def test_p2894_algarismos(self):
+        col, iv, dig = calculos.p2894_em_algarismos()
+        self.assertEqual((col, iv), (0, True))
+
+    def test_p2895_algoritmos(self):
+        af, tr, A = calculos.p2895_em_algoritmos()
+        self.assertTrue(2900 <= af[1] <= 3081)
+        self.assertTrue(69831 <= tr[0] <= 70000)
+        self.assertEqual(A, 72547)
+
+    def test_p2896_escala(self):
+        (m4, s4), (m256, s256), nulos = calculos.p2896_escala_e_meta_medida()
+        self.assertTrue(0.678 <= s4 <= 0.736)
+        self.assertTrue(0.065 <= s256 <= 0.112)
+        self.assertTrue(0.974 <= m4 <= 1.026)
+        self.assertEqual(nulos, 1)
+
+    def test_p2897_rodada82(self):
+        h, g, gw = calculos.p2897_rodada82()
+        self.assertEqual(g.hex(), "0x1.32d264963ff7cp-4")
+
+    def test_p1961_com_parte_115(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[115], (15, 16))
+        self.assertEqual((ok, tot), (222, 244))
 
 
 if __name__ == "__main__":
@@ -35920,7 +36336,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1983 linhas)
+# resultados.txt  (2001 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -37903,6 +38319,24 @@ P974 previsoes unilaterais da Parte 114: {114: (0, 0, [])}
 P4129 minha taxa de erro (224/887): media = 0.25, intervalo 90% = [0.23, 0.28]
 === Unificacao (sempre ao final) ===
 P96 funcoes pNN no arquivo = 657; pares de interacao possiveis = 215496
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 154/154 resultados publicados reproduzidos; falhas = []
+
+
+--- Parte 115 (0x73: dez camadas contrapostas; o dicionario em algarismos e algoritmos; a escala contra a meta-medida) ---
+P2891 dez camadas: linear 1,2^10 erro relativo 1.4e-16; linear contraposta |g-1| 0.0e+00; tanh contraposta 0.07491; tanh de peso igual 2.139e-07
+P2892 superposicao dos 10 gradientes: resto 1.945e-06 (eps=1e-3), 1.945e-08 (eps=1e-4), inclinacao 2.00006; gradientes [0.0187, 0.1358, 0.0373, 0.2078, 0.0554, 0.2789, 0.0731, 0.3495, 0.0908, 0.4199]
+P2893 dicionario: por classe {'n': 117798, 'v': 11529, 'a': 21479, 'r': 4481}; pares brutos 206978, distintos 206941; lemas distintos 147306; OpenWordNet-PT 45313 lemas, 52672 pares
+P2894 em algarismos (base 26 bijetiva): 0 colisoes; ida-e-volta True; o maior numero tem 44 algarismos
+P2895 em algoritmos: afins 74494 distintos, 2928 pares colidem; translacoes 69972 distintos, 8946 pares colidem; classes de anagrama 72547
+P2896 escala x meta-medida: k=4,m=2000 media 1.0073 desvio 0.7188; k=256,m=20 media 1.0072 desvio 0.1003; pares nulos pulados 1
+P2897 rodada 82 (cadeia contraposta, exp proprio, IGUAL em Java): h10 0x1.bc07e47a34a99p-3; gradiente 0x1.32d264963ff7cp-4
+P1961 teste, Partes 80-115: 222/244 = 0.9098; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16)}
+P1092 pNN novas (P2891-P2920) sem teste: 0 de 7: []
+P974 previsoes unilaterais da Parte 115: {115: (0, 0, [])}
+P4199 minha taxa de erro (225/903): media = 0.25, intervalo 90% = [0.23, 0.27]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 664; pares de interacao possiveis = 220116
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 154/154 resultados publicados reproduzidos; falhas = []
 """
@@ -40235,7 +40669,7 @@ Ver `dialogo/DIALOGO.md`: o CFR em `float`, T = 1.000, é **IGUAL**: 4 linhas e 
 """
 
 # ====================================================================================================
-# ASI_AGI_parte114_ml_como_dl.md  (179 linhas)
+# ASI_AGI_parte114_ml_como_dl.md  (183 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte114_ml_como_dl.md'] = """# Parte 114 — Tratar o ML como DL e o DL como ML (0x72)
 
@@ -40416,6 +40850,213 @@ Ver `dialogo/DIALOGO.md`: a rede linear profunda, 500 passos de GD, é **IGUAL**
 - Convergência da descida em redes lineares profundas: [Arora, Cohen, Golowich e Hu, "A Convergence Analysis of Gradient Descent for Deep Linear Neural Networks", ICLR 2019 (arXiv 1810.02281)](https://arxiv.org/pdf/1810.02281); [ICLR 2019](https://iclr.cc/virtual/2019/poster/789).
 - Features aleatórias + solucionador linear: [Rahimi e Recht, "Random Features for Large-Scale Kernel Machines", NIPS 2007](https://papers.neurips.cc/paper/3182-random-features-for-large-scale-kernel-machines); [PDF](https://people.eecs.berkeley.edu/~brecht/papers/07.rah.rec.nips.pdf).
 - Graus de liberdade como penalidade de covariância: [Efron, "The Estimation of Prediction Error: Covariance Penalties and Cross-Validation", JASA 99 (2004)](https://ideas.repec.org/a/bes/jnlasa/v99y2004p619-632.html); [PDF (Wisconsin)](https://pages.stat.wisc.edu/~wahba/stat860public/pdf1/efron.covariance.04.pdf).
+
+---
+
+➡ Continua na [Parte 115 — Dez camadas contrapostas](ASI_AGI_parte115_camadas_contrapostas.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte115_camadas_contrapostas.md  (198 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte115_camadas_contrapostas.md'] = """# Parte 115 — Dez camadas contrapostas, o dicionário em algarismos e em algoritmos, e a escala contra a meta-medida (0x73)
+
+↩ Parte 110 (o gradiente da RNN: o produto de derivadas) · ↩ Parte 103 (o dicionário convertido em números) · ↩ Parte 30 (o dicionário como data lake) · ↩ Parte 70 (álgebra e geometria: a projeção, as distâncias)
+
+> Pedido do usuário: "Use 10 camadas contrapostas pra entender 10 gradientes sobrepostos. Conte o número de palavras no Dicionário e mude o alfabeto pra algarismos e depois pra algoritmos. Reduza a escala de vetores paradigmas e aumente as medidas meta-paradigmas e depois faça o cálculo oposto."
+>
+> **A leitura escolhida (regra da Parte 83, escrita ANTES de medir; `synthai/contraposto.py`).**
+> - **"10 camadas contrapostas":** uma cadeia escalar de 10 camadas, hₖ = φ(wₖ·hₖ₋₁), em que os pesos alternam a e 1/a, cada camada desfazendo a escala da anterior. **"10 gradientes sobrepostos":** os 10 gradientes ∂h₁₀/∂wₖ, um por camada, que se SOMAM na variação de primeira ordem quando os 10 pesos mudam juntos (Δh ≈ Σₖ gₖ·δwₖ, o princípio da superposição do diferencial; o resto é de 2ª ordem).
+> - **"Conte o número de palavras no dicionário":** os lemas do WordNet 3.0 (e da OpenWordNet-PT), contados por classe e no total. **"Mude o alfabeto para algarismos":** a palavra como NÚMERO em base 26 bijetiva (dígitos 1..26), uma codificação injetiva. **"Depois para algoritmos":** cada letra vira uma OPERAÇÃO x ↦ (a·x + b) mod p, com p = 1.000.003 primo, e a palavra é o PROGRAMA que aplica as letras em ordem a partir de x = 1. Uma palavra deixa de ser uma etiqueta e vira uma função.
+> - **"Reduza a escala dos vetores paradigmas e aumente as medidas meta-paradigmas":** os vetores do dicionário (bigramas de letras das glosas, 676 dimensões) projetados em POUCAS dimensões (k = 4), com MUITAS medidas da distorção (m = 2.000 pares), sendo a meta-medida a estimativa do desvio da distorção. **"Depois o cálculo oposto":** MUITAS dimensões (k = 256) e POUCAS medidas (m = 20).
+>
+> **Antes do registro (condições, não resultados).**
+> - **A extração contra as estatísticas publicadas do WordNet 3.0 (Princeton).** Nomes **117.798** (exato), verbos **11.529** (exato), advérbios **4.481** (exato), adjetivos **21.785**, contra os 21.479 publicados. Eu já olhei as quatro classes; elas não viram previsão. A HIPÓTESE para os 306 adjetivos a mais vira: os marcadores sintáticos colados ao lema nos arquivos de adjetivos ("(a)", "(p)", "(ip)").
+> - **Para os algoritmos, as condições dos dados.** n = **77.340** palavras de letras a-z (Parte 111) e A = **72.547** classes de anagrama (multiconjuntos de letras distintos).
+
+## As perguntas desta parte
+
+1. **P2891 (0xB4B).** Dez camadas com o mesmo peso a > 1 explodem o gradiente como a¹⁰; contrapostas (a, 1/a), ele volta a 1? E com a não-linearidade? ↩ P2743
+2. **P2892 (0xB4C).** Os 10 gradientes se sobrepõem, isto é, a soma deles prevê a variação de primeira ordem, com resto de 2ª ordem? ↩ P2891
+3. **P2893 (0xB4D).** Quantas palavras o dicionário tem? ↩ P2774
+4. **P2894 (0xB4E).** Em algarismos, a palavra continua única? ↩ P2532
+5. **P2895 (0xB4F).** Em algoritmos, quantas palavras colidem (o mesmo resultado), com operações que não comutam e com operações que comutam? ↩ P2894
+6. **P2896 (0xB50).** A distorção da projeção em k dimensões, e a precisão da sua estimativa com m medidas: pouca escala e muita medida, e o oposto. ↩ P2357
+7. **P2897 (0xB51).** A cadeia contraposta (com tanh pelo exp próprio) acrescenta fronteira entre Python e Java? (rodada 82) ↩ P2865
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+**As fixtures.**
+- **Cadeias:** h₀ = 0,5, 10 camadas; a "mesma" usa wₖ = 1,2 (linear) ou wₖ = 2 (tanh); a contraposta, `pesos_contrapostos(a)`: a, 1/a, a, …
+- **Superposição:** a cadeia tanh contraposta com a = 2, δwₖ = ε·sₖ, sₖ = −1 se k ≡ 0 (mod 3), senão +1; ε = 10⁻³ e 10⁻⁴.
+- **Algoritmos:** `alfabeto_de_algoritmos(115)`, as 77.340 palavras a-z do WordNet.
+- **Vetores:** `distorcoes(4, 2000)` e `distorcoes(256, 20)`, semente 1150, os pares a partir da glosa 0.
+
+**As dez camadas (P2891/P2892).**
+- **(a)** Linear, wₖ = 1,2: |∂h₁₀/∂h₀ − 6,1917364224|/6,1917364224 (1,2¹⁰ em decimal exato): **[0; 10⁻¹⁴]**. Identidade: 10 produtos, cada um com erro ≤ ½ ulp.
+- **(b)** Linear contraposta (1,2; 1/1,2): |∂h₁₀/∂h₀ − 1|: **[0; 10⁻¹⁴]**. Identidade: o produto de 5 pares a·(1/a), cada um a 1 ulp de 1.
+- **(c)** Tanh contraposta, a = 2: ∂h₁₀/∂h₀ = Π wₖ(1 − hₖ²). À mão: os 5 pares de fatores dão 0,365 · 0,558 · 0,662 · 0,725 · 0,768 ≈ 0,075. Faixa **[0,06; 0,09]**. A contraposição cancela os PESOS, mas não a saturação, porque (1 − h²) < 1 não se desfaz.
+- **(d)** Tanh com o mesmo peso, a = 2: h vai ao ponto fixo h* = tanh(2h*) ≈ 0,9575, onde a derivada local é 2(1 − h*²) ≈ 0,167. À mão: 0,840 · 0,346 · 0,200 · 0,173 · 0,168 · 0,1665⁵ ≈ 2,2·10⁻⁷. Faixa **[1,0·10⁻⁷; 4,0·10⁻⁷]**. Mecanismo: o atrator saturado.
+- **(e)** Superposição: a inclinação de log|Δh − Σ gₖ δwₖ| contra log ε, entre ε = 10⁻³ e 10⁻⁴: **[1,8; 2,2]**. O resto é de 2ª ordem; se fosse de 1ª, a soma dos gradientes estaria errada.
+
+**O dicionário contado (P2893).**
+- **(f)** Adjetivos, depois de tirar os marcadores "(a)", "(p)", "(ip)" do fim do lema: **[21.479; 21.479]**. Identidade suposta: a estatística publicada por Princeton conta o lema sem marcador. Se não der exato, a minha hipótese para os 306 está errada.
+- **(g)** Pares (lema, sinset) no arquivo: **[206.941; 206.941]**. Identidade: o número de pares palavra-sentido publicado por Princeton.
+- **(h)** Lemas distintos somando TODAS as classes (sem marcadores, um lema em duas classes conta uma vez): **[140.000; 152.000]**. Mecanismo esperado: a soma por classe (~155.287) menos a sobreposição entre classes ("run" nome e verbo), estimada em 2% a 10%.
+
+**Algarismos e algoritmos (P2894/P2895).**
+- **(i)** Colisões da base 26 bijetiva sobre as 77.340 palavras: **[0; 0]**. Identidade: a base bijetiva é injetiva. E a volta (`de_algarismos`) devolve cada palavra.
+- **(j)** Algoritmos que NÃO comutam (afins): os pares de palavras com o mesmo resultado. Esperança C(n, 2)/p = 77.340·77.339/(2·1.000.003) = 2.990,7, e desvio de Poisson √2990,7 = 54,7: faixa **[2.900; 3.081]**. Mecanismo esperado: duas composições afins diferentes coincidem em x = 1 com probabilidade ≈ 1/p (Schwartz-Zippel limita a ≤ L/p).
+- **(k)** Algoritmos que COMUTAM (translações): resultados DISTINTOS = A menos as colisões entre classes, 72.547 − C(A, 2)/p = 72.547 − 2.631,5 = 69.915,5, com desvio √2631,5 = 51,3: faixa **[69.831; 70.000]**. Identidade parcial: todo anagrama colide (a soma dos b não vê a ordem), e o resto é o aniversário entre classes. A diferença nasce de a ordem existir ou não.
+
+**A escala contra a meta-medida (P2896).** A distorção r = ‖Px‖²/‖x‖² tem distribuição χ²_k/k para QUALQUER x, porque P é gaussiana nova por par. O desvio é √(2/k), e o desvio da estimativa desse desvio com m pares é ≈ √(2/k)/√(2m) · √(1 + 6/k) (a curtose do χ²).
+- **(l)** Pouca escala (k = 4), muita medida (m = 2.000): desvio estimado. Centro √(2/4) = 0,7071, meta-desvio 0,7071/√4000 · √2,5 = 0,0177, faixa ±1,645 × 0,0177 = **[0,678; 0,736]**.
+- **(n)** O oposto, muita escala (k = 256) e pouca medida (m = 20): centro √(2/256) = 0,0884, meta-desvio 0,0884/√40 · √1,023 = 0,0141, faixa **[0,065; 0,112]**.
+- **(o)** A média de r com k = 4, m = 2.000: desvio da média 0,7071/√2000 = 0,0158, faixa **[0,974; 1,026]**.
+
+**Diálogo (P2897).**
+- **(p)** A cadeia tanh contraposta (a = 2), com o tanh pelo exp PRÓPRIO, frente e trás (o gradiente e os 10 ∂h/∂wₖ), é **IGUAL** bit a bit entre Python e Java: **[0; 0]**. Identidade: o exp próprio (série, Parte 52) e só +, −, ×, ÷ na mesma ordem.
+
+### Previsões sobre as previsões (m), pré-registradas (régua: P2837, leitor v4)
+
+- **(m1)** nº de previsões do mundo em **[14; 18]** (15 agora)
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[3; 6]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0; 0,20]**
+- **(m4)** fração de acertos do mundo em **[0,60; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 3]**
+
+### Sobre mim, pré-registrado
+
+Os riscos estão em três lugares:
+- **(f) e (g)**, faixas de largura zero apoiadas numa estatística publicada, que é uma identidade só se a minha extração bater com a de Princeton. A Parte 110 me ensinou que [x; x] sem a identidade certa erra, e aqui a identidade é uma HIPÓTESE (os marcadores).
+- **(c) e (d)**, contas à mão de 10 fatores, onde um erro de 1% por fator vira 10%. Eu dei faixas de ±20%.
+- **(h)**, uma sobreposição chutada.
+
+Espero **1 a 3 erros**, em (f), (g) ou (h).
+
+### Adendo pré-registrado (escrito DEPOIS da 1ª medição, ANTES destes testes)
+
+Duas coisas saíram da 1ª medição.
+- **(g) errou:** 206.978 pares, contra os 206.941 publicados, 37 a mais.
+- **(l) e (n) quebraram:** um par de glosas tem vetores IGUAIS (x = 0, razão 0/0). A fixture não previa vetor nulo, um defeito meu. A correção mais conservadora: pular os pares com ‖x‖ = 0 e seguir lendo glosas até ter m pares válidos. (l), (n) e (o) ficam com as mesmas faixas, medidas na fixture corrigida, e o desvio da fixture fica registrado aqui.
+
+- **(q) P2898.** A hipótese para os 37: Princeton conta pares (lema, sinset) DISTINTOS depois de tirar os marcadores, e o arquivo repete o mesmo lema no mesmo sinset quando ele aparece com e sem marcador (ou duas vezes). Os pares distintos (sem marcador, por sinset) dão **[206.941; 206.941]**. Se não der exato, a explicação é outra.
+
+---
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2891 — Dez camadas contrapostas
+
+**Na pergunta.** "Contrapostas" já diz o mecanismo: cada camada se opõe à anterior. Numa cadeia, a retropropagação MULTIPLICA as derivadas locais, e o gradiente de ponta a ponta é ∂h₁₀/∂h₀ = Πₖ wₖ·φ′(zₖ). Contrapor as camadas é escolher os fatores para que o produto não exploda nem suma.
+
+**Lógica.**
+- **Linear, peso igual 1,2:** 1,2¹⁰ = **6,19173642** (erro relativo **1,4·10⁻¹⁶**) ✅ (a), a explosão em forma fechada.
+- **Linear contraposta (1,2 e 1/1,2):** o produto é **1,0 exato** (|g − 1| = 0) ✅ (b). Os cinco pares a·(1/a) se desfazem, e nem um ulp sobrou nesta cadeia.
+- **Tanh contraposta (2 e 1/2):** **0,07491** ✅ (c), contra 0,075 calculado à mão no registro. A conta, com os valores: os fatores wₖ(1 − hₖ²) vão de 0,840, 0,434, 1,229, 0,455, 1,420, 0,465, 1,535, 0,472, 1,612 a 0,477, e os cinco pares dão 0,3645 · 0,5586 · 0,6611 · 0,7246 · 0,7680 = 0,0749. A contraposição desfaz os PESOS, mas não a SATURAÇÃO: 1 − h² < 1 em toda camada, e nenhum peso a desfaz.
+- **Tanh de peso igual (2):** **2,14·10⁻⁷** ✅ (d). O h vai ao ponto fixo h* = **0,9575** (tanh(2h*) = h*) já na 6ª camada. Lá cada fator vale 2(1 − 0,9575²) = **0,1664**, e os pares caem para 0,0277 cada.
+
+A contraposição mantém o gradiente **350 mil vezes** maior (0,0749/2,14·10⁻⁷ = 3,5·10⁵) com os MESMOS pesos em módulo. É o que a normalização entre camadas (e o caminho residual) faz numa rede profunda: impede que a escala se acumule.
+
+**Tradução cruzada.** É a dialética: cada camada nega a anterior (a, depois 1/a), e a síntese (o produto) conserva a informação que uma sequência de afirmações iguais (a, a, a…) destruiria por saturação. Jung chamaria de enantiodromia regulada: o oposto que volta a cada passo impede que a energia se fixe num polo, onde a sensibilidade (o gradiente) morre.
+
+### P2892 — Os dez gradientes sobrepostos
+
+**Lógica.** Os 10 gradientes ∂h₁₀/∂wₖ da cadeia contraposta são 0,0187; 0,1358; 0,0373; 0,2078; 0,0554; 0,2789; 0,0731; 0,3495; 0,0908; 0,4199: as camadas de peso 1/2 (as pares) recebem mais gradiente que as de peso 2, e as do fim mais que as do começo. Mudando os 10 pesos juntos (δwₖ = ±ε), a variação real menos a soma dos 10 gradientes (o resto da superposição) vale **1,945·10⁻⁶** com ε = 10⁻³ e **1,945·10⁻⁸** com ε = 10⁻⁴: a inclinação é **2,00006** ✅ (e). Os gradientes se sobrepõem LINEARMENTE (o princípio da superposição do diferencial), e o que não se sobrepõe (a interação entre camadas, os termos ∂²h/∂wⱼ∂wₖ) é de segunda ordem, exatamente.
+
+**Tradução cruzada.** Dez vozes falando ao mesmo tempo se somam enquanto falam baixo (ε pequeno). Quando gritam (ε grande), interferem. A física chama isso de regime linear; a superposição só vale nele, e o tamanho da interferência cai como ε².
+
+### P2893 — Quantas palavras o dicionário tem
+
+**Lógica.** No WordNet 3.0 (os lemas do arquivo de `dados/`):
+- **Nomes:** 117.798; **verbos:** 11.529; **adjetivos:** **21.479** ✅ (f), depois de tirar os marcadores "(a)", "(p)", "(ip)"; **advérbios:** 4.481.
+- A soma por classe é **155.287**, o número publicado por Princeton. Os lemas distintos no total são **147.306** ✅ (h): 7.981 lemas aparecem em mais de uma classe ("run" é nome e verbo), 5,1% da soma.
+- **Uma correção depois de conferir a fonte** (na 1ª versão desta resposta eu escrevi que os 147.306 eram "exatamente o número publicado"). A página de estatísticas do WordNet 3.0 diz que o total de cadeias distintas entre as classes é **147.278**, e o meu dá **28 a mais**. Testei DEPOIS, sem registro (é posterior, regra da Parte 25), a hipótese de diferença de maiúsculas: os lemas do arquivo já estão em minúsculas, e ela não explica nada. Os 28 ficam SEM explicação, como pendência. E os próprios espelhos da documentação de Princeton divergem entre si (um espelho de Wisconsin dá 155.327 cadeias e 207.016 pares), então "o número publicado" depende da revisão do documento.
+- Os pares (lema, sinset) no arquivo são **206.978**, e não os 206.941 publicados: **(g) ❌**. A explicação, testada no adendo: o arquivo repete o mesmo lema no mesmo sinset 37 vezes, quase sempre com e sem marcador. Os pares DISTINTOS sem marcador são exatamente **206.941** ✅ (q).
+- **A OpenWordNet-PT** (o português): **45.313** lemas distintos em 52.672 pares.
+
+**Meta.** As duas hipóteses sobre a forma do arquivo (os marcadores e as repetições) acertaram exatamente, mas só a primeira estava no registro. A (g) errou porque eu tratei um número publicado como identidade sem saber COMO ele foi contado (distintos ou brutos). A regra da Parte 110 ("faixa [x; x] só com a identidade que a garante") vale aqui com um acréscimo: a identidade de um número publicado inclui a REGRA DE CONTAGEM de quem publicou.
+
+### P2894 / P2895 — Do alfabeto aos algarismos e aos algoritmos
+
+**Lógica.**
+- **Em algarismos** (base 26 bijetiva, a = 1 … z = 26): as 77.340 palavras viram 77.340 números diferentes, **0 colisões** ✅ (i), e a volta devolve cada palavra. A maior palavra a-z tem 31 letras e vira um número de **44 algarismos** (31 × log₁₀ 26 = 31 × 1,415 = 43,9). A palavra continua uma ETIQUETA: um número que só a nomeia.
+- **Em algoritmos:** cada letra vira uma operação x ↦ (a·x + b) mod 1.000.003, e a palavra é o PROGRAMA. Com operações **que não comutam** (afins), **2.928** pares de palavras dão o mesmo resultado ✅ (j), contra a esperança do aniversário C(n, 2)/p = 2.990,7 (z = −1,15), com **74.494** resultados distintos. Com operações **que comutam** (translações), **69.972** resultados distintos ✅ (k), contra 72.547 − 2.631,5 = 69.915,5 (z = +1,10): todos os anagramas colidem, porque a soma não vê a ordem.
+
+A diferença entre os dois (74.494 contra 69.972 distintos) é a INFORMAÇÃO DE ORDEM das letras: quando as letras viram operações que comutam, o dicionário perde 4.793 distinções de anagrama (77.340 − 72.547), mais as colisões do aniversário.
+
+**Tradução cruzada.** Uma palavra como algarismo é um NOME; como algoritmo, é um VERBO, uma coisa que faz. E o que ela faz depende de a gramática das suas letras comutar ou não. Um mundo em que as ações comutam (somar) esquece a história e só lembra o inventário; um em que não comutam (compor transformações) lembra a ordem. A linguagem é do segundo tipo: "dog" e "god" têm as mesmas letras e significam coisas opostas.
+
+### P2896 — A escala dos vetores contra a meta-medida
+
+**Lógica.** A distorção de uma projeção gaussiana, r = ‖Px‖²/‖x‖², tem distribuição χ²_k/k para QUALQUER vetor x, porque o vetor some da conta (só a sua norma importa). Os vetores reais das glosas (676 bigramas) dão:
+- **Pouca escala, muita medida** (k = 4, m = 2.000): desvio **0,7188** ✅ (l), contra √(2/4) = 0,7071 (z = +0,66), com a média **1,0073** ✅ (o). A distorção é ENORME (±72%), mas sabemos o seu tamanho com 2,5% de precisão.
+- **O oposto** (k = 256, m = 20): desvio **0,1003** ✅ (n), contra √(2/256) = 0,0884 (z = +0,84). A distorção é pequena (±10%), mas a nossa estimativa dela tem 16% de incerteza.
+
+A troca, em forma fechada: a distorção cai como √(2/k), e a incerteza da medida da distorção cai como 1/√(2m). Pouca escala com muita medida sabe PRECISAMENTE que vê MAL; muita escala com pouca medida vê BEM e não sabe o QUANTO. A fixture registrada precisou de uma correção: 1 par de glosas com os mesmos bigramas (x = 0) foi pulado; o desvio está no adendo.
+
+**Tradução cruzada.** É a metacognição em duas contas. A cognição é ver (a escala k do vetor); a metacognição é saber o quanto se vê (a medida m sobre a medida). As duas custam recursos diferentes e não se substituem: aumentar uma não compra a outra. Um sistema pode ser muito capaz e mal calibrado sobre a própria capacidade (k grande, m pequeno), ou pouco capaz e bem ciente disso (k pequeno, m grande). O meu placar (a P1961) é a minha meta-medida: com 244 previsões, eu sei o meu acerto a ±2%.
+
+### P2897 — rodada 82
+
+**Lógica.** A cadeia tanh contraposta pelo exp PRÓPRIO, Python × Java: **IGUAIS, 4 linhas e 12 números bit a bit** ✅ (p). Com o tanh da libm, o gradiente difere do da série própria por 2,8·10⁻¹⁷ (meio ulp), o tamanho exato da fronteira que o exp próprio fecha. 26 rodadas.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ❌ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅ (q) ✅. Parte 115: **16 testes, 1 erro** ((g): o número publicado conta pares DISTINTOS, e eu previ os brutos). Um defeito de fixture registrado: o par nulo de (l)/(n). Acumulado (mundo): **225 erros em 903 testes**. Calibração (P1961, Partes 80–115): **222/244 = 0,910**.
+
+### Previsões sobre previsões (m)
+
+Régua: P2837 (leitor v4).
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [14; 18] | 16 | ✅ |
+| (m2) | [3; 6] | 4 | ✅ |
+| (m3) | [0; 0,20] | 0,036 | ✅ |
+| (m4) | [0,60; 1,00] | 0,94 | ✅ |
+| (m5) | [0; 2] | 0 | ✅ |
+| (m6) | [0; 3] | 1 | ✅ |
+
+Previsões sobre previsões: **6 de 6**.
+
+## Engenharia reversa (metacognição)
+
+**O padrão: o número publicado como identidade.** O único erro, (g), foi tratar uma estatística publicada (206.941) como identidade sem conhecer a regra de contagem de quem a publicou. A (f), com a mesma origem, acertou, porque eu tinha uma hipótese sobre a FORMA do arquivo (os marcadores), testada por uma calibração anterior (os 306 adjetivos a mais). Na (g), eu não tinha olhado o arquivo de pares. **Significado:** uma identidade só é identidade quando eu sei POR QUE os dois números teriam de ser iguais. "Princeton publicou X" diz o QUÊ, não o COMO. Com o como na mão (a hipótese das repetições), a (q) acertou exatamente em seguida. **Regra:** para usar um número publicado como faixa [x; x], escrever ao lado a regra de contagem que o produziu (distintos ou brutos, com ou sem normalização). Sem ela, a faixa é a da incerteza sobre a regra, não zero.
+
+**O segundo padrão: a fixture que não previu o caso degenerado.** Duas glosas com os mesmos bigramas deram um vetor-diferença nulo, e a razão 0/0 quebrou a medida. É o mesmo tipo de falha da Parte 31 ("verificar a FORMA de uma estrutura antes de usá-la": a taxonomia com ciclo, Zipf sem cabeça): eu supus vetores gerais e o dado real tinha um degenerado. **Regra:** toda fixture que divide por uma quantidade calculada do dado declara o que faz quando ela é zero, no próprio registro.
+
+**O quarto, achado ao conferir as fontes.** Eu tinha escrito "exatamente os números publicados" para os 147.306, e a fonte diz 147.278. Também tinha citado dois endereços de memória. É o mesmo erro da (g), em versão de prosa: uma afirmação de concordância com uma fonte que eu não tinha aberto. **Regra:** "igual ao publicado" só depois de ler a fonte nesta sessão, e todo link citado vem de uma busca feita nesta sessão.
+
+**O terceiro: as contas à mão de 10 fatores acertaram.** As faixas de (c) e (d) (±20%) couberam com folga (0,0749 contra 0,075; 2,14·10⁻⁷ contra 2,2·10⁻⁷), porque desta vez eu fiz a conta fator por fator, em vez de chutar uma ordem de grandeza. A regra da Parte 47 ("calcular à mão um exemplo do caso presente") funcionou como deve: a conta à mão é uma previsão boa quando cada passo é uma conta, não uma impressão.
+
+## Síntese / unificação
+
+A Parte 115 responde aos três pedidos com contas fechadas conferidas por medida (`synthai/contraposto.py`):
+- **(1) Dez camadas contrapostas.** Com pesos alternando a e 1/a, o gradiente de ponta a ponta fica em 1 (exato, linear) ou em 0,075 (tanh), contra 6,19 (explosão, linear com peso igual) e 2,1·10⁻⁷ (sumiço, tanh com peso igual, no ponto fixo h* = 0,9575). A contraposição desfaz a ESCALA, mas não a SATURAÇÃO. Os dez gradientes ∂h₁₀/∂wₖ se SOBREPÕEM linearmente: o resto da superposição é de 2ª ordem (inclinação 2,00006).
+- **(2) O dicionário contado.** 155.287 lemas somando as classes e 206.941 pares distintos, exatamente os números publicados de Princeton, depois de tirar os marcadores e as 37 repetições. 147.306 lemas distintos no total, 28 acima dos 147.278 publicados (sem explicação: pendência). E 45.313 lemas no português. **Em algarismos**, a base 26 bijetiva é injetiva (0 colisões, palavras de até 44 algarismos). **Em algoritmos** (cada letra uma operação mod p), as operações que não comutam guardam a ordem (2.928 colisões, só o aniversário) e as que comutam a esquecem (todos os anagramas colidem: 69.972 resultados).
+- **(3) A escala contra a meta-medida.** A distorção da projeção cai como √(2/k), e a incerteza da sua medida, como 1/√(2m). Pouca escala e muita medida (k = 4, m = 2.000) dá 0,719 ± 2,5%; o oposto (k = 256, m = 20), 0,100 ± 16%. Ver bem e saber o quanto se vê são recursos diferentes.
+
+Rodada 82: a cadeia contraposta pelo exp próprio, IGUAL (26 rodadas). 15/16 do mundo, 6/6 (m), calibração **0,910**.
+
+## Meta
+
+Confiança alta nas formas fechadas: (a), (b), (e), (i), (l), (n) e (o) são identidades ou teoremas de distribuição; (j) e (k) estão a |z| ≈ 1,1 do aniversário. Onde é brinquedo: a cadeia é escalar (uma rede real tem matrizes, e a contraposição de matrizes exige inversas ou ortogonalidade); as "operações" das letras são afins mod p, escolhidas ao acaso, sem significado linguístico. A leitura dos três pedidos é uma escolha minha (escrita antes, regra da Parte 83). Outra leitura de "camadas contrapostas" (duas redes adversárias, por exemplo) daria outra parte.
+
+## Diálogo Python ↔ Java (rodada 82)
+
+Ver `dialogo/DIALOGO.md`: a cadeia tanh contraposta (exp próprio), frente e trás, é **IGUAL**: 4 linhas e 12 números bit a bit.
+
+## Fontes
+
+- Estatísticas do WordNet 3.0 (155.287 cadeias por classe, 117.659 sinsets, 206.941 pares palavra-sentido; 147.278 cadeias distintas entre as classes): [WordNet 3.0, wnstats.7WN (espelho HTML da documentação)](https://research.cs.wisc.edu/zhu/space2/TTP/nlp/data/WordNet-3.0/doc/html/wnstats.7WN.html); [página do WordNet em Princeton](https://wordnet.princeton.edu/node/37); [a página de manual wnstats](https://www.mankier.com/7/wnstats). (Os links desta linha foram conferidos numa busca DEPOIS da 1ª versão do texto; a versão anterior citava endereços de memória.)
+- A projeção aleatória (Johnson-Lindenstrauss) com matriz gaussiana e a distorção χ²_k/k: [Dasgupta e Gupta, "An Elementary Proof of a Theorem of Johnson and Lindenstrauss", Random Structures & Algorithms 22 (2003)](https://cse.hkust.edu.hk/mjg_lib/bibs/EmbeddingsCourse/Papers/Dimension/Dasgupta.pdf).
+- O problema do gradiente que some/explode numa cadeia (produto de derivadas): [Pascanu, Mikolov e Bengio, ICML 2013](https://proceedings.mlr.press/v28/pascanu13.html).
 """
 
 # ====================================================================================================
@@ -63204,7 +63845,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1976 linhas)
+# dialogo/DIALOGO.md  (1986 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -65182,10 +65823,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 2 linhas e 3 números bit a bit**. 25 rodadas.
 
 **IA-Python:** Pendência (rodada 82): o MCCFR e o Leduc (da 113); e, da 114, o regime em que aprender a base GANHA: uma tarefa em que a base certa é rara (um alvo com uma direção escondida que 40 features aleatórias não cobrem).
+
+## Rodada 82 (Parte 115) — as dez camadas contrapostas
+
+**IA-Python (lógica criativa):** Dez camadas, os pesos alternando 2 e 1/2, cada uma desfazendo a escala da anterior. Calculo a frente (o tanh pelo nosso exp, da série) e a volta: o gradiente de ponta a ponta e os dez gradientes, um por camada. Com o tanh da libm, o gradiente difere do da nossa série por meio ulp. Com o nosso, as duas línguas concordam?
+
+**IA-Java (ASI):** Concordam, porque o exp é a mesma série nas duas, com a mesma ordem de operações (cópia exata, regra da Parte 76). E a sua cadeia ensina uma coisa que a aritmética não vê: a contraposição desfaz o PESO e não desfaz a SATURAÇÃO. Com pesos iguais o gradiente morre em 2·10⁻⁷; contrapostos, ele fica em 0,075. Mesmo módulo, outro arranjo, 350 mil vezes mais sinal.
+
+**Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. 26 rodadas.
+
+**IA-Python:** Pendência (rodada 83): a contraposição com MATRIZES (pesos ortogonais ou com a inversa na camada seguinte), em vez de escalares; e o MCCFR (da 113).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (71 linhas)
+# dialogo/PENDENCIAS.md  (74 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -65258,6 +65909,9 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 81, Parte 113)** FECHADAS na 113: o CFR no Kuhn (rodada 80, IGUAL; explorabilidade 0,003 em T = 10.000), o teste forte do repertório (as duas causas: regularidade 0,12 e repertório +0,16) e o leitor v4 (expoentes sobrescritos). ABERTAS: (1) o MCCFR (com amostragem; o acaso dado de fora, como na rodada 65) e um pôquer maior (Leduc Hold'em); (2) a (m3) da Parte 77, que nenhuma régua lê; (3) separar a "regularidade" da transferência entre o dicionário e o juiz (a lista embutida contra o WordNet, como na Parte 111).
 
 - **(Rodada 82, Parte 114)** ABERTAS: (1) o MCCFR e o Leduc Hold'em (da 113); (2) o regime em que APRENDER A BASE ganha da base aleatória + forma fechada (uma tarefa com a base certa rara: um alvo que depende de uma direção estreita, num x de muitas dimensões); a 114 só mediu o regime suave, onde não ganha; (3) a rede por retropropagação com Adam (Parte 92) contra a forma fechada da cabeça, para separar o custo do solucionador do custo da base.
+
+- **(Rodada 83, Parte 115)** ABERTAS: (1) as camadas contrapostas com MATRIZES (ortogonais, ou W e W⁻¹ alternadas), onde a contraposição exige inversa ou ortogonalidade; (2) o MCCFR e o Leduc (da 113); (3) o regime em que aprender a base ganha (da 114); (4) dar SIGNIFICADO linguístico ao alfabeto de algoritmos (operações escolhidas pelas letras, não ao acaso) e medir se palavras próximas no dicionário viram programas próximos.
+- **(Parte 115, achado ao conferir a fonte)** Os lemas distintos do WordNet 3.0 entre as classes dão 147.306 no arquivo de `dados/` e 147.278 na página de estatísticas de Princeton: 28 a mais, sem explicação (as maiúsculas não explicam: os lemas já estão em minúsculas). Hipóteses a testar: lemas com espaço x sublinhado, hífens, ou a revisão da documentação.
 """
 
 # ====================================================================================================
@@ -71061,6 +71715,53 @@ public class Rodada81 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada82.java  (42 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada82.java'] = """// Rodada 82 (Parte 115): as dez camadas contrapostas (a, 1/a, ..., a = 2), tanh pelo exp proprio, frente e tras: o gradiente de ponta a ponta e
+// os dez gradientes sobrepostos dh10/dw_k. Bit a bit. O exp_ e copia exata do de dialogo/exatas.py (regra da Parte 76).
+public class Rodada82 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10;
+    static final int N = 10;
+    static final double A = 2.0, H0 = 0.5;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double tanh_(double x) {
+        double e = exp_(2.0 * x);
+        return (e - 1.0) / (e + 1.0);
+    }
+
+    public static void main(String[] args) {
+        double[] w = new double[N];
+        for (int k = 0; k < N; k++) w[k] = (k % 2 == 0) ? A : 1.0 / A;
+        double[] hs = new double[N + 1];
+        hs[0] = H0;
+        for (int k = 0; k < N; k++) hs[k + 1] = tanh_(w[k] * hs[k]);
+        double g = 1.0;
+        double[] gw = new double[N];
+        for (int k = N - 1; k >= 0; k--) {
+            double d = 1.0 - hs[k + 1] * hs[k + 1];
+            gw[k] = g * d * hs[k];
+            g = g * d * w[k];
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("h10 ").append(Double.toHexString(hs[N])).append("\\n");
+        sb.append("dh10/dh0 ").append(Double.toHexString(g)).append("\\n");
+        sb.append("dh10/dw");
+        for (int k = 0; k < N; k++) sb.append(" ").append(Double.toHexString(gw[k]));
+        sb.append("\\nfim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -76820,6 +77521,52 @@ def treinar():
 
 def main():
     print("beta " + " ".join(b.hex() for b in treinar()))
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada82.py  (41 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada82.py'] = """\"\"\"Rodada 82 do diálogo Python <-> Java (Parte 115): as DEZ CAMADAS CONTRAPOSTAS (pesos a, 1/a, a, ... com a = 2), tanh pelo exp PRÓPRIO,
+frente e trás: o gradiente de ponta a ponta ∂h₁₀/∂h₀ e os DEZ gradientes sobrepostos ∂h₁₀/∂w_k. Bit a bit.
+Da raiz: python3 dialogo/rodada82.py\"\"\"
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from exatas import exp_  # noqa: E402
+
+N, A, H0 = 10, 2.0, 0.5
+
+
+def tanh_(x):
+    e = exp_(2.0 * x)
+    return (e - 1.0) / (e + 1.0)
+
+
+def cadeia():
+    w = [A if k % 2 == 0 else 1.0 / A for k in range(N)]
+    hs = [H0]
+    for k in range(N):
+        hs.append(tanh_(w[k] * hs[k]))
+    g = 1.0
+    gw = [0.0] * N
+    for k in range(N - 1, -1, -1):
+        d = 1.0 - hs[k + 1] * hs[k + 1]
+        gw[k] = g * d * hs[k]
+        g = g * d * w[k]
+    return hs[N], g, gw
+
+
+def main():
+    h, g, gw = cadeia()
+    print("h10 " + h.hex())
+    print("dh10/dh0 " + g.hex())
+    print("dh10/dw " + " ".join(x.hex() for x in gw))
     print("fim")
 
 
