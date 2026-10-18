@@ -1,0 +1,1106 @@
+# [SYNTHAI, Parte 116] Cópia VERBATIM do texto colado pelo usuário na mensagem (uma resposta de outro assistente, TRUNCADA em dois pontos:
+# no meio de CreativityEngine.divergent_exploration e no fim de NexusRaphael.evaluate_and_decide). Guardado como .txt: não é importável
+# nem executável (não fecha como Python; tem urllib.request e sqlite3 em disco). A parte reescrita offline é synthai/nexus_v2.py.
+# --- início do texto recebido ---
+Vou implementar o NEXUS–RAPHAEL como uma arquitetura experimental consolidada em Python, seguindo os princípios estabelecidos e priorizando implementação real, mensurável e auditável.
+
+```python
+#!/usr/bin/env python3
+"""
+NEXUS–RAPHAEL: Experimental Recursive, Metacognitive, Probabilistic
+and Self-Correcting Intelligence Architecture
+
+A research platform combining linguistic processing, mathematical reasoning,
+multi-agent systems, game-theoretic learning, and metacognitive evaluation.
+"""
+
+import json
+import sqlite3
+import hashlib
+import random
+import math
+import logging
+import time
+from typing import Dict, List, Tuple, Any, Optional, Set, Callable
+from dataclasses import dataclass, asdict, field
+from datetime import datetime
+from enum import Enum
+from collections import defaultdict, Counter
+import urllib.request
+import urllib.error
+from abc import ABC, abstractmethod
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger('NEXUS-RAPHAEL')
+
+
+# ============================================================================
+# LAYER 0: CONFIGURATION AND FOUNDATIONS
+# ============================================================================
+
+class Config:
+    """Central configuration for the NEXUS-RAPHAEL system."""
+
+    # System parameters
+    MAX_RECURSION_DEPTH = 5
+    MAX_COMPUTATION_BUDGET = 10000
+    RANDOM_SEED = 42
+
+    # Dictionary API endpoints
+    FREE_DICTIONARY_API = "https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
+
+    # Experimental modes
+    MODE_FAST = "fast"
+    MODE_STANDARD = "standard"
+    MODE_INTENSIVE = "intensive"
+
+    # Mathematical constants
+    PI = math.pi
+    E = math.e
+    PHI = (1 + math.sqrt(5)) / 2  # Golden ratio
+
+    # Memory database
+    MEMORY_DB = "nexus_raphael_memory.db"
+
+    # Probability thresholds
+    CONFIDENCE_THRESHOLD = 0.7
+    CALIBRATION_BINS = 10
+
+
+class MetricType(Enum):
+    """Types of metrics for evaluation."""
+    ACCURACY = "accuracy"
+    PRECISION = "precision"
+    RECALL = "recall"
+    CALIBRATION = "calibration"
+    CONSISTENCY = "consistency"
+    NOVELTY = "novelty"
+    COMPUTATIONAL_COST = "computational_cost"
+
+
+@dataclass
+class Hypothesis:
+    """Represents a testable hypothesis."""
+    id: str
+    description: str
+    prediction: str
+    alternative: Optional[str] = None
+    timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
+    status: str = "untested"  # untested, confirmed, rejected, inconclusive
+    evidence: List[Dict] = field(default_factory=list)
+    confidence: float = 0.5
+
+    def to_dict(self) -> Dict:
+        return asdict(self)
+
+
+@dataclass
+class ExperimentResult:
+    """Records the outcome of an experiment."""
+    hypothesis_id: str
+    metric_type: str
+    value: float
+    baseline: Optional[float] = None
+    uncertainty: Optional[float] = None
+    timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
+    metadata: Dict = field(default_factory=dict)
+
+    def improvement_over_baseline(self) -> Optional[float]:
+        if self.baseline is not None and self.baseline != 0:
+            return (self.value - self.baseline) / abs(self.baseline)
+        return None
+
+
+# ============================================================================
+# LAYER 1: OBSERVATION AND INGESTION
+# ============================================================================
+
+class DataIngestionLayer:
+    """Layer 1: Receives and validates input data."""
+
+    def __init__(self):
+        self.ingestion_log: List[Dict] = []
+
+    def ingest(self, data: Any, source: str, data_type: str) -> Dict:
+        """Ingest data with metadata."""
+        record = {
+            'data': data,
+            'source': source,
+            'type': data_type,
+            'timestamp': datetime.now().isoformat(),
+            'quality': self._assess_quality(data, data_type)
+        }
+        self.ingestion_log.append(record)
+        logger.info(f"Ingested {data_type} from {source} (quality: {record['quality']:.2f})")
+        return record
+
+    def _assess_quality(self, data: Any, data_type: str) -> float:
+        """Assess data quality heuristically."""
+        if data is None:
+            return 0.0
+        if data_type == "text":
+            return min(1.0, len(str(data)) / 100)
+        elif data_type == "number":
+            return 1.0 if isinstance(data, (int, float)) else 0.5
+        return 0.5
+
+
+# ============================================================================
+# LAYER 2: LINGUISTIC REPRESENTATION
+# ============================================================================
+
+class LinguisticLayer:
+    """Layer 2: Converts text into linguistic representations."""
+
+    def __init__(self):
+        self.cache: Dict[str, Dict] = {}
+
+    def analyze(self, text: str) -> Dict:
+        """Analyze text into components."""
+        text = str(text).strip()
+
+        if text in self.cache:
+            return self.cache[text]
+
+        analysis = {
+            'original': text,
+            'characters': list(text),
+            'length': len(text),
+            'words': text.split(),
+            'unique_chars': len(set(text)),
+            'lowercase': text.lower(),
+            'uppercase': text.upper(),
+            'unicode_points': [ord(c) for c in text],
+            'is_alphabetic': text.isalpha(),
+            'is_numeric': text.isnumeric(),
+            'is_alphanumeric': text.isalnum()
+        }
+
+        self.cache[text] = analysis
+        return analysis
+
+
+class DictionaryAdapter:
+    """Adapter for external dictionary APIs with caching and error handling."""
+
+    def __init__(self, offline_mode: bool = False):
+        self.offline_mode = offline_mode
+        self.cache: Dict[str, Dict] = {}
+        self.request_count = 0
+        self.error_count = 0
+
+    def lookup(self, word: str, language: str = "en") -> Optional[Dict]:
+        """Look up word definition with error handling."""
+        word = word.lower().strip()
+
+        if word in self.cache:
+            return self.cache[word]
+
+        if self.offline_mode:
+            return self._offline_lookup(word)
+
+        try:
+            url = Config.FREE_DICTIONARY_API.format(word=word)
+            self.request_count += 1
+
+            with urllib.request.urlopen(url, timeout=5) as response:
+                data = json.loads(response.read().decode())
+
+                if data and len(data) > 0:
+                    entry = data[0]
+                    result = {
+                        'word': word,
+                        'phonetic': entry.get('phonetic', ''),
+                        'meanings': [],
+                        'source': 'Free Dictionary API',
+                        'timestamp': datetime.now().isoformat()
+                    }
+
+                    for meaning in entry.get('meanings', []):
+                        result['meanings'].append({
+                            'part_of_speech': meaning.get('partOfSpeech', ''),
+                            'definitions': [
+                                {
+                                    'definition': defn.get('definition', ''),
+                                    'example': defn.get('example', ''),
+                                    'synonyms': defn.get('synonyms', []),
+                                    'antonyms': defn.get('antonyms', [])
+                                }
+                                for defn in meaning.get('definitions', [])[:3]
+                            ]
+                        })
+
+                    self.cache[word] = result
+                    return result
+
+        except urllib.error.HTTPError as e:
+            self.error_count += 1
+            if e.code == 404:
+                logger.debug(f"Word not found: {word}")
+            else:
+                logger.warning(f"HTTP error looking up '{word}': {e}")
+        except Exception as e:
+            self.error_count += 1
+            logger.warning(f"Error looking up '{word}': {e}")
+
+        # Fallback to offline mode
+        return self._offline_lookup(word)
+
+    def _offline_lookup(self, word: str) -> Dict:
+        """Minimal offline representation."""
+        return {
+            'word': word,
+            'phonetic': '',
+            'meanings': [],
+            'source': 'offline_fallback',
+            'timestamp': datetime.now().isoformat()
+        }
+
+
+# ============================================================================
+# LAYER 3: NUMERIC AND SYMBOLIC REPRESENTATION
+# ============================================================================
+
+class NumericRepresentationLayer:
+    """Layer 3: Converts between words, numbers, and symbolic representations."""
+
+    @staticmethod
+    def word_to_unicode(word: str) -> List[int]:
+        """Convert word to Unicode code points."""
+        return [ord(c) for c in word]
+
+    @staticmethod
+    def word_to_utf8_bytes(word: str) -> List[int]:
+        """Convert word to UTF-8 byte sequence."""
+        return list(word.encode('utf-8'))
+
+    @staticmethod
+    def word_to_binary(word: str) -> str:
+        """Convert word to binary representation."""
+        return ''.join(format(ord(c), '08b') for c in word)
+
+    @staticmethod
+    def word_to_hex(word: str) -> str:
+        """Convert word to hexadecimal."""
+        return word.encode('utf-8').hex()
+
+    @staticmethod
+    def word_to_hash(word: str, algorithm: str = 'sha256') -> str:
+        """Generate cryptographic hash of word."""
+        h = hashlib.new(algorithm)
+        h.update(word.encode('utf-8'))
+        return h.hexdigest()
+
+    @staticmethod
+    def alphanumeric_value(word: str) -> int:
+        """Simple alphanumeric encoding (A=1, B=2, etc.)."""
+        word = word.upper()
+        return sum(ord(c) - ord('A') + 1 for c in word if c.isalpha())
+
+    @staticmethod
+    def positional_encoding(word: str, base: int = 26) -> int:
+        """Positional encoding treating word as base-N number."""
+        word = word.upper()
+        value = 0
+        for c in word:
+            if c.isalpha():
+                digit = ord(c) - ord('A')
+                value = value * base + digit
+        return value
+
+    @staticmethod
+    def numerological_reduction(word: str) -> int:
+        """Reduce to single digit (numerology style)."""
+        total = sum(ord(c) for c in word)
+        while total > 9:
+            total = sum(int(d) for d in str(total))
+        return total
+
+    @classmethod
+    def encode_all(cls, word: str) -> Dict[str, Any]:
+        """Apply all encoding methods."""
+        return {
+            'unicode': cls.word_to_unicode(word),
+            'utf8_bytes': cls.word_to_utf8_bytes(word),
+            'binary': cls.word_to_binary(word),
+            'hex': cls.word_to_hex(word),
+            'hash_sha256': cls.word_to_hash(word),
+            'alphanumeric': cls.alphanumeric_value(word),
+            'positional': cls.positional_encoding(word),
+            'numerological': cls.numerological_reduction(word)
+        }
+
+
+# ============================================================================
+# LAYER 4: ALGEBRAIC AND GEOMETRIC COMPUTATION
+# ============================================================================
+
+class Vector:
+    """Represents a mathematical vector with operations."""
+
+    def __init__(self, components: List[float]):
+        self.components = components
+        self.dimension = len(components)
+
+    def norm(self) -> float:
+        """Euclidean norm."""
+        return math.sqrt(sum(x**2 for x in self.components))
+
+    def normalize(self) -> 'Vector':
+        """Return unit vector."""
+        n = self.norm()
+        if n == 0:
+            return Vector([0] * self.dimension)
+        return Vector([x / n for x in self.components])
+
+    def dot(self, other: 'Vector') -> float:
+        """Dot product."""
+        if self.dimension != other.dimension:
+            raise ValueError("Vector dimensions must match")
+        return sum(a * b for a, b in zip(self.components, other.components))
+
+    def cosine_similarity(self, other: 'Vector') -> float:
+        """Cosine similarity between vectors."""
+        norm_product = self.norm() * other.norm()
+        if norm_product == 0:
+            return 0.0
+        return self.dot(other) / norm_product
+
+    def angle(self, other: 'Vector') -> float:
+        """Angle between vectors in radians."""
+        cos_sim = self.cosine_similarity(other)
+        # Clamp to avoid numerical errors
+        cos_sim = max(-1.0, min(1.0, cos_sim))
+        return math.acos(cos_sim)
+
+    def distance(self, other: 'Vector') -> float:
+        """Euclidean distance."""
+        if self.dimension != other.dimension:
+            raise ValueError("Vector dimensions must match")
+        return math.sqrt(sum((a - b)**2 for a, b in zip(self.components, other.components)))
+
+    def add(self, other: 'Vector') -> 'Vector':
+        """Vector addition."""
+        if self.dimension != other.dimension:
+            raise ValueError("Vector dimensions must match")
+        return Vector([a + b for a, b in zip(self.components, other.components)])
+
+    def scale(self, scalar: float) -> 'Vector':
+        """Scalar multiplication."""
+        return Vector([x * scalar for x in self.components])
+
+    def project_onto(self, other: 'Vector') -> 'Vector':
+        """Project this vector onto another."""
+        other_norm_sq = sum(x**2 for x in other.components)
+        if other_norm_sq == 0:
+            return Vector([0] * self.dimension)
+        scalar = self.dot(other) / other_norm_sq
+        return other.scale(scalar)
+
+
+class GeometricLayer:
+    """Layer 4: Algebraic and geometric operations."""
+
+    @staticmethod
+    def double_angle_transformation(theta: float) -> float:
+        """Apply cos(2θ) = 2cos²(θ) - 1 transformation."""
+        return 2 * math.cos(theta)**2 - 1
+
+    @staticmethod
+    def word_to_vector(word: str, dimension: int = 10) -> Vector:
+        """Convert word to vector representation."""
+        # Simple hash-based embedding
+        hash_val = int(hashlib.md5(word.encode()).hexdigest(), 16)
+        random.seed(hash_val)
+        components = [random.gauss(0, 1) for _ in range(dimension)]
+        return Vector(components)
+
+    @staticmethod
+    def semantic_similarity(word1: str, word2: str) -> float:
+        """Estimate semantic similarity using vector representation."""
+        v1 = GeometricLayer.word_to_vector(word1)
+        v2 = GeometricLayer.word_to_vector(word2)
+        return v1.cosine_similarity(v2)
+
+    @staticmethod
+    def gradient_estimate(func: Callable, x: float, h: float = 1e-5) -> float:
+        """Numerical gradient estimation."""
+        return (func(x + h) - func(x - h)) / (2 * h)
+
+
+# ============================================================================
+# LAYER 5: INFERENCE AND PREDICTION
+# ============================================================================
+
+class ProbabilisticInferenceEngine:
+    """Layer 5: Generates predictions and probability distributions."""
+
+    def __init__(self):
+        self.observations: List[Tuple[Any, Any]] = []
+        self.priors: Dict[str, float] = {}
+
+    def update_prior(self, event: str, probability: float):
+        """Set or update prior probability."""
+        if not 0 <= probability <= 1:
+            raise ValueError("Probability must be between 0 and 1")
+        self.priors[event] = probability
+
+    def bayesian_update(self, prior: float, likelihood: float, evidence: float) -> float:
+        """Bayes' theorem: P(H|E) = P(E|H) * P(H) / P(E)."""
+        if evidence == 0:
+            return 0.0
+        posterior = (likelihood * prior) / evidence
+        return min(1.0, max(0.0, posterior))
+
+    def predict_next_char(self, text: str) -> Dict[str, float]:
+        """Simple character-level prediction based on frequency."""
+        if not text:
+            return {}
+
+        char_counts = Counter(text)
+        total = sum(char_counts.values())
+
+        return {char: count / total for char, count in char_counts.most_common(10)}
+
+    def entropy(self, probabilities: List[float]) -> float:
+        """Calculate Shannon entropy."""
+        return -sum(p * math.log2(p) for p in probabilities if p > 0)
+
+    def brier_score(self, predictions: List[float], outcomes: List[int]) -> float:
+        """Calculate Brier score for probability calibration."""
+        if len(predictions) != len(outcomes):
+            raise ValueError("Predictions and outcomes must have same length")
+        return sum((p - o)**2 for p, o in zip(predictions, outcomes)) / len(predictions)
+
+    def confidence_interval(self, data: List[float], confidence: float = 0.95) -> Tuple[float, float]:
+        """Calculate confidence interval assuming normal distribution."""
+        if not data:
+            return (0.0, 0.0)
+
+        mean = sum(data) / len(data)
+        variance = sum((x - mean)**2 for x in data) / len(data)
+        std_dev = math.sqrt(variance)
+
+        # Using z-score for 95% confidence
+        z = 1.96 if confidence == 0.95 else 2.576
+        margin = z * std_dev / math.sqrt(len(data))
+
+        return (mean - margin, mean + margin)
+
+
+# ============================================================================
+# LAYER 6: DIVERGENT CREATIVITY
+# ============================================================================
+
+class CreativityEngine:
+    """Layer 6: Generates novel combinations and hypotheses."""
+
+    def __init__(self, dictionary: DictionaryAdapter):
+        self.dictionary = dictionary
+        self.generated_concepts: List[Dict] = []
+
+    def combine_words(self, word1: str, word2: str, method: str = "portmanteau") -> str:
+        """Combine two words using specified method."""
+        if method == "portmanteau":
+            # Take first half of word1 and second half of word2
+            mid1 = len(word1) // 2
+            mid2 = len(word2) // 2
+            return word1[:mid1] + word2[mid2:]
+        elif method == "compound":
+            return word1 + word2
+        elif method == "interleave":
+            result = []
+            for c1, c2 in zip(word1, word2):
+                result.extend([c1, c2])
+            return ''.join(result)
+        else:
+            return word1 + "_" + word2
+
+    def generate_axiom(self) -> str:
+        """Generate a formal axiom template."""
+        templates = [
+            "For all X, if P(X) then Q(X)",
+            "There exists X such that P(X) and Q(X)",
+            "If P then Q, and if Q then R, therefore if P then R",
+            "P if and only if Q",
+            "Not (P and not-P)",
+            "If P or Q, and not P, then Q"
+        ]
+        return random.choice(templates)
+
+    def generate_paradox(self) -> str:
+        """Generate a logical paradox."""
+        paradoxes = [
+            "This statement is false",
+            "The set of all sets that do not contain themselves",
+            "If the barber shaves all who do not shave themselves, who shaves the barber?",
+            "Can an omnipotent being create a stone too heavy to lift?",
+            "The next statement is true. The previous statement is false.",
+        ]
+        return random.choice(paradoxes)
+
+    def generate_dilemma(self) -> Dict[str, str]:
+        """Generate an ethical or logical dilemma."""
+        return {
+            'scenario': "A trolley problem variant",
+            'option_a': "Take action with known consequence A",
+            'option_b': "Take action with known consequence B",
+            'option_c': "Take no action",
+            'question': "Which option maximizes the desired outcome?"
+        }
+
+    def divergent_exploration(self, seed: str, depth: int = 3) -> List[str]:
+        Vou continuar o código a partir de onde parou:
+
+```python
+class ReinforcementLearningAgent:
+    """Simple Q-learning agent for game playing."""
+
+    def __init__(self, learning_rate: float = 0.1, discount_factor: float = 0.9, epsilon: float = 0.1):
+        self.learning_rate = learning_rate
+        self.discount_factor = discount_factor
+        self.epsilon = epsilon
+        self.q_table: Dict[Tuple, Dict[str, float]] = defaultdict(lambda: defaultdict(float))
+        self.episode_rewards: List[float] = []
+
+    def get_state_key(self, state: GameState) -> Tuple:
+        """Convert game state to hashable key."""
+        return (state.data.get('word', ''), state.data.get('target', 0), state.data.get('moves', 0))
+
+    def choose_action(self, state: GameState, available_actions: List[str]) -> str:
+        """Choose action using epsilon-greedy policy."""
+        if random.random() < self.epsilon:
+            return random.choice(available_actions)
+
+        state_key = self.get_state_key(state)
+        q_values = {action: self.q_table[state_key][action] for action in available_actions}
+
+        if not q_values or all(v == 0 for v in q_values.values()):
+            return random.choice(available_actions)
+
+        return max(q_values, key=q_values.get)
+
+    def update_q_value(self, state: GameState, action: str, reward: float, next_state: GameState):
+        """Update Q-value using Q-learning formula."""
+        state_key = self.get_state_key(state)
+        next_state_key = self.get_state_key(next_state)
+
+        current_q = self.q_table[state_key][action]
+        max_next_q = max(self.q_table[next_state_key].values()) if self.q_table[next_state_key] else 0
+
+        new_q = current_q + self.learning_rate * (reward + self.discount_factor * max_next_q - current_q)
+        self.q_table[state_key][action] = new_q
+
+    def train_episode(self, game: RaphaelGame, max_steps: int = 10) -> float:
+        """Train for one episode."""
+        total_reward = 0.0
+
+        for step in range(max_steps):
+            if game.is_complete():
+                break
+
+            current_state = game.state_history[-1]
+            available_actions = game.get_available_operations()
+
+            action = self.choose_action(current_state, available_actions)
+            _, _, reward = game.apply_operation(action)
+
+            next_state = game.state_history[-1]
+            self.update_q_value(current_state, action, reward, next_state)
+
+            total_reward += reward
+
+        self.episode_rewards.append(total_reward)
+        return total_reward
+
+
+# ============================================================================
+# LAYER 9: METACOGNITION AND EVALUATION
+# ============================================================================
+
+class MetacognitiveEvaluator:
+    """Layer 9: Analyzes system performance and self-monitors."""
+
+    def __init__(self):
+        self.evaluation_history: List[Dict] = []
+        self.performance_metrics: Dict[str, List[float]] = defaultdict(list)
+
+    def evaluate_hypothesis(self, hypothesis: Hypothesis, results: List[ExperimentResult]) -> Dict:
+        """Evaluate a hypothesis based on experimental results."""
+        if not results:
+            return {
+                'hypothesis_id': hypothesis.id,
+                'status': 'insufficient_data',
+                'confidence': 0.0,
+                'recommendation': 'collect_more_data'
+            }
+
+        # Calculate aggregate metrics
+        avg_value = sum(r.value for r in results) / len(results)
+        improvements = [r.improvement_over_baseline() for r in results if r.improvement_over_baseline() is not None]
+        avg_improvement = sum(improvements) / len(improvements) if improvements else 0.0
+
+        # Determine status
+        if avg_improvement > 0.1:
+            status = 'confirmed'
+            recommendation = 'accept'
+        elif avg_improvement < -0.1:
+            status = 'rejected'
+            recommendation = 'reject'
+        else:
+            status = 'inconclusive'
+            recommendation = 'revise_or_retest'
+
+        evaluation = {
+            'hypothesis_id': hypothesis.id,
+            'status': status,
+            'num_experiments': len(results),
+            'avg_value': avg_value,
+            'avg_improvement': avg_improvement,
+            'confidence': self._calculate_confidence(results),
+            'recommendation': recommendation,
+            'timestamp': datetime.now().isoformat()
+        }
+
+        self.evaluation_history.append(evaluation)
+        return evaluation
+
+    def _calculate_confidence(self, results: List[ExperimentResult]) -> float:
+        """Calculate confidence based on result consistency."""
+        if len(results) < 2:
+            return 0.3
+
+        values = [r.value for r in results]
+        mean = sum(values) / len(values)
+        variance = sum((v - mean)**2 for v in values) / len(values)
+        std_dev = math.sqrt(variance)
+
+        # Lower variance = higher confidence
+        coefficient_of_variation = std_dev / mean if mean != 0 else float('inf')
+
+        if coefficient_of_variation < 0.1:
+            return 0.9
+        elif coefficient_of_variation < 0.3:
+            return 0.7
+        elif coefficient_of_variation < 0.5:
+            return 0.5
+        else:
+            return 0.3
+
+    def calibration_analysis(self, predictions: List[float], outcomes: List[int]) -> Dict:
+        """Analyze prediction calibration."""
+        if len(predictions) != len(outcomes):
+            raise ValueError("Predictions and outcomes must have same length")
+
+        # Bin predictions and calculate calibration
+        bins = Config.CALIBRATION_BINS
+        bin_edges = [i / bins for i in range(bins + 1)]
+        bin_counts = [0] * bins
+        bin_correct = [0] * bins
+
+        for pred, outcome in zip(predictions, outcomes):
+            bin_idx = min(int(pred * bins), bins - 1)
+            bin_counts[bin_idx] += 1
+            bin_correct[bin_idx] += outcome
+
+        calibration_error = 0.0
+        for i in range(bins):
+            if bin_counts[i] > 0:
+                expected = (bin_edges[i] + bin_edges[i + 1]) / 2
+                observed = bin_correct[i] / bin_counts[i]
+                calibration_error += abs(expected - observed) * bin_counts[i]
+
+        calibration_error /= len(predictions)
+
+        return {
+            'calibration_error': calibration_error,
+            'num_samples': len(predictions),
+            'bins': bins,
+            'is_well_calibrated': calibration_error < 0.1
+        }
+
+    def compare_versions(self, old_metrics: Dict[str, float], new_metrics: Dict[str, float]) -> Dict:
+        """Compare two versions of the system."""
+        comparison = {
+            'improvements': {},
+            'regressions': {},
+            'unchanged': {},
+            'overall_change': 0.0
+        }
+
+        all_keys = set(old_metrics.keys()) | set(new_metrics.keys())
+
+        for key in all_keys:
+            old_val = old_metrics.get(key, 0.0)
+            new_val = new_metrics.get(key, 0.0)
+            change = new_val - old_val
+
+            if abs(change) < 0.01:
+                comparison['unchanged'][key] = new_val
+            elif change > 0:
+                comparison['improvements'][key] = change
+            else:
+                comparison['regressions'][key] = change
+
+        if comparison['improvements']:
+            comparison['overall_change'] = sum(comparison['improvements'].values()) / len(comparison['improvements'])
+
+        return comparison
+
+
+# ============================================================================
+# LAYER 10: AUDIT, STABILIZATION, AND EVOLUTION
+# ============================================================================
+
+class SecurityAuditor:
+    """Security testing and validation."""
+
+    def __init__(self):
+        self.vulnerabilities_found: List[Dict] = []
+        self.test_results: List[Dict] = []
+
+    def audit_input_validation(self, input_handler: Callable) -> Dict:
+        """Test input validation with various payloads."""
+        test_cases = [
+            ("", "empty_string"),
+            ("a" * 10000, "very_long_string"),
+            ("'; DROP TABLE--", "sql_injection_attempt"),
+            ("<script>alert('xss')</script>", "xss_attempt"),
+            ("../../../etc/passwd", "path_traversal"),
+            ("\x00\x01\x02", "binary_data"),
+            ("😀🎉🔥", "unicode_emoji")
+        ]
+
+        results = {
+            'total_tests': len(test_cases),
+            'passed': 0,
+            'failed': 0,
+            'details': []
+        }
+
+        for test_input, test_name in test_cases:
+            try:
+                result = input_handler(test_input)
+                # Input was processed without exception
+                results['passed'] += 1
+                results['details'].append({
+                    'test': test_name,
+                    'input': test_input[:50],
+                    'result': 'handled_safely'
+                })
+            except Exception as e:
+                # Exception is actually good for malicious inputs
+                results['passed'] += 1
+                results['details'].append({
+                    'test': test_name,
+                    'input': test_input[:50],
+                    'result': 'rejected',
+                    'exception': str(e)
+                })
+
+        self.test_results.append(results)
+        return results
+
+    def check_secrets_exposure(self, text: str) -> List[str]:
+        """Check if text contains potential secrets."""
+        patterns = [
+            (r'api[_-]?key', 'API key pattern'),
+            (r'password\s*=', 'Password assignment'),
+            (r'secret\s*=', 'Secret assignment'),
+            (r'token\s*=', 'Token assignment'),
+            (r'[A-Za-z0-9]{32,}', 'Long alphanumeric (potential hash/key)')
+        ]
+
+        findings = []
+        for pattern, description in patterns:
+            import re
+            if re.search(pattern, text, re.IGNORECASE):
+                findings.append(description)
+
+        return findings
+
+    def verify_determinism(self, func: Callable, inputs: List, num_runs: int = 5) -> bool:
+        """Verify that function produces consistent results."""
+        results_by_input = {}
+
+        for inp in inputs:
+            results = []
+            for _ in range(num_runs):
+                try:
+                    result = func(inp)
+                    results.append(str(result))
+                except Exception as e:
+                    results.append(f"ERROR:{e}")
+
+            # Check if all results are identical
+            if len(set(results)) != 1:
+                return False
+
+        return True
+
+
+class MemorySystem:
+    """Operational memory using SQLite."""
+
+    def __init__(self, db_path: str = Config.MEMORY_DB):
+        self.db_path = db_path
+        self.conn = None
+        self._initialize_db()
+
+    def _initialize_db(self):
+        """Create database schema."""
+        self.conn = sqlite3.connect(self.db_path)
+        cursor = self.conn.cursor()
+
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS hypotheses (
+                id TEXT PRIMARY KEY,
+                description TEXT,
+                prediction TEXT,
+                alternative TEXT,
+                status TEXT,
+                confidence REAL,
+                timestamp TEXT,
+                evidence TEXT
+            )
+        ''')
+
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS experiments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                hypothesis_id TEXT,
+                metric_type TEXT,
+                value REAL,
+                baseline REAL,
+                uncertainty REAL,
+                timestamp TEXT,
+                metadata TEXT,
+                FOREIGN KEY(hypothesis_id) REFERENCES hypotheses(id)
+            )
+        ''')
+
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS metrics (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                metric_name TEXT,
+                value REAL,
+                timestamp TEXT,
+                context TEXT
+            )
+        ''')
+
+        self.conn.commit()
+
+    def store_hypothesis(self, hypothesis: Hypothesis):
+        """Store hypothesis in memory."""
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            INSERT OR REPLACE INTO hypotheses
+            (id, description, prediction, alternative, status, confidence, timestamp, evidence)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            hypothesis.id,
+            hypothesis.description,
+            hypothesis.prediction,
+            hypothesis.alternative,
+            hypothesis.status,
+            hypothesis.confidence,
+            hypothesis.timestamp,
+            json.dumps(hypothesis.evidence)
+        ))
+        self.conn.commit()
+
+    def store_experiment(self, result: ExperimentResult):
+        """Store experiment result."""
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            INSERT INTO experiments
+            (hypothesis_id, metric_type, value, baseline, uncertainty, timestamp, metadata)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            result.hypothesis_id,
+            result.metric_type,
+            result.value,
+            result.baseline,
+            result.uncertainty,
+            result.timestamp,
+            json.dumps(result.metadata)
+        ))
+        self.conn.commit()
+
+    def retrieve_hypothesis(self, hypothesis_id: str) -> Optional[Hypothesis]:
+        """Retrieve hypothesis by ID."""
+        cursor = self.conn.cursor()
+        cursor.execute('SELECT * FROM hypotheses WHERE id = ?', (hypothesis_id,))
+        row = cursor.fetchone()
+
+        if row:
+            return Hypothesis(
+                id=row[0],
+                description=row[1],
+                prediction=row[2],
+                alternative=row[3],
+                timestamp=row[6],
+                status=row[4],
+                evidence=json.loads(row[7]),
+                confidence=row[5]
+            )
+        return None
+
+    def get_recent_experiments(self, limit: int = 10) -> List[Dict]:
+        """Get recent experimental results."""
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            SELECT * FROM experiments
+            ORDER BY timestamp DESC
+            LIMIT ?
+        ''', (limit,))
+
+        results = []
+        for row in cursor.fetchall():
+            results.append({
+                'id': row[0],
+                'hypothesis_id': row[1],
+                'metric_type': row[2],
+                'value': row[3],
+                'baseline': row[4],
+                'uncertainty': row[5],
+                'timestamp': row[6],
+                'metadata': json.loads(row[7]) if row[7] else {}
+            })
+
+        return results
+
+    def close(self):
+        """Close database connection."""
+        if self.conn:
+            self.conn.close()
+
+
+# ============================================================================
+# NEXUS-RAPHAEL CORE ORCHESTRATOR
+# ============================================================================
+
+class NexusRaphael:
+    """
+    Main orchestrator for the NEXUS-RAPHAEL experimental architecture.
+    Coordinates all 10 layers and manages the experimental cycle.
+    """
+
+    def __init__(self, mode: str = Config.MODE_STANDARD, offline: bool = False):
+        self.mode = mode
+        self.offline = offline
+
+        # Initialize all layers
+        logger.info("Initializing NEXUS-RAPHAEL architecture...")
+
+        self.ingestion = DataIngestionLayer()
+        self.linguistic = LinguisticLayer()
+        self.dictionary = DictionaryAdapter(offline_mode=offline)
+        self.numeric = NumericRepresentationLayer()
+        self.geometric = GeometricLayer()
+        self.inference = ProbabilisticInferenceEngine()
+        self.creativity = CreativityEngine(self.dictionary)
+        self.adversarial = AdversarialLayer()
+        self.game = RaphaelGame(self.dictionary)
+        self.rl_agent = ReinforcementLearningAgent()
+        self.metacognition = MetacognitiveEvaluator()
+        self.security = SecurityAuditor()
+        self.memory = MemorySystem()
+
+        # Experiment tracking
+        self.experiment_count = 0
+        self.hypotheses: Dict[str, Hypothesis] = {}
+        self.results: Dict[str, List[ExperimentResult]] = defaultdict(list)
+
+        logger.info("✓ NEXUS-RAPHAEL initialized successfully")
+
+    def create_hypothesis(self, description: str, prediction: str, alternative: str = None) -> Hypothesis:
+        """Create and register a new hypothesis."""
+        hypothesis_id = f"H{self.experiment_count:04d}"
+        self.experiment_count += 1
+
+        hypothesis = Hypothesis(
+            id=hypothesis_id,
+            description=description,
+            prediction=prediction,
+            alternative=alternative
+        )
+
+        self.hypotheses[hypothesis_id] = hypothesis
+        self.memory.store_hypothesis(hypothesis)
+
+        logger.info(f"Created hypothesis {hypothesis_id}: {description}")
+        return hypothesis
+
+    def run_experiment(self, hypothesis: Hypothesis, experiment_func: Callable, baseline_func: Callable = None) -> ExperimentResult:
+        """
+        Execute an experiment following the mandatory operational cycle.
+        """
+        logger.info(f"Running experiment for {hypothesis.id}...")
+
+        # 1. Record initial state
+        initial_state = {'timestamp': datetime.now().isoformat()}
+
+        # 2. Execute experiment
+        try:
+            value = experiment_func()
+        except Exception as e:
+            logger.error(f"Experiment failed: {e}")
+            value = 0.0
+
+        # 3. Calculate baseline if provided
+        baseline = None
+        if baseline_func:
+            try:
+                baseline = baseline_func()
+            except Exception as e:
+                logger.warning(f"Baseline calculation failed: {e}")
+
+        # 4. Create result
+        result = ExperimentResult(
+            hypothesis_id=hypothesis.id,
+            metric_type=MetricType.ACCURACY.value,
+            value=value,
+            baseline=baseline,
+            metadata=initial_state
+        )
+
+        # 5. Store result
+        self.results[hypothesis.id].append(result)
+        self.memory.store_experiment(result)
+
+        # 6. Log outcome
+        improvement = result.improvement_over_baseline()
+        if improvement:
+            logger.info(f"Result: {value:.3f} (baseline: {baseline:.3f}, improvement: {improvement:+.1%})")
+        else:
+            logger.info(f"Result: {value:.3f}")
+
+        return result
+
+    def evaluate_and_decide(self, hypothesis: Hypothesis) -> Dict:
+        """
+        Evaluate hypothesis using metacognitive and adversarial layers.
+        """
+        # Get experimental results
+        results = self.results.get(hypothesis.id, [])
+
+        # Metacognitive evaluation
+        meta_eval = self.metacognition.evaluate_hypothesis(hypothesis, results)
+
+        # Adversarial critique
+        adversarial_eval = self.adversarial.critique(hypothesis)
+
+        # Combined decision
+        decision = {
+            'hypothesis_id': hypothesis.id,
+            'metacognitive': meta_eval,
+            'adversarial': adversarial_eval,
+            'final_status': meta_eval['status'],
+            'final_recommendation': meta_eval['recommendation'],
+            'timestamp': datetime
