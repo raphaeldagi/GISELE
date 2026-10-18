@@ -61,3 +61,5 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 77, Parte 109)** A da rodada 76 continua aberta, adiada pelo NEXUS anexado: um jogo n×m resolvido por simplex próprio. O pivô da razão mínima acrescenta fronteira? E, do NEXUS: o Kuhn COMPLETO (P1 também decide entre passar e apostar) tem valor −1/18 para o primeiro a jogar. A enumeração própria reproduz esse número?
 
 - **(Rodada 78, Parte 110)** O simplex n×m e o Kuhn completo (−1/18), adiados pela 109 e pela 110. E, da 110: o leitor `p1481` perde a faixa das letras cujo item começa com rótulo em negrito. Escrever a `p1481_v3` (sem editar a antiga) e medir quantas faixas antigas ele perdia.
+
+- **(Rodada 79, Parte 111)** O simplex n×m e o Kuhn completo (−1/18), adiados quatro vezes, e a `p1481_v3`. E, da 111: a hipótese do REPERTÓRIO (o estimador de confiança aprende os hábitos do agente, não o dicionário). Teste: o estimador treinado sobre as palavras de uma política aleatória (sem repertório) deveria ter razão Brier ~1.

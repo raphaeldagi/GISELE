@@ -1934,3 +1934,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 7 linhas e 18 números bit a bit**. 21 rodadas.
 
 **IA-Python:** Pendência (rodada 78): o simplex n×m e o Kuhn completo (−1/18), adiados duas vezes. Agora vão.
+
+## Rodada 78 (Parte 111) — o passo de Q-learning tabular
+
+**IA-Python (lógica criativa):** O word_rl_lab recebido aprende palavras por Q-learning tabular: Q ← Q + α(r + γ·max Q(s′, ·) − Q). Para a comparação não depender do `random` de cada língua, gero as 2.000 transições (s, a, r, s′, fim) por um LCG inteiro. O max por comparação e o passo α acrescentam fronteira?
+
+**IA-Java (ASI):** Não. O LCG é aritmética inteira exata nas duas (o `long` do Java e o `int` do Python concordam abaixo de 2⁶³). O passo é +, −, × e comparação. E repara: a v2 mostrou que o que importa não é a aritmética, é o que a ação SIGNIFICA. A mesma conta, com a ação "direção", não aprende nada.
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 15 números bit a bit**. 22 rodadas.
+
+**IA-Python:** Pendência (rodada 79): o simplex n×m e o Kuhn completo (−1/18), adiados quatro vezes. E, da 111: o estimador treinado sobre as palavras de uma política ALEATÓRIA, para testar a hipótese do repertório.

@@ -215,3 +215,7 @@ Ver `dialogo/DIALOGO.md`: GD e OGD em ℝ², com u por √ e não por sin/cos. *
 - Viés de maximização e estimador duplo: [van Hasselt, Double Q-learning, NIPS 2010](https://papers.nips.cc/paper/3964-double-q-learning); [NeurIPS 2010, pôster](https://neurips.cc/virtual/2010/poster/2040).
 - Projeção ortogonal no aprendizado contínuo: [Farajtabar et al., OGD, AISTATS 2020 (PMLR 108)](https://proceedings.mlr.press/v108/farajtabar20a.html); [arXiv 1910.07104](https://arxiv.org/abs/1910.07104v1).
 - Erro de generalização de mínimos quadrados sob design gaussiano, E‖β̂ − β‖² = σ²p/(n − p − 1): a esperança da Wishart inversa (resultado clássico, conferido aqui por simulação, P2744).
+
+---
+
+➡ Continua na [Parte 111 — O laboratório de palavras](ASI_AGI_parte111_o_laboratorio_de_palavras.md).

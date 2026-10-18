@@ -9616,6 +9616,8 @@ VEREDITOS_P3779 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅ (h) �
 ERROS_P3779, TESTES_P3779 = 220, 814
 VEREDITOS_P3849 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ❌ (p) ✅ (q) ✅ (r) ✅ (s) ✅ (t) ✅ (u) ✅ (v) ✅"
 ERROS_P3849, TESTES_P3849 = 221, 835
+VEREDITOS_P3919 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ❌ (l) ✅ (n) ❌ (o) ✅ (p) ❌"
+ERROS_P3919, TESTES_P3919 = 224, 850
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12156,12 +12158,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14133,6 +14135,103 @@ def p2747_rodada77():
     return e60, n45
 
 
+def _p111_dicionarios():
+    from synthai import palavras_rl
+    return palavras_rl, palavras_rl.Dicionario(palavras_rl.EMBEDDED_WORDS), palavras_rl.Dicionario(palavras_rl.lemas_wordnet())
+
+
+def p2771_guloso_x_aleatorio():
+    """O agente de Q-learning da v2 do word_rl_lab contra o aleatorio (P2771; Parte 111), dicionario embutido, semente 42 (a padrao da v2), e a
+    replicacao nas sementes 10-14 (quantas com ICs de Wilson disjuntos). Devolve (taxa gulosa, taxa aleatoria, n de sementes disjuntas em 10-14)."""
+    P, emb, _ = _p111_dicionarios()
+    cfg = P.Config(seed=42)
+    ag, _, _ = P.train(cfg, emb)
+    ev = P.evaluate(cfg, emb, ag)
+    disj = 0
+    for s in range(10, 15):
+        c = P.Config(seed=s)
+        a, _, _ = P.train(c, emb)
+        e = P.evaluate(c, emb, a)
+        disj += int(e["guloso"][1][0] > e["aleatorio"][1][1])
+    return ev["guloso"][0], ev["aleatorio"][0], disj
+
+
+def p2772_acao_direcao():
+    """O desenho da v1 (acao = DIRECAO, estado = 3 ultimas letras) como braco de comparacao (P2772; Parte 111), semente 42: com letras uniformes (como
+    na v1) e com letras por frequencia (separa a causa). Devolve (taxa gulosa uniforme, guloso - aleatorio por frequencia)."""
+    P, emb, _ = _p111_dicionarios()
+    cfg = P.Config(seed=42)
+    u = P.treinar_e_avaliar_v1(cfg, emb)
+    f = P.treinar_e_avaliar_v1(cfg, emb, uniforme=False)
+    return u["guloso"][0], f["guloso"][0] - f["aleatorio"][0]
+
+
+def p2773_confianca_e_ablacoes():
+    """O estimador de confianca da v2 (P2773; Parte 111), semente 42: a razao Brier estimador/linha de base com o embutido e com o WordNet, e as duas
+    ablacoes pre-registradas (sem Q(PARAR); so as letras). Devolve (razao embutido, razao WordNet, sem Q, so letras)."""
+    P, emb, wn = _p111_dicionarios()
+    cfg = P.Config(seed=42)
+    _, _, st = P.train(cfg, emb)
+    _, _, sw = P.train(cfg, wn)
+    sem_q = P.treinar_com_estimador(cfg, emb, P.EstimadorSemQ)[0]
+    so_letras = P.treinar_com_estimador(cfg, emb, P.EstimadorSoLetras)[0]
+    return st["brier_estimador"] / st["brier_base"], sw["brier_estimador"] / sw["brier_base"], sem_q, so_letras
+
+
+def p2774_data_lake():
+    """O DATA LAKE (lemas a-z do WordNet 3.0, dados/) no lugar da lista embutida (P2774; Parte 111), semente 42. Devolve (n de lemas, taxa gulosa
+    WordNet, taxa aleatoria WordNet, razao aleatorio WordNet / aleatorio embutido)."""
+    P, emb, wn = _p111_dicionarios()
+    cfg = P.Config(seed=42)
+    a1, _, _ = P.train(cfg, emb)
+    e1 = P.evaluate(cfg, emb, a1)
+    a2, _, _ = P.train(cfg, wn)
+    e2 = P.evaluate(cfg, wn, a2)
+    return len(wn.palavras), e2["guloso"][0], e2["aleatorio"][0], e2["aleatorio"][0] / e1["aleatorio"][0]
+
+
+def p2775_auditor_por_capacidade():
+    """A auditoria AST v2, por CAPACIDADE (P2775; Parte 111): a da Parte 109 (por nome) nao viu requests.get/nltk.download na v1 e acusou o
+    urllib.parse.quote da v2. Controles dos dois lados: um caso plantado (4 formas de rede, 3 imports) e um limpo (os falsos positivos da 109).
+    Devolve (antiga na v1, antiga na v2, nova na v1, nova na v2, nova no plantado, nova no limpo, nova no proprio fonte)."""
+    import inspect
+    import os
+    from synthai import nexus, palavras_rl
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    srcs = []
+    for v in ("v1", "v2"):
+        with open(os.path.join(raiz, "externos", "word_rl_lab", f"word_rl_lab_{v}_recebido.py"), encoding="utf-8") as f:
+            srcs.append(f.read())
+    plantado = ("import requests\nimport socket\nimport urllib.request\nimport nltk\nrequests.get(u)\nnltk.download('w')\n"
+                "urllib.request.urlopen(u)\nsocket.create_connection(h)\n")
+    limpo = "from urllib.parse import quote\nimport re, asyncio\nre.compile('a')\nasyncio.run(f())\ns = 'requests.get('\n"
+    a = palavras_rl.security_audit_ast_v2
+    return (nexus.security_audit_ast(srcs[0]), nexus.security_audit_ast(srcs[1]), a(srcs[0]), a(srcs[1]), a(plantado), a(limpo),
+            a(inspect.getsource(palavras_rl)))
+
+
+def _rodada78():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada78", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada78.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2776_rodada78():
+    """Rodada 78 (P2776; Parte 111): o passo de Q-learning tabular (5x3, 2.000 transicoes de um LCG inteiro), IGUAL em Java bit a bit. Devolve a tabela."""
+    return _rodada78().treinar()
+
+
+def p2777_palavras_distintas_do_guloso():
+    """O mecanismo de (a), posto a prova (P2777; Parte 111): o guloso da semente 42 forma poucas palavras distintas (o seu repertorio). Devolve o Counter."""
+    P, emb, _ = _p111_dicionarios()
+    cfg = P.Config(seed=42)
+    ag, _, _ = P.train(cfg, emb)
+    return P.palavras_distintas_gulosas(cfg, emb, ag)
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -15459,6 +15558,30 @@ def _parte_110():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3849, testes=TESTES_P3849)
     print(f"P3849 minha taxa de erro ({ERROS_P3849}/{TESTES_P3849}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_111():
+    print("--- Parte 111 (0x6F: o laboratorio de palavras; o word_rl_lab recebido) ---")
+    g, a, disj = p2771_guloso_x_aleatorio()
+    print(f"P2771 v2, embutido, semente 42: guloso {g:.3f}, aleatorio {a:.3f}; replicacao 10-14: {disj}/5 com ICs disjuntos")
+    du, df = p2772_acao_direcao()
+    print(f"P2772 desenho da v1 (acao = direcao): guloso {du:.3f} (letras uniformes); guloso - aleatorio {df:+.3f} (letras por frequencia)")
+    re_, rw, sq, sl = p2773_confianca_e_ablacoes()
+    print(f"P2773 Brier estimador/base: embutido {re_:.3f}, WordNet {rw:.3f}; ablacoes: sem Q(PARAR) {sq:.3f}, so letras {sl:.3f}")
+    nl, gw, aw, rz = p2774_data_lake()
+    print(f"P2774 data lake ({nl} lemas a-z): guloso {gw:.3f}, aleatorio {aw:.3f}; aleatorio WordNet/embutido {rz:.2f}")
+    v1a, v2a, v1n, v2n, pl, li, pr = p2775_auditor_por_capacidade()
+    print(f"P2775 auditor por nome (109): v1 {v1a}, v2 {v2a}; por capacidade: v1 {v1n}, v2 {v2n}; plantado {len(pl)} achados; limpo {li}; proprio fonte {pr}")
+    q = p2776_rodada78()
+    print(f"P2776 rodada 78 (Q-learning tabular, IGUAL em Java): Q[0] = {[round(v, 6) for v in q[0]]}")
+    d = p2777_palavras_distintas_do_guloso()
+    print(f"P2777 palavras distintas do guloso (semente 42): {len(d)}; as 5 mais formadas {d.most_common(5)}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-111: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2771, 2800)
+    print(f"P1092 pNN novas (P2771-P2800) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 111: {p974_previsoes_sem_largura(range(111, 112))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3919, testes=TESTES_P3919)
+    print(f"P3919 minha taxa de erro ({ERROS_P3919}/{TESTES_P3919}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -15495,7 +15618,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111}
 
 
 if __name__ == "__main__":

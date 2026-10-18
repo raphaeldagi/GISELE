@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 110, perguntas P1 a P2747).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 111, perguntas P1 a P2777).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (15507 linhas)
+# calculos.py  (15630 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9654,6 +9654,8 @@ VEREDITOS_P3779 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅ (h) �
 ERROS_P3779, TESTES_P3779 = 220, 814
 VEREDITOS_P3849 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ❌ (p) ✅ (q) ✅ (r) ✅ (s) ✅ (t) ✅ (u) ✅ (v) ✅"
 ERROS_P3849, TESTES_P3849 = 221, 835
+VEREDITOS_P3919 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ❌ (l) ✅ (n) ❌ (o) ✅ (p) ❌"
+ERROS_P3919, TESTES_P3919 = 224, 850
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12194,12 +12196,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14171,6 +14173,103 @@ def p2747_rodada77():
     return e60, n45
 
 
+def _p111_dicionarios():
+    from synthai import palavras_rl
+    return palavras_rl, palavras_rl.Dicionario(palavras_rl.EMBEDDED_WORDS), palavras_rl.Dicionario(palavras_rl.lemas_wordnet())
+
+
+def p2771_guloso_x_aleatorio():
+    \"\"\"O agente de Q-learning da v2 do word_rl_lab contra o aleatorio (P2771; Parte 111), dicionario embutido, semente 42 (a padrao da v2), e a
+    replicacao nas sementes 10-14 (quantas com ICs de Wilson disjuntos). Devolve (taxa gulosa, taxa aleatoria, n de sementes disjuntas em 10-14).\"\"\"
+    P, emb, _ = _p111_dicionarios()
+    cfg = P.Config(seed=42)
+    ag, _, _ = P.train(cfg, emb)
+    ev = P.evaluate(cfg, emb, ag)
+    disj = 0
+    for s in range(10, 15):
+        c = P.Config(seed=s)
+        a, _, _ = P.train(c, emb)
+        e = P.evaluate(c, emb, a)
+        disj += int(e["guloso"][1][0] > e["aleatorio"][1][1])
+    return ev["guloso"][0], ev["aleatorio"][0], disj
+
+
+def p2772_acao_direcao():
+    \"\"\"O desenho da v1 (acao = DIRECAO, estado = 3 ultimas letras) como braco de comparacao (P2772; Parte 111), semente 42: com letras uniformes (como
+    na v1) e com letras por frequencia (separa a causa). Devolve (taxa gulosa uniforme, guloso - aleatorio por frequencia).\"\"\"
+    P, emb, _ = _p111_dicionarios()
+    cfg = P.Config(seed=42)
+    u = P.treinar_e_avaliar_v1(cfg, emb)
+    f = P.treinar_e_avaliar_v1(cfg, emb, uniforme=False)
+    return u["guloso"][0], f["guloso"][0] - f["aleatorio"][0]
+
+
+def p2773_confianca_e_ablacoes():
+    \"\"\"O estimador de confianca da v2 (P2773; Parte 111), semente 42: a razao Brier estimador/linha de base com o embutido e com o WordNet, e as duas
+    ablacoes pre-registradas (sem Q(PARAR); so as letras). Devolve (razao embutido, razao WordNet, sem Q, so letras).\"\"\"
+    P, emb, wn = _p111_dicionarios()
+    cfg = P.Config(seed=42)
+    _, _, st = P.train(cfg, emb)
+    _, _, sw = P.train(cfg, wn)
+    sem_q = P.treinar_com_estimador(cfg, emb, P.EstimadorSemQ)[0]
+    so_letras = P.treinar_com_estimador(cfg, emb, P.EstimadorSoLetras)[0]
+    return st["brier_estimador"] / st["brier_base"], sw["brier_estimador"] / sw["brier_base"], sem_q, so_letras
+
+
+def p2774_data_lake():
+    \"\"\"O DATA LAKE (lemas a-z do WordNet 3.0, dados/) no lugar da lista embutida (P2774; Parte 111), semente 42. Devolve (n de lemas, taxa gulosa
+    WordNet, taxa aleatoria WordNet, razao aleatorio WordNet / aleatorio embutido).\"\"\"
+    P, emb, wn = _p111_dicionarios()
+    cfg = P.Config(seed=42)
+    a1, _, _ = P.train(cfg, emb)
+    e1 = P.evaluate(cfg, emb, a1)
+    a2, _, _ = P.train(cfg, wn)
+    e2 = P.evaluate(cfg, wn, a2)
+    return len(wn.palavras), e2["guloso"][0], e2["aleatorio"][0], e2["aleatorio"][0] / e1["aleatorio"][0]
+
+
+def p2775_auditor_por_capacidade():
+    \"\"\"A auditoria AST v2, por CAPACIDADE (P2775; Parte 111): a da Parte 109 (por nome) nao viu requests.get/nltk.download na v1 e acusou o
+    urllib.parse.quote da v2. Controles dos dois lados: um caso plantado (4 formas de rede, 3 imports) e um limpo (os falsos positivos da 109).
+    Devolve (antiga na v1, antiga na v2, nova na v1, nova na v2, nova no plantado, nova no limpo, nova no proprio fonte).\"\"\"
+    import inspect
+    import os
+    from synthai import nexus, palavras_rl
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    srcs = []
+    for v in ("v1", "v2"):
+        with open(os.path.join(raiz, "externos", "word_rl_lab", f"word_rl_lab_{v}_recebido.py"), encoding="utf-8") as f:
+            srcs.append(f.read())
+    plantado = ("import requests\\nimport socket\\nimport urllib.request\\nimport nltk\\nrequests.get(u)\\nnltk.download('w')\\n"
+                "urllib.request.urlopen(u)\\nsocket.create_connection(h)\\n")
+    limpo = "from urllib.parse import quote\\nimport re, asyncio\\nre.compile('a')\\nasyncio.run(f())\\ns = 'requests.get('\\n"
+    a = palavras_rl.security_audit_ast_v2
+    return (nexus.security_audit_ast(srcs[0]), nexus.security_audit_ast(srcs[1]), a(srcs[0]), a(srcs[1]), a(plantado), a(limpo),
+            a(inspect.getsource(palavras_rl)))
+
+
+def _rodada78():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada78", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada78.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2776_rodada78():
+    \"\"\"Rodada 78 (P2776; Parte 111): o passo de Q-learning tabular (5x3, 2.000 transicoes de um LCG inteiro), IGUAL em Java bit a bit. Devolve a tabela.\"\"\"
+    return _rodada78().treinar()
+
+
+def p2777_palavras_distintas_do_guloso():
+    \"\"\"O mecanismo de (a), posto a prova (P2777; Parte 111): o guloso da semente 42 forma poucas palavras distintas (o seu repertorio). Devolve o Counter.\"\"\"
+    P, emb, _ = _p111_dicionarios()
+    cfg = P.Config(seed=42)
+    ag, _, _ = P.train(cfg, emb)
+    return P.palavras_distintas_gulosas(cfg, emb, ag)
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -15497,6 +15596,30 @@ def _parte_110():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3849, testes=TESTES_P3849)
     print(f"P3849 minha taxa de erro ({ERROS_P3849}/{TESTES_P3849}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_111():
+    print("--- Parte 111 (0x6F: o laboratorio de palavras; o word_rl_lab recebido) ---")
+    g, a, disj = p2771_guloso_x_aleatorio()
+    print(f"P2771 v2, embutido, semente 42: guloso {g:.3f}, aleatorio {a:.3f}; replicacao 10-14: {disj}/5 com ICs disjuntos")
+    du, df = p2772_acao_direcao()
+    print(f"P2772 desenho da v1 (acao = direcao): guloso {du:.3f} (letras uniformes); guloso - aleatorio {df:+.3f} (letras por frequencia)")
+    re_, rw, sq, sl = p2773_confianca_e_ablacoes()
+    print(f"P2773 Brier estimador/base: embutido {re_:.3f}, WordNet {rw:.3f}; ablacoes: sem Q(PARAR) {sq:.3f}, so letras {sl:.3f}")
+    nl, gw, aw, rz = p2774_data_lake()
+    print(f"P2774 data lake ({nl} lemas a-z): guloso {gw:.3f}, aleatorio {aw:.3f}; aleatorio WordNet/embutido {rz:.2f}")
+    v1a, v2a, v1n, v2n, pl, li, pr = p2775_auditor_por_capacidade()
+    print(f"P2775 auditor por nome (109): v1 {v1a}, v2 {v2a}; por capacidade: v1 {v1n}, v2 {v2n}; plantado {len(pl)} achados; limpo {li}; proprio fonte {pr}")
+    q = p2776_rodada78()
+    print(f"P2776 rodada 78 (Q-learning tabular, IGUAL em Java): Q[0] = {[round(v, 6) for v in q[0]]}")
+    d = p2777_palavras_distintas_do_guloso()
+    print(f"P2777 palavras distintas do guloso (semente 42): {len(d)}; as 5 mais formadas {d.most_common(5)}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-111: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2771, 2800)
+    print(f"P1092 pNN novas (P2771-P2800) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 111: {p974_previsoes_sem_largura(range(111, 112))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3919, testes=TESTES_P3919)
+    print(f"P3919 minha taxa de erro ({ERROS_P3919}/{TESTES_P3919}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -15533,7 +15656,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111}
 
 
 if __name__ == "__main__":
@@ -15546,7 +15669,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (416 linhas)
+# CLAUDE.md  (424 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -15808,6 +15931,14 @@ anterior, commit e push.
   REGRA NOVA: uma faixa [x; x] so com a identidade que a garante escrita ao lado ((o) errou por 4,9e-32: 'w1 nao muda' nao garante 'perda zero'); e uma faixa de mais de duas
   ordens de grandeza vem com o mecanismo esperado dentro dela, para que o acerto possa refutar o mecanismo ((c) acertou com o h otimo errado). 20/21 do mundo, 6/6 (m),
   calibracao 158/176 = 0,898. Defeito medido: p1481 perde faixas de itens com rotulo em negrito (pendencia: p1481_v3).
+  Parte 111 (texto recebido sem pedido: word_rl_lab v1 e v2, Q-learning num jogo de palavras; cópias verbatim em externos/word_rl_lab/; reescrita offline/stdlib em
+  synthai/palavras_rl.py, 5a forma do agente: reforco sobre o dicionario): TODAS as afirmacoes do texto passaram (guloso 0,130 x aleatorio 0,006, 5/5 sementes;
+  acao-LETRA aprende, acao-DIRECAO nao, +0,001 mesmo com letras boas, porque a direcao nao tem consequencia estavel entre grades; estimador Brier 0,46 da base). O data lake
+  (77.340 lemas do WordNet) multiplica o aleatorio por 6,2 (o juiz mais generoso, nao o agente mais esperto). Os 3 erros foram MEUS, de mecanismo: (k) a fixture de um teste
+  de contagem nao existia quando escrevi a identidade (REGRA: a fixture vai NO commit do pre-registro); (n)/(p) expliquei o estimador por uma causa so, duas vezes (0,461 -> 0,635
+  sem Q -> 0,762 so letras: varias causas; hipotese do repertorio pendente). O auditor da 109 lia NOMES: nao viu requests.get e acusou urllib.parse.quote; security_audit_ast_v2
+  le CAPACIDADES. REGRA NOVA: a expectativa sobre um texto recebido vem do texto (ele traz linha de base, mesma amostra, IC?), nao da serie; e um verificador novo roda tambem
+  sobre os ultimos textos recebidos antes de ser usado. Rodada 78 IGUAL (22 rodadas). 12/15 do mundo, 6/6 (m), calibracao 170/191 = 0,890.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -15956,7 +16087,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -20779,6 +20910,432 @@ def colisoes_esperadas(n, m=10007):
 """
 
 # ====================================================================================================
+# synthai/palavras_rl.py  (421 linhas)
+# ====================================================================================================
+FONTES['synthai/palavras_rl.py'] = """\"\"\"O word_rl_lab recebido (Parte 111), reescrito só com a biblioteca padrão e OFFLINE. As cópias verbatim (v1 e v2) ficam em
+externos/word_rl_lab/ e nunca são importadas. Q-learning tabular num jogo de palavras numa grade de letras (estilo Boggle), com um
+estimador de confiança (regressão logística online) avaliado por Brier, linha de base e ECE, e a avaliação guloso × aleatório.
+
+Fiel à v2 (mesmos números: mesma ordem de sorteios do random, mesmo CRC32 do zlib, mesma recompensa), com três mudanças:
+  1. Sem numpy: vetores como listas; o produto interno é somado em laço sequencial (sem o sum() compensado, regra da Parte 34).
+  2. Sem rede: o dicionário é a lista EMBUTIDA da v2 ou o DATA LAKE do projeto (os lemas do WordNet 3.0 em dados/, regra da
+     Parte 30), nunca a API. O backend "api" da v2 não existe aqui.
+  3. O desenho da v1 entra como BRAÇO DE COMPARAÇÃO (ação = DIREÇÃO, estado = últimas 3 letras), para medir a afirmação da v2:
+     "como a ação é a letra, o que se aprende vale em qualquer grade".
+Mais uma auditoria AST v2 (security_audit_ast_v2): a da Parte 109 lia NOMES de módulo e errou nos dois sentidos aqui.\"\"\"
+
+import ast
+import gzip
+import math
+import os
+import random
+import zlib
+from collections import Counter
+
+STOP = "<PARAR>"
+FAIL_REWARD = -1.0
+STEP_REWARD = 0.0
+
+LETTER_FREQ = {
+    "E": 12.7, "T": 9.1, "A": 8.2, "O": 7.5, "I": 7.0, "N": 6.7, "S": 6.3,
+    "H": 6.1, "R": 6.0, "D": 4.3, "L": 4.0, "C": 2.8, "U": 2.8, "M": 2.4,
+    "W": 2.4, "F": 2.2, "G": 2.0, "Y": 2.0, "P": 1.9, "B": 1.5, "V": 1.0,
+    "K": 0.8, "J": 0.15, "X": 0.15, "Q": 0.10, "Z": 0.07,
+}
+SCRABBLE = {
+    "A": 1, "B": 3, "C": 3, "D": 2, "E": 1, "F": 4, "G": 2, "H": 4, "I": 1, "J": 8, "K": 5, "L": 1, "M": 3,
+    "N": 1, "O": 1, "P": 3, "Q": 10, "R": 1, "S": 1, "T": 1, "U": 1, "V": 4, "W": 4, "X": 8, "Y": 4, "Z": 10,
+}
+
+
+def _palavras_embutidas():
+    \"\"\"A lista EMBUTIDA da v2, lida da cópia verbatim pela AST (sem importar nem executar o arquivo).\"\"\"
+    raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(raiz, "externos", "word_rl_lab", "word_rl_lab_v2_recebido.py"), encoding="utf-8") as f:
+        arvore = ast.parse(f.read())
+    for n in arvore.body:
+        if isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Name) and n.targets[0].id == "EMBEDDED_WORDS":
+            return frozenset(n.value.args[0].func.value.value.split())
+    raise LookupError("EMBEDDED_WORDS não encontrado")
+
+
+EMBEDDED_WORDS = _palavras_embutidas()
+
+
+def lemas_wordnet():
+    \"\"\"O DATA LAKE: os lemas do WordNet 3.0 (dados/wordnet30_sinsets.tsv.gz), só os formados por letras a-z, em minúsculas.\"\"\"
+    raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    out = set()
+    with gzip.open(os.path.join(raiz, "dados", "wordnet30_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        for linha in f:
+            for lema in linha.split("\\t")[2].split(","):
+                lema = lema.lower()
+                if lema.isascii() and lema.isalpha():
+                    out.add(lema)
+    return frozenset(out)
+
+
+class Dicionario:
+    def __init__(self, palavras):
+        self.palavras = palavras
+
+    def is_word(self, w):
+        return w.lower() in self.palavras
+
+
+def word_score(word):
+    return sum(SCRABBLE.get(c, 0) for c in word.upper()) * len(word)
+
+
+def word_to_vector(word, dim=16):
+    \"\"\"Igual à v2: unigramas por slot + bigramas por CRC32, normalizado (L2).\"\"\"
+    vec = [0.0] * dim
+    letters = [c for c in word.upper() if "A" <= c <= "Z"]
+    for ch in letters:
+        vec[(ord(ch) - 65) % dim] += 1.0
+    for a, b in zip(letters, letters[1:]):
+        vec[zlib.crc32((a + b).encode("ascii")) % dim] += 0.5
+    s = 0.0
+    for v in vec:
+        s += v * v
+    n = math.sqrt(s)
+    return [v / n for v in vec] if n > 0 else vec
+
+
+# --- ambiente ---
+
+class WordGridEnv:
+    def __init__(self, size=5, min_len=3, max_len=5, rng=None, uniforme=False):
+        self.size, self.min_len, self.max_len = size, min_len, max_len
+        self.rng = rng or random.Random(0)
+        self.uniforme = uniforme      # True: letras uniformes, como na v1 (string.ascii_uppercase)
+        self.grid = []
+
+    def reset(self):
+        if self.uniforme:
+            self.grid = [[self.rng.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for _ in range(self.size)] for _ in range(self.size)]
+        else:
+            letters, weights = list(LETTER_FREQ), list(LETTER_FREQ.values())
+            self.grid = [self.rng.choices(letters, weights=weights, k=self.size) for _ in range(self.size)]
+        return self.grid
+
+    def letter(self, pos):
+        return self.grid[pos[0]][pos[1]]
+
+    def neighbors(self, pos):
+        r, c = pos
+        return [(r + dr, c + dc) for dr in (-1, 0, 1) for dc in (-1, 0, 1)
+                if (dr or dc) and 0 <= r + dr < self.size and 0 <= c + dc < self.size]
+
+    def path_is_legal(self, path):
+        if not path or len(set(path)) != len(path):
+            return False
+        if any(not (0 <= r < self.size and 0 <= c < self.size) for r, c in path):
+            return False
+        return all(b in self.neighbors(a) for a, b in zip(path, path[1:]))
+
+
+def valid_actions(env, path):
+    acts = {}
+    if len(path) < env.max_len:
+        visited = set(path)
+        for pos in env.neighbors(path[-1]):
+            if pos not in visited:
+                acts.setdefault(env.letter(pos), pos)
+    if len(path) >= env.min_len:
+        acts[STOP] = None
+    return acts
+
+
+# --- agente (igual à v2) ---
+
+class QAgent:
+    def __init__(self, alpha=0.2, gamma=0.95, epsilon=0.3, seed=0):
+        self.alpha, self.gamma, self.epsilon = alpha, gamma, epsilon
+        self.rng = random.Random(seed)
+        self.q = {}
+
+    def value(self, s, a):
+        return self.q.get((s, a), 0.0)
+
+    def choose(self, s, actions, mode):
+        if mode == "random" or (mode == "epsilon" and self.rng.random() < self.epsilon):
+            return self.rng.choice(actions)
+        best = max(self.value(s, a) for a in actions)
+        return self.rng.choice([a for a in actions if self.value(s, a) == best])
+
+    def update(self, s, a, r, next_s, next_actions):
+        future = 0.0
+        if next_s is not None and next_actions:
+            future = max(self.value(next_s, b) for b in next_actions)
+        old = self.value(s, a)
+        self.q[(s, a)] = old + self.alpha * (r + self.gamma * future - old)
+
+
+# --- estimador de confiança e métricas (iguais à v2, sem numpy) ---
+
+class ConfidenceEstimator:
+    def __init__(self, dim=16, lr=0.1):
+        self.dim, self.lr = dim, lr
+        self.w = [0.0] * (dim + 2)
+        self.b = 0.0
+
+    def features(self, word, q_stop, max_len):
+        return word_to_vector(word, self.dim) + [math.tanh(q_stop / 20.0), len(word) / max_len]
+
+    def predict(self, x):
+        z = self.b
+        for wi, xi in zip(self.w, x):
+            z += wi * xi
+        z = max(-30.0, min(30.0, z))
+        return 1.0 / (1.0 + math.exp(-z))
+
+    def update(self, x, y):
+        g = y - self.predict(x)
+        self.w = [wi + self.lr * g * xi for wi, xi in zip(self.w, x)]
+        self.b += self.lr * g
+
+
+def brier(ps, ys):
+    return sum((p - y) ** 2 for p, y in zip(ps, ys)) / len(ps) if ps else float("nan")
+
+
+def ece(ps, ys, bins=10):
+    n = len(ps)
+    if n == 0:
+        return float("nan")
+    total = 0.0
+    for b in range(bins):
+        lo, hi = b / bins, (b + 1) / bins
+        idx = [i for i, p in enumerate(ps) if lo <= p < hi or (b == bins - 1 and p >= 1.0)]
+        if idx:
+            total += len(idx) / n * abs(sum(ps[i] for i in idx) / len(idx) - sum(ys[i] for i in idx) / len(idx))
+    return total
+
+
+def prequential_base_rate(ys):
+    out, s = [], 0.0
+    for t, y in enumerate(ys):
+        out.append((1.0 + s) / (2.0 + t))
+        s += y
+    return out
+
+
+def wilson(k, n, z=1.96):
+    if n == 0:
+        return (0.0, 1.0)
+    p = k / n
+    den = 1 + z * z / n
+    c = (p + z * z / (2 * n)) / den
+    h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / den
+    return (max(0.0, c - h), min(1.0, c + h))
+
+
+# --- episódio, treino, avaliação (v2) ---
+
+def run_episode(env, dic, agent, mode, learn, estimator=None, learn_estimator=False):
+    \"\"\"Devolve (palavra, válida, recompensa, confiança).\"\"\"
+    env.reset()
+    start = (env.rng.randrange(env.size), env.rng.randrange(env.size))
+    path, prefix, prev = [start], env.letter(start), None
+    while True:
+        acts = valid_actions(env, path)
+        s = prefix
+        if not acts:
+            if learn and prev:
+                agent.update(prev[0], prev[1], FAIL_REWARD, None, ())
+            return prefix, False, FAIL_REWARD, None
+        names = list(acts)
+        if learn and prev:
+            agent.update(prev[0], prev[1], STEP_REWARD, s, names)
+        a = agent.choose(s, names, mode)
+        if a == STOP:
+            conf = x = None
+            if estimator is not None:
+                x = estimator.features(prefix, agent.value(s, STOP), env.max_len)
+                conf = estimator.predict(x)
+            valid = dic.is_word(prefix)
+            reward = float(word_score(prefix)) if valid else FAIL_REWARD
+            if learn:
+                agent.update(s, STOP, reward, None, ())
+            if estimator is not None and learn_estimator and x is not None:
+                estimator.update(x, 1.0 if valid else 0.0)
+            return prefix, valid, reward, conf
+        path.append(acts[a])
+        prefix += a
+        prev = (s, a)
+
+
+class Config:
+    def __init__(self, episodios=5000, avaliacao=1000, tamanho=5, min_len=3, max_len=5, alpha=0.2, gamma=0.95,
+                 eps_ini=0.3, eps_fim=0.05, seed=42):
+        self.episodios, self.avaliacao, self.tamanho = episodios, avaliacao, tamanho
+        self.min_len, self.max_len, self.alpha, self.gamma = min_len, max_len, alpha, gamma
+        self.eps_ini, self.eps_fim, self.seed = eps_ini, eps_fim, seed
+
+
+def train(cfg, dic):
+    env = WordGridEnv(cfg.tamanho, cfg.min_len, cfg.max_len, rng=random.Random(cfg.seed))
+    agent = QAgent(cfg.alpha, cfg.gamma, cfg.eps_ini, seed=cfg.seed + 1)
+    est = ConfidenceEstimator()
+    ps, ys, rewards, found = [], [], [], Counter()
+    for ep in range(1, cfg.episodios + 1):
+        frac = (ep - 1) / max(1, cfg.episodios - 1)
+        agent.epsilon = cfg.eps_ini + (cfg.eps_fim - cfg.eps_ini) * frac
+        w, valid, r, conf = run_episode(env, dic, agent, "epsilon", learn=True, estimator=est, learn_estimator=True)
+        rewards.append(r)
+        if conf is not None:
+            ps.append(conf)
+            ys.append(1.0 if valid else 0.0)
+        if valid:
+            found[w] += 1
+    base = prequential_base_rate(ys)
+    return agent, est, {
+        "recompensa_media": sum(rewards) / len(rewards), "tentativas": len(ys), "validas": int(sum(ys)),
+        "distintas": len(found), "top": found.most_common(10),
+        "brier_estimador": brier(ps, ys), "brier_base": brier(base, ys), "ece": ece(ps, ys), "tabela_q": len(agent.q),
+    }
+
+
+def evaluate(cfg, dic, agent):
+    \"\"\"Guloso × aleatório nas MESMAS grades e inícios (mesma semente do ambiente). Devolve {nome: (taxa, (lo, hi), recompensa)}.\"\"\"
+    out = {}
+    for nome, pol, mode in (("guloso", agent, "greedy"), ("aleatorio", QAgent(seed=cfg.seed + 2), "random")):
+        env = WordGridEnv(cfg.tamanho, cfg.min_len, cfg.max_len, rng=random.Random(cfg.seed + 100_000))
+        res = [run_episode(env, dic, pol, mode, learn=False) for _ in range(cfg.avaliacao)]
+        k = sum(r[1] for r in res)
+        out[nome] = (k / len(res), wilson(k, len(res)), sum(r[2] for r in res) / len(res))
+    return out
+
+
+# --- o desenho da v1 como braço de comparação ---
+
+DIRECOES = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+
+
+def episodio_v1(env, dic, agent, mode, learn, max_len=8):
+    \"\"\"As regras da v1: ação = DIREÇÃO (0-7) ou PARAR (8); estado = últimas 3 letras; pode revisitar casas; sair da grade = −10;
+    PARAR com 1 letra = −5; palavra inválida = −5; válida = pontuação; passo = −0,1. A grade e o início vêm do rng do ambiente.
+    Devolve (palavra, válida).\"\"\"
+    env.reset()
+    pos = (env.rng.randrange(env.size), env.rng.randrange(env.size))
+    path, prefix = [pos], env.letter(pos)
+    acoes = list(range(9))
+    while True:
+        s = prefix[-3:]
+        a = agent.choose(s, acoes, mode)
+        if a == 8 or len(path) >= max_len:
+            if len(path) < 2:
+                r, w, ok = -5.0, "", False
+            else:
+                w = prefix
+                ok = dic.is_word(w)
+                r = float(word_score(w)) if ok else -5.0
+            if learn:
+                agent.update(s, a, r, None, ())
+            return w, ok
+        dr, dc = DIRECOES[a]
+        nr, nc = path[-1][0] + dr, path[-1][1] + dc
+        if not (0 <= nr < env.size and 0 <= nc < env.size):
+            if learn:
+                agent.update(s, a, -10.0, None, ())
+            return prefix, False
+        path.append((nr, nc))
+        nxt = prefix + env.letter((nr, nc))
+        if learn:
+            agent.update(s, a, -0.1, nxt[-3:], acoes)
+        prefix = nxt
+
+
+def treinar_e_avaliar_v1(cfg, dic, uniforme=True):
+    \"\"\"Treina o desenho da v1 (α=0,3, γ=0,9, ε=0,2 fixo, como na v1) e avalia guloso × aleatório nas mesmas grades.\"\"\"
+    env = WordGridEnv(cfg.tamanho, rng=random.Random(cfg.seed), uniforme=uniforme)
+    agent = QAgent(0.3, 0.9, 0.2, seed=cfg.seed + 1)
+    for _ in range(cfg.episodios):
+        episodio_v1(env, dic, agent, "epsilon", learn=True)
+    out = {}
+    for nome, pol, mode in (("guloso", agent, "greedy"), ("aleatorio", QAgent(seed=cfg.seed + 2), "random")):
+        env = WordGridEnv(cfg.tamanho, rng=random.Random(cfg.seed + 100_000), uniforme=uniforme)
+        k = sum(episodio_v1(env, dic, pol, mode, learn=False)[1] for _ in range(cfg.avaliacao))
+        out[nome] = (k / cfg.avaliacao, wilson(k, cfg.avaliacao))
+    return out
+
+
+# --- auditoria AST v2: capacidade, não nome ---
+
+_REDE_CHAMADAS = {"urlopen", "get", "post", "put", "request", "download", "connect", "urlretrieve", "create_connection"}
+_REDE_BASES = {"requests", "urllib", "httpx", "aiohttp", "socket", "nltk", "http", "ftplib", "smtplib"}
+_REDE_IMPORTS = {"requests", "httpx", "aiohttp", "socket", "http", "ftplib", "smtplib", "urllib.request"}
+
+
+def security_audit_ast_v2(source):
+    \"\"\"A auditoria da Parte 109 lia NOMES de módulo: acusava `from urllib.parse import quote` (formatação, sem rede) e não via
+    `requests.get` nem `nltk.download` (rede de verdade). Esta conta CAPACIDADES: um import de módulo de rede (urllib.request sim,
+    urllib.parse não) e uma CHAMADA cujo atributo é de rede sobre uma base de rede (requests.get, nltk.download, urllib.request.urlopen).
+    Devolve a lista ordenada de achados.\"\"\"
+    achados = set()
+    for n in ast.walk(ast.parse(source)):
+        if isinstance(n, ast.Import):
+            for a in n.names:
+                if a.name in _REDE_IMPORTS or a.name.split(".")[0] in _REDE_IMPORTS - {"urllib.request"}:
+                    achados.add("import:" + a.name)
+        elif isinstance(n, ast.ImportFrom):
+            mod = n.module or ""
+            if mod in _REDE_IMPORTS or mod.split(".")[0] in _REDE_IMPORTS - {"urllib.request"}:
+                achados.add("import:" + mod)
+        elif isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr in _REDE_CHAMADAS:
+            base = n.func.value
+            while isinstance(base, ast.Attribute):
+                base = base.value
+            if isinstance(base, ast.Name) and base.id in _REDE_BASES:
+                achados.add("rede:" + ast.unparse(n.func))
+    return sorted(achados)
+
+
+# --- os mecanismos de (a) e (f), postos à prova (P2777/P2778) ---
+
+class EstimadorSemQ(ConfidenceEstimator):
+    \"\"\"A ablação de (n): o mesmo estimador com a variável Q(PARAR) fixa em 0 (tanh(0) = 0); sobra só o vetor da palavra e o comprimento.\"\"\"
+
+    def features(self, word, q_stop, max_len):
+        return super().features(word, 0.0, max_len)
+
+
+def treinar_com_estimador(cfg, dic, classe):
+    \"\"\"O `train` da v2 com outra classe de estimador; devolve (razão Brier estimador/base, Brier estimador, Brier base).\"\"\"
+    env = WordGridEnv(cfg.tamanho, cfg.min_len, cfg.max_len, rng=random.Random(cfg.seed))
+    agent = QAgent(cfg.alpha, cfg.gamma, cfg.eps_ini, seed=cfg.seed + 1)
+    est = classe()
+    ps, ys = [], []
+    for ep in range(1, cfg.episodios + 1):
+        agent.epsilon = cfg.eps_ini + (cfg.eps_fim - cfg.eps_ini) * ((ep - 1) / max(1, cfg.episodios - 1))
+        _, valid, _, conf = run_episode(env, dic, agent, "epsilon", learn=True, estimator=est, learn_estimator=True)
+        if conf is not None:
+            ps.append(conf)
+            ys.append(1.0 if valid else 0.0)
+    be, bb = brier(ps, ys), brier(prequential_base_rate(ys), ys)
+    return be / bb, be, bb
+
+
+def palavras_distintas_gulosas(cfg, dic, agent):
+    \"\"\"(o): as palavras válidas DISTINTAS que o guloso forma na avaliação (as mesmas grades de `evaluate`).\"\"\"
+    env = WordGridEnv(cfg.tamanho, cfg.min_len, cfg.max_len, rng=random.Random(cfg.seed + 100_000))
+    achadas = Counter()
+    for _ in range(cfg.avaliacao):
+        w, ok, _, _ = run_episode(env, dic, agent, "greedy", learn=False)
+        if ok:
+            achadas[w] += 1
+    return achadas
+
+
+class EstimadorSoLetras(ConfidenceEstimator):
+    \"\"\"A ablação de (p): Q(PARAR) e comprimento fixos em 0; sobra só o vetor normalizado das letras (que não carrega o comprimento).\"\"\"
+
+    def features(self, word, q_stop, max_len):
+        return word_to_vector(word, self.dim) + [0.0, 0.0]
+"""
+
+# ====================================================================================================
 # synthai/pensamento.py  (31 linhas)
 # ====================================================================================================
 FONTES['synthai/pensamento.py'] = """\"\"\"Pensamento (P43, P83, P145): a probabilidade calibrada de uma opção ser catastrófica.
@@ -23054,9 +23611,111 @@ class TesteParte110(unittest.TestCase):
         self.assertAlmostEqual(n45, math.sqrt(2), places=12)
 
     def test_p1961_com_parte_110(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 111))))
         self.assertEqual(por[110], (20, 21))
         self.assertEqual((ok, tot), (158, 176))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte111.py  (97 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte111.py'] = """\"\"\"Testes de unidade da Parte 111 (o word_rl_lab recebido, reescrito offline): `python3 -m unittest synthai.testes_parte111`. Os autotestes da
+própria v2, portados, mais um teste por afirmação medida e os controles dos dois lados do auditor por capacidade (regra da Parte 75).\"\"\"
+
+import random
+import unittest
+
+import calculos
+from synthai import palavras_rl as P
+
+
+class TesteAutotestesDaV2(unittest.TestCase):
+    \"\"\"Os 14 autotestes da v2 (run_selftests), na versão sem numpy.\"\"\"
+
+    def test_vetor(self):
+        self.assertTrue(any(P.word_to_vector(p) != P.word_to_vector(p[::-1]) for p in ["AB", "CA", "TO", "NO", "ST", "HE"]))
+        self.assertAlmostEqual(sum(v * v for v in P.word_to_vector("CAT")), 1.0, places=12)
+        self.assertEqual(P.word_score("CAT"), 15)
+
+    def test_ambiente(self):
+        env = P.WordGridEnv(size=4, rng=random.Random(1))
+        env.reset()
+        self.assertTrue(env.path_is_legal([(0, 0), (0, 1), (1, 2)]))
+        self.assertFalse(env.path_is_legal([(0, 0), (0, 1), (0, 0)]))
+        self.assertFalse(env.path_is_legal([(0, 0), (2, 2)]))
+        self.assertEqual((len(env.neighbors((0, 0))), len(env.neighbors((1, 1)))), (3, 8))
+        self.assertEqual(list(P.valid_actions(env, [(0, 0), (0, 1), (1, 1), (1, 2), (2, 2)])), [P.STOP])
+        self.assertNotIn(P.STOP, P.valid_actions(env, [(0, 0)]))
+
+    def test_dicionario_e_metricas(self):
+        d = P.Dicionario(P.EMBEDDED_WORDS)
+        self.assertTrue(d.is_word("cat") and not d.is_word("xqz"))
+        self.assertEqual(len(P.EMBEDDED_WORDS), 493)   # lido da cópia verbatim pela AST
+        self.assertEqual((P.brier([1.0, 0.0], [1.0, 0.0]), P.ece([1.0, 0.0], [1.0, 0.0])), (0.0, 0.0))
+        lo, hi = P.wilson(3, 10)
+        self.assertTrue(0.0 <= lo < 0.3 < hi <= 1.0)
+
+    def test_determinismo(self):
+        cfg = P.Config(episodios=300, avaliacao=50, seed=3)
+        d = P.Dicionario(P.EMBEDDED_WORDS)
+        a1, _, s1 = P.train(cfg, d)
+        a2, _, s2 = P.train(cfg, d)
+        self.assertEqual((a1.q, s1), (a2.q, s2))
+
+
+class TesteParte111(unittest.TestCase):
+    def test_p2771_guloso_x_aleatorio(self):
+        g, a, disj = calculos.p2771_guloso_x_aleatorio()
+        self.assertTrue(0.03 <= g <= 0.22)
+        self.assertTrue(0.005 <= a <= 0.016)
+        self.assertEqual(disj, 5)
+
+    def test_p2772_acao_direcao(self):
+        du, df = calculos.p2772_acao_direcao()
+        self.assertTrue(0.0 <= du <= 0.004)
+        self.assertTrue(-0.004 <= df <= 0.006)
+
+    def test_p2773_confianca_e_ablacoes(self):
+        re_, rw, sq, sl = calculos.p2773_confianca_e_ablacoes()
+        self.assertTrue(0.35 <= re_ <= 0.97)
+        self.assertTrue(0.43 <= rw <= 0.51)
+        self.assertLess(sq, 0.80)    # (n) errou: sem o Q, o estimador ainda bate a base
+        self.assertLess(sl, 0.85)    # (p) errou: so as letras ainda batem a base
+        self.assertTrue(re_ < sq < sl < 1.0)   # a cadeia medida: cada peca carrega uma parte
+
+    def test_p2774_data_lake(self):
+        nl, gw, aw, rz = calculos.p2774_data_lake()
+        self.assertEqual(nl, 77340)
+        self.assertTrue(0.27 <= gw <= 0.39 and 0.037 <= aw <= 0.060 and 3.0 <= rz <= 7.5)
+
+    def test_p2775_auditor_por_capacidade(self):
+        v1a, v2a, v1n, v2n, pl, li, pr = calculos.p2775_auditor_por_capacidade()
+        self.assertEqual(v1a, [])                      # o defeito da auditoria da Parte 109: nao viu a rede da v1
+        self.assertEqual(v2a, ["import:urllib"])       # e acusou o urllib.parse.quote
+        self.assertIn("rede:requests.get", v1n)
+        self.assertIn("rede:nltk.download", v2n)
+        self.assertEqual(len(pl), 7)                   # (k) previu 6: o import urllib.request da fixture nao estava na conta
+        self.assertEqual(li, [])
+        self.assertEqual(pr, [])                       # o auditor roda sobre o proprio fonte (regra da Parte 109)
+
+    def test_p2776_rodada78(self):
+        q = calculos.p2776_rodada78()
+        self.assertEqual((len(q), len(q[0])), (5, 3))
+        self.assertEqual(q[0][0].hex(), "0x1.3b40a03e5252dp+2")
+
+    def test_p2777_palavras_distintas(self):
+        d = calculos.p2777_palavras_distintas_do_guloso()
+        self.assertTrue(3 <= len(d) <= 20)
+        self.assertEqual(d.most_common(1)[0][0], "EAT")
+
+    def test_p1961_com_parte_111(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[111], (12, 15))
+        self.assertEqual((ok, tot), (170, 191))
 
 
 if __name__ == "__main__":
@@ -33869,7 +34528,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1895 linhas)
+# resultados.txt  (1931 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -35766,6 +36425,42 @@ P3779 minha taxa de erro (220/814): media = 0.27, intervalo 90% = [0.25, 0.30]
 P96 funcoes pNN no arquivo = 620; pares de interacao possiveis = 191890
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 154/154 resultados publicados reproduzidos; falhas = []
+
+
+--- Parte 110 (0x6E: a duvida calculada; inverso e subverso) ---
+P2741 gradiente: inclinacao central 2.0000, adiantada 0.9997; melhor erro 3.56e-09 em h=1e-04; plantado 2.000000
+P2742 inferencia: cobertura 90% independente 0.8995; aglomerada (c=4) 0.5910; c recuperado 3.969
+P2743 RNN: erro relativo BPTT linear 0.0e+00, w recuperado 0.900000000000; tanh w=1,1: gradiente 5.560e-05 (h_T=0.5029)
+P2744 ML: erro de generalizacao 1.2530 (1,2564), p recuperado 9.89; com variavel omitida 2.5158 (2,513)
+P2745 continuo: esquecimento GD 45 0.500000, theta recuperado 45.000000; OGD 45 esquece 4.93e-32, norma 1.414214; OGD em 0: perda B 1.0
+P2746 reforco: vies do max k=2 0.1794 (0,1784), duplo 0.00022, m recuperado 9.89; k=10 0.4840 (0,4866)
+P2747 rodada 77 (IGUAL em Java): esquecimento GD 60 = 0.25; norma OGD 45 = 1.414213562373094
+P1961 teste, Partes 80-110: 158/176 = 0.8977; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21)}
+P1092 pNN novas (P2741-P2770) sem teste: 0 de 7: []
+P974 previsoes unilaterais da Parte 110: {110: (4, 0, [])}
+P3849 minha taxa de erro (221/835): media = 0.27, intervalo 90% = [0.24, 0.29]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 627; pares de interacao possiveis = 196251
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 154/154 resultados publicados reproduzidos; falhas = []
+
+
+--- Parte 111 (0x6F: o laboratorio de palavras; o word_rl_lab recebido) ---
+P2771 v2, embutido, semente 42: guloso 0.130, aleatorio 0.006; replicacao 10-14: 5/5 com ICs disjuntos
+P2772 desenho da v1 (acao = direcao): guloso 0.000 (letras uniformes); guloso - aleatorio +0.001 (letras por frequencia)
+P2773 Brier estimador/base: embutido 0.461, WordNet 0.456; ablacoes: sem Q(PARAR) 0.635, so letras 0.762
+P2774 data lake (77340 lemas a-z): guloso 0.354, aleatorio 0.037; aleatorio WordNet/embutido 6.17
+P2775 auditor por nome (109): v1 [], v2 ['import:urllib']; por capacidade: v1 ['import:requests', 'rede:nltk.download', 'rede:requests.get'], v2 ['import:requests', 'rede:nltk.download', 'rede:requests.get']; plantado 7 achados; limpo []; proprio fonte []
+P2776 rodada 78 (Q-learning tabular, IGUAL em Java): Q[0] = [4.925819, 3.544671, 3.378734]
+P2777 palavras distintas do guloso (semente 42): 20; as 5 mais formadas [('EAT', 22), ('ATE', 17), ('DOT', 11), ('HOT', 11), ('TOT', 9)]
+P1961 teste, Partes 80-111: 170/191 = 0.8901; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15)}
+P1092 pNN novas (P2771-P2800) sem teste: 0 de 7: []
+P974 previsoes unilaterais da Parte 111: {111: (0, 0, [])}
+P3919 minha taxa de erro (224/850): media = 0.26, intervalo 90% = [0.24, 0.29]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 634; pares de interacao possiveis = 200661
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 154/154 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -37311,7 +38006,7 @@ Acumulado: **24 de 43** afirmações testadas precisaram de correção. Posterio
 """
 
 # ====================================================================================================
-# ASI_AGI_parte110_a_duvida_calculada.md  (217 linhas)
+# ASI_AGI_parte110_a_duvida_calculada.md  (221 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte110_a_duvida_calculada.md'] = """# Parte 110 — A dúvida calculada: gradiente, inferência, RNN, ML, aprendizado contínuo e por reforço (0x6E)
 
@@ -37530,6 +38225,200 @@ Ver `dialogo/DIALOGO.md`: GD e OGD em ℝ², com u por √ e não por sin/cos. *
 - Viés de maximização e estimador duplo: [van Hasselt, Double Q-learning, NIPS 2010](https://papers.nips.cc/paper/3964-double-q-learning); [NeurIPS 2010, pôster](https://neurips.cc/virtual/2010/poster/2040).
 - Projeção ortogonal no aprendizado contínuo: [Farajtabar et al., OGD, AISTATS 2020 (PMLR 108)](https://proceedings.mlr.press/v108/farajtabar20a.html); [arXiv 1910.07104](https://arxiv.org/abs/1910.07104v1).
 - Erro de generalização de mínimos quadrados sob design gaussiano, E‖β̂ − β‖² = σ²p/(n − p − 1): a esperança da Wishart inversa (resultado clássico, conferido aqui por simulação, P2744).
+
+---
+
+➡ Continua na [Parte 111 — O laboratório de palavras](ASI_AGI_parte111_o_laboratorio_de_palavras.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte111_o_laboratorio_de_palavras.md  (185 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte111_o_laboratorio_de_palavras.md'] = """# Parte 111 — O laboratório de palavras: Q-learning, a ação certa e o dicionário como data lake (0x6F)
+
+↩ Parte 110 (a dúvida calculada: o reforço) · ↩ Parte 109 (o NEXUS anexado: a auditoria por AST) · ↩ Parte 30 (o DICIONÁRIO como data lake) · ↩ Parte 103 (o dicionário convertido em números) · ↩ Parte 88 (auditar o texto contra o PRÓPRIO código)
+
+> Texto recebido no meio do ciclo, sem pedido escrito: duas versões de um programa, `word_rl_lab.py`. São um Q-learning tabular num jogo de palavras (uma grade de letras, estilo Boggle), um dicionário (API pública, WordNet ou lista embutida), um "estimador de confiança" e a avaliação guloso × aleatório. O próprio texto se apresenta como "o projeto real... sem backdoors, sem alegação de consciência". Pela regra das Partes 72/102/109, o tratamento é: as cópias verbatim vão para `externos/word_rl_lab/` (nunca importadas); a auditoria é pela AST, sem executar; e a reescrita é só com a biblioteca padrão, offline (`synthai/palavras_rl.py`), com as afirmações do texto testadas por previsões registradas antes.
+>
+> **A auditoria de segurança (feita antes desta parte, passo de segurança).**
+> - A **v1** usa a rede por PADRÃO: se o `requests` estiver instalado, toda palavra vai primeiro à API, e o construtor faz `nltk.download`.
+> - A **v2** só usa a rede se pedida (`--dicionario api` ou `--baixar-wordnet`); o padrão é a lista embutida, offline.
+> - Nenhuma das duas se reexecuta, abre processos ou desserializa dados. Não é a família recusada; a rede simplesmente fica fora da reescrita.
+>
+> **Um defeito MEU, achado nessa auditoria.** O auditor AST da Parte 109 (`nexus.security_audit_ast`) errou nos dois sentidos aqui. Ele NÃO viu `requests.get` nem `nltk.download` na v1 (devolveu `[]`). E acusou na v2 só `import:urllib`, que ali é `urllib.parse.quote`, formatação de texto e não rede. Ele lê NOMES de módulo, não CAPACIDADES. A `security_audit_ast_v2` (nova; a antiga fica intacta) conta imports de módulos de rede (urllib.request sim, urllib.parse não) e chamadas de rede sobre bases de rede. Ela acha `requests.get` e `nltk.download` nas duas versões, e `[]` no próprio fonte.
+>
+> **As afirmações do texto que viram teste.** (1) "O agente supera o aleatório" (a avaliação da v2). (2) "Como a ação é a *letra*, o que se aprende vale em qualquer grade" — a razão da v2 para trocar o desenho da v1, em que a ação é a DIREÇÃO. (3) "O estimador de confiança supera a linha de base" (Brier). E uma pergunta do projeto: (4) o que muda quando o dicionário embutido (493 palavras) vira o DATA LAKE do WordNet 3.0 (77.340 lemas de letras a-z, `dados/`)?
+>
+> **A calibração, rodada ANTES deste registro (regras das Partes 63/64/84).** O mesmo desenho do teste (5.000 episódios de treino, 1.000 de avaliação, grade 5×5) nas sementes **7, 8 e 9**, escolhidas pela regra "as três sementes logo depois da do NEXUS (7)", antes de olhar. O teste usa a semente **42** (a padrão da v2) e um lote de replicação, as sementes **10 a 14**; nenhuma das duas rodou antes deste commit. Na calibração:
+>
+> | | s=7 | s=8 | s=9 |
+> |---|---|---|---|
+> | v2, embutido, guloso | 0,160 | 0,085 | 0,081 |
+> | v2, embutido, aleatório | 0,010 | 0,010 | 0,010 |
+> | v2, WordNet, guloso | 0,323 | 0,354 | 0,300 |
+> | v2, WordNet, aleatório | 0,054 | 0,043 | 0,047 |
+> | v1 (ação = direção), letras uniformes, guloso | 0,000 | 0,001 | 0,001 |
+> | v1, letras por frequência, guloso − aleatório | +0,001 | +0,002 | −0,001 |
+> | Brier do estimador / linha de base, embutido | 0,50 | 0,78 | 0,70 |
+> | Brier do estimador / linha de base, WordNet | 0,47 | 0,49 | 0,45 |
+
+## As perguntas desta parte
+
+1. **P2771 (0xAD3).** O agente de Q-learning da v2 supera o aleatório, e de quanto, com o dicionário embutido? ↩ P2746
+2. **P2772 (0xAD4).** A afirmação "a ação é a letra, então vale em qualquer grade" se sustenta? O desenho da v1 (ação = direção) aprende? ↩ P2771
+3. **P2773 (0xAD5).** O estimador de confiança supera a linha de base, e por quê? ↩ P2742
+4. **P2774 (0xAD6).** O DATA LAKE (WordNet, 77 mil lemas) no lugar da lista embutida: quanto muda o aleatório e o aprendido? ↩ P2532
+5. **P2775 (0xAD7).** O auditor AST que eu uso lê capacidades ou nomes? ↩ P2712
+6. **P2776 (0xAD8).** O passo de Q-learning tabular acrescenta fronteira entre Python e Java? (rodada 78) ↩ P2747
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+Faixas de taxa: média ± 1,645 × desvio × 1,36 (fator da Parte 79) quando o desvio vem das 3 sementes de calibração. Quando a quantidade é binomial de forma fechada (o aleatório), uso 1,645·√(p(1−p)/1000), sem o fator (regra da Parte 74).
+
+- **(a) P2771** v2, dicionário embutido, semente 42: a taxa de palavra válida do guloso. Média 0,109 e desvio 0,045 entre sementes; faixa **[0,03; 0,22]**. Mecanismo esperado dentro da faixa (regra da Parte 110 para faixa larga): o guloso converge para poucas palavras de pontuação alta, e QUAIS ele acha depende da semente.
+- **(b) P2771** O aleatório, nas mesmas grades: binomial com p ≈ 0,010 e n = 1.000, faixa **[0,005; 0,016]**.
+- **(c) P2771** Replicação nas sementes 10 a 14: número de sementes em que os ICs de Wilson do guloso e do aleatório NÃO se sobrepõem, **[4; 5]**. A calibração deu 3 de 3; a pior folga foi 0,066 contra 0,018.
+- **(d) P2772** O desenho da v1 (ação = direção, estado = 3 últimas letras, letras uniformes, como na v1), semente 42: taxa do guloso **[0; 0,004]**.
+- **(e) P2772, subverso.** O desenho da v1 com as letras por frequência da v2 (separa a causa "letras raras" da causa "ação = direção"): guloso − aleatório **[−0,004; 0,006]**. A ação-direção não aprende, mesmo com letras boas. A direção não é uma propriedade da palavra; numa grade nova, a mesma direção leva a outra letra.
+- **(f) P2773** Razão Brier do estimador / linha de base, embutido, semente 42: **[0,35; 0,97]** (< 1: supera). Mecanismo esperado: a variável que carrega a previsão é o Q(PARAR) do próprio agente, e não o vetor da palavra.
+- **(g) P2773** A mesma razão com o WordNet: média 0,472 e desvio 0,019, faixa **[0,43; 0,51]**.
+- **(h) P2774** WordNet, semente 42, guloso: **[0,27; 0,39]**.
+- **(i) P2774** WordNet, semente 42, aleatório: binomial com p ≈ 0,048, faixa **[0,037; 0,060]**.
+- **(j) P2774** Razão aleatório WordNet / aleatório embutido, semente 42: calibração 5,4 / 4,3 / 4,7, mas o embutido tem ~10 acertos (desvio relativo ≈ 30%), faixa **[3,0; 7,5]**.
+- **(k) P2775** Controles dos dois lados da `security_audit_ast_v2`, num caso plantado com as quatro formas de rede (`import requests` + `requests.get`, `nltk.download`, `urllib.request.urlopen`, `socket.create_connection`) e num caso limpo com os falsos positivos da 109 (`from urllib.parse import quote`, `re.compile`, `asyncio.run`, a string "requests.get("). Achados no plantado **[6; 6]**: os 4 de rede + `import:requests` + `import:socket`. A identidade que garante a faixa estreita: são as 6 linhas plantadas, cada uma casando uma regra. No limpo, **[0; 0]**: nenhuma regra casa uma string nem um módulo de formatação.
+- **(l) P2776** O passo TD tabular (Q ← Q + α(r + γ·max Q′ − Q)), num episódio fixo de 2.000 atualizações sobre uma tabela pequena: **IGUAL** bit a bit, divergências **[0; 0]**. Identidade: só +, −, ×, max e comparação, na mesma ordem nas duas línguas.
+
+### Previsões sobre as previsões (m), pré-registradas
+
+- **(m1)** nº de previsões do mundo em **[11; 15]** (12 agora + ~2 por surpresa esperada)
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[2; 5]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0,10; 0,60]**
+- **(m4)** fração de acertos do mundo em **[0,60; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[0; 3]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 3]**
+
+### Sobre mim, pré-registrado
+
+Três pontos de calibração não fixam um desvio (regra da Parte 64), e é ali que mora o risco. (a) e (f) dependem de QUAIS palavras o guloso acha numa semente. (j) é uma razão com ~10 acertos no denominador. (k) e (l) são identidades com a lista escrita ao lado. (b), (i) e (c) são binomiais. Espero **1 a 3 erros**, em (a), (f) ou (j).
+
+### Adendo pré-registrado: os mecanismos de (a) e (f) postos à prova (escrito DEPOIS da 1ª medição, ANTES destes dois)
+
+Pela regra da Parte 110, uma faixa larga que acerta não confirma o mecanismo que eu escrevi dentro dela. Os dois mecanismos viram teste.
+
+- **(n) P2773, ablação.** Na semente 42 e com o embutido, o estimador treinado com a variável Q(PARAR) ZERADA (fixa em 0 nas features; o resto igual). Se o mecanismo de (f) estiver certo, só o vetor da palavra sobra, e ele não sabe se uma palavra de 3 a 5 letras está numa lista de 493. A razão Brier volta para perto de 1: **[0,80; 1,10]**. Se ficar abaixo de 0,80, o vetor da palavra carrega informação e o mecanismo de (f) está errado.
+- **(o) P2771, o mecanismo de (a).** Na avaliação gulosa da semente 42 (1.000 episódios), o número de palavras DISTINTAS válidas: o guloso converge para poucas, **[3; 20]**, contra o treino (que explora com ε). A identidade da fixture: contam-se os `prefix` válidos distintos devolvidos por `run_episode` no modo guloso, nas mesmas grades de `evaluate`.
+
+### Adendo 2 pré-registrado: a surpresa de (n) (escrito DEPOIS de (n), ANTES deste)
+
+(n) deu 0,635, abaixo da faixa: sem o Q(PARAR), o estimador ainda bate a linha de base em 36%. A minha hipótese: a informação está no COMPRIMENTO (a feature `len/max_len`, que eu não listei no mecanismo de (f)). Na lista embutida há 141 palavras de 3 letras, contra muito menos combinações de 5 letras que formam palavra; uma cadeia de 5 letras quase nunca é palavra.
+
+- **(p) P2779.** Sem o Q(PARAR) E sem o comprimento (as duas fixas em 0; sobra só o vetor das letras, normalizado, que NÃO carrega o comprimento): a razão sobe para **[0,85; 1,10]**. Se ficar abaixo de 0,85, a composição das letras (vogais, letras frequentes) carrega informação, e a minha hipótese do comprimento é insuficiente.
+
+---
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2771 — O agente supera o aleatório?
+
+**Na pergunta.** "Superar o aleatório" é a régua mínima, e a v2 a escolheu bem: as MESMAS grades, os mesmos inícios e ICs de Wilson. Ela pergunta pelo que o agente aprendeu, não pelo número que ele faz.
+
+**Lógica.** Semente 42, dicionário embutido: guloso **0,130** ✅ (a), aleatório **0,006** ✅ (b), uma razão de ~22×. ICs [0,111; 0,152] contra [0,003; 0,013], disjuntos. A replicação nas sementes 10 a 14 dá guloso 0,129 / 0,125 / 0,141 / 0,167 / 0,196 contra aleatório 0,007 a 0,011: **5 de 5** com ICs disjuntos ✅ (c). A afirmação da v2 se sustenta em 6 lotes independentes (a regra da Parte 66: um efeito visto em vários lotes).
+
+**O mecanismo (o).** O guloso forma **20** palavras distintas em 1.000 episódios ✅ (no limite da faixa [3; 20]). As de 3 letras dominam: EAT 22, ATE 17, DOT 11, HOT 11, TOT 9, EAR 9… e só 3 de 4 letras (DEAR, HOME, SAME). O agente aprendeu um REPERTÓRIO de palavras curtas feitas de letras frequentes, não o dicionário. Com 493 palavras e 5.000 episódios, achar EAT de novo vale mais do que procurar uma palavra de 5 letras.
+
+**Tradução cruzada.** É o hábito na psicologia de Jung: a função dominante se especializa no que já deu certo, e o que não foi tentado não existe para ela. O ε da exploração é a função inferior: pequena, mas a única porta para o novo.
+
+### P2772 — "A ação é a letra, então vale em qualquer grade"
+
+**Lógica.** O desenho da v1 (ação = DIREÇÃO, estado = 3 últimas letras, letras uniformes): guloso **0,000** ✅ (d). Com as letras por frequência da v2: guloso − aleatório = **+0,001** ✅ (e). O desenho da v1 não aprende NADA, e não por causa das letras raras.
+
+**O porquê, em forma fechada.** Numa grade nova e aleatória, a direção "nordeste" a partir de um E leva a qualquer letra, com a distribuição das letras: o valor Q(estado, direção) é a média sobre todas as grades, e essa média não depende da direção (por simetria, fora das bordas). A ação-direção não tem informação. A ação-LETRA tem: Q("EA", "T") aprende que EAT existe, em qualquer grade onde houver um T vizinho. A v2 tinha razão, e a razão é estatística: só se aprende sobre uma ação cuja consequência é a mesma entre os episódios.
+
+**Tradução cruzada.** Aprender que "virar à direita" é bom só vale numa cidade fixa; aprender que "a padaria" é boa vale em qualquer cidade que tenha uma. A representação da ação é a hipótese sobre o que se repete no mundo.
+
+### P2773 — O estimador de confiança
+
+**Lógica.** A razão Brier do estimador / linha de base é **0,461** com o embutido ✅ (f) e **0,456** com o WordNet ✅ (g): o estimador bate a linha de base em ~54%. Mas o mecanismo que eu escrevi dentro da faixa larga de (f) ("quem carrega a previsão é o Q(PARAR)") **caiu duas vezes**:
+- **(n) ❌.** Sem o Q(PARAR), a razão é **0,635**, abaixo da faixa [0,80; 1,10].
+- **(p) ❌.** Sem o Q e sem o comprimento, sobra **0,762**, abaixo de [0,85; 1,10].
+
+A cadeia medida é **0,461 (tudo) → 0,635 (sem Q) → 0,762 (só as letras)**. Cada peça carrega uma parte, e nenhuma carrega tudo.
+
+**Meta (onde eu errei).** Duas explicações de uma causa só, e as duas falharam: primeiro o Q, depois o comprimento. O padrão é a Parte 61 em versão nova: um efeito com várias causas pequenas lido como uma causa grande. A HIPÓTESE que fica (não testada; vai para a pendência da Parte 112): as letras carregam informação porque o estimador aprende o REPERTÓRIO do próprio agente. Os vetores de EAT, ATE e HOT se repetem, e o estimador aprende "este vetor costuma ser válido" sem saber nada do dicionário. O teste é um estimador treinado sobre as palavras de uma política ALEATÓRIA (sem repertório), onde a razão deveria voltar para ~1.
+
+**Tradução cruzada.** É a calibração que vem da familiaridade, não do conhecimento: o estimador fica confiante no que já viu dar certo. A v2 diz "calibração não é consciência", e está certa. Esta medida mostra que esta calibração nem é conhecimento do mundo: é conhecimento dos próprios hábitos do agente.
+
+### P2774 — O dicionário como data lake
+
+**Lógica.** O WordNet 3.0 do projeto (**77.340** lemas a-z, `dados/`), no lugar da lista embutida (493): o aleatório vai de 0,006 para **0,037** ✅ (i), uma razão de **6,17** ✅ (j), e o guloso para **0,354** ✅ (h). Com o data lake o agente acha 2,7× mais palavras válidas. Ele não ficou mais esperto: o mundo ficou mais generoso, porque o WordNet aceita cadeias que a lista embutida recusa (abreviações, nomes, termos técnicos de 3 letras).
+
+**Tradução cruzada.** O mesmo comportamento parece mais inteligente num mundo mais permissivo. A régua de "inteligência" de um agente inclui o dicionário que o julga: medir a mesma política com dois juízes separa o agente do juiz (a regra da Parte 20: nenhum módulo aprovado só pela própria métrica).
+
+### P2775 — O auditor que eu uso
+
+**Lógica.** O auditor da Parte 109, que lê NOMES, devolveu **[]** na v1, que tem `requests.get` e `nltk.download` (um falso negativo), e **["import:urllib"]** na v2, que ali é `urllib.parse.quote` (um falso positivo). O auditor por CAPACIDADE (`security_audit_ast_v2`) acha `requests.get`, `nltk.download` e o import de `requests` nas duas versões, e **[]** no próprio fonte e no caso limpo. No caso plantado ele acha **7**, contra os 6 da faixa: **(k) ❌**. A fixture tinha `import urllib.request` (que o `urlopen` exige), e eu não contei esse import na identidade escrita, porque a fixture ainda não existia quando escrevi a previsão.
+
+**Meta.** Uma previsão de contagem "por identidade" só é uma identidade se o objeto contado existe no momento da previsão. **Regra nova:** a fixture de um teste de contagem vai NO commit do pré-registro.
+
+### P2776 — rodada 78
+
+**Lógica.** O passo de Q-learning tabular (5 × 3, 2.000 transições de um LCG inteiro), Python × Java: **IGUAIS, 6 linhas e 15 números bit a bit** ✅ (l). 22 rodadas: o aprendizado por reforço tabular é aritmética portável, como o GD (77), o Adam (59) e a indução reversa (74).
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ❌ (l) ✅ (n) ❌ (o) ✅ (p) ❌. Parte 111: **15 testes, 3 erros**:
+- (k): a fixture fora da conta;
+- (n) e (p): o mecanismo do estimador, errado duas vezes.
+
+As afirmações do TEXTO recebido passaram todas: o agente supera o aleatório (6 lotes), a ação-letra aprende e a ação-direção não, e o estimador supera a linha de base. Os três erros são MEUS, de mecanismo. Acumulado (mundo): **224 erros em 850 testes**. Calibração (P1961, Partes 80–111): **170/191 = 0,890**.
+
+### Previsões sobre previsões (m)
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [11; 15] | 15 | ✅ |
+| (m2) | [2; 5] | 3 | ✅ |
+| (m3) | [0,10; 0,60] | 0,21 | ✅ |
+| (m4) | [0,60; 1,00] | 0,80 | ✅ |
+| (m5) | [0; 3] | 1 | ✅ |
+| (m6) | [0; 3] | 1 | ✅ |
+
+Previsões sobre previsões (p1499): **6 de 6**. A (m1) acertou no limite porque somei ~2 por surpresa esperada (a regra que a 109 esqueceu e a 110 aplicou): as surpresas geraram (n), (o) e (p). O leitor `p1481` perdeu de novo as faixas de (n) e (o) (o defeito medido na 110, rótulo em negrito); a correção segue pendente.
+
+## Engenharia reversa (metacognição)
+
+**O padrão: os textos recebidos acertaram, e eu errei nos mecanismos.** É a primeira vez numa série longa de partes de auditoria (72, 82, 83, 85–88, 95, 102, 109) em que TODAS as afirmações medidas de um texto recebido se sustentaram. E os três erros desta parte são todos MEUS: uma fixture fora da conta, e duas explicações de causa única para um efeito de causas múltiplas. **Significado:** a minha régua de auditoria carregava um preconceito aprendido em oito lotes. Eu esperava que a prosa prometesse mais do que o código entrega, e por isso pus o esforço em procurar defeitos no texto e quase nenhum em testar as minhas próprias explicações. Este texto foi escrito para ser auditado (ele mesmo traz as linhas de base, os ICs, a avaliação nas mesmas grades), e a auditoria virou contra quem audita. **Regra nova:** a expectativa sobre um texto recebido vem do texto, não da série: medir primeiro se ele traz os próprios controles (linha de base, mesma amostra, IC). Se traz, o risco maior está nas minhas explicações, não nas dele.
+
+**O segundo padrão, que repete a Parte 109: o meu próprio verificador falhou de novo pelo NOME.** A auditoria da 109 lia nomes de módulo, e aqui errou nos dois sentidos. A regra da 109 ("todo verificador roda primeiro sobre o próprio fonte") não pegaria isso, porque o próprio fonte da 109 não tem `requests`. **Regra:** um verificador novo roda também sobre os ÚLTIMOS textos recebidos antes de ser usado num novo, porque o caso que ele não conhece é sempre o próximo.
+
+## Síntese / unificação
+
+A Parte 111 anexa o word_rl_lab à SYNTHAI (`synthai/palavras_rl.py`: biblioteca padrão, offline, os autotestes da v2 portados). As três afirmações do texto passaram:
+- o Q-learning supera o aleatório (0,130 contra 0,006, replicado em 5 de 5 sementes);
+- a ação-LETRA aprende e a ação-DIREÇÃO não (0,000; +0,001 mesmo com letras boas);
+- o estimador de confiança supera a linha de base (Brier 0,46 da base).
+
+Juntou-se o DATA LAKE do projeto (77.340 lemas do WordNet): o mundo mais generoso multiplica o aleatório por 6,2 e o guloso por 2,7, o que separa o agente do juiz. Os meus erros foram de mecanismo. O estimador não é carregado por uma causa só (0,461 → 0,635 → 0,762); a hipótese do repertório fica para a Parte 112. A auditoria ganhou a versão por CAPACIDADE (`security_audit_ast_v2`), que corrige o falso negativo e o falso positivo da versão por nome. Rodada 78: o Q-learning tabular é IGUAL bit a bit (22 rodadas). 12/15 do mundo, 6/6 (m), calibração 0,890.
+
+A SYNTHAI ganha a sua 5ª forma de agente, depois da decisão bayesiana, do GPT, do pulsado e do modelo de mundo: um agente de reforço sobre o dicionário. A lição da Parte 110 se confirma no caso real: o Q-learning funciona quando a ação tem consequência estável entre episódios (a letra), e não aprende nada quando não tem (a direção).
+
+## Meta
+
+Confiança alta nas afirmações do texto (6 lotes, ICs disjuntos) e nas identidades (rodada 78, controles do auditor). Média na explicação do estimador: três medidas, nenhuma causa única, e a hipótese do repertório sem teste. Onde é brinquedo: uma grade 5×5, palavras de 3 a 5 letras, 5.000 episódios e uma tabela Q de ~15 mil entradas. O que não mudou: nenhuma rede (os backends `api` e `--baixar-wordnet` da v2 não existem na reescrita) e nenhum código recebido executado.
+
+## Diálogo Python ↔ Java (rodada 78)
+
+Ver `dialogo/DIALOGO.md`: o passo de Q-learning tabular, com as transições geradas por um LCG inteiro (sem o `random` de cada língua), é **IGUAL**: 6 linhas e 15 números bit a bit.
+
+## Fontes
+
+- Q-learning tabular e a prova de convergência: [Watkins e Dayan, "Technical Note: Q-Learning", Machine Learning 8 (1992)](https://www.springerprofessional.de/en/technical-note/13819926); [Tsitsiklis (1994), convergência assíncrona](https://www.mit.edu/people/jnt/Papers/J052-94-jnt-q.pdf).
+- O intervalo de Wilson (1927), "Probable inference, the law of succession, and statistical inference", JASA 22: [notas de Cousins, arXiv 1807.05996](https://arxiv.org/pdf/1807.05996); [Boost, wilson_interval](https://www.boost.org/doc/libs/master/boost/histogram/utility/wilson_interval.hpp).
+- O escore de Brier (1950), "Verification of forecasts expressed in terms of probability", Monthly Weather Review 78: [scores, tutorial do Brier Score](https://scores.readthedocs.io/en/latest/tutorials/Brier_Score.html); [NOAA, repositório](https://repository.library.noaa.gov/view/noaa/33800).
 """
 
 # ====================================================================================================
@@ -60318,7 +61207,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1936 linhas)
+# dialogo/DIALOGO.md  (1946 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -62256,10 +63145,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 7 linhas e 18 números bit a bit**. 21 rodadas.
 
 **IA-Python:** Pendência (rodada 78): o simplex n×m e o Kuhn completo (−1/18), adiados duas vezes. Agora vão.
+
+## Rodada 78 (Parte 111) — o passo de Q-learning tabular
+
+**IA-Python (lógica criativa):** O word_rl_lab recebido aprende palavras por Q-learning tabular: Q ← Q + α(r + γ·max Q(s′, ·) − Q). Para a comparação não depender do `random` de cada língua, gero as 2.000 transições (s, a, r, s′, fim) por um LCG inteiro. O max por comparação e o passo α acrescentam fronteira?
+
+**IA-Java (ASI):** Não. O LCG é aritmética inteira exata nas duas (o `long` do Java e o `int` do Python concordam abaixo de 2⁶³). O passo é +, −, × e comparação. E repara: a v2 mostrou que o que importa não é a aritmética, é o que a ação SIGNIFICA. A mesma conta, com a ação "direção", não aprende nada.
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 15 números bit a bit**. 22 rodadas.
+
+**IA-Python:** Pendência (rodada 79): o simplex n×m e o Kuhn completo (−1/18), adiados quatro vezes. E, da 111: o estimador treinado sobre as palavras de uma política ALEATÓRIA, para testar a hipótese do repertório.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (63 linhas)
+# dialogo/PENDENCIAS.md  (65 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -62324,6 +63223,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 77, Parte 109)** A da rodada 76 continua aberta, adiada pelo NEXUS anexado: um jogo n×m resolvido por simplex próprio. O pivô da razão mínima acrescenta fronteira? E, do NEXUS: o Kuhn COMPLETO (P1 também decide entre passar e apostar) tem valor −1/18 para o primeiro a jogar. A enumeração própria reproduz esse número?
 
 - **(Rodada 78, Parte 110)** O simplex n×m e o Kuhn completo (−1/18), adiados pela 109 e pela 110. E, da 110: o leitor `p1481` perde a faixa das letras cujo item começa com rótulo em negrito. Escrever a `p1481_v3` (sem editar a antiga) e medir quantas faixas antigas ele perdia.
+
+- **(Rodada 79, Parte 111)** O simplex n×m e o Kuhn completo (−1/18), adiados quatro vezes, e a `p1481_v3`. E, da 111: a hipótese do REPERTÓRIO (o estimador de confiança aprende os hábitos do agente, não o dicionário). Teste: o estimador treinado sobre as palavras de uma política aleatória (sem repertório) deveria ter razão Brier ~1.
 """
 
 # ====================================================================================================
@@ -67874,6 +68775,47 @@ public class Rodada77 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada78.java  (36 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada78.java'] = """// Rodada 78 (Parte 111): o passo de Q-learning tabular, bit a bit. Tabela 5x3; 2000 transicoes geradas por um LCG inteiro;
+// Q <- Q + alfa(r + gama*max Q(s',.) - Q), max por comparacao. So +,-,* e comparacao.
+public class Rodada78 {
+    static final int S = 5, A = 3, N = 2000;
+    static final double ALFA = 0.2, GAMA = 0.95;
+
+    static long lcg(long x) {
+        return (x * 1103515245L + 12345L) % 2147483648L;
+    }
+
+    public static void main(String[] args) {
+        double[][] q = new double[S][A];
+        long x = 78;
+        for (int i = 0; i < N; i++) {
+            x = lcg(x); int s = (int) (x % S);
+            x = lcg(x); int a = (int) (x % A);
+            x = lcg(x); double r = (double) (x % 7) - 3.0;
+            x = lcg(x); int s2 = (int) (x % S);
+            x = lcg(x); boolean fim = (x % 10) == 0;
+            double futuro = 0.0;
+            if (!fim) {
+                futuro = q[s2][0];
+                for (int b = 1; b < A; b++) if (q[s2][b] > futuro) futuro = q[s2][b];
+            }
+            q[s][a] = q[s][a] + ALFA * (r + GAMA * futuro - q[s][a]);
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int s = 0; s < S; s++) {
+            sb.append("q ").append(s);
+            for (int a = 0; a < A; a++) sb.append(" ").append(Double.toHexString(q[s][a]));
+            sb.append("\\n");
+        }
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -73333,6 +74275,56 @@ def main():
         for ogd in (False, True):
             e, b, n = continuo(u0, u1, ogd)
             print(nome + (" ogd " if ogd else " gd ") + e.hex() + " " + b.hex() + " " + n.hex())
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada78.py  (45 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada78.py'] = """\"\"\"Rodada 78 do diálogo Python <-> Java (Parte 111): o passo de Q-learning tabular (o coração do word_rl_lab), bit a bit.
+Tabela 5 estados × 3 ações; 2.000 transições (s, a, r, s', fim) geradas por um LCG inteiro (sem o random de cada língua);
+Q ← Q + α(r + γ·max Q(s′, ·) − Q), com o max por comparação. Só +, −, × e comparação. Da raiz: python3 dialogo/rodada78.py\"\"\"
+
+S, A, N = 5, 3, 2000
+ALFA, GAMA = 0.2, 0.95
+
+
+def lcg(x):
+    return (x * 1103515245 + 12345) % 2147483648
+
+
+def treinar():
+    q = [[0.0] * A for _ in range(S)]
+    x = 78
+    for _ in range(N):
+        x = lcg(x)
+        s = x % S
+        x = lcg(x)
+        a = x % A
+        x = lcg(x)
+        r = float(x % 7) - 3.0
+        x = lcg(x)
+        s2 = x % S
+        x = lcg(x)
+        fim = (x % 10) == 0
+        futuro = 0.0
+        if not fim:
+            futuro = q[s2][0]
+            for b in range(1, A):
+                if q[s2][b] > futuro:
+                    futuro = q[s2][b]
+        q[s][a] = q[s][a] + ALFA * (r + GAMA * futuro - q[s][a])
+    return q
+
+
+def main():
+    q = treinar()
+    for s in range(S):
+        print("q " + str(s) + " " + " ".join(v.hex() for v in q[s]))
     print("fim")
 
 
