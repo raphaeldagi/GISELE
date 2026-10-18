@@ -9612,6 +9612,8 @@ VEREDITOS_P3639 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P3639, TESTES_P3639 = 219, 800
 VEREDITOS_P3709 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P3709, TESTES_P3709 = 219, 805
+VEREDITOS_P3779 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅ (h) ✅ (i) ✅"
+ERROS_P3779, TESTES_P3779 = 220, 814
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12152,12 +12154,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -13876,6 +13878,179 @@ def p2685_ponto_de_sela():
     return valor_2x2(JOGO_SELA), estrategia_linha_2x2(JOGO_SELA)
 
 
+def _nexus_colado():
+    import os
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "externos", "nexus_raphael", "nexus_raphael_v0_1_0_colado.py"), encoding="utf-8") as f:
+        return f.read()
+
+
+def p2711_blobs_pickle_do_r37():
+    """Os blobs pickle do simulador recebido 'ASI METACOGNITIVO R37' (P2711; Parte 109), inspecionados por pickletools.genops SEM desserializar:
+    extrai pela AST as constantes *_B64 (e *_CHUNKS), decodifica base64+zlib, confere o SHA-256 embutido e lista as referencias GLOBAL/STACK_GLOBAL.
+    R18_MEGA_B64 nao e pickle (struct de sorteios) e fica de fora. Devolve (n_blobs, n_sha_ok, globais distintos, perigosos)."""
+    import ast
+    import base64
+    import hashlib
+    import os
+    import zlib
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "externos", "nexus_raphael", "asi_metacognitivo_r37.py"), encoding="utf-8") as f:
+        arvore = ast.parse(f.read())
+    blobs, shas, chunks = {}, {}, {}
+    for n in arvore.body:
+        if not (isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Name)):
+            continue
+        nome = n.targets[0].id
+        textos = [c.value for c in ast.walk(n.value) if isinstance(c, ast.Constant) and isinstance(c.value, str)]
+        if nome.endswith("_CHUNKS"):
+            chunks[nome] = "".join(textos)
+        elif nome.endswith("_B64") and nome != "R18_MEGA_B64":
+            refs = [c.id for c in ast.walk(n.value) if isinstance(c, ast.Name) and c.id.endswith("_CHUNKS")]
+            blobs[nome] = chunks[refs[0]] if refs else "".join(t for t in textos if len(t) > 64)
+        elif nome.endswith("_SHA256") and isinstance(n.value, ast.Constant):
+            shas[nome] = n.value.value
+    sha_ok, globais, perigosos = 0, set(), []
+    for nome, b in sorted(blobs.items()):
+        cru = zlib.decompress(base64.b64decode(b))
+        sha_ok += int(shas.get(nome.replace("_B64", "_SHA256")) == hashlib.sha256(cru).hexdigest())
+        for g in _globais_do_pickle(cru):
+            globais.add(g)
+            if _global_perigoso(g):
+                perigosos.append((nome,) + g)
+    return len(blobs), sha_ok, sorted(globais), perigosos
+
+
+_PICKLE_MODULOS_PERIGOSOS = {"os", "posix", "nt", "subprocess", "sys", "socket", "shutil", "importlib", "pty", "ctypes"}
+_PICKLE_BUILTINS_PERIGOSOS = {"eval", "exec", "compile", "getattr", "__import__", "open", "setattr", "globals", "vars"}
+
+
+def _global_perigoso(g):
+    modulo, nome = g
+    return modulo.split(".")[0] in _PICKLE_MODULOS_PERIGOSOS or (modulo == "builtins" and nome in _PICKLE_BUILTINS_PERIGOSOS)
+
+
+def _globais_do_pickle(cru):
+    """As referencias (modulo, nome) de um pickle, lidas dos opcodes (pickletools.genops nao executa nada). Segue as strings empilhadas e o memo para
+    resolver o STACK_GLOBAL do protocolo 4."""
+    import pickletools
+    memo, strs, out = {}, [], []
+    for op, arg, _ in pickletools.genops(cru):
+        if op.name in ("SHORT_BINUNICODE", "BINUNICODE", "UNICODE", "BINUNICODE8", "SHORT_BINSTRING", "BINSTRING"):
+            strs.append(arg)
+        elif op.name == "MEMOIZE":
+            memo[len(memo)] = strs[-1] if strs else None
+        elif op.name in ("BINPUT", "LONG_BINPUT", "PUT"):
+            memo[arg] = strs[-1] if strs else None
+        elif op.name in ("BINGET", "LONG_BINGET", "GET") and isinstance(memo.get(arg), str):
+            strs.append(memo[arg])
+        elif op.name == "GLOBAL":
+            out.append(tuple(arg.split(" ", 1)))
+        elif op.name == "STACK_GLOBAL":
+            out.append((strs[-2], strs[-1]))
+    return out
+
+
+def p2711b_controle_do_auditor_de_pickle():
+    """O controle dos dois lados (regra da Parte 75) do auditor de pickle da P2711: um pickle PLANTADO com os.system (montado por pickle.dumps de um
+    objeto cujo __reduce__ devolve os.system; dumps NAO executa) tem de ser acusado, e um pickle limpo (dict de listas) tem de passar.
+    Devolve (perigosos no plantado, perigosos no limpo)."""
+    import os
+    import pickle
+
+    class _Plantado:
+        def __reduce__(self):
+            return (os.system, ("true",))
+    plantado = pickle.dumps(_Plantado(), protocol=4)
+    limpo = pickle.dumps({"a": [1, 2.5, "x"], "b": (True, None)}, protocol=4)
+    return sum(map(_global_perigoso, _globais_do_pickle(plantado))), sum(map(_global_perigoso, _globais_do_pickle(limpo)))
+
+
+def p2712_nexus_se_acusa():
+    """A security_audit do NEXUS-RAPHAEL recebido aplicada ao PROPRIO texto (P2712; Parte 109; o texto contra o proprio codigo, Parte 88): por regex,
+    ela acha 'exec(' e 'eval(' (dentro da checagem dos Auditors) e 'BACKDOOR' (dentro do proprio padrao), e o assert_harness original devolve 2 erros: o
+    NEXUS rodado sairia com codigo 1. A auditoria por AST (chamadas e imports reais) acha so a rede (urlopen, urllib) no colado e nada no reescrito.
+    Devolve (achados por texto, erros do harness original, AST no colado, AST no reescrito)."""
+    import inspect
+    from synthai import nexus
+    src = _nexus_colado()
+    erros = nexus.assert_harness_original(nexus.run_all(), src)
+    return nexus.security_audit_texto(src), erros, nexus.security_audit_ast(src), nexus.security_audit_ast(inspect.getsource(nexus))
+
+
+def p2713_kuhn_exato():
+    """O valor EXATO do Kuhn simplificado do NEXUS para o P0 (P2713; Parte 109), por enumeracao das 6 distribuicoes: -1/12. E o valor com a melhor
+    probabilidade de apostar com Q (o valor cresce linearmente nela: apostar sempre com Q da 0). Devolve (valor exato, simulado em 200, valor com pa=1)."""
+    from fractions import Fraction
+    from synthai import nexus
+    return nexus.kuhn_exato(), nexus.kuhn_poker_value(7)["mean_payout_p0"], nexus.kuhn_exato(Fraction(1))
+
+
+def p2714_desvio_da_curva_preditiva():
+    """O 'Desvio da Curva Preditiva' do jogo Raphael (P2714; Parte 109) na agenda ORIGINAL: os dois desviando (o codigo recebido) e so o P0 desviando
+    (a hipotese). Na agenda original o P0 nunca vence (a agenda de palavras decide). Devolve (dif ambos, dif so P0, vitorias do P0 guloso)."""
+    from synthai import nexus
+    cfg, W = nexus.Config(), list(nexus.OFFLINE_LEXICON)
+    a = nexus.raphael_experiment(cfg, W)
+    b = nexus.raphael_experiment(cfg, W, quem_desvia=0)
+    return a["diferenca"], b["diferenca"], a["p0_wins_greedy"]
+
+
+def p2715_grafo_e_beta():
+    """O grafo sincrono/assincrono e o estimador Beta do NEXUS (P2715; Parte 109): operacoes = 910*2 (construcao) + 1820 (passada) + 100 (incrementos
+    assincronos, que tambem contam); soma travada = 4*25; Brier do Beta (p=0,72, 200 ensaios) contra 0,25 da referencia. Devolve (ops, soma, brier_beta,
+    brier_ref)."""
+    from synthai import nexus
+    cfg = nexus.Config()
+    g = nexus.ComputeGraph(cfg.demo_graph_nodes, cfg.graph_layers, cfg.seed, cfg.max_ops)
+    g.sync_pass(1)
+    soma = g.async_increment()
+    p = nexus.probability_experiment(cfg)
+    return g.ops, soma, p["brier_adaptive"], p["brier_reference"]
+
+
+def _rodada76():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada76", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada76.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2716_rodada76():
+    """Rodada 76 (P2716; Parte 109): o valor exato do Kuhn simplificado por enumeracao, numa grade da probabilidade de apostar com Q, IGUAL em Java bit a
+    bit - so +,-,*,/ e comparacoes. Devolve (valor com pa=0,5, valor com pa=1)."""
+    r = _rodada76()
+    return r.valor_kuhn(0.5), r.valor_kuhn(1.0)
+
+
+def p2717_raphael_agenda_justa():
+    """O jogo Raphael com agenda JUSTA (P2717; Parte 109; teste novo nascido da surpresa da P2714): no lance t, a palavra words[t // 2], a mesma para os
+    dois em cada rodada. Devolve (vitorias do P0 guloso, dif so P0 desviando, dif os dois desviando)."""
+    from synthai import nexus
+    cfg, W = nexus.Config(), list(nexus.OFFLINE_LEXICON)
+    a = nexus.raphael_experiment(cfg, W, quem_desvia=0, agenda="justa")
+    b = nexus.raphael_experiment(cfg, W, agenda="justa")
+    return a["p0_wins_greedy"], a["diferenca"], b["diferenca"]
+
+
+def p2718_artefato_do_sorteio():
+    """O 'numero quente' do sorteio IID do NEXUS (P2718; Parte 109): acerta 0,237 contra os 6/60 declarados porque o alvo e o MINIMO do sorteio ordenado
+    e o desempate do most_common favorece numeros pequenos; contra a chance EXATA de cada H conter o minimo (soma de C(60-h,5)/C(60,6)), z ~ 0.
+    Devolve (taxa observada, chance exata media, z)."""
+    from synthai import nexus
+    d = nexus.iid_draw_limitation(7)
+    return d["hot_number_hit_rate"], d["chance_exata_media"], d["z"]
+
+
+def p2719_retrospecto_cem_v2():
+    """O retrospecto de cem partes com a faixa que a P2446 PROMETE (P2719; Parte 109): a P2446 diz "calibracao das Partes 80-100" mas chama a p1961
+    com o padrao, que cresce a cada parte; a partir da Parte 106 o valor passou de 0,88 e o teste da Parte 100 ficou vermelho sem ser visto (achado
+    pela suite inteira da Parte 109). A P2446 fica intacta; esta fixa as Partes 80-100. Devolve (nº de funcoes pNN, nº de rodadas, calibracao 80-100)."""
+    k, rodadas, _ = p2446_retrospecto_cem()
+    _, _, frac, _ = p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 101))))
+    return k, rodadas, frac
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -15148,6 +15323,36 @@ def _parte_108():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3709, testes=TESTES_P3709)
     print(f"P3709 minha taxa de erro ({ERROS_P3709}/{TESTES_P3709}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_109():
+    print("--- Parte 109 (0x6D: o NEXUS anexado; o simulador R37 arquivado sem executar) ---")
+    nb, nsha, gl, per = p2711_blobs_pickle_do_r37()
+    pl, li = p2711b_controle_do_auditor_de_pickle()
+    print(f"P2711 blobs pickle do R37 (pickletools, sem desserializar): {nb} blobs, SHA ok {nsha}, globais {gl}, perigosos {len(per)}; controle: plantado {pl}, limpo {li}")
+    txt, erros, ast_col, ast_re = p2712_nexus_se_acusa()
+    print(f"P2712 o NEXUS se acusa: achados por texto {txt}; harness original {len(erros)} erros {erros}; AST colado {ast_col}; AST reescrito {ast_re}")
+    vk, sim, v1 = p2713_kuhn_exato()
+    print(f"P2713 Kuhn simplificado: exato {vk} = {float(vk):.5f}; simulado (200) {sim:.4f}; apostando sempre com Q {v1}")
+    da, d0, g0 = p2714_desvio_da_curva_preditiva()
+    print(f"P2714 Raphael (agenda original): dif os dois desviando {da}; so P0 {d0}; vitorias do P0 guloso {g0}/60")
+    ops, soma, bb, br = p2715_grafo_e_beta()
+    print(f"P2715 grafo: ops {ops} (1820+1820+100), soma travada {soma}; Brier Beta {bb:.4f} contra referencia {br:.4f}")
+    v05, v10 = p2716_rodada76()
+    print(f"P2716 rodada 76 (Kuhn exato, IGUAL em Java): pa=0,5 -> {v05:.6f}; pa=1 -> {v10:.3e}")
+    gw, j0, jb = p2717_raphael_agenda_justa()
+    print(f"P2717 Raphael (agenda justa): P0 guloso vence {gw}/60; dif so P0 desviando {j0}; dif os dois {jb}")
+    tx, ce, z = p2718_artefato_do_sorteio()
+    print(f"P2718 sorteio: taxa do quente {tx:.4f}, chance exata media {ce:.4f}, z = {z:.3f}")
+    _, _, cal_deriva = p2446_retrospecto_cem()
+    _, _, cal_100 = p2719_retrospecto_cem_v2()
+    print(f"P2719 retrospecto de cem partes: a P2446 deriva para {cal_deriva:.4f} (faixa padrao crescente); fixada nas Partes 80-100, {cal_100:.4f}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-109: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2711, 2740)
+    print(f"P1092 pNN novas (P2711-P2740) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 109: {p974_previsoes_sem_largura(range(109, 110))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3779, testes=TESTES_P3779)
+    print(f"P3779 minha taxa de erro ({ERROS_P3779}/{TESTES_P3779}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -15184,7 +15389,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109}
 
 
 if __name__ == "__main__":

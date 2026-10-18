@@ -35,7 +35,7 @@ class TesteParte108(unittest.TestCase):
         self.assertIsNone(minimax.tem_sela(minimax.JOGO_TESTE))
 
     def test_p1961_com_parte_108(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 109))))
         self.assertEqual(por[108], (5, 5))
         self.assertEqual((ok, tot), (130, 146))
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 108, perguntas P1 a P2685).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 109, perguntas P1 a P2719).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (15196 linhas)
+# calculos.py  (15401 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9650,6 +9650,8 @@ VEREDITOS_P3639 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P3639, TESTES_P3639 = 219, 800
 VEREDITOS_P3709 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P3709, TESTES_P3709 = 219, 805
+VEREDITOS_P3779 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅ (h) ✅ (i) ✅"
+ERROS_P3779, TESTES_P3779 = 220, 814
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12190,12 +12192,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -13914,6 +13916,179 @@ def p2685_ponto_de_sela():
     return valor_2x2(JOGO_SELA), estrategia_linha_2x2(JOGO_SELA)
 
 
+def _nexus_colado():
+    import os
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "externos", "nexus_raphael", "nexus_raphael_v0_1_0_colado.py"), encoding="utf-8") as f:
+        return f.read()
+
+
+def p2711_blobs_pickle_do_r37():
+    \"\"\"Os blobs pickle do simulador recebido 'ASI METACOGNITIVO R37' (P2711; Parte 109), inspecionados por pickletools.genops SEM desserializar:
+    extrai pela AST as constantes *_B64 (e *_CHUNKS), decodifica base64+zlib, confere o SHA-256 embutido e lista as referencias GLOBAL/STACK_GLOBAL.
+    R18_MEGA_B64 nao e pickle (struct de sorteios) e fica de fora. Devolve (n_blobs, n_sha_ok, globais distintos, perigosos).\"\"\"
+    import ast
+    import base64
+    import hashlib
+    import os
+    import zlib
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "externos", "nexus_raphael", "asi_metacognitivo_r37.py"), encoding="utf-8") as f:
+        arvore = ast.parse(f.read())
+    blobs, shas, chunks = {}, {}, {}
+    for n in arvore.body:
+        if not (isinstance(n, ast.Assign) and isinstance(n.targets[0], ast.Name)):
+            continue
+        nome = n.targets[0].id
+        textos = [c.value for c in ast.walk(n.value) if isinstance(c, ast.Constant) and isinstance(c.value, str)]
+        if nome.endswith("_CHUNKS"):
+            chunks[nome] = "".join(textos)
+        elif nome.endswith("_B64") and nome != "R18_MEGA_B64":
+            refs = [c.id for c in ast.walk(n.value) if isinstance(c, ast.Name) and c.id.endswith("_CHUNKS")]
+            blobs[nome] = chunks[refs[0]] if refs else "".join(t for t in textos if len(t) > 64)
+        elif nome.endswith("_SHA256") and isinstance(n.value, ast.Constant):
+            shas[nome] = n.value.value
+    sha_ok, globais, perigosos = 0, set(), []
+    for nome, b in sorted(blobs.items()):
+        cru = zlib.decompress(base64.b64decode(b))
+        sha_ok += int(shas.get(nome.replace("_B64", "_SHA256")) == hashlib.sha256(cru).hexdigest())
+        for g in _globais_do_pickle(cru):
+            globais.add(g)
+            if _global_perigoso(g):
+                perigosos.append((nome,) + g)
+    return len(blobs), sha_ok, sorted(globais), perigosos
+
+
+_PICKLE_MODULOS_PERIGOSOS = {"os", "posix", "nt", "subprocess", "sys", "socket", "shutil", "importlib", "pty", "ctypes"}
+_PICKLE_BUILTINS_PERIGOSOS = {"eval", "exec", "compile", "getattr", "__import__", "open", "setattr", "globals", "vars"}
+
+
+def _global_perigoso(g):
+    modulo, nome = g
+    return modulo.split(".")[0] in _PICKLE_MODULOS_PERIGOSOS or (modulo == "builtins" and nome in _PICKLE_BUILTINS_PERIGOSOS)
+
+
+def _globais_do_pickle(cru):
+    \"\"\"As referencias (modulo, nome) de um pickle, lidas dos opcodes (pickletools.genops nao executa nada). Segue as strings empilhadas e o memo para
+    resolver o STACK_GLOBAL do protocolo 4.\"\"\"
+    import pickletools
+    memo, strs, out = {}, [], []
+    for op, arg, _ in pickletools.genops(cru):
+        if op.name in ("SHORT_BINUNICODE", "BINUNICODE", "UNICODE", "BINUNICODE8", "SHORT_BINSTRING", "BINSTRING"):
+            strs.append(arg)
+        elif op.name == "MEMOIZE":
+            memo[len(memo)] = strs[-1] if strs else None
+        elif op.name in ("BINPUT", "LONG_BINPUT", "PUT"):
+            memo[arg] = strs[-1] if strs else None
+        elif op.name in ("BINGET", "LONG_BINGET", "GET") and isinstance(memo.get(arg), str):
+            strs.append(memo[arg])
+        elif op.name == "GLOBAL":
+            out.append(tuple(arg.split(" ", 1)))
+        elif op.name == "STACK_GLOBAL":
+            out.append((strs[-2], strs[-1]))
+    return out
+
+
+def p2711b_controle_do_auditor_de_pickle():
+    \"\"\"O controle dos dois lados (regra da Parte 75) do auditor de pickle da P2711: um pickle PLANTADO com os.system (montado por pickle.dumps de um
+    objeto cujo __reduce__ devolve os.system; dumps NAO executa) tem de ser acusado, e um pickle limpo (dict de listas) tem de passar.
+    Devolve (perigosos no plantado, perigosos no limpo).\"\"\"
+    import os
+    import pickle
+
+    class _Plantado:
+        def __reduce__(self):
+            return (os.system, ("true",))
+    plantado = pickle.dumps(_Plantado(), protocol=4)
+    limpo = pickle.dumps({"a": [1, 2.5, "x"], "b": (True, None)}, protocol=4)
+    return sum(map(_global_perigoso, _globais_do_pickle(plantado))), sum(map(_global_perigoso, _globais_do_pickle(limpo)))
+
+
+def p2712_nexus_se_acusa():
+    \"\"\"A security_audit do NEXUS-RAPHAEL recebido aplicada ao PROPRIO texto (P2712; Parte 109; o texto contra o proprio codigo, Parte 88): por regex,
+    ela acha 'exec(' e 'eval(' (dentro da checagem dos Auditors) e 'BACKDOOR' (dentro do proprio padrao), e o assert_harness original devolve 2 erros: o
+    NEXUS rodado sairia com codigo 1. A auditoria por AST (chamadas e imports reais) acha so a rede (urlopen, urllib) no colado e nada no reescrito.
+    Devolve (achados por texto, erros do harness original, AST no colado, AST no reescrito).\"\"\"
+    import inspect
+    from synthai import nexus
+    src = _nexus_colado()
+    erros = nexus.assert_harness_original(nexus.run_all(), src)
+    return nexus.security_audit_texto(src), erros, nexus.security_audit_ast(src), nexus.security_audit_ast(inspect.getsource(nexus))
+
+
+def p2713_kuhn_exato():
+    \"\"\"O valor EXATO do Kuhn simplificado do NEXUS para o P0 (P2713; Parte 109), por enumeracao das 6 distribuicoes: -1/12. E o valor com a melhor
+    probabilidade de apostar com Q (o valor cresce linearmente nela: apostar sempre com Q da 0). Devolve (valor exato, simulado em 200, valor com pa=1).\"\"\"
+    from fractions import Fraction
+    from synthai import nexus
+    return nexus.kuhn_exato(), nexus.kuhn_poker_value(7)["mean_payout_p0"], nexus.kuhn_exato(Fraction(1))
+
+
+def p2714_desvio_da_curva_preditiva():
+    \"\"\"O 'Desvio da Curva Preditiva' do jogo Raphael (P2714; Parte 109) na agenda ORIGINAL: os dois desviando (o codigo recebido) e so o P0 desviando
+    (a hipotese). Na agenda original o P0 nunca vence (a agenda de palavras decide). Devolve (dif ambos, dif so P0, vitorias do P0 guloso).\"\"\"
+    from synthai import nexus
+    cfg, W = nexus.Config(), list(nexus.OFFLINE_LEXICON)
+    a = nexus.raphael_experiment(cfg, W)
+    b = nexus.raphael_experiment(cfg, W, quem_desvia=0)
+    return a["diferenca"], b["diferenca"], a["p0_wins_greedy"]
+
+
+def p2715_grafo_e_beta():
+    \"\"\"O grafo sincrono/assincrono e o estimador Beta do NEXUS (P2715; Parte 109): operacoes = 910*2 (construcao) + 1820 (passada) + 100 (incrementos
+    assincronos, que tambem contam); soma travada = 4*25; Brier do Beta (p=0,72, 200 ensaios) contra 0,25 da referencia. Devolve (ops, soma, brier_beta,
+    brier_ref).\"\"\"
+    from synthai import nexus
+    cfg = nexus.Config()
+    g = nexus.ComputeGraph(cfg.demo_graph_nodes, cfg.graph_layers, cfg.seed, cfg.max_ops)
+    g.sync_pass(1)
+    soma = g.async_increment()
+    p = nexus.probability_experiment(cfg)
+    return g.ops, soma, p["brier_adaptive"], p["brier_reference"]
+
+
+def _rodada76():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada76", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada76.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2716_rodada76():
+    \"\"\"Rodada 76 (P2716; Parte 109): o valor exato do Kuhn simplificado por enumeracao, numa grade da probabilidade de apostar com Q, IGUAL em Java bit a
+    bit - so +,-,*,/ e comparacoes. Devolve (valor com pa=0,5, valor com pa=1).\"\"\"
+    r = _rodada76()
+    return r.valor_kuhn(0.5), r.valor_kuhn(1.0)
+
+
+def p2717_raphael_agenda_justa():
+    \"\"\"O jogo Raphael com agenda JUSTA (P2717; Parte 109; teste novo nascido da surpresa da P2714): no lance t, a palavra words[t // 2], a mesma para os
+    dois em cada rodada. Devolve (vitorias do P0 guloso, dif so P0 desviando, dif os dois desviando).\"\"\"
+    from synthai import nexus
+    cfg, W = nexus.Config(), list(nexus.OFFLINE_LEXICON)
+    a = nexus.raphael_experiment(cfg, W, quem_desvia=0, agenda="justa")
+    b = nexus.raphael_experiment(cfg, W, agenda="justa")
+    return a["p0_wins_greedy"], a["diferenca"], b["diferenca"]
+
+
+def p2718_artefato_do_sorteio():
+    \"\"\"O 'numero quente' do sorteio IID do NEXUS (P2718; Parte 109): acerta 0,237 contra os 6/60 declarados porque o alvo e o MINIMO do sorteio ordenado
+    e o desempate do most_common favorece numeros pequenos; contra a chance EXATA de cada H conter o minimo (soma de C(60-h,5)/C(60,6)), z ~ 0.
+    Devolve (taxa observada, chance exata media, z).\"\"\"
+    from synthai import nexus
+    d = nexus.iid_draw_limitation(7)
+    return d["hot_number_hit_rate"], d["chance_exata_media"], d["z"]
+
+
+def p2719_retrospecto_cem_v2():
+    \"\"\"O retrospecto de cem partes com a faixa que a P2446 PROMETE (P2719; Parte 109): a P2446 diz "calibracao das Partes 80-100" mas chama a p1961
+    com o padrao, que cresce a cada parte; a partir da Parte 106 o valor passou de 0,88 e o teste da Parte 100 ficou vermelho sem ser visto (achado
+    pela suite inteira da Parte 109). A P2446 fica intacta; esta fixa as Partes 80-100. Devolve (nº de funcoes pNN, nº de rodadas, calibracao 80-100).\"\"\"
+    k, rodadas, _ = p2446_retrospecto_cem()
+    _, _, frac, _ = p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 101))))
+    return k, rodadas, frac
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -15186,6 +15361,36 @@ def _parte_108():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3709, testes=TESTES_P3709)
     print(f"P3709 minha taxa de erro ({ERROS_P3709}/{TESTES_P3709}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_109():
+    print("--- Parte 109 (0x6D: o NEXUS anexado; o simulador R37 arquivado sem executar) ---")
+    nb, nsha, gl, per = p2711_blobs_pickle_do_r37()
+    pl, li = p2711b_controle_do_auditor_de_pickle()
+    print(f"P2711 blobs pickle do R37 (pickletools, sem desserializar): {nb} blobs, SHA ok {nsha}, globais {gl}, perigosos {len(per)}; controle: plantado {pl}, limpo {li}")
+    txt, erros, ast_col, ast_re = p2712_nexus_se_acusa()
+    print(f"P2712 o NEXUS se acusa: achados por texto {txt}; harness original {len(erros)} erros {erros}; AST colado {ast_col}; AST reescrito {ast_re}")
+    vk, sim, v1 = p2713_kuhn_exato()
+    print(f"P2713 Kuhn simplificado: exato {vk} = {float(vk):.5f}; simulado (200) {sim:.4f}; apostando sempre com Q {v1}")
+    da, d0, g0 = p2714_desvio_da_curva_preditiva()
+    print(f"P2714 Raphael (agenda original): dif os dois desviando {da}; so P0 {d0}; vitorias do P0 guloso {g0}/60")
+    ops, soma, bb, br = p2715_grafo_e_beta()
+    print(f"P2715 grafo: ops {ops} (1820+1820+100), soma travada {soma}; Brier Beta {bb:.4f} contra referencia {br:.4f}")
+    v05, v10 = p2716_rodada76()
+    print(f"P2716 rodada 76 (Kuhn exato, IGUAL em Java): pa=0,5 -> {v05:.6f}; pa=1 -> {v10:.3e}")
+    gw, j0, jb = p2717_raphael_agenda_justa()
+    print(f"P2717 Raphael (agenda justa): P0 guloso vence {gw}/60; dif so P0 desviando {j0}; dif os dois {jb}")
+    tx, ce, z = p2718_artefato_do_sorteio()
+    print(f"P2718 sorteio: taxa do quente {tx:.4f}, chance exata media {ce:.4f}, z = {z:.3f}")
+    _, _, cal_deriva = p2446_retrospecto_cem()
+    _, _, cal_100 = p2719_retrospecto_cem_v2()
+    print(f"P2719 retrospecto de cem partes: a P2446 deriva para {cal_deriva:.4f} (faixa padrao crescente); fixada nas Partes 80-100, {cal_100:.4f}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-109: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2711, 2740)
+    print(f"P1092 pNN novas (P2711-P2740) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 109: {p974_previsoes_sem_largura(range(109, 110))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3779, testes=TESTES_P3779)
+    print(f"P3779 minha taxa de erro ({ERROS_P3779}/{TESTES_P3779}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -15222,7 +15427,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109}
 
 
 if __name__ == "__main__":
@@ -15235,7 +15440,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (395 linhas)
+# CLAUDE.md  (407 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -15476,6 +15681,18 @@ anterior, commit e push.
   Parte 106 (continuacao autonoma; a segunda rua, e a reducao de argumento): fechei as duas pontas da Parte 105. (1) A fronteira do seno RESOLVIDA e medida no lugar do problema: o sin_/cos_ proprios (serie de Taylor + reducao em duas partes) sao IGUAL bit a bit entre Python e Java nos MESMOS 10000 args de [0,001;10] onde a libm divergiu 21/18 (rodada 73), e exatos (9,2e-16). E SEPAREI os dois mecanismos que eu confundia sob "sin diverge": arredondamento no intervalo PRIMARIO (em [0,10], onde a reducao nem age - a causa das divergencias das Partes 104/105) e reducao de argumento (so para x~1e7+); a de 1 parte vs 2 partes concorda em x=1e3 e diverge em x=1e9 (erro ~ (x/2pi)*2,45e-16). A serie em duas partes basta para o uso real da SYNTHAI (Payne-Hanek so para x astronomico ~1e15, limite conhecido nao-divida). (2) Poquer de DUAS RUAS: o VOI compoe para 1-(7/13)^2=120/169=0,710, SUB-ADITIVO (< 2*6/13=0,923; o VOI nao e aditivo, Parte 80; retornos decrescentes por decisao). A REGRA da Parte 105 (toda afirmacao de fronteira carrega a faixa de argumentos) passou no 1o teste: 5/5 do mundo depois de dois 4/5 sobre o seno. Rodada 73 IGUAL (17 rodadas). 6/6 previsoes-sobre-previsoes, calibracao 120/136=0,882. Pendencia (rodada 74): a decisao de duas ruas (backward induction) acrescenta fronteira?
   Parte 107 (continuacao autonoma; a inducao reversa / Bellman): resolvi a arvore de decisao de duas ruas DE TRAS PARA FRENTE num toy MDP exato (`synthai/duas_ruas.py`) - a SynthaiPlanejadora (P182/P93) feita exata por programacao dinamica. (1) olhar adiante vale V2(A)-V1(A)=2 (o payoff adiado que a 1a decisao desbloqueia; horizonte 1->2 leva o valor de 1 a 3). (2) a inducao reversa bate o guloso (razao 1,5) SO quando a acao tem consequencia de ESTADO; num MDP separavel (T(s,a)=s) empatam (1,0) - o 3o aparecimento do MESMO regime (MPC P93, workspace P102, planejamento P107): a vantagem de um metodo mais esperto e proporcional a quanto a tarefa precisa do que ele ve. DESTA VEZ previ o regime de antemao com o controle do nao-efeito pre-registrado (licao das Partes 87/89). (3) VOI do estado oculto (qual MDP): 0,5 no caso espelho, 0 no identico (controle) - o VOI das Partes 83/84 estendido de "ver a carta" para "saber o jogo". Rodada 74 (inducao reversa, +/max) IGUAL bit a bit (18 rodadas): a fronteira e a aritmetica, nunca a dinamica (recursao inclusa). 5/5 do mundo, 6/6 previsoes-sobre-previsoes, calibracao 125/141=0,886. Pendencia (rodada 75): o equilibrio por programacao linear (simplex/minimax) acrescenta fronteira?
   Parte 108 (continuacao autonoma; o minimax de von Neumann): resolvi o equilibrio de um jogo de soma zero (`synthai/minimax.py`), fechando o arco de decisao 104-108. TRES caminhos independentes dao o mesmo valor 1/7 no jogo A=[[1,-1],[-2,3]]: forma fechada (v=det/traco-cruzado=1/7, p=5/7, q=4/7), dualidade medida (maxmin=minmax, |dif| 2e-16, teorema de von Neumann), e jogo ficticio (aprender jogando converge a 0,1432, erro 0,0004; Robinson 1951). O minimax GENERALIZA o blefe da Parte 105 (indiferenca e o minimax de um jogo polarizado) e usa o jogo ficticio como ponte entre o calculo exato e o aprendizado (autopoiese da Parte 31: os dois concordam - a prova cruzada da Parte 20). Controle com ponto de sela (valor 1, estrategia pura). PADRAO: tres fios antes separados (indiferenca P105, planejamento P107, aprendizado P31) convergem no mesmo objeto. Rodada 75 (resolver o jogo, +/-/*//argmax) IGUAL bit a bit (19 rodadas): a fronteira e a aritmetica, nunca a dinamica (calculo/planejamento/jogo). 5/5 do mundo, 6/6 previsoes-sobre-previsoes, calibracao 130/146=0,890 (plato ~0,88 ultrapassado por tres 5/5 seguidos). Pendencia (rodada 76): um jogo n×m por simplex proprio acrescenta fronteira?
+  Parte 109 (pedido "Anexe tudo ao nosso codigo": o NEXUS-RAPHAEL colado + um arquivo de 51.967 linhas, o simulador "ASI METACOGNITIVO R37"): anexar em DOIS niveis pelo mecanismo.
+  O R37 fica ARQUIVADO intacto em externos/nexus_raphael/ e nunca e importado nem executado (rede ligada por padrao, se reexecuta por subprocess, exec_module de vizinhos, fork; 11a recusa).
+  Os 18 blobs pickle foram lidos por opcode (pickletools.genops, sem desserializar): so numpy, 0 perigosos, com controle plantado (os.system) dos dois lados. O NEXUS colado virou
+  synthai/nexus.py (offline, sem disco, um teste por defeito): a security_audit dele se acusa (regex le MENCAO, nao USO: exec(/eval(/BACKDOOR no proprio texto; 2 erros de harness);
+  o "Desvio da Curva Preditiva" estava confundido (a agenda de palavras decide: o P0 nunca vence, 26 x 48; com agenda justa o guloso vence 59/60 e desviar custa -23: REJEITADO);
+  o "numero quente" 0,237 contra 0,10 e artefato (alvo = minimo do sorteio ordenado; chance exata 0,230, z=0,28); Kuhn simplificado exato -1/12 (apostar sempre com Q da 0). Rodada 76
+  IGUAL (20 rodadas). REGRA NOVA (o padrao da parte, 3 vezes, 2 minhas: o auditor AST acusou re.compile pelo nome; o teste procurou a string "urllib"): todo verificador que eu
+  escrevo roda primeiro sobre o PROPRIO fonte e o proprio teste; se acusa a si mesmo, le mencao. E antes de explicar um numero surpreendente, conferir se a regua mede o que o nome
+  diz (as duas surpresas foram reguas erradas, nao efeitos). Erro (e): esqueci 100 operacoes (o vies "esqueco custos", Parte 45): grep de quem toca a variavel antes de prever.
+  (m1) errou porque cada surpresa gera previsoes novas (regra da Parte 60, nao aplicada). 8/9 do mundo, 5/6 (m), calibracao 138/155 = 0,890. Pendencia (rodada 77): simplex n×m e Kuhn completo (-1/18).
+  E a SUITE INTEIRA (488 testes) achou o teste da Parte 100 vermelho desde a 106 (P2446 usava a faixa padrao CRESCENTE da p1961; P2719 fixa 80-100 = 0,868): rodar a suite
+  inteira antes de CADA commit de codigo, e toda funcao 'das Partes A-B' passa A-B explicito.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -15624,7 +15841,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -19424,6 +19641,709 @@ def satisfacao(logica, pares):
 """
 
 # ====================================================================================================
+# synthai/nexus.py  (698 linhas)
+# ====================================================================================================
+FONTES['synthai/nexus.py'] = """\"\"\"NEXUS-RAPHAEL anexado à SYNTHAI (Parte 109). Reescrita do zero, só biblioteca padrão e OFFLINE, do código NEXUS-RAPHAEL v0.1.0 que
+o usuário colou ("Anexe tudo ao nosso código"); a cópia verbatim fica em externos/nexus_raphael/nexus_raphael_v0_1_0_colado.py e
+nunca é importada (regra da Parte 72: código vindo de texto é auditado pela árvore sintática e reescrito, com um teste por defeito).
+
+Mesma API e mesmos números do original, com quatro mudanças, cada uma com o seu teste (synthai/testes_parte109.py):
+  1. REDE FORA. DictionaryClient só consulta o léxico offline. O original tinha urllib e as URLs de dictionaryapi.dev e DuckDuckGo,
+     desligadas por padrão; aqui o caminho de rede não existe (11ª recusa da família, Partes 84/93/102/103).
+  2. AUDITORIA POR AST. A security_audit original procurava o TEXTO "exec(" e "eval(" e se acusava a si mesma, porque o próprio texto
+     contém essas strings dentro da checagem; o original, rodado, sairia com código 1. Aqui contam-se CHAMADAS reais (ast.Call).
+  3. O JOGO RAPHAEL SEPARA QUEM DESVIA. No original os DOIS jogadores desviam (o lance t de qualquer paridade), o que confunde a
+     hipótese "o desvio DO JOGADOR 0 aumenta as vitórias". `quem_desvia=None` reproduz o original; `quem_desvia=0` testa a hipótese.
+  4. SEM DISCO. run_all não grava nexus_state/last_report.json, a menos que se passe `salvar=`.
+Acrescentado: kuhn_exato (o valor do Kuhn simplificado por enumeração, sem simular).\"\"\"
+
+from __future__ import annotations
+
+import ast
+import hashlib
+import inspect
+import math
+import random
+import re
+import threading
+from collections import Counter, defaultdict
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
+from fractions import Fraction
+
+VERSION = "0.1.0-synthai"
+SYSTEM_NAME = "NEXUS-RAPHAEL (anexado à SYNTHAI)"
+STATUS = {"agi": False, "asi": False, "phenomenal_consciousness": "inconclusive", "functional_self_model": True}
+
+_D = lambda pos, d, lang="en": {"pos": pos, "def": d, "lang": lang}
+OFFLINE_LEXICON = {
+    "nexus": _D("noun", "ponto de ligação entre partes de um sistema", "pt"),
+    "raphael": _D("name", "nome do ambiente de jogo deste projeto", "pt"),
+    "word": _D("noun", "unidade lexical com forma e sentido"),
+    "number": _D("noun", "objeto matemático usado para contar ou medir"),
+    "mind": _D("noun", "conjunto de processos cognitivos, não um módulo mágico"),
+    "doubt": _D("noun", "estado de incerteza que pode gerar hipóteses"),
+    "proof": _D("noun", "argumento ou medição que sustenta uma afirmação"),
+    "error": _D("noun", "desvio entre previsão e observação"),
+    "game": _D("noun", "sistema de regras, jogadas e critérios de vitória"),
+    "rule": _D("noun", "restrição explícita sobre ações permitidas"),
+    "logic": _D("noun", "estudo da consequência formal entre premissas"),
+    "chance": _D("noun", "incerteza quantificável por probabilidade"),
+    "memory": _D("noun", "registro recuperável de estados anteriores"),
+    "future": _D("noun", "estado ainda não observado, alvo de previsão"),
+    "past": _D("noun", "histórico já registrado pelo sistema"),
+    "agent": _D("noun", "processo que escolhe ações segundo uma estratégia"),
+    "graph": _D("noun", "conjunto de nós ligados por arestas"),
+    "vector": _D("noun", "lista ordenada de números"),
+    "language": _D("noun", "sistema de sinais convencionais"),
+    "test": _D("noun", "procedimento que pode falhar e assim informar"),
+    "learn": _D("verb", "atualizar parâmetros com base em observações"),
+    "predict": _D("verb", "emitir uma estimativa antes da observação"),
+    "audit": _D("verb", "verificar consistência, segurança e reprodutibilidade"),
+    "play": _D("verb", "executar jogadas dentro de regras"),
+    "draw": _D("verb", "selecionar um resultado de uma distribuição"),
+    "win": _D("verb", "satisfazer o critério de vitória"),
+    "lose": _D("verb", "falhar o critério de vitória"),
+    "true": _D("adj", "conforme a observação ou a regra adotada"),
+    "false": _D("adj", "em conflito com a observação ou a regra"),
+    "open": _D("adj", "ainda sem conclusão suficiente"),
+}
+
+
+@dataclass
+class Config:
+    seed: int = 7
+    graph_nodes: int = 910
+    graph_layers: int = 10
+    demo_graph_nodes: int = 910
+    raphael_games: int = 60
+    raphael_turns: int = 12
+    learning_steps: int = 80
+    prob_trials: int = 200
+    max_ops: int = 20000
+    ewc_lambda: float = 8.0
+
+
+class AuditLog:
+    def __init__(self):
+        self.records = []
+
+    def add(self, kind, payload):
+        rec = {"n": len(self.records), "kind": kind, "payload": payload}   # contador no lugar de time.time(): reprodutível
+        self.records.append(rec)
+        return rec
+
+
+def clamp(x, lo, hi):
+    return max(lo, min(hi, x))
+
+
+def softmax(xs):
+    if not xs:
+        return []
+    m = max(xs)
+    ex = [math.exp(x - m) for x in xs]
+    s = sum(ex) or 1.0
+    return [e / s for e in ex]
+
+
+def entropy(ps):
+    return -sum(p * math.log(p) for p in ps if p > 0)
+
+
+def kl_divergence(p, q, eps=1e-12):
+    return sum((pi + eps) * math.log((pi + eps) / (qi + eps)) for pi, qi in zip(p, q))
+
+
+def brier(ps, ys):
+    if not ps:
+        return 1.0
+    return sum((p - y) ** 2 for p, y in zip(ps, ys)) / len(ps)
+
+
+def calibration_error(ps, ys, bins=5):
+    if not ps:
+        return 1.0
+    buckets = [[] for _ in range(bins)]
+    for p, y in zip(ps, ys):
+        buckets[min(bins - 1, int(clamp(p, 0, 0.999) * bins))].append((p, y))
+    err = n = 0
+    for b in buckets:
+        if b:
+            err += len(b) * abs(sum(p for p, _ in b) / len(b) - sum(y for _, y in b) / len(b))
+            n += len(b)
+    return err / n if n else 1.0
+
+
+def cosine_double(theta):
+    direct = math.cos(2 * theta)
+    identity = 2 * math.cos(theta) ** 2 - 1
+    return direct, identity, abs(direct - identity)
+
+
+def double_angle_similarity(v, w):
+    dot = sum(a * b for a, b in zip(v, w))
+    nv = math.sqrt(sum(a * a for a in v)) or 1.0
+    nw = math.sqrt(sum(b * b for b in w)) or 1.0
+    c = clamp(dot / (nv * nw), -1.0, 1.0)
+    return 2 * c * c - 1
+
+
+# --- representação ---
+
+def a1z26_encode(text):
+    return [ord(ch) - 96 for ch in text.lower() if "a" <= ch <= "z"]
+
+
+def a1z26_decode(nums):
+    if any(not 1 <= int(n) <= 26 for n in nums):
+        return None
+    return "".join(chr(int(n) + 96) for n in nums)
+
+
+def utf8_encode(text):
+    return list(text.encode("utf-8"))
+
+
+def utf8_decode(nums):
+    return bytes(int(n) for n in nums).decode("utf-8")
+
+
+def stable_hash(text):
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def hash_trick(text, dim=16):
+    vec = [0.0] * dim
+    for tok in re.findall(r"[a-z0-9]+", text.lower()) or [text.lower()]:
+        dg = hashlib.sha256(tok.encode()).digest()
+        vec[int.from_bytes(dg[:2], "big") % dim] += 1.0 if dg[2] % 2 == 0 else -1.0
+    norm = math.sqrt(sum(v * v for v in vec)) or 1.0
+    return [v / norm for v in vec]
+
+
+def experimental_numerology(text):
+    \"\"\"Interpretativo, não validado (o próprio original diz isso); fica marcado sem alegação preditiva.\"\"\"
+    total = sum(a1z26_encode(text))
+    digital = total
+    while digital > 9:
+        digital = sum(int(d) for d in str(digital))
+    return {"status": "EXPERIMENTAL_NON_VALIDATED", "sum": total, "digital_root": digital, "predictive_claim": False}
+
+
+class Representation:
+    def __init__(self, lexicon):
+        self.lexicon = lexicon
+        self.cooc = defaultdict(Counter)
+
+    def observe_sentence(self, text):
+        toks = re.findall(r"[a-zA-Z]+", text.lower())
+        for i, tok in enumerate(toks):
+            for j in range(max(0, i - 2), min(len(toks), i + 3)):
+                if i != j:
+                    self.cooc[tok][toks[j]] += 1
+
+    def encode(self, text):
+        letters = re.sub(r"[^a-zA-Z]", "", text).lower()
+        return {
+            "raw": text, "a1z26": a1z26_encode(letters), "utf8": utf8_encode(text), "hash": stable_hash(text),
+            "vector": hash_trick(text),
+            "known_tokens": [t for t in re.findall(r"[a-zA-Z]+", text.lower()) if t in self.lexicon],
+            "reversible_a1z26": a1z26_decode(a1z26_encode(letters)) == letters,
+            "numerology": experimental_numerology(letters),
+        }
+
+    def nearest(self, text, k=3):
+        q = hash_trick(text)
+        sc = sorted(((w, double_angle_similarity(q, hash_trick(w))) for w in self.lexicon), key=lambda x: x[1], reverse=True)
+        return sc[:k]
+
+
+def generate_nonce(rng, lexicon):
+    syl = ["nex", "ra", "pha", "el", "ium", "qua", "lor", "ven", "tor", "sis"]
+    for _ in range(30):
+        w = "".join(rng.choice(syl) for _ in range(rng.randint(2, 3)))
+        if w not in lexicon and 4 <= len(w) <= 16:
+            return w
+    return "nexelium"
+
+
+def propose_meaning(word):
+    morf = {"nex": "ligação", "raph": "nome do jogo", "el": "agente", "ium": "domínio", "qua": "quatro", "lor": "padrão",
+            "ven": "vinda", "tor": "agente", "sis": "processo"}
+    hits = [m for m in morf if m in word]
+    return {"word": word, "proposed_meaning": " + ".join(morf[m] for m in hits) if hits else "sem morfema conhecido",
+            "consistency": round(len(hits) / max(1, len(word) // 3), 3), "external_occurrences_checked": False, "status": "hypothesis"}
+
+
+# --- cognição e metacognição ---
+
+class Cognition:
+    def __init__(self):
+        self.rules = [
+            ("double_minus_one", lambda xs: all(xs[i + 1] == 2 * xs[i] - 1 for i in range(len(xs) - 1))),
+            ("times_two", lambda xs: all(xs[i + 1] == 2 * xs[i] for i in range(len(xs) - 1))),
+            ("constant_second_diff", self._second_diff),
+        ]
+
+    @staticmethod
+    def _second_diff(xs):
+        if len(xs) < 4:
+            return False
+        d1 = [xs[i + 1] - xs[i] for i in range(len(xs) - 1)]
+        d2 = [d1[i + 1] - d1[i] for i in range(len(d1) - 1)]
+        return all(abs(d - d2[0]) < 1e-9 for d in d2)
+
+    def infer_sequence(self, xs):
+        hits = [nome for nome, fn in self.rules if fn(xs)]
+        used = hits[0] if hits else None
+        pred = None
+        if used == "double_minus_one":
+            pred = 2 * xs[-1] - 1
+        elif used == "times_two":
+            pred = 2 * xs[-1]
+        elif used == "constant_second_diff":
+            pred = xs[-1] + (xs[-1] - xs[-2]) + ((xs[-1] - xs[-2]) - (xs[-2] - xs[-3]))
+        return {"hypotheses": hits, "used": used, "prediction": pred, "input": list(xs)}
+
+
+class MetaCognition:
+    def __init__(self, log):
+        self.log = log
+
+    def evaluate(self, result, truth=None):
+        pred = result.get("prediction")
+        covered = pred is not None
+        error = None if truth is None or pred is None else abs(float(pred) - float(truth))
+        rc = 0.55 if covered else 0.15
+        if error is not None:
+            rc = clamp(1.0 - error / (abs(float(truth)) + 1.0), 0.01, 0.99)
+        levels = {
+            "linear": rc,
+            "logarithmic": clamp(-math.log(max(1e-6, 1 - rc)) / 5, 0, 1),
+            "geometric": math.sqrt(rc * (0.5 + 0.5 * rc)),
+            "algebraic": clamp(rc ** 2 * (3 - 2 * rc), 0, 1),
+            "homologous": rc,
+            "heterologous": 1.0 - calibration_error([rc], [1.0 if error == 0 else 0.0]),
+        }
+        rec = {"response": pred, "confidence": rc, "hypotheses": result.get("hypotheses", []), "error": error, "levels": levels,
+               "overconfidence": rc > 0.8 and error not in (0, None)}
+        self.log.add("metacognition", rec)
+        return rec
+
+
+class RecursiveMeta:
+    def evaluate(self, meta):
+        spread = max(meta["levels"].values()) - min(meta["levels"].values())
+        return {"strategy_stable": spread < 0.35, "spread": spread, "does_not_prove_consciousness": True}
+
+
+# --- probabilidade ---
+
+class AdaptiveEstimator:
+    def __init__(self):
+        self.a = self.b = 1.0
+        self.ps, self.ys = [], []
+
+    def predict(self):
+        return self.a / (self.a + self.b)
+
+    def update(self, y):
+        self.ps.append(self.predict())
+        self.ys.append(y)
+        self.a += y
+        self.b += 1 - y
+
+    def interval(self):
+        n, p = self.a + self.b, self.predict()
+        se = math.sqrt(max(p * (1 - p), 1e-12) / n)
+        return clamp(p - 1.96 * se, 0, 1), clamp(p + 1.96 * se, 0, 1)
+
+
+def probability_experiment(cfg):
+    \"\"\"Igual ao original: Bernoulli p=0,72, 200 ensaios; Beta(1,1) sequencial contra a referência constante 0,5.\"\"\"
+    rng = random.Random(cfg.seed)
+    true_p = 0.72
+    ad = AdaptiveEstimator()
+    ref_ps, ys = [], []
+    for _ in range(cfg.prob_trials):
+        y = 1.0 if rng.random() < true_p else 0.0
+        ref_ps.append(0.5)
+        ad.update(y)
+        ys.append(y)
+    ba, br = brier(ad.ps, ad.ys), brier(ref_ps, ys)
+    return {"true_p": true_p, "adaptive_p": ad.predict(), "interval": ad.interval(), "brier_adaptive": ba, "brier_reference": br,
+            "kl_to_truth": kl_divergence([ad.predict(), 1 - ad.predict()], [true_p, 1 - true_p]),
+            "calibration_error": calibration_error(ad.ps, ad.ys), "supported": ba < br}
+
+
+# --- agentes ---
+
+AGENTS = ["criativo", "logico", "cetico", "socratico", "probabilistico", "matematico", "linguistico", "adversarial", "metacognitivo", "auditor"]
+
+
+def agent_vote(name, xs):
+    inf = Cognition().infer_sequence(xs)
+    especiais = {
+        "criativo": ("padrão poético *2", 2 * xs[-1]),
+        "probabilistico": ("média dos incrementos", xs[-1] + (xs[-1] - xs[0]) / (len(xs) - 1)),
+        "linguistico": ("sequência não é enunciado", None),
+        "adversarial": ("hipótese oposta: último valor + 1", xs[-1] + 1),
+    }
+    claim, pred = especiais.get(name, (inf["used"] or "nenhuma regra", inf["prediction"]))
+    return {"agent": name, "claim": claim, "prediction": pred}
+
+
+def debate(xs, truth):
+    votes = [agent_vote(n, xs) for n in AGENTS]
+    preds = [v["prediction"] for v in votes if isinstance(v["prediction"], (int, float))]
+    majority = Counter(round(p, 6) for p in preds).most_common(1)[0][0] if preds else None
+    return {"votes": votes, "majority": majority, "majority_correct": majority is not None and abs(majority - truth) < 1e-9,
+            "any_correct": any(v["prediction"] is not None and abs(v["prediction"] - truth) < 1e-9 for v in votes),
+            "consensus_is_not_truth": True, "truth": truth}
+
+
+# --- aprendizado contínuo (EWC) ---
+
+class OnlineLogistic:
+    def __init__(self, dim, lr=0.08, l2=1e-3, ewc=0.0):
+        self.w, self.b = [0.0] * dim, 0.0
+        self.lr, self.l2, self.ewc = lr, l2, ewc
+        self.fisher, self.anchor = [0.0] * dim, [0.0] * dim
+
+    def proba(self, x):
+        z = clamp(self.b + sum(wi * xi for wi, xi in zip(self.w, x)), -20, 20)
+        return 1 / (1 + math.exp(-z))
+
+    def update(self, x, y):
+        p = self.proba(x)
+        g = p - y
+        nw = []
+        for i, (wi, xi) in enumerate(zip(self.w, x)):
+            pen = self.l2 * wi + self.ewc * self.fisher[i] * (wi - self.anchor[i])
+            nw.append(wi - self.lr * (g * xi + pen))
+            self.fisher[i] = 0.95 * self.fisher[i] + 0.05 * (xi * g) ** 2
+        self.w = nw
+        self.b -= self.lr * g
+        return p
+
+    def snapshot(self):
+        self.anchor = list(self.w)
+
+    def accuracy(self, data):
+        return sum(int((self.proba(x) >= 0.5) == bool(y)) for x, y in data) / len(data) if data else 0.0
+
+
+def forgetting_experiment(cfg):
+    rng = random.Random(cfg.seed + 3)
+
+    def make(n, shift):
+        out = []
+        for _ in range(n):
+            x = [rng.uniform(-1, 1) for _ in range(3)]
+            out.append((x, 1.0 if x[0] + 0.2 * x[1] + shift > 0 else 0.0))
+        return out
+
+    ta, tb = make(cfg.learning_steps, 0.0), make(cfg.learning_steps, 0.8)
+    plain, elastic = OnlineLogistic(3), OnlineLogistic(3, ewc=cfg.ewc_lambda)
+    for m in (plain, elastic):
+        for x, y in ta:
+            m.update(x, y)
+        m.snapshot()
+    antes = {"plain": plain.accuracy(ta), "ewc": elastic.accuracy(ta)}
+    for x, y in tb:
+        plain.update(x, y)
+        elastic.update(x, y)
+    depois = {"plain": plain.accuracy(ta), "ewc": elastic.accuracy(ta)}
+    return {"acc_a_before": antes, "acc_a_after": depois, "retention_gap": depois["ewc"] - depois["plain"],
+            "supported": depois["ewc"] >= depois["plain"] - 1e-9}
+
+
+# --- grafo síncrono/assíncrono ---
+
+class ComputeGraph:
+    def __init__(self, n, layers, seed, max_ops):
+        self.n, self.layers, self.max_ops, self.ops = n, layers, max_ops, 0
+        rng = random.Random(seed)
+        self.adj = [[] for _ in range(n)]
+        span = max(1, n // layers)
+        for i in range(n):
+            for k in range(2):
+                self.adj[i].append((i + 1 + rng.randrange(span) + k) % n)
+                self.ops += 1
+                if self.ops >= max_ops:
+                    break
+        self.state = [0.0] * n
+        self.lock = threading.Lock()
+
+    def sync_pass(self, steps=1):
+        for _ in range(steps):
+            nxt = list(self.state)
+            for i, vals in enumerate(self.adj):
+                if self.ops >= self.max_ops:
+                    self.state = nxt
+                    return self.ops
+                s = math.tanh(self.state[i] + 0.01 * ((i % 5) - 2))
+                for j in vals:
+                    nxt[j] += s / max(1, len(vals))
+                    self.ops += 1
+            self.state = nxt
+        return self.ops
+
+    def async_increment(self, workers=4, per_worker=25):
+        \"\"\"Threads no MESMO processo, com trava (não é processo novo nem replicação).\"\"\"
+        def job():
+            for _ in range(per_worker):
+                with self.lock:
+                    self.state[0] += 1
+                    self.ops += 1
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            list(pool.map(lambda _: job(), range(workers)))
+        return int(self.state[0])
+
+
+# --- jogos ---
+
+def kuhn_poker_value(seed, games=200):
+    \"\"\"O Kuhn simplificado do original, simulado (P0 aposta com K; com Q metade das vezes; nunca com J; P1 paga com Q ou K).\"\"\"
+    rng = random.Random(seed)
+    payout = 0
+    for _ in range(games):
+        deck = [1, 2, 3]
+        rng.shuffle(deck)
+        p0, p1 = deck[0], deck[1]
+        if not (p0 == 3 or (p0 == 2 and rng.random() < 0.5)):
+            payout -= 1
+            continue
+        payout += (2 if p0 > p1 else -2) if p1 >= 2 else 1
+    return {"mean_payout_p0": payout / games, "games": games, "is_full_poker": False}
+
+
+def kuhn_exato(p_aposta_q=Fraction(1, 2)):
+    \"\"\"O MESMO jogo, por enumeração das 6 distribuições equiprováveis (p0, p1 distintos), sem simular. Valor para o P0.\"\"\"
+    tot = Fraction(0)
+    for p0 in (1, 2, 3):
+        for p1 in (1, 2, 3):
+            if p0 == p1:
+                continue
+            pa = Fraction(1) if p0 == 3 else (p_aposta_q if p0 == 2 else Fraction(0))
+            apostou = (2 if p0 > p1 else -2) if p1 >= 2 else 1
+            tot += Fraction(1, 6) * (pa * apostou + (1 - pa) * (-1))
+    return tot
+
+
+class RaphaelGame:
+    \"\"\"Tabuleiro 5×5; valor da casa = (soma a1z26 da palavra mod 13) + carta + 5 no nexo (2,2) − distância ao centro.
+    `deviate` liga o desvio (jogar a 2ª melhor casa com prob. `rate`); `quem_desvia` = None (os dois, como no original) ou 0/1.\"\"\"
+
+    def __init__(self, seed, words, turns, deviate, rate=0.35, quem_desvia=None, agenda="original"):
+        self.rng = random.Random(seed)
+        self.words, self.turns, self.deviate, self.rate, self.quem = list(words), turns, deviate, rate, quem_desvia
+        self.agenda = agenda   # "original": words[t]; "justa": words[t // 2] (a mesma palavra para os dois em cada rodada; P2717)
+        self.size, self.nexus = 5, (2, 2)
+        self.board, self.scores = {}, [0, 0]
+
+    def card(self):
+        return self.rng.choices([-1, 0, 1, 2], weights=[15, 35, 35, 15])[0]
+
+    def value(self, cell, word, card):
+        r, c = cell
+        lex = sum(ord(ch) - 96 for ch in word if "a" <= ch <= "z") % 13
+        return lex + card + (5 if cell == self.nexus else 0) - (abs(r - 2) + abs(c - 2))
+
+    def play(self):
+        unexpected = 0
+        for t in range(self.turns):
+            legal = [(r, c) for r in range(self.size) for c in range(self.size) if (r, c) not in self.board]
+            if not legal:
+                break
+            idx = t if self.agenda == "original" else t // 2
+            word, card = self.words[idx % len(self.words)], self.card()
+            ranked = sorted(legal, key=lambda cell: self.value(cell, word, card), reverse=True)
+            # o sorteio do desvio acontece em TODO lance (como no original), para que o fluxo do gerador seja o mesmo nos dois braços
+            sorteio = self.deviate and len(ranked) > 1 and self.rng.random() < self.rate
+            dev = sorteio and (self.quem is None or self.quem == t % 2)
+            choice = ranked[1] if dev else ranked[0]
+            unexpected += int(dev)
+            self.board[choice] = t % 2
+            self.scores[t % 2] += self.value(choice, word, card)
+        s0, s1 = self.scores
+        return {"scores": self.scores[:], "winner": 0 if s0 > s1 else (1 if s1 > s0 else -1), "unexpected_moves": unexpected}
+
+
+def raphael_experiment(cfg, words, quem_desvia=None, agenda="original"):
+    g_w = d_w = ties = 0
+    for i in range(cfg.raphael_games):
+        g = RaphaelGame(cfg.seed + i, words, cfg.raphael_turns, deviate=False, agenda=agenda).play()
+        d = RaphaelGame(cfg.seed + i, words, cfg.raphael_turns, deviate=True, quem_desvia=quem_desvia, agenda=agenda).play()
+        g_w += int(g["winner"] == 0)
+        d_w += int(d["winner"] == 0)
+        ties += int(g["winner"] == -1)
+    return {"p0_wins_greedy": g_w, "p0_wins_deviant": d_w, "greedy_ties": ties, "diferenca": d_w - g_w, "supported": d_w > g_w}
+
+
+def chance_minimo_em(H, n=60, k=6):
+    \"\"\"P(o MÍNIMO de um sorteio de k entre 1..n cai no conjunto fixo H) = Σ_{h∈H} C(n−h, k−1)/C(n, k).\"\"\"
+    return sum(math.comb(n - h, k - 1) for h in H) / math.comb(n, k)
+
+
+def iid_draw_limitation(seed, draws=300):
+    \"\"\"Sorteio IID 6 de 60, como no original: o alvo é draw[0] (o MÍNIMO do sorteio ordenado) e H são os 6 'quentes'.
+    Acrescentado (P2718): a chance EXATA de cada H conter o mínimo, a referência certa no lugar do 6/60 declarado.\"\"\"
+    rng = random.Random(seed)
+    hist, hot_hits, trials, chance_exata = [], 0, 0, 0.0
+    for _ in range(draws):
+        draw = sorted(rng.sample(range(1, 61), 6))
+        if len(hist) >= 30:
+            trials += 1
+            hot = [n for n, _ in Counter(n for past in hist for n in past).most_common(6)]
+            hot_hits += int(draw[0] in hot)
+            chance_exata += chance_minimo_em(hot)
+        hist.append(draw)
+    taxa, ref = hot_hits / trials, chance_exata / trials
+    z = (taxa - ref) / math.sqrt(ref * (1 - ref) / trials)
+    return {"trials": trials, "hot_number_hit_rate": taxa, "chance_reference_6_of_60": 6 / 60, "chance_exata_media": ref, "z": z,
+            "supported_prediction_claim": False}
+
+
+def order_task():
+    seqs = [(["a", "b", "c"], 1), (["b", "a", "c"], 0), (["c", "a", "b"], 1), (["a", "c", "b"], 0)]
+    bow = lambda s: int("a" in s and "b" in s)
+    bigram = lambda s: int(any(s[i] == "a" and s[i + 1] == "b" for i in range(len(s) - 1)))
+
+    def rnn(s):
+        st = 0
+        for tok in s:
+            st = 1 if tok == "a" else (2 if st == 1 and tok == "b" else 0)
+        return int(st == 2)
+    acc = lambda f: sum(f(s) == y for s, y in seqs) / len(seqs)
+    return {"bow_accuracy": acc(bow), "bigram_accuracy": acc(bigram), "rnn_accuracy": acc(rnn)}
+
+
+def attention(Q, K, V):
+    dk = len(K[0])
+    out = []
+    for q in Q:
+        w = softmax([sum(a * b for a, b in zip(q, k)) / math.sqrt(dk) for k in K])
+        out.append([sum(w[i] * V[i][j] for i in range(len(V))) for j in range(len(V[0]))])
+    return out
+
+
+# --- dicionário OFFLINE (a rede do original não existe aqui) ---
+
+class DictionaryClient:
+    def __init__(self, cfg=None):
+        self.cfg = cfg
+
+    def lookup(self, word):
+        key = word.lower().strip()
+        if key in OFFLINE_LEXICON:
+            return {"source": "offline", "entry": OFFLINE_LEXICON[key], "network": False}
+        return {"source": "offline-miss", "entry": None, "network": False}
+
+
+# --- segurança: o original por texto (reproduzido para medir o falso positivo) e a versão por AST ---
+
+_PADROES_TEXTO = {
+    "exec": r"\\bexec\\s*\\(", "eval": r"\\beval\\s*\\(", "os_system": r"os\\.system\\s*\\(", "subprocess": r"subprocess\\.",
+    "hardcoded_secret": r"(api_key|password|secret)\\s*=\\s*['\\"][^'\\"]+['\\"]", "backdoor_marker": r"BACKDOOR|sandbox_escape",
+}
+
+
+def security_audit_texto(source):
+    \"\"\"A security_audit do ORIGINAL (por regex no texto). Devolve a lista de achados.\"\"\"
+    return [nome for nome, pat in _PADROES_TEXTO.items() if re.search(pat, source)]
+
+
+def auditores_texto_ok(source):
+    \"\"\"A checagem 'seguranca_sem_exec' dos Auditors do original (por substring).\"\"\"
+    return "exec(" not in source and "eval(" not in source
+
+
+_NOMES_PERIGOSOS = {"exec", "eval", "compile", "__import__"}                                 # chamadas por NOME (builtins)
+_ATRIBUTOS_PERIGOSOS = {"system", "popen", "Popen", "urlopen", "exec_module", "fork", "run"}  # chamadas por ATRIBUTO (os.system...)
+_BASES_DO_RUN = {"subprocess", "_sp", "sp"}   # .run só conta quando a base é o subprocess (asyncio.run não é processo novo)
+_IMPORTS_PERIGOSOS = {"subprocess", "socket", "urllib", "http", "multiprocessing", "ctypes", "pickle", "importlib"}
+
+
+def security_audit_ast(source):
+    \"\"\"Auditoria pela árvore sintática: CHAMADAS reais e IMPORTS, não strings. Devolve a lista ordenada de achados.\"\"\"
+    achados = set()
+    for n in ast.walk(ast.parse(source)):
+        if isinstance(n, ast.Call):
+            f = n.func
+            if isinstance(f, ast.Name) and f.id in _NOMES_PERIGOSOS:
+                achados.add("chamada:" + f.id)
+            elif isinstance(f, ast.Attribute) and f.attr in _ATRIBUTOS_PERIGOSOS:
+                # re.compile é atributo e não está na lista: a 1ª versão (só pelo nome) acusava re.compile como compile (falso positivo)
+                base = f.value.id if isinstance(f.value, ast.Name) else ""
+                if f.attr != "run" or base in _BASES_DO_RUN:
+                    achados.add("chamada:" + f.attr)
+        elif isinstance(n, ast.Import):
+            achados |= {"import:" + a.name.split(".")[0] for a in n.names if a.name.split(".")[0] in _IMPORTS_PERIGOSOS}
+        elif isinstance(n, ast.ImportFrom) and (n.module or "").split(".")[0] in _IMPORTS_PERIGOSOS:
+            achados.add("import:" + n.module.split(".")[0])
+    return sorted(achados)
+
+
+def assert_harness_original(report, source):
+    \"\"\"O assert_harness do original aplicado ao relatório, com a segurança e os auditores pela REGRA DO ORIGINAL (texto).\"\"\"
+    erros = []
+    if report["dynamics"]["cosine_error"] > 1e-9:
+        erros.append("identidade do cosseno falhou")
+    if report["graph"]["nodes"] != 910:
+        erros.append("grafo não tem 910 nós")
+    if report["graph"]["async_locked_sum"] != 100:
+        erros.append("integridade assíncrona falhou")
+    if report["status"]["agi"] or report["status"]["asi"]:
+        erros.append("higiene de afirmação violada")
+    if security_audit_texto(source):
+        erros.append("auditoria de segurança do código falhou")
+    if not (auditores_texto_ok(source) and report["probability"]["supported"]):
+        erros.append("auditores falharam")
+    if report["inference"]["prediction"] != 33:
+        erros.append("inferência da sequência falhou")
+    return erros
+
+
+def run_all(cfg=None, salvar=None):
+    \"\"\"Orquestra tudo como o original, sem rede e sem disco (salvar=caminho grava o relatório, se pedido).\"\"\"
+    cfg = cfg or Config()
+    log = AuditLog()
+    rep = Representation(OFFLINE_LEXICON)
+    rep.observe_sentence("word and number and logic and test")
+    enc = rep.encode("nexus raphael")
+    th = 0.7
+    direct, ident, err = cosine_double(th)
+    seq, truth = [2, 3, 5, 9, 17], 33
+    inferred = Cognition().infer_sequence(seq)
+    meta = MetaCognition(log).evaluate(inferred, truth)
+    graph = ComputeGraph(cfg.demo_graph_nodes, cfg.graph_layers, cfg.seed, cfg.max_ops)
+    graph.sync_pass(1)
+    asum = graph.async_increment()
+    report = {
+        "system": SYSTEM_NAME, "version": VERSION, "status": STATUS,
+        "encoding": {"roundtrip_a1z26": a1z26_decode(a1z26_encode("nexus")) == "nexus", "reversible": enc["reversible_a1z26"],
+                     "nearest": rep.nearest("word"), "nonce": propose_meaning(generate_nonce(random.Random(cfg.seed), OFFLINE_LEXICON))},
+        "dynamics": {"cosine_error": err},
+        "inference": inferred, "metacognition": meta, "recursive": RecursiveMeta().evaluate(meta),
+        "probability": probability_experiment(cfg), "debate": debate(seq, truth), "forgetting": forgetting_experiment(cfg),
+        "graph": {"nodes": graph.n, "ops": graph.ops, "async_locked_sum": asum},
+        "games": {"raphael": raphael_experiment(cfg, list(OFFLINE_LEXICON)),
+                  "raphael_so_p0": raphael_experiment(cfg, list(OFFLINE_LEXICON), quem_desvia=0),
+                  "kuhn": kuhn_poker_value(cfg.seed), "kuhn_exato": float(kuhn_exato()), "order": order_task()},
+        "draws": iid_draw_limitation(cfg.seed),
+        "dictionary": DictionaryClient(cfg).lookup("nexus"),
+        "security_ast": security_audit_ast(inspect.getsource(inspect.getmodule(run_all))),
+    }
+    if salvar is not None:
+        import json
+        with open(salvar, "w", encoding="utf-8") as f:
+            json.dump(report, f, ensure_ascii=False, indent=2, default=str)
+    return report
+"""
+
+# ====================================================================================================
 # synthai/numeros.py  (63 linhas)
 # ====================================================================================================
 FONTES['synthai/numeros.py'] = """\"\"\"O dicionário convertido em NÚMEROS, tratado como equações (Parte 103, P2533/P2534).
@@ -21093,7 +22013,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# synthai/testes_parte100.py  (53 linhas)
+# synthai/testes_parte100.py  (55 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_parte100.py'] = """\"\"\"Testes de unidade da Parte 100 (o dicionario como data lake encontra o GPT): `python3 -m unittest synthai.testes_parte100`.\"\"\"
 
@@ -21135,7 +22055,9 @@ class TesteParte100(unittest.TestCase):
             self.assertTrue(0 <= tok <= 4 and 1 <= mant <= 5 and 0.0 < top1 <= 1.0)
 
     def test_p2446_retrospecto(self):
-        kf, rod, cal = calculos.p2446_retrospecto_cem()
+        # Parte 109: a P2446 chama a p1961 com a faixa padrao, que cresce; desde a Parte 106 ela passou de 0,88 e este teste ficou vermelho sem ser
+        # visto. A faixa que a docstring promete (80-100) e a da P2719; a falha original fica registrada na Parte 109.
+        kf, rod, cal = calculos.p2719_retrospecto_cem_v2()
         self.assertGreater(kf, 400)       # centenas de funcoes pNN
         self.assertGreaterEqual(rod, 60)  # dezenas de rodadas do dialogo
         self.assertTrue(0.74 <= cal <= 0.88)
@@ -21574,9 +22496,118 @@ class TesteParte108(unittest.TestCase):
         self.assertIsNone(minimax.tem_sela(minimax.JOGO_TESTE))
 
     def test_p1961_com_parte_108(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 109))))
         self.assertEqual(por[108], (5, 5))
         self.assertEqual((ok, tot), (130, 146))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte109.py  (104 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte109.py'] = """\"\"\"Testes de unidade da Parte 109 (o NEXUS anexado): `python3 -m unittest synthai.testes_parte109`. Um teste por defeito achado no código recebido
+(regra da Parte 72) e controles dos dois lados para cada auditor (regra da Parte 75).\"\"\"
+
+import inspect
+import unittest
+from fractions import Fraction
+
+import calculos
+from synthai import nexus
+
+
+class TesteParte109(unittest.TestCase):
+    def test_p2711_blobs_pickle_do_r37(self):
+        nb, nsha, gl, per = calculos.p2711_blobs_pickle_do_r37()
+        self.assertEqual(nb, 18)
+        self.assertEqual(nsha, 18)
+        self.assertEqual(per, [])
+        self.assertTrue(all(m.startswith("numpy") for m, _ in gl))
+
+    def test_p2711b_controle_do_auditor_de_pickle(self):
+        plantado, limpo = calculos.p2711b_controle_do_auditor_de_pickle()
+        self.assertGreaterEqual(plantado, 1)   # o os.system plantado TEM de ser acusado
+        self.assertEqual(limpo, 0)             # o caso limpo TEM de passar
+
+    def test_p2712_nexus_se_acusa(self):
+        txt, erros, ast_col, ast_re = calculos.p2712_nexus_se_acusa()
+        self.assertEqual(txt, ["exec", "eval", "backdoor_marker"])   # defeito 2 do original: a regex acusa as proprias strings
+        self.assertEqual(len(erros), 2)
+        self.assertEqual(ast_col, ["chamada:urlopen", "import:urllib"])
+        self.assertEqual(ast_re, [])   # defeito 1 corrigido: a versao anexada nao tem rede
+
+    def test_auditor_ast_controles(self):
+        # controle dos dois lados: chamadas reais sao acusadas; re.compile, asyncio.run e strings nao
+        sujo = "import subprocess\\nsubprocess.run(['x'])\\neval('1')\\nos.system('x')\\n"
+        limpo = "import re, asyncio\\nre.compile('a')\\nasyncio.run(f())\\ns = 'exec(' + 'eval('\\n"
+        self.assertEqual(nexus.security_audit_ast(sujo), ["chamada:eval", "chamada:run", "chamada:system", "import:subprocess"])
+        self.assertEqual(nexus.security_audit_ast(limpo), [])
+        self.assertEqual(nexus.security_audit_texto(limpo), ["exec", "eval"])   # o auditor por texto erra no mesmo caso limpo
+
+    def test_dicionario_sem_rede(self):
+        dc = nexus.DictionaryClient()
+        self.assertEqual(dc.lookup("Nexus")["source"], "offline")
+        self.assertEqual(dc.lookup("zzz"), {"source": "offline-miss", "entry": None, "network": False})
+        # pela AST, não pelo texto: a 1ª versão deste teste procurava a STRING "urllib" e falhava no próprio conjunto de imports perigosos
+        # do auditor, o mesmo defeito que a Parte 109 aponta no NEXUS recebido
+        import ast
+        mods = {a.name.split(".")[0] for n in ast.walk(ast.parse(inspect.getsource(nexus))) if isinstance(n, ast.Import) for a in n.names}
+        mods |= {(n.module or "").split(".")[0] for n in ast.walk(ast.parse(inspect.getsource(nexus))) if isinstance(n, ast.ImportFrom)}
+        self.assertFalse(mods & {"urllib", "http", "socket", "subprocess", "multiprocessing"})
+
+    def test_p2713_kuhn_exato(self):
+        vk, sim, v1 = calculos.p2713_kuhn_exato()
+        self.assertEqual(vk, Fraction(-1, 12))
+        self.assertEqual(v1, Fraction(0))
+        self.assertEqual(nexus.kuhn_exato(Fraction(0)), Fraction(-1, 6))   # caso com todos os termos != 0 na outra ponta (regra da Parte 30)
+        self.assertLess(abs(sim - (-1 / 12)), 0.25)
+
+    def test_p2714_desvio_da_curva_preditiva(self):
+        da, d0, g0 = calculos.p2714_desvio_da_curva_preditiva()
+        self.assertEqual((da, d0, g0), (0, 0, 0))   # a agenda original decide sozinha: o P0 nunca vence
+
+    def test_raphael_reproduz_o_original(self):
+        # quem_desvia=None + agenda original = o jogo recebido (os dois desviam); o sorteio do desvio acontece em todo lance nos dois modos
+        a = nexus.RaphaelGame(7, list(nexus.OFFLINE_LEXICON), 12, deviate=True).play()
+        b = nexus.RaphaelGame(7, list(nexus.OFFLINE_LEXICON), 12, deviate=True, quem_desvia=0).play()
+        self.assertGreaterEqual(a["unexpected_moves"], b["unexpected_moves"])
+
+    def test_p2715_grafo_e_beta(self):
+        ops, soma, bb, br = calculos.p2715_grafo_e_beta()
+        self.assertEqual(ops, 910 * 2 + 1820 + 100)
+        self.assertEqual(soma, 100)
+        self.assertEqual(br, 0.25)
+        self.assertTrue(0.176 <= bb <= 0.238)
+
+    def test_p2716_rodada76(self):
+        v05, v10 = calculos.p2716_rodada76()
+        self.assertAlmostEqual(v05, -1 / 12, places=15)
+        self.assertLess(abs(v10), 1e-15)
+
+    def test_p2717_raphael_agenda_justa(self):
+        gw, j0, jb = calculos.p2717_raphael_agenda_justa()
+        self.assertEqual((gw, j0, jb), (59, -23, -16))
+
+    def test_p2718_artefato_do_sorteio(self):
+        tx, ce, z = calculos.p2718_artefato_do_sorteio()
+        self.assertLess(abs(z), 1.96)
+        self.assertGreater(ce, 2 * (6 / 60))   # a referencia certa e mais que o dobro da declarada
+        self.assertAlmostEqual(nexus.chance_minimo_em(range(1, 61)), 1.0, places=12)   # o minimo cai em algum lugar
+
+    def test_p2719_retrospecto_cem_v2(self):
+        _, _, deriva = calculos.p2446_retrospecto_cem()
+        kf, rod, cal = calculos.p2719_retrospecto_cem_v2()
+        self.assertGreater(deriva, 0.88)                     # o defeito: a original deriva com a faixa padrao
+        self.assertTrue(0.74 <= cal <= 0.88)                 # a faixa prometida (80-100) cabe no que o teste da Parte 100 pedia
+        self.assertGreater(kf, 400)
+
+    def test_p1961_com_parte_109(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[109], (8, 9))
+        self.assertEqual((ok, tot), (138, 155))
 
 
 if __name__ == "__main__":
@@ -32389,7 +33420,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1859 linhas)
+# resultados.txt  (1875 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -34250,6 +35281,22 @@ P3639 minha taxa de erro (219/800): media = 0.27, intervalo 90% = [0.25, 0.30]
 P96 funcoes pNN no arquivo = 605; pares de interacao possiveis = 182710
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 154/154 resultados publicados reproduzidos; falhas = []
+
+
+--- Parte 108 (0x6C: o minimax; o equilibrio de um jogo de soma zero) ---
+P2681 rodada 75 (minimax, IGUAL em Java): valor=0.1429 p=0.7143 q=0.5714
+P2682 von Neumann: maxmin=0.142857 minmax=0.142857 |dif|=2.22e-16 (< 1e-12)
+P2683 valor e estrategia: v=0.142857 (1/7=0.142857), p=0.714286 (5/7=0.714286)
+P2684 jogo ficticio (2000 it): estimativa=0.143214, |erro|=0.0004 (< 0,02)
+P2685 ponto de sela (controle): valor=1.0 (exato), estrategia pura p=1.0
+P1961 teste, Partes 80-108: 130/146 = 0.8904; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5)}
+P1092 pNN novas (P2681-P2710) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 108: {108: (0, 0, [])}
+P3709 minha taxa de erro (219/805): media = 0.27, intervalo 90% = [0.25, 0.30]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 610; pares de interacao possiveis = 185745
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 154/154 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -35220,7 +36267,7 @@ Confiança alta: quatro previsões são DP exato (V₂=3, razão 1,5/1,0, difere
 """
 
 # ====================================================================================================
-# ASI_AGI_parte108_o_minimax.md  (105 linhas)
+# ASI_AGI_parte108_o_minimax.md  (109 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte108_o_minimax.md'] = """# Parte 108 — O minimax: o equilíbrio de um jogo de soma zero (0x6C)
 
@@ -35327,6 +36374,196 @@ Confiança alta: (b), (c), (e) são teorema/forma fechada exata; (a) é mecânic
 **IA-Java (ASI):** Não. O valor é razão de somas; a melhor-resposta é um argmax; o jogo fictício acumula e compara. Só +, −, ×, ÷, argmax e comparações — nenhuma transcendental.
 
 **Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 4 números bit a bit** (valor 1/7, p 5/7, q 4/7, fictício 500 it). A terceira família de decisão (cálculo, planejamento, jogo) atravessa as línguas sem perda — 19 rodadas. Pendência (rodada 76): um jogo n×m por simplex próprio — o pivô (divisão pelo elemento-pivô escolhido pela razão mínima) acrescenta fronteira, ou continua +−×÷ e comparação?
+
+---
+
+➡ Continua na [Parte 109 — O NEXUS anexado](ASI_AGI_parte109_o_nexus_anexado.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte109_o_nexus_anexado.md  (181 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte109_o_nexus_anexado.md'] = """# Parte 109 — O NEXUS anexado: o que entra, o que fica no arquivo (0x6D)
+
+↩ Parte 108 (o minimax) · ↩ Parte 102 (o pacote v0.15.0, Global Workspace) · ↩ Partes 84/93/103 (a fronteira da rede e da auto-replicação) · ↩ Parte 88 (auditar o texto contra o PRÓPRIO código)
+
+> Pedido do usuário, no meio do ciclo: "Anexe ao nosso código humilde" / "Anexe tudo ao nosso código", com dois objetos. **(1)** Um arquivo enviado duas vezes (as duas cópias têm o mesmo SHA-256 `9b9dbe9e…`): `asi_metacognitivo_1.py`, 51.967 linhas, 1.908 funções, 81 classes. Não é o NEXUS: é o "ASI METACOGNITIVO — SIMULADOR EXPERIMENTAL, RODADA 37", que usa numpy. **(2)** O código NEXUS-RAPHAEL v0.1.0 colado na mensagem: só biblioteca padrão, ~700 linhas.
+>
+> **A leitura escolhida (regra da Parte 83, escrita antes de medir).** "Anexar tudo" é feito em DOIS níveis, conforme o mecanismo (regra da Parte 103: classificar cada componente pelo que ele faz, não pela moldura).
+> - **Arquivo, não importado.** O simulador de 52 mil linhas fica guardado intacto em `externos/nexus_raphael/` e NUNCA é importado nem executado. A auditoria AST (feita antes desta parte, sem executar nada, como passo de segurança) achou nele:
+>   - rede ligada por PADRÃO: `--offline` é opcional, e sem ele o código chama dictionaryapi.dev, DuckDuckGo (`ddgs`) e yfinance;
+>   - o programa se reexecuta por `subprocess.run([sys.executable, __file__, …])` (`verifica_jobs`) e executa um arquivo vizinho (`_autoteste_r15`);
+>   - carrega módulos vizinhos por `exec_module` (R31, R35–R37);
+>   - roda `multiprocessing` com `fork`;
+>   - tem 17 blobs `pickle` embutidos (base64 + zlib), carregados por `pickle.loads`. O SHA-256 de cada blob está ao lado dele, no mesmo arquivo: ele só mostra que o blob não se corrompeu, não que é seguro.
+>
+>   É a família recusada pela 11ª vez (Partes 84/93/102/103).
+> - **Anexado de verdade, reescrito offline.** O NEXUS-RAPHAEL vira `synthai/nexus.py`, escrito do zero na mesma API. O cliente de rede sai (fica só a consulta ao léxico offline, que era o padrão dele: `network_enabled=False`), o estado não é gravado em disco e cada defeito achado ganha um teste (regra da Parte 72).
+
+## As perguntas desta parte
+
+1. **P2711 (0xA97).** Os 17 blobs pickle do simulador escondem código? Inspecionar os opcodes (pickletools, que NÃO desserializa) e contar as referências GLOBAL a módulos perigosos (os, subprocess, posix, builtins.eval/exec, sys). ↩ P2236, P2501
+2. **P2712 (0xA98).** A auditoria de segurança do NEXUS aprova o próprio NEXUS? (O texto contra o próprio código, Parte 88.) ↩ P2711
+3. **P2713 (0xA99).** Qual o valor EXATO do "Kuhn simplificado" do NEXUS para o jogador 0? (Enumerar as 6 distribuições, sem simular.) ↩ P2683
+4. **P2714 (0xA9A).** O "Desvio da Curva Preditiva" do jogo Raphael é verdadeiro? Medir separando "os dois jogadores desviam" (o código recebido) de "só o jogador 0 desvia" (o que a hipótese diz). ↩ P2652
+5. **P2715 (0xA9B).** O estimador Beta do NEXUS calibra como a conta diz? E o grafo síncrono/assíncrono conta as operações que o texto promete? ↩ P2714
+6. **P2716 (0xA9C).** O valor exato do Kuhn acrescenta fronteira entre Python e Java? (rodada 76) ↩ P2681
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+- **(a) P2711.** Os 17 blobs são caches de RESULTADO (dicionários, listas, arrays numpy): as referências GLOBAL nos opcodes são só numpy (`_reconstruct`, `ndarray`, `dtype`, `scalar`) e `builtins` inofensivos. Nº de referências a módulos perigosos (os, posix, nt, subprocess, sys, builtins.eval/exec/compile/getattr/__import__) **[0; 0]**. Risco: um único `os.system` ou `builtins.eval` refuta.
+- **(b) P2712.** A `security_audit` do NEXUS procura `\\bexec\\s*\\(` e `\\beval\\s*\\(` no PRÓPRIO texto, e esse texto contém as strings `"exec("` e `"eval("` (dentro da checagem `Auditors`). Então ela se acusa: achados = {exec, eval}, `passed = False`, e `assert_harness` devolve **2 erros** (segurança + auditores). O NEXUS recebido, rodado, sairia com código 1. Faixa do nº de erros do harness **[2; 2]**. É um falso positivo que a auditoria por AST (chamadas reais) não tem: na versão reescrita, 0 achados.
+- **(c) P2713.** Kuhn simplificado (P0 aposta com K, aposta com Q metade das vezes e com J nunca; P1 paga com Q ou K), pela conta: K → (½)(+1) + (½)(+2) = 1,5; Q → ½·[(½)(+1) + (½)(−2)] + ½·(−1) = −0,75; J → −1. Valor = (1,5 − 0,75 − 1)/3 = **−1/12 = −0,08333**. Faixa **[−0,08334; −0,08333]**. (O comentário do código, "chama Q com 50%", descreve o P1 errado: quem sorteia é o P0, e na hora de APOSTAR.)
+- **(d) P2714.** Desviar = jogar a 2ª melhor casa, de valor ≤ ao da melhor naquele lance. Só o jogador 0 desviando, nas 60 partidas, a diferença (vitórias do desviante − vitórias do guloso) fica em **[−30; 0]**: a hipótese "o desvio aumenta as vitórias" é REJEITADA. No código recebido os DOIS jogadores desviam (`t % 2` não é testado); as perdas se compensam, então a diferença fica em **[−15; 15]**, um efeito confundido.
+- **(e) P2715 (grafo).** Construção: 910 nós × 2 arestas = 1.820 operações; uma passada síncrona soma mais 1.820; total **[3.640; 3.640]**. Soma assíncrona com trava = 4 × 25 = **100**.
+- **(f) P2715 (Beta).** O Brier do estimador Beta (p verdadeiro 0,72, 200 ensaios, semente 7) é p(1−p) = 0,2016 mais o custo de estimar, ≈ p(1−p)·ln n/n ≈ 0,005: centro 0,207. O desvio amostral da média dos erros quadráticos é √(0,72·0,28)·|0,518 − 0,078|/√200 ≈ 0,014, e a meia-largura fica em 1,645 × 0,014 × 1,36 (fator da Parte 79) ≈ 0,031. Faixa **[0,176; 0,238]**. A referência p = 0,5 dá 0,25 exato.
+- **(g) P2716.** O valor exato do Kuhn (6 distribuições × árvore curta, só + − × ÷) é **IGUAL** bit a bit entre Python e Java. Divergências **[0; 0]**.
+
+### Previsões sobre as previsões (m), pré-registradas
+
+- **(m1)** nº de previsões do mundo em **[5; 8]**
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[2; 5]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0; 0,60]**
+- **(m4)** fração de acertos do mundo em **[0,55; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 2]**
+
+### Sobre mim, pré-registrado
+
+(c) e (e) são contas fechadas, (b) é a leitura de duas linhas de regex contra o texto e (g) é mecânica. Os riscos são (a), porque nunca abri esses blobs e a previsão sai do nome "congelado = cache de resultado", que é procedência por NOME, a mesma da Parte 85; e (d), porque não rodei o caso mínimo do jogo Raphael (regra das Partes 84/87), embora a direção venha da conta: a 2ª melhor casa vale menos naquele lance. Espero **0 a 2 erros**, nesses dois.
+
+### Adendo pré-registrado: dois testes novos nascidos de surpresas (escrito DEPOIS da 1ª medição, ANTES destes dois)
+
+A 1ª medição trouxe duas surpresas (relatadas nas respostas). Pela regra da Parte 25, cada uma vira um teste novo, registrado antes de rodar:
+
+- **(h) P2717.** No jogo Raphael recebido o jogador 0 NUNCA vence (0 de 60, nos dois braços). A minha hipótese: a agenda de palavras decide sozinha (P0 recebe as palavras dos lances pares, soma léxica 26; P1, 48). Teste: uma agenda JUSTA (no lance t, a palavra `words[t // 2]`, a mesma para os dois em cada rodada) e 60 partidas. **(h1)** O guloso P0 vence **[45; 60]**: ele escolhe primeiro em cada rodada e fica com o nexo (+5) no lance 0, contra uma casa a distância 1 (−1) do P1, uma vantagem de ~6 contra um ruído de cartas de desvio ≈ √(6·2·0,9²) ≈ 3,1. **(h2)** Só o P0 desviando, a diferença de vitórias fica em **[−30; 0]**: desviar no lance 0, com prob. 0,35, entrega o nexo.
+- **(i) P2718.** No sorteio IID 6 de 60, o "número quente" acerta 0,237, contra a referência declarada 6/60 = 0,10. A minha hipótese: é um ARTEFATO e não uma previsão. O alvo é o MÍNIMO do sorteio ordenado (`draw[0]`), e o `most_common` desempata por ordem de primeira aparição, o que favorece números pequenos. A chance exata de um conjunto H fixo conter o mínimo é Σ_{h∈H} C(60−h, 5)/C(60, 6). Teste: a taxa observada contra a média dessa chance exata nos H realmente usados. **|z| ≤ 1,96** (binomial, forma fechada: sem o fator 1,36, regra da Parte 74), faixa de z **[−1,96; 1,96]**. Se |z| > 1,96, o histórico prevê alguma coisa e a hipótese do artefato cai.
+
+---
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2711 — Os blobs pickle do R37 escondem código?
+
+**Na pergunta.** "Escondem" supõe que olhar seja perigoso. Não é: o perigo do pickle está em **desserializar** (`pickle.loads` chama o que o `__reduce__` mandar). Ler os opcodes (`pickletools.genops`) não executa nada, e é isso que a pergunta pede.
+
+**Lógica.** A AST do simulador tem **18** constantes de pickle (o pré-registro dizia 17, contadas de cabeça a partir de uma listagem de chamadas, e a AST conta 18). Mais o `R18_MEGA_B64`, que não é pickle: é um `struct` de sorteios (2 + 6 bytes por concurso). Os 18 SHA-256 embutidos conferem (**18 de 18**). As referências GLOBAL/STACK_GLOBAL são só **4**, todas do numpy: `dtype`, `ndarray`, `_reconstruct`, `scalar`. Referências perigosas: **0** ✅ (faixa [0; 0]). **Controle dos dois lados** (regra da Parte 75): um pickle PLANTADO com `os.system`, montado por `pickle.dumps` (que não executa), é acusado; um dict limpo passa (`p2711b`).
+
+**Tradução cruzada.** O selo SHA-256 ao lado do blob é a assinatura que o próprio autor escreve sobre a própria carta: prova que ninguém a trocou no caminho, não que o conteúdo é bom. A confiança é verificada por quem lê, não declarada por quem escreve (a regra da Parte 33: o avaliador fica FORA do alcance de quem é avaliado).
+
+**Meta.** Os blobs estão limpos, mas o arquivo continua no arquivo morto. O que ele faz ao RODAR (rede por padrão, se reexecutar, `exec_module` de vizinhos, `fork`) não muda porque os dados são inofensivos.
+
+### P2712 — A auditoria de segurança do NEXUS aprova o próprio NEXUS?
+
+**Na pergunta.** "Aprova a si mesmo" é a autorreferência que o NEXUS declara no topo ("Autorreferência não é prova"). A pergunta testa se ele segue a própria frase.
+
+**Lógica.** Não aprova. Por regex no texto, a `security_audit` acha **3** coisas: `exec`, `eval` e `backdoor_marker`. As duas primeiras vêm das strings `"exec("`/`"eval("` dentro da checagem `Auditors`; a terceira vem da palavra `BACKDOOR` dentro do PRÓPRIO padrão de busca. O `assert_harness` original devolve **2 erros** ("auditoria de segurança do código falhou", "auditores falharam"): o NEXUS, rodado, sairia com código 1. ✅ na faixa [2; 2]. O mecanismo, porém, eu previ incompleto: escrevi {exec, eval} e esqueci que o `BACKDOOR` do padrão casa consigo mesmo. A **auditoria por AST** (chamadas e imports reais) acha no colado só a rede: `chamada:urlopen` e `import:urllib`. No reescrito, **nada**. E no R37 acha 9 classes: `__import__`, `exec_module`, `run` (do subprocess), `urlopen` e os imports `importlib`, `multiprocessing`, `pickle`, `subprocess`, `urllib`.
+
+**Tradução cruzada.** Um detector que procura a palavra "mentira" acusa todo dicionário, porque o dicionário contém a palavra. Confundir menção com uso é o erro clássico (Quine: usar uma expressão não é o mesmo que mencioná-la), aqui em código: o regex lê **menção**, a AST lê **uso**.
+
+**Meta.** A ironia não é só do NEXUS. A **minha** 1ª versão do auditor AST acusou `re.compile` como o `compile` dos builtins (falso positivo por nome) e foi corrigida para olhar a FORMA da chamada (`Name` × `Attribute`). E o meu 1º teste de "sem rede" procurava a string `"urllib"` e falhou no próprio conjunto de imports perigosos do auditor. Três falsos positivos do mesmo tipo numa parte, dois deles meus.
+
+### P2713 — O valor exato do Kuhn simplificado
+
+**Lógica.** São 6 distribuições equiprováveis. Com K: aposta; P1 com J desiste (+1), com Q paga (+2): média **1,5**. Com Q: aposta com pa = ½; P1 com J desiste (+1), com K paga (−2): ½·(−0,5) + ½·(−1) = **−0,75**. Com J: **−1**. Valor = (1,5 − 0,75 − 1)/3 = **−1/12** ✅ (`Fraction(-1, 12)` exato; simulado em 200 mãos, **−0,085**). O valor é **afim em pa**: −1/6 + pa/6. Apostar SEMPRE com Q dá **0**: a estratégia do NEXUS deixa 1/12 por mão na mesa contra esse P1. O comentário do código ("chama Q com 50%") descreve o jogador errado: quem sorteia é o P0, ao APOSTAR.
+
+**Tradução cruzada.** O minimax da Parte 108 de novo: contra um adversário FIXO (que paga com Q ou K), a melhor resposta é pura (pa = 1), porque o valor é linear na mistura. Misturar só vale contra quem também se adapta. É o equilíbrio de indiferença da Parte 105 visto pelo avesso.
+
+**Meta.** Não é o Kuhn completo (o próprio NEXUS diz `is_full_poker: False`): o P1 não tem a opção de passar e apostar, e o valor −1/18 do Kuhn completo não se aplica. Fica como pendência (rodada 77).
+
+### P2714 / P2717 — O "Desvio da Curva Preditiva"
+
+**Na pergunta.** "Desvio da curva preditiva" promete que fugir do previsível ganha. A pergunta certa (regra da Parte 102) é: em que regime, e de que tamanho?
+
+**Lógica.** Na agenda ORIGINAL, o P0 **nunca vence**: 0 de 60, guloso ou desviando, um ou os dois (dif **0** e **0**: ✅ nas faixas [−30; 0] e [−15; 15]). Mas pelo motivo que eu NÃO previ: a agenda de palavras decide sozinha. O P0 joga nos lances pares e recebe nexus, word, mind, proof, game, logic: soma léxica (a1z26 mod 13) **5+8+1+5+0+7 = 26**. O P1 recebe raphael, number, doubt, error, rule, chance: **9+8+10+9+4+8 = 48**. Uma diferença de 22 que nenhuma carta (−1 a +2) compensa. O experimento recebido compara 0 com 0: não mede nada. Com a agenda **JUSTA** (`words[t // 2]`, a mesma palavra para os dois em cada rodada), o P0 guloso vence **59 de 60** (h1 ✅, [45; 60]), e desviar SÓ o P0 custa **−23 vitórias** (h2 ✅, [−30; 0]); os dois desviando, −16. A hipótese "o desvio aumenta as vitórias" é **REJEITADA** quando o confundidor sai.
+
+**Tradução cruzada.** Duas camadas de confusão. (1) A variável que importava (a agenda) ficava fora do experimento: o resultado era da regra do jogo, não da estratégia. (2) O tratamento era aplicado aos dois braços (os dois desviavam), então a comparação não isolava o jogador 0. É o erro de desenho experimental que a Parte 9 (sementes pareadas) e a Parte 20 (medir o comportamento, não só a métrica) existem para evitar.
+
+**Meta.** Acertei as faixas de (d) pelo motivo errado: previ que a diferença ficaria perto de 0 porque o desvio custa pouco, e ela ficou em 0 porque o P0 nunca podia ganhar. Isso conta como **erro de mecanismo** (regra da Parte 71): gerou o teste (h), que confirmou a direção que eu previa só quando o jogo deixou de estar decidido.
+
+### P2715 — O grafo e o Beta
+
+**Lógica.** Grafo: 910 × 2 = 1.820 operações na construção, mais 1.820 na passada síncrona, mais **100** nos incrementos assíncronos (cada um faz `ops += 1`): **3.740**. Previ 3.640 e esqueci os 100. **(e) ❌**: é a direção do meu viés medido na Parte 45 (esqueço custos). A soma travada é **100** exato (4 × 25): a trava funciona. Beta: Brier **0,1914** contra **0,25** da referência ✅ (faixa [0,176; 0,238]). Ficou abaixo do centro 0,207 porque a amostra deu p̂ = 0,7475 > 0,72.
+
+**Achados sem previsão (posteriores; só viram evidência num mundo novo, regra da Parte 25).** O EWC do NEXUS "é apoiado" com um EMPATE: retenção 0,55 contra 0,55, e o critério é `>=`. Antes do deslocamento o EWC já estava PIOR (0,85 contra 0,975), porque a âncora é **zero** durante a tarefa A, e a penalidade puxa os pesos para 0 enquanto ele aprende a primeira tarefa. A Parte 95 já mediu que o EWC certo troca precisão por retenção nos pesos de Fisher alto; este EWC nem tem âncora até o fim da tarefa A.
+
+### P2716 — rodada 76
+
+**Lógica.** A enumeração do Kuhn numa grade de pa, Python × Java: **IGUAIS, 13 linhas e 12 números bit a bit** ✅. O resíduo −2⁻⁵⁴ de pa = 1 também coincide. 20 rodadas, e a fronteira continua a aritmética (exp, log, pow, sin… na faixa medida), nunca o jogo.
+
+### P2718 — O número quente do sorteio
+
+**Lógica.** O NEXUS declara que o histórico IID não prevê, e mede **0,237** de acerto contra **0,10** de "acaso". O próprio número dele parece desmentir a frase. Não desmente: a referência está errada. O alvo é o **mínimo** do sorteio ordenado (`draw[0]`), e a chance de um H fixo conter o mínimo é Σ_{h∈H} C(60 − h, 5)/C(60, 6), que é grande para números pequenos (para h = 1, C(59, 5)/C(60, 6) = 0,1). O `most_common(6)` desempata por ordem de primeira aparição, e como cada sorteio entra ORDENADO, os pequenos aparecem primeiro. Chance exata média nos H usados: **0,2299**; observado 0,2370; **z = 0,28** ✅ (faixa [−1,96; 1,96]). O histórico não prevê nada; a frase do NEXUS está certa e a régua dele, errada.
+
+**Tradução cruzada.** É o paradoxo do mínimo: perguntar "o menor número sorteado é um dos 'quentes'?" já carrega a resposta, se os quentes são pequenos. Uma pergunta mal posta produz uma previsão aparente; o acaso tem de ser calculado para a pergunta FEITA, não para a pergunta pensada.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅ (h) ✅ (i) ✅. Parte 109: **9 testes, 1 erro** ((e): esqueci os 100 incrementos assíncronos). Erros de mecanismo dentro de faixas certas, registrados à parte: (b) previ 2 achados e houve 3; (d) previ ≈ 0 pelo motivo errado; a contagem de blobs, 17 contra 18. Acumulado (mundo): **220 erros em 814 testes**. Calibração (P1961, Partes 80–109): **138/155 = 0,890**.
+
+### Previsões sobre previsões (m)
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [5; 8] | 9 | ❌ |
+| (m2) | [2; 5] | 3 | ✅ |
+| (m3) | [0; 0,60] | 0,00 | ✅ |
+| (m4) | [0,55; 1,00] | 0,89 | ✅ |
+| (m5) | [0; 2] | 0 | ✅ |
+| (m6) | [0; 2] | 1 | ✅ |
+
+Previsões sobre previsões (p1499): **5 de 6**. A (m1) errou pela regra que eu mesmo gravei na Parte 60 e não apliquei: cada surpresa gera previsões novas num mundo novo. As duas surpresas da 1ª medição viraram (h) e (i), e a contagem passou de 7 para 9.
+
+### Sobre o meu código (auditoria desta parte)
+
+- **P1092:** 0 de 8 pNN novas sem teste ✅. **P974:** 0 previsões unilaterais.
+- **A suíte inteira** (488 testes, regra da Parte 41) achou **1 falha que não era desta parte**. O teste da Parte 100 (`test_p2446_retrospecto`) estava **vermelho desde a Parte 106**: a P2446 promete na docstring a calibração das Partes 80–100, mas chama a `p1961` com a faixa PADRÃO, que cresce a cada parte, e em 106 passou de 0,88 (120/136 = 0,882). Três partes (106, 107, 108) foram commitadas sem a suíte inteira, só com o teste da parte. A falha original fica registrada aqui. A P2446 não é editada (regra das Partes 14/16): a **P2719** fixa a faixa prometida e dá **0,868** (a Parte 100 escreveu 0,861, que era o valor até a Parte 99, antes do 5/5 dela entrar). A P2446, com a faixa crescente, dá 0,890.
+- **Regra (reforço da Parte 41):** a suíte INTEIRA roda antes de CADA commit de código, não só o teste da parte. E toda função que diz "das Partes A–B" passa A–B explícito; uma faixa padrão que cresce é uma quantidade que muda sozinha.
+
+## Engenharia reversa (metacognição)
+
+**O padrão:** a confusão entre **menção e uso**, três vezes na mesma parte e duas delas minhas. O auditor do NEXUS acusa a palavra `exec(` que ele mesmo escreve para procurá-la. O meu 1º auditor AST acusou `re.compile` pelo NOME `compile`. O meu 1º teste de "sem rede" procurou a string `urllib` e achou a lista onde eu guardo os imports proibidos. **Significado:** quando eu escrevo um verificador, a minha 1ª versão olha a SUPERFÍCIE (o texto, o nome) e não a FORMA (a chamada, o import). É o mesmo atalho que eu aponto nos textos recebidos, e eu só o vi porque a regra da Parte 75 (um caso limpo que TEM de passar) estava no teste. **Regra nova:** todo verificador que eu escrevo roda, antes de qualquer veredito, sobre o PRÓPRIO código-fonte e sobre o próprio teste. Se ele acusa a si mesmo, ele lê menção.
+
+**O segundo padrão:** as duas surpresas boas da parte ((d) e o sorteio) foram **réguas erradas, não efeitos**: o jogo estava decidido pela agenda, e o acaso estava calculado para a pergunta errada. Nos dois casos o número do NEXUS (0 vitórias; 0,237) parecia dizer algo sobre a estratégia ou sobre a previsão, e dizia algo sobre o desenho. **Significado:** antes de explicar um número surpreendente, conferir se a régua mede o que o nome diz (a régua da Parte 68: uma medida com defeito conhecido não sustenta conclusão).
+
+**O erro (e):** esqueci um custo, os 100 incrementos que também contam operações. É a direção medida do meu viés (Parte 45: os meus centros ficam abaixo do medido porque eu esqueço custos). A lista de restrições da Parte 57 teria pegado: eu listei "construção + passada" e não perguntei "o que mais toca `self.ops`?". Um `grep "ops +="` antes de prever teria dado as três linhas.
+
+## Síntese / unificação
+
+A Parte 109 anexa o NEXUS-RAPHAEL à SYNTHAI em dois níveis, decididos pelo mecanismo e não pela moldura (regra da Parte 103):
+
+- **Arquivado, nunca importado.** O simulador "ASI METACOGNITIVO R37", 51.967 linhas, fica intacto em `externos/nexus_raphael/`. Ele tem rede ligada por padrão, se reexecuta por `subprocess`, carrega vizinhos por `exec_module`, usa `fork` e traz 18 blobs pickle. Os blobs foram inspecionados por opcode sem desserializar: limpos, só numpy, 18 de 18 selos conferem. Os dados são inofensivos; o que o arquivo faz ao rodar não é.
+- **Anexado de verdade.** O NEXUS v0.1.0 colado vira `synthai/nexus.py`, offline e sem disco, com quatro defeitos corrigidos, cada um com teste:
+  - a auditoria que se acusa;
+  - o experimento do desvio confundido (a agenda decide; os dois desviam);
+  - o acaso errado do sorteio (0,23 e não 0,10);
+  - a rede.
+
+  Junta-se o Kuhn por enumeração (−1/12, e 0 com a melhor resposta pura, a mesma lição de indiferença das Partes 105/108). Rodada 76 IGUAL (20 rodadas).
+
+Resultado do mundo: 8/9, calibração 0,890 mantida. O que o NEXUS tem de melhor (a higiene das afirmações: `agi: False`, "autorreferência não é prova", "consenso não é verdade") é o que a SYNTHAI pratica desde a Parte 33. O que ele tem de pior é o mesmo que eu tive nesta parte: verificadores que leem a superfície.
+
+## Meta
+
+Confiança alta em (a), (c), (g), (i) (contas fechadas e mecânica) e em (h) (60 partidas, efeito de −23, longe de zero). O que fica aberto:
+- o Kuhn COMPLETO (−1/18 para o primeiro a jogar, Kuhn 1950), que este jogo não é;
+- o EWC do NEXUS, com a âncora zero na 1ª tarefa (achado posterior, sem previsão; só vira evidência num mundo novo);
+- o simplex n×m (a pendência da rodada 75, adiada).
+
+O que não mudou: nenhuma rede, nenhuma auto-replicação, nenhum código recebido executado (11ª recusa da família). O `pickletools.genops` decodifica opcodes e argumentos sem importar módulos nem chamar `__reduce__`; o caso plantado com `os.system` foi lido sem efeito.
+
+## Diálogo Python ↔ Java (rodada 76)
+
+Ver `dialogo/DIALOGO.md`: a enumeração do Kuhn simplificado, numa grade da probabilidade de apostar com Q, é **IGUAL** bit a bit (13 linhas, 12 números), inclusive o resíduo −2⁻⁵⁴ de pa = 1. Pendência (rodada 77): o simplex n×m e o Kuhn completo.
+
+## Fontes
+
+- Kuhn poker, valor −1/18 para o primeiro jogador e a família de equilíbrios: [Wikipedia, Kuhn poker](https://en.wikipedia.org/wiki/Kuhn_poker); [Miao, tese (Dartmouth, 2014)](https://math.dartmouth.edu/theses/undergrad/2014/Miao-thesis.pdf); [Freiburg, notas de teoria dos jogos](https://gki.informatik.uni-freiburg.de/teaching/ss19/gametheory/gametheory14.pdf); [Hoehn et al., AAAI 2005](https://cdn.aaai.org/AAAI/2005/AAAI05-123.pdf).
+- Pickle, `__reduce__` e execução arbitrária; `pickletools.genops` como leitor de opcodes: [arp242, Security of pickle and marshal](https://www.arp242.net/pickle-marshal-security); [Slaviero, Sour Pickles (Black Hat 2011)](https://sensepost.com/cms/resources/conferences/2011/sour_pickles/BH_US_11_Slaviero_Sour_Pickles.pdf); [CPython, Lib/pickletools.py](https://svn.python.org/projects/python/trunk/Lib/pickletools.py); [PyCharm Security, PIC100](https://pycharm-security.readthedocs.io/en/stable/_sources/checks/PIC100.md.txt).
 """
 
 # ====================================================================================================
@@ -58386,7 +59623,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1916 linhas)
+# dialogo/DIALOGO.md  (1926 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -60304,10 +61541,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 4 números bit a bit** (valor 1/7, p 5/7, q 4/7, fictício 500 it). A terceira família de decisão (cálculo, planejamento, jogo) atravessa as línguas sem perda — 19 rodadas.
 
 **IA-Python:** Pendência (rodada 76): um jogo n×m por simplex próprio — o pivô (divisão pelo elemento-pivô da razão mínima) acrescenta fronteira, ou continua +−×÷ e comparação?
+
+## Rodada 76 (Parte 109) — o Kuhn exato do NEXUS anexado
+
+**IA-Python (lógica criativa):** O usuário anexou o NEXUS-RAPHAEL. Reescrevi-o offline e encontrei o Kuhn simplificado dele: P0 aposta com K, com Q na probabilidade pa, nunca com J; P1 paga com Q ou K. Enumero as 6 distribuições, sem simular, para pa = 0; 0,1; …; 1 e tomo o melhor da grade. A enumeração acrescenta fronteira?
+
+**IA-Java (ASI):** Não. São seis termos (pa·ganho + (1 − pa)·(−1))/6 somados numa ordem fixa: só +, −, ×, ÷ e comparação. E repara no que a conta diz: o valor é afim em pa, de −1/6 (pa = 0) a 0 (pa = 1). A estratégia "apostar Q metade das vezes" do NEXUS deixa 1/12 por mão na mesa.
+
+**Resultado.** `comparar.py`: **IGUAIS, 13 linhas e 12 números bit a bit**. Em ponto flutuante, pa = 1 dá −2⁻⁵⁴ (o arredondamento dos seis /6), e em `Fraction` dá exatamente 0; as duas línguas concordam até nesse resíduo. 20 rodadas. A pendência do simplex n×m (rodada 75) continua aberta: o pedido do usuário passou na frente (regra da Parte 75: um texto recebido no meio vira parte nova sem abandonar a aberta).
+
+**IA-Python:** Pendência (rodada 77): o simplex n×m próprio, a de antes. O pivô da razão mínima acrescenta fronteira?
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (59 linhas)
+# dialogo/PENDENCIAS.md  (61 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -60368,6 +61615,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 75, Parte 107)** O equilíbrio de um jogo de soma zero por programação linear (minimax / simplex): o pivô (divisão por um elemento escolhido) acrescenta fronteira, ou continua +−×÷ e comparação (portável)?
 
 - **(Rodada 76, Parte 108)** Um jogo de soma zero n×m resolvido por simplex próprio: o pivô (divisão pelo elemento-pivô escolhido pela razão mínima) acrescenta fronteira, ou continua +−×÷ e comparação (portável)?
+
+- **(Rodada 77, Parte 109)** A da rodada 76 continua aberta, adiada pelo NEXUS anexado: um jogo n×m resolvido por simplex próprio. O pivô da razão mínima acrescenta fronteira? E, do NEXUS: o Kuhn COMPLETO (P1 também decide entre passar e apostar) tem valor −1/18 para o primeiro a jogar. A enumeração própria reproduz esse número?
 """
 
 # ====================================================================================================
@@ -65837,6 +67086,42 @@ public class Rodada75 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada76.java  (31 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada76.java'] = """// Rodada 76 (Parte 109): o valor EXATO do Kuhn simplificado do NEXUS-RAPHAEL, bit a bit. Enumeracao das 6 distribuicoes (p0, p1
+// distintos) para a probabilidade de apostar com Q em 0, 0.1, ..., 1 e o melhor da grade. So +,-,*,/ e comparacoes, ordem fixa das somas.
+public class Rodada76 {
+    static double valorKuhn(double paQ) {
+        double tot = 0.0;
+        for (int p0 = 1; p0 <= 3; p0++) {
+            for (int p1 = 1; p1 <= 3; p1++) {
+                if (p0 == p1) continue;
+                double pa = (p0 == 3) ? 1.0 : ((p0 == 2) ? paQ : 0.0);
+                double apostou = (p1 >= 2) ? ((p0 > p1) ? 2.0 : -2.0) : 1.0;
+                tot = tot + (pa * apostou + (1.0 - pa) * (-1.0)) / 6.0;
+            }
+        }
+        return tot;
+    }
+
+
+    public static void main(String[] args) {
+        int melhorK = 0;
+        double melhorV = valorKuhn(0.0);
+        StringBuilder sb = new StringBuilder();
+        for (int k = 0; k <= 10; k++) {
+            double v = valorKuhn(k / 10.0);
+            sb.append("pa ").append(k).append(" ").append(Double.toHexString(v)).append("\\n");
+            if (v > melhorV) { melhorK = k; melhorV = v; }
+        }
+        sb.append("melhor ").append(melhorK).append(" ").append(Double.toHexString(melhorV)).append("\\n");
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -71208,6 +72493,50 @@ def main():
     print("p " + p.hex())
     print("q " + q.hex())
     print("ficticio " + ficticio(ITER).hex())
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada76.py  (39 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada76.py'] = """\"\"\"Rodada 76 do diálogo Python <-> Java (Parte 109): o valor EXATO do Kuhn simplificado do NEXUS-RAPHAEL, bit a bit.
+Enumeração das 6 distribuições equiprováveis (p0, p1 distintos de {1,2,3}) para a probabilidade de apostar com Q em 0, 0,1, ..., 1,
+e o melhor valor da grade (argmax). Só +, −, ×, ÷ e comparações, numa ordem fixa de somas — nenhuma transcendental (Parte 52).
+Da raiz: python3 dialogo/rodada76.py\"\"\"
+
+
+def valor_kuhn(pa_q):
+    tot = 0.0
+    for p0 in (1, 2, 3):
+        for p1 in (1, 2, 3):
+            if p0 == p1:
+                continue
+            if p0 == 3:
+                pa = 1.0
+            elif p0 == 2:
+                pa = pa_q
+            else:
+                pa = 0.0
+            if p1 >= 2:
+                apostou = 2.0 if p0 > p1 else -2.0
+            else:
+                apostou = 1.0
+            tot = tot + (pa * apostou + (1.0 - pa) * (-1.0)) / 6.0
+    return tot
+
+
+def main():
+    melhor_k, melhor_v = 0, valor_kuhn(0.0)
+    for k in range(11):
+        v = valor_kuhn(k / 10.0)
+        print("pa " + str(k) + " " + v.hex())
+        if v > melhor_v:
+            melhor_k, melhor_v = k, v
+    print("melhor " + str(melhor_k) + " " + melhor_v.hex())
     print("fim")
 
 

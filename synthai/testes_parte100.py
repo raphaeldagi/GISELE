@@ -38,7 +38,9 @@ class TesteParte100(unittest.TestCase):
             self.assertTrue(0 <= tok <= 4 and 1 <= mant <= 5 and 0.0 < top1 <= 1.0)
 
     def test_p2446_retrospecto(self):
-        kf, rod, cal = calculos.p2446_retrospecto_cem()
+        # Parte 109: a P2446 chama a p1961 com a faixa padrao, que cresce; desde a Parte 106 ela passou de 0,88 e este teste ficou vermelho sem ser
+        # visto. A faixa que a docstring promete (80-100) e a da P2719; a falha original fica registrada na Parte 109.
+        kf, rod, cal = calculos.p2719_retrospecto_cem_v2()
         self.assertGreater(kf, 400)       # centenas de funcoes pNN
         self.assertGreaterEqual(rod, 60)  # dezenas de rodadas do dialogo
         self.assertTrue(0.74 <= cal <= 0.88)

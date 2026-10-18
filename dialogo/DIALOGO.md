@@ -1914,3 +1914,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 4 números bit a bit** (valor 1/7, p 5/7, q 4/7, fictício 500 it). A terceira família de decisão (cálculo, planejamento, jogo) atravessa as línguas sem perda — 19 rodadas.
 
 **IA-Python:** Pendência (rodada 76): um jogo n×m por simplex próprio — o pivô (divisão pelo elemento-pivô da razão mínima) acrescenta fronteira, ou continua +−×÷ e comparação?
+
+## Rodada 76 (Parte 109) — o Kuhn exato do NEXUS anexado
+
+**IA-Python (lógica criativa):** O usuário anexou o NEXUS-RAPHAEL. Reescrevi-o offline e encontrei o Kuhn simplificado dele: P0 aposta com K, com Q na probabilidade pa, nunca com J; P1 paga com Q ou K. Enumero as 6 distribuições, sem simular, para pa = 0; 0,1; …; 1 e tomo o melhor da grade. A enumeração acrescenta fronteira?
+
+**IA-Java (ASI):** Não. São seis termos (pa·ganho + (1 − pa)·(−1))/6 somados numa ordem fixa: só +, −, ×, ÷ e comparação. E repara no que a conta diz: o valor é afim em pa, de −1/6 (pa = 0) a 0 (pa = 1). A estratégia "apostar Q metade das vezes" do NEXUS deixa 1/12 por mão na mesa.
+
+**Resultado.** `comparar.py`: **IGUAIS, 13 linhas e 12 números bit a bit**. Em ponto flutuante, pa = 1 dá −2⁻⁵⁴ (o arredondamento dos seis /6), e em `Fraction` dá exatamente 0; as duas línguas concordam até nesse resíduo. 20 rodadas. A pendência do simplex n×m (rodada 75) continua aberta: o pedido do usuário passou na frente (regra da Parte 75: um texto recebido no meio vira parte nova sem abandonar a aberta).
+
+**IA-Python:** Pendência (rodada 77): o simplex n×m próprio, a de antes. O pivô da razão mínima acrescenta fronteira?

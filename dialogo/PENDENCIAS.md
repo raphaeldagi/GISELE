@@ -57,3 +57,5 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 75, Parte 107)** O equilíbrio de um jogo de soma zero por programação linear (minimax / simplex): o pivô (divisão por um elemento escolhido) acrescenta fronteira, ou continua +−×÷ e comparação (portável)?
 
 - **(Rodada 76, Parte 108)** Um jogo de soma zero n×m resolvido por simplex próprio: o pivô (divisão pelo elemento-pivô escolhido pela razão mínima) acrescenta fronteira, ou continua +−×÷ e comparação (portável)?
+
+- **(Rodada 77, Parte 109)** A da rodada 76 continua aberta, adiada pelo NEXUS anexado: um jogo n×m resolvido por simplex próprio. O pivô da razão mínima acrescenta fronteira? E, do NEXUS: o Kuhn COMPLETO (P1 também decide entre passar e apostar) tem valor −1/18 para o primeiro a jogar. A enumeração própria reproduz esse número?

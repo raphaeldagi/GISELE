@@ -103,3 +103,7 @@ Confiança alta: (b), (c), (e) são teorema/forma fechada exata; (a) é mecânic
 **IA-Java (ASI):** Não. O valor é razão de somas; a melhor-resposta é um argmax; o jogo fictício acumula e compara. Só +, −, ×, ÷, argmax e comparações — nenhuma transcendental.
 
 **Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 4 números bit a bit** (valor 1/7, p 5/7, q 4/7, fictício 500 it). A terceira família de decisão (cálculo, planejamento, jogo) atravessa as línguas sem perda — 19 rodadas. Pendência (rodada 76): um jogo n×m por simplex próprio — o pivô (divisão pelo elemento-pivô escolhido pela razão mínima) acrescenta fronteira, ou continua +−×÷ e comparação?
+
+---
+
+➡ Continua na [Parte 109 — O NEXUS anexado](ASI_AGI_parte109_o_nexus_anexado.md).
