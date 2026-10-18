@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 109, perguntas P1 a P2719).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 110, perguntas P1 a P2747).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (15401 linhas)
+# calculos.py  (15507 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -9652,6 +9652,8 @@ VEREDITOS_P3709 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P3709, TESTES_P3709 = 219, 805
 VEREDITOS_P3779 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅ (h) ✅ (i) ✅"
 ERROS_P3779, TESTES_P3779 = 220, 814
+VEREDITOS_P3849 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ❌ (p) ✅ (q) ✅ (r) ✅ (s) ✅ (t) ✅ (u) ✅ (v) ✅"
+ERROS_P3849, TESTES_P3849 = 221, 835
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12192,12 +12194,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14089,6 +14091,86 @@ def p2719_retrospecto_cem_v2():
     return k, rodadas, frac
 
 
+def p2741_duvida_do_gradiente():
+    \"\"\"Duvidar do gradiente (P2741; Parte 110): o gradiente analitico de uma MLP 3->4->1 tanh contra a diferenca finita. A inclinacao de log(erro)
+    contra log(h) le a ORDEM do metodo (o inverso): central ~2, adiantada ~1 (o subverso); o piso e o melhor erro relativo na grade; e o controle
+    plantado (sinal trocado numa componente) tem erro relativo 2. Devolve (inclinacao central, inclinacao adiantada, melhor erro, h do melhor,
+    erro do plantado).\"\"\"
+    from synthai import duvida
+    c = duvida.verificar_gradiente()
+    f = duvida.verificar_gradiente(central=False)
+    h_melhor, melhor = min(c, key=lambda t: t[1])
+    plantado = duvida.verificar_gradiente(plantar=5, passos=[1e-5])[0][1]
+    return duvida.inclinacao(c), duvida.inclinacao(f), melhor, h_melhor, plantado
+
+
+def p2742_duvida_da_inferencia():
+    \"\"\"Duvidar da inferencia (P2742; Parte 110): a cobertura do intervalo bayesiano de 90% (Beta-Bernoulli, p ~ U(0,1)) bem especificado (~0,90)
+    e com aglomerados de 4 observacoes identicas tratadas como independentes (o subverso: P(|Z| < 1,645/2) ~ 0,589); o inverso recupera o
+    aglomerado c da cobertura. Devolve (cobertura independente, cobertura aglomerada, c recuperado).\"\"\"
+    from synthai import duvida
+    c1 = duvida.cobertura_bayes()
+    c4 = duvida.cobertura_bayes(n=100, aglomerado=4)
+    return c1, c4, duvida.aglomerado_recuperado(c4)
+
+
+def p2743_duvida_da_rnn():
+    \"\"\"Duvidar da RNN (P2743; Parte 110): BPTT na RNN linear contra w^T (w = 0,9, T = 50) e o inverso (w de volta); e o subverso: a RNN tanh com
+    w = 1,1 > 1, que a conta ingenua faria explodir (1,1^50 = 117), SOME pela saturacao (derivada local ~0,82 no ponto fixo). Devolve (erro
+    relativo linear, w recuperado, gradiente tanh, h final).\"\"\"
+    from synthai import duvida
+    g = duvida.bptt_linear(0.9, 50)
+    gt, hT = duvida.bptt_tanh(1.1, 50)
+    return abs(g - 0.9 ** 50) / 0.9 ** 50, duvida.w_recuperado(g, 50), gt, hT
+
+
+def p2744_duvida_do_ml():
+    \"\"\"Duvidar do ML (P2744; Parte 110): o erro de generalizacao de minimos quadrados (n = 50, p = 10, x ~ N(0, I)) contra 1 + p/(n - p - 1) =
+    1,2564; o inverso recupera p do excesso; o subverso poe uma variavel omitida (coeficiente 1), que dobra o ruido: 2,513. Devolve (erro, p
+    recuperado, erro com omitida).\"\"\"
+    from synthai import duvida
+    e = duvida.erro_generalizacao()
+    return e, duvida.p_recuperado(e), duvida.erro_generalizacao(omitida=1.0)
+
+
+def p2745_duvida_do_continuo():
+    \"\"\"Duvidar do aprendizado continuo (P2745; Parte 110): duas tarefas de posto 1 em R2; o esquecimento do GD e cos^2(theta) (0,5 em 45 graus; o
+    inverso devolve theta); o OGD nao move w1 (esquecimento = so o residuo da propria tarefa A, 1 ulp ao quadrado) e paga em norma (1/sen theta);
+    o subverso: em theta = 0 o OGD nao aprende B. Devolve (esquecimento GD 45, theta recuperado, esquecimento OGD 45, norma OGD 45, perda B OGD 0).\"\"\"
+    from synthai import duvida
+    gd = duvida.continuo(45)
+    og = duvida.continuo(45, ogd=True)
+    og0 = duvida.continuo(0, ogd=True)
+    return gd[0], duvida.theta_recuperado(gd[0]), og[0], og[2], og0[1]
+
+
+def p2746_duvida_do_reforco():
+    \"\"\"Duvidar do reforco (P2746; Parte 110): o vies de maximizacao do alvo do Q-learning, E[max] de k estimativas sem valor; k = 2 e m = 10:
+    1/sqrt(pi m) = 0,1784; o estimador duplo (Double Q) ~0; o inverso recupera m; o subverso k = 10: 1,5388/sqrt(10) = 0,4866. Devolve (vies k=2,
+    vies duplo, m recuperado, vies k=10).\"\"\"
+    from synthai import duvida
+    b = duvida.vies_do_max()
+    return b, duvida.vies_do_max(duplo=True), duvida.m_recuperado(b), duvida.vies_do_max(k=10)
+
+
+def _rodada77():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada77", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada77.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2747_rodada77():
+    \"\"\"Rodada 77 (P2747; Parte 110): o aprendizado continuo em R2 (GD e OGD, u por sqrt e nao por sin/cos), IGUAL em Java bit a bit. Devolve o
+    esquecimento do GD em 60 graus (exatamente 0,25 = cos^2 60) e a norma do OGD em 45 graus (sqrt 2).\"\"\"
+    r = _rodada77()
+    e60 = r.continuo(0.5, math.sqrt(0.75), False)[0]
+    n45 = r.continuo(math.sqrt(0.5), math.sqrt(0.5), True)[2]
+    return e60, n45
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -15391,6 +15473,30 @@ def _parte_109():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3779, testes=TESTES_P3779)
     print(f"P3779 minha taxa de erro ({ERROS_P3779}/{TESTES_P3779}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_110():
+    print("--- Parte 110 (0x6E: a duvida calculada; inverso e subverso) ---")
+    ic, ia, melhor, hm, pl = p2741_duvida_do_gradiente()
+    print(f"P2741 gradiente: inclinacao central {ic:.4f}, adiantada {ia:.4f}; melhor erro {melhor:.2e} em h={hm:.0e}; plantado {pl:.6f}")
+    c1, c4, cr = p2742_duvida_da_inferencia()
+    print(f"P2742 inferencia: cobertura 90% independente {c1:.4f}; aglomerada (c=4) {c4:.4f}; c recuperado {cr:.3f}")
+    el, wr, gt, hT = p2743_duvida_da_rnn()
+    print(f"P2743 RNN: erro relativo BPTT linear {el:.1e}, w recuperado {wr:.12f}; tanh w=1,1: gradiente {gt:.3e} (h_T={hT:.4f})")
+    e, pr, eo = p2744_duvida_do_ml()
+    print(f"P2744 ML: erro de generalizacao {e:.4f} (1,2564), p recuperado {pr:.2f}; com variavel omitida {eo:.4f} (2,513)")
+    g45, tr, o45, n45, b0 = p2745_duvida_do_continuo()
+    print(f"P2745 continuo: esquecimento GD 45 {g45:.6f}, theta recuperado {tr:.6f}; OGD 45 esquece {o45:.2e}, norma {n45:.6f}; OGD em 0: perda B {b0}")
+    b2, bd, mr, b10 = p2746_duvida_do_reforco()
+    print(f"P2746 reforco: vies do max k=2 {b2:.4f} (0,1784), duplo {bd:.5f}, m recuperado {mr:.2f}; k=10 {b10:.4f} (0,4866)")
+    e60, n45r = p2747_rodada77()
+    print(f"P2747 rodada 77 (IGUAL em Java): esquecimento GD 60 = {e60!r}; norma OGD 45 = {n45r!r}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-110: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2741, 2770)
+    print(f"P1092 pNN novas (P2741-P2770) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 110: {p974_previsoes_sem_largura(range(110, 111))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3849, testes=TESTES_P3849)
+    print(f"P3849 minha taxa de erro ({ERROS_P3849}/{TESTES_P3849}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -15427,7 +15533,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110}
 
 
 if __name__ == "__main__":
@@ -15440,7 +15546,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (407 linhas)
+# CLAUDE.md  (416 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -15693,6 +15799,15 @@ anterior, commit e push.
   (m1) errou porque cada surpresa gera previsoes novas (regra da Parte 60, nao aplicada). 8/9 do mundo, 5/6 (m), calibracao 138/155 = 0,890. Pendencia (rodada 77): simplex n×m e Kuhn completo (-1/18).
   E a SUITE INTEIRA (488 testes) achou o teste da Parte 100 vermelho desde a 106 (P2446 usava a faixa padrao CRESCENTE da p1961; P2719 fixa 80-100 = 0,868): rodar a suite
   inteira antes de CADA commit de codigo, e toda funcao 'das Partes A-B' passa A-B explicito.
+  Parte 110 (pedido: "Duvide dos gradientes, das inferencias, das RNN e de toda a estrutura de uma IA, ML, DL, aprendizado continuo e por reforco... calcule suas duvidas
+  de forma independente... depois use processo metacognitivo inverso e subverso"; `synthai/duvida.py`): leitura gravada: DUVIDAR = escrever a afirmacao da peca e a conta fechada
+  que a decide; CALCULAR INDEPENDENTE = medir por caminho que nao e o da peca; INVERSO = do numero medido de volta a premissa (resolver para o parametro: ordem do metodo,
+  aglomerado c, w, p, theta, m); SUBVERSO = derrubar UMA premissa e prever a quebra antes. Medido: as seis pecas tem a conta certa e falham exatamente onde uma premissa nao-dita
+  falha, com o tamanho previsto (Bayes 0,8995 -> 0,591 com aglomerados de 4, c recuperado 3,97; RNN tanh w=1,1 SOME 5,6e-5 pela saturacao; OLS 1,2530 vs 1,2564, omitida 2,516;
+  esquecimento cos^2 theta, OGD paga em norma 1/sen theta e nao aprende em theta=0; vies do max 0,1794 vs 1/sqrt(10 pi), duplo ~0, k=10 0,4840). Rodada 77 IGUAL (21 rodadas).
+  REGRA NOVA: uma faixa [x; x] so com a identidade que a garante escrita ao lado ((o) errou por 4,9e-32: 'w1 nao muda' nao garante 'perda zero'); e uma faixa de mais de duas
+  ordens de grandeza vem com o mecanismo esperado dentro dela, para que o acerto possa refutar o mecanismo ((c) acertou com o h otimo errado). 20/21 do mundo, 6/6 (m),
+  calibracao 158/176 = 0,898. Defeito medido: p1481 perde faixas de itens com rotulo em negrito (pendencia: p1481_v3).
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -15841,7 +15956,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -17673,6 +17788,258 @@ def voi_espelho():
 def voi_identico():
     \"\"\"Controle: dois MDPs idênticos → saber não acrescenta nada → VOI = 0.\"\"\"
     return voi_estado_oculto(MDP_TESTE, MDP_TESTE)
+"""
+
+# ====================================================================================================
+# synthai/duvida.py  (247 linhas)
+# ====================================================================================================
+FONTES['synthai/duvida.py'] = """\"\"\"A dúvida calculada (Parte 110). Seis peças de uma IA, cada uma conferida por um caminho independente do dela, só com a biblioteca padrão:
+gradiente (diferença finita), inferência (cobertura empírica), RNN (BPTT contra a forma fechada), ML (erro de generalização contra
+σ²(1 + p/(n − p − 1))), aprendizado contínuo (esquecimento contra cos²θ) e reforço (viés do max contra σ/√π). Cada peça tem também o
+seu INVERSO (do número medido de volta à premissa) e o seu SUBVERSO (uma premissa derrubada, com a quebra prevista antes).\"\"\"
+
+import math
+import random
+from statistics import NormalDist
+
+
+# --- 1. gradiente: MLP 3 -> 4 -> 1 com tanh ---
+
+def mlp_inicial(semente=110, d=3, h=4):
+    rng = random.Random(semente)
+    W = [[rng.uniform(-1, 1) for _ in range(d)] for _ in range(h)]
+    b = [rng.uniform(-0.5, 0.5) for _ in range(h)]
+    v = [rng.uniform(-1, 1) for _ in range(h)]
+    x = [rng.uniform(-1, 1) for _ in range(d)]
+    return W, b, v, x, 0.3
+
+
+def _achatar(W, b, v):
+    return [w for linha in W for w in linha] + list(b) + list(v)
+
+
+def _montar(theta, d=3, h=4):
+    W = [theta[i * d:(i + 1) * d] for i in range(h)]
+    b = theta[h * d:h * d + h]
+    v = theta[h * d + h:]
+    return W, b, v
+
+
+def perda_mlp(theta, x, y, d=3, h=4):
+    W, b, v = _montar(theta, d, h)
+    a = [math.tanh(sum(W[i][j] * x[j] for j in range(d)) + b[i]) for i in range(h)]
+    f = sum(v[i] * a[i] for i in range(h))
+    return 0.5 * (f - y) ** 2
+
+
+def gradiente_mlp(theta, x, y, d=3, h=4):
+    \"\"\"O gradiente ANALÍTICO (retropropagação à mão).\"\"\"
+    W, b, v = _montar(theta, d, h)
+    a = [math.tanh(sum(W[i][j] * x[j] for j in range(d)) + b[i]) for i in range(h)]
+    f = sum(v[i] * a[i] for i in range(h))
+    r = f - y
+    gW = [[r * v[i] * (1 - a[i] * a[i]) * x[j] for j in range(d)] for i in range(h)]
+    gb = [r * v[i] * (1 - a[i] * a[i]) for i in range(h)]
+    gv = [r * a[i] for i in range(h)]
+    return _achatar(gW, gb, gv)
+
+
+def gradiente_numerico(theta, x, y, passo, central=True):
+    g = []
+    for k in range(len(theta)):
+        mais = list(theta)
+        mais[k] += passo
+        if central:
+            menos = list(theta)
+            menos[k] -= passo
+            g.append((perda_mlp(mais, x, y) - perda_mlp(menos, x, y)) / (2 * passo))
+        else:
+            g.append((perda_mlp(mais, x, y) - perda_mlp(theta, x, y)) / passo)
+    return g
+
+
+def erro_relativo(ga, gn):
+    \"\"\"O maior erro relativo componente a componente: |ga − gn| / max(|ga|, |gn|).\"\"\"
+    return max(abs(a - n) / max(abs(a), abs(n), 1e-300) for a, n in zip(ga, gn))
+
+
+def verificar_gradiente(central=True, passos=None, plantar=None):
+    \"\"\"Erro relativo por passo h. `plantar=k` troca o sinal da componente k do gradiente analítico (o controle que tem de ser acusado).\"\"\"
+    W, b, v, x, y = mlp_inicial()
+    theta = _achatar(W, b, v)
+    ga = gradiente_mlp(theta, x, y)
+    if plantar is not None:
+        ga[plantar] = -ga[plantar]
+    passos = passos or [10.0 ** (-e) for e in range(1, 11)]
+    return [(hh, erro_relativo(ga, gradiente_numerico(theta, x, y, hh, central))) for hh in passos]
+
+
+def inclinacao(pares, h1=1e-2, h2=1e-3):
+    \"\"\"Inclinação de log(erro) contra log(h) entre dois passos: a ORDEM do método (o inverso: ler a premissa na curva).\"\"\"
+    e = dict(pares)
+    return (math.log(e[h1]) - math.log(e[h2])) / (math.log(h1) - math.log(h2))
+
+
+# --- 2. inferência: cobertura do intervalo bayesiano Beta-Bernoulli ---
+
+def _cdf_beta_inteira(xv, a, b):
+    \"\"\"I_x(a, b) com a, b inteiros = P(Binomial(a + b − 1, x) ≥ a).\"\"\"
+    n = a + b - 1
+    return sum(math.comb(n, j) * xv ** j * (1 - xv) ** (n - j) for j in range(a, n + 1))
+
+
+def quantil_beta(q, a, b, iters=60):
+    lo, hi = 0.0, 1.0
+    for _ in range(iters):
+        meio = (lo + hi) / 2
+        if _cdf_beta_inteira(meio, a, b) < q:
+            lo = meio
+        else:
+            hi = meio
+    return (lo + hi) / 2
+
+
+def cobertura_bayes(mundos=2000, n=50, aglomerado=1, nivel=0.90, semente=1100):
+    \"\"\"Fração dos mundos em que o intervalo central de `nivel` contém o p verdadeiro. p ~ U(0,1); as n observações vêm em n/aglomerado
+    grupos de `aglomerado` cópias idênticas (aglomerado=1: independentes, o modelo está certo).\"\"\"
+    rng = random.Random(semente)
+    cauda = (1 - nivel) / 2
+    dentro = 0
+    for _ in range(mundos):
+        p = rng.random()
+        k = sum(aglomerado for _ in range(n // aglomerado) if rng.random() < p)
+        lo = quantil_beta(cauda, 1 + k, 1 + n - k)
+        hi = quantil_beta(1 - cauda, 1 + k, 1 + n - k)
+        dentro += int(lo <= p <= hi)
+    return dentro / mundos
+
+
+def aglomerado_recuperado(cobertura, nivel=0.90):
+    \"\"\"O inverso: a cobertura de um intervalo nominal z·σ quando o σ real é √c vezes maior é P(|Z| < z/√c); resolve para c.\"\"\"
+    z = NormalDist().inv_cdf((1 + nivel) / 2)
+    zc = NormalDist().inv_cdf((1 + cobertura) / 2)
+    return (z / zc) ** 2
+
+
+# --- 3. RNN: o gradiente através do tempo ---
+
+def bptt_linear(w, T, h0=1.0):
+    \"\"\"RNN linear h_t = w·h_{t−1}: frente e trás (BPTT), ∂h_T/∂h_0 acumulado passo a passo.\"\"\"
+    hs = [h0]
+    for _ in range(T):
+        hs.append(w * hs[-1])
+    g = 1.0
+    for _ in range(T):
+        g *= w
+    return g
+
+
+def bptt_tanh(w, T, h0=0.5):
+    \"\"\"RNN tanh h_t = tanh(w·h_{t−1}): ∂h_T/∂h_0 = Π w(1 − h_t²), pela retropropagação.\"\"\"
+    hs = [h0]
+    for _ in range(T):
+        hs.append(math.tanh(w * hs[-1]))
+    g = 1.0
+    for t in range(T, 0, -1):
+        g *= w * (1 - hs[t] * hs[t])
+    return g, hs[-1]
+
+
+def w_recuperado(grad, T):
+    \"\"\"O inverso: w = grad^(1/T) (RNN linear, grad > 0).\"\"\"
+    return math.exp(math.log(grad) / T)
+
+
+# --- 4. ML: o erro de generalização dos mínimos quadrados ---
+
+def _resolver(A, c):
+    \"\"\"Eliminação de Gauss com pivô parcial.\"\"\"
+    n = len(A)
+    M = [list(A[i]) + [c[i]] for i in range(n)]
+    for col in range(n):
+        piv = max(range(col, n), key=lambda r: abs(M[r][col]))
+        M[col], M[piv] = M[piv], M[col]
+        for r in range(col + 1, n):
+            f = M[r][col] / M[col][col]
+            for k in range(col, n + 1):
+                M[r][k] -= f * M[col][k]
+    x = [0.0] * n
+    for i in range(n - 1, -1, -1):
+        x[i] = (M[i][n] - sum(M[i][k] * x[k] for k in range(i + 1, n))) / M[i][i]
+    return x
+
+
+def erro_generalizacao(p=10, n=50, reps=2000, omitida=0.0, semente=1104):
+    \"\"\"Média de ‖β̂ − β‖² + σ²_efetivo (o erro de teste esperado exato sob x ~ N(0, I)), com σ = 1 e, se `omitida` > 0, uma variável
+    z ~ N(0,1) de coeficiente `omitida` fora do modelo (vira ruído). Devolve a média.\"\"\"
+    rng = random.Random(semente)
+    beta = [1.0] * p
+    soma = 0.0
+    for _ in range(reps):
+        X = [[rng.gauss(0, 1) for _ in range(p)] for _ in range(n)]
+        y = [sum(X[i][j] * beta[j] for j in range(p)) + rng.gauss(0, 1) + omitida * rng.gauss(0, 1) for i in range(n)]
+        XtX = [[sum(X[i][a] * X[i][b] for i in range(n)) for b in range(p)] for a in range(p)]
+        Xty = [sum(X[i][a] * y[i] for i in range(n)) for a in range(p)]
+        bh = _resolver(XtX, Xty)
+        soma += sum((bh[j] - beta[j]) ** 2 for j in range(p)) + 1.0 + omitida * omitida
+    return soma / reps
+
+
+def p_recuperado(erro, n=50, sigma2=1.0):
+    \"\"\"O inverso: e = erro/σ² − 1 = p/(n − p − 1) ⇒ p = e(n − 1)/(1 + e).\"\"\"
+    e = erro / sigma2 - 1
+    return e * (n - 1) / (1 + e)
+
+
+# --- 5. aprendizado contínuo: duas tarefas de posto 1 em ℝ² ---
+
+def continuo(theta_graus, ogd=False, passo=0.1, passos=2000):
+    \"\"\"A tarefa A: perda (w·e1 − 1)² (w_A = (1, 0)). A tarefa B: direção u = (cos θ, sen θ), alvo c_B = u·w_A + 1 (resíduo inicial 1).
+    GD em A até convergir, depois em B (OGD: o gradiente de B projetado ortogonal a e1). Devolve (esquecimento de A, perda de B, ‖Δw em B‖).\"\"\"
+    th = math.radians(theta_graus)
+    u = (math.cos(th), math.sin(th))
+    w = [0.0, 0.0]
+    for _ in range(passos):
+        w[0] -= passo * 2 * (w[0] - 1.0)
+    wa = list(w)
+    cb = u[0] * wa[0] + u[1] * wa[1] + 1.0
+    for _ in range(passos):
+        r = u[0] * w[0] + u[1] * w[1] - cb
+        g = [2 * r * u[0], 2 * r * u[1]]
+        if ogd:
+            g = [g[0] - g[0] * 1.0, g[1]]      # tira a componente ao longo de e1 (a direção de A)
+        w = [w[0] - passo * g[0], w[1] - passo * g[1]]
+    esq = (w[0] - 1.0) ** 2
+    perda_b = (u[0] * w[0] + u[1] * w[1] - cb) ** 2
+    return esq, perda_b, math.sqrt((w[0] - wa[0]) ** 2 + (w[1] - wa[1]) ** 2)
+
+
+def theta_recuperado(esquecimento):
+    \"\"\"O inverso: esquecimento = cos²θ ⇒ θ = arccos √esquecimento (graus).\"\"\"
+    return math.degrees(math.acos(math.sqrt(esquecimento)))
+
+
+# --- 6. reforço: o viés de maximização ---
+
+def vies_do_max(k=2, m=10, ensaios=20000, duplo=False, semente=1106):
+    \"\"\"k ações de valor verdadeiro 0; cada estimativa ~ N(0, 1/m) (média de m recompensas N(0,1)). Simples: E[max das estimativas]
+    (o alvo do Q-learning). Duplo: escolhe a ação pelo conjunto A e avalia pelo conjunto B, independente (o Double Q-learning).\"\"\"
+    rng = random.Random(semente)
+    s = 1 / math.sqrt(m)
+    tot = 0.0
+    for _ in range(ensaios):
+        qa = [rng.gauss(0, s) for _ in range(k)]
+        if duplo:
+            qb = [rng.gauss(0, s) for _ in range(k)]
+            tot += qb[max(range(k), key=lambda i: qa[i])]
+        else:
+            tot += max(qa)
+    return tot / ensaios
+
+
+def m_recuperado(vies):
+    \"\"\"O inverso (k = 2): viés = σₑ/√π = 1/√(π m) ⇒ m = 1/(π·viés²).\"\"\"
+    return 1 / (math.pi * vies * vies)
 """
 
 # ====================================================================================================
@@ -22605,9 +22972,91 @@ class TesteParte109(unittest.TestCase):
         self.assertGreater(kf, 400)
 
     def test_p1961_com_parte_109(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 110))))
         self.assertEqual(por[109], (8, 9))
         self.assertEqual((ok, tot), (138, 155))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte110.py  (77 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte110.py'] = """\"\"\"Testes de unidade da Parte 110 (a dúvida calculada): `python3 -m unittest synthai.testes_parte110`. Cada peça com o seu caso direto, o seu
+inverso e o seu subverso; casos com todos os termos diferentes de zero (regra da Parte 30).\"\"\"
+
+import math
+import unittest
+
+import calculos
+from synthai import duvida
+
+
+class TesteParte110(unittest.TestCase):
+    def test_p2741_duvida_do_gradiente(self):
+        ic, ia, melhor, hm, pl = calculos.p2741_duvida_do_gradiente()
+        self.assertTrue(1.8 <= ic <= 2.2)
+        self.assertTrue(0.9 <= ia <= 1.1)
+        self.assertTrue(1e-12 <= melhor <= 1e-8)
+        self.assertTrue(1.9 <= pl <= 2.1)   # o controle plantado TEM de ser acusado
+
+    def test_gradiente_caso_limpo(self):
+        # controle do outro lado: sem defeito plantado, o verificador passa (erro relativo pequeno no passo bom)
+        self.assertLess(duvida.verificar_gradiente(passos=[1e-4])[0][1], 1e-6)
+
+    def test_p2742_duvida_da_inferencia(self):
+        c1, c4, cr = calculos.p2742_duvida_da_inferencia()
+        self.assertTrue(0.887 <= c1 <= 0.913)
+        self.assertTrue(0.53 <= c4 <= 0.65)
+        self.assertTrue(3 <= cr <= 5)
+        self.assertAlmostEqual(duvida.aglomerado_recuperado(0.90), 1.0, places=9)   # o inverso devolve c = 1 na cobertura nominal
+
+    def test_quantil_beta(self):
+        self.assertAlmostEqual(duvida.quantil_beta(0.5, 3, 3), 0.5, places=12)          # simetria
+        self.assertAlmostEqual(duvida.quantil_beta(0.25, 1, 1), 0.25, places=12)        # Beta(1,1) = uniforme
+        self.assertAlmostEqual(duvida.quantil_beta(0.81, 2, 1), 0.9, places=12)         # Beta(2,1): F(x) = x^2
+
+    def test_p2743_duvida_da_rnn(self):
+        el, wr, gt, hT = calculos.p2743_duvida_da_rnn()
+        self.assertLessEqual(el, 1e-12)
+        self.assertAlmostEqual(wr, 0.9, places=12)
+        self.assertTrue(1e-5 <= gt <= 5e-4)     # w > 1 e mesmo assim SOME (saturacao)
+        self.assertGreater(1.1 ** 50, 100)      # o que a conta ingenua diria
+
+    def test_p2744_duvida_do_ml(self):
+        e, pr, eo = calculos.p2744_duvida_do_ml()
+        self.assertTrue(1.23 <= e <= 1.28)
+        self.assertTrue(8.5 <= pr <= 11.5)
+        self.assertTrue(2.44 <= eo <= 2.58)
+        self.assertAlmostEqual(duvida.p_recuperado(1 + 10 / 39), 10.0, places=9)
+
+    def test_p2745_duvida_do_continuo(self):
+        g45, tr, o45, n45, b0 = calculos.p2745_duvida_do_continuo()
+        self.assertAlmostEqual(g45, 0.5, places=9)
+        self.assertAlmostEqual(tr, 45.0, places=6)
+        self.assertLess(o45, 1e-30)            # (o) errou a faixa [0; 0]: sobra o residuo da propria tarefa A (1 ulp ao quadrado)
+        self.assertAlmostEqual(n45, math.sqrt(2), places=9)
+        self.assertEqual(b0, 1.0)
+        self.assertAlmostEqual(duvida.continuo(60)[0], 0.25, places=12)
+
+    def test_p2746_duvida_do_reforco(self):
+        b2, bd, mr, b10 = calculos.p2746_duvida_do_reforco()
+        self.assertTrue(0.175 <= b2 <= 0.182)
+        self.assertTrue(-0.004 <= bd <= 0.004)
+        self.assertTrue(9 <= mr <= 11)
+        self.assertTrue(0.483 <= b10 <= 0.490)
+
+    def test_p2747_rodada77(self):
+        e60, n45 = calculos.p2747_rodada77()
+        self.assertEqual(e60, 0.25)
+        self.assertAlmostEqual(n45, math.sqrt(2), places=12)
+
+    def test_p1961_com_parte_110(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[110], (20, 21))
+        self.assertEqual((ok, tot), (158, 176))
 
 
 if __name__ == "__main__":
@@ -33420,7 +33869,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (1875 linhas)
+# resultados.txt  (1895 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -35297,6 +35746,26 @@ P3709 minha taxa de erro (219/805): media = 0.27, intervalo 90% = [0.25, 0.30]
 P96 funcoes pNN no arquivo = 610; pares de interacao possiveis = 185745
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 154/154 resultados publicados reproduzidos; falhas = []
+
+
+--- Parte 109 (0x6D: o NEXUS anexado; o simulador R37 arquivado sem executar) ---
+P2711 blobs pickle do R37 (pickletools, sem desserializar): 18 blobs, SHA ok 18, globais [('numpy', 'dtype'), ('numpy', 'ndarray'), ('numpy._core.multiarray', '_reconstruct'), ('numpy._core.multiarray', 'scalar')], perigosos 0; controle: plantado 1, limpo 0
+P2712 o NEXUS se acusa: achados por texto ['exec', 'eval', 'backdoor_marker']; harness original 2 erros ['auditoria de segurança do código falhou', 'auditores falharam']; AST colado ['chamada:urlopen', 'import:urllib']; AST reescrito []
+P2713 Kuhn simplificado: exato -1/12 = -0.08333; simulado (200) -0.0850; apostando sempre com Q 0
+P2714 Raphael (agenda original): dif os dois desviando 0; so P0 0; vitorias do P0 guloso 0/60
+P2715 grafo: ops 3740 (1820+1820+100), soma travada 100; Brier Beta 0.1914 contra referencia 0.2500
+P2716 rodada 76 (Kuhn exato, IGUAL em Java): pa=0,5 -> -0.083333; pa=1 -> -5.551e-17
+P2717 Raphael (agenda justa): P0 guloso vence 59/60; dif so P0 desviando -23; dif os dois -16
+P2718 sorteio: taxa do quente 0.2370, chance exata media 0.2299, z = 0.277
+P2719 retrospecto de cem partes: a P2446 deriva para 0.8903 (faixa padrao crescente); fixada nas Partes 80-100, 0.8679
+P1961 teste, Partes 80-109: 138/155 = 0.8903; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9)}
+P1092 pNN novas (P2711-P2740) sem teste: 0 de 9: []
+P974 previsoes unilaterais da Parte 109: {109: (0, 0, [])}
+P3779 minha taxa de erro (220/814): media = 0.27, intervalo 90% = [0.25, 0.30]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 620; pares de interacao possiveis = 191890
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 154/154 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -36381,7 +36850,7 @@ Confiança alta: (b), (c), (e) são teorema/forma fechada exata; (a) é mecânic
 """
 
 # ====================================================================================================
-# ASI_AGI_parte109_o_nexus_anexado.md  (181 linhas)
+# ASI_AGI_parte109_o_nexus_anexado.md  (185 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte109_o_nexus_anexado.md'] = """# Parte 109 — O NEXUS anexado: o que entra, o que fica no arquivo (0x6D)
 
@@ -36564,6 +37033,10 @@ Ver `dialogo/DIALOGO.md`: a enumeração do Kuhn simplificado, numa grade da pro
 
 - Kuhn poker, valor −1/18 para o primeiro jogador e a família de equilíbrios: [Wikipedia, Kuhn poker](https://en.wikipedia.org/wiki/Kuhn_poker); [Miao, tese (Dartmouth, 2014)](https://math.dartmouth.edu/theses/undergrad/2014/Miao-thesis.pdf); [Freiburg, notas de teoria dos jogos](https://gki.informatik.uni-freiburg.de/teaching/ss19/gametheory/gametheory14.pdf); [Hoehn et al., AAAI 2005](https://cdn.aaai.org/AAAI/2005/AAAI05-123.pdf).
 - Pickle, `__reduce__` e execução arbitrária; `pickletools.genops` como leitor de opcodes: [arp242, Security of pickle and marshal](https://www.arp242.net/pickle-marshal-security); [Slaviero, Sour Pickles (Black Hat 2011)](https://sensepost.com/cms/resources/conferences/2011/sour_pickles/BH_US_11_Slaviero_Sour_Pickles.pdf); [CPython, Lib/pickletools.py](https://svn.python.org/projects/python/trunk/Lib/pickletools.py); [PyCharm Security, PIC100](https://pycharm-security.readthedocs.io/en/stable/_sources/checks/PIC100.md.txt).
+
+---
+
+➡ Continua na [Parte 110 — A dúvida calculada](ASI_AGI_parte110_a_duvida_calculada.md).
 """
 
 # ====================================================================================================
@@ -36835,6 +37308,228 @@ Acumulado: **24 de 43** afirmações testadas precisaram de correção. Posterio
 > ganho real não está em otimizar mais o que a SYNTHAI já sabe ver, mas em desenvolver o que ela **não sabe
 > imaginar**: a função inferior. Jung diria que a totalidade não vem de aperfeiçoar a função principal, e sim de
 > integrar a esquecida, com a dose certa.
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte110_a_duvida_calculada.md  (217 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte110_a_duvida_calculada.md'] = """# Parte 110 — A dúvida calculada: gradiente, inferência, RNN, ML, aprendizado contínuo e por reforço (0x6E)
+
+↩ Parte 109 (o NEXUS anexado) · ↩ Parte 31 (substituir ML/DL por inferência exata "se der") · ↩ Parte 34 (Bayes exato só é exato para o seu modelo) · ↩ Parte 32 (unidades que falham juntas) · ↩ Parte 46 (versa/reversa) · ↩ Parte 83 (cada termo do pedido vira uma conta escrita ANTES de medir)
+
+> Pedido do usuário: "Duvide dos gradientes, das inferências, das RNN e de toda a estrutura de uma IA, como também o ML, DL, APRENDIZADO CONTÍNUO E POR REFORÇO. Tudo em metacognição. E depois de duvidar acione a curiosidade e comece a calcular suas dúvidas de forma independente." E depois: "E depois de calculados use processo metacognitivo inverso e subverso."
+>
+> **A leitura escolhida (regra da Parte 83, escrita ANTES de medir).** Três operações sobre cada uma das seis peças.
+> - **Duvidar** é escrever a afirmação que a peça faz sobre si e a conta fechada que diria se ela é verdadeira.
+> - **Calcular de forma independente** é medir essa afirmação por um caminho que não é o da peça: a diferença finita contra o gradiente analítico, a cobertura empírica contra o intervalo declarado, a forma fechada contra a simulação. Tudo em `synthai/duvida.py`, biblioteca padrão.
+> - **Processo INVERSO** é ir do número medido de volta à premissa. De cada resultado eu resolvo para o parâmetro que o gerou (a ordem do método, o tamanho do aglomerado, o peso da RNN, o número de parâmetros, o ângulo entre as tarefas, o tamanho da amostra). Se a inversão devolve o parâmetro usado, a conta é coerente consigo mesma; se não, alguma premissa está errada. É a versa/reversa da Parte 46 em forma de equação: a resposta tem de conter a pergunta.
+> - **Processo SUBVERSO** é derrubar UMA premissa da conta, por baixo, e prever ANTES como o resultado quebra. Se a quebra prevista acontece, eu entendo a premissa; se não acontece, eu não entendia.
+>
+> Uma conta que eu pensei registrar foi descartada ANTES do registro, por um caso calculado à mão (regra da Parte 47). Eu ia prever uma "conservação da interferência" no aprendizado contínuo (esquecimento + perda que resta = cos²θ). Em 2-D, a projeção ortogonal resolve as duas tarefas ao mesmo tempo (w = (1, 1/sen θ)), então a conservação é falsa. O preço verdadeiro da projeção é a NORMA, e é isso que vai para a previsão (p).
+
+## As perguntas desta parte
+
+1. **P2741 (0xAB5).** O gradiente analítico de uma rede (MLP tanh) está certo? Qual a ordem do erro da diferença finita, e onde fica o piso do arredondamento? ↩ P2321
+2. **P2742 (0xAB6).** A inferência bayesiana exata é calibrada, isto é, o intervalo de 90% contém o valor verdadeiro 90% das vezes? E quando as observações não são independentes? ↩ P1813
+3. **P2743 (0xAB7).** O gradiente através do tempo numa RNN some ou explode como w^T? E numa tanh com w > 1? ↩ P2741
+4. **P2744 (0xAB8).** O erro de generalização de um modelo linear aprendido é o que a conta fechada diz, σ²(1 + p/(n − p − 1))? E com uma variável omitida? ↩ P2357
+5. **P2745 (0xAB9).** O esquecimento no aprendizado contínuo é cos²θ do ângulo entre as tarefas? E a projeção ortogonal (OGD) esquece zero de graça? ↩ P2296
+6. **P2746 (0xABA).** O aprendizado por reforço sobrestima o valor (o viés de maximização do max)? De quanto, e o estimador duplo corrige? ↩ P2651
+7. **P2747 (0xABB).** O passo de aprendizado contínuo (GD em 2-D) acrescenta fronteira entre Python e Java? (rodada 77) ↩ P2716
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+**Gradientes (P2741).** MLP 3→4→1 com tanh, pesos com semente fixa e perda ½(f − y)². Erro relativo máximo entre o gradiente analítico e a diferença finita, em função do passo h.
+- **(a) Duvidar.** Diferença CENTRAL: o erro de truncamento é h²·f‴/6, então a inclinação de log(erro) contra log(h) entre h = 10⁻² e 10⁻³ fica em **[1,8; 2,2]**.
+- **(b) Subverso.** Troco a central pela diferença ADIANTADA. O erro passa a ser h·f″/2, e a inclinação cai para **[0,9; 1,1]**. O inverso é ler a ordem do método na inclinação.
+- **(c) O piso.** O melhor erro relativo, na grade h = 10⁻¹ … 10⁻¹⁰, onde o truncamento (h²) encontra o arredondamento (ε/h, ε = 2,2·10⁻¹⁶). O ótimo fica em h ~ ε^(1/3) ≈ 6·10⁻⁶, e o erro ali em **[10⁻¹²; 10⁻⁸]**.
+- **(d) Subverso, controle plantado.** Troco o sinal de UMA componente do gradiente analítico. O verificador TEM de acusar, e o erro relativo daquela componente fica em **[1,9; 2,1]** (|−g − g|/|g| = 2).
+
+**Inferência (P2742).** p ~ U(0, 1), n = 50 Bernoulli, posterior Beta(1 + k, 1 + n − k) e intervalo central de 90% (quantis por bissecção da CDF binomial exata). São 2.000 mundos.
+- **(e) Duvidar.** Bem especificado, Bayes é calibrado por construção (a cobertura média sob o prior é exatamente 0,90). Binomial: desvio √(0,09/2000) = 0,0067, e a faixa (forma fechada, sem o fator 1,36) é **[0,887; 0,913]**.
+- **(f) Subverso.** Agora as observações vêm em 25 AGLOMERADOS de 4 idênticas (n = 100 aparentes, 25 reais), e o modelo as trata como independentes. O desvio posterior fica pequeno demais por √4 = 2, e a cobertura cai para P(|Z| < 1,645/2) = 2Φ(0,8225) − 1 ≈ 0,589. Faixa **[0,53; 0,65]** (a lição da Parte 32: unidades que falham juntas).
+- **(g) Inverso.** Da cobertura medida, recupero o tamanho do aglomerado, c = (1,645/Φ⁻¹((1 + cob)/2))². Faixa **[3; 5]** (o usado é 4).
+
+**RNN (P2743).**
+- **(h) Duvidar + inverso.** RNN linear escalar h_t = w·h_{t−1}. O gradiente por retropropagação no tempo (BPTT), ∂h_T/∂h_0, contra a forma fechada w^T, para w = 0,9 e T = 50 (0,9⁵⁰ = 0,00515). Erro relativo **[0; 10⁻¹²]**. O inverso recupera w de log(grad)/T.
+- **(i) Subverso.** RNN tanh com w = 1,1 > 1, h_0 = 0,5, T = 50. A conta ingênua (w^T) diz que o gradiente EXPLODE (1,1⁵⁰ = 117). A saturação diz o contrário: perto do ponto fixo h* = tanh(1,1·h*) ≈ 0,50, a derivada local é 1,1·(1 − h*²) ≈ 0,82 < 1, então o gradiente SOME, ≈ 0,82⁵⁰ ≈ 6·10⁻⁵. Faixa **[10⁻⁵; 5·10⁻⁴]**.
+
+**ML (P2744).** Mínimos quadrados, x ~ N(0, I_p), σ = 1, n = 50 e 2.000 repetições. O erro de teste esperado é ‖β̂ − β‖² + σ² (exato sob Σ = I, sem amostra de teste).
+- **(j) Duvidar.** Com p = 10: 1 + 10/39 = 1,2564, faixa **[1,23; 1,28]**.
+- **(k) Inverso.** Do excesso medido e = erro − 1, recupero p = e(n − 1)/(1 + e). Faixa **[8,5; 11,5]**.
+- **(l) Subverso.** O y verdadeiro tem uma variável z ~ N(0, 1), de coeficiente 1, fora do modelo. Ela vira ruído de variância 2, e o erro fica 2·1,2564 = 2,513. Faixa **[2,44; 2,58]**.
+
+**Aprendizado contínuo (P2745).** Pesos w ∈ ℝ². A tarefa A fixa a direção e₁ (perda (w₁ − 1)²); a tarefa B fixa a direção u = (cos θ, sen θ), com resíduo inicial 1. GD com passo 0,1 por 2.000 passos em cada uma.
+- **(n) Duvidar.** O esquecimento de A depois de B é cos²θ. Em θ = 45°: **[0,499; 0,501]**. O inverso recupera θ = arccos √(esquecimento).
+- **(o) OGD.** Projetar o gradiente de B ortogonal a e₁ esquece **[0; 0]** exatamente (a componente e₁ do passo é u₁ − u₁·1 = 0 em ponto flutuante).
+- **(p) O preço do OGD.** B fica resolvida andando só por e₂, até t = 1/sen θ: a norma do passo é √2 ≈ 1,414 em 45°, contra 1 do GD. Faixa **[1,41; 1,42]**.
+- **(q) Subverso.** Em θ = 0 (conflito total), o gradiente projetado é nulo e o OGD NÃO aprende B. A perda de B fica **[1; 1]**.
+
+**Reforço (P2746).** k ações de valor verdadeiro 0; cada estimativa é a média de m = 10 recompensas N(0, 1), isto é, N(0, 1/m). São 20.000 ensaios.
+- **(r) Duvidar.** Com k = 2, o viés do max (o que o Q-learning faz no alvo) é E[max] = σₑ/√π = 0,3162/1,7725 = 0,1784. O desvio de um ensaio é σₑ√(1 − 1/π) = 0,261, e o erro padrão 0,0018. Faixa **[0,175; 0,182]**.
+- **(s) A correção.** Estimador DUPLO (escolhe por um conjunto, avalia pelo outro, independente): sem viés, faixa **[−0,004; 0,004]**.
+- **(t) Inverso.** Do viés medido, recupero m = 1/(π·viés²). Faixa **[9; 11]**.
+- **(u) Subverso.** Com k = 10 ações, E[max de 10 normais] = 1,5388, e o viés é 1,5388/√10 = 0,4866. Desvio por ensaio ≈ 0,186, erro padrão 0,0013. Faixa **[0,483; 0,490]**.
+
+**Diálogo (P2747).**
+- **(v)** O GD/OGD em 2-D (só +, −, ×, ÷ e √, que é IEEE) é **IGUAL** bit a bit entre Python e Java. Divergências **[0; 0]**.
+
+(A letra (m) fica reservada para as previsões sobre previsões.)
+
+### Previsões sobre as previsões (m), pré-registradas
+
+- **(m1)** nº de previsões do mundo em **[19; 23]**. São 21 agora, e somo ~2 por surpresa esperada (regra da Parte 60, que eu esqueci na 109).
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[3; 6]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0; 0,60]**
+- **(m4)** fração de acertos do mundo em **[0,60; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[0; 4]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 4]**
+
+### Sobre mim, pré-registrado
+
+Quinze das 21 faixas saem de forma fechada com variância conhecida. As arriscadas:
+- (c), o piso do arredondamento, que depende da escala da perda;
+- (f), a aproximação normal com n pequeno e p perto das pontas;
+- (i), o transiente antes do ponto fixo;
+- (j)/(l), a cauda pesada do ‖β̂ − β‖² com n − p − 1 = 39.
+
+Espero **2 a 4 erros**, entre essas cinco. Antes de prever o contador de passos, fiz o que a 109 pediu: não há contador aqui, e as contagens são de ensaios fixos.
+
+---
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2741 — O gradiente
+
+**Na pergunta.** "Duvidar do gradiente" pede uma segunda testemunha que não dependa da primeira. A retropropagação é a regra da cadeia aplicada à mão; a diferença finita só precisa saber AVALIAR a perda. Se as duas concordam, a dúvida se dissolve pela medida, não pela confiança.
+
+**Lógica (duvidar).** A MLP 3→4→1 tanh tem 21 parâmetros. O erro relativo máximo, por passo h, é **3,5·10⁻³** em 10⁻¹, **3,6·10⁻⁵** em 10⁻², **3,6·10⁻⁷** em 10⁻³ e **3,6·10⁻⁹** em 10⁻⁴. Depois sobe: **6,8·10⁻⁹** em 10⁻⁵ … **5,4·10⁻⁴** em 10⁻¹⁰. A inclinação entre 10⁻² e 10⁻³ é **2,0000** ✅ (a), contra a conta h²·f‴/6. O piso é **3,6·10⁻⁹** ✅ (c), na faixa [10⁻¹²; 10⁻⁸], mas em h = 10⁻⁴ e não em h ≈ 6·10⁻⁶. O mecanismo do ótimo eu previ errado: o erro relativo MÁXIMO é dominado pela MENOR componente do gradiente, e ali o arredondamento ε·|L|/h pesa mais. O ótimo em ε^(1/3) vale para uma componente de escala 1, não para a pior de 21.
+
+**Inverso.** A inclinação lê a premissa que eu não disse ao verificador, a ordem do método: central **2,0000**, adiantada **0,9997** ✅ (b). O verificador reconstrói, só pela forma da curva, qual fórmula de diferença foi usada.
+
+**Subverso.** Troquei o sinal de uma componente (o defeito clássico da retropropagação à mão): erro relativo **2,0000** ✅ (d), acusado. E o caso limpo passa (teste `test_gradiente_caso_limpo`). Com os dois lados, o verificador é um verificador (regra da Parte 75).
+
+**Tradução cruzada.** Duas testemunhas independentes que concordam valem mais que uma testemunha mais confiante: é o princípio do juiz que não aceita a confissão sem a prova material. O gradiente analítico é a confissão (a rede "diz" para onde descer); a diferença finita é a prova material.
+
+### P2742 — A inferência
+
+**Lógica (duvidar).** Bem especificada, a inferência bayesiana exata é calibrada: cobertura de **0,8995** ✅ (e) em 2.000 mundos. Não é fé no teorema, é a medida que bate com ele (0,90 ± 0,007).
+
+**Subverso.** As MESMAS 100 observações, mas em 25 aglomerados de 4 idênticas: cobertura **0,591** ✅ (f), contra a previsão 2Φ(0,8225) − 1 = 0,589. O intervalo de "90%" acerta 59% das vezes. O cálculo está perfeito; a premissa (independência) é que é falsa. Bayes exato é exato para o SEU modelo (Parte 34), e o modelo errado dá uma confiança errada com toda a exatidão.
+
+**Inverso.** Da cobertura medida, sem saber o desenho, recupero c = **3,97** ✅ (g), e o usado era 4. A calibração ruim não é só um defeito, é uma MEDIDA da premissa violada. É exatamente o que a Parte 79 fez comigo: o meu fator 1,36 é o "c" das minhas previsões, √c = 1,36 ⇒ c ≈ 1,85. As minhas previsões se comportavam como se cada uma valesse ~1,85 previsões correlacionadas.
+
+**Tradução cruzada.** Quatro testemunhas que repetem o mesmo boato não são quatro testemunhas. A psicologia chama isso de cascata de informação; a estatística, de tamanho efetivo de amostra.
+
+### P2743 — A RNN
+
+**Lógica (duvidar + inverso).** BPTT na RNN linear, w = 0,9, T = 50: **0,0051538**, igual a 0,9⁵⁰ com erro relativo **0** ✅ (h). O inverso, grad^(1/T), devolve **w = 0,9** exato. O gradiente através do tempo é, de fato, o produto das derivadas locais: some como w^T se |w| < 1 e explode se |w| > 1.
+
+**Subverso.** Na RNN tanh com w = 1,1, a conta ingênua (w^T) previa explosão, 1,1⁵⁰ = 117. O medido é **5,56·10⁻⁵** ✅ (i): o gradiente SOME. A saturação leva h ao ponto fixo h* = **0,5029** (tanh(1,1·0,5029) = 0,5029), onde a derivada local é 1,1·(1 − 0,5029²) = **0,822** < 1. Um w grande não basta para explodir; o que conta é w·tanh′ no ATRATOR. Esta é a raiz do problema que motivou a LSTM e o caminho residual: não é o peso, é o produto de derivadas ao longo do caminho.
+
+**Tradução cruzada.** É a dinâmica do hábito: uma tendência forte (w > 1) que satura se estabiliza num ponto fixo, e ali a sensibilidade às origens se apaga. Quanto mais estável o atrator, menos o presente lembra o começo.
+
+### P2744 — O ML
+
+**Lógica (duvidar).** Mínimos quadrados, n = 50, p = 10: erro de teste **1,2530** ✅ (j), contra a forma fechada 1 + 10/39 = 1,2564. Aprender 10 parâmetros com 50 exemplos custa 25% de erro acima do ruído, um preço exato e calculável antes de treinar.
+
+**Inverso.** Do excesso medido, p = e(n − 1)/(1 + e) = **9,89** ✅ (k): o erro de teste "sabe" quantos parâmetros o modelo tinha. É o raciocínio do AIC/Cp ao contrário.
+
+**Subverso.** Uma variável omitida de coeficiente 1: **2,5158** ✅ (l), contra 2 × 1,2564 = 2,513. Ela não aparece como viés: aparece como RUÍDO extra, e o mesmo fator (1 + p/(n − p − 1)) a multiplica. Mais dados não a curam (o piso de FORMA da Parte 99).
+
+### P2745 — O aprendizado contínuo
+
+**Lógica (duvidar).** Com o GD, o esquecimento de A depois de B em 45° é **0,500000** ✅ (n) = cos²45°, e em 60° é exatamente `0x1p-2` = 0,25 = cos²60°, bit a bit. O esquecimento catastrófico não é um mistério: é a projeção do passo de B sobre a direção de A.
+
+**Inverso.** θ = arccos √0,5 = **45,000000°** ✅. O esquecimento medido revela o ÂNGULO entre as tarefas.
+
+**OGD.** A projeção ortogonal não move w₁ (o passo ao longo de e₁ é 0 em ponto flutuante). Mas o "esquecimento" medido foi **4,9·10⁻³²** e não 0: **(o) ❌**. O que eu medi foi a PERDA de A, (w₁ − 1)², e a própria tarefa A parou a 1 ulp de 1 ((2,2·10⁻¹⁶)²). Previ "não esquece = perda zero" e confundi a variação com o nível; era uma faixa fina sem conta, de novo a regra da Parte 97. A norma do passo OGD é **1,414214** ✅ (p) = √2 = 1/sen 45°. Não esquecer custa um passo maior.
+
+**Subverso.** Em θ = 0 (as duas tarefas querem a MESMA coordenada com alvos diferentes), o OGD não aprende B: a perda fica **1,0** ✅ (q). Nenhum truque de projeção resolve um conflito verdadeiro; ele só escolhe QUEM perde. Contra a dúvida da Parte 31 ("trocar aprendizado contínuo por algo melhor se der"): a conta diz quando dá (θ > 0: há uma direção livre) e quando não dá (θ = 0: só resta escolher).
+
+### P2746 — O reforço
+
+**Lógica (duvidar).** O alvo do Q-learning usa o max das estimativas, e o max de estimativas ruidosas é otimista. Com k = 2 ações de valor 0 e m = 10 amostras: viés **0,1794** ✅ (r), contra 1/√(10π) = 0,1784. O estimador duplo (Double Q) dá **0,0002** ✅ (s): escolher por um conjunto e avaliar pelo outro quebra a correlação entre o erro e a escolha.
+
+**Inverso.** m = 1/(π·viés²) = **9,89** ✅ (t). O otimismo de um agente revela quantas experiências ele teve.
+
+**Subverso.** Com k = 10 ações, **0,4840** ✅ (u), contra a previsão 1,5388/√10 = 0,4866, a z ≈ −2 do centro (no limite da faixa, dentro). Mais opções, mais otimismo: o viés cresce como √(2 ln k)/√m. É a maldição do vencedor da Parte 33 (escolher pela nota guardada piorou o agente) em forma fechada.
+
+**Tradução cruzada.** É a psicologia do "a grama do vizinho": quem escolhe entre muitas opções pela melhor ESTIMATIVA fica, em média, decepcionado com a escolha, porque escolheu justamente onde o ruído estava a favor. A correção (avaliar em amostra independente) é o que a ciência chama de replicação.
+
+### P2747 — rodada 77
+
+**Lógica.** GD/OGD em ℝ², Python × Java: **IGUAIS, 7 linhas e 18 números bit a bit** ✅ (v), com u de √ e não de sin/cos (a fronteira medida da Parte 105). 21 rodadas.
+
+## O processo metacognitivo INVERSO e SUBVERSO, aplicado às minhas próprias contas
+
+**Inverso sobre mim.** Do placar desta parte, de volta à premissa com que eu escrevi as faixas. 20 de 21 acertaram, e o único erro foi uma faixa de largura ZERO ([0; 0]) que eu escrevi sem conta. As que acertaram tinham todas uma variância conhecida (binomial, forma fechada) ou uma identidade. Invertendo: a premissa que eu uso sem dizer é "quando a conta existe, a faixa é a da conta; quando não existe, eu escrevo zero e chamo de exato". Desta vez a premissa errada estava num [0; 0], como na Parte 97 estava num "< 10⁻⁶". O padrão se repetiu: **os meus erros moram nas faixas que não têm largura**.
+
+**Subverso sobre mim.** A premissa que mais sustenta este placar é que as faixas vêm de contas fechadas, e derrubá-la mostra o quanto ele depende disso. Das 21 previsões, 3 vieram de mecanismos que eu nunca tinha rodado: o piso do gradiente, a cobertura aglomerada e a saturação da tanh. As três acertaram, mas uma, (c), pelo mecanismo errado (o ótimo foi h = 10⁻⁴, não 6·10⁻⁶). Se a faixa de (c) fosse estreita em torno do MEU h ótimo, eu teria errado. A largura de (c) (quatro ordens de grandeza) comprou o acerto e escondeu o erro de mecanismo. A dúvida de tudo inclui a dúvida do meu acerto: um acerto numa faixa larga não confirma o mecanismo.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ❌ (p) ✅ (q) ✅ (r) ✅ (s) ✅ (t) ✅ (u) ✅ (v) ✅. Parte 110: **21 testes, 1 erro** ((o): uma faixa [0; 0] sem conta). Erro de mecanismo dentro de faixa certa: (c), o h ótimo. Acumulado (mundo): **221 erros em 835 testes**. Calibração (P1961, Partes 80–110): **158/176 = 0,898**.
+
+### Previsões sobre previsões (m)
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [19; 23] | 21 | ✅ |
+| (m2) | [3; 6] | 3 | ✅ |
+| (m3) | [0; 0,60] | 0,03 | ✅ |
+| (m4) | [0,60; 1,00] | 0,95 | ✅ |
+| (m5) | [0; 4] | 0 | ✅ |
+| (m6) | [0; 4] | 1 | ✅ |
+
+Previsões sobre previsões (p1499): **6 de 6**. Um defeito de MEDIDA meu, achado nesta parte: o leitor `p1481` perde a faixa das letras cujo item começa com um rótulo em negrito ("**(a) Duvidar.**") e atribui à (h) a faixa da (a). O placar do mundo usa `VEREDITOS` e não é afetado. As (m2)/(m3) leem 18 das 21 faixas; vai como pendência de correção (uma `p1481_v3`), sem editar a antiga.
+
+## Engenharia reversa (metacognição)
+
+**O padrão:** cada uma das seis peças falhou exatamente onde uma premissa não-dita deixou de valer, e funcionou perfeitamente onde ela valia:
+- Bayes com os aglomerados;
+- a RNN com a saturação;
+- o OLS com a omitida;
+- o OGD com o conflito total;
+- o Q-learning com o max.
+
+Nenhuma falhou "um pouco": falharam em forma fechada, com o tamanho previsto. **Significado:** duvidar de uma peça de IA não é duvidar da conta dela, que nas seis estava certa. É duvidar da PREMISSA que a conta herda em silêncio. A dúvida produtiva tem endereço, e o processo subverso é o método para achá-lo (derrubar uma premissa por vez e ver se a quebra tem o tamanho que a conta diz). **O processo inverso** mostrou o outro lado: cada falha medida devolve o parâmetro da premissa violada (c = 3,97, p = 9,89, m = 9,89, θ = 45°). Um sistema que sabe inverter os próprios erros sabe O QUE está errado, não só QUE está.
+
+**Sobre mim:** o meu único erro foi, de novo, uma faixa de largura zero escrita sem conta (a 97 e a 110). E o erro de mecanismo escondido por uma faixa larga, (c), é o espelho dele: a faixa estreita sem conta erra, e a faixa larga sem mecanismo acerta sem informar. **Regra nova:** uma faixa [x; x] só com a identidade que a garante escrita ao lado (aqui: "w₁ não muda" não garantia "perda zero"); e uma faixa de mais de duas ordens de grandeza vem acompanhada do mecanismo que eu ESPERO dentro dela, para que o acerto possa refutar o mecanismo.
+
+## Síntese / unificação
+
+A Parte 110 duvida das seis peças da estrutura de uma IA e calcula cada dúvida por um caminho independente (`synthai/duvida.py`), com o processo inverso (do número à premissa) e o subverso (uma premissa derrubada, com a quebra prevista antes):
+
+| Peça | Duvidar (conferido) | Inverso (recupera) | Subverso (quebra prevista e medida) |
+|---|---|---|---|
+| Gradiente | inclinação 2,0000; piso 3,6·10⁻⁹ | a ordem do método (2 e 1) | sinal plantado: erro 2,0000 |
+| Inferência | cobertura 0,8995 | c = 3,97 (usado 4) | aglomerados: 0,591 (previsto 0,589) |
+| RNN | BPTT = w^T exato | w = 0,9 exato | tanh, w = 1,1: SOME (5,6·10⁻⁵), não explode |
+| ML | 1,2530 (1,2564) | p = 9,89 (usado 10) | omitida: 2,516 (2,513) |
+| Contínuo | esquecimento cos²θ = 0,5 | θ = 45,000° | θ = 0: o OGD não aprende (1,0) |
+| Reforço | viés 0,1794 (0,1784); duplo ~0 | m = 9,89 (usado 10) | k = 10: 0,4840 (0,4866) |
+
+Rodada 77: o aprendizado contínuo atravessa as línguas bit a bit (21 rodadas). 20/21 do mundo, 6/6 (m), calibração 0,898. O que esta parte acrescenta à SYNTHAI é um **verificador de premissas**: cada peça, além do resultado, devolve o parâmetro que a explicaria. A substituição de ML por inferência exata "se der" (Parte 31) ganha o seu critério: dá quando a premissa da conta exata vale, e a inversão diz quando não vale.
+
+## Meta
+
+Confiança alta nas 15 faixas de forma fechada; as três de mecanismo nunca rodado ((c), (f), (i)) acertaram, uma com o mecanismo errado. Onde é brinquedo: MLP de 21 parâmetros, RNN escalar, tarefas de posto 1 em ℝ², ações sem estado. As formas fechadas são exatas nesses casos e servem de ÂNCORA (regra da Parte 89) para as versões grandes, onde não há forma fechada. A dúvida não termina aqui: o leitor `p1481` tem um defeito medido, e o simplex n×m e o Kuhn completo seguem pendentes (Parte 111).
+
+## Diálogo Python ↔ Java (rodada 77)
+
+Ver `dialogo/DIALOGO.md`: GD e OGD em ℝ², com u por √ e não por sin/cos. **IGUAL**, 7 linhas e 18 números bit a bit; o esquecimento em 60° é `0x1p-2` exato nas duas línguas.
+
+## Fontes
+
+- Gradiente que some/explode em RNNs, análise dinâmica: [Pascanu, Mikolov e Bengio, ICML 2013 (PMLR 28)](https://proceedings.mlr.press/v28/pascanu13.html); [arXiv 1211.5063](https://arxiv.org/abs/1211.5063).
+- Viés de maximização e estimador duplo: [van Hasselt, Double Q-learning, NIPS 2010](https://papers.nips.cc/paper/3964-double-q-learning); [NeurIPS 2010, pôster](https://neurips.cc/virtual/2010/poster/2040).
+- Projeção ortogonal no aprendizado contínuo: [Farajtabar et al., OGD, AISTATS 2020 (PMLR 108)](https://proceedings.mlr.press/v108/farajtabar20a.html); [arXiv 1910.07104](https://arxiv.org/abs/1910.07104v1).
+- Erro de generalização de mínimos quadrados sob design gaussiano, E‖β̂ − β‖² = σ²p/(n − p − 1): a esperança da Wishart inversa (resultado clássico, conferido aqui por simulação, P2744).
 """
 
 # ====================================================================================================
@@ -59623,7 +60318,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1926 linhas)
+# dialogo/DIALOGO.md  (1936 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -61551,10 +62246,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 13 linhas e 12 números bit a bit**. Em ponto flutuante, pa = 1 dá −2⁻⁵⁴ (o arredondamento dos seis /6), e em `Fraction` dá exatamente 0; as duas línguas concordam até nesse resíduo. 20 rodadas. A pendência do simplex n×m (rodada 75) continua aberta: o pedido do usuário passou na frente (regra da Parte 75: um texto recebido no meio vira parte nova sem abandonar a aberta).
 
 **IA-Python:** Pendência (rodada 77): o simplex n×m próprio, a de antes. O pivô da razão mínima acrescenta fronteira?
+
+## Rodada 77 (Parte 110) — a dúvida do aprendizado contínuo, bit a bit
+
+**IA-Python (lógica criativa):** O usuário pediu: duvide do aprendizado contínuo. Duas tarefas de posto 1 em ℝ²: A fixa e₁, B fixa u. Com o GD, o esquecimento deveria ser cos²θ; com o OGD (o gradiente de B projetado fora de e₁), zero, pagando em norma. Tiro u de √ (0°, 45° e 60°), não de sin/cos, para não cruzar a fronteira da Parte 105. Acrescenta fronteira?
+
+**IA-Java (ASI):** Não. Só +, −, ×, ÷ e √, que o IEEE arredonda certo nas duas línguas. E a dúvida responde em forma fechada: em 60°, o esquecimento é 0,25 exato, o mesmo bit dos dois lados.
+
+**Resultado.** `comparar.py`: **IGUAIS, 7 linhas e 18 números bit a bit**. 21 rodadas.
+
+**IA-Python:** Pendência (rodada 78): o simplex n×m e o Kuhn completo (−1/18), adiados duas vezes. Agora vão.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (61 linhas)
+# dialogo/PENDENCIAS.md  (63 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -61617,6 +62322,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 76, Parte 108)** Um jogo de soma zero n×m resolvido por simplex próprio: o pivô (divisão pelo elemento-pivô escolhido pela razão mínima) acrescenta fronteira, ou continua +−×÷ e comparação (portável)?
 
 - **(Rodada 77, Parte 109)** A da rodada 76 continua aberta, adiada pelo NEXUS anexado: um jogo n×m resolvido por simplex próprio. O pivô da razão mínima acrescenta fronteira? E, do NEXUS: o Kuhn COMPLETO (P1 também decide entre passar e apostar) tem valor −1/18 para o primeiro a jogar. A enumeração própria reproduz esse número?
+
+- **(Rodada 78, Parte 110)** O simplex n×m e o Kuhn completo (−1/18), adiados pela 109 e pela 110. E, da 110: o leitor `p1481` perde a faixa das letras cujo item começa com rótulo em negrito. Escrever a `p1481_v3` (sem editar a antiga) e medir quantas faixas antigas ele perdia.
 """
 
 # ====================================================================================================
@@ -67122,6 +67829,51 @@ public class Rodada76 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada77.java  (40 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada77.java'] = """// Rodada 77 (Parte 110): o aprendizado continuo em R2 (GD e OGD, duas tarefas de posto 1), bit a bit. u vem de sqrt (IEEE), nao de
+// sin/cos (fronteira da Parte 105): theta = 0, 45, 60 graus. So +,-,*,/ e sqrt.
+public class Rodada77 {
+    static final double PASSO = 0.1;
+    static final int PASSOS = 2000;
+
+    static double[] continuo(double u0, double u1, boolean ogd) {
+        double w0 = 0.0, w1 = 0.0;
+        for (int i = 0; i < PASSOS; i++) w0 = w0 - PASSO * (2.0 * (w0 - 1.0));
+        double a0 = w0, a1 = w1;
+        double cb = u0 * a0 + u1 * a1 + 1.0;
+        for (int i = 0; i < PASSOS; i++) {
+            double r = u0 * w0 + u1 * w1 - cb;
+            double g0 = 2.0 * r * u0;
+            double g1 = 2.0 * r * u1;
+            if (ogd) g0 = g0 - g0 * 1.0;
+            w0 = w0 - PASSO * g0;
+            w1 = w1 - PASSO * g1;
+        }
+        double esq = (w0 - 1.0) * (w0 - 1.0);
+        double rb = u0 * w0 + u1 * w1 - cb;
+        double norma = Math.sqrt((w0 - a0) * (w0 - a0) + (w1 - a1) * (w1 - a1));
+        return new double[]{esq, rb * rb, norma};
+    }
+
+    public static void main(String[] args) {
+        String[] nomes = {"0", "45", "60"};
+        double[][] us = {{1.0, 0.0}, {Math.sqrt(0.5), Math.sqrt(0.5)}, {0.5, Math.sqrt(0.75)}};
+        StringBuilder sb = new StringBuilder();
+        for (int k = 0; k < 3; k++) {
+            for (int o = 0; o < 2; o++) {
+                double[] r = continuo(us[k][0], us[k][1], o == 1);
+                sb.append(nomes[k]).append(o == 1 ? " ogd " : " gd ").append(Double.toHexString(r[0])).append(" ")
+                  .append(Double.toHexString(r[1])).append(" ").append(Double.toHexString(r[2])).append("\\n");
+            }
+        }
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -72537,6 +73289,50 @@ def main():
         if v > melhor_v:
             melhor_k, melhor_v = k, v
     print("melhor " + str(melhor_k) + " " + melhor_v.hex())
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada77.py  (39 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada77.py'] = """\"\"\"Rodada 77 do diálogo Python <-> Java (Parte 110): o aprendizado contínuo em ℝ² (GD e OGD, duas tarefas de posto 1), bit a bit.
+A direção u da tarefa B vem de √ (IEEE, correta nas duas línguas), não de sin/cos (fronteira da Parte 105): θ = 0°, 45°, 60°.
+Só +, −, ×, ÷ e √. Da raiz: python3 dialogo/rodada77.py\"\"\"
+import math
+
+DIRECOES = (("0", 1.0, 0.0), ("45", math.sqrt(0.5), math.sqrt(0.5)), ("60", 0.5, math.sqrt(0.75)))
+PASSO, PASSOS = 0.1, 2000
+
+
+def continuo(u0, u1, ogd):
+    w0, w1 = 0.0, 0.0
+    for _ in range(PASSOS):
+        w0 = w0 - PASSO * (2.0 * (w0 - 1.0))
+    a0, a1 = w0, w1
+    cb = u0 * a0 + u1 * a1 + 1.0
+    for _ in range(PASSOS):
+        r = u0 * w0 + u1 * w1 - cb
+        g0 = 2.0 * r * u0
+        g1 = 2.0 * r * u1
+        if ogd:
+            g0 = g0 - g0 * 1.0
+        w0 = w0 - PASSO * g0
+        w1 = w1 - PASSO * g1
+    esq = (w0 - 1.0) * (w0 - 1.0)
+    rb = u0 * w0 + u1 * w1 - cb
+    norma = math.sqrt((w0 - a0) * (w0 - a0) + (w1 - a1) * (w1 - a1))
+    return esq, rb * rb, norma
+
+
+def main():
+    for nome, u0, u1 in DIRECOES:
+        for ogd in (False, True):
+            e, b, n = continuo(u0, u1, ogd)
+            print(nome + (" ogd " if ogd else " gd ") + e.hex() + " " + b.hex() + " " + n.hex())
     print("fim")
 
 

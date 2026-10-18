@@ -95,7 +95,7 @@ class TesteParte109(unittest.TestCase):
         self.assertGreater(kf, 400)
 
     def test_p1961_com_parte_109(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 110))))
         self.assertEqual(por[109], (8, 9))
         self.assertEqual((ok, tot), (138, 155))
 

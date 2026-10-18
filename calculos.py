@@ -9614,6 +9614,8 @@ VEREDITOS_P3709 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅"
 ERROS_P3709, TESTES_P3709 = 219, 805
 VEREDITOS_P3779 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ✅ (h) ✅ (i) ✅"
 ERROS_P3779, TESTES_P3779 = 220, 814
+VEREDITOS_P3849 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ❌ (p) ✅ (q) ✅ (r) ✅ (s) ✅ (t) ✅ (u) ✅ (v) ✅"
+ERROS_P3849, TESTES_P3849 = 221, 835
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12154,12 +12156,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14051,6 +14053,86 @@ def p2719_retrospecto_cem_v2():
     return k, rodadas, frac
 
 
+def p2741_duvida_do_gradiente():
+    """Duvidar do gradiente (P2741; Parte 110): o gradiente analitico de uma MLP 3->4->1 tanh contra a diferenca finita. A inclinacao de log(erro)
+    contra log(h) le a ORDEM do metodo (o inverso): central ~2, adiantada ~1 (o subverso); o piso e o melhor erro relativo na grade; e o controle
+    plantado (sinal trocado numa componente) tem erro relativo 2. Devolve (inclinacao central, inclinacao adiantada, melhor erro, h do melhor,
+    erro do plantado)."""
+    from synthai import duvida
+    c = duvida.verificar_gradiente()
+    f = duvida.verificar_gradiente(central=False)
+    h_melhor, melhor = min(c, key=lambda t: t[1])
+    plantado = duvida.verificar_gradiente(plantar=5, passos=[1e-5])[0][1]
+    return duvida.inclinacao(c), duvida.inclinacao(f), melhor, h_melhor, plantado
+
+
+def p2742_duvida_da_inferencia():
+    """Duvidar da inferencia (P2742; Parte 110): a cobertura do intervalo bayesiano de 90% (Beta-Bernoulli, p ~ U(0,1)) bem especificado (~0,90)
+    e com aglomerados de 4 observacoes identicas tratadas como independentes (o subverso: P(|Z| < 1,645/2) ~ 0,589); o inverso recupera o
+    aglomerado c da cobertura. Devolve (cobertura independente, cobertura aglomerada, c recuperado)."""
+    from synthai import duvida
+    c1 = duvida.cobertura_bayes()
+    c4 = duvida.cobertura_bayes(n=100, aglomerado=4)
+    return c1, c4, duvida.aglomerado_recuperado(c4)
+
+
+def p2743_duvida_da_rnn():
+    """Duvidar da RNN (P2743; Parte 110): BPTT na RNN linear contra w^T (w = 0,9, T = 50) e o inverso (w de volta); e o subverso: a RNN tanh com
+    w = 1,1 > 1, que a conta ingenua faria explodir (1,1^50 = 117), SOME pela saturacao (derivada local ~0,82 no ponto fixo). Devolve (erro
+    relativo linear, w recuperado, gradiente tanh, h final)."""
+    from synthai import duvida
+    g = duvida.bptt_linear(0.9, 50)
+    gt, hT = duvida.bptt_tanh(1.1, 50)
+    return abs(g - 0.9 ** 50) / 0.9 ** 50, duvida.w_recuperado(g, 50), gt, hT
+
+
+def p2744_duvida_do_ml():
+    """Duvidar do ML (P2744; Parte 110): o erro de generalizacao de minimos quadrados (n = 50, p = 10, x ~ N(0, I)) contra 1 + p/(n - p - 1) =
+    1,2564; o inverso recupera p do excesso; o subverso poe uma variavel omitida (coeficiente 1), que dobra o ruido: 2,513. Devolve (erro, p
+    recuperado, erro com omitida)."""
+    from synthai import duvida
+    e = duvida.erro_generalizacao()
+    return e, duvida.p_recuperado(e), duvida.erro_generalizacao(omitida=1.0)
+
+
+def p2745_duvida_do_continuo():
+    """Duvidar do aprendizado continuo (P2745; Parte 110): duas tarefas de posto 1 em R2; o esquecimento do GD e cos^2(theta) (0,5 em 45 graus; o
+    inverso devolve theta); o OGD nao move w1 (esquecimento = so o residuo da propria tarefa A, 1 ulp ao quadrado) e paga em norma (1/sen theta);
+    o subverso: em theta = 0 o OGD nao aprende B. Devolve (esquecimento GD 45, theta recuperado, esquecimento OGD 45, norma OGD 45, perda B OGD 0)."""
+    from synthai import duvida
+    gd = duvida.continuo(45)
+    og = duvida.continuo(45, ogd=True)
+    og0 = duvida.continuo(0, ogd=True)
+    return gd[0], duvida.theta_recuperado(gd[0]), og[0], og[2], og0[1]
+
+
+def p2746_duvida_do_reforco():
+    """Duvidar do reforco (P2746; Parte 110): o vies de maximizacao do alvo do Q-learning, E[max] de k estimativas sem valor; k = 2 e m = 10:
+    1/sqrt(pi m) = 0,1784; o estimador duplo (Double Q) ~0; o inverso recupera m; o subverso k = 10: 1,5388/sqrt(10) = 0,4866. Devolve (vies k=2,
+    vies duplo, m recuperado, vies k=10)."""
+    from synthai import duvida
+    b = duvida.vies_do_max()
+    return b, duvida.vies_do_max(duplo=True), duvida.m_recuperado(b), duvida.vies_do_max(k=10)
+
+
+def _rodada77():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada77", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada77.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2747_rodada77():
+    """Rodada 77 (P2747; Parte 110): o aprendizado continuo em R2 (GD e OGD, u por sqrt e nao por sin/cos), IGUAL em Java bit a bit. Devolve o
+    esquecimento do GD em 60 graus (exatamente 0,25 = cos^2 60) e a norma do OGD em 45 graus (sqrt 2)."""
+    r = _rodada77()
+    e60 = r.continuo(0.5, math.sqrt(0.75), False)[0]
+    n45 = r.continuo(math.sqrt(0.5), math.sqrt(0.5), True)[2]
+    return e60, n45
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -15353,6 +15435,30 @@ def _parte_109():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3779, testes=TESTES_P3779)
     print(f"P3779 minha taxa de erro ({ERROS_P3779}/{TESTES_P3779}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_110():
+    print("--- Parte 110 (0x6E: a duvida calculada; inverso e subverso) ---")
+    ic, ia, melhor, hm, pl = p2741_duvida_do_gradiente()
+    print(f"P2741 gradiente: inclinacao central {ic:.4f}, adiantada {ia:.4f}; melhor erro {melhor:.2e} em h={hm:.0e}; plantado {pl:.6f}")
+    c1, c4, cr = p2742_duvida_da_inferencia()
+    print(f"P2742 inferencia: cobertura 90% independente {c1:.4f}; aglomerada (c=4) {c4:.4f}; c recuperado {cr:.3f}")
+    el, wr, gt, hT = p2743_duvida_da_rnn()
+    print(f"P2743 RNN: erro relativo BPTT linear {el:.1e}, w recuperado {wr:.12f}; tanh w=1,1: gradiente {gt:.3e} (h_T={hT:.4f})")
+    e, pr, eo = p2744_duvida_do_ml()
+    print(f"P2744 ML: erro de generalizacao {e:.4f} (1,2564), p recuperado {pr:.2f}; com variavel omitida {eo:.4f} (2,513)")
+    g45, tr, o45, n45, b0 = p2745_duvida_do_continuo()
+    print(f"P2745 continuo: esquecimento GD 45 {g45:.6f}, theta recuperado {tr:.6f}; OGD 45 esquece {o45:.2e}, norma {n45:.6f}; OGD em 0: perda B {b0}")
+    b2, bd, mr, b10 = p2746_duvida_do_reforco()
+    print(f"P2746 reforco: vies do max k=2 {b2:.4f} (0,1784), duplo {bd:.5f}, m recuperado {mr:.2f}; k=10 {b10:.4f} (0,4866)")
+    e60, n45r = p2747_rodada77()
+    print(f"P2747 rodada 77 (IGUAL em Java): esquecimento GD 60 = {e60!r}; norma OGD 45 = {n45r!r}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-110: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2741, 2770)
+    print(f"P1092 pNN novas (P2741-P2770) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 110: {p974_previsoes_sem_largura(range(110, 111))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P3849, testes=TESTES_P3849)
+    print(f"P3849 minha taxa de erro ({ERROS_P3849}/{TESTES_P3849}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -15389,7 +15495,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110}
 
 
 if __name__ == "__main__":

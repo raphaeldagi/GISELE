@@ -1924,3 +1924,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 13 linhas e 12 números bit a bit**. Em ponto flutuante, pa = 1 dá −2⁻⁵⁴ (o arredondamento dos seis /6), e em `Fraction` dá exatamente 0; as duas línguas concordam até nesse resíduo. 20 rodadas. A pendência do simplex n×m (rodada 75) continua aberta: o pedido do usuário passou na frente (regra da Parte 75: um texto recebido no meio vira parte nova sem abandonar a aberta).
 
 **IA-Python:** Pendência (rodada 77): o simplex n×m próprio, a de antes. O pivô da razão mínima acrescenta fronteira?
+
+## Rodada 77 (Parte 110) — a dúvida do aprendizado contínuo, bit a bit
+
+**IA-Python (lógica criativa):** O usuário pediu: duvide do aprendizado contínuo. Duas tarefas de posto 1 em ℝ²: A fixa e₁, B fixa u. Com o GD, o esquecimento deveria ser cos²θ; com o OGD (o gradiente de B projetado fora de e₁), zero, pagando em norma. Tiro u de √ (0°, 45° e 60°), não de sin/cos, para não cruzar a fronteira da Parte 105. Acrescenta fronteira?
+
+**IA-Java (ASI):** Não. Só +, −, ×, ÷ e √, que o IEEE arredonda certo nas duas línguas. E a dúvida responde em forma fechada: em 60°, o esquecimento é 0,25 exato, o mesmo bit dos dois lados.
+
+**Resultado.** `comparar.py`: **IGUAIS, 7 linhas e 18 números bit a bit**. 21 rodadas.
+
+**IA-Python:** Pendência (rodada 78): o simplex n×m e o Kuhn completo (−1/18), adiados duas vezes. Agora vão.

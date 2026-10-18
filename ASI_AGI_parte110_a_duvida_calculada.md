@@ -83,3 +83,135 @@ Espero **2 a 4 erros**, entre essas cinco. Antes de prever o contador de passos,
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2741 — O gradiente
+
+**Na pergunta.** "Duvidar do gradiente" pede uma segunda testemunha que não dependa da primeira. A retropropagação é a regra da cadeia aplicada à mão; a diferença finita só precisa saber AVALIAR a perda. Se as duas concordam, a dúvida se dissolve pela medida, não pela confiança.
+
+**Lógica (duvidar).** A MLP 3→4→1 tanh tem 21 parâmetros. O erro relativo máximo, por passo h, é **3,5·10⁻³** em 10⁻¹, **3,6·10⁻⁵** em 10⁻², **3,6·10⁻⁷** em 10⁻³ e **3,6·10⁻⁹** em 10⁻⁴. Depois sobe: **6,8·10⁻⁹** em 10⁻⁵ … **5,4·10⁻⁴** em 10⁻¹⁰. A inclinação entre 10⁻² e 10⁻³ é **2,0000** ✅ (a), contra a conta h²·f‴/6. O piso é **3,6·10⁻⁹** ✅ (c), na faixa [10⁻¹²; 10⁻⁸], mas em h = 10⁻⁴ e não em h ≈ 6·10⁻⁶. O mecanismo do ótimo eu previ errado: o erro relativo MÁXIMO é dominado pela MENOR componente do gradiente, e ali o arredondamento ε·|L|/h pesa mais. O ótimo em ε^(1/3) vale para uma componente de escala 1, não para a pior de 21.
+
+**Inverso.** A inclinação lê a premissa que eu não disse ao verificador, a ordem do método: central **2,0000**, adiantada **0,9997** ✅ (b). O verificador reconstrói, só pela forma da curva, qual fórmula de diferença foi usada.
+
+**Subverso.** Troquei o sinal de uma componente (o defeito clássico da retropropagação à mão): erro relativo **2,0000** ✅ (d), acusado. E o caso limpo passa (teste `test_gradiente_caso_limpo`). Com os dois lados, o verificador é um verificador (regra da Parte 75).
+
+**Tradução cruzada.** Duas testemunhas independentes que concordam valem mais que uma testemunha mais confiante: é o princípio do juiz que não aceita a confissão sem a prova material. O gradiente analítico é a confissão (a rede "diz" para onde descer); a diferença finita é a prova material.
+
+### P2742 — A inferência
+
+**Lógica (duvidar).** Bem especificada, a inferência bayesiana exata é calibrada: cobertura de **0,8995** ✅ (e) em 2.000 mundos. Não é fé no teorema, é a medida que bate com ele (0,90 ± 0,007).
+
+**Subverso.** As MESMAS 100 observações, mas em 25 aglomerados de 4 idênticas: cobertura **0,591** ✅ (f), contra a previsão 2Φ(0,8225) − 1 = 0,589. O intervalo de "90%" acerta 59% das vezes. O cálculo está perfeito; a premissa (independência) é que é falsa. Bayes exato é exato para o SEU modelo (Parte 34), e o modelo errado dá uma confiança errada com toda a exatidão.
+
+**Inverso.** Da cobertura medida, sem saber o desenho, recupero c = **3,97** ✅ (g), e o usado era 4. A calibração ruim não é só um defeito, é uma MEDIDA da premissa violada. É exatamente o que a Parte 79 fez comigo: o meu fator 1,36 é o "c" das minhas previsões, √c = 1,36 ⇒ c ≈ 1,85. As minhas previsões se comportavam como se cada uma valesse ~1,85 previsões correlacionadas.
+
+**Tradução cruzada.** Quatro testemunhas que repetem o mesmo boato não são quatro testemunhas. A psicologia chama isso de cascata de informação; a estatística, de tamanho efetivo de amostra.
+
+### P2743 — A RNN
+
+**Lógica (duvidar + inverso).** BPTT na RNN linear, w = 0,9, T = 50: **0,0051538**, igual a 0,9⁵⁰ com erro relativo **0** ✅ (h). O inverso, grad^(1/T), devolve **w = 0,9** exato. O gradiente através do tempo é, de fato, o produto das derivadas locais: some como w^T se |w| < 1 e explode se |w| > 1.
+
+**Subverso.** Na RNN tanh com w = 1,1, a conta ingênua (w^T) previa explosão, 1,1⁵⁰ = 117. O medido é **5,56·10⁻⁵** ✅ (i): o gradiente SOME. A saturação leva h ao ponto fixo h* = **0,5029** (tanh(1,1·0,5029) = 0,5029), onde a derivada local é 1,1·(1 − 0,5029²) = **0,822** < 1. Um w grande não basta para explodir; o que conta é w·tanh′ no ATRATOR. Esta é a raiz do problema que motivou a LSTM e o caminho residual: não é o peso, é o produto de derivadas ao longo do caminho.
+
+**Tradução cruzada.** É a dinâmica do hábito: uma tendência forte (w > 1) que satura se estabiliza num ponto fixo, e ali a sensibilidade às origens se apaga. Quanto mais estável o atrator, menos o presente lembra o começo.
+
+### P2744 — O ML
+
+**Lógica (duvidar).** Mínimos quadrados, n = 50, p = 10: erro de teste **1,2530** ✅ (j), contra a forma fechada 1 + 10/39 = 1,2564. Aprender 10 parâmetros com 50 exemplos custa 25% de erro acima do ruído, um preço exato e calculável antes de treinar.
+
+**Inverso.** Do excesso medido, p = e(n − 1)/(1 + e) = **9,89** ✅ (k): o erro de teste "sabe" quantos parâmetros o modelo tinha. É o raciocínio do AIC/Cp ao contrário.
+
+**Subverso.** Uma variável omitida de coeficiente 1: **2,5158** ✅ (l), contra 2 × 1,2564 = 2,513. Ela não aparece como viés: aparece como RUÍDO extra, e o mesmo fator (1 + p/(n − p − 1)) a multiplica. Mais dados não a curam (o piso de FORMA da Parte 99).
+
+### P2745 — O aprendizado contínuo
+
+**Lógica (duvidar).** Com o GD, o esquecimento de A depois de B em 45° é **0,500000** ✅ (n) = cos²45°, e em 60° é exatamente `0x1p-2` = 0,25 = cos²60°, bit a bit. O esquecimento catastrófico não é um mistério: é a projeção do passo de B sobre a direção de A.
+
+**Inverso.** θ = arccos √0,5 = **45,000000°** ✅. O esquecimento medido revela o ÂNGULO entre as tarefas.
+
+**OGD.** A projeção ortogonal não move w₁ (o passo ao longo de e₁ é 0 em ponto flutuante). Mas o "esquecimento" medido foi **4,9·10⁻³²** e não 0: **(o) ❌**. O que eu medi foi a PERDA de A, (w₁ − 1)², e a própria tarefa A parou a 1 ulp de 1 ((2,2·10⁻¹⁶)²). Previ "não esquece = perda zero" e confundi a variação com o nível; era uma faixa fina sem conta, de novo a regra da Parte 97. A norma do passo OGD é **1,414214** ✅ (p) = √2 = 1/sen 45°. Não esquecer custa um passo maior.
+
+**Subverso.** Em θ = 0 (as duas tarefas querem a MESMA coordenada com alvos diferentes), o OGD não aprende B: a perda fica **1,0** ✅ (q). Nenhum truque de projeção resolve um conflito verdadeiro; ele só escolhe QUEM perde. Contra a dúvida da Parte 31 ("trocar aprendizado contínuo por algo melhor se der"): a conta diz quando dá (θ > 0: há uma direção livre) e quando não dá (θ = 0: só resta escolher).
+
+### P2746 — O reforço
+
+**Lógica (duvidar).** O alvo do Q-learning usa o max das estimativas, e o max de estimativas ruidosas é otimista. Com k = 2 ações de valor 0 e m = 10 amostras: viés **0,1794** ✅ (r), contra 1/√(10π) = 0,1784. O estimador duplo (Double Q) dá **0,0002** ✅ (s): escolher por um conjunto e avaliar pelo outro quebra a correlação entre o erro e a escolha.
+
+**Inverso.** m = 1/(π·viés²) = **9,89** ✅ (t). O otimismo de um agente revela quantas experiências ele teve.
+
+**Subverso.** Com k = 10 ações, **0,4840** ✅ (u), contra a previsão 1,5388/√10 = 0,4866, a z ≈ −2 do centro (no limite da faixa, dentro). Mais opções, mais otimismo: o viés cresce como √(2 ln k)/√m. É a maldição do vencedor da Parte 33 (escolher pela nota guardada piorou o agente) em forma fechada.
+
+**Tradução cruzada.** É a psicologia do "a grama do vizinho": quem escolhe entre muitas opções pela melhor ESTIMATIVA fica, em média, decepcionado com a escolha, porque escolheu justamente onde o ruído estava a favor. A correção (avaliar em amostra independente) é o que a ciência chama de replicação.
+
+### P2747 — rodada 77
+
+**Lógica.** GD/OGD em ℝ², Python × Java: **IGUAIS, 7 linhas e 18 números bit a bit** ✅ (v), com u de √ e não de sin/cos (a fronteira medida da Parte 105). 21 rodadas.
+
+## O processo metacognitivo INVERSO e SUBVERSO, aplicado às minhas próprias contas
+
+**Inverso sobre mim.** Do placar desta parte, de volta à premissa com que eu escrevi as faixas. 20 de 21 acertaram, e o único erro foi uma faixa de largura ZERO ([0; 0]) que eu escrevi sem conta. As que acertaram tinham todas uma variância conhecida (binomial, forma fechada) ou uma identidade. Invertendo: a premissa que eu uso sem dizer é "quando a conta existe, a faixa é a da conta; quando não existe, eu escrevo zero e chamo de exato". Desta vez a premissa errada estava num [0; 0], como na Parte 97 estava num "< 10⁻⁶". O padrão se repetiu: **os meus erros moram nas faixas que não têm largura**.
+
+**Subverso sobre mim.** A premissa que mais sustenta este placar é que as faixas vêm de contas fechadas, e derrubá-la mostra o quanto ele depende disso. Das 21 previsões, 3 vieram de mecanismos que eu nunca tinha rodado: o piso do gradiente, a cobertura aglomerada e a saturação da tanh. As três acertaram, mas uma, (c), pelo mecanismo errado (o ótimo foi h = 10⁻⁴, não 6·10⁻⁶). Se a faixa de (c) fosse estreita em torno do MEU h ótimo, eu teria errado. A largura de (c) (quatro ordens de grandeza) comprou o acerto e escondeu o erro de mecanismo. A dúvida de tudo inclui a dúvida do meu acerto: um acerto numa faixa larga não confirma o mecanismo.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ❌ (p) ✅ (q) ✅ (r) ✅ (s) ✅ (t) ✅ (u) ✅ (v) ✅. Parte 110: **21 testes, 1 erro** ((o): uma faixa [0; 0] sem conta). Erro de mecanismo dentro de faixa certa: (c), o h ótimo. Acumulado (mundo): **221 erros em 835 testes**. Calibração (P1961, Partes 80–110): **158/176 = 0,898**.
+
+### Previsões sobre previsões (m)
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [19; 23] | 21 | ✅ |
+| (m2) | [3; 6] | 3 | ✅ |
+| (m3) | [0; 0,60] | 0,03 | ✅ |
+| (m4) | [0,60; 1,00] | 0,95 | ✅ |
+| (m5) | [0; 4] | 0 | ✅ |
+| (m6) | [0; 4] | 1 | ✅ |
+
+Previsões sobre previsões (p1499): **6 de 6**. Um defeito de MEDIDA meu, achado nesta parte: o leitor `p1481` perde a faixa das letras cujo item começa com um rótulo em negrito ("**(a) Duvidar.**") e atribui à (h) a faixa da (a). O placar do mundo usa `VEREDITOS` e não é afetado. As (m2)/(m3) leem 18 das 21 faixas; vai como pendência de correção (uma `p1481_v3`), sem editar a antiga.
+
+## Engenharia reversa (metacognição)
+
+**O padrão:** cada uma das seis peças falhou exatamente onde uma premissa não-dita deixou de valer, e funcionou perfeitamente onde ela valia:
+- Bayes com os aglomerados;
+- a RNN com a saturação;
+- o OLS com a omitida;
+- o OGD com o conflito total;
+- o Q-learning com o max.
+
+Nenhuma falhou "um pouco": falharam em forma fechada, com o tamanho previsto. **Significado:** duvidar de uma peça de IA não é duvidar da conta dela, que nas seis estava certa. É duvidar da PREMISSA que a conta herda em silêncio. A dúvida produtiva tem endereço, e o processo subverso é o método para achá-lo (derrubar uma premissa por vez e ver se a quebra tem o tamanho que a conta diz). **O processo inverso** mostrou o outro lado: cada falha medida devolve o parâmetro da premissa violada (c = 3,97, p = 9,89, m = 9,89, θ = 45°). Um sistema que sabe inverter os próprios erros sabe O QUE está errado, não só QUE está.
+
+**Sobre mim:** o meu único erro foi, de novo, uma faixa de largura zero escrita sem conta (a 97 e a 110). E o erro de mecanismo escondido por uma faixa larga, (c), é o espelho dele: a faixa estreita sem conta erra, e a faixa larga sem mecanismo acerta sem informar. **Regra nova:** uma faixa [x; x] só com a identidade que a garante escrita ao lado (aqui: "w₁ não muda" não garantia "perda zero"); e uma faixa de mais de duas ordens de grandeza vem acompanhada do mecanismo que eu ESPERO dentro dela, para que o acerto possa refutar o mecanismo.
+
+## Síntese / unificação
+
+A Parte 110 duvida das seis peças da estrutura de uma IA e calcula cada dúvida por um caminho independente (`synthai/duvida.py`), com o processo inverso (do número à premissa) e o subverso (uma premissa derrubada, com a quebra prevista antes):
+
+| Peça | Duvidar (conferido) | Inverso (recupera) | Subverso (quebra prevista e medida) |
+|---|---|---|---|
+| Gradiente | inclinação 2,0000; piso 3,6·10⁻⁹ | a ordem do método (2 e 1) | sinal plantado: erro 2,0000 |
+| Inferência | cobertura 0,8995 | c = 3,97 (usado 4) | aglomerados: 0,591 (previsto 0,589) |
+| RNN | BPTT = w^T exato | w = 0,9 exato | tanh, w = 1,1: SOME (5,6·10⁻⁵), não explode |
+| ML | 1,2530 (1,2564) | p = 9,89 (usado 10) | omitida: 2,516 (2,513) |
+| Contínuo | esquecimento cos²θ = 0,5 | θ = 45,000° | θ = 0: o OGD não aprende (1,0) |
+| Reforço | viés 0,1794 (0,1784); duplo ~0 | m = 9,89 (usado 10) | k = 10: 0,4840 (0,4866) |
+
+Rodada 77: o aprendizado contínuo atravessa as línguas bit a bit (21 rodadas). 20/21 do mundo, 6/6 (m), calibração 0,898. O que esta parte acrescenta à SYNTHAI é um **verificador de premissas**: cada peça, além do resultado, devolve o parâmetro que a explicaria. A substituição de ML por inferência exata "se der" (Parte 31) ganha o seu critério: dá quando a premissa da conta exata vale, e a inversão diz quando não vale.
+
+## Meta
+
+Confiança alta nas 15 faixas de forma fechada; as três de mecanismo nunca rodado ((c), (f), (i)) acertaram, uma com o mecanismo errado. Onde é brinquedo: MLP de 21 parâmetros, RNN escalar, tarefas de posto 1 em ℝ², ações sem estado. As formas fechadas são exatas nesses casos e servem de ÂNCORA (regra da Parte 89) para as versões grandes, onde não há forma fechada. A dúvida não termina aqui: o leitor `p1481` tem um defeito medido, e o simplex n×m e o Kuhn completo seguem pendentes (Parte 111).
+
+## Diálogo Python ↔ Java (rodada 77)
+
+Ver `dialogo/DIALOGO.md`: GD e OGD em ℝ², com u por √ e não por sin/cos. **IGUAL**, 7 linhas e 18 números bit a bit; o esquecimento em 60° é `0x1p-2` exato nas duas línguas.
+
+## Fontes
+
+- Gradiente que some/explode em RNNs, análise dinâmica: [Pascanu, Mikolov e Bengio, ICML 2013 (PMLR 28)](https://proceedings.mlr.press/v28/pascanu13.html); [arXiv 1211.5063](https://arxiv.org/abs/1211.5063).
+- Viés de maximização e estimador duplo: [van Hasselt, Double Q-learning, NIPS 2010](https://papers.nips.cc/paper/3964-double-q-learning); [NeurIPS 2010, pôster](https://neurips.cc/virtual/2010/poster/2040).
+- Projeção ortogonal no aprendizado contínuo: [Farajtabar et al., OGD, AISTATS 2020 (PMLR 108)](https://proceedings.mlr.press/v108/farajtabar20a.html); [arXiv 1910.07104](https://arxiv.org/abs/1910.07104v1).
+- Erro de generalização de mínimos quadrados sob design gaussiano, E‖β̂ − β‖² = σ²p/(n − p − 1): a esperança da Wishart inversa (resultado clássico, conferido aqui por simulação, P2744).

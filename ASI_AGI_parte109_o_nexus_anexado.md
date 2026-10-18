@@ -179,3 +179,7 @@ Ver `dialogo/DIALOGO.md`: a enumeração do Kuhn simplificado, numa grade da pro
 
 - Kuhn poker, valor −1/18 para o primeiro jogador e a família de equilíbrios: [Wikipedia, Kuhn poker](https://en.wikipedia.org/wiki/Kuhn_poker); [Miao, tese (Dartmouth, 2014)](https://math.dartmouth.edu/theses/undergrad/2014/Miao-thesis.pdf); [Freiburg, notas de teoria dos jogos](https://gki.informatik.uni-freiburg.de/teaching/ss19/gametheory/gametheory14.pdf); [Hoehn et al., AAAI 2005](https://cdn.aaai.org/AAAI/2005/AAAI05-123.pdf).
 - Pickle, `__reduce__` e execução arbitrária; `pickletools.genops` como leitor de opcodes: [arp242, Security of pickle and marshal](https://www.arp242.net/pickle-marshal-security); [Slaviero, Sour Pickles (Black Hat 2011)](https://sensepost.com/cms/resources/conferences/2011/sour_pickles/BH_US_11_Slaviero_Sour_Pickles.pdf); [CPython, Lib/pickletools.py](https://svn.python.org/projects/python/trunk/Lib/pickletools.py); [PyCharm Security, PIC100](https://pycharm-security.readthedocs.io/en/stable/_sources/checks/PIC100.md.txt).
+
+---
+
+➡ Continua na [Parte 110 — A dúvida calculada](ASI_AGI_parte110_a_duvida_calculada.md).
