@@ -47,6 +47,13 @@
 
 (c) e (e) são contas fechadas, (b) é a leitura de duas linhas de regex contra o texto e (g) é mecânica. Os riscos são (a), porque nunca abri esses blobs e a previsão sai do nome "congelado = cache de resultado", que é procedência por NOME, a mesma da Parte 85; e (d), porque não rodei o caso mínimo do jogo Raphael (regra das Partes 84/87), embora a direção venha da conta: a 2ª melhor casa vale menos naquele lance. Espero **0 a 2 erros**, nesses dois.
 
+### Adendo pré-registrado: dois testes novos nascidos de surpresas (escrito DEPOIS da 1ª medição, ANTES destes dois)
+
+A 1ª medição trouxe duas surpresas (relatadas nas respostas). Pela regra da Parte 25, cada uma vira um teste novo, registrado antes de rodar:
+
+- **(h) P2717.** No jogo Raphael recebido o jogador 0 NUNCA vence (0 de 60, nos dois braços). A minha hipótese: a agenda de palavras decide sozinha (P0 recebe as palavras dos lances pares, soma léxica 26; P1, 48). Teste: uma agenda JUSTA (no lance t, a palavra `words[t // 2]`, a mesma para os dois em cada rodada) e 60 partidas. **(h1)** O guloso P0 vence **[45; 60]**: ele escolhe primeiro em cada rodada e fica com o nexo (+5) no lance 0, contra uma casa a distância 1 (−1) do P1, uma vantagem de ~6 contra um ruído de cartas de desvio ≈ √(6·2·0,9²) ≈ 3,1. **(h2)** Só o P0 desviando, a diferença de vitórias fica em **[−30; 0]**: desviar no lance 0, com prob. 0,35, entrega o nexo.
+- **(i) P2718.** No sorteio IID 6 de 60, o "número quente" acerta 0,237, contra a referência declarada 6/60 = 0,10. A minha hipótese: é um ARTEFATO e não uma previsão. O alvo é o MÍNIMO do sorteio ordenado (`draw[0]`), e o `most_common` desempata por ordem de primeira aparição, o que favorece números pequenos. A chance exata de um conjunto H fixo conter o mínimo é Σ_{h∈H} C(60−h, 5)/C(60, 6). Teste: a taxa observada contra a média dessa chance exata nos H realmente usados. **|z| ≤ 1,96** (binomial, forma fechada: sem o fator 1,36, regra da Parte 74), faixa de z **[−1,96; 1,96]**. Se |z| > 1,96, o histórico prevê alguma coisa e a hipótese do artefato cai.
+
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
