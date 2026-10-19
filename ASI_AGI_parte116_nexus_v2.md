@@ -264,3 +264,7 @@ Ver `dialogo/DIALOGO.md`: a avaliação pareada (diferenças, t, decisão) é **
 
 - O gerador global do módulo `random` ("as funções do módulo são métodos ligados de uma instância escondida de `random.Random`"; um `int` passado a `seed` é usado diretamente): [documentação do Python, random](https://docs.python.org/3/library/random.html), lida nesta sessão.
 - O intervalo pela t de Student com a variância amostral (n − 1), exato para dados normais, e o z como aproximação de n grande: [Wolfram Demonstrations, robustez da t de Student no problema de uma amostra](https://www.wolframcloud.com/objects/demonstrations/RobustnessOfStudentTInTheOneSampleProblem-source.nb); [Hurvich, notas de regressão (NYU Stern)](https://pages.stern.nyu.edu/~churvich/Regress/Handouts/Chapt2.pdf); [LibreTexts, as distribuições t](https://stats.libretexts.org/Bookshelves/Applied_Statistics/Introduction_to_Applied_Statistics_for_Psychology_Students_(Sarty)/08%3A_Confidence_Intervals/8.03%3A_The_t-Distributions).
+
+---
+
+➡ Continua na [Parte 117 — As camadas contrapostas com matrizes](ASI_AGI_parte117_contrapostas_matrizes.md).

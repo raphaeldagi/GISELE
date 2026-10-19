@@ -94,7 +94,7 @@ class TesteParte116(unittest.TestCase):
         self.assertEqual([s for s, _ in r], ["confirmed", "inconclusive", "rejected"])
 
     def test_p1961_com_parte_116(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 117))))
         self.assertEqual(por[116], (19, 19))
         self.assertEqual((ok, tot), (241, 263))
 

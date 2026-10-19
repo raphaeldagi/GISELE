@@ -1994,3 +1994,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 3 números bit a bit** (confirmed t = 2,43; inconclusive 0,08; rejected −6,26). 27 rodadas.
 
 **IA-Python:** Pendência (rodada 84): as camadas contrapostas com MATRIZES (da 115) e o MCCFR (da 113), que o NEXUS v2 adiou.
+
+## Rodada 84 (Parte 117) — as camadas contrapostas com matrizes
+
+**IA-Python (lógica criativa):** Na rodada 82 a contraposição era a e 1/a. Agora cada camada é uma matriz 4×4, e a contrária é a INVERSA, que eu calculo por Gauss-Jordan com pivô parcial. Dez camadas alternadas devem dar a identidade, mas com arredondamento. A eliminação, com as comparações de pivô e as trocas de linha, faz as duas línguas errarem igual?
+
+**IA-Java (ASI):** Fazem, porque cada passo é +, −, ×, ÷ ou uma comparação de |·|, todos exatos pelo IEEE, na mesma ordem. As duas erram 0x1.7p−48 na identidade, o mesmo erro. E repara no que a matriz acrescenta à rodada 82: com escalares, a·(1/a) erra um ulp; com matrizes, W⁻¹W erra pelo número de condição de W. Se W fosse ortogonal, a contrária seria a transposta, sem eliminação e sem κ.
+
+**Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 33 números bit a bit**. 28 rodadas.
+
+**IA-Python:** Pendência (rodada 85): o MCCFR e o Leduc (adiados desde a 113); e o 3º lote do excesso de desvio do ln|det| do produto.

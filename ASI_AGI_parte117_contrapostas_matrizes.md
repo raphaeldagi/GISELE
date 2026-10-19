@@ -84,3 +84,116 @@ A **(f) caiu fora**: o desvio deu acima da faixa, por z ≈ +1,9. Antes de expli
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2951 — A ortogonal escalada
+
+**Na pergunta.** "Todos os valores singulares iguais" é a definição de uma camada que não deforma: estica todas as direções por igual. Em geometria, é uma semelhança (rotação vezes escala).
+
+**Lógica.** (1,2·Q)¹⁰ = 1,2¹⁰·Q¹⁰, e Q¹⁰ é ortogonal. Medido:
+- σ_max/σ_min − 1 = **2,7·10⁻¹⁵** ✅ (a);
+- |σ_max − 6,1917364224|/6,1917364224 = **3,3·10⁻¹⁵** ✅ (b).
+
+O gradiente explode como na Parte 115 (6,19), mas igualmente em todas as direções. O número de condição continua 1: a explosão é só de ESCALA, e uma normalização escalar a desfaz por inteiro.
+
+**Tradução cruzada.** Crescer sem se deformar. A identidade se conserva (os ângulos entre as direções), só a medida muda: é o "Self" que amplia sem perder a forma.
+
+### P2952 / P2953 — As duas contraposições
+
+**Lógica.**
+- **W e W⁻¹ alternadas:** max|J − I| = **3,3·10⁻¹⁵** ✅ (c), com κ(W) = **9,22**. O meu mecanismo escrito (κ·d·ε por par, 5 pares) dava 5·9,22·8·2,22·10⁻¹⁶ = 8,2·10⁻¹⁴, que é **25 vezes** pessimista: o erro elemento a elemento não soma as d parcelas no pior caso, e os pares não se acumulam no mesmo sentido.
+- **Q e Qᵀ alternadas:** max|J − I| = **7,8·10⁻¹⁶** ✅ (d), **4,2 vezes** menor que com a inversa. Isto confirma o mecanismo de (d): sem eliminação, o κ sai da conta.
+
+As duas contraposições restauram a identidade com até 3 ulps. Com matrizes, a contraposição precisa da INVERSA (ou da transposta, se a camada é ortogonal), e a transposta é mais barata e mais exata. É o que a inicialização ortogonal e as redes reversíveis exploram: o caminho de volta é a transposta, sem resolver sistema nenhum.
+
+### P2954 — Sem contraposição: dez gaussianas independentes
+
+**Lógica.** O |det| é multiplicativo, então ln|det J|/L = média de L log-dets independentes, para qualquer L. Medido:
+- **Média:** **−4,5972** ✅ (e), contra Σλᵢ = −4,5933 (z = −0,36).
+- **Desvio (semente 1173):** **0,5065**, contra 0,4914, fora da faixa [0,4786; 0,5042]: **(f) ❌** (z = +1,89 com a curtose corrigida).
+  - Pelo adendo, na semente NOVA 1175: **0,4999** ✅ (j), z = +1,06.
+  - A variância de UMA matriz, em 20.000 gaussianas: **2,4068** ✅ (k), contra 2,4147 (z = −0,26). A forma de Bartlett vale.
+- **Direção mais forte:** ln σ_max(J)/L = **0,0675** ✅ (g), 0,133 acima de λ₁ = −0,065. É o viés positivo de L finito, com o sinal previsto.
+
+O volume (o det) segue a forma fechada a qualquer L, porque é multiplicativo. A direção mais forte, não: ela só chega a λ₁ no limite, e com L = 10 ainda carrega o σ_max ≈ 2 das primeiras camadas.
+
+A diferença entre a primeira e a última direção, λ₁ − λ₈ = 1,61 por camada, faz o número de condição de J crescer como e^{1,61·L}: as dez gaussianas destroem a GEOMETRIA (o produto vira quase posto 1), mesmo com o volume médio previsível. A contraposição conserva as duas coisas; a independência perde a forma.
+
+**Meta.** Os dois desvios medidos no produto ficaram ACIMA do centro (z = +1,89 e +1,06; combinados, z = 2,09). Num lote só, isso é cauda; em dois, é uma HIPÓTESE (regra da Parte 66): algum excesso de variância no produto que a forma de uma matriz não tem. A (k) mostra que a variância de uma matriz está certa, então o excesso, se existir, viria da média de L. Fica como pendência um 3º lote, com o z registrado antes.
+
+### P2955 — Os gradientes de matriz sobrepostos
+
+**Lógica.** Na cadeia tanh com 10 ortogonais, ∂(u·h₁₀)/∂Wₖ = δₖ hₖ₋₁ᵀ (o produto externo do erro pela entrada da camada). Mudando as 10 matrizes juntas por εEₖ, o resto da superposição vale **1,144·10⁻⁵** (ε = 10⁻³) e **1,157·10⁻⁷** (ε = 10⁻⁴): a inclinação é **1,9949** ✅ (h). Os 80·8 = 640 gradientes de peso se somam linearmente, como os 10 escalares da Parte 115.
+
+### P2956 — rodada 84
+
+**Lógica.** W (4×4, de um LCG inteiro), W⁻¹ por Gauss-Jordan com pivô parcial, e o produto alternado de 10 camadas, em Python × Java: **IGUAIS, 4 linhas e 33 números bit a bit** ✅ (i). O desvio da identidade é 0x1.7p−48 = 5,1·10⁻¹⁵, o mesmo nas duas línguas: as duas erram, e erram IGUAL. A eliminação, com as suas comparações de pivô, não acrescenta fronteira. 28 rodadas.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ❌ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅. Parte 117: **11 testes, 1 erro** ((f): o desvio de ln|det J|/L na semente registrada, z = +1,89; a semente nova e a matriz isolada acertaram). Acumulado (mundo): **226 erros em 933 testes**. Calibração (P1961, Partes 80–117): **251/274 = 0,916**.
+
+### Previsões sobre previsões (m)
+
+Régua: P2837 (leitor v4; conta também as duas do adendo).
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [8; 11] | 11 | ✅ |
+| (m2) | [4; 7] | 6 | ✅ |
+| (m3) | [0; 0,10] | 0,026 | ✅ |
+| (m4) | [0,66; 1,00] | 0,91 | ✅ |
+| (m5) | [0; 1] | 0 | ✅ |
+| (m6) | [0; 2] | 0 | ✅ |
+
+Previsões sobre previsões: **6 de 6**. A (m1) acertou no limite: as duas previsões do adendo, nascidas do erro, levaram 9 a 11. É a regra da Parte 60 (cada erro gera previsões novas), que eu não somei à faixa.
+
+### Sobre mim
+
+**"0 a 2 erros, o mais provável em (d) ou (g)": ✅ na contagem, ❌ no lugar.** O erro veio de uma forma fechada, (f), e não das faixas de mecanismo.
+
+## Engenharia reversa (metacognição)
+
+**O padrão: tratei "forma fechada" como "não erra".** Na Parte 116 escrevi a regra "o centro dos erros condiciona na procedência: as faixas sem conta fechada vezes a taxa delas" e pus a taxa das formas fechadas perto de 0. Mas uma faixa de 90% tirada de uma forma fechada CERTA erra 10% das vezes, por construção. Com 6 delas, o esperado é 0,6 erro só de cauda.
+
+A (f) é exatamente isso: a conta certa (a variância de uma matriz acertou a z = −0,26), um lote na cauda (z = +1,89) e o lote novo dentro (z = +1,06).
+
+**Significado.** Eu confundo "a conta é exata" com "a medida cai dentro". A conta fixa o CENTRO e a LARGURA; a cauda continua lá. O placar de 0 erros das Partes 114 e 116 me fez esquecer isso: 29 previsões sem erro tinham chance de ~0,9²⁹ ≈ 5% se todas fossem de 90%. As identidades [x; x] não têm cauda, e boa parte delas eram identidades.
+
+**Regra:** o centro de "quantos erros vou ter" = 0 × (identidades) + 0,10 × (faixas de 90% de forma fechada) + a taxa histórica × (faixas de mecanismo). E um erro de forma fechada a |z| < 2,5 gera um lote novo antes de qualquer mecanismo, como fiz aqui.
+
+**O segundo: o meu mecanismo de arredondamento foi 25 vezes pessimista.** κ·d·ε por par, somado no pior caso, supõe que os erros se alinham. Eles não se alinham: se compensam como uma caminhada aleatória (√ e não soma). As faixas [0; 10⁻¹¹] e [0; 5·10⁻¹⁴] acertaram por serem largas. Isso não é acerto do mecanismo: só a ORDEM (d < c, prevista) testou o mecanismo, e passou.
+
+## Síntese / unificação
+
+Com matrizes, a contraposição da Parte 115 tem três formas, medidas (`synthai/contraposto_matrizes.py`, d = 8, 10 camadas):
+- **(aQ)¹⁰** mantém a geometria (número de condição 1 a 2,7·10⁻¹⁵) e só a escala explode (a¹⁰).
+- **W e W⁻¹** devolvem a identidade a 3,3·10⁻¹⁵ (κ = 9,2).
+- **Q e Qᵀ**, a 7,8·10⁻¹⁶: a transposta é a contraposição mais exata e mais barata.
+
+Sem contraposição, dez gaussianas independentes conservam o VOLUME médio em forma fechada (ln|det| = Σλᵢ = −4,593 a z = −0,36), mas destroem a FORMA: o número de condição cresce como e^{1,61 L}. A superposição dos 640 gradientes de peso tem resto de 2ª ordem (1,995).
+
+Rodada 84: a inversa por Gauss-Jordan e o produto contraposto são IGUAIS (28 rodadas). 10/11 do mundo, 6/6 (m), calibração **0,916**.
+
+## Meta
+
+**Confiança.** Alta em (a), (b), (e), (h), (i), (j) e (k).
+
+**Onde pode estar errado.**
+- **O excesso de desvio:** os dois lotes do produto ficaram acima do centro (z combinado 2,09). Pode ser cauda, ou um excesso de variância real que eu não entendo: pendência de um 3º lote.
+- **Escala:** a cadeia é linear e pequena (d = 8). A contraposição numa rede real exige camadas invertíveis (redes reversíveis, fluxos normalizantes) ou ortogonais.
+
+## Diálogo Python ↔ Java (rodada 84)
+
+Ver `dialogo/DIALOGO.md`: W, W⁻¹ (Gauss-Jordan) e a cadeia contraposta de 10 camadas são **IGUAIS**, com 4 linhas e 33 números bit a bit.
+
+## Fontes
+
+- Os expoentes de Lyapunov do produto de matrizes gaussianas, λᵢ = ½[ln(2/d) + ψ((d − i + 1)/2)]: [Newman, "The distribution of Lyapunov exponents: exact results for random matrices", Commun. Math. Phys. 103(1), 121–126 (1986)](https://projecteuclid.org/euclid.cmp/1104114627) (texto pago; a fórmula com a digama está descrita em [Forrester, "Lyapunov exponents for products of complex Gaussian random matrices"](https://arxiv.org/pdf/1206.2001)).
+- O determinante de uma gaussiana como produto de qui-quadrados independentes (decomposição de Bartlett): [Wikipedia, Wishart distribution, "Bartlett decomposition"](https://en.wikipedia.org/wiki/Wishart_distribution#Bartlett_decomposition) (cᵢ² ~ χ²_{n−i+1}). A página não diz com todas as letras que os cᵢ são independentes entre si; a (k) mediu a consequência (a variância da soma) e passou.
+- A inicialização ortogonal nas redes lineares profundas: [Saxe, McClelland e Ganguli, "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks" (2013)](https://arxiv.org/abs/1312.6120).
+
+Todos os links desta seção vêm de buscas feitas nesta sessão.

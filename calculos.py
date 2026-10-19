@@ -7520,6 +7520,8 @@ def testes_de_regressao():
         "P1579": p1574_irredutiveis_gf2(17, 6)[2] == 758 and abs(p1579_serie_singular_gf2(17)[1] - 755.458) < 0.001,
         "P2927": p2927_auditoria_de_entrada() == (7, 3, 0),
         "P2929": [st for st, _ in p2929_rodada83()] == ["confirmed", "inconclusive", "rejected"],
+        "P2951": max(p2951_ortogonal_escalada()) < 1e-12,
+        "P2956": p2956_rodada84() < 1e-12,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9630,6 +9632,8 @@ VEREDITOS_P4199 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ❌ (h) �
 ERROS_P4199, TESTES_P4199 = 225, 903
 VEREDITOS_P4269 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅ (q) ✅ (r) ✅ (s) ✅ (t) ✅"
 ERROS_P4269, TESTES_P4269 = 225, 922
+VEREDITOS_P4339 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ❌ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅"
+ERROS_P4339, TESTES_P4339 = 226, 933
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12170,12 +12174,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14881,6 +14885,59 @@ def p2929_rodada83():
     return [r.avaliar(v, b) for v, b in r.HIPOTESES]
 
 
+def p2951_ortogonal_escalada():
+    """(aQ)^10 com a = 1,2, d = 8 (P2951; Parte 117). Devolve (σ_max/σ_min − 1, |σ_max − a¹⁰|/a¹⁰)."""
+    from synthai import contraposto_matrizes as M
+    sv = M.valores_singulares(M.cadeia_ortogonal_escalada())
+    return sv[0] / sv[-1] - 1.0, abs(sv[0] - 1.2 ** 10) / 1.2 ** 10
+
+
+def p2952_contrapostas_matriciais():
+    """W e W⁻¹ alternadas e Q e Qᵀ alternadas, 10 camadas, d = 8 (P2952/P2953; Parte 117). Devolve (max|J − I| com a inversa, κ(W),
+    max|J − I| com a transposta)."""
+    from synthai import contraposto_matrizes as M
+    J, k = M.cadeia_contraposta_inversa()
+    return M.max_abs_menos_identidade(J), k, M.max_abs_menos_identidade(M.cadeia_contraposta_ortogonal())
+
+
+def p2954_gaussianas_independentes():
+    """Dez gaussianas N(0, 1/d) independentes, 2.000 produtos (P2954; Parte 117), na semente registrada (1173) e na do adendo (1175); e a variância de
+    ln|det W| de uma matriz (20.000, semente 1176). Devolve ((média, desvio, ln σ_max médio) 1173, desvio 1175, (média, variância) uma matriz,
+    (E, Var) da forma fechada)."""
+    import math
+    from synthai import contraposto_matrizes as M
+
+    def md(xs):
+        mu = sum(xs) / len(xs)
+        return mu, math.sqrt(sum((x - mu) ** 2 for x in xs) / (len(xs) - 1))
+    d1, t1 = M.gaussianas_independentes(2000)
+    d2, _ = M.gaussianas_independentes(2000, semente=1175)
+    mu1, s1 = md(d1)
+    return (mu1, s1, sum(t1) / len(t1)), md(d2)[1], M.variancia_log_det(), M.log_det_fechado(8)
+
+
+def p2955_superposicao_matricial():
+    """Os 10 gradientes de matriz sobrepostos (P2955; Parte 117): o resto com ε = 10⁻³ e 10⁻⁴ e a inclinação log-log. Devolve (r1, r2, inclinação)."""
+    import math
+    from synthai import contraposto_matrizes as M
+    r1, r2 = M.superposicao_matricial(1e-3), M.superposicao_matricial(1e-4)
+    return r1, r2, (math.log(r1) - math.log(r2)) / math.log(10.0)
+
+
+def _rodada84():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada84", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada84.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2956_rodada84():
+    """Rodada 84 (P2956; Parte 117): W e W⁻¹ (Gauss-Jordan) alternadas, 4×4, IGUAL em Java. Devolve o desvio max|J − I|."""
+    return _rodada84().cadeia()[2]
+
+
 def p1578_autovalores_da_atencao():
     """Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores)."""
@@ -16349,6 +16406,25 @@ def _parte_116():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4269, testes=TESTES_P4269)
     print(f"P4269 minha taxa de erro ({ERROS_P4269}/{TESTES_P4269}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_117():
+    print("--- Parte 117 (0x75: as camadas contrapostas com matrizes) ---")
+    a, b = p2951_ortogonal_escalada()
+    print(f"P2951 (aQ)^10, a=1,2, d=8: sigma_max/sigma_min - 1 = {a:.2e}; |sigma_max - a^10|/a^10 = {b:.2e}")
+    c, k, d = p2952_contrapostas_matriciais()
+    print(f"P2952/P2953 contrapostas: W,W^-1 max|J-I| = {c:.2e} (kappa(W) = {k:.3f}); Q,Q^T max|J-I| = {d:.2e}")
+    (mu, sd, top), sd2, (m1, v1), (E, V) = p2954_gaussianas_independentes()
+    print(f"P2954 gaussianas independentes: ln|det J|/L media {mu:.4f} (fechada {E:.4f}), desvio {sd:.4f} (fechada {(V / 10) ** 0.5:.4f}), semente nova {sd2:.4f}; ln sigma_max/L {top:.4f}; uma matriz: media {m1:.4f}, var {v1:.4f} (fechada {V:.4f})")
+    r1, r2, incl = p2955_superposicao_matricial()
+    print(f"P2955 superposicao matricial: resto {r1:.3e} (1e-3), {r2:.3e} (1e-4), inclinacao {incl:.4f}")
+    print(f"P2956 rodada 84 (W, W^-1 por Gauss-Jordan, IGUAL em Java): desvio {p2956_rodada84().hex()}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-117: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2951, 2980)
+    print(f"P1092 pNN novas (P2951-P2980) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 117: {p974_previsoes_sem_largura(range(117, 118))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4339, testes=TESTES_P4339)
+    print(f"P4339 minha taxa de erro ({ERROS_P4339}/{TESTES_P4339}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -16385,7 +16461,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117}
 
 
 if __name__ == "__main__":
