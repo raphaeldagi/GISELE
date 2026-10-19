@@ -235,3 +235,13 @@ def variancia_log_det(amostras=20000, semente=1176):
     xs = [log_abs_det(gaussiana(D, rng)) for _ in range(amostras)]
     mu = sum(xs) / amostras
     return mu, sum((x - mu) ** 2 for x in xs) / (amostras - 1)
+
+
+def log_det_produto(amostras=20000, semente=1180):
+    """(a)/(b) da Parte 118: o 3º lote, GRANDE, de ln|det J|/L = (1/L) Σ ln|det W_k| (só o det, sem os valores singulares). Devolve (média, desvio)."""
+    rng = random.Random(semente)
+    xs = []
+    for _ in range(amostras):
+        xs.append(sum(log_abs_det(gaussiana(D, rng)) for _ in range(L)) / L)
+    mu = sum(xs) / amostras
+    return mu, math.sqrt(sum((x - mu) ** 2 for x in xs) / (amostras - 1))
