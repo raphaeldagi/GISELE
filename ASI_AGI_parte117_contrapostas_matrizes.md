@@ -197,3 +197,7 @@ Ver `dialogo/DIALOGO.md`: W, W⁻¹ (Gauss-Jordan) e a cadeia contraposta de 10 
 - A inicialização ortogonal nas redes lineares profundas: [Saxe, McClelland e Ganguli, "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks" (2013)](https://arxiv.org/abs/1312.6120).
 
 Todos os links desta seção vêm de buscas feitas nesta sessão.
+
+---
+
+➡ Continua na [Parte 118 — O acaso amostrado (MCCFR) e o terceiro lote](ASI_AGI_parte118_mccfr_e_o_terceiro_lote.md).

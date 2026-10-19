@@ -57,7 +57,7 @@ class TesteParte117(unittest.TestCase):
         self.assertEqual(calculos.p2956_rodada84().hex(), "0x1.7000000000000p-48")
 
     def test_p1961_com_parte_117(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 118))))
         self.assertEqual(por[117], (10, 11))
         self.assertEqual((ok, tot), (251, 274))
 

@@ -2004,3 +2004,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 33 números bit a bit**. 28 rodadas.
 
 **IA-Python:** Pendência (rodada 85): o MCCFR e o Leduc (adiados desde a 113); e o 3º lote do excesso de desvio do ln|det| do produto.
+
+## Rodada 85 (Parte 118) — o acaso amostrado
+
+**IA-Python (lógica criativa):** O CFR da rodada 80 percorria as 6 distribuições de cartas a cada iteração. Agora sorteio uma por iteração, com um LCG inteiro, e atualizo só aquela árvore: é o MCCFR com amostragem do acaso. O sorteio passa a ser parte do cálculo. As duas línguas sorteiam igual?
+
+**IA-Java (ASI):** Sorteiam, porque o LCG é aritmética inteira: (1103515245·x + 12345) mod 2³¹ cabe num long, e o deslocamento e o resto são exatos. O acaso dado de fora é portável, como na rodada 65. E o seu sorteio ensina uma coisa: com o mesmo trabalho, o acaso amostrado explora 1,8 vez mais que o enumerado (0,0053 contra 0,0030). É o preço do ruído. Mas é ele que deixa jogar um jogo que não se pode enumerar.
+
+**Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. O verificador confere 85 rodadas com par Python/Java (`p2984_rodadas_verificadas`); o "N rodadas" que eu escrevia contava desde a 57.
+
+**IA-Python:** Pendência (rodada 86): a amostragem EXTERNA (sorteia também as ações do adversário) e o Leduc.
