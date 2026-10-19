@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 116, perguntas P1 a P2929).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 117, perguntas P1 a P2956).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (16397 linhas)
+# calculos.py  (16473 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7558,6 +7558,8 @@ def testes_de_regressao():
         "P1579": p1574_irredutiveis_gf2(17, 6)[2] == 758 and abs(p1579_serie_singular_gf2(17)[1] - 755.458) < 0.001,
         "P2927": p2927_auditoria_de_entrada() == (7, 3, 0),
         "P2929": [st for st, _ in p2929_rodada83()] == ["confirmed", "inconclusive", "rejected"],
+        "P2951": max(p2951_ortogonal_escalada()) < 1e-12,
+        "P2956": p2956_rodada84() < 1e-12,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9668,6 +9670,8 @@ VEREDITOS_P4199 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ❌ (h) �
 ERROS_P4199, TESTES_P4199 = 225, 903
 VEREDITOS_P4269 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅ (q) ✅ (r) ✅ (s) ✅ (t) ✅"
 ERROS_P4269, TESTES_P4269 = 225, 922
+VEREDITOS_P4339 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ❌ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅"
+ERROS_P4339, TESTES_P4339 = 226, 933
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12208,12 +12212,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -14919,6 +14923,59 @@ def p2929_rodada83():
     return [r.avaliar(v, b) for v, b in r.HIPOTESES]
 
 
+def p2951_ortogonal_escalada():
+    \"\"\"(aQ)^10 com a = 1,2, d = 8 (P2951; Parte 117). Devolve (σ_max/σ_min − 1, |σ_max − a¹⁰|/a¹⁰).\"\"\"
+    from synthai import contraposto_matrizes as M
+    sv = M.valores_singulares(M.cadeia_ortogonal_escalada())
+    return sv[0] / sv[-1] - 1.0, abs(sv[0] - 1.2 ** 10) / 1.2 ** 10
+
+
+def p2952_contrapostas_matriciais():
+    \"\"\"W e W⁻¹ alternadas e Q e Qᵀ alternadas, 10 camadas, d = 8 (P2952/P2953; Parte 117). Devolve (max|J − I| com a inversa, κ(W),
+    max|J − I| com a transposta).\"\"\"
+    from synthai import contraposto_matrizes as M
+    J, k = M.cadeia_contraposta_inversa()
+    return M.max_abs_menos_identidade(J), k, M.max_abs_menos_identidade(M.cadeia_contraposta_ortogonal())
+
+
+def p2954_gaussianas_independentes():
+    \"\"\"Dez gaussianas N(0, 1/d) independentes, 2.000 produtos (P2954; Parte 117), na semente registrada (1173) e na do adendo (1175); e a variância de
+    ln|det W| de uma matriz (20.000, semente 1176). Devolve ((média, desvio, ln σ_max médio) 1173, desvio 1175, (média, variância) uma matriz,
+    (E, Var) da forma fechada).\"\"\"
+    import math
+    from synthai import contraposto_matrizes as M
+
+    def md(xs):
+        mu = sum(xs) / len(xs)
+        return mu, math.sqrt(sum((x - mu) ** 2 for x in xs) / (len(xs) - 1))
+    d1, t1 = M.gaussianas_independentes(2000)
+    d2, _ = M.gaussianas_independentes(2000, semente=1175)
+    mu1, s1 = md(d1)
+    return (mu1, s1, sum(t1) / len(t1)), md(d2)[1], M.variancia_log_det(), M.log_det_fechado(8)
+
+
+def p2955_superposicao_matricial():
+    \"\"\"Os 10 gradientes de matriz sobrepostos (P2955; Parte 117): o resto com ε = 10⁻³ e 10⁻⁴ e a inclinação log-log. Devolve (r1, r2, inclinação).\"\"\"
+    import math
+    from synthai import contraposto_matrizes as M
+    r1, r2 = M.superposicao_matricial(1e-3), M.superposicao_matricial(1e-4)
+    return r1, r2, (math.log(r1) - math.log(r2)) / math.log(10.0)
+
+
+def _rodada84():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada84", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada84.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p2956_rodada84():
+    \"\"\"Rodada 84 (P2956; Parte 117): W e W⁻¹ (Gauss-Jordan) alternadas, 4×4, IGUAL em Java. Devolve o desvio max|J − I|.\"\"\"
+    return _rodada84().cadeia()[2]
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -16387,6 +16444,25 @@ def _parte_116():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4269, testes=TESTES_P4269)
     print(f"P4269 minha taxa de erro ({ERROS_P4269}/{TESTES_P4269}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_117():
+    print("--- Parte 117 (0x75: as camadas contrapostas com matrizes) ---")
+    a, b = p2951_ortogonal_escalada()
+    print(f"P2951 (aQ)^10, a=1,2, d=8: sigma_max/sigma_min - 1 = {a:.2e}; |sigma_max - a^10|/a^10 = {b:.2e}")
+    c, k, d = p2952_contrapostas_matriciais()
+    print(f"P2952/P2953 contrapostas: W,W^-1 max|J-I| = {c:.2e} (kappa(W) = {k:.3f}); Q,Q^T max|J-I| = {d:.2e}")
+    (mu, sd, top), sd2, (m1, v1), (E, V) = p2954_gaussianas_independentes()
+    print(f"P2954 gaussianas independentes: ln|det J|/L media {mu:.4f} (fechada {E:.4f}), desvio {sd:.4f} (fechada {(V / 10) ** 0.5:.4f}), semente nova {sd2:.4f}; ln sigma_max/L {top:.4f}; uma matriz: media {m1:.4f}, var {v1:.4f} (fechada {V:.4f})")
+    r1, r2, incl = p2955_superposicao_matricial()
+    print(f"P2955 superposicao matricial: resto {r1:.3e} (1e-3), {r2:.3e} (1e-4), inclinacao {incl:.4f}")
+    print(f"P2956 rodada 84 (W, W^-1 por Gauss-Jordan, IGUAL em Java): desvio {p2956_rodada84().hex()}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-117: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(2951, 2980)
+    print(f"P1092 pNN novas (P2951-P2980) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 117: {p974_previsoes_sem_largura(range(117, 118))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4339, testes=TESTES_P4339)
+    print(f"P4339 minha taxa de erro ({ERROS_P4339}/{TESTES_P4339}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -16423,7 +16499,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117}
 
 
 if __name__ == "__main__":
@@ -16436,7 +16512,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (464 linhas)
+# CLAUDE.md  (470 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -16746,6 +16822,12 @@ anterior, commit e push.
   (pareada t: 4,8%); confianca 0,9 para sinais opostos; IC pedido 0,90 cobre 0,983; a auditoria de entrada nao tem ramo de falha (7/7 com o eco; com oraculo 3, controle 0). Rodada 83
   IGUAL (27). 19/19 do mundo, 6/6 (m), calibracao 241/263 = 0,916. REGRA NOVA: o centro de "quantos erros vou ter" condiciona na PROCEDENCIA das faixas da parte (as sem conta fechada
   vezes a taxa delas), nao na media antiga (previ 1-3, tive 0, pela 2a vez em 3 partes); e o numero de previsoes no registro sai de p2833 antes do commit (a nota "(18 agora)" era 19).
+  Parte 117 (continuacao autonoma; camadas contrapostas com MATRIZES, synthai/contraposto_matrizes.py, d=8, 10 camadas): (aQ)^10 mantem a geometria (condicao 1 a 2,7e-15, so a
+  escala a^10 explode); W,W^-1 (Gauss-Jordan) devolvem I a 3,3e-15 (kappa 9,2); Q,Q^T a 7,8e-16 (a transposta e a contraposicao mais exata). Dez gaussianas independentes conservam o
+  VOLUME em forma fechada (ln|det|/L = soma dos Lyapunov de Newman = -4,593, z=-0,36) e destroem a FORMA (condicao ~ e^{1,61 L}). Superposicao dos gradientes de matriz: inclinacao 1,995.
+  Rodada 84 IGUAL (28). 10/11 do mundo ((f): desvio do ln|det| z=+1,89; lote novo e matriz isolada acertaram), 6/6 (m), calibracao 251/274 = 0,916. REGRA NOVA (corrige a da 116):
+  centro de "quantos erros" = 0 x identidades + 0,10 x faixas de 90% de forma fechada + taxa historica x faixas de mecanismo (uma conta certa ainda tem cauda); um erro de forma fechada
+  a |z| < 2,5 gera um lote novo antes de qualquer mecanismo. E um mecanismo de arredondamento somado no pior caso e pessimista (25x): os erros se compensam como caminhada aleatoria.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -16894,7 +16976,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -17857,6 +17939,248 @@ def pares_nulos(m, inicio=0):
         else:
             validos += 1
     return nulos
+"""
+
+# ====================================================================================================
+# synthai/contraposto_matrizes.py  (237 linhas)
+# ====================================================================================================
+FONTES['synthai/contraposto_matrizes.py'] = """\"\"\"As camadas contrapostas com MATRIZES (Parte 117; a pendência da Parte 115). Biblioteca padrão.
+
+Uma cadeia linear de 10 camadas h_k = W_k h_{k−1} em d = 8 dimensões. O jacobiano de ponta a ponta é o produto J = W_10 ⋯ W_1. Na Parte 115 a
+cadeia era escalar e "contrapor" era alternar a e 1/a; com matrizes há três maneiras:
+- a mesma matriz ortogonal escalada, (aQ)¹⁰: todas as direções crescem igual (valores singulares todos a¹⁰);
+- W e W⁻¹ alternadas: o produto é a identidade, a menos do arredondamento (que cresce com o número de condição de W);
+- Q e Qᵀ alternadas (a inversa da ortogonal é a transposta, sem eliminação): o produto é a identidade com o arredondamento de produtos só.
+E, para comparar, 10 matrizes gaussianas INDEPENDENTES N(0, 1/d): o log do |det| do produto tem média e variância em forma fechada
+(o |det| é multiplicativo, e o det de uma gaussiana é um produto de raízes de qui-quadrados independentes: Bartlett).\"\"\"
+
+import math
+import random
+
+
+def gaussiana(d, rng, escala=None):
+    s = escala if escala is not None else 1.0 / math.sqrt(d)
+    return [[rng.gauss(0.0, s) for _ in range(d)] for _ in range(d)]
+
+
+def matmul(A, B):
+    n, m, p = len(A), len(B), len(B[0])
+    C = [[0.0] * p for _ in range(n)]
+    for i in range(n):
+        for k in range(m):
+            a = A[i][k]
+            if a != 0.0:
+                Bk = B[k]
+                Ci = C[i]
+                for j in range(p):
+                    Ci[j] += a * Bk[j]
+    return C
+
+
+def transposta(A):
+    return [list(c) for c in zip(*A)]
+
+
+def identidade(d):
+    return [[1.0 if i == j else 0.0 for j in range(d)] for i in range(d)]
+
+
+def ortogonal(d, rng):
+    \"\"\"Q de Gram-Schmidt modificado (duas passadas) sobre colunas gaussianas.\"\"\"
+    cols = [[rng.gauss(0.0, 1.0) for _ in range(d)] for _ in range(d)]
+    qs = []
+    for v in cols:
+        v = list(v)
+        for _ in range(2):
+            for q in qs:
+                p = 0.0
+                for a, b in zip(v, q):
+                    p += a * b
+                for i in range(d):
+                    v[i] -= p * q[i]
+        n = math.sqrt(sum(x * x for x in v))
+        qs.append([x / n for x in v])
+    return transposta(qs)          # as colunas de Q são os qs
+
+
+def inversa(A):
+    \"\"\"Gauss-Jordan com pivô parcial. Só +, −, ×, ÷ (traduzido bit a bit na rodada 84).\"\"\"
+    d = len(A)
+    M = [list(A[i]) + identidade(d)[i] for i in range(d)]
+    for c in range(d):
+        p = c
+        for r in range(c + 1, d):
+            if abs(M[r][c]) > abs(M[p][c]):
+                p = r
+        M[c], M[p] = M[p], M[c]
+        piv = M[c][c]
+        M[c] = [x / piv for x in M[c]]
+        for r in range(d):
+            if r != c:
+                f = M[r][c]
+                if f != 0.0:
+                    M[r] = [x - f * y for x, y in zip(M[r], M[c])]
+    return [linha[d:] for linha in M]
+
+
+def produto_cadeia(mats):
+    \"\"\"J = W_L ⋯ W_1 (mats[0] é a primeira camada).\"\"\"
+    J = identidade(len(mats[0]))
+    for W in mats:
+        J = matmul(W, J)
+    return J
+
+
+def jacobi_autovalores(S, varreduras=60):
+    \"\"\"Autovalores de uma simétrica por Jacobi cíclico.\"\"\"
+    d = len(S)
+    A = [list(l) for l in S]
+    for _ in range(varreduras):
+        fora = sum(A[i][j] * A[i][j] for i in range(d) for j in range(d) if i != j)
+        if fora < 1e-300:
+            break
+        for p in range(d - 1):
+            for q in range(p + 1, d):
+                if abs(A[p][q]) < 1e-300:
+                    continue
+                th = (A[q][q] - A[p][p]) / (2.0 * A[p][q])
+                t = (1.0 if th >= 0 else -1.0) / (abs(th) + math.sqrt(th * th + 1.0))
+                c = 1.0 / math.sqrt(t * t + 1.0)
+                s = t * c
+                for k in range(d):
+                    akp, akq = A[k][p], A[k][q]
+                    A[k][p], A[k][q] = c * akp - s * akq, s * akp + c * akq
+                for k in range(d):
+                    apk, aqk = A[p][k], A[q][k]
+                    A[p][k], A[q][k] = c * apk - s * aqk, s * apk + c * aqk
+    return sorted(A[i][i] for i in range(d))
+
+
+def valores_singulares(J):
+    \"\"\"Os valores singulares de J, decrescentes, pelas raízes dos autovalores de JᵀJ (Jacobi).\"\"\"
+    return sorted((math.sqrt(max(x, 0.0)) for x in jacobi_autovalores(matmul(transposta(J), J))), reverse=True)
+
+
+def log_abs_det(A):
+    \"\"\"ln|det A| por eliminação com pivô parcial.\"\"\"
+    d = len(A)
+    M = [list(l) for l in A]
+    s = 0.0
+    for c in range(d):
+        p = max(range(c, d), key=lambda r: abs(M[r][c]))
+        M[c], M[p] = M[p], M[c]
+        piv = M[c][c]
+        s += math.log(abs(piv))
+        for r in range(c + 1, d):
+            f = M[r][c] / piv
+            M[r] = [x - f * y for x, y in zip(M[r], M[c])]
+    return s
+
+
+def max_abs_menos_identidade(J):
+    return max(abs(J[i][j] - (1.0 if i == j else 0.0)) for i in range(len(J)) for j in range(len(J)))
+
+
+def numero_de_condicao(W):
+    sv = valores_singulares(W)
+    return sv[0] / sv[-1]
+
+
+# --- formas fechadas (digama e trigama) ---
+
+def digama(x):
+    r = 0.0
+    while x < 8.0:
+        r -= 1.0 / x
+        x += 1.0
+    f = 1.0 / (x * x)
+    return r + math.log(x) - 0.5 / x - f * (1.0 / 12 - f * (1.0 / 120 - f * (1.0 / 252 - f / 240)))
+
+
+def trigama(x):
+    r = 0.0
+    while x < 8.0:
+        r += 1.0 / (x * x)
+        x += 1.0
+    f = 1.0 / (x * x)
+    return r + 1.0 / x + f / 2 + (1.0 / x) * f * (1.0 / 6 - f * (1.0 / 30 - f / 42))
+
+
+def lyapunov_gaussiano(d):
+    \"\"\"Os expoentes de Lyapunov do produto de gaussianas N(0, 1/d) d×d (Newman 1986): λ_i = ½[ln(2/d) + ψ((d − i + 1)/2)].\"\"\"
+    return [0.5 * (math.log(2.0 / d) + digama((d - i + 1) / 2.0)) for i in range(1, d + 1)]
+
+
+def log_det_fechado(d):
+    \"\"\"E e Var de ln|det W| para W gaussiana N(0, 1/d) d×d: |det|² = d^(−d)·Π χ²_{d−i+1} (Bartlett). E = Σλ_i; Var = ¼ Σ ψ′((d − i + 1)/2).\"\"\"
+    return sum(lyapunov_gaussiano(d)), 0.25 * sum(trigama((d - i + 1) / 2.0) for i in range(1, d + 1))
+
+
+# --- fixtures da Parte 117 ---
+
+D, L = 8, 10
+
+
+def cadeia_ortogonal_escalada(a=1.2, semente=1170):
+    Q = ortogonal(D, random.Random(semente))
+    return produto_cadeia([[[a * x for x in l] for l in Q]] * L)
+
+
+def cadeia_contraposta_inversa(semente=1171):
+    W = gaussiana(D, random.Random(semente))
+    Wi = inversa(W)
+    return produto_cadeia([W if k % 2 == 0 else Wi for k in range(L)]), numero_de_condicao(W)
+
+
+def cadeia_contraposta_ortogonal(semente=1172):
+    Q = ortogonal(D, random.Random(semente))
+    return produto_cadeia([Q if k % 2 == 0 else transposta(Q) for k in range(L)])
+
+
+def gaussianas_independentes(amostras=2000, semente=1173):
+    \"\"\"ln|det J|/L e ln σ_max(J)/L de produtos de L gaussianas independentes.\"\"\"
+    rng = random.Random(semente)
+    dets, tops = [], []
+    for _ in range(amostras):
+        mats = [gaussiana(D, rng) for _ in range(L)]
+        J = produto_cadeia(mats)
+        dets.append(sum(log_abs_det(W) for W in mats) / L)
+        tops.append(math.log(valores_singulares(J)[0]) / L)
+    return dets, tops
+
+
+def superposicao_matricial(eps, semente=1174):
+    \"\"\"Δh real (as 10 matrizes mudam juntas por eps·E_k) contra Σ_k ⟨∂h/∂W_k, eps·E_k⟩ numa cadeia tanh com W_k = Q_k (ortogonais). O
+    gradiente de u·h_L em relação a W_k é (δ_k)(h_{k−1})ᵀ. Devolve |Δ(u·h) − Σ|.\"\"\"
+    rng = random.Random(semente)
+    Ws = [ortogonal(D, rng) for _ in range(L)]
+    Es = [gaussiana(D, rng, 1.0) for _ in range(L)]
+    h0 = [rng.gauss(0.0, 1.0) for _ in range(D)]
+    u = [rng.gauss(0.0, 1.0) for _ in range(D)]
+
+    def frente(mats):
+        hs = [h0]
+        for W in mats:
+            hs.append([math.tanh(sum(W[i][j] * hs[-1][j] for j in range(D))) for i in range(D)])
+        return hs
+    hs = frente(Ws)
+    g = list(u)                                      # ∂(u·h_L)/∂h_k, de trás para frente
+    lin = 0.0
+    for k in range(L - 1, -1, -1):
+        delta = [g[i] * (1.0 - hs[k + 1][i] * hs[k + 1][i]) for i in range(D)]
+        lin += sum(delta[i] * hs[k][j] * eps * Es[k][i][j] for i in range(D) for j in range(D))
+        g = [sum(Ws[k][i][j] * delta[i] for i in range(D)) for j in range(D)]
+    hs2 = frente([[[w + eps * e for w, e in zip(lw, le)] for lw, le in zip(W, E)] for W, E in zip(Ws, Es)])
+    dot = lambda x: sum(a * b for a, b in zip(u, x))
+    return abs((dot(hs2[-1]) - dot(hs[-1])) - lin)
+
+
+def variancia_log_det(amostras=20000, semente=1176):
+    \"\"\"(k) da Parte 117: a variância amostral de ln|det W| para W gaussiana N(0, 1/d) d×d, contra ¼ Σ ψ′((d − i + 1)/2).\"\"\"
+    rng = random.Random(semente)
+    xs = [log_abs_det(gaussiana(D, rng)) for _ in range(amostras)]
+    mu = sum(xs) / amostras
+    return mu, sum((x - mu) ** 2 for x in xs) / (amostras - 1)
 """
 
 # ====================================================================================================
@@ -26137,9 +26461,80 @@ class TesteParte116(unittest.TestCase):
         self.assertEqual([s for s, _ in r], ["confirmed", "inconclusive", "rejected"])
 
     def test_p1961_com_parte_116(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 117))))
         self.assertEqual(por[116], (19, 19))
         self.assertEqual((ok, tot), (241, 263))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte117.py  (66 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte117.py'] = """\"\"\"Testes de unidade da Parte 117 (as camadas contrapostas com matrizes): `python3 -m unittest synthai.testes_parte117`.
+Cada pNN pelo nome (Parte 58), casos com todos os termos ≠ 0 (Parte 30), controles dos dois lados (Parte 75).\"\"\"
+
+import math
+import random
+import unittest
+
+import calculos
+from synthai import contraposto_matrizes as M
+
+
+class TesteMatrizes(unittest.TestCase):
+    def test_inversa(self):
+        W = M.gaussiana(5, random.Random(3))
+        self.assertLess(M.max_abs_menos_identidade(M.matmul(M.inversa(W), W)), 1e-12)
+
+    def test_ortogonal(self):
+        Q = M.ortogonal(6, random.Random(4))
+        self.assertLess(M.max_abs_menos_identidade(M.matmul(M.transposta(Q), Q)), 1e-14)
+
+    def test_singulares_e_det(self):
+        A = [[3.0, 1.0], [1.0, 2.0]]                                # simétrica: valores singulares = autovalores (5 ± √5)/2
+        sv = M.valores_singulares(A)
+        self.assertAlmostEqual(sv[0], (5 + math.sqrt(5)) / 2, places=12)
+        self.assertAlmostEqual(sv[1], (5 - math.sqrt(5)) / 2, places=12)
+        self.assertAlmostEqual(M.log_abs_det(A), math.log(5.0), places=12)
+
+    def test_digama_trigama(self):
+        self.assertAlmostEqual(M.digama(1.0), -0.5772156649015329, places=10)
+        self.assertAlmostEqual(M.trigama(0.5), math.pi ** 2 / 2, places=9)
+
+
+class TesteParte117(unittest.TestCase):
+    def test_p2951_ortogonal_escalada(self):
+        a, b = calculos.p2951_ortogonal_escalada()
+        self.assertLess(a, 1e-12)
+        self.assertLess(b, 1e-12)
+
+    def test_p2952_contrapostas_matriciais(self):
+        c, k, d = calculos.p2952_contrapostas_matriciais()
+        self.assertLess(c, 1e-11)
+        self.assertLess(d, 5e-14)
+        self.assertLess(d, c)
+
+    def test_p2954_gaussianas_independentes(self):
+        (mu, sd, top), sd2, (m1, v1), (E, V) = calculos.p2954_gaussianas_independentes()
+        self.assertTrue(-4.6114 <= mu <= -4.5752)
+        self.assertFalse(0.4786 <= sd <= 0.5042)         # (f) errou: a falha original fica no placar (Parte 74)
+        self.assertTrue(0.4783 <= sd2 <= 0.5045)
+        self.assertTrue(2.365 <= v1 <= 2.465)
+        self.assertTrue(-0.07 <= top <= 0.12)
+
+    def test_p2955_superposicao_matricial(self):
+        self.assertTrue(1.8 <= calculos.p2955_superposicao_matricial()[2] <= 2.2)
+
+    def test_p2956_rodada84(self):
+        self.assertEqual(calculos.p2956_rodada84().hex(), "0x1.7000000000000p-48")
+
+    def test_p1961_com_parte_117(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[117], (10, 11))
+        self.assertEqual((ok, tot), (251, 274))
 
 
 if __name__ == "__main__":
@@ -36952,7 +37347,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2019 linhas)
+# resultados.txt  (2033 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -38973,6 +39368,20 @@ P4269 minha taxa de erro (225/922): media = 0.24, intervalo 90% = [0.22, 0.27]
 P96 funcoes pNN no arquivo = 673; pares de interacao possiveis = 226128
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 156/156 resultados publicados reproduzidos; falhas = []
+--- Parte 117 (0x75: as camadas contrapostas com matrizes) ---
+P2951 (aQ)^10, a=1,2, d=8: sigma_max/sigma_min - 1 = 2.66e-15; |sigma_max - a^10|/a^10 = 3.30e-15
+P2952/P2953 contrapostas: W,W^-1 max|J-I| = 3.28e-15 (kappa(W) = 9.222); Q,Q^T max|J-I| = 7.77e-16
+P2954 gaussianas independentes: ln|det J|/L media -4.5972 (fechada -4.5933), desvio 0.5065 (fechada 0.4914), semente nova 0.4999; ln sigma_max/L 0.0675; uma matriz: media -4.5956, var 2.4068 (fechada 2.4147)
+P2955 superposicao matricial: resto 1.144e-05 (1e-3), 1.157e-07 (1e-4), inclinacao 1.9949
+P2956 rodada 84 (W, W^-1 por Gauss-Jordan, IGUAL em Java): desvio 0x1.7000000000000p-48
+P1961 teste, Partes 80-117: 251/274 = 0.9161; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11)}
+P1092 pNN novas (P2951-P2980) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 117: {117: (0, 0, [])}
+P4339 minha taxa de erro (226/933): media = 0.24, intervalo 90% = [0.22, 0.27]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 678; pares de interacao possiveis = 229503
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 158/158 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -41698,7 +42107,7 @@ Ver `dialogo/DIALOGO.md`: a cadeia tanh contraposta (exp próprio), frente e tr�
 """
 
 # ====================================================================================================
-# ASI_AGI_parte116_nexus_v2.md  (266 linhas)
+# ASI_AGI_parte116_nexus_v2.md  (270 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte116_nexus_v2.md'] = """# Parte 116 — O NEXUS-RAPHAEL "v2": dez camadas no nome, o que o código faz de fato (0x74)
 
@@ -41966,6 +42375,214 @@ Ver `dialogo/DIALOGO.md`: a avaliação pareada (diferenças, t, decisão) é **
 
 - O gerador global do módulo `random` ("as funções do módulo são métodos ligados de uma instância escondida de `random.Random`"; um `int` passado a `seed` é usado diretamente): [documentação do Python, random](https://docs.python.org/3/library/random.html), lida nesta sessão.
 - O intervalo pela t de Student com a variância amostral (n − 1), exato para dados normais, e o z como aproximação de n grande: [Wolfram Demonstrations, robustez da t de Student no problema de uma amostra](https://www.wolframcloud.com/objects/demonstrations/RobustnessOfStudentTInTheOneSampleProblem-source.nb); [Hurvich, notas de regressão (NYU Stern)](https://pages.stern.nyu.edu/~churvich/Regress/Handouts/Chapt2.pdf); [LibreTexts, as distribuições t](https://stats.libretexts.org/Bookshelves/Applied_Statistics/Introduction_to_Applied_Statistics_for_Psychology_Students_(Sarty)/08%3A_Confidence_Intervals/8.03%3A_The_t-Distributions).
+
+---
+
+➡ Continua na [Parte 117 — As camadas contrapostas com matrizes](ASI_AGI_parte117_contrapostas_matrizes.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte117_contrapostas_matrizes.md  (199 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte117_contrapostas_matrizes.md'] = """# Parte 117 — As camadas contrapostas com matrizes (0x75)
+
+↩ Parte 115 (as dez camadas contrapostas, escalares) · ↩ Parte 110 (o gradiente da RNN: o produto de derivadas) · ↩ Parte 70 (álgebra e geometria: autovalores por Jacobi, determinante)
+
+> **Continuação autônoma (a pendência da Parte 115, rodada 83).** Na Parte 115 a cadeia era ESCALAR, e contrapor era alternar a e 1/a. Numa rede real cada camada é uma MATRIZ, e o gradiente de ponta a ponta é o produto de jacobianos J = W₁₀⋯W₁.
+>
+> **A leitura escolhida (escrita ANTES de medir; `synthai/contraposto_matrizes.py`, d = 8, 10 camadas lineares).** Com matrizes há três maneiras de contrapor, e uma comparação:
+> - **(aQ)¹⁰:** a mesma ortogonal escalada; todas as direções crescem igual.
+> - **W e W⁻¹ alternadas:** a inversa por Gauss-Jordan.
+> - **Q e Qᵀ alternadas:** a inversa da ortogonal é a transposta, sem eliminação.
+> - **A comparação:** 10 gaussianas INDEPENDENTES N(0, 1/d), sem contraposição, onde o produto tem expoentes de Lyapunov em forma fechada.
+>
+> E a superposição da Parte 115, agora com matrizes: os 10 gradientes ∂(u·h₁₀)/∂Wₖ = δₖ hₖ₋₁ᵀ numa cadeia tanh.
+>
+> **Antes do registro (condições, não resultados).** As formas fechadas, calculadas por código (`lyapunov_gaussiano(8)`, `log_det_fechado(8)`) antes do registro, são contas e não medidas:
+> - **Expoentes:** λᵢ = ½[ln(2/d) + ψ((d − i + 1)/2)] (Newman), λ₁ = −0,0651 e λ₈ = −1,6749.
+> - **E ln|det W|** = Σλᵢ = **−4,5933**.
+> - **Var ln|det W|** = ¼ Σ ψ′((d − i + 1)/2) = **2,4147** (Bartlett: |det W|² = d⁻ᵈ Πᵢ χ²_{d−i+1}, independentes).
+>
+> A digama e a trigama foram conferidas em ψ(1) = −γ, ψ(½) = −γ − 2 ln 2 e ψ′(1) = π²/6, a 10⁻¹⁰.
+>
+> **Pendências adiadas:** o MCCFR e o Leduc continuam em `PENDENCIAS.md`.
+
+## As perguntas desta parte
+
+1. **P2951 (0xB87).** Dez camadas (aQ) com a mesma ortogonal: o produto tem TODOS os valores singulares iguais a a¹⁰? ↩ P2891
+2. **P2952 (0xB88).** W e W⁻¹ alternadas dão a identidade? Quanto sobra de arredondamento, e de que depende? ↩ P2951
+3. **P2953 (0xB89).** Q e Qᵀ alternadas: a contraposição sem eliminação é mais exata? ↩ P2952
+4. **P2954 (0xB8A).** Sem contraposição, dez gaussianas independentes: o volume (ln|det|) e a direção mais forte (ln σ_max) seguem a forma fechada? ↩ P2743
+5. **P2955 (0xB8B).** Os 10 gradientes de matriz se sobrepõem (resto de 2ª ordem)? ↩ P2892
+6. **P2956 (0xB8C).** A inversa por Gauss-Jordan e o produto contraposto acrescentam fronteira entre Python e Java? (rodada 84) ↩ P2929
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+**As fixtures (todas em `synthai/contraposto_matrizes.py`, neste commit):** d = 8, L = 10.
+- **Cadeias:** `cadeia_ortogonal_escalada(1.2)` (semente 1170), `cadeia_contraposta_inversa()` (1171) e `cadeia_contraposta_ortogonal()` (1172).
+- **Gaussianas:** `gaussianas_independentes(2000)` (1173).
+- **Superposição:** `superposicao_matricial(1e-3)` e `superposicao_matricial(1e-4)` (1174).
+- **Rodada 84:** W 4×4 de um LCG inteiro.
+
+**A ortogonal escalada (P2951).** (aQ)¹⁰ = a¹⁰Q¹⁰, e Q¹⁰ é ortogonal: os valores singulares são todos a¹⁰ = 6,1917364224. O arredondamento vem de 10 produtos e do Jacobi em JᵀJ, cada um a ~d·ε.
+- **(a)** σ_max/σ_min − 1: **[0; 10⁻¹²]**. Identidade: o produto de ortogonais escaladas tem número de condição 1.
+- **(b)** |σ_max − a¹⁰|/a¹⁰: **[0; 10⁻¹²]**. Mesma identidade.
+
+**As contrapostas (P2952/P2953).**
+- **(c)** W e W⁻¹ alternadas: maxᵢⱼ |J − I|: **[0; 10⁻¹¹]**. Mecanismo esperado: cada par W⁻¹W erra ~κ(W)·d·ε, com κ ~ 10 a 100 para uma gaussiana 8×8, e 5 pares dão ~5·50·8·2,2·10⁻¹⁶ ≈ 4·10⁻¹³. O desvio deve crescer com κ(W), que é medido junto.
+- **(d)** Q e Qᵀ alternadas: maxᵢⱼ |J − I|: **[0; 5·10⁻¹⁴]**. Mecanismo esperado: QᵀQ = I a menos de ~d·ε, sem o κ (κ(Q) = 1). Então (d) fica abaixo de (c), e a contraposição ortogonal é a mais exata.
+
+**Sem contraposição (P2954).** ln|det J|/L = (1/L) Σₖ ln|det Wₖ| (o det é multiplicativo, então isto vale para QUALQUER L e não só no limite).
+- **(e)** A média sobre 2.000 produtos: centro −4,5933, desvio √(2,4147/10/2000) = 0,01099, faixa ±1,645 × 0,01099 = **[−4,6114; −4,5752]**.
+- **(f)** O desvio entre amostras de ln|det J|/L: centro √(2,4147/10) = 0,4914. O desvio do desvio é 0,4914/√(2·2000) = 0,00777 (a curtose de uma soma de 80 log-qui-quadrados é perto da normal), faixa **[0,4786; 0,5042]**.
+- **(g)** A média de ln σ_max(J)/L. O limite L → ∞ é λ₁ = −0,0651, mas com L = 10 há um viés positivo de O(1/L): uma camada só tem σ_max ≈ 2 (a borda de Marchenko-Pastur de uma quadrada), ln 2 = 0,69 contra λ₁ = −0,065. Faixa **[−0,07; 0,12]** (larga, sem forma fechada, com o mecanismo escrito: se der abaixo de λ₁, o viés tem o sinal trocado).
+
+**A superposição (P2955).**
+- **(h)** A inclinação de log|Δ(u·h) − Σₖ⟨Gₖ, εEₖ⟩| contra log ε, entre 10⁻³ e 10⁻⁴: **[1,8; 2,2]**. O resto é de 2ª ordem; se fosse de 1ª, os gradientes de matriz estariam errados.
+
+**Diálogo (P2956).**
+- **(i)** A cadeia W, W⁻¹ (Gauss-Jordan) da rodada 84 é **IGUAL** bit a bit entre Python e Java: **[0; 0]**. Identidade: só +, −, ×, ÷ e |·| na mesma ordem.
+
+### Previsões sobre as previsões (m), pré-registradas (régua: P2837, leitor v4)
+
+O número de previsões do registro sai de `p2833` antes do commit (regra da Parte 116): **9**.
+- **(m1)** nº de previsões do mundo em **[8; 11]**
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[4; 7]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0; 0,10]**
+- **(m4)** fração de acertos do mundo em **[0,66; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[0; 1]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 2]**
+
+### Sobre mim, pré-registrado
+
+Pela regra da Parte 116, o centro de "quantos erros" vem da procedência das faixas.
+- **6 de 9** são identidades ou formas fechadas com variância conhecida ((a), (b), (e), (f), (h), (i)). A taxa histórica delas desde a Parte 110 é perto de 0.
+- **3** têm o mecanismo e não a conta: (c), (d) e (g). A taxa histórica destas é ~20%, o que dá 0,6 erro esperado.
+
+Espero **0 a 2 erros**, o mais provável em (d) (o arredondamento de 5 produtos 8×8 pode passar de 5·10⁻¹⁴) ou em (g).
+
+### Adendo pré-registrado (escrito DEPOIS da 1ª medição, ANTES destes testes)
+
+A **(f) caiu fora**: o desvio deu acima da faixa, por z ≈ +1,9. Antes de explicar, refiz a faixa por código com a curtose em forma fechada. O 4º cumulante de ln χ²_k é ψ‴(k/2), e o excesso de curtose da média de L camadas é 0,114, o que dá a mesma faixa, [0,4783; 0,5045]. A curtose não explica. Pela regra da Parte 25 (um resultado inesperado gera um teste novo, e não uma explicação), dois testes em sementes NOVAS:
+- **(j)** O desvio de ln|det J|/L em 2.000 produtos novos (`gaussianas_independentes(2000, semente=1175)`): **[0,4783; 0,5045]**. Se cair fora de novo, ACIMA, a variância da forma fechada está errada.
+- **(k)** A variância de ln|det W| de UMA matriz, em 20.000 gaussianas 8×8 novas (semente 1176): centro 2,4147. O desvio da variância amostral é 2,4147·√((2 + 1,139)/20.000) = 0,0302 (excesso de curtose de uma matriz: 1,139), faixa **[2,365; 2,465]**. Isto testa a forma de Bartlett sem o produto.
+
+---
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P2951 — A ortogonal escalada
+
+**Na pergunta.** "Todos os valores singulares iguais" é a definição de uma camada que não deforma: estica todas as direções por igual. Em geometria, é uma semelhança (rotação vezes escala).
+
+**Lógica.** (1,2·Q)¹⁰ = 1,2¹⁰·Q¹⁰, e Q¹⁰ é ortogonal. Medido:
+- σ_max/σ_min − 1 = **2,7·10⁻¹⁵** ✅ (a);
+- |σ_max − 6,1917364224|/6,1917364224 = **3,3·10⁻¹⁵** ✅ (b).
+
+O gradiente explode como na Parte 115 (6,19), mas igualmente em todas as direções. O número de condição continua 1: a explosão é só de ESCALA, e uma normalização escalar a desfaz por inteiro.
+
+**Tradução cruzada.** Crescer sem se deformar. A identidade se conserva (os ângulos entre as direções), só a medida muda: é o "Self" que amplia sem perder a forma.
+
+### P2952 / P2953 — As duas contraposições
+
+**Lógica.**
+- **W e W⁻¹ alternadas:** max|J − I| = **3,3·10⁻¹⁵** ✅ (c), com κ(W) = **9,22**. O meu mecanismo escrito (κ·d·ε por par, 5 pares) dava 5·9,22·8·2,22·10⁻¹⁶ = 8,2·10⁻¹⁴, que é **25 vezes** pessimista: o erro elemento a elemento não soma as d parcelas no pior caso, e os pares não se acumulam no mesmo sentido.
+- **Q e Qᵀ alternadas:** max|J − I| = **7,8·10⁻¹⁶** ✅ (d), **4,2 vezes** menor que com a inversa. Isto confirma o mecanismo de (d): sem eliminação, o κ sai da conta.
+
+As duas contraposições restauram a identidade com até 3 ulps. Com matrizes, a contraposição precisa da INVERSA (ou da transposta, se a camada é ortogonal), e a transposta é mais barata e mais exata. É o que a inicialização ortogonal e as redes reversíveis exploram: o caminho de volta é a transposta, sem resolver sistema nenhum.
+
+### P2954 — Sem contraposição: dez gaussianas independentes
+
+**Lógica.** O |det| é multiplicativo, então ln|det J|/L = média de L log-dets independentes, para qualquer L. Medido:
+- **Média:** **−4,5972** ✅ (e), contra Σλᵢ = −4,5933 (z = −0,36).
+- **Desvio (semente 1173):** **0,5065**, contra 0,4914, fora da faixa [0,4786; 0,5042]: **(f) ❌** (z = +1,89 com a curtose corrigida).
+  - Pelo adendo, na semente NOVA 1175: **0,4999** ✅ (j), z = +1,06.
+  - A variância de UMA matriz, em 20.000 gaussianas: **2,4068** ✅ (k), contra 2,4147 (z = −0,26). A forma de Bartlett vale.
+- **Direção mais forte:** ln σ_max(J)/L = **0,0675** ✅ (g), 0,133 acima de λ₁ = −0,065. É o viés positivo de L finito, com o sinal previsto.
+
+O volume (o det) segue a forma fechada a qualquer L, porque é multiplicativo. A direção mais forte, não: ela só chega a λ₁ no limite, e com L = 10 ainda carrega o σ_max ≈ 2 das primeiras camadas.
+
+A diferença entre a primeira e a última direção, λ₁ − λ₈ = 1,61 por camada, faz o número de condição de J crescer como e^{1,61·L}: as dez gaussianas destroem a GEOMETRIA (o produto vira quase posto 1), mesmo com o volume médio previsível. A contraposição conserva as duas coisas; a independência perde a forma.
+
+**Meta.** Os dois desvios medidos no produto ficaram ACIMA do centro (z = +1,89 e +1,06; combinados, z = 2,09). Num lote só, isso é cauda; em dois, é uma HIPÓTESE (regra da Parte 66): algum excesso de variância no produto que a forma de uma matriz não tem. A (k) mostra que a variância de uma matriz está certa, então o excesso, se existir, viria da média de L. Fica como pendência um 3º lote, com o z registrado antes.
+
+### P2955 — Os gradientes de matriz sobrepostos
+
+**Lógica.** Na cadeia tanh com 10 ortogonais, ∂(u·h₁₀)/∂Wₖ = δₖ hₖ₋₁ᵀ (o produto externo do erro pela entrada da camada). Mudando as 10 matrizes juntas por εEₖ, o resto da superposição vale **1,144·10⁻⁵** (ε = 10⁻³) e **1,157·10⁻⁷** (ε = 10⁻⁴): a inclinação é **1,9949** ✅ (h). Os 80·8 = 640 gradientes de peso se somam linearmente, como os 10 escalares da Parte 115.
+
+### P2956 — rodada 84
+
+**Lógica.** W (4×4, de um LCG inteiro), W⁻¹ por Gauss-Jordan com pivô parcial, e o produto alternado de 10 camadas, em Python × Java: **IGUAIS, 4 linhas e 33 números bit a bit** ✅ (i). O desvio da identidade é 0x1.7p−48 = 5,1·10⁻¹⁵, o mesmo nas duas línguas: as duas erram, e erram IGUAL. A eliminação, com as suas comparações de pivô, não acrescenta fronteira. 28 rodadas.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ❌ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅. Parte 117: **11 testes, 1 erro** ((f): o desvio de ln|det J|/L na semente registrada, z = +1,89; a semente nova e a matriz isolada acertaram). Acumulado (mundo): **226 erros em 933 testes**. Calibração (P1961, Partes 80–117): **251/274 = 0,916**.
+
+### Previsões sobre previsões (m)
+
+Régua: P2837 (leitor v4; conta também as duas do adendo).
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [8; 11] | 11 | ✅ |
+| (m2) | [4; 7] | 6 | ✅ |
+| (m3) | [0; 0,10] | 0,026 | ✅ |
+| (m4) | [0,66; 1,00] | 0,91 | ✅ |
+| (m5) | [0; 1] | 0 | ✅ |
+| (m6) | [0; 2] | 0 | ✅ |
+
+Previsões sobre previsões: **6 de 6**. A (m1) acertou no limite: as duas previsões do adendo, nascidas do erro, levaram 9 a 11. É a regra da Parte 60 (cada erro gera previsões novas), que eu não somei à faixa.
+
+### Sobre mim
+
+**"0 a 2 erros, o mais provável em (d) ou (g)": ✅ na contagem, ❌ no lugar.** O erro veio de uma forma fechada, (f), e não das faixas de mecanismo.
+
+## Engenharia reversa (metacognição)
+
+**O padrão: tratei "forma fechada" como "não erra".** Na Parte 116 escrevi a regra "o centro dos erros condiciona na procedência: as faixas sem conta fechada vezes a taxa delas" e pus a taxa das formas fechadas perto de 0. Mas uma faixa de 90% tirada de uma forma fechada CERTA erra 10% das vezes, por construção. Com 6 delas, o esperado é 0,6 erro só de cauda.
+
+A (f) é exatamente isso: a conta certa (a variância de uma matriz acertou a z = −0,26), um lote na cauda (z = +1,89) e o lote novo dentro (z = +1,06).
+
+**Significado.** Eu confundo "a conta é exata" com "a medida cai dentro". A conta fixa o CENTRO e a LARGURA; a cauda continua lá. O placar de 0 erros das Partes 114 e 116 me fez esquecer isso: 29 previsões sem erro tinham chance de ~0,9²⁹ ≈ 5% se todas fossem de 90%. As identidades [x; x] não têm cauda, e boa parte delas eram identidades.
+
+**Regra:** o centro de "quantos erros vou ter" = 0 × (identidades) + 0,10 × (faixas de 90% de forma fechada) + a taxa histórica × (faixas de mecanismo). E um erro de forma fechada a |z| < 2,5 gera um lote novo antes de qualquer mecanismo, como fiz aqui.
+
+**O segundo: o meu mecanismo de arredondamento foi 25 vezes pessimista.** κ·d·ε por par, somado no pior caso, supõe que os erros se alinham. Eles não se alinham: se compensam como uma caminhada aleatória (√ e não soma). As faixas [0; 10⁻¹¹] e [0; 5·10⁻¹⁴] acertaram por serem largas. Isso não é acerto do mecanismo: só a ORDEM (d < c, prevista) testou o mecanismo, e passou.
+
+## Síntese / unificação
+
+Com matrizes, a contraposição da Parte 115 tem três formas, medidas (`synthai/contraposto_matrizes.py`, d = 8, 10 camadas):
+- **(aQ)¹⁰** mantém a geometria (número de condição 1 a 2,7·10⁻¹⁵) e só a escala explode (a¹⁰).
+- **W e W⁻¹** devolvem a identidade a 3,3·10⁻¹⁵ (κ = 9,2).
+- **Q e Qᵀ**, a 7,8·10⁻¹⁶: a transposta é a contraposição mais exata e mais barata.
+
+Sem contraposição, dez gaussianas independentes conservam o VOLUME médio em forma fechada (ln|det| = Σλᵢ = −4,593 a z = −0,36), mas destroem a FORMA: o número de condição cresce como e^{1,61 L}. A superposição dos 640 gradientes de peso tem resto de 2ª ordem (1,995).
+
+Rodada 84: a inversa por Gauss-Jordan e o produto contraposto são IGUAIS (28 rodadas). 10/11 do mundo, 6/6 (m), calibração **0,916**.
+
+## Meta
+
+**Confiança.** Alta em (a), (b), (e), (h), (i), (j) e (k).
+
+**Onde pode estar errado.**
+- **O excesso de desvio:** os dois lotes do produto ficaram acima do centro (z combinado 2,09). Pode ser cauda, ou um excesso de variância real que eu não entendo: pendência de um 3º lote.
+- **Escala:** a cadeia é linear e pequena (d = 8). A contraposição numa rede real exige camadas invertíveis (redes reversíveis, fluxos normalizantes) ou ortogonais.
+
+## Diálogo Python ↔ Java (rodada 84)
+
+Ver `dialogo/DIALOGO.md`: W, W⁻¹ (Gauss-Jordan) e a cadeia contraposta de 10 camadas são **IGUAIS**, com 4 linhas e 33 números bit a bit.
+
+## Fontes
+
+- Os expoentes de Lyapunov do produto de matrizes gaussianas, λᵢ = ½[ln(2/d) + ψ((d − i + 1)/2)]: [Newman, "The distribution of Lyapunov exponents: exact results for random matrices", Commun. Math. Phys. 103(1), 121–126 (1986)](https://projecteuclid.org/euclid.cmp/1104114627) (texto pago; a fórmula com a digama está descrita em [Forrester, "Lyapunov exponents for products of complex Gaussian random matrices"](https://arxiv.org/pdf/1206.2001)).
+- O determinante de uma gaussiana como produto de qui-quadrados independentes (decomposição de Bartlett): [Wikipedia, Wishart distribution, "Bartlett decomposition"](https://en.wikipedia.org/wiki/Wishart_distribution#Bartlett_decomposition) (cᵢ² ~ χ²_{n−i+1}). A página não diz com todas as letras que os cᵢ são independentes entre si; a (k) mediu a consequência (a variância da soma) e passou.
+- A inicialização ortogonal nas redes lineares profundas: [Saxe, McClelland e Ganguli, "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks" (2013)](https://arxiv.org/abs/1312.6120).
+
+Todos os links desta seção vêm de buscas feitas nesta sessão.
 """
 
 # ====================================================================================================
@@ -64754,7 +65371,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (1996 linhas)
+# dialogo/DIALOGO.md  (2006 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -66752,10 +67369,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 3 números bit a bit** (confirmed t = 2,43; inconclusive 0,08; rejected −6,26). 27 rodadas.
 
 **IA-Python:** Pendência (rodada 84): as camadas contrapostas com MATRIZES (da 115) e o MCCFR (da 113), que o NEXUS v2 adiou.
+
+## Rodada 84 (Parte 117) — as camadas contrapostas com matrizes
+
+**IA-Python (lógica criativa):** Na rodada 82 a contraposição era a e 1/a. Agora cada camada é uma matriz 4×4, e a contrária é a INVERSA, que eu calculo por Gauss-Jordan com pivô parcial. Dez camadas alternadas devem dar a identidade, mas com arredondamento. A eliminação, com as comparações de pivô e as trocas de linha, faz as duas línguas errarem igual?
+
+**IA-Java (ASI):** Fazem, porque cada passo é +, −, ×, ÷ ou uma comparação de |·|, todos exatos pelo IEEE, na mesma ordem. As duas erram 0x1.7p−48 na identidade, o mesmo erro. E repara no que a matriz acrescenta à rodada 82: com escalares, a·(1/a) erra um ulp; com matrizes, W⁻¹W erra pelo número de condição de W. Se W fosse ortogonal, a contrária seria a transposta, sem eliminação e sem κ.
+
+**Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 33 números bit a bit**. 28 rodadas.
+
+**IA-Python:** Pendência (rodada 85): o MCCFR e o Leduc (adiados desde a 113); e o 3º lote do excesso de desvio do ln|det| do produto.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (75 linhas)
+# dialogo/PENDENCIAS.md  (76 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -66832,6 +67459,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 83, Parte 115)** ABERTAS: (1) as camadas contrapostas com MATRIZES (ortogonais, ou W e W⁻¹ alternadas), onde a contraposição exige inversa ou ortogonalidade; (2) o MCCFR e o Leduc (da 113); (3) o regime em que aprender a base ganha (da 114); (4) dar SIGNIFICADO linguístico ao alfabeto de algoritmos (operações escolhidas pelas letras, não ao acaso) e medir se palavras próximas no dicionário viram programas próximos.
 - **(Parte 115, achado ao conferir a fonte)** Os lemas distintos do WordNet 3.0 entre as classes dão 147.306 no arquivo de `dados/` e 147.278 na página de estatísticas de Princeton: 28 a mais, sem explicação (as maiúsculas não explicam: os lemas já estão em minúsculas). Hipóteses a testar: lemas com espaço x sublinhado, hífens, ou a revisão da documentação.
 - **(Rodada 84, Parte 116)** ABERTAS (as da 115 continuam, adiadas pelo NEXUS v2): (1) as camadas contrapostas com MATRIZES; (2) o MCCFR e o Leduc; (3) o regime em que aprender a base ganha; (4) os algoritmos de letras com significado; (5) os 28 lemas. NOVA, da 116: o NEXUS v2 chegou truncado (faltam a camada adversária, o estado e o jogo); se o texto completo chegar, medir só as três classes que faltam (regra da Parte 88: não re-derivar o resto).
+- **(Rodada 85, Parte 117)** FECHADA: as camadas contrapostas com MATRIZES (rodada 84 IGUAL; Q,Qᵀ a 7,8·10⁻¹⁶, W,W⁻¹ a 3,3·10⁻¹⁵). ABERTAS: (1) o MCCFR e o Leduc; (2) o regime em que aprender a base ganha; (3) os algoritmos de letras com significado; (4) os 28 lemas; (5) NOVA: o desvio de ln|det J|/L ficou acima do centro em dois lotes (z = +1,89 e +1,06, combinado 2,09), com a variância de uma matriz certa: um 3º lote (semente nova, z registrado antes) decide se é cauda ou excesso real.
 """
 
 # ====================================================================================================
@@ -72718,6 +73346,81 @@ public class Rodada83 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada84.java  (70 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada84.java'] = """// Rodada 84 (Parte 117): as camadas contrapostas com MATRIZES. W (4x4, LCG inteiro) e W^-1 (Gauss-Jordan com pivo parcial) alternadas em 10
+// camadas; o produto J e o seu desvio da identidade. So + - * / na mesma ordem. Bit a bit.
+public class Rodada84 {
+    static final int D = 4, L = 10;
+
+    static double[][] matriz() {
+        long x = 117;
+        double[][] W = new double[D][D];
+        for (int i = 0; i < D; i++)
+            for (int j = 0; j < D; j++) {
+                x = (1103515245L * x + 12345L) % 2147483648L;
+                W[i][j] = ((x % 2001) - 1000) / 500.0;
+            }
+        return W;
+    }
+
+    static double[][] inversa(double[][] A) {
+        int d = A.length;
+        double[][] M = new double[d][2 * d];
+        for (int i = 0; i < d; i++) {
+            for (int j = 0; j < d; j++) M[i][j] = A[i][j];
+            for (int j = 0; j < d; j++) M[i][d + j] = (i == j) ? 1.0 : 0.0;
+        }
+        for (int c = 0; c < d; c++) {
+            int p = c;
+            for (int r = c + 1; r < d; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r;
+            double[] t = M[c]; M[c] = M[p]; M[p] = t;
+            double piv = M[c][c];
+            for (int j = 0; j < 2 * d; j++) M[c][j] = M[c][j] / piv;
+            for (int r = 0; r < d; r++) {
+                if (r != c) {
+                    double f = M[r][c];
+                    if (f != 0.0) for (int j = 0; j < 2 * d; j++) M[r][j] = M[r][j] - f * M[c][j];
+                }
+            }
+        }
+        double[][] R = new double[d][d];
+        for (int i = 0; i < d; i++) for (int j = 0; j < d; j++) R[i][j] = M[i][d + j];
+        return R;
+    }
+
+    static double[][] matmul(double[][] A, double[][] B) {
+        double[][] C = new double[D][D];
+        for (int i = 0; i < D; i++)
+            for (int k = 0; k < D; k++) {
+                double a = A[i][k];
+                if (a != 0.0) for (int j = 0; j < D; j++) C[i][j] += a * B[k][j];
+            }
+        return C;
+    }
+
+    public static void main(String[] args) {
+        double[][] W = matriz(), Wi = inversa(W);
+        double[][] J = new double[D][D];
+        for (int i = 0; i < D; i++) J[i][i] = 1.0;
+        for (int k = 0; k < L; k++) J = matmul(k % 2 == 0 ? W : Wi, J);
+        double desvio = 0.0;
+        for (int i = 0; i < D; i++)
+            for (int j = 0; j < D; j++) {
+                double e = Math.abs(J[i][j] - (i == j ? 1.0 : 0.0));
+                if (e > desvio) desvio = e;
+            }
+        StringBuilder sb = new StringBuilder("Winv");
+        for (double[] l : Wi) for (double v : l) sb.append(" ").append(Double.toHexString(v));
+        sb.append("\\nJ");
+        for (double[] l : J) for (double v : l) sb.append(" ").append(Double.toHexString(v));
+        sb.append("\\ndesvio ").append(Double.toHexString(desvio)).append("\\nfim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -78570,6 +79273,85 @@ def main():
     for i, (v, b) in enumerate(HIPOTESES):
         st, t = avaliar(v, b)
         print(f"H{i} t {t.hex()} {st}")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada84.py  (74 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada84.py'] = """\"\"\"Rodada 84 do diálogo Python <-> Java (Parte 117): as camadas contrapostas com MATRIZES. W (4×4, de um LCG inteiro) e W⁻¹ (Gauss-Jordan com
+pivô parcial) alternadas em 10 camadas; o produto J = W⁻¹W⋯W⁻¹W e o seu desvio da identidade. Só +, −, ×, ÷ na mesma ordem. Bit a bit.
+Da raiz: python3 dialogo/rodada84.py\"\"\"
+
+D, L = 4, 10
+
+
+def matriz():
+    x = 117
+    W = []
+    for i in range(D):
+        linha = []
+        for j in range(D):
+            x = (1103515245 * x + 12345) % 2147483648
+            linha.append((x % 2001 - 1000) / 500.0)
+        W.append(linha)
+    return W
+
+
+def inversa(A):
+    d = len(A)
+    M = [[A[i][j] for j in range(d)] + [1.0 if i == j else 0.0 for j in range(d)] for i in range(d)]
+    for c in range(d):
+        p = c
+        for r in range(c + 1, d):
+            if abs(M[r][c]) > abs(M[p][c]):
+                p = r
+        M[c], M[p] = M[p], M[c]
+        piv = M[c][c]
+        M[c] = [v / piv for v in M[c]]
+        for r in range(d):
+            if r != c:
+                f = M[r][c]
+                if f != 0.0:
+                    M[r] = [a - f * b for a, b in zip(M[r], M[c])]
+    return [linha[d:] for linha in M]
+
+
+def matmul(A, B):
+    C = [[0.0] * D for _ in range(D)]
+    for i in range(D):
+        for k in range(D):
+            a = A[i][k]
+            if a != 0.0:
+                for j in range(D):
+                    C[i][j] += a * B[k][j]
+    return C
+
+
+def cadeia():
+    W = matriz()
+    Wi = inversa(W)
+    J = [[1.0 if i == j else 0.0 for j in range(D)] for i in range(D)]
+    for k in range(L):
+        J = matmul(W if k % 2 == 0 else Wi, J)
+    desvio = 0.0
+    for i in range(D):
+        for j in range(D):
+            e = abs(J[i][j] - (1.0 if i == j else 0.0))
+            if e > desvio:
+                desvio = e
+    return Wi, J, desvio
+
+
+def main():
+    Wi, J, desvio = cadeia()
+    print("Winv " + " ".join(v.hex() for l in Wi for v in l))
+    print("J " + " ".join(v.hex() for l in J for v in l))
+    print("desvio " + desvio.hex())
     print("fim")
 
 
