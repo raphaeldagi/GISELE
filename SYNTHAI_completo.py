@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 118, perguntas P1 a P2984).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 119, perguntas P1 a P3013).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (16539 linhas)
+# calculos.py  (16612 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7561,6 +7561,7 @@ def testes_de_regressao():
         "P2951": max(p2951_ortogonal_escalada()) < 1e-12,
         "P2956": p2956_rodada84() < 1e-12,
         "P2983": p2983_rodada85()[1] == 0,
+        "P3013": p3013_rodada86()[1] == 0,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9675,6 +9676,8 @@ VEREDITOS_P4339 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ❌ (g) ✅ (h) �
 ERROS_P4339, TESTES_P4339 = 226, 933
 VEREDITOS_P4409 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅"
 ERROS_P4409, TESTES_P4409 = 226, 939
+VEREDITOS_P4479 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
+ERROS_P4479, TESTES_P4479 = 226, 943
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12215,12 +12218,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339", 118: "VEREDITOS_P4409"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339", 118: "VEREDITOS_P4409", 119: "VEREDITOS_P4479"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -15024,6 +15027,58 @@ def p2984_rodadas_verificadas():
     return len(nums), nums[-1]
 
 
+def p3011_amostragem_externa():
+    \"\"\"O MCCFR com amostragem EXTERNA no Kuhn (P3011/P3012; Parte 119), T = 50.000, semente 1192. Devolve (explorabilidade, P(paga com a dama)).\"\"\"
+    from synthai import mccfr_externo as M
+    from synthai.cfr import explorabilidade
+    m = M.CFRExterno().iterar_externo(50000, 1192).media()
+    return explorabilidade(m), m[(2, "b")][1]
+
+
+def p3012_nos_por_iteracao(iteracoes=2000):
+    \"\"\"Quantos nós (chamadas da recursão) cada amostrador visita por iteração (P3012; Parte 119): o vanilla (6 distribuições, 2 jogadores percorridos),
+    o do acaso (Parte 118: 1 distribuição) e o externo (uma distribuição por viajante, o adversário sorteado). Devolve (vanilla, acaso, externo).\"\"\"
+    from synthai import cfr as C, mccfr as A, mccfr_externo as E
+
+    def contar(classe, rodar):
+        n = [0]
+        orig = classe._cfr if hasattr(classe, "_cfr") else None
+
+        class Contador(classe):
+            pass
+        for nome in ("_cfr", "_es"):
+            if hasattr(classe, nome):
+                f = getattr(classe, nome)
+
+                def envolto(self, *a, _f=f):
+                    n[0] += 1
+                    return _f(self, *a)
+                setattr(Contador, nome, envolto)
+        rodar(Contador())
+        return n[0] / iteracoes
+    return (contar(C.CFR, lambda c: c.iterar(iteracoes)), contar(A.CFRAcaso, lambda c: c.iterar_amostrado(iteracoes, 1)),
+            contar(E.CFRExterno, lambda c: c.iterar_externo(iteracoes, 1)))
+
+
+def _rodada86():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada86", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada86.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p3013_rodada86():
+    \"\"\"Rodada 86 (P3013; Parte 119): a amostragem externa com o LCG, IGUAL em Java; e quantos dos 12 conjuntos diferem de synthai.mccfr_externo.
+    Devolve (P(b) médio nos 12, diferenças).\"\"\"
+    from synthai import mccfr_externo as M
+    r = _rodada86()
+    mr = r.treinar()
+    c = M.CFRExterno().iterar_externo(r.T, r.SEMENTE).media()
+    return mr, sum(1 for carta in (1, 2, 3) for h in r.HIST if mr[r.indice(carta, h)] != c[(carta, h)][1])
+
+
 def p1578_autovalores_da_atencao():
     \"\"\"Rodada 45 (P1578): o GPT (d = 16) pré-treinado pela dialogo/rodada45.py; os autovalores de MᵀM, M = W_Q W_Kᵀ, por Jacobi, e a razão de participação
     (IGUAL em Java). Devolve (PR, fração do maior, autovalores).\"\"\"
@@ -16529,6 +16584,24 @@ def _parte_118():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4409, testes=TESTES_P4409)
     print(f"P4409 minha taxa de erro ({ERROS_P4409}/{TESTES_P4409}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_119():
+    print("--- Parte 119 (0x77: a amostragem externa: sortear tambem o adversario) ---")
+    e, q = p3011_amostragem_externa()
+    print(f"P3011 MCCFR externo (T=50000): explorabilidade {e:.5f}; P(paga com a dama) {q:.4f} (1/3)")
+    nv, na, ne = p3012_nos_por_iteracao()
+    print(f"P3012 nos visitados por iteracao: vanilla {nv:.1f}, acaso {na:.2f}, externo {ne:.2f}")
+    mr, dif = p3013_rodada86()
+    print(f"P3013 rodada 86 (amostragem externa com LCG, IGUAL em Java): {dif} conjuntos diferem de synthai.mccfr_externo")
+    n, maior = p2984_rodadas_verificadas()
+    print(f"P2984 rodadas com par Python/Java no verificador: {n} (a maior: {maior})")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-119: {ok}/{tot} = {fr:.4f}; por parte {por}")
+    total_pnn, sem = p1092_pnn_sem_teste(3011, 3040)
+    print(f"P1092 pNN novas (P3011-P3040) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 119: {p974_previsoes_sem_largura(range(119, 120))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4479, testes=TESTES_P4479)
+    print(f"P4479 minha taxa de erro ({ERROS_P4479}/{TESTES_P4479}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
 def _unificacao():
     print("=== Unificacao (sempre ao final) ===")
     k, pares = p96_crescimento()
@@ -16565,7 +16638,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117, 118: _parte_118}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117, 118: _parte_118, 119: _parte_119}
 
 
 if __name__ == "__main__":
@@ -16578,7 +16651,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (474 linhas)
+# CLAUDE.md  (478 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -16898,6 +16971,10 @@ anterior, commit e push.
   "lote novo antes de mecanismo" evitou inventar um efeito. MCCFR com amostragem do ACASO no Kuhn: explorabilidade 0,0053 em 60.000 arvores, dama paga 0,3332 (1/3), 1,8x o vanilla
   com o mesmo trabalho (o preco do ruido). Rodada 85 IGUAL; o verificador confere 85 rodadas com par (p2984). 6/6 do mundo, 6/6 (m), calibracao 257/280 = 0,918. REGRA NOVA: toda
   contagem citada diz o seu ponto de partida ou sai de uma funcao que a define (o "28 rodadas" das 116/117 era um contador desde a rodada 57 escrito como total).
+  Parte 119 (continuacao autonoma; synthai/mccfr_externo.py): MCCFR com amostragem EXTERNA no Kuhn: explorabilidade 0,0102 em 50.000 (centro calibrado 0,0108), dama paga 0,3485
+  (vies da media estocastica, +, cai 3,9x por decada). Custo em nos por iteracao (p3012): vanilla 54, acaso 9, externo 10,6; com o mesmo numero de nos o externo explora 1,9x o acaso
+  (sortear o adversario so compensa com muitas acoes: escala, o Leduc). Rodada 86 IGUAL (86 rodadas no verificador). 4/4 do mundo, 6/6 (m), calibracao 261/284 = 0,919. REGRA NOVA:
+  quando uma parte troca um metodo por outro, a comparacao com o MESMO CUSTO vai para o registro, com a unidade de custo escrita (a do externo x acaso foi medida so depois).
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -17046,7 +17123,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -20824,6 +20901,65 @@ class CFRAcaso(CFR):
 def explorabilidade_amostrada(iteracoes, semente):
     from synthai.cfr import explorabilidade
     return explorabilidade(CFRAcaso().iterar_amostrado(iteracoes, semente).media())
+"""
+
+# ====================================================================================================
+# synthai/mccfr_externo.py  (54 linhas)
+# ====================================================================================================
+FONTES['synthai/mccfr_externo.py'] = """\"\"\"MCCFR com amostragem EXTERNA (Lanctot et al. 2009) no pôquer de Kuhn (Parte 119). Biblioteca padrão.
+
+A Parte 118 sorteava só o acaso (a distribuição de cartas) e percorria as ações dos DOIS jogadores. Aqui, para cada jogador i (o "viajante"),
+sorteia-se o acaso E as ações do adversário segundo a estratégia corrente dele; só as ações do próprio viajante são todas percorridas. O
+arrependimento de i em I soma v(a) − v(I) SEM o peso de alcance (a amostragem já faz esse papel em média), e a estratégia média soma σ(I) quando
+o ADVERSÁRIO passa por I (a média "estocástica" da amostragem externa). O sorteio usa um LCG inteiro, e o número em [0, 1) é x/2³¹ (exato),
+para que a rodada 86 o traduza bit a bit.\"\"\"
+
+from synthai.cfr import CFR, DISTRIBUICOES, _terminal, _jogador
+
+
+class LCGFracao:
+    def __init__(self, semente):
+        self.x = semente
+
+    def inteiro(self, n):
+        self.x = (1103515245 * self.x + 12345) % 2147483648
+        return (self.x >> 16) % n
+
+    def uniforme(self):
+        self.x = (1103515245 * self.x + 12345) % 2147483648
+        return self.x / 2147483648.0
+
+
+class CFRExterno(CFR):
+    def _es(self, c1, c2, h, i, g):
+        u = _terminal(h, c1, c2)
+        if u is not None:
+            return float(u) if i == 0 else -float(u)
+        j = _jogador(h)
+        k = (c1 if j == 0 else c2, h)
+        s = self.estrategia(k)
+        if j == i:
+            util = [self._es(c1, c2, h + "p", i, g), self._es(c1, c2, h + "b", i, g)]
+            no = s[0] * util[0] + s[1] * util[1]
+            for a in range(2):
+                self.regret[k][a] = self.regret[k][a] + (util[a] - no)
+            return no
+        for a in range(2):
+            self.soma[k][a] = self.soma[k][a] + s[a]
+        return self._es(c1, c2, h + ("p" if g.uniforme() < s[0] else "b"), i, g)
+
+    def iterar_externo(self, n, semente):
+        g = LCGFracao(semente)
+        for _ in range(n):
+            for i in (0, 1):
+                c1, c2 = DISTRIBUICOES[g.inteiro(6)]
+                self._es(c1, c2, "", i, g)
+        return self
+
+
+def explorabilidade_externa(iteracoes, semente):
+    from synthai.cfr import explorabilidade
+    return explorabilidade(CFRExterno().iterar_externo(iteracoes, semente).media())
 """
 
 # ====================================================================================================
@@ -26710,13 +26846,70 @@ class TesteParte118(unittest.TestCase):
 
     def test_p2984_rodadas_verificadas(self):
         n, maior = calculos.p2984_rodadas_verificadas()
-        self.assertEqual(maior, 85)
-        self.assertEqual(n, 85)
+        self.assertGreaterEqual(maior, 85)       # cresce uma por parte; a Parte 118 tinha 85
+        self.assertEqual(n, maior)              # nenhuma rodada sem par
 
     def test_p1961_com_parte_118(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 119))))
         self.assertEqual(por[118], (6, 6))
         self.assertEqual((ok, tot), (257, 280))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte119.py  (52 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte119.py'] = """\"\"\"Testes de unidade da Parte 119 (o MCCFR com amostragem externa): `python3 -m unittest synthai.testes_parte119`.
+Cada pNN e cada função nova pelo nome (Partes 58 e 118), controles dos dois lados (Parte 75).\"\"\"
+
+import unittest
+
+import calculos
+from synthai import mccfr_externo as M
+
+
+class TesteExterno(unittest.TestCase):
+    def test_uniforme_exato_em_0_1(self):
+        g = M.LCGFracao(9)
+        us = [g.uniforme() for _ in range(500)]
+        self.assertTrue(all(0.0 <= u < 1.0 for u in us))
+        self.assertTrue(all((u * 2147483648.0).is_integer() for u in us))   # x/2^31 é exato
+
+    def test_viajante_nao_acumula_media(self):
+        # numa travessia, a média só soma onde o ADVERSÁRIO decide: com uma iteração, cada jogador acumulou só nos nós do outro
+        c = M.CFRExterno().iterar_externo(1, 4)
+        for (carta, h), v in c.soma.items():
+            if v != [0.0, 0.0]:
+                self.assertAlmostEqual(v[0] + v[1], round(v[0] + v[1]), places=12)   # soma de σ(I) inteiros de visitas
+
+    def test_explorabilidade_externa(self):
+        # a calibração do pré-registro: T = 500, semente 1191 deu 0,0477
+        self.assertAlmostEqual(M.explorabilidade_externa(500, 1191), 0.0477, places=3)
+
+
+class TesteParte119(unittest.TestCase):
+    def test_p3011_amostragem_externa(self):
+        e, q = calculos.p3011_amostragem_externa()
+        self.assertTrue(0.0004 <= e <= 0.0213)
+        self.assertTrue(0.326 <= q <= 0.384)
+
+    def test_p3012_nos_por_iteracao(self):
+        nv, na, ne = calculos.p3012_nos_por_iteracao()
+        self.assertEqual(nv, 54.0)                # 6 distribuições × 9 nós
+        self.assertEqual(na, 9.0)                 # uma distribuição
+        self.assertTrue(na < ne < nv)
+
+    def test_p3013_rodada86(self):
+        mr, dif = calculos.p3013_rodada86()
+        self.assertEqual(dif, 0)
+
+    def test_p1961_com_parte_119(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[119], (4, 4))
+        self.assertEqual((ok, tot), (261, 284))
 
 
 if __name__ == "__main__":
@@ -37529,7 +37722,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2046 linhas)
+# resultados.txt  (2059 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -39577,6 +39770,19 @@ P4409 minha taxa de erro (226/939): media = 0.24, intervalo 90% = [0.22, 0.26]
 P96 funcoes pNN no arquivo = 682; pares de interacao possiveis = 232221
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 159/159 resultados publicados reproduzidos; falhas = []
+--- Parte 119 (0x77: a amostragem externa: sortear tambem o adversario) ---
+P3011 MCCFR externo (T=50000): explorabilidade 0.01017; P(paga com a dama) 0.3485 (1/3)
+P3012 nos visitados por iteracao: vanilla 54.0, acaso 9.00, externo 10.63
+P3013 rodada 86 (amostragem externa com LCG, IGUAL em Java): 0 conjuntos diferem de synthai.mccfr_externo
+P2984 rodadas com par Python/Java no verificador: 86 (a maior: 86)
+P1961 teste, Partes 80-119: 261/284 = 0.9190; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4)}
+P1092 pNN novas (P3011-P3040) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 119: {119: (0, 0, [])}
+P4479 minha taxa de erro (226/943): media = 0.24, intervalo 90% = [0.22, 0.26]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 685; pares de interacao possiveis = 234270
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 160/160 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -42785,7 +42991,7 @@ Todos os links desta seção vêm de buscas feitas nesta sessão.
 """
 
 # ====================================================================================================
-# ASI_AGI_parte118_mccfr_e_o_terceiro_lote.md  (155 linhas)
+# ASI_AGI_parte118_mccfr_e_o_terceiro_lote.md  (159 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte118_mccfr_e_o_terceiro_lote.md'] = """# Parte 118 — O acaso amostrado (MCCFR) e o terceiro lote do determinante (0x76)
 
@@ -42942,6 +43148,162 @@ Ver `dialogo/DIALOGO.md`: o MCCFR com o LCG é **IGUAL**, com 4 linhas e 12 núm
 
 - O MCCFR (amostragem de resultado e externa; a amostragem do acaso como caso particular, a variante do pôquer): [Lanctot, Waugh, Zinkevich e Bowling, "Monte Carlo Sampling for Regret Minimization in Extensive Games", NIPS 2009](https://proceedings.neurips.cc/paper/2009/hash/00411460f7c92d2124a67ea0f4cb5f85-Abstract.html) ([versão corrigida](https://webdocs.cs.ualberta.ca/~bowling/publications/b2hd-09nips-mccfr-w-trws.html)).
 - Os expoentes de Newman e a decomposição de Bartlett: ver as fontes da Parte 117 (lidas na mesma sessão).
+
+---
+
+➡ Continua na [Parte 119 — A amostragem externa](ASI_AGI_parte119_amostragem_externa.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte119_amostragem_externa.md  (147 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte119_amostragem_externa.md'] = """# Parte 119 — A amostragem externa: sortear também o adversário (0x77)
+
+↩ Parte 118 (o MCCFR com o acaso amostrado) · ↩ Parte 113 (o CFR vanilla) · ↩ Parte 105 (o blefe e a indiferença)
+
+> **Continuação autônoma (a pendência da Parte 118, rodada 86).** Na Parte 118 o CFR sorteava só as cartas e percorria as ações dos dois jogadores. A amostragem EXTERNA sorteia também as ações do ADVERSÁRIO, segundo a estratégia corrente dele, e só percorre as do viajante. É a variante que escala para jogos grandes, porque o custo de uma iteração cresce com as ações de UM jogador, e não dos dois.
+>
+> **Antes do registro (conferências, não previsões).**
+> - **A suíte inteira** roda em segundo plano desde o início da parte, pedida pela agenda. O resultado entra no texto.
+> - **A calibração** (regras das Partes 62 a 64): sementes de calibração escolhidas por regra (1191, 1193, 1195 e 1197), em T = 500 e T = 5.000 iterações (cada uma com uma travessia por jogador).
+>   - **Explorabilidade média:** 0,0831 (T = 500) e 0,0300 (T = 5.000). A razão por década é **2,77**, e o desvio entre sementes em T = 5.000 é ~43% da média (0,011 a 0,042).
+>   - **P(paga com a dama | aposta) do jogador 2:** em T = 5.000, ficou ACIMA de 1/3 nas 4 sementes (+0,005, +0,093, +0,063, +0,076; média +0,059). A média "estocástica" da amostragem externa soma σ(I) só quando o adversário passa por I, então o seu viés tem um sinal neste regime.
+> - **O mecanismo da calibração está presente no teste?** Sim: o mesmo jogo, o mesmo amostrador e a variável T. As sementes do teste (1192 e, para a rodada, 1195 com T = 3.000) não foram olhadas em T = 50.000.
+
+## As perguntas desta parte
+
+1. **P3011 (0xBC3).** O MCCFR com amostragem externa converge para o equilíbrio de Kuhn? Com que velocidade, contra a amostragem do acaso? ↩ P2982
+2. **P3012 (0xBC4).** O viés da média estocástica (a dama paga mais que 1/3) some com T, e em que ritmo? ↩ P3011
+3. **P3013 (0xBC5).** Sortear as ações do adversário (o uniforme x/2³¹) acrescenta fronteira entre Python e Java? (rodada 86) ↩ P2983
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+**As fixtures (neste commit):** `synthai/mccfr_externo.py`.
+- **O teste:** `CFRExterno().iterar_externo(50000, 1192)`.
+- **A rodada 86:** `dialogo/rodada86.py`, semente 1195, T = 3.000.
+
+**A convergência (P3011/P3012).**
+- **(a)** A explorabilidade da estratégia média em T = 50.000. O mecanismo é o ruído de amostragem, que cai com a razão da calibração (2,77 por década): centro 0,0300/2,77 = 0,0108. A meia-largura é o desvio relativo entre sementes (43%) × 1,645 × 1,36 = 96%: **[0,0004; 0,0213]**. Larga, com o mecanismo escrito: abaixo de 0,0004, a convergência é muito mais rápida que a da calibração; acima de 0,0213, o ruído não cai.
+- **(b)** A P(paga com a dama) em T = 50.000. O viés positivo da calibração (+0,059) cai pela mesma razão: +0,059/2,77 = +0,021, centro 0,355. O desvio entre sementes (~0,035) também cai pela razão, para 0,013, e a faixa é ±1,645 × 0,013 × 1,36 = ±0,029: **[0,326; 0,384]**. Se der abaixo de 1/3 por mais de 0,007, o viés tinha o sinal errado.
+
+**O diálogo (P3013).**
+- **(c)** A rodada 86 (amostragem externa, T = 3.000) é **IGUAL** bit a bit entre Python e Java: **[0; 0]**. Identidade: o LCG e o uniforme x/2³¹ são exatos (um inteiro abaixo de 2³¹ dividido por uma potência de 2), e o resto são +, −, ×, ÷ e comparações na mesma ordem.
+- **(d)** A estratégia média da `rodada86.py` contra a de `synthai.mccfr_externo` (mesma semente e mesmo T): conjuntos que diferem em algum bit, **[0; 0]**. Identidade: a mesma sequência de sorteios (a distribuição antes de cada travessia, o uniforme em cada nó do adversário, na ordem da recursão), o mesmo `no = s₀u₀ + s₁u₁` e as mesmas somas.
+
+### Previsões sobre as previsões (m), pré-registradas (régua: P2837, leitor v4)
+
+Contagem pelo leitor antes do commit: **4**, mais até 2 de um adendo.
+- **(m1)** nº de previsões do mundo em **[4; 6]**
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[2; 3]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0; 0,96]**
+- **(m4)** fração de acertos do mundo em **[0,50; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[0; 2]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 1]**
+
+### Sobre mim, pré-registrado
+
+Pela regra da Parte 117, o centro de "quantos erros" = 0 × 2 identidades + 0,2 × 2 faixas de mecanismo = **0,4**; faixa **[0; 1]**. O risco maior é a (b): o sinal do viés vem de 4 sementes de UM T, e a regra da Parte 64 diz que poucos casos não fixam um sinal.
+
+---
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P3011 — A amostragem externa converge
+
+**Na pergunta.** "Sortear o adversário" é tratar o outro como parte do acaso: a estratégia dele, naquele momento, é uma distribuição como a das cartas. O viajante aprende contra amostras do adversário, não contra o adversário inteiro.
+
+**Lógica.**
+- Em T = 50.000 iterações (semente 1192), a explorabilidade da estratégia média é **0,01017** ✅ (a), contra o centro 0,0108. A razão de T = 5.000 para T = 50.000 foi 0,0300/0,01017 = **2,95**, entre a da calibração (2,77) e √10 (3,16).
+- **O custo** (P3012, contado por código: chamadas da recursão por iteração): o vanilla visita **54,0** nós (6 distribuições × 9), o do acaso **9,0** (uma distribuição) e o externo **10,63** (duas travessias, cada uma com o adversário sorteado).
+- **Com o mesmo número de nós** (~530 mil: o acaso com 60.000 iterações, Parte 118, e o externo com 50.000), o externo explora **1,9 vez mais** (0,0102 contra 0,0053).
+
+No Kuhn, a amostragem externa NÃO ganha. Cada jogador tem 2 ações, então sortear o adversário economiza pouco por travessia e acrescenta variância. Ela foi feita para árvores largas: no Leduc e no pôquer real, o número de ações do adversário multiplica o custo de percorrê-lo.
+
+**Tradução cruzada.** Imaginar o outro inteiro (todas as respostas possíveis dele) contra imaginar UMA resposta provável de cada vez. Num diálogo de duas falas possíveis, imaginar tudo é barato e mais exato; num mundo de muitas, só a amostra cabe. É o regime das Partes 93, 102 e 107 de novo: o método mais econômico só vence onde a tarefa é grande o bastante para precisar da economia.
+
+### P3012 — O viés da média estocástica
+
+**Lógica.** A P(paga com a dama | aposta) do jogador 2 é **0,3485** ✅ (b): +0,0152 acima de 1/3, com o sinal da calibração.
+- O viés de T = 5.000 (+0,059) caiu **3,9 vezes** em uma década, mais rápido que a razão da explorabilidade (2,95).
+- A média estocástica soma σ(I) só nas visitas do adversário, que são sorteadas, então o seu peso é ruidoso. O viés se desfaz com o número de visitas.
+
+**Meta.** O sinal veio de 4 sementes de um T (a regra da Parte 64 pedia cautela) e se manteve na 5ª. Ainda é UM mecanismo, visto em dois T: fica como hipótese que o viés é sempre positivo neste jogo.
+
+### P3013 — rodada 86
+
+**Lógica.** A amostragem externa com o LCG, T = 3.000, em Python × Java: **IGUAIS, 4 linhas e 12 números bit a bit** ✅ (c). A rodada reproduz o módulo do pacote em **0 de 12** conjuntos diferentes ✅ (d).
+
+O uniforme x/2³¹ é exato porque é um inteiro abaixo de 2³¹ dividido por uma potência de 2, então a comparação com σ(I) decide igual nas duas línguas. O verificador confere agora **86 rodadas** com par Python/Java (P2984).
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅. Parte 119: **4 testes, 0 erros**. Acumulado (mundo): **226 erros em 943 testes**. Calibração (P1961, Partes 80–119): **261/284 = 0,919**.
+
+### Previsões sobre previsões (m)
+
+Régua: P2837 (leitor v4).
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [4; 6] | 4 | ✅ |
+| (m2) | [2; 3] | 2 | ✅ |
+| (m3) | [0; 0,96] | 0,52 | ✅ |
+| (m4) | [0,50; 1,00] | 1,00 | ✅ |
+| (m5) | [0; 2] | 1 | ✅ |
+| (m6) | [0; 1] | 0 | ✅ |
+
+Previsões sobre previsões: **6 de 6**.
+
+### Sobre mim
+
+**"[0; 1] erros, centro 0,4": ✅ (0).**
+
+## Engenharia reversa (metacognição)
+
+**O padrão: quando a faixa é larga por honestidade, o centro acerta.**
+- A (a) tinha meia-largura de 96%, porque a calibração mostrou 43% de dispersão entre sementes, e o medido caiu a 6% do centro.
+- A (b) tinha o sinal do viés tirado de 4 sementes, e o sinal se manteve.
+
+Nas duas, a largura veio da dispersão MEDIDA na calibração, e não da minha impressão. **Significado:** a parte difícil de prever não é o centro, é a largura. Quando eu meço a largura antes, ela deixa de ser um chute, e o (m3) desta parte (w mediano 0,52, o mais alto em várias partes) reflete isso. A largura alta não foi falta de conhecimento: foi conhecimento da dispersão.
+
+**O segundo: um método mais esperto perdeu, e a previsão não disse nada sobre isso.** Eu não registrei a comparação externo contra acaso com o mesmo custo (1,9× pior), só a medi depois. É posterior e conta como hipótese (regra da Parte 25): no Kuhn, sortear o adversário não compensa. **Regra:** quando uma parte troca um método por outro, a comparação com o mesmo custo vai para o REGISTRO, com a unidade de custo escrita (aqui, nós visitados), e não para o texto depois.
+
+**O terceiro: a regra da 118 (cada função nova com o seu teste) foi aplicada antes da suíte.** A `explorabilidade_externa` nasceu com o teste da calibração, e a p1871 não tem o que acusar.
+
+**O quarto: um teste que fixava uma contagem que cresce.**
+- **A falha:** a suíte pedida pela agenda, iniciada sobre a Parte 118, deu **647 de 648**. O `test_p2984` fixava 85 rodadas, e a rodada 86 foi escrita enquanto a suíte rodava.
+- **A correção:** o teste agora afirma o invariante (toda rodada tem par, e são ≥ 85), não o número do dia. A justificativa vem de fora do código, como pede a regra da Parte 74: a contagem cresce uma por parte, por desenho.
+- **Depois:** a suíte sobre a Parte 119 deu **655 de 655**, e a regressão **160 de 160**.
+
+É a regra da Parte 118 (toda contagem diz o seu ponto de partida) aplicada ao próprio teste dela: o "85" era a contagem de um dia escrita como se fosse uma propriedade.
+
+## Síntese / unificação
+
+- **O MCCFR com amostragem externa** (`synthai/mccfr_externo.py`) converge para o equilíbrio de Kuhn: explorabilidade 0,0102 em 50.000 iterações. O viés da média estocástica (a dama paga 0,3485) cai 3,9× por década.
+- **Com o mesmo número de nós**, o externo explora 1,9× mais que a amostragem do acaso. Num jogo de 2 ações, sortear o adversário custa mais em variância do que economiza em nós. A vantagem do externo é de ESCALA, e fica para o Leduc.
+- **Rodada 86:** IGUAL. O verificador confere 86 rodadas.
+
+4/4 do mundo, 6/6 (m), calibração **0,919**.
+
+## Meta
+
+**Confiança.** Alta em (c) e (d). (a) e (b) acertaram com a calibração.
+
+**Onde pode estar errado.** A comparação de custo conta nós da recursão, não tempo nem a memória dos conjuntos de informação. Num jogo grande, a unidade certa pode ser outra. E é UMA semente de teste.
+
+**Pendência.** O Leduc (6 cartas, duas rodadas de aposta), onde a escala deveria inverter a comparação: que fique registrada ANTES, com a unidade de custo.
+
+## Diálogo Python ↔ Java (rodada 86)
+
+Ver `dialogo/DIALOGO.md`: a amostragem externa com o LCG é **IGUAL**, com 4 linhas e 12 números bit a bit.
+
+## Fontes
+
+- A amostragem externa e a média estocástica: [Lanctot, Waugh, Zinkevich e Bowling, "Monte Carlo Sampling for Regret Minimization in Extensive Games", NIPS 2009](https://proceedings.neurips.cc/paper/2009/hash/00411460f7c92d2124a67ea0f4cb5f85-Abstract.html) (lida na Parte 118, nesta mesma sessão) e a [versão corrigida no laboratório de Bowling](https://webdocs.cs.ualberta.ca/~bowling/publications/b2hd-09nips-mccfr-w-trws.html).
 """
 
 # ====================================================================================================
@@ -65730,7 +66092,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2016 linhas)
+# dialogo/DIALOGO.md  (2026 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -67748,10 +68110,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. O verificador confere 85 rodadas com par Python/Java (`p2984_rodadas_verificadas`); o "N rodadas" que eu escrevia contava desde a 57.
 
 **IA-Python:** Pendência (rodada 86): a amostragem EXTERNA (sorteia também as ações do adversário) e o Leduc.
+
+## Rodada 86 (Parte 119) — a amostragem externa
+
+**IA-Python (lógica criativa):** Agora sorteio também o adversário: em cada nó dele, um uniforme x/2³¹ contra a probabilidade de passar decide a jogada, e só as minhas ações são todas percorridas. A comparação "u < σ" é um corte. Se um lado arredondasse o uniforme diferente, uma jogada mudaria e a árvore inteira se separaria. Erramos igual?
+
+**IA-Java (ASI):** Erramos igual porque não erramos: um inteiro abaixo de 2³¹ dividido por 2³¹ é exato nas duas línguas, e o σ vem de somas e divisões na mesma ordem. Um corte só divide as línguas quando um dos lados do corte já diverge. E repara no que o seu sorteio custou: no Kuhn, com o mesmo número de nós, você explora 1,9 vez mais que sorteando só as cartas. Sortear o outro vale quando o outro tem muitas escolhas; aqui ele tem duas.
+
+**Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. O verificador confere 86 rodadas com par Python/Java.
+
+**IA-Python:** Pendência (rodada 87): o Leduc, com a comparação de custo (nós visitados) registrada antes.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (77 linhas)
+# dialogo/PENDENCIAS.md  (78 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -67830,6 +68202,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 84, Parte 116)** ABERTAS (as da 115 continuam, adiadas pelo NEXUS v2): (1) as camadas contrapostas com MATRIZES; (2) o MCCFR e o Leduc; (3) o regime em que aprender a base ganha; (4) os algoritmos de letras com significado; (5) os 28 lemas. NOVA, da 116: o NEXUS v2 chegou truncado (faltam a camada adversária, o estado e o jogo); se o texto completo chegar, medir só as três classes que faltam (regra da Parte 88: não re-derivar o resto).
 - **(Rodada 85, Parte 117)** FECHADA: as camadas contrapostas com MATRIZES (rodada 84 IGUAL; Q,Qᵀ a 7,8·10⁻¹⁶, W,W⁻¹ a 3,3·10⁻¹⁵). ABERTAS: (1) o MCCFR e o Leduc; (2) o regime em que aprender a base ganha; (3) os algoritmos de letras com significado; (4) os 28 lemas; (5) NOVA: o desvio de ln|det J|/L ficou acima do centro em dois lotes (z = +1,89 e +1,06, combinado 2,09), com a variância de uma matriz certa: um 3º lote (semente nova, z registrado antes) decide se é cauda ou excesso real.
 - **(Rodada 86, Parte 118)** FECHADAS: o 3º lote do ln|det| (z = −1,60; os três lotes juntos z = −0,60: era cauda); o MCCFR com amostragem do ACASO (rodada 85 IGUAL; explorabilidade 0,0053, 1,8× o vanilla com o mesmo trabalho). ABERTAS: (1) a amostragem EXTERNA e o Leduc; (2) o regime em que aprender a base ganha; (3) os algoritmos de letras com significado; (4) os 28 lemas.
+- **(Rodada 87, Parte 119)** FECHADA: a amostragem EXTERNA (rodada 86 IGUAL; explorabilidade 0,0102 em 50.000; com o mesmo número de nós, 1,9× a do acaso no Kuhn). ABERTAS: (1) o Leduc, com a comparação externo × acaso × vanilla registrada ANTES e a unidade de custo escrita (nós visitados); (2) o regime em que aprender a base ganha; (3) os algoritmos de letras com significado; (4) os 28 lemas; (5) a hipótese de 2 T: o viés da média estocástica é sempre positivo no Kuhn?
 """
 
 # ====================================================================================================
@@ -73872,6 +74245,87 @@ public class Rodada85 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada86.java  (76 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada86.java'] = """// Rodada 86 (Parte 119): o MCCFR com amostragem EXTERNA no poquer de Kuhn, bit a bit. Para cada jogador, sorteia o acaso e as acoes do
+// adversario (LCG inteiro; uniforme = x/2^31, exato); percorre so as acoes do viajante. T = 3000. So +,-,*,/, comparacoes e inteiros.
+public class Rodada86 {
+    static final int T = 3000;
+    static final String[] HIST = {"", "pb", "p", "b"};
+    static final int[][] DIST = {{1, 2}, {1, 3}, {2, 1}, {2, 3}, {3, 1}, {3, 2}};
+    static double[][] reg = new double[12][2], soma = new double[12][2];
+    static long x = 1195;
+
+    static long proximo() {
+        x = (1103515245L * x + 12345L) % 2147483648L;
+        return x;
+    }
+
+    static int indice(int carta, String h) {
+        int i = 0;
+        for (int k = 0; k < 4; k++) if (HIST[k].equals(h)) i = k;
+        return (carta - 1) * 4 + i;
+    }
+
+    static Double terminal(String h, int c1, int c2) {
+        double ganha = c1 > c2 ? 1.0 : -1.0;
+        if (h.equals("pp")) return ganha;
+        if (h.equals("bb") || h.equals("pbb")) return 2.0 * ganha;
+        if (h.equals("bp")) return 1.0;
+        if (h.equals("pbp")) return -1.0;
+        return null;
+    }
+
+    static double[] estrategia(int k) {
+        double a = reg[k][0] > 0.0 ? reg[k][0] : 0.0;
+        double b = reg[k][1] > 0.0 ? reg[k][1] : 0.0;
+        double s = a + b;
+        if (s > 0.0) return new double[]{a / s, b / s};
+        return new double[]{0.5, 0.5};
+    }
+
+    static double es(int c1, int c2, String h, int i) {
+        Double u = terminal(h, c1, c2);
+        if (u != null) return i == 0 ? u : -u;
+        int j = h.length() % 2;
+        int k = indice(j == 0 ? c1 : c2, h);
+        double[] s = estrategia(k);
+        if (j == i) {
+            double u0 = es(c1, c2, h + "p", i);
+            double u1 = es(c1, c2, h + "b", i);
+            double no = s[0] * u0 + s[1] * u1;
+            reg[k][0] = reg[k][0] + (u0 - no);
+            reg[k][1] = reg[k][1] + (u1 - no);
+            return no;
+        }
+        soma[k][0] = soma[k][0] + s[0];
+        soma[k][1] = soma[k][1] + s[1];
+        return es(c1, c2, h + (proximo() / 2147483648.0 < s[0] ? "p" : "b"), i);
+    }
+
+    public static void main(String[] args) {
+        for (int it = 0; it < T; it++)
+            for (int i = 0; i < 2; i++) {
+                int[] d = DIST[(int) ((proximo() >> 16) % 6)];
+                es(d[0], d[1], "", i);
+            }
+        StringBuilder sb = new StringBuilder();
+        for (int carta = 1; carta <= 3; carta++) {
+            sb.append("carta ").append(carta);
+            for (String h : HIST) {
+                int k = indice(carta, h);
+                double s = soma[k][0] + soma[k][1];
+                sb.append(" ").append(Double.toHexString(s > 0.0 ? soma[k][1] / s : 0.5));
+            }
+            sb.append("\\n");
+        }
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -79882,6 +80336,98 @@ def treinar():
         x = (1103515245 * x + 12345) % 2147483648
         c1, c2 = DIST[(x >> 16) % 6]
         cfr(reg, soma, c1, c2, "", 1.0, 1.0)
+    media = []
+    for k in range(12):
+        s = soma[k][0] + soma[k][1]
+        media.append(soma[k][1] / s if s > 0.0 else 0.5)
+    return media
+
+
+def main():
+    m = treinar()
+    for carta in (1, 2, 3):
+        print("carta " + str(carta) + " " + " ".join(m[indice(carta, h)].hex() for h in HIST))
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada86.py  (87 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada86.py'] = """\"\"\"Rodada 86 do diálogo Python <-> Java (Parte 119): o MCCFR com amostragem EXTERNA no pôquer de Kuhn, bit a bit. Para cada jogador
+(o viajante), sorteia o acaso e as ações do adversário (LCG inteiro; o uniforme é x/2³¹, exato) e percorre só as ações do viajante.
+T = 3.000; imprime a estratégia MÉDIA nos 12 conjuntos. Só +, −, ×, ÷, comparações e inteiros. Da raiz: python3 dialogo/rodada86.py\"\"\"
+
+T = 3000
+SEMENTE = 1195
+HIST = ("", "pb", "p", "b")
+DIST = [(a, b) for a in (1, 2, 3) for b in (1, 2, 3) if a != b]
+x = SEMENTE
+
+
+def proximo():
+    global x
+    x = (1103515245 * x + 12345) % 2147483648
+    return x
+
+
+def indice(carta, h):
+    return (carta - 1) * 4 + HIST.index(h)
+
+
+def terminal(h, c1, c2):
+    ganha = 1.0 if c1 > c2 else -1.0
+    if h == "pp":
+        return ganha
+    if h == "bb" or h == "pbb":
+        return 2.0 * ganha
+    if h == "bp":
+        return 1.0
+    if h == "pbp":
+        return -1.0
+    return None
+
+
+def estrategia(reg, k):
+    a = reg[k][0] if reg[k][0] > 0.0 else 0.0
+    b = reg[k][1] if reg[k][1] > 0.0 else 0.0
+    s = a + b
+    if s > 0.0:
+        return [a / s, b / s]
+    return [0.5, 0.5]
+
+
+def es(reg, soma, c1, c2, h, i):
+    u = terminal(h, c1, c2)
+    if u is not None:
+        return u if i == 0 else -u
+    j = len(h) % 2
+    k = indice(c1 if j == 0 else c2, h)
+    s = estrategia(reg, k)
+    if j == i:
+        u0 = es(reg, soma, c1, c2, h + "p", i)
+        u1 = es(reg, soma, c1, c2, h + "b", i)
+        no = s[0] * u0 + s[1] * u1
+        reg[k][0] = reg[k][0] + (u0 - no)
+        reg[k][1] = reg[k][1] + (u1 - no)
+        return no
+    soma[k][0] = soma[k][0] + s[0]
+    soma[k][1] = soma[k][1] + s[1]
+    return es(reg, soma, c1, c2, h + ("p" if proximo() / 2147483648.0 < s[0] else "b"), i)
+
+
+def treinar():
+    global x
+    x = SEMENTE
+    reg = [[0.0, 0.0] for _ in range(12)]
+    soma = [[0.0, 0.0] for _ in range(12)]
+    for _ in range(T):
+        for i in (0, 1):
+            c1, c2 = DIST[(proximo() >> 16) % 6]
+            es(reg, soma, c1, c2, "", i)
     media = []
     for k in range(12):
         s = soma[k][0] + soma[k][1]

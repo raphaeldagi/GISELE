@@ -115,6 +115,13 @@ Nas duas, a largura veio da dispersão MEDIDA na calibração, e não da minha i
 
 **O terceiro: a regra da 118 (cada função nova com o seu teste) foi aplicada antes da suíte.** A `explorabilidade_externa` nasceu com o teste da calibração, e a p1871 não tem o que acusar.
 
+**O quarto: um teste que fixava uma contagem que cresce.**
+- **A falha:** a suíte pedida pela agenda, iniciada sobre a Parte 118, deu **647 de 648**. O `test_p2984` fixava 85 rodadas, e a rodada 86 foi escrita enquanto a suíte rodava.
+- **A correção:** o teste agora afirma o invariante (toda rodada tem par, e são ≥ 85), não o número do dia. A justificativa vem de fora do código, como pede a regra da Parte 74: a contagem cresce uma por parte, por desenho.
+- **Depois:** a suíte sobre a Parte 119 deu **655 de 655**, e a regressão **160 de 160**.
+
+É a regra da Parte 118 (toda contagem diz o seu ponto de partida) aplicada ao próprio teste dela: o "85" era a contagem de um dia escrita como se fosse uma propriedade.
+
 ## Síntese / unificação
 
 - **O MCCFR com amostragem externa** (`synthai/mccfr_externo.py`) converge para o equilíbrio de Kuhn: explorabilidade 0,0102 em 50.000 iterações. O viés da média estocástica (a dama paga 0,3485) cai 3,9× por década.
