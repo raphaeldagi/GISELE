@@ -48,3 +48,93 @@ Pela regra da Parte 117, o centro de "quantos erros" = 0 × 2 identidades + 0,2 
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P3011 — A amostragem externa converge
+
+**Na pergunta.** "Sortear o adversário" é tratar o outro como parte do acaso: a estratégia dele, naquele momento, é uma distribuição como a das cartas. O viajante aprende contra amostras do adversário, não contra o adversário inteiro.
+
+**Lógica.**
+- Em T = 50.000 iterações (semente 1192), a explorabilidade da estratégia média é **0,01017** ✅ (a), contra o centro 0,0108. A razão de T = 5.000 para T = 50.000 foi 0,0300/0,01017 = **2,95**, entre a da calibração (2,77) e √10 (3,16).
+- **O custo** (P3012, contado por código: chamadas da recursão por iteração): o vanilla visita **54,0** nós (6 distribuições × 9), o do acaso **9,0** (uma distribuição) e o externo **10,63** (duas travessias, cada uma com o adversário sorteado).
+- **Com o mesmo número de nós** (~530 mil: o acaso com 60.000 iterações, Parte 118, e o externo com 50.000), o externo explora **1,9 vez mais** (0,0102 contra 0,0053).
+
+No Kuhn, a amostragem externa NÃO ganha. Cada jogador tem 2 ações, então sortear o adversário economiza pouco por travessia e acrescenta variância. Ela foi feita para árvores largas: no Leduc e no pôquer real, o número de ações do adversário multiplica o custo de percorrê-lo.
+
+**Tradução cruzada.** Imaginar o outro inteiro (todas as respostas possíveis dele) contra imaginar UMA resposta provável de cada vez. Num diálogo de duas falas possíveis, imaginar tudo é barato e mais exato; num mundo de muitas, só a amostra cabe. É o regime das Partes 93, 102 e 107 de novo: o método mais econômico só vence onde a tarefa é grande o bastante para precisar da economia.
+
+### P3012 — O viés da média estocástica
+
+**Lógica.** A P(paga com a dama | aposta) do jogador 2 é **0,3485** ✅ (b): +0,0152 acima de 1/3, com o sinal da calibração.
+- O viés de T = 5.000 (+0,059) caiu **3,9 vezes** em uma década, mais rápido que a razão da explorabilidade (2,95).
+- A média estocástica soma σ(I) só nas visitas do adversário, que são sorteadas, então o seu peso é ruidoso. O viés se desfaz com o número de visitas.
+
+**Meta.** O sinal veio de 4 sementes de um T (a regra da Parte 64 pedia cautela) e se manteve na 5ª. Ainda é UM mecanismo, visto em dois T: fica como hipótese que o viés é sempre positivo neste jogo.
+
+### P3013 — rodada 86
+
+**Lógica.** A amostragem externa com o LCG, T = 3.000, em Python × Java: **IGUAIS, 4 linhas e 12 números bit a bit** ✅ (c). A rodada reproduz o módulo do pacote em **0 de 12** conjuntos diferentes ✅ (d).
+
+O uniforme x/2³¹ é exato porque é um inteiro abaixo de 2³¹ dividido por uma potência de 2, então a comparação com σ(I) decide igual nas duas línguas. O verificador confere agora **86 rodadas** com par Python/Java (P2984).
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅. Parte 119: **4 testes, 0 erros**. Acumulado (mundo): **226 erros em 943 testes**. Calibração (P1961, Partes 80–119): **261/284 = 0,919**.
+
+### Previsões sobre previsões (m)
+
+Régua: P2837 (leitor v4).
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [4; 6] | 4 | ✅ |
+| (m2) | [2; 3] | 2 | ✅ |
+| (m3) | [0; 0,96] | 0,52 | ✅ |
+| (m4) | [0,50; 1,00] | 1,00 | ✅ |
+| (m5) | [0; 2] | 1 | ✅ |
+| (m6) | [0; 1] | 0 | ✅ |
+
+Previsões sobre previsões: **6 de 6**.
+
+### Sobre mim
+
+**"[0; 1] erros, centro 0,4": ✅ (0).**
+
+## Engenharia reversa (metacognição)
+
+**O padrão: quando a faixa é larga por honestidade, o centro acerta.**
+- A (a) tinha meia-largura de 96%, porque a calibração mostrou 43% de dispersão entre sementes, e o medido caiu a 6% do centro.
+- A (b) tinha o sinal do viés tirado de 4 sementes, e o sinal se manteve.
+
+Nas duas, a largura veio da dispersão MEDIDA na calibração, e não da minha impressão. **Significado:** a parte difícil de prever não é o centro, é a largura. Quando eu meço a largura antes, ela deixa de ser um chute, e o (m3) desta parte (w mediano 0,52, o mais alto em várias partes) reflete isso. A largura alta não foi falta de conhecimento: foi conhecimento da dispersão.
+
+**O segundo: um método mais esperto perdeu, e a previsão não disse nada sobre isso.** Eu não registrei a comparação externo contra acaso com o mesmo custo (1,9× pior), só a medi depois. É posterior e conta como hipótese (regra da Parte 25): no Kuhn, sortear o adversário não compensa. **Regra:** quando uma parte troca um método por outro, a comparação com o mesmo custo vai para o REGISTRO, com a unidade de custo escrita (aqui, nós visitados), e não para o texto depois.
+
+**O terceiro: a regra da 118 (cada função nova com o seu teste) foi aplicada antes da suíte.** A `explorabilidade_externa` nasceu com o teste da calibração, e a p1871 não tem o que acusar.
+
+## Síntese / unificação
+
+- **O MCCFR com amostragem externa** (`synthai/mccfr_externo.py`) converge para o equilíbrio de Kuhn: explorabilidade 0,0102 em 50.000 iterações. O viés da média estocástica (a dama paga 0,3485) cai 3,9× por década.
+- **Com o mesmo número de nós**, o externo explora 1,9× mais que a amostragem do acaso. Num jogo de 2 ações, sortear o adversário custa mais em variância do que economiza em nós. A vantagem do externo é de ESCALA, e fica para o Leduc.
+- **Rodada 86:** IGUAL. O verificador confere 86 rodadas.
+
+4/4 do mundo, 6/6 (m), calibração **0,919**.
+
+## Meta
+
+**Confiança.** Alta em (c) e (d). (a) e (b) acertaram com a calibração.
+
+**Onde pode estar errado.** A comparação de custo conta nós da recursão, não tempo nem a memória dos conjuntos de informação. Num jogo grande, a unidade certa pode ser outra. E é UMA semente de teste.
+
+**Pendência.** O Leduc (6 cartas, duas rodadas de aposta), onde a escala deveria inverter a comparação: que fique registrada ANTES, com a unidade de custo.
+
+## Diálogo Python ↔ Java (rodada 86)
+
+Ver `dialogo/DIALOGO.md`: a amostragem externa com o LCG é **IGUAL**, com 4 linhas e 12 números bit a bit.
+
+## Fontes
+
+- A amostragem externa e a média estocástica: [Lanctot, Waugh, Zinkevich e Bowling, "Monte Carlo Sampling for Regret Minimization in Extensive Games", NIPS 2009](https://proceedings.neurips.cc/paper/2009/hash/00411460f7c92d2124a67ea0f4cb5f85-Abstract.html) (lida na Parte 118, nesta mesma sessão) e a [versão corrigida no laboratório de Bowling](https://webdocs.cs.ualberta.ca/~bowling/publications/b2hd-09nips-mccfr-w-trws.html).

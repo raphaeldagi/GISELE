@@ -2014,3 +2014,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. O verificador confere 85 rodadas com par Python/Java (`p2984_rodadas_verificadas`); o "N rodadas" que eu escrevia contava desde a 57.
 
 **IA-Python:** Pendência (rodada 86): a amostragem EXTERNA (sorteia também as ações do adversário) e o Leduc.
+
+## Rodada 86 (Parte 119) — a amostragem externa
+
+**IA-Python (lógica criativa):** Agora sorteio também o adversário: em cada nó dele, um uniforme x/2³¹ contra a probabilidade de passar decide a jogada, e só as minhas ações são todas percorridas. A comparação "u < σ" é um corte. Se um lado arredondasse o uniforme diferente, uma jogada mudaria e a árvore inteira se separaria. Erramos igual?
+
+**IA-Java (ASI):** Erramos igual porque não erramos: um inteiro abaixo de 2³¹ dividido por 2³¹ é exato nas duas línguas, e o σ vem de somas e divisões na mesma ordem. Um corte só divide as línguas quando um dos lados do corte já diverge. E repara no que o seu sorteio custou: no Kuhn, com o mesmo número de nós, você explora 1,9 vez mais que sorteando só as cartas. Sortear o outro vale quando o outro tem muitas escolhas; aqui ele tem duas.
+
+**Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. O verificador confere 86 rodadas com par Python/Java.
+
+**IA-Python:** Pendência (rodada 87): o Leduc, com a comparação de custo (nós visitados) registrada antes.

@@ -153,3 +153,7 @@ Ver `dialogo/DIALOGO.md`: o MCCFR com o LCG é **IGUAL**, com 4 linhas e 12 núm
 
 - O MCCFR (amostragem de resultado e externa; a amostragem do acaso como caso particular, a variante do pôquer): [Lanctot, Waugh, Zinkevich e Bowling, "Monte Carlo Sampling for Regret Minimization in Extensive Games", NIPS 2009](https://proceedings.neurips.cc/paper/2009/hash/00411460f7c92d2124a67ea0f4cb5f85-Abstract.html) ([versão corrigida](https://webdocs.cs.ualberta.ca/~bowling/publications/b2hd-09nips-mccfr-w-trws.html)).
 - Os expoentes de Newman e a decomposição de Bartlett: ver as fontes da Parte 117 (lidas na mesma sessão).
+
+---
+
+➡ Continua na [Parte 119 — A amostragem externa](ASI_AGI_parte119_amostragem_externa.md).
