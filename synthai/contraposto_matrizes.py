@@ -227,3 +227,11 @@ def superposicao_matricial(eps, semente=1174):
     hs2 = frente([[[w + eps * e for w, e in zip(lw, le)] for lw, le in zip(W, E)] for W, E in zip(Ws, Es)])
     dot = lambda x: sum(a * b for a, b in zip(u, x))
     return abs((dot(hs2[-1]) - dot(hs[-1])) - lin)
+
+
+def variancia_log_det(amostras=20000, semente=1176):
+    """(k) da Parte 117: a variância amostral de ln|det W| para W gaussiana N(0, 1/d) d×d, contra ¼ Σ ψ′((d − i + 1)/2)."""
+    rng = random.Random(semente)
+    xs = [log_abs_det(gaussiana(D, rng)) for _ in range(amostras)]
+    mu = sum(xs) / amostras
+    return mu, sum((x - mu) ** 2 for x in xs) / (amostras - 1)

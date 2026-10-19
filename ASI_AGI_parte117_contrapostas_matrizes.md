@@ -75,6 +75,12 @@ Pela regra da Parte 116, o centro de "quantos erros" vem da procedência das fai
 
 Espero **0 a 2 erros**, o mais provável em (d) (o arredondamento de 5 produtos 8×8 pode passar de 5·10⁻¹⁴) ou em (g).
 
+### Adendo pré-registrado (escrito DEPOIS da 1ª medição, ANTES destes testes)
+
+A **(f) caiu fora**: o desvio deu acima da faixa, por z ≈ +1,9. Antes de explicar, refiz a faixa por código com a curtose em forma fechada. O 4º cumulante de ln χ²_k é ψ‴(k/2), e o excesso de curtose da média de L camadas é 0,114, o que dá a mesma faixa, [0,4783; 0,5045]. A curtose não explica. Pela regra da Parte 25 (um resultado inesperado gera um teste novo, e não uma explicação), dois testes em sementes NOVAS:
+- **(j)** O desvio de ln|det J|/L em 2.000 produtos novos (`gaussianas_independentes(2000, semente=1175)`): **[0,4783; 0,5045]**. Se cair fora de novo, ACIMA, a variância da forma fechada está errada.
+- **(k)** A variância de ln|det W| de UMA matriz, em 20.000 gaussianas 8×8 novas (semente 1176): centro 2,4147. O desvio da variância amostral é 2,4147·√((2 + 1,139)/20.000) = 0,0302 (excesso de curtose de uma matriz: 1,139), faixa **[2,365; 2,465]**. Isto testa a forma de Bartlett sem o produto.
+
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
