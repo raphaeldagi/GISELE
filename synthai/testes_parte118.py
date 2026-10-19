@@ -21,6 +21,11 @@ class TesteMCCFR(unittest.TestCase):
         self.assertEqual((len(cartas_p1), len(cartas_p2)), (1, 1))   # uma distribuição: uma carta de cada jogador
 
 
+    def test_explorabilidade_amostrada_calibracao(self):
+        # a calibração do pré-registro: T = 600, semente 1181 deu 0,0531
+        self.assertAlmostEqual(M.explorabilidade_amostrada(600, 1181), 0.0531, places=3)
+
+
 class TesteParte118(unittest.TestCase):
     def test_p2981_terceiro_lote(self):
         mu, sd = calculos.p2981_terceiro_lote()

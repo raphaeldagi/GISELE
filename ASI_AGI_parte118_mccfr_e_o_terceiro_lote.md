@@ -126,6 +126,8 @@ Previsões sobre previsões: **6 de 6**.
 
 **O terceiro: o lote grande matou a hipótese sem explicação nenhuma.** Na Parte 117 eu escrevi o excesso como hipótese (regra da Parte 66) e pedi um lote. O lote deu z = −1,60, do outro lado. Se eu tivesse inventado um mecanismo na 117, teria de desmenti-lo agora.
 
+**O quarto, achado pela suíte inteira.** A `p1871` (código sem uso, Parte 81) acusou `mccfr.explorabilidade_amostrada`: a função que fez a calibração não era chamada por nenhum teste. Ela ganhou um teste com o número da calibração (0,0531 em T = 600). Antes dele, a suíte deu **646 de 647**; depois, os dois arquivos envolvidos passaram. A regra da Parte 113 (git add antes da suíte) funcionou: sem ela, a p1871 não teria visto o arquivo novo.
+
 ## Síntese / unificação
 
 - **O 3º lote fecha a pendência da Parte 117.** Os três lotes juntos estão a z = −0,60 da forma fechada (ln|det| de Newman e Bartlett), e o excesso era cauda.
