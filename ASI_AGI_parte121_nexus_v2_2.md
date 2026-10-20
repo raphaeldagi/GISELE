@@ -79,6 +79,19 @@ Pela regra da Parte 117, o centro de "quantos erros vou ter" = 0 × identidades 
 
 Isso dá centro **1,4** e faixa **[0; 3]**. O risco maior está em (j): se, numa semente, o ordinário escolher o braço ruim no começo e não sair, a diferença deixa de ser 0.
 
+### Adendo pré-registrado (escrito DEPOIS da 1ª medição, ANTES destes testes)
+
+Duas faixas [5; 5] erraram: a (b) deu 4 ACEITA e a (j) deu 4 diferenças zero.
+
+- **(b): o meu erro de mecanismo.** "Passa em todas" pede a probabilidade POR SEMENTE elevada a 5, e eu não fiz essa conta. Pela normal, P(limite inferior > 0) = P(Z > (0,063 − 0,1225)/0,032) = 0,969 por semente, e 0,969⁵ = 0,85: a faixa [5; 5] tinha 15% de chance de errar.
+- **(j): o mecanismo que eu NÃO previ.** Na semente 1, o reforço EXTRAORDINÁRIO terminou no braço RUIM: as primeiras falhas valem −1, e o braço bom só voltou a ser visto pela exploração (60 de 1.000 vezes). A conta do sinal-ruído dos dois tipos de recompensa diz que esse travamento deveria ser IGUALMENTE provável nos dois tipos:
+  - ordinária: diferença de 0,20 entre os braços, desvio ~0,47 (razão 0,43);
+  - extraordinária: diferença de 0,36, desvio ~0,86 (razão 0,42).
+
+Dois testes novos, nas sementes 100 a 1.099 (1.000 sementes nunca usadas):
+- **(q)** A fração de sementes em que o EXTRAORDINÁRIO termina no braço ruim, menos a do ORDINÁRIO. Se a razão sinal-ruído decide, o centro é 0. Com p ~0,05 em cada um, o desvio é √(2·0,05·0,95/1.000) = 0,0097, e a faixa é ±1,645 × 0,0097 × 1,36 = **[−0,022; 0,022]**. Se der positivo além disso, a recompensa negativa trava mais do que a razão sinal-ruído explica.
+- **(r)** A fração das sementes 100 a 1.099 em que H-M3-001 dá ACEITA: 0,969 ± 1,645·√(0,969·0,031/1.000) × 1,36 (a normal é aproximação) = **[0,957; 0,981]**.
+
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
