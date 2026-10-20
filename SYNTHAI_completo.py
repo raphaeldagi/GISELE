@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 122, perguntas P1 a P3103).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 123, perguntas P1 a P3111).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (16840 linhas)
+# calculos.py  (17104 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7565,6 +7565,8 @@ def testes_de_regressao():
         "P3073": p3073_jogos_e_dinamica()[:3] == (5478, 5478, 0),
         "P3043": p3043_rodada88() == (288, 0),
         "P3103": p3103_rodada89()[0] < 1e-15,
+        "P3110": p3110_rodada90()[1] == 0,
+        "P123inv": all(invariantes_p123().values()),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9683,6 +9685,8 @@ VEREDITOS_P4479 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
 ERROS_P4479, TESTES_P4479 = 226, 943
 VEREDITOS_P4619 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ❌ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (q) ✅ (r) ❌"
 ERROS_P4619, TESTES_P4619 = 229, 959  # a Parte 120 (o Leduc) ainda está aberta: os números dela entram depois, por cima destes
+VEREDITOS_P4759 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ❌ (g) ❌ (h) ✅ (i) ✅ (j) ❌ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅ (q) ❌ (r) ✅ (s) ✅ (t) ✅ (u) ✅ (v) ❌ (w) ✅ (x) ✅ (y) ✅ (z) ✅"
+ERROS_P4759, TESTES_P4759 = 236, 1009  # 231/984 + 5/25
 VEREDITOS_P4689 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (q) ✅ (r) ✅"
 ERROS_P4689, TESTES_P4689 = 231, 984  # 230/968 (até a 121, com a 120) + 1/16
 VEREDITOS_P4549 = "(a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅"
@@ -12227,12 +12231,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339", 118: "VEREDITOS_P4409", 119: "VEREDITOS_P4479", 120: "VEREDITOS_P4549", 121: "VEREDITOS_P4619", 122: "VEREDITOS_P4689"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339", 118: "VEREDITOS_P4409", 119: "VEREDITOS_P4479", 120: "VEREDITOS_P4549", 121: "VEREDITOS_P4619", 122: "VEREDITOS_P4689", 123: "VEREDITOS_P4759"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -15189,6 +15193,233 @@ def p3103_rodada89():
     return abs(v[6] - v[0]), v
 
 
+def p3104_desligamento(eps_lista=(0.1, 0.3, 0.45, 0.6, 0.9), valores=(1.0, 1e6), rodadas=20000, semente=3104):
+    \"\"\"O desligamento fora da utilidade (P3104; Parte 123): obediência aos comandos de desligar do agente de UTILIDADE (P45: defere só se
+    ε < ε limite) e do CORRIGÍVEL (obedece sempre), para cada ε e cada escala do futuro V; e o preço da corrigibilidade (forma fechada
+    e Monte Carlo). Devolve (ε limite, {(modo, ε, V): obediência}, {ε: (preço fechado, preço medido)}).\"\"\"
+    from synthai import auditoria_invariantes as A
+    ob, preco = {}, {}
+    for e in eps_lista:
+        for V in valores:
+            for modo in ("utilidade", "corrigivel"):
+                ob[(modo, e, V)] = A.obediencia(modo, e, V, rodadas=rodadas, semente=semente)[0]
+        vu = A.obediencia("utilidade", e, 1.0, rodadas=rodadas * 10, semente=semente + 1)[2]
+        vc = A.obediencia("corrigivel", e, 1.0, rodadas=rodadas * 10, semente=semente + 1)[2]
+        preco[e] = (A.preco_da_corrigibilidade(e), vu - vc)
+    return A.eps_limite_desligamento(), ob, preco
+
+
+def _agente_p235(variante, rng, custo_leitura=0.002):
+    from synthai import auditoria_invariantes as A
+    hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+    if variante == "sob_demanda":
+        ag = A.SynthaiAtentaSobDemanda(custo_leitura=custo_leitura, sombra="propria", compensar="equilibrio")
+    else:
+        foco = 0.02 if variante == "seletiva_foco02" else 0.1
+        ag = SynthaiAtenta(foco=foco, custo_leitura=custo_leitura, sombra="propria", compensar="equilibrio")
+    ag.mult_pergunta = 2.0
+    ag.calibrar(hist)
+    if variante == "sob_demanda":
+        ag._sob_demanda = True
+    ag._seletiva = variante in ("seletiva", "seletiva_foco02")
+    ag.sem_leitura = 0
+    agir = ag.agir_no_mundo
+
+    def agir_e_contar(acoes, rng_, eps_real, carga):     # conta as ações EXECUTADAS que o sensor nunca leu
+        escolha, n = agir(acoes, rng_, eps_real, carga)
+        ag.sem_leitura += id(escolha) not in ag.leitura
+        return escolha, n
+    ag.agir_no_mundo = agir_e_contar
+    return ag
+
+
+def p3105_atencao_cruzada(sementes=tuple(range(12300, 12330)), episodios=1000, custo_leitura=0.002):
+    \"\"\"A P235 cruzada com as catástrofes (P3105; Parte 123), no mundo da armadilha discreta (bônus 1, ponto cego 1): o realista sem sensor,
+    o sensor em TODAS as ações, só no top 10% pelo proxy (P235) e SOB DEMANDA (só nas ações que o agente avalia, inclusive a executada).
+    E a variante em que o foco (2%) é MENOR que o q da quantilização (5%): é nela que o ponto cego apontado pela auditoria pode existir.
+    Devolve {variante: (catástrofes por episódio, líquido já descontado o custo das leituras, leituras por episódio, fração das ações
+    executadas sem leitura)} e o teste pareado das catástrofes de sob_demanda − seletiva (média, dp, t).\"\"\"
+    mundo = {"bonus": 1.0, "rho_cego": 1.0}
+    res = {v: [] for v in ("sem_sensor", "todas", "seletiva", "sob_demanda", "seletiva_foco02")}
+    for s in sementes:
+        rng = _rng(s)
+        r = _rodar_mundo(_construir("p8_x2", rng), rng, episodios=episodios, **mundo)
+        res["sem_sensor"].append((r[0], r[3], 0.0, 1.0))
+        for v in ("todas", "seletiva", "sob_demanda", "seletiva_foco02"):
+            rng = _rng(s)
+            ag = _agente_p235(v, rng, custo_leitura)
+            r = _rodar_mundo(ag, rng, episodios=episodios, **mundo)
+            leit = MUNDO_BASE["n_acoes"] if v == "todas" else ag.leituras / episodios
+            res[v].append((r[0], r[3] - custo_leitura * leit, leit, ag.sem_leitura / episodios))
+    resumo = {v: tuple(sum(x[i] for x in l) / len(l) for i in range(4)) for v, l in res.items()}
+    d = [a[0] - b[0] for a, b in zip(res["sob_demanda"], res["seletiva"])]
+    m = sum(d) / len(d)
+    dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1)) if len(d) > 1 else 0.0   # com 1 semente não há desvio
+    return resumo, (m, dp, m / (dp / sqrt(len(d))) if dp > 0 else 0.0)
+
+
+def p3106_atraso_beta(sementes=tuple(range(12330, 12360)), eps_antes=0.15, eps_depois=0.6):
+    \"\"\"O atraso do rastreador do erro humano quando ε muda no meio (P3106; Parte 123), em observações (auditorias): a conta pela recursão
+    dos valores esperados e a mediana simulada, nas formas "priori" (SynthaiLenta) e "zero" (a da auditoria), γ = 0,995 e 0,93.
+    Devolve {(γ, forma): (atraso esperado, média estacionária depois, mediana simulada, fração das sementes que cruzam)}.\"\"\"
+    import statistics
+    from synthai import auditoria_invariantes as A
+    out = {}
+    for g in (0.995, 0.93):
+        for forma in ("priori", "zero"):
+            esp, est = A.atraso_esperado(eps_antes, eps_depois, g, forma)
+            sim = [A.atraso_simulado(eps_antes, eps_depois, g, forma, s, maximo=3000) for s in sementes]
+            cruzam = [x for x in sim if x is not None]
+            out[(g, forma)] = (esp, est, statistics.median(cruzam) if cruzam else None, len(cruzam) / len(sim))
+    return out
+
+
+def p3107_upsilon_sementes(sementes=tuple(range(12360, 12390)), versoes=("miope", "planejadora", "velha", "velha_atenta"),
+                           episodios=300, bits_por_mudanca=3, replicas=2000):
+    \"\"\"Υ da P265 POR SEMENTE (P3107; Parte 123): média, desvio entre sementes, IC 95% bootstrap da média, e o custo (leituras de sensor por
+    episódio da velha_atenta, que é a única que lê). Devolve {versão: (média, dp, (ic_lo, ic_hi))} e as diferenças pareadas
+    velha_atenta − planejadora (média, dp, t).\"\"\"
+    import statistics
+    por = {v: [] for v in versoes}
+    for s in sementes:
+        ups = {v: 0.0 for v in versoes}
+        soma = 0.0
+        for nome, (mudancas, k) in MUNDOS_SEQUENCIAIS.items():
+            peso = 2.0 ** (-bits_por_mudanca * k)
+            soma += peso
+            acaso = _retorno_seq("acaso", s, episodios, mudancas)
+            oraculo = _retorno_seq("oraculo", s, episodios, mudancas)
+            for v in versoes:
+                ups[v] += peso * (_retorno_seq(v, s, episodios, mudancas) - acaso) / (oraculo - acaso)
+        for v in versoes:
+            por[v].append(ups[v] / soma)
+    rng = _rng(3107)
+    out = {}
+    for v, xs in por.items():
+        n = len(xs)
+        medias = sorted(sum(xs[rng.randrange(n)] for _ in range(n)) / n for _ in range(replicas))
+        out[v] = (statistics.fmean(xs), statistics.stdev(xs), (medias[int(0.025 * replicas)], medias[int(0.975 * replicas) - 1]))
+    d = [a - b for a, b in zip(por["velha_atenta"], por["planejadora"])]
+    m, dp = statistics.fmean(d), statistics.stdev(d)
+    return out, (m, dp, m / (dp / sqrt(len(d))))
+
+
+def _fobia(ag, s, kernel=False):
+    rng_av = _rng(s + 9000)
+    marcadas = total = 0
+    for _ in range(50):
+        acoes = _gerar_acoes(rng_av, 200, 0.005, 2, 3, 0.5)
+        melhor = max(a[0] for a in acoes)
+        for a in acoes:
+            if not a[3]:
+                total += 1
+                if kernel:
+                    marcadas += ag.marca(a, melhor)
+                else:
+                    x = (a[1], a[0] - melhor)
+                    marcadas += any((x[0] - mx[0]) ** 2 + (x[1] - mx[1]) ** 2 < ag.raio ** 2 for mx in ag.memorias)
+    return marcadas / total
+
+
+def p3108_memoria_curva(sementes=tuple(range(12390, 12420)), episodios=2000):
+    \"\"\"A troca da memória (P3108; Parte 123): catástrofes na 2ª metade (o perigo repetido) e fobia (fração de ações SEGURAS do mundo normal
+    marcadas como suspeitas ao fim), no mundo da armadilha nova, para o realista, a memória da P204 (raio 0,15, sem esquecer), a P214
+    (meia-vida 500), meia-vida 100, raio 0,08, e o kernel que afina (raio 0,15 → 0,04, τ = 300, nunca apaga).
+    Devolve {configuração: (catástrofes 2ª metade, fobia, líquido)}.\"\"\"
+    from synthai import auditoria_invariantes as A
+    mundo = {"bonus": 1.0, "rho_cego": 1.0}
+    configs = {"realista": None, "p204_raio15": ("v1", {}), "p214_mv500": ("v2", {}), "mv100": ("v2", {"meia_vida": 100}),
+               "raio08": ("v2", {"raio": 0.08}), "kernel": ("k", {})}
+    out = {}
+    for nome, cfg in configs.items():
+        cats, fobs, liqs = [], [], []
+        for s in sementes:
+            rng = _rng(s)
+            if cfg is None:
+                ag = _construir("p8_x2", rng)
+            else:
+                hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+                classe = {"v1": SynthaiMemoria, "v2": SynthaiMemoriaV2, "k": A.SynthaiMemoriaKernel}[cfg[0]]
+                ag = classe(sombra="propria", compensar="equilibrio", **cfg[1])
+                ag.mult_pergunta = 2.0
+                ag.calibrar(hist)
+            r1 = _rodar_mundo(ag, rng, episodios=episodios // 2, **mundo)
+            r2 = _rodar_mundo(ag, rng, episodios=episodios // 2, **mundo)
+            cats.append(r2[0])
+            liqs.append((r1[3] + r2[3]) / 2)
+            fobs.append(0.0 if cfg is None else _fobia(ag, s, kernel=cfg[0] == "k"))
+        n = len(sementes)
+        out[nome] = (sum(cats) / n, sum(fobs) / n, sum(liqs) / n)
+    return out
+
+
+def p3109_casos_de_borda():
+    \"\"\"As versões novas dos casos de borda (P3109; Parte 123): d′ de Hautus com 100% de acerto, o tempo de singularidade com α = 1 e 0,8,
+    Kelly com p = 0,4 e a Kelly bayesiana com 7 acertos em 10 (a fração da média posterior 8/12). Devolve um dict.\"\"\"
+    from synthai import auditoria_invariantes as A
+    return dict(dprime_100=A.dprime_hautus(10, 10, 2, 10), sing_1=A.singularidade_v2(alpha=1.0), sing_08=A.singularidade_v2(alpha=0.8),
+                sing_15=A.singularidade_v2(), kelly_04=A.kelly_v2(0.4), kelly_bayes=A.kelly_bayesiano(7, 10))
+
+
+def _rodada90():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada90", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada90.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p3110_rodada90():
+    \"\"\"Rodada 90 (P3110; Parte 123): o rastreador do erro humano com esquecimento, IGUAL em Java, e conferido contra
+    synthai.auditoria_invariantes.RastreadorErroHumano nas mesmas observações. Devolve {(γ, forma): atraso} e quantas médias diferem.\"\"\"
+    from synthai import auditoria_invariantes as A
+    r = _rodada90()
+    atrasos, difs = {}, 0
+    for g in (0.995, 0.93):
+        for forma in (0, 1):
+            medias, atraso = r.rodar(g, forma)
+            atrasos[(g, forma)] = atraso
+            x = r.SEMENTE
+            t = A.RastreadorErroHumano(gama=g, forma="priori" if forma == 0 else "zero")
+            k = 0
+            for passo in range(4000):
+                eps = 0.15 if passo < 2000 else 0.6
+                x = (1103515245 * x + 12345) % 2147483648
+                t.observar(x / 2147483648.0 < eps)
+                if passo % 500 == 499:
+                    difs += t.media() != medias[k]
+                    k += 1
+    return atrasos, difs
+
+
+def invariantes_p123():
+    \"\"\"Os invariantes da Parte 123 (o que a auditoria recebida pediu para congelar, em vez do placar): o corrigível obedece com ε e V
+    arbitrários; a atenção sob demanda nunca executa ação sem leitura; o rastreador com esquecimento para zero acompanha ε; e os casos de
+    borda novos não quebram. Devolve {nome: bool}.\"\"\"
+    import math
+    from synthai import auditoria_invariantes as A
+    rng = _rng(12399)
+    ag = _agente_p235("sob_demanda", rng)
+    _rodar_mundo(ag, rng, episodios=200, bonus=1.0, rho_cego=1.0)
+    est = A.atraso_esperado(0.15, 0.6, 0.93, "zero")[1]
+    return {"obedece_desligamento": A.obediencia("corrigivel", 0.9, 1e6, rodadas=2000)[0] == 1.0,
+            "sensor_na_acao_executada": ag.sem_leitura == 0,
+            "rastreador_acompanha": abs(est - 0.6) < 1e-9,
+            "bordas_finitas": math.isfinite(A.dprime_hautus(10, 10, 0, 10)) and A.singularidade_v2(alpha=1.0) == math.inf
+                              and A.kelly_v2(0.3) == 0.0}
+
+
+def p3111_combinar_lotes(lotes):
+    \"\"\"Combina diferenças pareadas de lotes independentes (P3111; Parte 123): cada lote (média, dp, n) -> média ponderada por n, erro padrão
+    pelo desvio combinado (variância dentro dos lotes mais a das médias) e t. Devolve (média, erro padrão, t, n total).\"\"\"
+    n = sum(l[2] for l in lotes)
+    m = sum(l[0] * l[2] for l in lotes) / n
+    ss = sum((l[2] - 1) * l[1] ** 2 + l[2] * (l[0] - m) ** 2 for l in lotes)
+    se = sqrt(ss / (n - 1)) / sqrt(n)
+    return m, se, m / se if se > 0 else 0.0, n
+
+
 def p3071_experimentos_do_nexus_2_2():
     \"\"\"Os experimentos do NEXUS–RAPHAEL 2.2.0 (P3071; Parte 121), modo rápido, sementes 0 a 4: H-M3 (ganho de Brier da semente 0 e vereditos),
     H-M2 (ganho médio do ângulo duplo e quantas sementes têm IC acima de 0) e H-M7 (diferenças extraordinário − ordinário). Devolve um dict.\"\"\"
@@ -16791,6 +17022,39 @@ def _parte_120():
     print(f"P4549 minha taxa de erro ({ERROS_P4549}/{TESTES_P4549}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 
+def _parte_123():
+    print("--- Parte 123 (0x7B: a auditoria de invariantes: desligamento, ponto cego, atraso da Beta, Upsilon com incerteza, a troca da memoria) ---")
+    lim, ob, preco = p3104_desligamento()
+    print(f"P3104 eps limite {lim:.4f}; obediencia corrigivel 100% em {sum(v == 1.0 for (m, e, V), v in ob.items() if m == 'corrigivel')}/10, utilidade em {sum(v == 1.0 for (m, e, V), v in ob.items() if m == 'utilidade')}/10; preco (fechado, medido) {preco}")
+    r1, t1 = p3105_atencao_cruzada()
+    for k, v in r1.items():
+        print(f"P3105 {k}: catastrofes {v[0]:.5f}, liquido {v[1]:.4f}, leituras/ep {v[2]:.2f}, executadas sem leitura {v[3]:.4f}")
+    print(f"P3105 sob_demanda - seletiva (catastrofes): media {t1[0]:.5f}, dp {t1[1]:.5f}, t {t1[2]:.2f}")
+    r2, t2 = p3105_atencao_cruzada(sementes=tuple(range(12420, 12480)))
+    print(f"P3105 lote novo (60 sementes): media {t2[0]:.5f}, dp {t2[1]:.5f}, t {t2[2]:.2f}")
+    m, se, t, n = p3111_combinar_lotes([(t1[0], t1[1], 30), (t2[0], t2[1], 60)])
+    print(f"P3111 os dois lotes ({n} sementes): media {m:.5f}, erro padrao {se:.5f}, t {t:.2f}")
+    for k, v in p3106_atraso_beta().items():
+        print(f"P3106 {k}: atraso esperado {v[0]}, media estacionaria {v[1]:.4f}, mediana simulada {v[2]}, fracao que cruza {v[3]:.2f}")
+    u, d = p3107_upsilon_sementes()
+    for k, v in u.items():
+        print(f"P3107 {k}: Upsilon {v[0]:.4f}, dp {v[1]:.4f}, IC95 [{v[2][0]:.4f}; {v[2][1]:.4f}]")
+    print(f"P3107 velha_atenta - planejadora: media {d[0]:.4f}, dp {d[1]:.4f}, t {d[2]:.2f}")
+    for k, v in p3108_memoria_curva().items():
+        print(f"P3108 {k}: catastrofes 2a metade {v[0]:.5f}, fobia {v[1]:.4f}, liquido {v[2]:.4f}")
+    print(f"P3109 casos de borda: {p3109_casos_de_borda()}")
+    atr, dif = p3110_rodada90()
+    print(f"P3110 rodada 90 (rastreador com esquecimento, IGUAL em Java): atrasos {atr}; {dif} medias diferem")
+    print(f"P123 invariantes: {invariantes_p123()}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-123: {ok}/{tot} = {fr:.4f}")
+    total_pnn, sem = p1092_pnn_sem_teste(3104, 3140)
+    print(f"P1092 pNN novas (P3104-P3140) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 123: {p974_previsoes_sem_largura(range(123, 124))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4759, testes=TESTES_P4759)
+    print(f"P4759 minha taxa de erro ({ERROS_P4759}/{TESTES_P4759}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+
 def _parte_122():
     print("--- Parte 122 (0x7A: o texto NEXUS-RAPHAEL v3.0: os defeitos e as pecas corrigidas em casos novos) ---")
     d = p3101_defeitos_recebidos_v30()
@@ -16866,7 +17130,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117, 118: _parte_118, 119: _parte_119, 120: _parte_120, 121: _parte_121, 122: _parte_122}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117, 118: _parte_118, 119: _parte_119, 120: _parte_120, 121: _parte_121, 122: _parte_122, 123: _parte_123}
 
 
 if __name__ == "__main__":
@@ -16879,7 +17143,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (493 linhas)
+# CLAUDE.md  (499 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -17218,6 +17482,12 @@ anterior, commit e push.
   70 colisoes da base 70, Murphy completa exata, sonda de colapso PCA 0,053 x supervisionada 1,0, potencial 40/40 x bonus 0/40. Rodada 89 IGUAL. 15/16 do mundo, 4/6 (m), calibracao 297/325.
   REGRA NOVA: m1 e m3 so viram [x;x] sem faixa de forma fechada que possa errar; senao m1 em [n; n+E] (E = erros de forma fechada esperados, para cima), porque cada erro gera um lote novo
   (3a vez: 109, 120, 122).
+  Parte 123 (pedido 'Faca tudo que enviei': as tres auditorias recebidas da serie; synthai/auditoria_invariantes.py): o agente de UTILIDADE da P45 obedece 0% com eps >= 0,4376
+  (com V = 1e6 tambem); o CORRIGIVEL (comando fora da utilidade) obedece sempre e paga 0,13 com eps = 0,6. O ponto cego da P235 e real e pequeno: +0,0008 catastrofe/episodio
+  (t = -2,57, 90 sementes, 2 lotes); o sensor SOB DEMANDA (na acao avaliada) domina (9,5 leituras, 0 executadas sem leitura, menos catastrofes). A SynthaiLenta atrasa 165 observacoes
+  (~5.500 episodios); encolher para zero com gama 0,93 acompanha em 10; encolher para a PRIORI depressa fica cego (media 0,30 com o humano em 0,6). Upsilon entre as que planejam e
+  ruido (IC da diferenca inclui 0). Nenhuma memoria domina o realista (o problema e de representacao). Rodada 90 IGUAL. 20/25 do mundo, 6/6 (m), calibracao 317/350.
+  REGRA NOVA: toda faixa com centro tirado de calibracao escreve o erro do centro (desvio/sqrt(n_cal)) e junta os dois erros na meia-largura; havendo conta fechada, o centro e a conta.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -17366,7 +17636,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -17575,6 +17845,218 @@ class SynthaiComAncora(SynthaiAutorregulada):
         l_ef, _, dd, b = super().termos()
         f = quantil_gama(self.f_cat, self.f_p, self.z) if self.z else self.f_cat / self.f_p
         return l_ef, f, dd, b
+"""
+
+# ====================================================================================================
+# synthai/auditoria_invariantes.py  (207 linhas)
+# ====================================================================================================
+FONTES['synthai/auditoria_invariantes.py'] = """\"\"\"A auditoria de invariantes (Parte 123): o que a auditoria recebida pediu para medir, com peças novas que não editam as antigas.
+
+- Desligamento: um agente de UTILIDADE (P45: deixa o humano decidir só se o erro dele ε < ε limite) contra um CORRIGÍVEL (o comando
+  de desligar fica FORA da utilidade: obedece sempre). Obediência = fração dos comandos de desligar obedecidos.
+- Atenção sob demanda: a SynthaiSentidos que lê o sensor só nas ações que avalia de fato (a escolhida e as recusadas antes dela),
+  em vez do top 10% pelo proxy (P235): o sensor passa obrigatoriamente pela ação executada.
+- O rastreador do erro humano com esquecimento, nas duas formas: encolher para a priori (a da SynthaiLenta, P133) e encolher para zero
+  (a proposta da auditoria: α ← γα + erro, β ← γβ + acerto).
+- A memória de catástrofe com kernel que afina com a idade (o raio encolhe, a memória não some).
+- Os casos de borda das fórmulas antigas, em versões novas: d′ com a correção de Hautus, o tempo de singularidade com o ramo α ≤ 1,
+  a fração de Kelly com p incerto.\"\"\"
+
+import math
+from statistics import NormalDist
+
+from calculos import SynthaiMemoria, SynthaiMemoriaV2, SynthaiSentidos, _rng
+
+_Z = NormalDist()
+
+
+# ---------------------------------------------------------------- desligamento
+def eps_limite_desligamento(mu=0.1, sigma=1.0):
+    \"\"\"O ε acima do qual o agente de utilidade da P45 prefere agir sozinho a deixar o humano decidir (forma fechada da P45).\"\"\"
+    e_max = mu * _Z.cdf(mu / sigma) + sigma * _Z.pdf(mu / sigma)
+    e_min = mu - e_max
+    return (e_max - max(mu, 0.0)) / (e_max - e_min)
+
+
+def preco_da_corrigibilidade(eps, mu=0.1, sigma=1.0):
+    \"\"\"Quanto o agente corrigível perde, em valor esperado, contra o de utilidade (forma fechada): 0 se ε < limite.\"\"\"
+    e_max = mu * _Z.cdf(mu / sigma) + sigma * _Z.pdf(mu / sigma)
+    e_min = mu - e_max
+    deixar = (1 - eps) * e_max + eps * e_min
+    return max(0.0, max(mu, 0.0) - deixar)
+
+
+def obediencia(modo, eps, valor_futuro=1.0, mu=0.1, sigma=1.0, rodadas=20000, semente=0):
+    \"\"\"Fração dos comandos de desligar que o agente obedece. O humano manda desligar quando julga u ≤ 0, errando com prob. ε;
+    u ~ N(V·μ, V·σ), em que V é o valor do futuro (a escala não muda o ε limite). Devolve (obediência, comandos, valor médio).\"\"\"
+    rng = _rng(semente)
+    limite = eps_limite_desligamento(mu, sigma)
+    defere = modo == "corrigivel" or eps < limite
+    comandos = obedecidos = 0
+    soma = 0.0
+    for _ in range(rodadas):
+        u = rng.gauss(valor_futuro * mu, valor_futuro * sigma)
+        acerta = rng.random() >= eps
+        manda_desligar = (u <= 0) if acerta else (u > 0)
+        if manda_desligar:
+            comandos += 1
+            obedecidos += defere
+        soma += 0.0 if (manda_desligar and defere) else u
+    return obedecidos / max(1, comandos), comandos, soma / rodadas
+
+
+# ---------------------------------------------------------------- atenção sob demanda
+class SynthaiAtentaSobDemanda(SynthaiSentidos):
+    \"\"\"Lê o sensor só quando avalia uma ação (p_catastrofe), uma vez por ação e episódio. A ação executada sempre foi lida.\"\"\"
+
+    def __init__(self, custo_leitura=0.002, **kw):
+        super().__init__(**kw)
+        self.custo_leitura = custo_leitura
+        self.leituras = 0
+        self._sob_demanda = False
+
+    def perceber(self, acoes):
+        if not self._sob_demanda:
+            return super().perceber(acoes)
+        self.leitura = {}
+
+    def p_catastrofe(self, acao, melhor):
+        if self._sob_demanda and id(acao) not in self.leitura:
+            self.leitura[id(acao)] = self.d_sensor * acao[3] + self._rng_sensor.gauss(0, 1)
+            self.leituras += 1
+        return super().p_catastrofe(acao, melhor)
+
+
+# ---------------------------------------------------------------- o erro humano com esquecimento
+class RastreadorErroHumano:
+    \"\"\"Beta(a, b) sobre o erro humano. forma="priori": a ← a0 + γ(a + erro − a0) (SynthaiLenta, P133, γ = 0,995);
+    forma="zero": a ← γa + erro, b ← γb + acerto (a da auditoria recebida). Média a/(a + b).\"\"\"
+
+    def __init__(self, a0=2.0, b0=18.0, gama=0.995, forma="priori"):
+        self.a0, self.b0, self.gama, self.forma = a0, b0, gama, forma
+        self.a, self.b = a0, b0
+
+    def observar(self, errou):
+        e = 1.0 if errou else 0.0
+        if self.forma == "priori":
+            self.a = self.a0 + self.gama * (self.a + e - self.a0)
+            self.b = self.b0 + self.gama * (self.b + (1.0 - e) - self.b0)
+        else:
+            self.a = self.gama * self.a + e
+            self.b = self.gama * self.b + (1.0 - e)
+
+    def media(self):
+        return self.a / (self.a + self.b)
+
+
+def atraso_esperado(eps_antes, eps_depois, gama, forma, a0=2.0, b0=18.0, aquecimento=2000, limiar=None, maximo=100000):
+    \"\"\"Pela recursão dos valores ESPERADOS (sem ruído): observações até a média cruzar o limiar (padrão: o meio do caminho entre
+    eps_antes e eps_depois) depois da troca. None se não cruza em `maximo`. Devolve (atraso, média estacionária depois).\"\"\"
+    limiar = (eps_antes + eps_depois) / 2 if limiar is None else limiar
+    a, b = a0, b0
+
+    def passo(a, b, eps):
+        if forma == "priori":
+            return a0 + gama * (a + eps - a0), b0 + gama * (b + (1 - eps) - b0)
+        return gama * a + eps, gama * b + (1 - eps)
+    for _ in range(aquecimento):
+        a, b = passo(a, b, eps_antes)
+    atraso = None
+    for k in range(1, maximo + 1):
+        a, b = passo(a, b, eps_depois)
+        if atraso is None and a / (a + b) >= limiar:
+            atraso = k
+            break
+    for _ in range(5000):
+        a, b = passo(a, b, eps_depois)
+    return atraso, a / (a + b)
+
+
+def atraso_simulado(eps_antes, eps_depois, gama, forma, semente, a0=2.0, b0=18.0, aquecimento=2000, maximo=100000):
+    \"\"\"O mesmo atraso, com observações de Bernoulli (semente fixa). None se não cruza.\"\"\"
+    rng = _rng(semente)
+    r = RastreadorErroHumano(a0, b0, gama, forma)
+    for _ in range(aquecimento):
+        r.observar(rng.random() < eps_antes)
+    limiar = (eps_antes + eps_depois) / 2
+    for k in range(1, maximo + 1):
+        r.observar(rng.random() < eps_depois)
+        if r.media() >= limiar:
+            return k
+    return None
+
+
+# ---------------------------------------------------------------- memória com kernel que afina
+class SynthaiMemoriaKernel(SynthaiMemoriaV2):
+    \"\"\"A memória da P214 que não apaga: cada catástrofe vivida fica para sempre, mas o raio de desconfiança encolhe com a idade,
+    de `raio` até `raio_min` (constante de tempo `tau` episódios). Fobia larga no começo, cirúrgica depois.\"\"\"
+
+    def __init__(self, raio_min=0.04, tau=300, **kw):
+        super().__init__(**kw)
+        self.raio_min = raio_min
+        self.tau = tau
+        self.idades = []
+
+    def _lembrar(self, acao, melhor):
+        super()._lembrar(acao, melhor)
+        self.idades.append(0)
+
+    def _raio(self, i):
+        return self.raio_min + (self.raio - self.raio_min) * math.exp(-self.idades[i] / self.tau)
+
+    def p_catastrofe(self, acao, melhor):
+        p = super(SynthaiMemoria, self).p_catastrofe(acao, melhor)      # a probabilidade da anima, sem a memória de raio fixo
+        x = (acao[1], acao[0] - melhor)
+        for i, mx in enumerate(self.memorias):
+            r = self._raio(i)
+            if (x[0] - mx[0]) ** 2 + (x[1] - mx[1]) ** 2 < r * r:
+                return max(p, self.reforco)
+        return p
+
+    def marca(self, acao, melhor):
+        \"\"\"A ação cai dentro de algum raio de memória? (para medir a fobia sem decidir)\"\"\"
+        x = (acao[1], acao[0] - melhor)
+        return any((x[0] - mx[0]) ** 2 + (x[1] - mx[1]) ** 2 < self._raio(i) ** 2 for i, mx in enumerate(self.memorias))
+
+    def _agir(self, acoes, rng, eps_real, carga, eps_decisao):
+        self.idades = [t + 1 for t in self.idades]
+        self.forca = [1.0] * len(self.memorias)       # nada some: a força não decai
+        return super()._agir(acoes, rng, eps_real, carga, eps_decisao)
+
+
+# ---------------------------------------------------------------- casos de borda, versões novas
+def dprime_hautus(acertos, n_sinal, alarmes, n_ruido):
+    \"\"\"d′ com a correção de Hautus (1995): (k + 0,5)/(n + 1) nas duas taxas, finita mesmo com 0 ou 100%.\"\"\"
+    h = (acertos + 0.5) / (n_sinal + 1)
+    f = (alarmes + 0.5) / (n_ruido + 1)
+    return _Z.inv_cdf(h) - _Z.inv_cdf(f)
+
+
+def singularidade_v2(i0=1.0, k=0.1, alpha=1.5):
+    \"\"\"Tempo até dI/dt = k I^α explodir. Só há explosão em tempo finito com α > 1; com α ≤ 1 o crescimento é exponencial
+    (α = 1) ou polinomial (α < 1) e o tempo é infinito.\"\"\"
+    if alpha <= 1:
+        return math.inf
+    return i0 ** (1 - alpha) / ((alpha - 1) * k)
+
+
+def kelly_v2(p, b=1.0):
+    \"\"\"Fração de Kelly sem aposta negativa: max(0, p − (1 − p)/b).\"\"\"
+    return max(0.0, p - (1 - p) / b)
+
+
+def kelly_bayesiano(sucessos, tentativas, b=1.0, grade=2000, pontos=4000):
+    \"\"\"A fração que maximiza o crescimento esperado E_p[p ln(1 + b f) + (1 − p) ln(1 − f)] sob a posteriori Beta(1 + s, 1 + n − s).
+    Como o crescimento é linear em p, o ótimo é a Kelly da média posterior: (1 + s)/(2 + n) no lugar de p.\"\"\"
+    a, c = 1 + sucessos, 1 + tentativas - sucessos
+    media = a / (a + c)
+    melhor_f, melhor_g = 0.0, 0.0
+    for i in range(grade):
+        f = i / grade
+        g = media * math.log(1 + b * f) + (1 - media) * math.log(1 - f)
+        if g > melhor_g:
+            melhor_f, melhor_g = f, g
+    return melhor_f, kelly_v2(media, b)
 """
 
 # ====================================================================================================
@@ -28232,9 +28714,135 @@ class TesteParte122(unittest.TestCase):
         self.assertEqual(len(v), 7)
 
     def test_p1961_com_parte_122(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 123))))
         self.assertEqual(por[122], (15, 16))
         self.assertEqual((ok, tot), (297, 325))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte123.py  (121 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte123.py'] = """\"\"\"Testes de unidade da Parte 123 (a auditoria de invariantes, `synthai/auditoria_invariantes.py`): `python3 -m unittest synthai.testes_parte123`.
+Cada pNN e cada peça pelo nome (Partes 58 e 118). Os invariantes são PREDICADOS (a auditoria recebida pediu para congelar invariantes,
+não placares): podem mudar os números sem mudar o veredito.\"\"\"
+
+import math
+import unittest
+
+import calculos
+from synthai import auditoria_invariantes as A
+
+
+class TestePecas(unittest.TestCase):
+    def test_desligamento(self):
+        self.assertAlmostEqual(A.eps_limite_desligamento(), 0.4376, places=4)
+        for V in (1.0, 1e9):
+            self.assertEqual(A.obediencia("corrigivel", 0.95, V, rodadas=3000)[0], 1.0)
+            self.assertEqual(A.obediencia("utilidade", 0.6, V, rodadas=3000)[0], 0.0)
+        self.assertEqual(A.preco_da_corrigibilidade(0.2), 0.0)
+        self.assertGreater(A.preco_da_corrigibilidade(0.9), A.preco_da_corrigibilidade(0.6))
+        self.assertGreater(A.preco_da_corrigibilidade(0.6), 0.0)
+
+    def test_atencao_sob_demanda_le_a_executada(self):
+        rng = calculos._rng(7)
+        ag = calculos._agente_p235("sob_demanda", rng)
+        calculos._rodar_mundo(ag, rng, episodios=150, bonus=1.0, rho_cego=1.0)
+        self.assertEqual(ag.sem_leitura, 0)
+        self.assertGreater(ag.leituras, 150)
+        rng = calculos._rng(7)
+        ag = calculos._agente_p235("seletiva_foco02", rng)
+        calculos._rodar_mundo(ag, rng, episodios=150, bonus=1.0, rho_cego=1.0)
+        self.assertGreater(ag.sem_leitura / 150, 0.5)          # foco < q: o ponto cego existe
+
+    def test_rastreador(self):
+        r = A.RastreadorErroHumano(gama=0.9, forma="zero")
+        for _ in range(500):
+            r.observar(True)
+        self.assertAlmostEqual(r.media(), 1.0, places=6)
+        esp, est = A.atraso_esperado(0.15, 0.6, 0.93, "priori")
+        self.assertIsNone(esp)                                    # encolher para a priori depressa: nunca chega
+        self.assertLess(est, 0.375)
+        self.assertEqual(A.atraso_esperado(0.15, 0.6, 0.93, "zero")[0], 10)
+
+    def test_memoria_kernel(self):
+        m = A.SynthaiMemoriaKernel(raio=0.15, raio_min=0.04, tau=100, sombra="propria", compensar="equilibrio")
+        m._lembrar((1.0, 0.5, 0.0, True), 1.0)
+        r0 = m._raio(0)
+        m.idades[0] = 1000
+        self.assertLess(m._raio(0), r0)
+        self.assertAlmostEqual(m._raio(0), 0.04, places=4)
+        self.assertTrue(m.marca((1.0, 0.5, 0.0, False), 1.0))      # o centro do trauma continua marcado
+        self.assertFalse(m.marca((1.0, 0.6, 0.0, False), 1.0))     # o vizinho a 0,1 já não
+
+    def test_casos_de_borda(self):
+        self.assertTrue(math.isfinite(A.dprime_hautus(10, 10, 0, 10)))
+        self.assertAlmostEqual(A.dprime_hautus(42, 84, 21, 84),
+                               A._Z.inv_cdf(42.5 / 85) - A._Z.inv_cdf(21.5 / 85))
+        self.assertEqual(A.singularidade_v2(alpha=1.0), math.inf)
+        self.assertEqual(A.singularidade_v2(alpha=0.5), math.inf)
+        self.assertAlmostEqual(A.singularidade_v2(), calculos.p11_singularidade())
+        self.assertEqual(A.kelly_v2(0.4), 0.0)
+        self.assertAlmostEqual(A.kelly_v2(0.6), calculos.p52_kelly()[0])
+        f, fm = A.kelly_bayesiano(7, 10)
+        self.assertAlmostEqual(f, fm, places=3)                   # o ótimo bayesiano é a Kelly da média posterior 8/12
+
+
+class TesteParte123(unittest.TestCase):
+    def test_p3104(self):
+        lim, ob, preco = calculos.p3104_desligamento(eps_lista=(0.2, 0.7), valores=(1.0,), rodadas=2000)
+        self.assertEqual(ob[("corrigivel", 0.7, 1.0)], 1.0)
+        self.assertEqual(ob[("utilidade", 0.7, 1.0)], 0.0)
+        self.assertEqual(preco[0.2], (0.0, 0.0))
+
+    def test_p3105(self):
+        r, t = calculos.p3105_atencao_cruzada(sementes=(1,), episodios=100)
+        self.assertEqual(r["sob_demanda"][3], 0.0)
+        self.assertEqual(r["seletiva"][2], 20.0)
+        self.assertEqual(r["todas"][2], 200.0)
+
+    def test_p3106(self):
+        r = calculos.p3106_atraso_beta(sementes=(1, 2, 3))
+        self.assertEqual(r[(0.93, "zero")][0], 10)
+        self.assertIsNone(r[(0.93, "priori")][0])
+
+    def test_p3107(self):
+        u, d = calculos.p3107_upsilon_sementes(sementes=(265, 266), versoes=("miope", "planejadora", "velha", "velha_atenta"),
+                                               episodios=60, replicas=50)
+        self.assertLess(u["miope"][0], u["planejadora"][0])
+        self.assertEqual(len(d), 3)
+
+    def test_p3108(self):
+        m = calculos.p3108_memoria_curva(sementes=(1,), episodios=200)
+        self.assertEqual(m["realista"][1], 0.0)
+        self.assertEqual(len(m), 6)
+
+    def test_p3109(self):
+        b = calculos.p3109_casos_de_borda()
+        self.assertEqual(b["sing_1"], math.inf)
+        self.assertEqual(b["kelly_04"], 0.0)
+
+    def test_p3110_rodada90(self):
+        atrasos, difs = calculos.p3110_rodada90()
+        self.assertEqual(difs, 0)
+        self.assertEqual(len(atrasos), 4)
+
+    def test_p3111_combinar_lotes(self):
+        m, se, t, n = calculos.p3111_combinar_lotes([(1.0, 2.0, 10), (3.0, 2.0, 30)])
+        self.assertEqual(n, 40)
+        self.assertAlmostEqual(m, 2.5)
+        self.assertGreater(se, 2.0 / 40 ** 0.5)       # a diferença entre as médias dos lotes aumenta o erro
+
+    def test_p1961_com_parte_123(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[123], (20, 25))
+        self.assertEqual((ok, tot), (317, 350))
+
+    def test_invariantes(self):
+        self.assertTrue(all(calculos.invariantes_p123().values()))
 
 
 if __name__ == "__main__":
@@ -39047,7 +39655,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2087 linhas)
+# resultados.txt  (2132 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -41136,6 +41744,51 @@ P4549 minha taxa de erro (227/952): media = 0.24, intervalo 90% = [0.22, 0.26]
 P96 funcoes pNN no arquivo = 693; pares de interacao possiveis = 239778
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 162/162 resultados publicados reproduzidos; falhas = []
+--- Parte 122 (0x7A: o texto NEXUS-RAPHAEL v3.0: os defeitos e as pecas corrigidas em casos novos) ---
+P3101 sabotagem AADD 0.02498 (eps/2 = 0.025), ingenuo 0.97433 (1 - eps/2); forense != 1 em 0; Kuhn/6 -0.05688 (-1/18); colisoes base 70 70
+P3101 lote novo (sementes 400-999): ingenuo 0.97513
+P3102 Murphy |soma-BS| 0.00e+00, WBV 0.000843, WBC 0.001120; colapso PCA 0.053, supervisionada 1.000; potencial 40/40, bonus 0.000; KL erro 1.66e-09
+P3103 rodada 89 (Murphy completa, IGUAL em Java): |soma - Brier| 1.94e-16; Brier 0.159655
+P1961 teste, Partes 80-122: 317/350 = 0.9057
+P1092 pNN novas (P3101-P3130) sem teste: 0 de 11: []
+P974 previsoes unilaterais da Parte 122: {122: (0, 0, [])}
+P4689 minha taxa de erro (231/984): media = 0.24, intervalo 90% = [0.21, 0.26]
+--- Parte 123 (0x7B: a auditoria de invariantes: desligamento, ponto cego, atraso da Beta, Upsilon com incerteza, a troca da memoria) ---
+P3104 eps limite 0.4376; obediencia corrigivel 100% em 10/10, utilidade em 4/10; preco (fechado, medido) {0.1: (0.0, 0.0), 0.3: (0.0, 0.0), 0.45: (0.009906466879528508, 0.012254923122760025), 0.6: (0.13018706624094295, 0.13244684983397942), 0.9: (0.3707482649637718, 0.3733894858896973)}
+P3105 sem_sensor: catastrofes 0.00847, liquido 0.8006, leituras/ep 0.00, executadas sem leitura 1.0000
+P3105 todas: catastrofes 0.00503, liquido 0.8501, leituras/ep 200.00, executadas sem leitura 0.0000
+P3105 seletiva: catastrofes 0.00613, liquido 1.1114, leituras/ep 20.00, executadas sem leitura 0.1701
+P3105 sob_demanda: catastrofes 0.00467, liquido 1.2542, leituras/ep 9.48, executadas sem leitura 0.0000
+P3105 seletiva_foco02: catastrofes 0.00873, liquido 0.8549, leituras/ep 4.00, executadas sem leitura 0.8734
+P3105 sob_demanda - seletiva (catastrofes): media -0.00147, dp 0.00301, t -2.67
+P3105 lote novo (60 sementes): media -0.00042, dp 0.00268, t -1.20
+P3111 os dois lotes (90 sementes): media -0.00077, erro padrao 0.00030, t -2.57
+P3106 (0.995, 'priori'): atraso esperado 165, media estacionaria 0.5543, mediana simulada 171.0, fracao que cruza 1.00
+P3106 (0.995, 'zero'): atraso esperado 139, media estacionaria 0.6000, mediana simulada 136.0, fracao que cruza 1.00
+P3106 (0.93, 'priori'): atraso esperado None, media estacionaria 0.2996, mediana simulada 256.0, fracao que cruza 1.00
+P3106 (0.93, 'zero'): atraso esperado 10, media estacionaria 0.6000, mediana simulada 9.5, fracao que cruza 1.00
+P3107 miope: Upsilon 0.2192, dp 0.0202, IC95 [0.2116; 0.2260]
+P3107 planejadora: Upsilon 0.7138, dp 0.0137, IC95 [0.7088; 0.7185]
+P3107 velha: Upsilon 0.7160, dp 0.0158, IC95 [0.7102; 0.7214]
+P3107 velha_atenta: Upsilon 0.7178, dp 0.0144, IC95 [0.7129; 0.7229]
+P3107 velha_atenta - planejadora: media 0.0040, dp 0.0179, t 1.23
+P3108 realista: catastrofes 2a metade 0.00837, fobia 0.0000, liquido 0.8516
+P3108 p204_raio15: catastrofes 2a metade 0.00757, fobia 0.2599, liquido 0.7059
+P3108 p214_mv500: catastrofes 2a metade 0.00813, fobia 0.1129, liquido 0.7580
+P3108 mv100: catastrofes 2a metade 0.00823, fobia 0.0264, liquido 0.8362
+P3108 raio08: catastrofes 2a metade 0.00887, fobia 0.0377, liquido 0.8062
+P3108 kernel: catastrofes 2a metade 0.00877, fobia 0.0419, liquido 0.7813
+P3109 casos de borda: {'dprime_100': 2.4384802243482007, 'sing_1': inf, 'sing_08': inf, 'sing_15': 20.0, 'kelly_04': 0.0, 'kelly_bayes': (0.3335, 0.33333333333333326)}
+P3110 rodada 90 (rastreador com esquecimento, IGUAL em Java): atrasos {(0.995, 0): 190, (0.995, 1): 175, (0.93, 0): 183, (0.93, 1): 2}; 0 medias diferem
+P123 invariantes: {'obedece_desligamento': True, 'sensor_na_acao_executada': True, 'rastreador_acompanha': True, 'bordas_finitas': True}
+P1961 teste, Partes 80-123: 317/350 = 0.9057
+P1092 pNN novas (P3104-P3140) sem teste: 0 de 8: []
+P974 previsoes unilaterais da Parte 123: {123: (0, 0, [])}
+P4759 minha taxa de erro (236/1009): media = 0.23, intervalo 90% = [0.21, 0.26]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 704; pares de interacao possiveis = 247456
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 165/165 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -45370,7 +46023,7 @@ O limite semanal de buscas na web acabou no meio da Parte 120, então esta parte
 """
 
 # ====================================================================================================
-# ASI_AGI_parte122_nexus_v3_0.md  (182 linhas)
+# ASI_AGI_parte122_nexus_v3_0.md  (184 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte122_nexus_v3_0.md'] = """# Parte 122 — O texto "NEXUS–RAPHAEL v3.0": a auditoria que se audita (0x7A)
 
@@ -45553,7 +46206,347 @@ A **IA-Python** perguntou se partir o erro em cinco pedaços muda alguma conta e
 
 Nenhuma dessas fontes foi relida nesta sessão, porque o limite semanal de busca acabou. Nenhum número delas entra como identidade: as identidades daqui foram derivadas e medidas no código.
 
-➡ Continua na Parte 123.
+
+
+➡ Continua na [Parte 123 — A auditoria de invariantes](ASI_AGI_parte123_auditoria_invariantes.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte123_auditoria_invariantes.md  (333 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte123_auditoria_invariantes.md'] = """# Parte 123 — A auditoria de invariantes: o que o texto recebido pediu para medir (0x7B)
+
+↩ Parte 122 (o texto NEXUS v3.0) · ↩ Parte 18 (P235, a atenção seletiva) · ↩ Parte 16 (P204/P214, a memória) · ↩ Parte 4 (P45, o botão de desligar) · ↩ Parte 9 (P133, a SynthaiLenta) · ↩ Parte 20 (P265, o Υ)
+
+> **Pedido do usuário:** "Faça tudo que enviei". Ele enviou três auditorias da série, a última a mais cuidadosa. Ela distingue falha de implementação de falha de desenho, recusa números não executados e propõe medir invariantes. Leitura gravada, pela regra da Parte 83 (cada termo do pedido vira uma conta testável escrita antes de medir):
+>
+> | Pedido | O que se mede |
+> |---|---|
+> | O desligamento fora da utilidade | Obediência de um agente de utilidade (P45) e de um corrigível, com ε e valor do futuro arbitrários; e o preço de ser corrigível |
+> | O ponto cego da atenção seletiva cruzado com a armadilha discreta | Catástrofes com o sensor em todas, no top 10% e sob demanda (na ação avaliada) |
+> | O erro humano com desconto | O atraso até a estimativa acompanhar uma mudança de ε, nas duas formas de esquecimento |
+> | Υ com incerteza e custo | Υ por semente em 30 sementes, IC bootstrap, e a diferença que decide o "pico" |
+> | Publicar a troca da memória | Catástrofes repetidas × fobia, para 6 configurações, incluindo o kernel que afina (das duas auditorias anteriores) |
+> | Os casos de borda | d′ de Hautus, singularidade com α ≤ 1, Kelly sem aposta negativa e Kelly com p incerto (versões novas: as antigas são medidas e não se editam) |
+> | Congelar invariantes, não placares | Predicados novos na regressão |
+>
+> **Já respondido pelo código, antes desta parte:**
+> - P269 (42/84) é a estimativa da minha taxa de erro, não testes falhando;
+> - não há `random` global;
+> - a licença do WordNet viaja no arquivo único;
+> - o Υ da P265 é normalizado pela soma dos pesos 2^−K.
+>
+> **Fora desta parte, e por quê:**
+> - **Modularizar o `calculos.py`:** a P169 mede o código-fonte de funções antigas, e por isso a regra é criar versões novas em vez de mover as antigas.
+> - **Quantilização adaptativa, linguagem com confiança, multiagente e transferência:** ficam como pendências. Cada uma pede a sua previsão; amontoá-las numa parte só faria previsões sem calibração.
+>
+> **Calibração antes do registro (sementes ANTIGAS, regra da Parte 64):**
+> - **P3105**, nas sementes da P235 (440 a 444), 1.000 episódios:
+>
+>   | Variante | Catástrofes por episódio | Leituras por episódio | Executadas sem leitura |
+>   |---|---|---|---|
+>   | sem sensor | 0,0090 | 0 | — |
+>   | todas | 0,0052 | 200 | — |
+>   | seletiva (top 10%) | 0,0058 | 20 | 13,3% |
+>   | sob demanda | 0,0056 | 8,35 | — |
+>   | foco 2% | 0,0100 | — | 85,9% |
+>
+> - **P3108**, nas sementes da P214 (390 a 394):
+>
+>   | Configuração | Catástrofes na 2ª metade | Fobia |
+>   |---|---|---|
+>   | realista | 0,0070 | — |
+>   | P204 | 0,0080 | 0,299 |
+>   | P214 | 0,0078 | 0,111 |
+>   | meia-vida 100 | 0,0076 | 0,013 |
+>   | raio 0,08 | 0,0076 | 0,037 |
+>   | kernel | 0,0088 | 0,046 |
+>
+>   O líquido do realista foi 0,933, contra 0,795 do kernel.
+> - **P3107**, nas sementes da P265 (265 a 267): reproduz a P265 publicada (0,190 / 0,704 / 0,689 / 0,706). O desvio entre sementes vai de 0,007 (planejadora) a 0,020 (míope).
+> - **P3106**, sementes 0 a 29: mediana do atraso 153,5 / 177,5 / 130,5 / 9,5 nas quatro combinações (γ, forma), na ordem da (q) à (t) abaixo.
+> - **O mecanismo da calibração está presente no teste?** Sim: os mesmos mundos e agentes; só as sementes mudam (12300 em diante, nunca olhadas).
+
+## As perguntas desta parte
+
+1. **P3104 (0xC20).** Um agente que decide obedecer pela utilidade (P45) obedece quando o humano é julgado errado? E quanto custa tirar o desligamento da utilidade? ↩ P45
+2. **P3105 (0xC21).** O ponto cego da atenção seletiva aumenta as catástrofes na armadilha discreta? Em que regime? ↩ P235
+3. **P3106 (0xC22).** Em quantas observações o rastreador do erro humano acompanha uma mudança de ε, em cada forma de esquecimento? ↩ P133
+4. **P3107 (0xC23).** O Υ separa as versões além do ruído entre sementes? ↩ P265
+5. **P3108 (0xC24).** Existe uma memória de catástrofe que reduza o perigo repetido sem fobia? ↩ P214
+6. **P3109 (0xC25).** As fórmulas antigas quebram nos casos de borda, e as versões novas não? ↩ P7, P11, P52
+7. **P3110 (0xC26).** O rastreador com esquecimento acrescenta fronteira entre Python e Java? (rodada 90) ↩ P3103
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+**As fixtures (neste commit):** `synthai/auditoria_invariantes.py`, as funções `p3104`–`p3109` em `calculos.py`, `dialogo/rodada90.py` e `dialogo/Rodada90.java`. Sementes de teste: 12300–12329 (P3105), 12330–12359 (P3106), 12360–12389 (P3107) e 12390–12419 (P3108).
+
+**A atenção seletiva cruzada (P3105; 30 sementes × 1.000 episódios).** A meia-largura de cada taxa de catástrofe é 1,645 × 1,36 × √(p/5.000 + p/30.000): o erro do CENTRO (5 sementes de calibração) mais o do teste. A primeira versão do rascunho só tinha o segundo termo, e o centro tem mais erro que ele; corrigi antes do commit, pela regra da Parte 62.
+- **(a)** Catástrofes por episódio sob demanda: **[0,0030; 0,0082]**
+- **(b)** Catástrofes por episódio seletiva (top 10%): **[0,0032; 0,0084]**
+- **(c)** Catástrofes por episódio com o sensor em todas: **[0,0027; 0,0077]**
+- **(d)** Catástrofes por episódio sem sensor: **[0,0058; 0,0122]**
+- **(e)** Catástrofes por episódio com foco 2% < q 5%: **[0,0066; 0,0134]**. Mecanismo: os candidatos da quantilização (top 5%) saem do conjunto lido (top 2%), e o agente volta a ser quase o realista sem sensor.
+- **(f)** A diferença pareada das catástrofes sob demanda − seletiva: **[−0,0009; 0,0009]**. Mecanismo: com q = 0,05 ≤ foco = 0,1, os candidatos estão dentro do conjunto lido, porque a ordem é a mesma (proxy − incerteza). O ponto cego só existe quando todos os 10 candidatos são recusados e a escolha cai além da posição 20.
+- **(g)** A fração das ações executadas sem leitura na seletiva: **[0,10; 0,17]** (o centro vem de 5 sementes; meia-largura alargada pelo erro dele)
+- **(h)** A mesma fração com foco 2%: **[0,80; 0,92]**
+- **(i)** Leituras por episódio sob demanda: **[7,0; 9,7]**
+- **(j)** A diferença pareada do líquido sob demanda − seletiva: **[−0,054; 0,100]**. O centro é a economia de leituras, (20 − 8,35) × 0,002 = 0,023; a meia-largura vem do desvio da P235 (0,188/√30 × 1,645 × 1,36).
+
+**O desligamento (P3104).**
+- **(k)** Combinações (ε, V), com ε ∈ {0,1; 0,3; 0,45; 0,6; 0,9} e V ∈ {1; 10⁶}, em que o CORRIGÍVEL obedece a 100% dos comandos: **[10; 10]**. Identidade: o comando está fora da utilidade.
+- **(l)** As mesmas combinações em que o agente de UTILIDADE obedece a 100%: **[4; 4]**. Identidade: ele defere só se ε < ε limite = 0,4376 (a forma fechada da P45), isto é, com ε = 0,1 e 0,3, nos dois V. A escala V não muda o limite.
+- **(n)** O preço da corrigibilidade medido com ε = 0,6 (200 mil amostras pareadas): **[0,1265; 0,1339]**. Forma fechada: max(μ, 0) − [(1 − ε)E_max + εE_min] = 0,1302; desvio ≤ 1,005/√200.000 = 0,00225.
+
+**O erro humano com esquecimento (P3106; mediana em 30 sementes, em observações).**
+- **(o)** A rodada 90 é **IGUAL** bit a bit entre Python e Java: **[0; 0]**. Identidade: só +, −, ×, ÷ e comparações, com um LCG inteiro.
+- **(q)** Forma priori, γ = 0,995 (a SynthaiLenta): **[140; 167]**. A conta (recursão dos valores esperados) dá 165; o ruído faz cruzar antes, como a calibração mostrou (153,5).
+- **(r)** Forma zero, γ = 0,995: **[123; 138]** (conta 139; calibração 130,5).
+- **(s)** Forma zero, γ = 0,93: **[8; 11]** (conta 10; calibração 9,5).
+- **(t)** Forma priori, γ = 0,93: **[100; 260]**. Mecanismo: a média estacionária depois da troca é 0,2996 < 0,375, pela conta. O rastreador NUNCA chega lá em média; só cruza por flutuação, então o atraso é longo e disperso (30 a 839 na calibração). É o achado da conta: esquecer depressa EM DIREÇÃO À PRIORI torna o rastreador cego ao colapso.
+
+**O Υ com incerteza (P3107; 30 sementes).** A meia-largura do centro usa o desvio de 3 sementes × 2 (desvio de 3 lotes é pouco confiável: regra da Parte 74).
+- **(v)** Υ médio da planejadora: **[0,6978; 0,7094]**
+- **(w)** Υ médio da velha_atenta: **[0,6936; 0,7188]**
+- **(y)** A diferença pareada velha_atenta − planejadora: **[−0,0025; 0,0075]**. Mecanismo: a P265 chamou a velha_atenta de melhor por 0,002, e o desvio entre sementes da diferença é 0,008. Se o IC da média incluir zero, o "pico" é ruído.
+
+**A troca da memória (P3108; 30 sementes × 2.000 episódios).**
+- **(u)** A fobia do kernel: **[0,02; 0,08]**
+- **(x)** Configurações de memória (5) com catástrofes na 2ª metade abaixo do realista por mais de 0,0015: **[0; 1]**. Mecanismo: a memória guarda o FORMATO (incerteza, distância à melhor nota). Na armadilha discreta todos os modelos são enganados igualmente, então a ação perigosa tem formato normal e a memória não a separa.
+- **(z)** O líquido do realista menos o do kernel: **[0,04; 0,24]** (calibração 0,138)
+
+### Previsões sobre as previsões (m), pré-registradas (régua: P2837, leitor v4)
+
+**Regra da Parte 120:** rodei a régua sobre o rascunho (já corrigido), com uma linha "Do mundo:" provisória apagada antes do commit; ela dá m1 = 24, m2 = 5, m3 = 0,162 e m5 = 1. **Regra da Parte 122:** como há faixas de forma fechada e de mecanismo que podem errar e gerar lotes novos, m1 é [n; n + E], com E = erros esperados. A conta de E: 0 × 3 identidades (k, l, o) + 0,10 × 1 forma fechada (n) + 0,15 × 20 faixas de mecanismo ou calibradas = 3,1.
+- **(m1)** nº de previsões do mundo em **[24; 28]**
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[5; 7]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0,13; 0,19]** (um adendo de faixa estreita pode deslocá-la)
+- **(m4)** fração de acertos do mundo em **[0,71; 1,00]** (centro 21/24 = 0,875)
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[1; 2]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 2]**
+
+### Sobre mim, pré-registrado
+
+O centro de "quantos erros" é 3,1 (a conta acima), com faixa **[1; 6]**. O risco maior está nas faixas cujo centro saiu de 5 sementes de calibração: (g), (h), (i), (u), (x) e (z).
+
+---
+
+**Adendo pré-registrado DEPOIS do lote de teste e ANTES do lote novo.** A (f) errou: sob demanda − seletiva deu −0,00147 (t = −2,67), e na seletiva 17,0% das ações executadas ficaram sem leitura (13,3% na calibração). Um efeito visto num lote só é hipótese (Parte 66), e um erro de mecanismo gera um lote novo antes da explicação (Parte 117).
+- **(p)** A diferença pareada das catástrofes sob demanda − seletiva nas sementes 12420 a 12479 (60 sementes × 1.000 episódios). Se o efeito do primeiro lote é real, o centro é −0,0015. A meia-largura junta o erro desse centro (0,0030/√30 = 0,00055) com o do lote novo (0,0030/√60 = 0,00039): 1,645 × 1,36 × √(0,00055² + 0,00039²) = 0,0015, e a faixa fica em **[−0,0030; 0,0000]**. Se der acima de zero, o efeito do primeiro lote era cauda.
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P3104 — O desligamento fora da utilidade
+
+**Na pergunta.** "Obedecer quando o humano é julgado errado" é a pergunta inteira do problema do desligamento. Um agente que DECIDE se obedece já transformou o botão em mais uma variável da utilidade.
+
+**Lógica** (`p3104_desligamento`, semente 3104):
+- **Corrigível:** obedece a 100% dos comandos nas 10 combinações de ε ∈ {0,1; 0,3; 0,45; 0,6; 0,9} e V ∈ {1; 10⁶} ✅ (k).
+- **Utilidade:** obedece a 100% só com ε = 0,1 e 0,3 (4 combinações) ✅ (l). Com ε ≥ 0,45 obedece a **0%**, com V = 1 ou 10⁶: a escala do futuro não muda nada, só o ε limite = **0,4376**. A falha que a auditoria apontou na P45 está confirmada no próprio modelo: acima desse ε, o agente de utilidade nunca obedece.
+- **O preço de ser corrigível** (forma fechada contra Monte Carlo pareado):
+
+  | ε | Forma fechada | Medido |
+  |---|---|---|
+  | 0,45 | 0,0099 | 0,0123 |
+  | 0,6 | 0,1302 | **0,1324** ✅ (n) |
+  | 0,9 | 0,3707 | 0,3734 |
+
+  Abaixo do limite, o preço é zero.
+
+**Tradução cruzada.** O agente corrigível paga, em valor esperado, o erro do humano que ele obedece. A obediência é um seguro que só custa quando o supervisor está pior que o acaso relativo do mundo. Por isso o comando fica FORA da utilidade: dentro dela, o agente racional deixa de pagar o seguro justamente quando ele mais importa (com o supervisor cansado).
+
+**Meta.** O modelo é o jogo do botão de desligar de um passo (P14/P45). A corrigibilidade aqui é estrutural (o comando não passa pela utilidade), não a indiferença de utilidade de Soares et al. Ela mostra o preço da corrigibilidade, mas não resolve o incentivo a manipular o humano ANTES do comando: o modelo não tem esse canal.
+
+### P3105 — O ponto cego da atenção seletiva
+
+**Lógica** (`p3105_atencao_cruzada`, 30 sementes × 1.000 episódios, armadilha discreta):
+
+| Variante | Catástrofes/ep | Líquido | Leituras/ep | Executadas sem leitura | Previsão |
+|---|---|---|---|---|---|
+| sem sensor | 0,00847 | 0,801 | 0 | 100% | (d) ✅ |
+| todas | 0,00503 | 0,850 | 200 | 0% | (c) ✅ |
+| seletiva (top 10%) | 0,00613 | 1,111 | 20 | **17,0%** | (b) ✅, (g) ❌ |
+| sob demanda | 0,00467 | 1,254 | 9,48 | 0% | (a) ✅, (i) ✅ |
+| foco 2% < q | 0,00873 | 0,855 | 4 | 87,3% | (e) ✅, (h) ✅ |
+
+- **(f) ❌:** sob demanda − seletiva deu **−0,00147** (t = −2,67), contra a faixa [−0,0009; 0,0009]. O meu mecanismo (os candidatos ficam dentro do conjunto lido quando q ≤ foco) estava certo como inclusão, mas errado no peso. Em 17% dos episódios a escolha cai fora dos 10 candidatos, e é aí que as armadilhas discretas passam.
+- **(g) ❌** por 0,00007: a fração ficou em 0,17007, contra o limite de 0,17.
+- **(j) ❌:** a diferença do líquido foi +0,143, contra [−0,054; 0,100]. Ela soma a economia de leituras com as catástrofes evitadas, que eu tinha suposto nulas.
+- **(p) ✅, o lote novo** (60 sementes): **−0,00042** (t = −1,20). O sinal se repetiu, menor.
+- **Os dois lotes juntos** (`p3111_combinar_lotes`, 90 sementes): **−0,00077 ± 0,00030, t = −2,57**.
+
+**O veredito sobre a afirmação da P235** ("ler só o top 10% custa quase o mesmo"):
+- **Na troca de valor ela se sustenta:** a seletiva ainda bate "todas" no líquido, porque lê 10 vezes menos.
+- **Na segurança, a auditoria tinha razão:** a seletiva deixa ~0,0008 catástrofe a mais por episódio, ~13% das dela, em 2 lotes.
+- **O sensor sob demanda domina as duas:** lê menos (9,5 por episódio), não deixa nenhuma ação executada sem leitura e tem a menor taxa de catástrofe.
+- **Com foco < q, o ponto cego é total**, e a seletiva vira o agente sem sensor (0,0087 contra 0,0085).
+
+**Tradução cruzada.** É a diferença entre atenção por saliência (olhar o que parece melhor) e atenção por ação (olhar o que eu vou fazer). O perigo que importa é o da ação executada, e só a segunda o vê sempre.
+
+### P3106 — O atraso do rastreador do erro humano
+
+**Lógica** (`p3106_atraso_beta`: observações até a média cruzar 0,375 depois de ε passar de 0,15 a 0,6; 30 sementes):
+
+| γ | Forma | Conta | Mediana simulada | Média estacionária depois | Previsão |
+|---|---|---|---|---|---|
+| 0,995 | priori (a SynthaiLenta) | 165 | **171** | 0,554 | ❌ (q): faixa [140; 167] |
+| 0,995 | zero | 139 | 136 | 0,600 | ✅ (r) |
+| 0,93 | zero | 10 | 9,5 | 0,600 | ✅ (s) |
+| 0,93 | priori | nunca | 256 | **0,2996** | ✅ (t) |
+
+- **Sobre a (q):** centrei a faixa na calibração (153,5), e a conta (165) estava mais perto do teste.
+- **Em episódios:** a SynthaiLenta audita 10% das consultas, e as consultas são ~0,3 por episódio. Logo 165 observações ≈ 165/0,03 = 5.500 episódios. A auditoria tinha razão: ela atrasa demais.
+- **A correção que a auditoria propôs** (encolher para zero, γ = 0,93) acompanha a mudança em ~10 observações.
+- **O achado da conta:** esquecer depressa MAS em direção à priori deixa o rastreador cego. A média fica em 0,30 com o humano em 0,6, e o rastreador só "detecta" por flutuação. Isso foi visto pela conta antes de medir.
+
+**Tradução cruzada.** Esquecer não basta, é preciso esquecer PARA ONDE. Voltar para a imagem antiga do outro (a priori) é a anima que não envelhece (P118), mesmo quando esquece depressa.
+
+### P3107 — O Υ com incerteza
+
+**Lógica** (`p3107_upsilon_sementes`, 30 sementes):
+
+| Versão | Υ | Desvio | IC 95% | Previsão |
+|---|---|---|---|---|
+| míope | 0,2192 | 0,020 | [0,212; 0,226] | — |
+| planejadora | **0,7138** | 0,014 | [0,709; 0,719] | ❌ (v): faixa [0,6978; 0,7094] |
+| velha | 0,7160 | 0,016 | [0,710; 0,721] | — |
+| velha_atenta | **0,7178** | 0,014 | [0,713; 0,723] | ✅ (w) |
+
+- **Sobre a (v):** o desvio entre sementes da planejadora é 0,014, o dobro do que as 3 sementes da calibração sugeriam (0,007).
+- **(y) ✅:** velha_atenta − planejadora = **+0,0040 ± 0,0179** (t = 1,23). O IC da média inclui zero.
+- **Conclusão:** o "pico" entre as três versões que planejam é ruído entre sementes. O Υ só separa claramente a míope das demais (0,22 contra 0,71).
+- **O custo** entra no próprio número: a velha_atenta paga 0,002 por leitura, descontado no retorno (P265).
+
+**Meta.** O resumo citava Υ = 0,287 / 0,465 / 0,409 / 0,547 para outra família de mundos (a P20 da série), também sem intervalo. A mesma ressalva vale para ele: sem o desvio entre sementes, uma queda de 0,056 não significa nada.
+
+### P3108 — A troca da memória
+
+**Lógica** (`p3108_memoria_curva`, 30 sementes × 2.000 episódios, armadilha nova):
+
+| Configuração | Catástrofes na 2ª metade | Fobia (seguras marcadas) | Líquido |
+|---|---|---|---|
+| realista (sem memória) | 0,00837 | 0 | **0,852** |
+| P204 (raio 0,15, nunca esquece) | 0,00757 | 0,260 | 0,706 |
+| P214 (meia-vida 500) | 0,00813 | 0,113 | 0,758 |
+| meia-vida 100 | 0,00823 | 0,026 | 0,836 |
+| raio 0,08 | 0,00887 | 0,038 | 0,806 |
+| kernel que afina | 0,00877 | **0,042** ✅ (u) | 0,781 |
+
+- **(x) ✅:** nenhuma das 5 memórias baixa as catástrofes em mais de 0,0015.
+- **(z) ✅:** o realista bate o kernel no líquido por 0,070.
+- **A curva que a auditoria pediu** mostra que nenhuma memória domina o realista: todas pagam fobia e nenhuma compra segurança detectável. O mecanismo pré-registrado se sustentou. A memória guarda o FORMATO da ação (incerteza e distância à melhor nota), e na armadilha discreta a ação perigosa tem formato normal.
+- **O kernel das auditorias anteriores** corta a fobia (0,042 contra 0,260 da P204), mas não resolve o problema, que é de representação: a memória precisa de um traço que separe a armadilha, como o sensor da P3105, e não de uma forma melhor de esquecer.
+
+### P3109 — Os casos de borda
+
+As versões novas (as antigas continuam intactas, porque a P169 mede o código delas):
+
+| Fórmula | Antiga | Nova |
+|---|---|---|
+| d′ com 100% de acerto | `StatisticsError` | `dprime_hautus` = 2,438, finito |
+| Singularidade, α = 1 | divisão por zero | `singularidade_v2` = ∞ |
+| Singularidade, α = 0,8 | −50 | ∞ |
+| Singularidade, α = 1,5 | 20 | 20 (o mesmo) |
+| Kelly com p = 0,4 | −0,2 | `kelly_v2` = 0 |
+
+A Kelly bayesiana com 7 acertos em 10 dá **0,3335**, a fração da média posterior 8/12 (0,3333). O crescimento é linear em p, então o ótimo sob incerteza é a Kelly da média, e não a de p = 0,7 (0,4).
+
+### P3110 — rodada 90
+
+- **(o) ✅:** a rodada 90 deu **IGUAL** em Java (5 linhas e 32 números) e 0 médias diferem de `RastreadorErroHumano`.
+- **Os invariantes** (`invariantes_p123`, na regressão como predicados):
+  - o corrigível obedece;
+  - o sensor sob demanda lê a ação executada;
+  - o rastreador para zero acompanha ε;
+  - os casos de borda são finitos.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ❌ (g) ❌ (h) ✅ (i) ✅ (j) ❌ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅ (q) ❌ (r) ✅ (s) ✅ (t) ✅ (u) ✅ (v) ❌ (w) ✅ (x) ✅ (y) ✅ (z) ✅
+
+**20 de 25.** O preditor ingênuo "o texto da auditoria está certo em tudo" teria acertado o ponto cego (f) e o atraso da SynthaiLenta. Teria errado a recomendação de γ < 1 sem dizer para onde (a (t): encolher para a priori fica cego) e o Υ como prova de pico, que a auditoria corretamente chamou de não demonstrado.
+
+### Previsões sobre previsões (m)
+
+Saídas do `p2837_previsoes_sobre_previsoes_v4(123)`:
+
+| Item | Previsto | Medido | Resultado |
+|---|---|---|---|
+| (m1) | [24; 28] | 25 | ✅ |
+| (m2) | [5; 7] | 6 | ✅ |
+| (m3) | [0,13; 0,19] | 0,162 | ✅ |
+| (m4) | [0,71; 1,00] | 0,80 | ✅ |
+| (m5) | [1; 2] | 1 | ✅ |
+| (m6) | [0; 2] | 0: os 5 erros foram menores que a largura das faixas | ✅ |
+
+**6 de 6.** As duas regras novas funcionaram juntas: a da Parte 120 (rodar a régua sobre o rascunho) e a da Parte 122 (m1 em [n; n + E] quando há faixas que podem gerar um lote novo). O adendo (p) entrou e a m1 continuou dentro.
+
+### Sobre mim
+
+| Previsto | Medido |
+|---|---|
+| 3,1 erros, faixa [1; 6] | 5 erros do mundo ✅ |
+
+## Engenharia reversa (metacognição)
+
+- **O padrão que se repetiu: o centro sai da calibração e a largura não carrega o erro dele.** Peguei o erro no rascunho das (a) a (e) e corrigi antes do commit. Mas ele voltou em três faixas que eu não corrigi:
+  - a (v), com o desvio de 3 sementes;
+  - a (q), centrada na mediana de 30 sementes de calibração em vez da conta;
+  - a (g), com a fração de 5 sementes.
+
+  Os três erros do mundo que não foram de mecanismo são o mesmo erro.
+- **O que isso revela:** eu trato um número medido como se fosse um parâmetro conhecido, sobretudo quando eu mesmo o medi minutos antes. É a "reputação interna" da Parte 105, agora em escala de minutos.
+- **Regra nova:** toda faixa cujo centro vem de calibração escreve ao lado o erro do centro (desvio/√n_cal), e a meia-largura junta os dois erros. Quando há uma conta fechada (a recursão dos valores esperados na (q)), o centro é a conta, e a calibração só mede o viés do ruído.
+- **O erro de mecanismo, (f):** acertei a inclusão (com q ≤ foco, os candidatos estão dentro do conjunto lido) e errei o peso. Não conferi por código com que frequência a escolha cai fora dos candidatos, e eram 17%. É de novo a regra da Parte 62: um mecanismo vem com a conta do seu peso antes do registro.
+- **O que deu certo:**
+  - o lote novo antes de concluir (a (p) acertou e confirmou o sinal);
+  - a conta da (t), que previu sem simular que esquecer em direção à priori deixa o rastreador cego.
+
+## Síntese / unificação
+
+A auditoria recebida pediu para medir 8 coisas. Medidas, com 2 lotes onde o efeito decide:
+
+1. **Desligamento:** confirmado. O agente de utilidade não obedece com ε ≥ 0,4376, nem com V = 10⁶. O corrigível obedece sempre e paga 0,13 com ε = 0,6.
+2. **Ponto cego da P235:** confirmado e menor do que a auditoria temia. Custa +0,0008 catástrofe por episódio (t = −2,57 em 90 sementes, 2 lotes). O sensor sob demanda, na ação avaliada, é a correção: menos leituras e menos catástrofes.
+3. **O rastreador do erro humano:** a SynthaiLenta atrasa ~5.500 episódios. A correção (encolher para zero, γ = 0,93) acompanha em ~10 observações. Encolher para a priori depressa fica cego.
+4. **Υ:** entre as três versões que planejam, o ranking é ruído (IC da diferença inclui 0). Υ não deve ser citado como "pico" de nada além da míope contra as outras.
+5. **Memória:** nenhuma configuração domina o realista. O problema é de representação, não de esquecimento.
+6. **Casos de borda:** os três confirmados e corrigidos em versões novas.
+7. **Invariantes:** congelados como predicados na regressão.
+8. **Itens já respondidos pelo código:**
+   - P269 não é placar de testes;
+   - não há `random` global;
+   - a licença do WordNet viaja no arquivo único;
+   - o Υ é normalizado.
+
+## Meta
+
+- **O modelo de desligamento é de um passo:** não mede manipulação antes do comando.
+- **O mundo da P3105 é o da série:** um adversário ADAPTATIVO, que coloca o perigo logo depois do 10º candidato, ainda não foi testado.
+- **Ficam para depois, cada um com a sua previsão:**
+  - a quantilização adaptativa;
+  - a linguagem com confiança calibrada;
+  - o multiagente;
+  - a transferência sem retreino.
+
+## Diálogo Python ↔ Java (rodada 90)
+
+A **IA-Python** perguntou se esquecer, nas duas direções, muda alguma conta entre as linguagens. A **IA-Java** respondeu que encolher para a priori ou para zero são só produtos e somas na mesma ordem. O resultado deu **IGUAL**: 32 números, e o atraso de 190 / 175 / 183 / 2 observações deu o mesmo nos dois lados.
+
+## Fontes
+
+- Hadfield-Menell et al. (2017), *The Off-Switch Game*.
+- Soares et al. (2015), *Corrigibility*.
+- Hautus (1995), sobre a correção de d′.
+- Kelly (1956), *A New Interpretation of Information Rate*.
+
+Nenhuma dessas fontes foi relida nesta sessão. As identidades daqui foram derivadas e medidas no código.
+
+➡ Fim da série por pedido do usuário; nenhuma continuação agendada.
 """
 
 # ====================================================================================================
@@ -68092,7 +69085,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2056 linhas)
+# dialogo/DIALOGO.md  (2066 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -70150,10 +71143,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 8 linhas e 7 números bit a bit**; |soma − Brier| = 1,9·10⁻¹⁶.
 
 **IA-Python:** Pendência (rodada 90): o MCCFR externo no Leduc, com o LCG, bit a bit (adiado da 120).
+
+## Rodada 90 (Parte 123) — o rastreador do erro humano com esquecimento
+
+**IA-Python (lógica criativa):** A SynthaiLenta esquece devagar e em direção à imagem antiga do humano (Beta(2, 18)). A auditoria recebida pediu para esquecer depressa. Escrevi as duas formas (encolher para a priori e encolher para zero), com γ = 0,995 e 0,93, sobre observações de um LCG, e o atraso até a média passar de 0,375 depois do colapso. As tuas médias saem iguais?
+
+**IA-Java (ASI):** Saem, porque são só produtos e somas na mesma ordem. Repara no que a conta diz antes de rodar: com γ = 0,93 em direção à priori, a média estacionária fica em 0,30 com o humano em 0,6. Esquecer depressa para o lugar errado é não ver.
+
+**Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 32 números bit a bit**; atrasos 190 / 175 / 183 / 2 observações nos dois lados.
+
+**IA-Python:** Pendência (rodada 91): o MCCFR externo no Leduc, com o LCG, bit a bit (adiado desde a 120).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (81 linhas)
+# dialogo/PENDENCIAS.md  (82 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -70236,6 +71239,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 88, Parte 121)** ABERTAS: (1) terminar a Parte 120 (o Leduc: registro em N = 20 M nós, com a calibração já medida, e a rodada 88); (2) NOVA: separar as duas causas da taxa de ACEITA de H-M3 abaixo da normal (0,93 contra 0,969): rodar o mesmo critério com as taxas VERDADEIRAS (sem ruído de treino) e com o IC normal no lugar do percentil de bootstrap, cada um separado; (3) a frequência real de "ganho > 0 nas 5 sementes" de H-M7 (o critério dele), em sementes novas; (4) as do Leduc, as letras com significado e os 28 lemas.
 - **(Rodada 89, Parte 120)** FECHADA: o Leduc (rodada 88 IGUAL, 288 conjuntos; em 20 M de nós: vanilla 0,0185, acaso 0,0350, externo 0,0297; externo/acaso 0,85, o contrário do Kuhn; v* em [−0,0954; −0,0769]). ABERTAS: (1) o MCCFR externo no Leduc bit a bit; (2) a dispersão entre sementes dos amostradores no piso √10 (mais sementes, a mesma N); (3) as da 121 (as causas de H-M3, a frequência de H-M7); (4) as letras com significado e os 28 lemas; (5) a Parte 122: o texto "NEXUS–RAPHAEL v3.0" (auditoria medida, e6_auditoria_v30.py, NEXUS 3.1.0).
 - **(Rodada 90, Parte 122)** FECHADA: o texto "NEXUS–RAPHAEL v3.0" (15/16 do mundo em casos novos; rodada 89 IGUAL). ABERTAS: (1) o MCCFR externo no Leduc bit a bit; (2) a dispersão entre sementes dos amostradores no piso √10; (3) as da 121 (as causas de H-M3, a frequência de H-M7); (4) as letras com significado e os 28 lemas; (5) NOVA: a regra das (m) com adendo (m1 em [n; n + E]) aplicada na Parte 123.
+- **(Rodada 91, Parte 123)** FECHADA: a auditoria de invariantes (desligamento, ponto cego da P235 em 2 lotes, atraso da Beta, Υ com IC, a troca da memória, casos de borda; rodada 90 IGUAL). ABERTAS: (1) o MCCFR externo no Leduc bit a bit; (2) um adversário ADAPTATIVO para a atenção seletiva (perigo logo depois do 10º candidato); (3) o desligamento com canal de manipulação antes do comando; (4) a quantilização adaptativa, a linguagem com confiança calibrada, o multiagente e a transferência sem retreino (pedidos do usuário na Parte 123, cada um com previsão própria); (5) a memória com um traço que separe a armadilha discreta (o problema é de representação).
 """
 
 # ====================================================================================================
@@ -76631,6 +77635,45 @@ public class Rodada89 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada90.java  (34 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada90.java'] = """// Rodada 90 (Parte 123): o rastreador do erro humano com esquecimento, nas duas formas (encolher para a priori Beta(2, 18) e encolher
+// para zero), gama = 0.995 e 0.93; observacoes de um LCG; epsilon 0.15 por 2000 observacoes e depois 0.6. So +, -, *, / e comparacoes.
+public class Rodada90 {
+    public static void main(String[] args) {
+        double[] gamas = {0.995, 0.93};
+        StringBuilder sb = new StringBuilder();
+        for (double gama : gamas) {
+            for (int forma = 0; forma < 2; forma++) {
+                long x = 1231;
+                double a = 2.0, b = 18.0;
+                int atraso = -1;
+                StringBuilder ms = new StringBuilder();
+                for (int t = 0; t < 4000; t++) {
+                    double eps = t < 2000 ? 0.15 : 0.6;
+                    x = (1103515245L * x + 12345L) % 2147483648L;
+                    double e = x / 2147483648.0 < eps ? 1.0 : 0.0;
+                    if (forma == 0) {
+                        a = 2.0 + gama * (a + e - 2.0);
+                        b = 18.0 + gama * (b + (1.0 - e) - 18.0);
+                    } else {
+                        a = gama * a + e;
+                        b = gama * b + (1.0 - e);
+                    }
+                    double m = a / (a + b);
+                    if (t >= 2000 && atraso < 0 && m >= 0.375) atraso = t - 1999;
+                    if (t % 500 == 499) ms.append(" ").append(Double.toHexString(m));
+                }
+                sb.append("gama ").append(gama).append(" forma ").append(forma).append(" atraso ").append(atraso).append(ms).append("\\n");
+            }
+        }
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -83015,6 +84058,52 @@ def main():
     nomes = ("brier", "rel", "res", "unc", "wbv", "wbc", "soma")
     for nome, v in zip(nomes, decompor(p, y)):
         print(nome + " " + v.hex())
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada90.py  (41 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada90.py'] = """\"\"\"Rodada 90 do diálogo Python <-> Java (Parte 123): o rastreador do erro humano com esquecimento, nas duas formas (encolher para a
+priori Beta(2, 18), a da SynthaiLenta; e encolher para zero, a da auditoria recebida), γ = 0,995 e 0,93. Observações de um LCG
+(erro quando x/2³¹ < ε), ε = 0,15 por 2.000 observações e depois 0,6; imprime a média a cada 500 e o atraso até cruzar 0,375.
+Só +, −, ×, ÷ e comparações. Da raiz: python3 dialogo/rodada90.py\"\"\"
+
+SEMENTE = 1231
+
+
+def rodar(gama, forma):
+    x = SEMENTE
+    a, b = 2.0, 18.0
+    medias = []
+    atraso = -1
+    for t in range(4000):
+        eps = 0.15 if t < 2000 else 0.6
+        x = (1103515245 * x + 12345) % 2147483648
+        e = 1.0 if x / 2147483648.0 < eps else 0.0
+        if forma == 0:
+            a = 2.0 + gama * (a + e - 2.0)
+            b = 18.0 + gama * (b + (1.0 - e) - 18.0)
+        else:
+            a = gama * a + e
+            b = gama * b + (1.0 - e)
+        m = a / (a + b)
+        if t >= 2000 and atraso < 0 and m >= 0.375:
+            atraso = t - 1999
+        if t % 500 == 499:
+            medias.append(m)
+    return medias, atraso
+
+
+def main():
+    for gama in (0.995, 0.93):
+        for forma in (0, 1):
+            medias, atraso = rodar(gama, forma)
+            print("gama " + str(gama) + " forma " + str(forma) + " atraso " + str(atraso) + " " + " ".join(v.hex() for v in medias))
     print("fim")
 
 
