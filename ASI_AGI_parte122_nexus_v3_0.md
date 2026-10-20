@@ -63,4 +63,7 @@ O centro de "quantos erros" é 1,0, conta acima, com faixa **[0; 3]**. O risco m
 
 ---
 
+**Adendo pré-registrado DEPOIS de ver a (b) e ANTES do lote novo (regra da Parte 117: um erro de forma fechada a |z| < 2,5 gera um lote novo antes de qualquer mecanismo).** A (b) deu 0,97433, z = −1,92 contra 0,975; no lote de numpy do turno anterior (sementes 0 a 199) foi 0,97444, z = −1,62. São dois lotes baixos, com z combinado ≈ −2,5.
+- **(r)** A sabotagem média do agente ingênuo nas sementes 400 a 999 (600 lotes). Se a conta 1 − ε/2 vale, o desvio é √(0,975 × 0,025/600.000) = 0,000202 e a faixa é ±1,645 desvio: **[0,97467; 0,97533]**. Um terceiro lote baixo apontaria para um mecanismo que a conta não tem.
+
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
