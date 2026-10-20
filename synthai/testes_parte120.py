@@ -42,5 +42,33 @@ class TesteRegras(unittest.TestCase):
         self.assertLess(e.nos, a.nos)
 
 
+
+class TesteParte120(unittest.TestCase):
+    """As pNN da Parte 120 pelo nome (Parte 58), num custo pequeno (a de 20 milhões de nós roda em calculos.py 120)."""
+
+    def test_p3041_e_p3042(self):
+        import calculos
+        r = calculos.p3041_leduc(nos=204_000, sementes=(1,))
+        self.assertEqual(set(r), {"vanilla", "acaso", "externo"})
+        self.assertEqual(r["vanilla"][0][4], 204_000)              # 20 iterações × 10.200 nós
+        for v in r.values():
+            e, val, br0, br1, _ = v[0]
+            self.assertAlmostEqual(e, br0 - br1)                     # explorabilidade = soma do que as duas melhores respostas ganham
+            self.assertTrue(br1 <= val <= br0)
+        a, b, (lo, hi) = calculos.p3042_razoes_mesmo_custo(r)
+        self.assertGreater(a, 0)
+        self.assertLessEqual(lo, hi)                                 # o valor do jogo está na interseção dos intervalos
+
+    def test_p3043_rodada88(self):
+        import calculos
+        self.assertEqual(calculos.p3043_rodada88(), (288, 0))
+
+    def test_p1961_com_parte_120(self):
+        import calculos
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[120], (8, 9))
+        self.assertEqual((ok, tot), (282, 309))
+
+
 if __name__ == "__main__":
     unittest.main()

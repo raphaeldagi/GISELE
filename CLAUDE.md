@@ -320,7 +320,10 @@ anterior, commit e push.
   (vies da media estocastica, +, cai 3,9x por decada). Custo em nos por iteracao (p3012): vanilla 54, acaso 9, externo 10,6; com o mesmo numero de nos o externo explora 1,9x o acaso
   (sortear o adversario so compensa com muitas acoes: escala, o Leduc). Rodada 86 IGUAL (86 rodadas no verificador). 4/4 do mundo, 6/6 (m), calibracao 261/284 = 0,919. REGRA NOVA:
   quando uma parte troca um metodo por outro, a comparacao com o MESMO CUSTO vai para o registro, com a unidade de custo escrita (a do externo x acaso foi medida so depois).
-  Parte 120 (ABERTA): o poquer Leduc (synthai/leduc.py: 288 conjuntos de informacao, vanilla/acaso/externo, melhor resposta exata); calibracao medida antes do registro.
+  Parte 120 (o Leduc, fechada depois da 121; synthai/leduc.py): em 20 M de nos (o MESMO custo) vanilla 0,0185, acaso 0,0350, externo 0,0297; externo/acaso 0,85 (no Kuhn era 1,9: sortear o
+  adversario compensa com mais acoes, 2 lotes), vanilla/externo 0,62; os amostradores no piso do ruido (razao sqrt10 por decada); v* em [-0,0954; -0,0769] pela intersecao das melhores respostas.
+  Rodada 88 IGUAL (288 conjuntos). 8/9 do mundo, 4/6 (m), calibracao 282/309 = 0,913. REGRA NOVA: as (m) so se registram depois de rodar a regua (P2837) sobre o rascunho com uma linha
+  'Do mundo:' provisoria (calculei w de cabeca como largura/centro; a regua usa largura/(|a|+|b|): m3 e m5 erraram); e uma faixa com piso fisico (sqrt10) soma a dispersao das sementes em volta dele.
   Parte 121 (anexo nexus_raphael.py, o NEXUS-RAPHAEL 2.2.0; arquivado em externos/nexus_raphael_v2_0/, transcrito em synthai/nexus_v2_2.py): o texto recebido mais cuidadoso da serie (rede
   so com --online, criterios antes, dados marcados como sinteticos); os defeitos sao de DESENHO e de indice: H-M3 rejeita um efeito real 30% das vezes (0,93^5), H-M7 nao pode aceitar
   (os dois tratamentos dividem o avaliador e o braco: 0,0 exato), o IC da Mega-Sena usa indices fixos [24]/[974] (IndexError com 500 replicas; "superior" abaixo da mediana com 2.000), o

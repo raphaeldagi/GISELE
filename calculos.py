@@ -7525,6 +7525,7 @@ def testes_de_regressao():
         "P2983": p2983_rodada85()[1] == 0,
         "P3013": p3013_rodada86()[1] == 0,
         "P3073": p3073_jogos_e_dinamica()[:3] == (5478, 5478, 0),
+        "P3043": p3043_rodada88() == (288, 0),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9643,6 +9644,8 @@ VEREDITOS_P4479 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
 ERROS_P4479, TESTES_P4479 = 226, 943
 VEREDITOS_P4619 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ❌ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (q) ✅ (r) ❌"
 ERROS_P4619, TESTES_P4619 = 229, 959  # a Parte 120 (o Leduc) ainda está aberta: os números dela entram depois, por cima destes
+VEREDITOS_P4549 = "(a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅"
+ERROS_P4549, TESTES_P4549 = 227, 952  # na ordem das partes (até a 120, sem a 121): 226/943 da 119 + 1/9; com a 121, o acumulado é 230/968 (a 122 parte daí)
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12183,12 +12186,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 121), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339", 118: "VEREDITOS_P4409", 119: "VEREDITOS_P4479", 121: "VEREDITOS_P4619"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339", 118: "VEREDITOS_P4409", 119: "VEREDITOS_P4479", 120: "VEREDITOS_P4549", 121: "VEREDITOS_P4619"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -15044,6 +15047,46 @@ def p3013_rodada86():
     return mr, sum(1 for carta in (1, 2, 3) for h in r.HIST if mr[r.indice(carta, h)] != c[(carta, h)][1])
 
 
+def p3041_leduc(nos=20_000_000, sementes=(1202, 1204)):
+    """O CFR no pôquer Leduc com o MESMO custo em nós (P3041/P3042; Parte 120): vanilla (10.200 nós por iteração), acaso (85) e externo
+    (~36,96). Devolve {método: [(explorabilidade, valor, melhor resposta do 1, melhor resposta do 2, nós), ...]} (uma entrada por semente)."""
+    from synthai import leduc as L
+
+    def medir(c):
+        m = c.media()
+        return L.explorabilidade(m), L.valor(m), L.melhor_resposta(m, 0), L.melhor_resposta(m, 1), c.nos
+    return dict(vanilla=[medir(L.CFRLeduc().vanilla(round(nos / 10200)))],
+                acaso=[medir(L.CFRLeduc().acaso(round(nos / 85), s)) for s in sementes],
+                externo=[medir(L.CFRLeduc().externo(round(nos / 36.96), s)) for s in sementes])
+
+
+def p3042_razoes_mesmo_custo(r):
+    """As razões com o mesmo custo (P3042; Parte 120), a partir do resultado da P3041: (externo/acaso, vanilla/externo) das explorabilidades médias,
+    e o intervalo do valor do jogo pela interseção das melhores respostas de todos os métodos (max das do 2, min das do 1)."""
+    import statistics
+    e = {k: statistics.fmean(x[0] for x in v) for k, v in r.items()}
+    todos = [x for v in r.values() for x in v]
+    return e["externo"] / e["acaso"], e["vanilla"] / e["externo"], (max(x[3] for x in todos), min(x[2] for x in todos))
+
+
+def _rodada88():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada88", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada88.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p3043_rodada88():
+    """Rodada 88 (P3043; Parte 120): o CFR vanilla no Leduc, T = 3, IGUAL em Java; e quantos dos 288 conjuntos diferem de synthai.leduc.
+    Devolve (conjuntos, diferenças)."""
+    from synthai import leduc as L
+    m = _rodada88().treinar()
+    c = L.CFRLeduc().vanilla(3).media()
+    return len(m), sum(1 for k, v in c.items() if m[f"{k[0]}|{k[1]}|{k[2]}"] != v)
+
+
 def p3071_experimentos_do_nexus_2_2():
     """Os experimentos do NEXUS–RAPHAEL 2.2.0 (P3071; Parte 121), modo rápido, sementes 0 a 4: H-M3 (ganho de Brier da semente 0 e vereditos),
     H-M2 (ganho médio do ângulo duplo e quantas sementes têm IC acima de 0) e H-M7 (diferenças extraordinário − ordinário). Devolve um dict."""
@@ -16628,6 +16671,24 @@ def _parte_119():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4479, testes=TESTES_P4479)
     print(f"P4479 minha taxa de erro ({ERROS_P4479}/{TESTES_P4479}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_120():
+    print("--- Parte 120 (0x78: o poquer Leduc: CFR, acaso e amostragem externa com o mesmo custo) ---")
+    r = p3041_leduc()
+    for k, v in r.items():
+        print(f"P3041 {k}: " + "; ".join(f"explorabilidade {x[0]:.5f}, valor {x[1]:.5f}, [{x[3]:.5f}; {x[2]:.5f}], {x[4]} nos" for x in v))
+    a, b, (lo, hi) = p3042_razoes_mesmo_custo(r)
+    print(f"P3042 com o mesmo custo: externo/acaso {a:.3f}, vanilla/externo {b:.3f}; valor do jogo em [{lo:.5f}; {hi:.5f}]")
+    n, dif = p3043_rodada88()
+    print(f"P3043 rodada 88 (CFR vanilla no Leduc, IGUAL em Java): {n} conjuntos, {dif} diferem de synthai.leduc")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-121: {ok}/{tot} = {fr:.4f}")
+    total_pnn, sem = p1092_pnn_sem_teste(3041, 3070)
+    print(f"P1092 pNN novas (P3041-P3070) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 120: {p974_previsoes_sem_largura(range(120, 121))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4549, testes=TESTES_P4549)
+    print(f"P4549 minha taxa de erro ({ERROS_P4549}/{TESTES_P4549}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+
 def _parte_121():
     print("--- Parte 121 (0x79: o NEXUS-RAPHAEL 2.2.0 anexado, auditado no proprio codigo) ---")
     d = p3071_experimentos_do_nexus_2_2()
@@ -16684,7 +16745,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117, 118: _parte_118, 119: _parte_119, 121: _parte_121}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117, 118: _parte_118, 119: _parte_119, 120: _parte_120, 121: _parte_121}
 
 
 if __name__ == "__main__":

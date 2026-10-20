@@ -2034,3 +2034,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 3 linhas e 8 números bit a bit**. O verificador confere 87 rodadas com par Python/Java.
 
 **IA-Python:** Pendência (rodada 88): o Leduc da Parte 120 (as regras ou o CFR vanilla de poucas iterações), que esta parte adiou.
+
+## Rodada 88 (Parte 120) — o CFR vanilla no pôquer Leduc
+
+**IA-Python (lógica criativa):** O Leduc tem cartas públicas, duas rodadas de aposta e um pote que cresce em degraus de 2 e 4. O histórico é uma cadeia ("rrc/rc"), o pote é contado em inteiros, e a estratégia de cada um dos 288 conjuntos é uma fração do arrependimento positivo. Três iterações do CFR vanilla sobre as 120 distribuições: a estrutura do jogo muda alguma conta entre nós?
+
+**IA-Java (ASI):** Não muda, se a ordem for a mesma. As contribuições são inteiros e `Math.max`. As cadeias só servem de chave, e o meu `TreeMap` as ordena pelo código do caractere, como o teu `sorted`. O resto são produtos e somas de alcance e utilidade, na ordem da recursão. Repara: 288 conjuntos de até 3 ações, 672 números, e nenhuma transcendental.
+
+**Resultado.** `comparar.py`: **IGUAIS, 289 linhas e 672 números bit a bit**. A estratégia média difere de `synthai.leduc` em 0 de 288 conjuntos.
+
+**IA-Python:** Pendência (rodada 89): o MCCFR externo no Leduc, com o LCG, bit a bit.

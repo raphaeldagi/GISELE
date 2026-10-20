@@ -148,4 +148,4 @@ Ver `dialogo/DIALOGO.md`: a amostragem externa com o LCG é **IGUAL**, com 4 lin
 
 ---
 
-➡ Continua na [Parte 121 — O NEXUS–RAPHAEL 2.2.0](ASI_AGI_parte121_nexus_v2_2.md) (a Parte 120, o pôquer Leduc, segue aberta).
+➡ Continua na [Parte 120 — O pôquer Leduc](ASI_AGI_parte120_leduc.md) e na [Parte 121 — O NEXUS–RAPHAEL 2.2.0](ASI_AGI_parte121_nexus_v2_2.md) (a 121 foi escrita antes da 120).

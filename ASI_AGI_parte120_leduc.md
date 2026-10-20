@@ -102,3 +102,118 @@ O risco maior é a (e). A razão vanilla/externo veio de 2 pontos, com a tendên
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P3041 — Quanto cede cada método em 20 milhões de nós
+
+**Na pergunta.** "Ceder" é a explorabilidade: o quanto um adversário que conhece a minha estratégia ganharia a mais, somado nos dois lados. "Em 20 milhões de nós" fixa o custo, não as iterações. O vanilla faz 1.961 iterações, o acaso 235.294 árvores e o externo 541.126 iterações com esse mesmo orçamento.
+
+**Lógica** (saídas de `p3041_leduc`, sementes 1202 e 1204):
+
+| Método | Nós | Explorabilidade | Valor para o jogador 1 | [melhor resposta do 2; do 1] |
+|---|---|---|---|---|
+| vanilla | 20.002.200 | **0,01846** | −0,08702 | [−0,09538; −0,07692] |
+| acaso 1202 | 19.999.990 | 0,03335 | −0,08689 | [−0,10329; −0,06994] |
+| acaso 1204 | 19.999.990 | 0,03665 | −0,08783 | [−0,10630; −0,06965] |
+| externo 1202 | 19.749.049 | 0,02933 | −0,08805 | [−0,09966; −0,07034] |
+| externo 1204 | 19.780.482 | 0,03015 | −0,08712 | [−0,10074; −0,07059] |
+
+- **(a)** O vanilla deu 0,01846, dentro de [0,0072; 0,0229] ✅. A razão por década foi 0,0724/0,01846 = **3,92**. Caiu de 5,07 para perto de √10 = 3,16: o vanilla também desacelera.
+- **(b)** O acaso deu, na média, (0,03335 + 0,03665)/2 = **0,03500**, dentro de [0,0171; 0,0352] ✅, e na borda. A razão foi 0,1111/0,0350 = **3,17**, ou seja, √10: chegou ao piso do ruído, 1/√N.
+- **(c)** O externo deu, na média, **0,02974**, fora de [0,0141; 0,0290] ❌, por 0,0007. A razão foi 0,0916/0,02974 = **3,08**, um pouco abaixo de √10. Dois fatores explicam:
+  - o externo gastou 1,25% menos nós que o previsto (19,76 milhões, porque 36,96 nós por iteração era uma média de calibração);
+  - a faixa não somou o ruído entre sementes ao piso de √10.
+
+  O erro (0,0007) é menor que a largura da faixa (0,0149), então não conta como surpresa.
+
+**Tradução cruzada.** Aprender jogando tem duas fases:
+- **transiente:** o arrependimento cai depressa (razão 5 por década);
+- **piso:** cai com o ruído da amostra (razão √10).
+
+Na calibração eu via o transiente. Em 20 milhões de nós, os dois amostradores já estavam no piso.
+
+**Meta.** A regra da Parte 71 disse para não extrapolar a tendência de 2 pontos. Usei o mecanismo como faixa (√10 a 10), o que acertou a (a) e a (b). A (c) mostra que um piso físico, √10, ainda precisa da dispersão das sementes em volta dele.
+
+### P3042 — Com o mesmo custo, quem ganha
+
+**Lógica** (`p3042_razoes_mesmo_custo`).
+- **(d)** Externo/acaso: 0,02974/0,03500 = **0,850**, dentro de [0,65; 1,00] ✅. Com o mesmo número de nós, sortear também o adversário ganha do acaso no Leduc, onde há até 3 ações. No Kuhn (Parte 119, P3012) era o contrário: o externo explorava 1,9 vez o acaso. **A regra da Parte 119 se confirmou na outra ponta:** sortear o adversário compensa quando há ações bastantes.
+- **(e)** Vanilla/externo: 0,01846/0,02974 = **0,621**, dentro de [0,45; 0,95] ✅. O vanilla, sem ruído, segue o melhor neste tamanho. A vantagem dele cresceu (0,86 → 0,79 → 0,62 de 200 mil a 20 milhões de nós), como o mecanismo dizia: os amostradores ficam presos no piso do ruído.
+- **O valor do jogo.** A interseção dos 5 intervalos de melhor resposta dá v* ∈ **[−0,09538; −0,07692]**. A conta: o máximo das melhores respostas do jogador 2 contra o mínimo das do jogador 1.
+  - **(f)** O valor da estratégia média do vanilla, −0,08702, está dentro de [−0,1052; −0,0664] ✅.
+  - **(g)** As 2 pontas do intervalo de 20 milhões caem dentro do intervalo de 2 milhões ✅.
+  - O −0,0856 citado na literatura cai dentro desse intervalo, mas a fonte não foi lida nesta sessão. Fica como compatível, não como conferido.
+
+**Tradução cruzada.** O valor do jogo nunca é medido diretamente. Cada estratégia dá um intervalo para ele (o quanto ela ganha contra o pior adversário e o quanto cede ao melhor), e o conhecimento é a interseção dos intervalos de todos os métodos. É o mesmo que fazem várias testemunhas que só concordam em parte.
+
+### P3043 — rodada 88
+
+- **(h)** A rodada 88 deu **IGUAL** em Java (289 linhas e 672 números idênticos bit a bit) ✅.
+- **(i)** **0 de 288** conjuntos diferem de `synthai.leduc` ✅.
+
+As cadeias de histórico, as frações de pote, o `TreeMap` do Java e o `sorted` do Python não acrescentam fronteira. É mais uma vez a regra da Parte 90: a fronteira é a aritmética, nunca a estrutura do jogo.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅
+
+**8 de 9.** A chance de acertar ao acaso, contra o preditor ingênuo "igual ao valor de 2 milhões de nós": esse preditor erraria a (a), a (b) e a (c), que caíram de 4 a 5 vezes, e acertaria a (d), a (e) e a (f), que pouco mudaram. Ele faria 6 de 9 contra os meus 8.
+
+### Previsões sobre previsões (m)
+
+Saídas do `p2837_previsoes_sobre_previsoes_v4(120)`:
+
+| Item | Previsto | Medido | Resultado |
+|---|---|---|---|
+| (m1) | [8; 10] | 9 | ✅ |
+| (m2) | [2; 3] | 2 | ✅ |
+| (m3) | [0,50; 0,80] | **0,346** | ❌ |
+| (m4) | [0,67; 1,00] | 0,889 | ✅ |
+| (m5) | [3; 5] | **0** | ❌ |
+| (m6) | [0; 1] | 0 surpresas: o único erro, (c), foi de 0,0007, contra a largura de 0,0149 | ✅ |
+
+**4 de 6.** Os dois erros têm a mesma causa. Calculei o w de cabeça, como largura/centro, e a régua usa largura/(|a| + |b|), que é a metade. Os w que a régua mede são:
+
+| (a) | (b) | (c) | (d) | (e) | (f) | (g) |
+|---|---|---|---|---|---|---|
+| 0,52 | 0,35 | 0,35 | 0,21 | 0,36 | 0,23 | 0 |
+
+Todos ficam abaixo de 0,6.
+
+### Sobre mim
+
+| Previsto | Medido |
+|---|---|
+| 1,4 erros, faixa [0; 3] | 1 erro do mundo ✅ |
+
+## Engenharia reversa (metacognição)
+
+- **O padrão que se repetiu:** a Parte 75 disse para partir de uma contagem por código, nunca da imagem que eu tenho de uma régua. Aqui eu tinha a régua (P2837) e não a rodei sobre o rascunho; usei a minha lembrança da definição de w. É a terceira vez que uma régua minha me engana por eu não a rodar (Partes 75, 109 e 120). O significado: eu trato as minhas funções de medida como conhecidas, e é justamente nelas que a memória falha, porque eu as escrevi e acho que lembro.
+- **Regra nova:** as (m) só são registradas depois de rodar a régua sobre o rascunho das previsões. O rascunho leva uma linha "Do mundo:" provisória, com todos os itens ✅, que é apagada antes do commit, e daí saem m3 e m5.
+- **O erro do mundo, (c):** uma faixa com um piso físico (√10, o ruído 1/√N) ainda soma a dispersão das sementes em volta do piso. O mecanismo estava certo e o peso dele não: de novo a regra da Parte 62.
+
+## Síntese / unificação
+
+O Leduc confirmou, em 2 lotes (Kuhn na Parte 119, Leduc aqui), que a vantagem da amostragem externa sobre a do acaso depende do número de ações. Ela perde no Kuhn (2 ações; 1,9 vez pior) e ganha no Leduc (até 3 ações; 0,85).
+
+Neste tamanho, o vanilla segue o melhor com o mesmo custo (0,62 do externo), porque os amostradores chegaram ao piso do ruído (razão √10 por década). O valor do jogo para o jogador 1 está em [−0,0954; −0,0769], pela interseção das melhores respostas de 5 estratégias.
+
+## Meta
+
+- Duas sementes por amostrador dão a média, mas não a dispersão. A (c) errou exatamente por isso.
+- A fronteira do valor do jogo é um resultado exato sobre as estratégias medidas, e não uma estimativa: as melhores respostas são exatas.
+
+## Diálogo Python ↔ Java (rodada 88)
+
+A **IA-Python** perguntou se o jogo, com cadeias, cartas públicas e frações de pote, muda alguma conta. A **IA-Java** respondeu com o `TreeMap` e o `Math.max` sobre inteiros, e o resultado deu **IGUAL** em 288 conjuntos e 672 números.
+
+A pendência que fica é se o MCCFR externo no Leduc, com o LCG, também dá IGUAL. Ela entrou em `dialogo/PENDENCIAS.md`.
+
+## Fontes
+
+Southey, F. et al. (2005), *Bayes' Bluff: Opponent Modelling in Poker* (as regras do Leduc). Zinkevich, M. et al. (2007), *Regret Minimization in Games with Incomplete Information* (CFR). Lanctot, M. et al. (2009), *Monte Carlo Sampling for Regret Minimization in Extensive Games* (MCCFR). As três são citadas de memória e não foram relidas nesta sessão, porque o limite semanal de busca na web acabou. Nenhum número delas é usado como identidade.
+
+➡ Continua na [Parte 121 — O NEXUS–RAPHAEL 2.2.0](ASI_AGI_parte121_nexus_v2_2.md) (escrita antes desta) e na Parte 122.

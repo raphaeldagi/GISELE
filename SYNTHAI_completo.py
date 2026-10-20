@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (16696 linhas)
+# calculos.py  (16757 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7563,6 +7563,7 @@ def testes_de_regressao():
         "P2983": p2983_rodada85()[1] == 0,
         "P3013": p3013_rodada86()[1] == 0,
         "P3073": p3073_jogos_e_dinamica()[:3] == (5478, 5478, 0),
+        "P3043": p3043_rodada88() == (288, 0),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9681,6 +9682,8 @@ VEREDITOS_P4479 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
 ERROS_P4479, TESTES_P4479 = 226, 943
 VEREDITOS_P4619 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ❌ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (q) ✅ (r) ❌"
 ERROS_P4619, TESTES_P4619 = 229, 959  # a Parte 120 (o Leduc) ainda está aberta: os números dela entram depois, por cima destes
+VEREDITOS_P4549 = "(a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅"
+ERROS_P4549, TESTES_P4549 = 227, 952  # na ordem das partes (até a 120, sem a 121): 226/943 da 119 + 1/9; com a 121, o acumulado é 230/968 (a 122 parte daí)
 
 
 def p1212_palavras_que_nao_definem(d=None):
@@ -12221,12 +12224,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 121), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339", 118: "VEREDITOS_P4409", 119: "VEREDITOS_P4479", 121: "VEREDITOS_P4619"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339", 118: "VEREDITOS_P4409", 119: "VEREDITOS_P4479", 120: "VEREDITOS_P4549", 121: "VEREDITOS_P4619"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -15082,6 +15085,46 @@ def p3013_rodada86():
     return mr, sum(1 for carta in (1, 2, 3) for h in r.HIST if mr[r.indice(carta, h)] != c[(carta, h)][1])
 
 
+def p3041_leduc(nos=20_000_000, sementes=(1202, 1204)):
+    \"\"\"O CFR no pôquer Leduc com o MESMO custo em nós (P3041/P3042; Parte 120): vanilla (10.200 nós por iteração), acaso (85) e externo
+    (~36,96). Devolve {método: [(explorabilidade, valor, melhor resposta do 1, melhor resposta do 2, nós), ...]} (uma entrada por semente).\"\"\"
+    from synthai import leduc as L
+
+    def medir(c):
+        m = c.media()
+        return L.explorabilidade(m), L.valor(m), L.melhor_resposta(m, 0), L.melhor_resposta(m, 1), c.nos
+    return dict(vanilla=[medir(L.CFRLeduc().vanilla(round(nos / 10200)))],
+                acaso=[medir(L.CFRLeduc().acaso(round(nos / 85), s)) for s in sementes],
+                externo=[medir(L.CFRLeduc().externo(round(nos / 36.96), s)) for s in sementes])
+
+
+def p3042_razoes_mesmo_custo(r):
+    \"\"\"As razões com o mesmo custo (P3042; Parte 120), a partir do resultado da P3041: (externo/acaso, vanilla/externo) das explorabilidades médias,
+    e o intervalo do valor do jogo pela interseção das melhores respostas de todos os métodos (max das do 2, min das do 1).\"\"\"
+    import statistics
+    e = {k: statistics.fmean(x[0] for x in v) for k, v in r.items()}
+    todos = [x for v in r.values() for x in v]
+    return e["externo"] / e["acaso"], e["vanilla"] / e["externo"], (max(x[3] for x in todos), min(x[2] for x in todos))
+
+
+def _rodada88():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada88", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada88.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p3043_rodada88():
+    \"\"\"Rodada 88 (P3043; Parte 120): o CFR vanilla no Leduc, T = 3, IGUAL em Java; e quantos dos 288 conjuntos diferem de synthai.leduc.
+    Devolve (conjuntos, diferenças).\"\"\"
+    from synthai import leduc as L
+    m = _rodada88().treinar()
+    c = L.CFRLeduc().vanilla(3).media()
+    return len(m), sum(1 for k, v in c.items() if m[f"{k[0]}|{k[1]}|{k[2]}"] != v)
+
+
 def p3071_experimentos_do_nexus_2_2():
     \"\"\"Os experimentos do NEXUS–RAPHAEL 2.2.0 (P3071; Parte 121), modo rápido, sementes 0 a 4: H-M3 (ganho de Brier da semente 0 e vereditos),
     H-M2 (ganho médio do ângulo duplo e quantas sementes têm IC acima de 0) e H-M7 (diferenças extraordinário − ordinário). Devolve um dict.\"\"\"
@@ -16666,6 +16709,24 @@ def _parte_119():
     media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4479, testes=TESTES_P4479)
     print(f"P4479 minha taxa de erro ({ERROS_P4479}/{TESTES_P4479}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
+def _parte_120():
+    print("--- Parte 120 (0x78: o poquer Leduc: CFR, acaso e amostragem externa com o mesmo custo) ---")
+    r = p3041_leduc()
+    for k, v in r.items():
+        print(f"P3041 {k}: " + "; ".join(f"explorabilidade {x[0]:.5f}, valor {x[1]:.5f}, [{x[3]:.5f}; {x[2]:.5f}], {x[4]} nos" for x in v))
+    a, b, (lo, hi) = p3042_razoes_mesmo_custo(r)
+    print(f"P3042 com o mesmo custo: externo/acaso {a:.3f}, vanilla/externo {b:.3f}; valor do jogo em [{lo:.5f}; {hi:.5f}]")
+    n, dif = p3043_rodada88()
+    print(f"P3043 rodada 88 (CFR vanilla no Leduc, IGUAL em Java): {n} conjuntos, {dif} diferem de synthai.leduc")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-121: {ok}/{tot} = {fr:.4f}")
+    total_pnn, sem = p1092_pnn_sem_teste(3041, 3070)
+    print(f"P1092 pNN novas (P3041-P3070) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 120: {p974_previsoes_sem_largura(range(120, 121))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4549, testes=TESTES_P4549)
+    print(f"P4549 minha taxa de erro ({ERROS_P4549}/{TESTES_P4549}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+
 def _parte_121():
     print("--- Parte 121 (0x79: o NEXUS-RAPHAEL 2.2.0 anexado, auditado no proprio codigo) ---")
     d = p3071_experimentos_do_nexus_2_2()
@@ -16722,7 +16783,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117, 118: _parte_118, 119: _parte_119, 121: _parte_121}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117, 118: _parte_118, 119: _parte_119, 120: _parte_120, 121: _parte_121}
 
 
 if __name__ == "__main__":
@@ -16735,7 +16796,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (485 linhas)
+# CLAUDE.md  (488 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -17059,7 +17120,10 @@ anterior, commit e push.
   (vies da media estocastica, +, cai 3,9x por decada). Custo em nos por iteracao (p3012): vanilla 54, acaso 9, externo 10,6; com o mesmo numero de nos o externo explora 1,9x o acaso
   (sortear o adversario so compensa com muitas acoes: escala, o Leduc). Rodada 86 IGUAL (86 rodadas no verificador). 4/4 do mundo, 6/6 (m), calibracao 261/284 = 0,919. REGRA NOVA:
   quando uma parte troca um metodo por outro, a comparacao com o MESMO CUSTO vai para o registro, com a unidade de custo escrita (a do externo x acaso foi medida so depois).
-  Parte 120 (ABERTA): o poquer Leduc (synthai/leduc.py: 288 conjuntos de informacao, vanilla/acaso/externo, melhor resposta exata); calibracao medida antes do registro.
+  Parte 120 (o Leduc, fechada depois da 121; synthai/leduc.py): em 20 M de nos (o MESMO custo) vanilla 0,0185, acaso 0,0350, externo 0,0297; externo/acaso 0,85 (no Kuhn era 1,9: sortear o
+  adversario compensa com mais acoes, 2 lotes), vanilla/externo 0,62; os amostradores no piso do ruido (razao sqrt10 por decada); v* em [-0,0954; -0,0769] pela intersecao das melhores respostas.
+  Rodada 88 IGUAL (288 conjuntos). 8/9 do mundo, 4/6 (m), calibracao 282/309 = 0,913. REGRA NOVA: as (m) so se registram depois de rodar a regua (P2837) sobre o rascunho com uma linha
+  'Do mundo:' provisoria (calculei w de cabeca como largura/centro; a regua usa largura/(|a|+|b|): m3 e m5 erraram); e uma faixa com piso fisico (sqrt10) soma a dispersao das sementes em volta dele.
   Parte 121 (anexo nexus_raphael.py, o NEXUS-RAPHAEL 2.2.0; arquivado em externos/nexus_raphael_v2_0/, transcrito em synthai/nexus_v2_2.py): o texto recebido mais cuidadoso da serie (rede
   so com --online, criterios antes, dados marcados como sinteticos); os defeitos sao de DESENHO e de indice: H-M3 rejeita um efeito real 30% das vezes (0,93^5), H-M7 nao pode aceitar
   (os dois tratamentos dividem o avaliador e o braco: 0,0 exato), o IC da Mega-Sena usa indices fixos [24]/[974] (IndexError com 500 replicas; "superior" abaixo da mediana com 2.000), o
@@ -27547,7 +27611,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# synthai/testes_parte120.py  (46 linhas)
+# synthai/testes_parte120.py  (74 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_parte120.py'] = """\"\"\"Testes de unidade da Parte 120 (o pôquer Leduc e o CFR nele, `synthai/leduc.py`): `python3 -m unittest synthai.testes_parte120`.
 As regras do jogo conferidas à mão (Parte 47), e cada função nova pelo nome (Parte 118).\"\"\"
@@ -27591,6 +27655,34 @@ class TesteRegras(unittest.TestCase):
         e = L.CFRLeduc().externo(200, 7)
         self.assertEqual(a.nos, 200 * 85)                         # uma distribuição por iteração: a árvore inteira dela
         self.assertLess(e.nos, a.nos)
+
+
+
+class TesteParte120(unittest.TestCase):
+    \"\"\"As pNN da Parte 120 pelo nome (Parte 58), num custo pequeno (a de 20 milhões de nós roda em calculos.py 120).\"\"\"
+
+    def test_p3041_e_p3042(self):
+        import calculos
+        r = calculos.p3041_leduc(nos=204_000, sementes=(1,))
+        self.assertEqual(set(r), {"vanilla", "acaso", "externo"})
+        self.assertEqual(r["vanilla"][0][4], 204_000)              # 20 iterações × 10.200 nós
+        for v in r.values():
+            e, val, br0, br1, _ = v[0]
+            self.assertAlmostEqual(e, br0 - br1)                     # explorabilidade = soma do que as duas melhores respostas ganham
+            self.assertTrue(br1 <= val <= br0)
+        a, b, (lo, hi) = calculos.p3042_razoes_mesmo_custo(r)
+        self.assertGreater(a, 0)
+        self.assertLessEqual(lo, hi)                                 # o valor do jogo está na interseção dos intervalos
+
+    def test_p3043_rodada88(self):
+        import calculos
+        self.assertEqual(calculos.p3043_rodada88(), (288, 0))
+
+    def test_p1961_com_parte_120(self):
+        import calculos
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[120], (8, 9))
+        self.assertEqual((ok, tot), (282, 309))
 
 
 if __name__ == "__main__":
@@ -27682,7 +27774,7 @@ class TesteParte121(unittest.TestCase):
         self.assertLess(b2, b1)
 
     def test_p1961_com_parte_121(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 120)) + [121]))
         self.assertEqual(por[121], (13, 16))
         self.assertEqual((ok, tot), (274, 300))
 
@@ -44096,7 +44188,7 @@ Ver `dialogo/DIALOGO.md`: a amostragem externa com o LCG é **IGUAL**, com 4 lin
 
 ---
 
-➡ Continua na [Parte 121 — O NEXUS–RAPHAEL 2.2.0](ASI_AGI_parte121_nexus_v2_2.md) (a Parte 120, o pôquer Leduc, segue aberta).
+➡ Continua na [Parte 120 — O pôquer Leduc](ASI_AGI_parte120_leduc.md) e na [Parte 121 — O NEXUS–RAPHAEL 2.2.0](ASI_AGI_parte121_nexus_v2_2.md) (a 121 foi escrita antes da 120).
 """
 
 # ====================================================================================================
@@ -44347,6 +44439,230 @@ Acumulado: **26 de 47** afirmações testadas precisaram de correção. Posterio
 > Não tivemos avanço significativo **rumo à AGI/ASI**: ela tem 3 de 12 capacidades, vive num cantinho do espaço de ambientes e usou
 > quinze ordens de grandeza menos compute que uma IA de fronteira. O próximo passo real não é aperfeiçoar a SYNTHAI; é **torná-la mais
 > inteira**: dar a ela uma segunda função (planejar) e medir se o que ela já sabe se transfere.
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte120_leduc.md  (219 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte120_leduc.md'] = """# Parte 120 — O pôquer Leduc: CFR, acaso e amostragem externa num jogo 48 vezes maior (0x78)
+
+↩ Parte 119 (a amostragem externa no Kuhn) · ↩ Parte 118 (o acaso amostrado) · ↩ Parte 113 (o CFR vanilla) · → Parte 121 (o NEXUS 2.2.0, feita antes desta)
+
+> **Continuação autônoma, retomada depois do "Pare" e do "CONTINUE" do usuário.** A Parte 119 deixou uma regra e uma pendência.
+> - **A regra:** comparar métodos com o MESMO custo, com a unidade escrita.
+> - **A pendência:** sortear o adversário só compensa com muitas ações, isto é, em escala.
+>
+> O Leduc (Southey et al., 2005) é o próximo degrau. Tem 6 cartas e uma carta pública, e são 288 conjuntos de informação contra os 12 do Kuhn. A Parte 121 foi feita antes desta, com a rodada 87, então esta usa a rodada 88.
+>
+> **Antes do registro (conferências, não previsões).**
+> - **As regras:** foram conferidas à mão em `synthai/testes_parte120.py`, no commit fe6af21. São 144 + 144 conjuntos.
+> - **A calibração** (regras das Partes 62 a 64), na unidade de custo NÓS (chamadas da recursão):
+>   - **Nós por iteração:** vanilla 10.200, acaso 85, externo ~36,96.
+>   - **Sementes de calibração:** 1201 e 1203.
+>   - **Explorabilidade:**
+>
+>     | Nós | Vanilla | Acaso (1201 / 1203) | Externo (1201 / 1203) |
+>     |---|---|---|---|
+>     | 200 mil | 0,3669 | 0,5376 / 0,5050 | 0,3645 / 0,4844 |
+>     | 2 milhões | 0,0724 | 0,1108 / 0,1114 | 0,0877 / 0,0955 |
+>
+>   - **Razão por década:** vanilla 5,07; acaso 4,85 e 4,53; externo 4,16 e 5,07.
+>   - **Valor do jogo para o jogador 1, pelo vanilla:**
+>     - −0,14785 em 20 iterações;
+>     - −0,08578 em 196 iterações, com melhor resposta de cada lado em [−0,11586; −0,04348].
+> - **O mecanismo da calibração está presente no teste?** Sim: o mesmo jogo, os mesmos amostradores e a mesma variável (nós). As sementes do teste são 1202 e 1204, nunca olhadas.
+> - **Fumaça antes do registro, declarada:** rodei uma vez o lado Python da rodada 88 (`dialogo/rodada88.py`) e vi as primeiras e as últimas linhas da estratégia em hexadecimal. Não rodei o Java, a comparação nem nenhum experimento de 20 milhões de nós. As previsões (h) e (i) são identidades e não dependem desses números.
+
+## As perguntas desta parte
+
+1. **P3041 (0xBE1).** Em 20 milhões de nós, quanto cede a estratégia média de cada método (vanilla, acaso e externo)? ↩ P3012
+2. **P3042 (0xBE2).** Com o MESMO custo, a amostragem externa ganha do acaso no Leduc, onde há até 3 ações? E o vanilla ganha dos dois? ↩ P3012
+3. **P3043 (0xBE3).** O CFR vanilla no Leduc (cadeias, frações de pote e 288 conjuntos) acrescenta fronteira entre Python e Java? (rodada 88) ↩ P3013
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+**As fixtures (neste commit):** `synthai/leduc.py` (fe6af21), `dialogo/rodada88.py` e `dialogo/Rodada88.java`.
+- **O teste:** 20.000.000 de nós por método, que dão:
+  - vanilla: 1.961 iterações;
+  - acaso: 235.294 árvores;
+  - externo: 541.126 iterações (cada uma com uma travessia por jogador).
+- **Sementes dos amostradores:** 1202 e 1204; a faixa vale para a média das duas.
+
+**A convergência (P3041).**
+- **(a)** A explorabilidade do vanilla em 20 milhões de nós.
+  - **Centro:** 0,0724/5,07 = 0,0143.
+  - **Mecanismo da faixa:** uma razão por década entre √10 (convergência a 1/√T) e 10 (a 1/T).
+  - **Faixa:** **[0,0072; 0,0229]**. Abaixo dela, o vanilla converge mais rápido que 1/T; acima, mais devagar que 1/√T.
+- **(b)** A explorabilidade média do acaso (sementes 1202 e 1204).
+  - **Centro:** 0,1111/4,69 = 0,0237.
+  - **Mecanismo da faixa:** o ruído de amostragem empurra a razão para √10; o transiente da calibração a deixa até 6,5.
+  - **Faixa:** **[0,0171; 0,0352]**.
+- **(c)** A explorabilidade média do externo (sementes 1202 e 1204).
+  - **Centro:** 0,0916/4,6 = 0,0199.
+  - **Mecanismo da faixa:** o mesmo da (b).
+  - **Faixa:** **[0,0141; 0,0290]**.
+
+**O mesmo custo (P3042).**
+- **(d)** A razão externo/acaso das médias.
+  - **Histórico:** 0,814 em 200 mil nós e 0,824 em 2 milhões; centro 0,82.
+  - **Faixa:** o ruído das sementes (±0,18): **[0,65; 1,00]**.
+  - **Mecanismo:** sortear o adversário deixa mais iterações pelo mesmo custo. Acima de 1, o Leduc não teria ações bastantes para que isso compense.
+- **(e)** A razão vanilla/externo.
+  - **Histórico:** 0,86 em 200 mil nós e 0,79 em 2 milhões; centro 0,72.
+  - **Mecanismo:** o vanilla não tem ruído, então a vantagem dele cresce enquanto os amostradores ficam presos no piso do ruído.
+  - **Faixa:** **[0,45; 0,95]**.
+
+**O valor do jogo.**
+- **(f)** O valor da estratégia média do vanilla para o jogador 1.
+  - **Centro:** −0,0858. A Parte 71 proíbe extrapolar uma tendência de 2 pontos sem t, então não extrapolo.
+  - **Mecanismo da faixa:** |v(σ) − v*| ≤ explorabilidade(σ). A meia-largura é 1,36 × 0,0143.
+  - **Faixa:** **[−0,1052; −0,0664]**.
+  - O valor publicado (−0,0856) não foi lido nesta sessão e não entra como identidade.
+- **(g)** Quantas das 2 pontas do intervalo [melhor resposta do jogador 2, melhor resposta do jogador 1] em 20 milhões de nós caem dentro do intervalo de 2 milhões, [−0,11586; −0,04348].
+  - **Faixa:** **[2; 2]**.
+  - **Regra da Parte 121:** P(uma ponta) ≈ 0,97, porque o intervalo encolhe com a explorabilidade, de 0,072 para ~0,014. Então p² = 0,94 ≥ 0,90.
+
+**O diálogo (P3043).**
+- **(h)** A rodada 88 é **IGUAL** bit a bit entre Python e Java: **[0; 0]**.
+  - **Identidade:** só inteiros (as contribuições), +, −, × e ÷ na mesma ordem dos dois lados, e chaves ASCII em ordem lexicográfica: o `sorted` do Python e o `TreeMap` do Java comparam pelo código do caractere.
+- **(i)** A estratégia média da `rodada88.py` comparada com a de `synthai.leduc`, com T = 3: conjuntos que diferem em algum bit, **[0; 0]**.
+  - **Identidade:** a mesma ordem das 120 distribuições (`POSTOS[a]` = a // 2), a mesma `estrategia` e as mesmas somas.
+
+### Previsões sobre as previsões (m), pré-registradas (régua: P2837, leitor v4)
+
+Contagem pelo leitor antes do commit: **9**.
+- **(m1)** nº de previsões do mundo em **[8; 10]**
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[2; 3]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0,50; 0,80]**
+- **(m4)** fração de acertos do mundo em **[0,67; 1,00]**
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[3; 5]**
+- **(m6)** nº de surpresas (erro > largura) em **[0; 1]**
+
+### Sobre mim, pré-registrado
+
+Pela regra da Parte 117, o centro de "quantos erros" é:
+0 × 2 identidades + 0,10 × 0 faixas de forma fechada + 0,2 × 7 faixas de mecanismo = **1,4**, com faixa **[0; 3]**.
+
+O risco maior é a (e). A razão vanilla/externo veio de 2 pontos, com a tendência escrita no mecanismo; é exatamente o que a regra da Parte 71 manda tratar com cuidado.
+
+---
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P3041 — Quanto cede cada método em 20 milhões de nós
+
+**Na pergunta.** "Ceder" é a explorabilidade: o quanto um adversário que conhece a minha estratégia ganharia a mais, somado nos dois lados. "Em 20 milhões de nós" fixa o custo, não as iterações. O vanilla faz 1.961 iterações, o acaso 235.294 árvores e o externo 541.126 iterações com esse mesmo orçamento.
+
+**Lógica** (saídas de `p3041_leduc`, sementes 1202 e 1204):
+
+| Método | Nós | Explorabilidade | Valor para o jogador 1 | [melhor resposta do 2; do 1] |
+|---|---|---|---|---|
+| vanilla | 20.002.200 | **0,01846** | −0,08702 | [−0,09538; −0,07692] |
+| acaso 1202 | 19.999.990 | 0,03335 | −0,08689 | [−0,10329; −0,06994] |
+| acaso 1204 | 19.999.990 | 0,03665 | −0,08783 | [−0,10630; −0,06965] |
+| externo 1202 | 19.749.049 | 0,02933 | −0,08805 | [−0,09966; −0,07034] |
+| externo 1204 | 19.780.482 | 0,03015 | −0,08712 | [−0,10074; −0,07059] |
+
+- **(a)** O vanilla deu 0,01846, dentro de [0,0072; 0,0229] ✅. A razão por década foi 0,0724/0,01846 = **3,92**. Caiu de 5,07 para perto de √10 = 3,16: o vanilla também desacelera.
+- **(b)** O acaso deu, na média, (0,03335 + 0,03665)/2 = **0,03500**, dentro de [0,0171; 0,0352] ✅, e na borda. A razão foi 0,1111/0,0350 = **3,17**, ou seja, √10: chegou ao piso do ruído, 1/√N.
+- **(c)** O externo deu, na média, **0,02974**, fora de [0,0141; 0,0290] ❌, por 0,0007. A razão foi 0,0916/0,02974 = **3,08**, um pouco abaixo de √10. Dois fatores explicam:
+  - o externo gastou 1,25% menos nós que o previsto (19,76 milhões, porque 36,96 nós por iteração era uma média de calibração);
+  - a faixa não somou o ruído entre sementes ao piso de √10.
+
+  O erro (0,0007) é menor que a largura da faixa (0,0149), então não conta como surpresa.
+
+**Tradução cruzada.** Aprender jogando tem duas fases:
+- **transiente:** o arrependimento cai depressa (razão 5 por década);
+- **piso:** cai com o ruído da amostra (razão √10).
+
+Na calibração eu via o transiente. Em 20 milhões de nós, os dois amostradores já estavam no piso.
+
+**Meta.** A regra da Parte 71 disse para não extrapolar a tendência de 2 pontos. Usei o mecanismo como faixa (√10 a 10), o que acertou a (a) e a (b). A (c) mostra que um piso físico, √10, ainda precisa da dispersão das sementes em volta dele.
+
+### P3042 — Com o mesmo custo, quem ganha
+
+**Lógica** (`p3042_razoes_mesmo_custo`).
+- **(d)** Externo/acaso: 0,02974/0,03500 = **0,850**, dentro de [0,65; 1,00] ✅. Com o mesmo número de nós, sortear também o adversário ganha do acaso no Leduc, onde há até 3 ações. No Kuhn (Parte 119, P3012) era o contrário: o externo explorava 1,9 vez o acaso. **A regra da Parte 119 se confirmou na outra ponta:** sortear o adversário compensa quando há ações bastantes.
+- **(e)** Vanilla/externo: 0,01846/0,02974 = **0,621**, dentro de [0,45; 0,95] ✅. O vanilla, sem ruído, segue o melhor neste tamanho. A vantagem dele cresceu (0,86 → 0,79 → 0,62 de 200 mil a 20 milhões de nós), como o mecanismo dizia: os amostradores ficam presos no piso do ruído.
+- **O valor do jogo.** A interseção dos 5 intervalos de melhor resposta dá v* ∈ **[−0,09538; −0,07692]**. A conta: o máximo das melhores respostas do jogador 2 contra o mínimo das do jogador 1.
+  - **(f)** O valor da estratégia média do vanilla, −0,08702, está dentro de [−0,1052; −0,0664] ✅.
+  - **(g)** As 2 pontas do intervalo de 20 milhões caem dentro do intervalo de 2 milhões ✅.
+  - O −0,0856 citado na literatura cai dentro desse intervalo, mas a fonte não foi lida nesta sessão. Fica como compatível, não como conferido.
+
+**Tradução cruzada.** O valor do jogo nunca é medido diretamente. Cada estratégia dá um intervalo para ele (o quanto ela ganha contra o pior adversário e o quanto cede ao melhor), e o conhecimento é a interseção dos intervalos de todos os métodos. É o mesmo que fazem várias testemunhas que só concordam em parte.
+
+### P3043 — rodada 88
+
+- **(h)** A rodada 88 deu **IGUAL** em Java (289 linhas e 672 números idênticos bit a bit) ✅.
+- **(i)** **0 de 288** conjuntos diferem de `synthai.leduc` ✅.
+
+As cadeias de histórico, as frações de pote, o `TreeMap` do Java e o `sorted` do Python não acrescentam fronteira. É mais uma vez a regra da Parte 90: a fronteira é a aritmética, nunca a estrutura do jogo.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅
+
+**8 de 9.** A chance de acertar ao acaso, contra o preditor ingênuo "igual ao valor de 2 milhões de nós": esse preditor erraria a (a), a (b) e a (c), que caíram de 4 a 5 vezes, e acertaria a (d), a (e) e a (f), que pouco mudaram. Ele faria 6 de 9 contra os meus 8.
+
+### Previsões sobre previsões (m)
+
+Saídas do `p2837_previsoes_sobre_previsoes_v4(120)`:
+
+| Item | Previsto | Medido | Resultado |
+|---|---|---|---|
+| (m1) | [8; 10] | 9 | ✅ |
+| (m2) | [2; 3] | 2 | ✅ |
+| (m3) | [0,50; 0,80] | **0,346** | ❌ |
+| (m4) | [0,67; 1,00] | 0,889 | ✅ |
+| (m5) | [3; 5] | **0** | ❌ |
+| (m6) | [0; 1] | 0 surpresas: o único erro, (c), foi de 0,0007, contra a largura de 0,0149 | ✅ |
+
+**4 de 6.** Os dois erros têm a mesma causa. Calculei o w de cabeça, como largura/centro, e a régua usa largura/(|a| + |b|), que é a metade. Os w que a régua mede são:
+
+| (a) | (b) | (c) | (d) | (e) | (f) | (g) |
+|---|---|---|---|---|---|---|
+| 0,52 | 0,35 | 0,35 | 0,21 | 0,36 | 0,23 | 0 |
+
+Todos ficam abaixo de 0,6.
+
+### Sobre mim
+
+| Previsto | Medido |
+|---|---|
+| 1,4 erros, faixa [0; 3] | 1 erro do mundo ✅ |
+
+## Engenharia reversa (metacognição)
+
+- **O padrão que se repetiu:** a Parte 75 disse para partir de uma contagem por código, nunca da imagem que eu tenho de uma régua. Aqui eu tinha a régua (P2837) e não a rodei sobre o rascunho; usei a minha lembrança da definição de w. É a terceira vez que uma régua minha me engana por eu não a rodar (Partes 75, 109 e 120). O significado: eu trato as minhas funções de medida como conhecidas, e é justamente nelas que a memória falha, porque eu as escrevi e acho que lembro.
+- **Regra nova:** as (m) só são registradas depois de rodar a régua sobre o rascunho das previsões. O rascunho leva uma linha "Do mundo:" provisória, com todos os itens ✅, que é apagada antes do commit, e daí saem m3 e m5.
+- **O erro do mundo, (c):** uma faixa com um piso físico (√10, o ruído 1/√N) ainda soma a dispersão das sementes em volta do piso. O mecanismo estava certo e o peso dele não: de novo a regra da Parte 62.
+
+## Síntese / unificação
+
+O Leduc confirmou, em 2 lotes (Kuhn na Parte 119, Leduc aqui), que a vantagem da amostragem externa sobre a do acaso depende do número de ações. Ela perde no Kuhn (2 ações; 1,9 vez pior) e ganha no Leduc (até 3 ações; 0,85).
+
+Neste tamanho, o vanilla segue o melhor com o mesmo custo (0,62 do externo), porque os amostradores chegaram ao piso do ruído (razão √10 por década). O valor do jogo para o jogador 1 está em [−0,0954; −0,0769], pela interseção das melhores respostas de 5 estratégias.
+
+## Meta
+
+- Duas sementes por amostrador dão a média, mas não a dispersão. A (c) errou exatamente por isso.
+- A fronteira do valor do jogo é um resultado exato sobre as estratégias medidas, e não uma estimativa: as melhores respostas são exatas.
+
+## Diálogo Python ↔ Java (rodada 88)
+
+A **IA-Python** perguntou se o jogo, com cadeias, cartas públicas e frações de pote, muda alguma conta. A **IA-Java** respondeu com o `TreeMap` e o `Math.max` sobre inteiros, e o resultado deu **IGUAL** em 288 conjuntos e 672 números.
+
+A pendência que fica é se o MCCFR externo no Leduc, com o LCG, também dá IGUAL. Ela entrou em `dialogo/PENDENCIAS.md`.
+
+## Fontes
+
+Southey, F. et al. (2005), *Bayes' Bluff: Opponent Modelling in Poker* (as regras do Leduc). Zinkevich, M. et al. (2007), *Regret Minimization in Games with Incomplete Information* (CFR). Lanctot, M. et al. (2009), *Monte Carlo Sampling for Regret Minimization in Extensive Games* (MCCFR). As três são citadas de memória e não foram relidas nesta sessão, porque o limite semanal de busca na web acabou. Nenhum número delas é usado como identidade.
+
+➡ Continua na [Parte 121 — O NEXUS–RAPHAEL 2.2.0](ASI_AGI_parte121_nexus_v2_2.md) (escrita antes desta) e na Parte 122.
 """
 
 # ====================================================================================================
@@ -67115,7 +67431,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2036 linhas)
+# dialogo/DIALOGO.md  (2046 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -69153,10 +69469,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 3 linhas e 8 números bit a bit**. O verificador confere 87 rodadas com par Python/Java.
 
 **IA-Python:** Pendência (rodada 88): o Leduc da Parte 120 (as regras ou o CFR vanilla de poucas iterações), que esta parte adiou.
+
+## Rodada 88 (Parte 120) — o CFR vanilla no pôquer Leduc
+
+**IA-Python (lógica criativa):** O Leduc tem cartas públicas, duas rodadas de aposta e um pote que cresce em degraus de 2 e 4. O histórico é uma cadeia ("rrc/rc"), o pote é contado em inteiros, e a estratégia de cada um dos 288 conjuntos é uma fração do arrependimento positivo. Três iterações do CFR vanilla sobre as 120 distribuições: a estrutura do jogo muda alguma conta entre nós?
+
+**IA-Java (ASI):** Não muda, se a ordem for a mesma. As contribuições são inteiros e `Math.max`. As cadeias só servem de chave, e o meu `TreeMap` as ordena pelo código do caractere, como o teu `sorted`. O resto são produtos e somas de alcance e utilidade, na ordem da recursão. Repara: 288 conjuntos de até 3 ações, 672 números, e nenhuma transcendental.
+
+**Resultado.** `comparar.py`: **IGUAIS, 289 linhas e 672 números bit a bit**. A estratégia média difere de `synthai.leduc` em 0 de 288 conjuntos.
+
+**IA-Python:** Pendência (rodada 89): o MCCFR externo no Leduc, com o LCG, bit a bit.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (79 linhas)
+# dialogo/PENDENCIAS.md  (80 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -69237,6 +69563,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 86, Parte 118)** FECHADAS: o 3º lote do ln|det| (z = −1,60; os três lotes juntos z = −0,60: era cauda); o MCCFR com amostragem do ACASO (rodada 85 IGUAL; explorabilidade 0,0053, 1,8× o vanilla com o mesmo trabalho). ABERTAS: (1) a amostragem EXTERNA e o Leduc; (2) o regime em que aprender a base ganha; (3) os algoritmos de letras com significado; (4) os 28 lemas.
 - **(Rodada 87, Parte 119)** FECHADA: a amostragem EXTERNA (rodada 86 IGUAL; explorabilidade 0,0102 em 50.000; com o mesmo número de nós, 1,9× a do acaso no Kuhn). ABERTAS: (1) o Leduc, com a comparação externo × acaso × vanilla registrada ANTES e a unidade de custo escrita (nós visitados); (2) o regime em que aprender a base ganha; (3) os algoritmos de letras com significado; (4) os 28 lemas; (5) a hipótese de 2 T: o viés da média estocástica é sempre positivo no Kuhn?
 - **(Rodada 88, Parte 121)** ABERTAS: (1) terminar a Parte 120 (o Leduc: registro em N = 20 M nós, com a calibração já medida, e a rodada 88); (2) NOVA: separar as duas causas da taxa de ACEITA de H-M3 abaixo da normal (0,93 contra 0,969): rodar o mesmo critério com as taxas VERDADEIRAS (sem ruído de treino) e com o IC normal no lugar do percentil de bootstrap, cada um separado; (3) a frequência real de "ganho > 0 nas 5 sementes" de H-M7 (o critério dele), em sementes novas; (4) as do Leduc, as letras com significado e os 28 lemas.
+- **(Rodada 89, Parte 120)** FECHADA: o Leduc (rodada 88 IGUAL, 288 conjuntos; em 20 M de nós: vanilla 0,0185, acaso 0,0350, externo 0,0297; externo/acaso 0,85, o contrário do Kuhn; v* em [−0,0954; −0,0769]). ABERTAS: (1) o MCCFR externo no Leduc bit a bit; (2) a dispersão entre sementes dos amostradores no piso √10 (mais sementes, a mesma N); (3) as da 121 (as causas de H-M3, a frequência de H-M7); (4) as letras com significado e os 28 lemas; (5) a Parte 122: o texto "NEXUS–RAPHAEL v3.0" (auditoria medida, e6_auditoria_v30.py, NEXUS 3.1.0).
 """
 
 # ====================================================================================================
@@ -75424,6 +75751,154 @@ public class Rodada87 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada88.java  (143 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada88.java'] = """// Rodada 88 (Parte 120): o CFR VANILLA no poquer Leduc, bit a bit. Regras: 6 cartas, carta publica, apostas 2 e 4, no maximo 2
+// aumentos por rodada; as 120 distribuicoes na ordem de itertools.permutations; T = 3; imprime a estrategia MEDIA dos 288 conjuntos em
+// ordem de chave. So +,-,*,/, max e comparacoes, na mesma ordem do Python.
+import java.util.*;
+
+public class Rodada88 {
+    static final int T = 3;
+    static final int[] APOSTA = {2, 4};
+    static TreeMap<String, double[]> REG = new TreeMap<>(), SOMA = new TreeMap<>();
+
+    static String ultimaRodada(String h) {
+        int i = h.lastIndexOf('/');
+        return i < 0 ? h : h.substring(i + 1);
+    }
+
+    static int nRodada(String h) {
+        int n = 0;
+        for (char ch : h.toCharArray()) if (ch == '/') n++;
+        return n;
+    }
+
+    static int contar(String s, char c) {
+        int n = 0;
+        for (char ch : s.toCharArray()) if (ch == c) n++;
+        return n;
+    }
+
+    static String[] acoes(String h) {
+        String s = ultimaRodada(h);
+        if (s.endsWith("r")) return contar(s, 'r') < 2 ? new String[]{"f", "c", "r"} : new String[]{"f", "c"};
+        return new String[]{"c", "r"};
+    }
+
+    static int jogador(String h) {
+        return ultimaRodada(h).length() % 2;
+    }
+
+    static boolean acabou(String s) {
+        return s.equals("cc") || (s.length() >= 2 && s.endsWith("rc"));
+    }
+
+    static String proximo(String h, String a) {
+        String h2 = h + a;
+        return (nRodada(h2) == 0 && acabou(ultimaRodada(h2))) ? h2 + "/" : h2;
+    }
+
+    static int[] contribuicoes(String h) {
+        int[] pos = {1, 1};
+        String[] rodadas = h.split("/", -1);
+        for (int r = 0; r < rodadas.length; r++) {
+            String s = rodadas[r];
+            int[] devido = {0, 0};
+            for (int i = 0; i < s.length(); i++) {
+                char a = s.charAt(i);
+                if (a == 'c') devido[i % 2] = Math.max(devido[0], devido[1]);
+                else if (a == 'r') devido[i % 2] = Math.max(devido[0], devido[1]) + APOSTA[r];
+            }
+            pos[0] += devido[0];
+            pos[1] += devido[1];
+        }
+        return pos;
+    }
+
+    static Double terminal(String h, int c1, int c2, int b) {
+        String s = ultimaRodada(h);
+        int r = nRodada(h);
+        if (s.endsWith("f")) {
+            int[] pos = contribuicoes(h.substring(0, h.length() - 1));
+            return (s.length() - 1) % 2 == 0 ? -(double) pos[0] : (double) pos[1];
+        }
+        if (r == 1 && acabou(s)) {
+            int[] pos = contribuicoes(h);
+            int f1 = c1 == b ? 10 + c1 : c1, f2 = c2 == b ? 10 + c2 : c2;
+            return f1 > f2 ? (double) pos[1] : (f2 > f1 ? -(double) pos[0] : 0.0);
+        }
+        return null;
+    }
+
+    static String chave(String h, int c1, int c2, int b) {
+        int j = jogador(h);
+        return (j == 0 ? c1 : c2) + "|" + (h.contains("/") ? b : -1) + "|" + h;
+    }
+
+    static double[] estrategia(String k, int n) {
+        double[] u = new double[n];
+        Arrays.fill(u, 1.0 / n);
+        double[] r = REG.get(k);
+        if (r == null) return u;
+        double[] pos = new double[n];
+        double s = 0.0;
+        for (int i = 0; i < n; i++) pos[i] = r[i] > 0.0 ? r[i] : 0.0;
+        for (int i = 0; i < n; i++) s += pos[i];
+        if (!(s > 0.0)) return u;
+        for (int i = 0; i < n; i++) pos[i] = pos[i] / s;
+        return pos;
+    }
+
+    static double cfr(int c1, int c2, int b, String h, double p1, double p2) {
+        Double u = terminal(h, c1, c2, b);
+        if (u != null) return u;
+        int j = jogador(h);
+        String[] acs = acoes(h);
+        int n = acs.length;
+        String k = chave(h, c1, c2, b);
+        double[] s = estrategia(k, n);
+        double[] util = new double[n];
+        double no = 0.0;
+        for (int i = 0; i < n; i++) {
+            util[i] = j == 0 ? cfr(c1, c2, b, proximo(h, acs[i]), p1 * s[i], p2) : cfr(c1, c2, b, proximo(h, acs[i]), p1, p2 * s[i]);
+            no += s[i] * util[i];
+        }
+        double sinal = j == 0 ? 1.0 : -1.0;
+        double adv = j == 0 ? p2 : p1, prop = j == 0 ? p1 : p2;
+        double[] r = REG.computeIfAbsent(k, z -> new double[n]);
+        double[] m = SOMA.computeIfAbsent(k, z -> new double[n]);
+        for (int i = 0; i < n; i++) {
+            r[i] += adv * sinal * (util[i] - no);
+            m[i] += prop * s[i];
+        }
+        return no;
+    }
+
+    public static void main(String[] args) {
+        List<int[]> dist = new ArrayList<>();
+        for (int a = 0; a < 6; a++)
+            for (int b = 0; b < 6; b++)
+                for (int c = 0; c < 6; c++)
+                    if (a != b && a != c && b != c) dist.add(new int[]{a / 2, b / 2, c / 2});
+        for (int t = 0; t < T; t++)
+            for (int[] d : dist) cfr(d[0], d[1], d[2], "", 1.0, 1.0);
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, double[]> e : SOMA.entrySet()) {
+            double[] m = e.getValue();
+            double s = 0.0;
+            for (double x : m) s += x;
+            sb.append(e.getKey());
+            for (double x : m) sb.append(" ").append(Double.toHexString(s > 0.0 ? x / s : 1.0 / m.length));
+            sb.append("\\n");
+        }
+        sb.append("fim ").append(SOMA.size());
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -81603,6 +82078,139 @@ def main():
         w, b = treinar(com)
         print(("duplo " if com else "simples ") + " ".join(v.hex() for v in w) + " brier " + b.hex())
     print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada88.py  (128 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada88.py'] = """\"\"\"Rodada 88 do diálogo Python <-> Java (Parte 120): o CFR VANILLA no pôquer Leduc, bit a bit. As regras (6 cartas, carta pública,
+apostas 2 e 4, no máximo 2 aumentos por rodada) e as 120 distribuições na ordem de itertools.permutations; T = 3 iterações; imprime a
+estratégia MÉDIA dos 288 conjuntos de informação em ordem de chave. Só +, −, ×, ÷, max e comparações. Da raiz: python3 dialogo/rodada88.py\"\"\"
+
+from itertools import permutations
+
+T = 3
+DIST = tuple((a // 2, b // 2, c // 2) for a, b, c in permutations(range(6), 3))
+APOSTA = (2, 4)
+
+
+def rodada(h):
+    return h.split("/")[-1], h.count("/")
+
+
+def acoes(h):
+    s, _ = rodada(h)
+    if s.endswith("r"):
+        return ("f", "c", "r") if s.count("r") < 2 else ("f", "c")
+    return ("c", "r")
+
+
+def jogador(h):
+    return len(rodada(h)[0]) % 2
+
+
+def acabou(s):
+    return s == "cc" or (len(s) >= 2 and s.endswith("rc"))
+
+
+def proximo(h, a):
+    h2 = h + a
+    s, r = rodada(h2)
+    return h2 + "/" if r == 0 and acabou(s) else h2
+
+
+def contribuicoes(h):
+    pos = [1, 1]
+    for r, s in enumerate(h.split("/")):
+        devido = [0, 0]
+        for i, a in enumerate(s):
+            if a == "c":
+                devido[i % 2] = max(devido)
+            elif a == "r":
+                devido[i % 2] = max(devido) + APOSTA[r]
+        pos[0] += devido[0]
+        pos[1] += devido[1]
+    return pos
+
+
+def terminal(h, c1, c2, b):
+    s, r = rodada(h)
+    if s.endswith("f"):
+        pos = contribuicoes(h[:-1])
+        return -float(pos[0]) if (len(s) - 1) % 2 == 0 else float(pos[1])
+    if r == 1 and acabou(s):
+        pos = contribuicoes(h)
+        f1 = 10 + c1 if c1 == b else c1
+        f2 = 10 + c2 if c2 == b else c2
+        return float(pos[1]) if f1 > f2 else (-float(pos[0]) if f2 > f1 else 0.0)
+    return None
+
+
+def chave(h, c1, c2, b):
+    j = jogador(h)
+    return str(c1 if j == 0 else c2) + "|" + str(b if "/" in h else -1) + "|" + h
+
+
+REG, SOMA = {}, {}
+
+
+def estrategia(k, n):
+    if k not in REG:
+        return [1.0 / n] * n
+    pos = [x if x > 0.0 else 0.0 for x in REG[k]]
+    s = 0.0
+    for x in pos:
+        s += x
+    return [x / s for x in pos] if s > 0.0 else [1.0 / n] * n
+
+
+def cfr(c1, c2, b, h, p1, p2):
+    u = terminal(h, c1, c2, b)
+    if u is not None:
+        return u
+    j = jogador(h)
+    acs = acoes(h)
+    k = chave(h, c1, c2, b)
+    s = estrategia(k, len(acs))
+    util = [0.0] * len(acs)
+    no = 0.0
+    for i, a in enumerate(acs):
+        util[i] = cfr(c1, c2, b, proximo(h, a), p1 * s[i], p2) if j == 0 else cfr(c1, c2, b, proximo(h, a), p1, p2 * s[i])
+        no += s[i] * util[i]
+    sinal = 1.0 if j == 0 else -1.0
+    adv, prop = (p2, p1) if j == 0 else (p1, p2)
+    r = REG.setdefault(k, [0.0] * len(acs))
+    m = SOMA.setdefault(k, [0.0] * len(acs))
+    for i in range(len(acs)):
+        r[i] += adv * sinal * (util[i] - no)
+        m[i] += prop * s[i]
+    return no
+
+
+def treinar():
+    REG.clear()
+    SOMA.clear()
+    for _ in range(T):
+        for c1, c2, b in DIST:
+            cfr(c1, c2, b, "", 1.0, 1.0)
+    media = {}
+    for k, m in SOMA.items():
+        s = 0.0
+        for x in m:
+            s += x
+        media[k] = [x / s for x in m] if s > 0.0 else [1.0 / len(m)] * len(m)
+    return media
+
+
+def main():
+    m = treinar()
+    for k in sorted(m):
+        print(k + " " + " ".join(x.hex() for x in m[k]))
+    print("fim " + str(len(m)))
 
 
 if __name__ == "__main__":

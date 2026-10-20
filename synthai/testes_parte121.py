@@ -80,7 +80,7 @@ class TesteParte121(unittest.TestCase):
         self.assertLess(b2, b1)
 
     def test_p1961_com_parte_121(self):
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 120)) + [121]))
         self.assertEqual(por[121], (13, 16))
         self.assertEqual((ok, tot), (274, 300))
 
