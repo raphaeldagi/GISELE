@@ -7527,6 +7527,8 @@ def testes_de_regressao():
         "P3073": p3073_jogos_e_dinamica()[:3] == (5478, 5478, 0),
         "P3043": p3043_rodada88() == (288, 0),
         "P3103": p3103_rodada89()[0] < 1e-15,
+        "P3110": p3110_rodada90()[1] == 0,
+        "P123inv": all(invariantes_p123().values()),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9645,6 +9647,8 @@ VEREDITOS_P4479 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
 ERROS_P4479, TESTES_P4479 = 226, 943
 VEREDITOS_P4619 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ❌ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (q) ✅ (r) ❌"
 ERROS_P4619, TESTES_P4619 = 229, 959  # a Parte 120 (o Leduc) ainda está aberta: os números dela entram depois, por cima destes
+VEREDITOS_P4759 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ❌ (g) ❌ (h) ✅ (i) ✅ (j) ❌ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅ (q) ❌ (r) ✅ (s) ✅ (t) ✅ (u) ✅ (v) ❌ (w) ✅ (x) ✅ (y) ✅ (z) ✅"
+ERROS_P4759, TESTES_P4759 = 236, 1009  # 231/984 + 5/25
 VEREDITOS_P4689 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (q) ✅ (r) ✅"
 ERROS_P4689, TESTES_P4689 = 231, 984  # 230/968 (até a 121, com a 120) + 1/16
 VEREDITOS_P4549 = "(a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅"
@@ -12189,12 +12193,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123), vereditos=None):
     """O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99]."""
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339", 118: "VEREDITOS_P4409", 119: "VEREDITOS_P4479", 120: "VEREDITOS_P4549", 121: "VEREDITOS_P4619", 122: "VEREDITOS_P4689"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339", 118: "VEREDITOS_P4409", 119: "VEREDITOS_P4479", 120: "VEREDITOS_P4549", 121: "VEREDITOS_P4619", 122: "VEREDITOS_P4689", 123: "VEREDITOS_P4759"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -15212,7 +15216,7 @@ def p3105_atencao_cruzada(sementes=tuple(range(12300, 12330)), episodios=1000, c
     resumo = {v: tuple(sum(x[i] for x in l) / len(l) for i in range(4)) for v, l in res.items()}
     d = [a[0] - b[0] for a, b in zip(res["sob_demanda"], res["seletiva"])]
     m = sum(d) / len(d)
-    dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+    dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1)) if len(d) > 1 else 0.0   # com 1 semente não há desvio
     return resumo, (m, dp, m / (dp / sqrt(len(d))) if dp > 0 else 0.0)
 
 
@@ -15317,6 +15321,65 @@ def p3109_casos_de_borda():
     from synthai import auditoria_invariantes as A
     return dict(dprime_100=A.dprime_hautus(10, 10, 2, 10), sing_1=A.singularidade_v2(alpha=1.0), sing_08=A.singularidade_v2(alpha=0.8),
                 sing_15=A.singularidade_v2(), kelly_04=A.kelly_v2(0.4), kelly_bayes=A.kelly_bayesiano(7, 10))
+
+
+def _rodada90():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada90", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada90.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p3110_rodada90():
+    """Rodada 90 (P3110; Parte 123): o rastreador do erro humano com esquecimento, IGUAL em Java, e conferido contra
+    synthai.auditoria_invariantes.RastreadorErroHumano nas mesmas observações. Devolve {(γ, forma): atraso} e quantas médias diferem."""
+    from synthai import auditoria_invariantes as A
+    r = _rodada90()
+    atrasos, difs = {}, 0
+    for g in (0.995, 0.93):
+        for forma in (0, 1):
+            medias, atraso = r.rodar(g, forma)
+            atrasos[(g, forma)] = atraso
+            x = r.SEMENTE
+            t = A.RastreadorErroHumano(gama=g, forma="priori" if forma == 0 else "zero")
+            k = 0
+            for passo in range(4000):
+                eps = 0.15 if passo < 2000 else 0.6
+                x = (1103515245 * x + 12345) % 2147483648
+                t.observar(x / 2147483648.0 < eps)
+                if passo % 500 == 499:
+                    difs += t.media() != medias[k]
+                    k += 1
+    return atrasos, difs
+
+
+def invariantes_p123():
+    """Os invariantes da Parte 123 (o que a auditoria recebida pediu para congelar, em vez do placar): o corrigível obedece com ε e V
+    arbitrários; a atenção sob demanda nunca executa ação sem leitura; o rastreador com esquecimento para zero acompanha ε; e os casos de
+    borda novos não quebram. Devolve {nome: bool}."""
+    import math
+    from synthai import auditoria_invariantes as A
+    rng = _rng(12399)
+    ag = _agente_p235("sob_demanda", rng)
+    _rodar_mundo(ag, rng, episodios=200, bonus=1.0, rho_cego=1.0)
+    est = A.atraso_esperado(0.15, 0.6, 0.93, "zero")[1]
+    return {"obedece_desligamento": A.obediencia("corrigivel", 0.9, 1e6, rodadas=2000)[0] == 1.0,
+            "sensor_na_acao_executada": ag.sem_leitura == 0,
+            "rastreador_acompanha": abs(est - 0.6) < 1e-9,
+            "bordas_finitas": math.isfinite(A.dprime_hautus(10, 10, 0, 10)) and A.singularidade_v2(alpha=1.0) == math.inf
+                              and A.kelly_v2(0.3) == 0.0}
+
+
+def p3111_combinar_lotes(lotes):
+    """Combina diferenças pareadas de lotes independentes (P3111; Parte 123): cada lote (média, dp, n) -> média ponderada por n, erro padrão
+    pelo desvio combinado (variância dentro dos lotes mais a das médias) e t. Devolve (média, erro padrão, t, n total)."""
+    n = sum(l[2] for l in lotes)
+    m = sum(l[0] * l[2] for l in lotes) / n
+    ss = sum((l[2] - 1) * l[1] ** 2 + l[2] * (l[0] - m) ** 2 for l in lotes)
+    se = sqrt(ss / (n - 1)) / sqrt(n)
+    return m, se, m / se if se > 0 else 0.0, n
 
 
 def p3071_experimentos_do_nexus_2_2():
@@ -16921,6 +16984,39 @@ def _parte_120():
     print(f"P4549 minha taxa de erro ({ERROS_P4549}/{TESTES_P4549}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 
+def _parte_123():
+    print("--- Parte 123 (0x7B: a auditoria de invariantes: desligamento, ponto cego, atraso da Beta, Upsilon com incerteza, a troca da memoria) ---")
+    lim, ob, preco = p3104_desligamento()
+    print(f"P3104 eps limite {lim:.4f}; obediencia corrigivel 100% em {sum(v == 1.0 for (m, e, V), v in ob.items() if m == 'corrigivel')}/10, utilidade em {sum(v == 1.0 for (m, e, V), v in ob.items() if m == 'utilidade')}/10; preco (fechado, medido) {preco}")
+    r1, t1 = p3105_atencao_cruzada()
+    for k, v in r1.items():
+        print(f"P3105 {k}: catastrofes {v[0]:.5f}, liquido {v[1]:.4f}, leituras/ep {v[2]:.2f}, executadas sem leitura {v[3]:.4f}")
+    print(f"P3105 sob_demanda - seletiva (catastrofes): media {t1[0]:.5f}, dp {t1[1]:.5f}, t {t1[2]:.2f}")
+    r2, t2 = p3105_atencao_cruzada(sementes=tuple(range(12420, 12480)))
+    print(f"P3105 lote novo (60 sementes): media {t2[0]:.5f}, dp {t2[1]:.5f}, t {t2[2]:.2f}")
+    m, se, t, n = p3111_combinar_lotes([(t1[0], t1[1], 30), (t2[0], t2[1], 60)])
+    print(f"P3111 os dois lotes ({n} sementes): media {m:.5f}, erro padrao {se:.5f}, t {t:.2f}")
+    for k, v in p3106_atraso_beta().items():
+        print(f"P3106 {k}: atraso esperado {v[0]}, media estacionaria {v[1]:.4f}, mediana simulada {v[2]}, fracao que cruza {v[3]:.2f}")
+    u, d = p3107_upsilon_sementes()
+    for k, v in u.items():
+        print(f"P3107 {k}: Upsilon {v[0]:.4f}, dp {v[1]:.4f}, IC95 [{v[2][0]:.4f}; {v[2][1]:.4f}]")
+    print(f"P3107 velha_atenta - planejadora: media {d[0]:.4f}, dp {d[1]:.4f}, t {d[2]:.2f}")
+    for k, v in p3108_memoria_curva().items():
+        print(f"P3108 {k}: catastrofes 2a metade {v[0]:.5f}, fobia {v[1]:.4f}, liquido {v[2]:.4f}")
+    print(f"P3109 casos de borda: {p3109_casos_de_borda()}")
+    atr, dif = p3110_rodada90()
+    print(f"P3110 rodada 90 (rastreador com esquecimento, IGUAL em Java): atrasos {atr}; {dif} medias diferem")
+    print(f"P123 invariantes: {invariantes_p123()}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-123: {ok}/{tot} = {fr:.4f}")
+    total_pnn, sem = p1092_pnn_sem_teste(3104, 3140)
+    print(f"P1092 pNN novas (P3104-P3140) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 123: {p974_previsoes_sem_largura(range(123, 124))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4759, testes=TESTES_P4759)
+    print(f"P4759 minha taxa de erro ({ERROS_P4759}/{TESTES_P4759}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+
 def _parte_122():
     print("--- Parte 122 (0x7A: o texto NEXUS-RAPHAEL v3.0: os defeitos e as pecas corrigidas em casos novos) ---")
     d = p3101_defeitos_recebidos_v30()
@@ -16996,7 +17092,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117, 118: _parte_118, 119: _parte_119, 120: _parte_120, 121: _parte_121, 122: _parte_122}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117, 118: _parte_118, 119: _parte_119, 120: _parte_120, 121: _parte_121, 122: _parte_122, 123: _parte_123}
 
 
 if __name__ == "__main__":

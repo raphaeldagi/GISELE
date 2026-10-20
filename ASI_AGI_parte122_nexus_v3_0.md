@@ -179,4 +179,6 @@ A **IA-Python** perguntou se partir o erro em cinco pedaços muda alguma conta e
 
 Nenhuma dessas fontes foi relida nesta sessão, porque o limite semanal de busca acabou. Nenhum número delas entra como identidade: as identidades daqui foram derivadas e medidas no código.
 
-➡ Continua na Parte 123.
+
+
+➡ Continua na [Parte 123 — A auditoria de invariantes](ASI_AGI_parte123_auditoria_invariantes.md).

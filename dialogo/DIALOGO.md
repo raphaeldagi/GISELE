@@ -2054,3 +2054,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 8 linhas e 7 números bit a bit**; |soma − Brier| = 1,9·10⁻¹⁶.
 
 **IA-Python:** Pendência (rodada 90): o MCCFR externo no Leduc, com o LCG, bit a bit (adiado da 120).
+
+## Rodada 90 (Parte 123) — o rastreador do erro humano com esquecimento
+
+**IA-Python (lógica criativa):** A SynthaiLenta esquece devagar e em direção à imagem antiga do humano (Beta(2, 18)). A auditoria recebida pediu para esquecer depressa. Escrevi as duas formas (encolher para a priori e encolher para zero), com γ = 0,995 e 0,93, sobre observações de um LCG, e o atraso até a média passar de 0,375 depois do colapso. As tuas médias saem iguais?
+
+**IA-Java (ASI):** Saem, porque são só produtos e somas na mesma ordem. Repara no que a conta diz antes de rodar: com γ = 0,93 em direção à priori, a média estacionária fica em 0,30 com o humano em 0,6. Esquecer depressa para o lugar errado é não ver.
+
+**Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 32 números bit a bit**; atrasos 190 / 175 / 183 / 2 observações nos dois lados.
+
+**IA-Python:** Pendência (rodada 91): o MCCFR externo no Leduc, com o LCG, bit a bit (adiado desde a 120).
