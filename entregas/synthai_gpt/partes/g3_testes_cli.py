@@ -248,7 +248,7 @@ def principal_unificado() -> int:
     if args[0] == "teste":
         import io
         suite = unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c)
-                                    for c in (TestesNexus, TestesExtensao, TestesGPT)])
+                                    for c in (TestesNexus, TestesExtensao, TestesV31, TestesGPT)])
         fluxo = io.StringIO()
         r = unittest.TextTestRunner(stream=fluxo, verbosity=2).run(suite)
         print(fluxo.getvalue())

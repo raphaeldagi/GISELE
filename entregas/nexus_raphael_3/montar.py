@@ -11,10 +11,10 @@ AQUI = Path(__file__).resolve().parent
 BASE = AQUI.parents[1] / "externos" / "nexus_raphael_v2_0" / "nexus_raphael_v2_0.py.txt"
 SAIDA = AQUI / "nexus_raphael.py"
 PARTES = ["e1_estatistica_algebra.py", "e2_calibracao_bandidos_texto_dinamica.py", "e3_jogos.py",
-          "e4_logica_codificacao_experimentos.py"]
+          "e4_logica_codificacao_experimentos.py", "e6_auditoria_v30.py"]
 TESTES = "e5_testes_cli.py"
 
-CABECALHO = '''"""NEXUS–RAPHAEL 3.0.0: laboratório experimental auditável, offline, só biblioteca padrão.
+CABECALHO = '''"""NEXUS–RAPHAEL 3.1.0: laboratório experimental auditável, offline, só biblioteca padrão.
 
 Execução: python3 nexus_raphael.py teste
           python3 nexus_raphael.py experimento --modo rapido
@@ -45,13 +45,20 @@ O que mudou desde a 2.2.0 (cada item tem teste em TestesExtensao):
   - Lógica: Tseitin + DPLL (sem o teto de 16 variáveis), casa dos pombos, transição do 3-SAT.
   - Codificação: base 26 bijetiva, Hamming (7,4), CRC-32, Huffman, LZ78.
 
+  3.1.0 (do texto "NEXUS–RAPHAEL v3.0" recebido, só o que se sustentou, reescrito e testado em TestesV31)
+  - Murphy completa: BS = REL − RES + UNC + WBV − WBC, exata para qualquer previsão (a clássica não fecha).
+  - MensagemImutavel: conteúdo congelado em profundidade e trilha em cadeia de hashes.
+  - SondaColapso: a PCA apaga a identidade de baixa variância; a projeção supervisionada a guarda.
+  - ModelagemPorPotencial: o shaping γΦ(s') − Φ(s) preserva a política ótima; o bônus aditivo não.
+  - kl_beta em forma fechada, para detectar deriva entre posteriores.
+
 Comentários e textos em português. Dados offline são léxico manual de teste, não fonte primária.
 Esta implementação NÃO constitui AGI, ASI, AFI ou evidência de consciência.
 """'''
 
 SUBSTITUICOES = [
     # versão e cabeçalho
-    ('VERSAO = "2.2.0"', 'VERSAO = "3.0.0"'),
+    ('VERSAO = "2.2.0"', 'VERSAO = "3.1.0"'),
     # rede: fora
     ("from urllib.parse import quote\nfrom urllib.request import Request, urlopen\n", ""),
     ('    """Data lake local com fonte e licença; consulta HTTP opcional, sem chave."""\n'
@@ -85,7 +92,8 @@ SUBSTITUICOES = [
     # testes: as duas classes
     ("    suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestesNexus)\n",
      "    suite = unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(TestesNexus),\n"
-     "                                unittest.defaultTestLoader.loadTestsFromTestCase(TestesExtensao)])\n"),
+     "                                unittest.defaultTestLoader.loadTestsFromTestCase(TestesExtensao),\n"
+     "                                unittest.defaultTestLoader.loadTestsFromTestCase(TestesV31)])\n"),
     # CLI
     ('                                 "ciclo", "jogo", "lexico", "estado"))',
      '                                 "ciclo", "jogo", "lexico", "estado", "kuhn", "leduc", "velha", "sat",\n'

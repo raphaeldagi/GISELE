@@ -36,7 +36,13 @@ COMPONENTES (cada um com teste em TestesGPT, TestesExtensao ou TestesNexus)
                      simplex exato, SAT (DPLL + Tseitin), Hamming, CRC-32, Huffman, LZ78, dinâmica caótica.
 
 NÚMEROS MEDIDOS DOS PESOS DISTRIBUÍDOS
-  {NUMEROS}
+  Configuração: tokenizador de caracteres (77 símbolos), contexto 32, d = 32, 2 camadas, 4 cabeças,
+  31.501 parâmetros; 3.000 passos de 16 janelas (1,5 milhão de caracteres vistos), 41 minutos em 4 núcleos de CPU.
+  Corpus: glosas do WordNet 3.0 (8.963.290 caracteres), 10% das glosas reservadas para teste (semente 7).
+  Bits por caractere no teste (400 janelas):  SYNTHAI-GPT 2,880 | trigrama Witten-Bell no mesmo texto 3,190 |
+  uniforme 6,539. Referência mais forte: o trigrama bayesiano da série SYNTHAI (Parte 100) dá 2,78 nessas glosas,
+  ainda 0,10 bit abaixo deste modelo. Previsão registrada ANTES do treino: GPT em [2,6; 3,1] (acertou);
+  trigrama em [2,70; 2,85] (errou: 3,19).
 
 LIMITES (escritos para que ninguém compre o que isto não é)
   - É um modelo pequeno, treinado em CPU, para entender, ensinar, auditar e estender a arquitetura GPT.

@@ -5,7 +5,7 @@
 ## Em uma frase
 O SYNTHAI-GPT é a arquitetura de um GPT (transformer decodificador autorregressivo, a família do GPT-2) escrita do zero em
 Python puro: treino, geração, avaliação e pesos. Vem com um modelo pré-treinado no dicionário WordNet e com um laboratório
-de 3.700 linhas de métodos numéricos e de teoria dos jogos. Cada peça é verificável: são 65 testes, incluindo a conferência do
+de 3.950 linhas de métodos numéricos e de teoria dos jogos. Cada peça é verificável: são 72 testes, incluindo a conferência do
 gradiente por diferenças finitas.
 
 ## O que vai no pacote
@@ -35,7 +35,20 @@ gradiente por diferenças finitas.
 - **Requisitos**: Python 3.10 ou mais novo, em qualquer sistema operacional. Não precisa de GPU.
 
 ## Números medidos dos pesos distribuídos
-{NUMEROS_TABELA}
+| Medida | Valor |
+|---|---|
+| Parâmetros | 31.501 (vocabulário 77, contexto 32, d = 32, 2 camadas, 4 cabeças) |
+| Treino | 3.000 passos × 16 janelas de 32 caracteres; 41 min em 4 núcleos de CPU |
+| Corpus | glosas do WordNet 3.0, 8.963.290 caracteres; 10% das glosas reservadas para teste |
+| **Bits por caractere no teste** | **2,880** |
+| Trigrama Witten-Bell treinado no mesmo texto | 3,190 |
+| Uniforme sobre o vocabulário | 6,539 |
+| Trigrama bayesiano da série SYNTHAI (Parte 100) | 2,78 (ainda melhor que este modelo) |
+| Previsão registrada antes do treino | GPT em [2,6; 3,1]: acertou. Trigrama em [2,70; 2,85]: errou (3,19) |
+| Selo SHA-256 dos pesos | conferido ao carregar |
+
+Exemplo gerado (temperatura 0,7, semente 1): *"the act of a shapose somaning a pup in in a mactiontic revermanning"*. São palavras plausíveis
+no formato de uma definição, sem significado garantido. É o que um modelo deste tamanho faz, e a ficha deve dizer isso.
 
 ## Para quem serve (e como vender)
 1. **Ensino de IA e de LLMs**: cursos, bootcamps e universidades. É o único lugar em que o aluno lê *toda* a conta de um GPT
