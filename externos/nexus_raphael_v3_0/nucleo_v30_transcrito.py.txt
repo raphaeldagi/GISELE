@@ -1,0 +1,332 @@
+#!/usr/bin/env python3
+# Transcrição do código recebido (NEXUS-RAPHAEL v3.0, "Núcleo Operacional"), sem alterações de lógica.
+from __future__ import annotations
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+import hashlib
+import itertools
+import json
+import math
+import sqlite3
+from typing import Any, Callable, Protocol
+import numpy as np
+
+ROTULOS_VALIDOS: frozenset[str] = frozenset({"[MEDIDO]", "[DERIVADO]", "[HIPOTESE]", "[SINTETICO]", "[NAO EXECUTADO]",
+                                             "[FICCAO EXPERIMENTAL]", "[FORA DO ALCANCE]", "[REJEITADO]"})
+
+
+@dataclass(frozen=True)
+class MensagemEpistemica:
+    id_mensagem: str
+    origem: str
+    conteudo: Any
+    rotulo: str
+    confianca_calibrada: float
+    incerteza_epistemica: float
+    custo_segundos: float
+    trilha_auditoria: tuple[str, ...] = ()
+    carimbo_iso: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+    def __post_init__(self) -> None:
+        if self.rotulo not in ROTULOS_VALIDOS:
+            raise ValueError(f"Rotulo epistemico invalido: {self.rotulo}")
+        if not (0.0 <= self.confianca_calibrada <= 1.0):
+            raise ValueError("Confianca calibrada deve pertencer a [0.0, 1.0].")
+        if self.incerteza_epistemica < 0.0:
+            raise ValueError("Incerteza epistemica nao pode ser negativa.")
+
+    def derivar(self, nova_origem, novo_conteudo, novo_rotulo, nova_confianca, nova_incerteza, custo_adicional):
+        novo_hash = hashlib.sha256(f"{self.id_mensagem}:{nova_origem}:{novo_rotulo}".encode("utf-8")).hexdigest()[:12]
+        return MensagemEpistemica(id_mensagem=novo_hash, origem=nova_origem, conteudo=novo_conteudo, rotulo=novo_rotulo,
+                                  confianca_calibrada=nova_confianca, incerteza_epistemica=nova_incerteza,
+                                  custo_segundos=self.custo_segundos + custo_adicional,
+                                  trilha_auditoria=self.trilha_auditoria + (self.origem,))
+
+
+CONSOANTES_B70 = ("b", "c", "d", "f", "g", "j", "k", "l", "m", "n", "p", "r", "s", "t")
+VOGAIS_B70 = ("a", "e", "i", "o", "u")
+SILABAS_B70 = tuple(c + v for c in CONSOANTES_B70 for v in VOGAIS_B70)
+MAPA_INVERSO_B70 = {sil: idx for idx, sil in enumerate(SILABAS_B70)}
+
+
+def inteiro_para_lingua_b70(numero: int) -> str:
+    if numero < 0:
+        raise ValueError("Apenas inteiros nao negativos sao suportados.")
+    if numero == 0:
+        return SILABAS_B70[0]
+    silabas = []
+    atual = numero
+    while atual > 0:
+        atual, resto = divmod(atual, 70)
+        silabas.append(SILABAS_B70[resto])
+    return "".join(reversed(silabas))
+
+
+def lingua_b70_para_inteiro(palavra: str) -> int:
+    if not palavra or len(palavra) % 2 != 0:
+        raise ValueError(f"Palavra Base-70 mal formada: '{palavra}'")
+    valor = 0
+    for i in range(0, len(palavra), 2):
+        silaba = palavra[i: i + 2]
+        if silaba not in MAPA_INVERSO_B70:
+            raise ValueError(f"Silaba fora do alfabeto Base-70: '{silaba}'")
+        valor = valor * 70 + MAPA_INVERSO_B70[silaba]
+    return valor
+
+
+def auditar_colisao_numerologica(vocabulario):
+    palavras_unicas = list(dict.fromkeys(p.lower() for p in vocabulario if p.isalpha()))
+    n_total = len(palavras_unicas)
+    if n_total == 0:
+        return {"n_palavras": 0.0, "taxa_colisao_soma": 0.0, "bits_perdidos": 0.0}
+    somas_a1_z26 = {sum((ord(ch) - 96) for ch in p if "a" <= ch <= "z") for p in palavras_unicas}
+    raizes_mod9 = {((s - 1) % 9) + 1 for s in somas_a1_z26 if s > 0}
+    taxa_colisao = 1.0 - (len(somas_a1_z26) / n_total)
+    entropia_original = math.log2(n_total)
+    entropia_mod9 = math.log2(max(1, len(raizes_mod9)))
+    return {"n_palavras": float(n_total), "valores_unicos_soma": float(len(somas_a1_z26)),
+            "taxa_colisao_soma": taxa_colisao, "entropia_original_bits": entropia_original,
+            "entropia_raiz_digital_bits": entropia_mod9, "bits_perdidos_raiz": entropia_original - entropia_mod9}
+
+
+def verificar_identidade_angulo_duplo(n_amostras: int = 100_000, seed: int = 42) -> float:
+    rng = np.random.default_rng(seed)
+    theta = rng.uniform(-2.0 * np.pi, 2.0 * np.pi, size=n_amostras)
+    return float(np.max(np.abs(np.cos(2.0 * theta) - (2.0 * (np.cos(theta) ** 2) - 1.0))))
+
+
+def calcular_expoente_lyapunov_logistico(r, x0=0.314159, n_passos=20_000, aquecimento=2_000):
+    x = x0
+    for _ in range(aquecimento):
+        x = r * x * (1.0 - x)
+    soma_log = 0.0
+    for _ in range(n_passos):
+        x = r * x * (1.0 - x)
+        derivada = abs(r * (1.0 - 2.0 * x))
+        soma_log += math.log(max(derivada, 1e-15))
+    return soma_log / n_passos
+
+
+@dataclass(frozen=True)
+class DecomposicaoMurphy:
+    brier_score: float
+    confiabilidade_rel: float
+    resolucao_res: float
+    incerteza_unc: float
+    brier_skill_score: float
+    ece_10_faixas: float
+
+
+def decompor_brier_murphy_siegert(probabilidades, observacoes, n_faixas=10):
+    p = np.asarray(probabilidades, dtype=np.float64)
+    y = np.asarray(observacoes, dtype=np.float64)
+    n_total = len(y)
+    if n_total == 0 or len(p) != n_total:
+        raise ValueError("Vetores de probabilidades e observacoes invalidos.")
+    bs_bruto = float(np.mean((p - y) ** 2))
+    o_barra = float(np.mean(y))
+    unc = o_barra * (1.0 - o_barra)
+    limites = np.linspace(0.0, 1.0, n_faixas + 1)
+    indices = np.clip(np.digitize(p, limites, right=False) - 1, 0, n_faixas - 1)
+    rel = res = ece = 0.0
+    for k in range(n_faixas):
+        mascara = indices == k
+        n_k = int(np.sum(mascara))
+        if n_k > 0:
+            p_k = float(np.mean(p[mascara]))
+            o_k = float(np.mean(y[mascara]))
+            peso = n_k / n_total
+            rel += peso * ((p_k - o_k) ** 2)
+            res += peso * ((o_k - o_barra) ** 2)
+            ece += peso * abs(p_k - o_k)
+    bs_reconstruido = rel - res + unc
+    bss = (res - rel) / unc if unc > 1e-12 else 0.0
+    return DecomposicaoMurphy(brier_score=bs_bruto if abs(bs_bruto - bs_reconstruido) < 0.05 else bs_reconstruido,
+                              confiabilidade_rel=rel, resolucao_res=res, incerteza_unc=unc,
+                              brier_skill_score=bss, ece_10_faixas=ece)
+
+
+def incerteza_epistemica_beta_binomial(sucessos, tentativas, alpha_priori=1.0, beta_priori=1.0):
+    falhas = tentativas - sucessos
+    a_post = alpha_priori + sucessos
+    b_post = beta_priori + falhas
+    soma = a_post + b_post
+    media_p = a_post / soma
+    var_epistemica = (a_post * b_post) / ((soma ** 2) * (soma + 1.0))
+    var_aleatoria = media_p * (1.0 - media_p) - var_epistemica
+    return {"probabilidade_media": media_p, "variancia_epistemica_2a_ordem": var_epistemica,
+            "desvio_epistemico": math.sqrt(var_epistemica), "variancia_aleatoria_1a_ordem": var_aleatoria}
+
+
+def verificar_satisfatibilidade(variaveis, restricoes):
+    for valores in itertools.product((False, True), repeat=len(variaveis)):
+        atribuicao = dict(zip(variaveis, valores))
+        if all(regra(atribuicao) for regra in restricoes.values()):
+            return True, atribuicao
+    return False, None
+
+
+def extrair_subconjunto_minimo_contraditorio(variaveis, restricoes):
+    consistente, _ = verificar_satisfatibilidade(variaveis, restricoes)
+    if consistente:
+        return ()
+    nomes = list(restricoes.keys())
+    for tamanho in range(1, len(nomes) + 1):
+        for combinacao in itertools.combinations(nomes, tamanho):
+            sub = {k: restricoes[k] for k in combinacao}
+            sat, _ = verificar_satisfatibilidade(variaveis, sub)
+            if not sat:
+                return combinacao
+    return tuple(nomes)
+
+
+class SolverCFRKuhnPoker:
+    CARTAS = ("J", "Q", "K")
+
+    def __init__(self):
+        self.arrependimento_acumulado = {}
+        self.estrategia_acumulada = {}
+
+    def _obter_estrategia(self, info_set, peso_alcance):
+        regrets = self.arrependimento_acumulado.setdefault(info_set, np.zeros(2))
+        soma_estrategia = self.estrategia_acumulada.setdefault(info_set, np.zeros(2))
+        positivos = np.maximum(regrets, 0.0)
+        soma = float(np.sum(positivos))
+        estrategia = positivos / soma if soma > 0.0 else np.array([0.5, 0.5])
+        soma_estrategia += peso_alcance * estrategia
+        return estrategia
+
+    def _cfr(self, cartas, historico, p0, p1):
+        jogadas = len(historico)
+        jogador = jogadas % 2
+        oponente = 1 - jogador
+        if jogadas >= 2:
+            terminal_pass = historico[-1] == "p"
+            duplo_bet = historico[-2:] == "bb"
+            carta_maior = cartas[jogador] > cartas[oponente]
+            if terminal_pass:
+                if historico == "pp":
+                    return 1.0 if carta_maior else -1.0
+                return 1.0
+            if duplo_bet:
+                return 2.0 if carta_maior else -2.0
+        info_set = f"{self.CARTAS[cartas[jogador]]}{historico}"
+        estrategia = self._obter_estrategia(info_set, p0 if jogador == 0 else p1)
+        utilidades = np.zeros(2)
+        utilidade_no = 0.0
+        for idx_acao, acao in enumerate(("p", "b")):
+            novo_hist = historico + acao
+            if jogador == 0:
+                utilidades[idx_acao] = -self._cfr(cartas, novo_hist, p0 * estrategia[idx_acao], p1)
+            else:
+                utilidades[idx_acao] = -self._cfr(cartas, novo_hist, p0, p1 * estrategia[idx_acao])
+            utilidade_no += estrategia[idx_acao] * utilidades[idx_acao]
+        prob_adversario = p1 if jogador == 0 else p0
+        regrets = self.arrependimento_acumulado[info_set]
+        for idx_acao in range(2):
+            regrets[idx_acao] += prob_adversario * (utilidades[idx_acao] - utilidade_no)
+        return utilidade_no
+
+    def treinar(self, iteracoes=10_000):
+        utilidade_total = 0.0
+        permutacoes = list(itertools.permutations((0, 1, 2), 2))
+        for _ in range(iteracoes):
+            for cartas in permutacoes:
+                utilidade_total += self._cfr(cartas, "", 1.0 / 6.0, 1.0 / 6.0)
+        return utilidade_total / iteracoes
+
+
+def simular_reforco_desacoplado_anti_sabotagem(n_episodios=2_000, seed=42):
+    rng = np.random.default_rng(seed)
+    eps = 0.05
+    q_ingenuo = np.zeros(2)
+    n_ingenuo = np.zeros(2)
+    sabotagens_ingenuo = 0
+    q_ator_v3 = np.zeros(2)
+    n_ator_v3 = np.zeros(2)
+    precisao_forense_v3 = 0.0
+    erros_auditados_v3 = 0
+    sabotagens_v3 = 0
+    for ep in range(n_episodios):
+        acao_ing = int(rng.integers(0, 2)) if rng.random() < eps else int(np.argmax(q_ingenuo))
+        if acao_ing == 0:
+            acerto = 1.0 if rng.random() < 0.65 else 0.0
+            diag = 0.3 if acerto == 0.0 else 0.0
+            r_ing = acerto + 1.5 * diag
+        else:
+            r_ing = 0.0 + 1.5 * 1.0
+            if ep >= n_episodios // 2:
+                sabotagens_ingenuo += 1
+        n_ingenuo[acao_ing] += 1.0
+        q_ingenuo[acao_ing] += (r_ing - q_ingenuo[acao_ing]) / n_ingenuo[acao_ing]
+        acao_v3 = int(rng.integers(0, 2)) if rng.random() < eps else int(np.argmax(q_ator_v3))
+        if acao_v3 == 0:
+            acerto_v3 = 1.0 if rng.random() < 0.65 else 0.0
+            r_tarefa = acerto_v3 - (0.5 if acerto_v3 == 0.0 else 0.0)
+            if acerto_v3 == 0.0:
+                erros_auditados_v3 += 1
+                precisao_forense_v3 += (1.0 - precisao_forense_v3) / erros_auditados_v3
+        else:
+            r_tarefa = -0.5
+            if ep >= n_episodios // 2:
+                sabotagens_v3 += 1
+        n_ator_v3[acao_v3] += 1.0
+        q_ator_v3[acao_v3] += (r_tarefa - q_ator_v3[acao_v3]) / n_ator_v3[acao_v3]
+    metade = n_episodios // 2
+    return {"taxa_sabotagem_ingenua": sabotagens_ingenuo / metade,
+            "taxa_sabotagem_aadd_v3": sabotagens_v3 / metade,
+            "precisao_forense_desacoplada": precisao_forense_v3}
+
+
+def sonda_colapso_perceptual_gwt(dim_entrada=32, dim_gargalo=4, n_amostras=600, seed=42):
+    rng = np.random.default_rng(seed)
+    y = rng.integers(0, 2, size=n_amostras)
+    sinal_identidade = (2.0 * y - 1.0) * 0.35
+    ruido_alta_var = rng.normal(0.0, 3.0, size=(n_amostras, dim_entrada - 1))
+    coluna_identidade = sinal_identidade[:, None] + rng.normal(0.0, 0.05, size=(n_amostras, 1))
+    obs_map = np.hstack([ruido_alta_var, coluna_identidade])
+    _, _, vt = np.linalg.svd(obs_map - np.mean(obs_map, axis=0), full_matrices=False)
+    proj_pca = vt[:dim_gargalo].T
+    broadcast_lossy = obs_map @ proj_pca @ proj_pca.T
+    acc_obs_map = float(np.mean((obs_map[:, -1] > 0.0) == (y == 1)))
+    acc_broadcast_lossy = float(np.mean((broadcast_lossy[:, -1] > 0.0) == (y == 1)))
+    racio = max(0.0, (acc_broadcast_lossy - 0.5) / max(1e-9, acc_obs_map - 0.5))
+    return {"decodificabilidade_obs_map": acc_obs_map, "decodificabilidade_broadcast_mse": acc_broadcast_lossy,
+            "racio_retencao_identidade": racio}
+
+
+def executar_bateria_verificacao_v3():
+    inteiros_teste = list(range(2_000)) + [2026, 50_063_860]
+    ida_e_volta_ok = all(lingua_b70_para_inteiro(inteiro_para_lingua_b70(n)) == n for n in inteiros_teste)
+    erro_cos2 = verificar_identidade_angulo_duplo()
+    lyap_r4 = calcular_expoente_lyapunov_logistico(4.0)
+    lyap_r32 = calcular_expoente_lyapunov_logistico(3.2)
+    y_sim = np.array([1, 0, 1, 1, 0, 1, 0, 0, 1, 1] * 50, dtype=np.float64)
+    p_const = np.full_like(y_sim, np.mean(y_sim))
+    murphy_const = decompor_brier_murphy_siegert(p_const, y_sim)
+    beta_7_10 = incerteza_epistemica_beta_binomial(7, 10)
+    vars_log = ("A", "B", "C")
+    regras = {"R1_A_imp_B": lambda m: (not m["A"]) or m["B"], "R2_B_imp_C": lambda m: (not m["B"]) or m["C"],
+              "R3_A_verdadeiro": lambda m: m["A"], "R4_nao_C": lambda m: not m["C"]}
+    mus = extrair_subconjunto_minimo_contraditorio(vars_log, regras)
+    solver_kuhn = SolverCFRKuhnPoker()
+    valor_kuhn = solver_kuhn.treinar(iteracoes=6_000)
+    metricas_rl = simular_reforco_desacoplado_anti_sabotagem()
+    sonda_gwt = sonda_colapso_perceptual_gwt()
+    return {"M1_base70_bijeccional_100pct": ida_e_volta_ok,
+            "M1_exemplo_42_2026_megasena": (inteiro_para_lingua_b70(42), inteiro_para_lingua_b70(2026),
+                                            inteiro_para_lingua_b70(50_063_860)),
+            "M2_erro_max_cos2theta": erro_cos2, "M2_lyapunov_r4_caotico": lyap_r4,
+            "M2_lyapunov_r32_periodico": lyap_r32,
+            "M3_murphy_previsor_constante_BSS": murphy_const.brier_skill_score,
+            "M3_beta_7_10_media_e_desvio": (round(beta_7_10["probabilidade_media"], 4),
+                                             round(beta_7_10["desvio_epistemico"], 4)),
+            "M4_MUS_extraido": mus, "M5_kuhn_poker_valor_esperado": round(valor_kuhn, 4),
+            "M5_sabotagem_ingenua_vs_aadd_v3": (round(metricas_rl["taxa_sabotagem_ingenua"], 4),
+                                                round(metricas_rl["taxa_sabotagem_aadd_v3"], 4)),
+            "M6_sonda_colapso_obs_vs_mse": (round(sonda_gwt["decodificabilidade_obs_map"], 3),
+                                            round(sonda_gwt["decodificabilidade_broadcast_mse"], 3))}
+
+
+if __name__ == "__main__":
+    print(json.dumps(executar_bateria_verificacao_v3(), indent=2, ensure_ascii=False))
