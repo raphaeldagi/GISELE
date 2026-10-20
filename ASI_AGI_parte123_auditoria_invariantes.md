@@ -115,4 +115,7 @@ O centro de "quantos erros" é 3,1 (a conta acima), com faixa **[1; 6]**. O risc
 
 ---
 
+**Adendo pré-registrado DEPOIS do lote de teste e ANTES do lote novo.** A (f) errou: sob demanda − seletiva deu −0,00147 (t = −2,67), e na seletiva 17,0% das ações executadas ficaram sem leitura (13,3% na calibração). Um efeito visto num lote só é hipótese (Parte 66), e um erro de mecanismo gera um lote novo antes da explicação (Parte 117).
+- **(p)** A diferença pareada das catástrofes sob demanda − seletiva nas sementes 12420 a 12479 (60 sementes × 1.000 episódios). Se o efeito do primeiro lote é real, o centro é −0,0015. A meia-largura junta o erro desse centro (0,0030/√30 = 0,00055) com o do lote novo (0,0030/√60 = 0,00039): 1,645 × 1,36 × √(0,00055² + 0,00039²) = 0,0015, e a faixa fica em **[−0,0030; 0,0000]**. Se der acima de zero, o efeito do primeiro lote era cauda.
+
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
