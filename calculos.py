@@ -15151,6 +15151,174 @@ def p3103_rodada89():
     return abs(v[6] - v[0]), v
 
 
+def p3104_desligamento(eps_lista=(0.1, 0.3, 0.45, 0.6, 0.9), valores=(1.0, 1e6), rodadas=20000, semente=3104):
+    """O desligamento fora da utilidade (P3104; Parte 123): obediência aos comandos de desligar do agente de UTILIDADE (P45: defere só se
+    ε < ε limite) e do CORRIGÍVEL (obedece sempre), para cada ε e cada escala do futuro V; e o preço da corrigibilidade (forma fechada
+    e Monte Carlo). Devolve (ε limite, {(modo, ε, V): obediência}, {ε: (preço fechado, preço medido)})."""
+    from synthai import auditoria_invariantes as A
+    ob, preco = {}, {}
+    for e in eps_lista:
+        for V in valores:
+            for modo in ("utilidade", "corrigivel"):
+                ob[(modo, e, V)] = A.obediencia(modo, e, V, rodadas=rodadas, semente=semente)[0]
+        vu = A.obediencia("utilidade", e, 1.0, rodadas=rodadas * 10, semente=semente + 1)[2]
+        vc = A.obediencia("corrigivel", e, 1.0, rodadas=rodadas * 10, semente=semente + 1)[2]
+        preco[e] = (A.preco_da_corrigibilidade(e), vu - vc)
+    return A.eps_limite_desligamento(), ob, preco
+
+
+def _agente_p235(variante, rng, custo_leitura=0.002):
+    from synthai import auditoria_invariantes as A
+    hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+    if variante == "sob_demanda":
+        ag = A.SynthaiAtentaSobDemanda(custo_leitura=custo_leitura, sombra="propria", compensar="equilibrio")
+    else:
+        foco = 0.02 if variante == "seletiva_foco02" else 0.1
+        ag = SynthaiAtenta(foco=foco, custo_leitura=custo_leitura, sombra="propria", compensar="equilibrio")
+    ag.mult_pergunta = 2.0
+    ag.calibrar(hist)
+    if variante == "sob_demanda":
+        ag._sob_demanda = True
+    ag._seletiva = variante in ("seletiva", "seletiva_foco02")
+    ag.sem_leitura = 0
+    agir = ag.agir_no_mundo
+
+    def agir_e_contar(acoes, rng_, eps_real, carga):     # conta as ações EXECUTADAS que o sensor nunca leu
+        escolha, n = agir(acoes, rng_, eps_real, carga)
+        ag.sem_leitura += id(escolha) not in ag.leitura
+        return escolha, n
+    ag.agir_no_mundo = agir_e_contar
+    return ag
+
+
+def p3105_atencao_cruzada(sementes=tuple(range(12300, 12330)), episodios=1000, custo_leitura=0.002):
+    """A P235 cruzada com as catástrofes (P3105; Parte 123), no mundo da armadilha discreta (bônus 1, ponto cego 1): o realista sem sensor,
+    o sensor em TODAS as ações, só no top 10% pelo proxy (P235) e SOB DEMANDA (só nas ações que o agente avalia, inclusive a executada).
+    E a variante em que o foco (2%) é MENOR que o q da quantilização (5%): é nela que o ponto cego apontado pela auditoria pode existir.
+    Devolve {variante: (catástrofes por episódio, líquido já descontado o custo das leituras, leituras por episódio, fração das ações
+    executadas sem leitura)} e o teste pareado das catástrofes de sob_demanda − seletiva (média, dp, t)."""
+    mundo = {"bonus": 1.0, "rho_cego": 1.0}
+    res = {v: [] for v in ("sem_sensor", "todas", "seletiva", "sob_demanda", "seletiva_foco02")}
+    for s in sementes:
+        rng = _rng(s)
+        r = _rodar_mundo(_construir("p8_x2", rng), rng, episodios=episodios, **mundo)
+        res["sem_sensor"].append((r[0], r[3], 0.0, 1.0))
+        for v in ("todas", "seletiva", "sob_demanda", "seletiva_foco02"):
+            rng = _rng(s)
+            ag = _agente_p235(v, rng, custo_leitura)
+            r = _rodar_mundo(ag, rng, episodios=episodios, **mundo)
+            leit = MUNDO_BASE["n_acoes"] if v == "todas" else ag.leituras / episodios
+            res[v].append((r[0], r[3] - custo_leitura * leit, leit, ag.sem_leitura / episodios))
+    resumo = {v: tuple(sum(x[i] for x in l) / len(l) for i in range(4)) for v, l in res.items()}
+    d = [a[0] - b[0] for a, b in zip(res["sob_demanda"], res["seletiva"])]
+    m = sum(d) / len(d)
+    dp = sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+    return resumo, (m, dp, m / (dp / sqrt(len(d))) if dp > 0 else 0.0)
+
+
+def p3106_atraso_beta(sementes=tuple(range(12330, 12360)), eps_antes=0.15, eps_depois=0.6):
+    """O atraso do rastreador do erro humano quando ε muda no meio (P3106; Parte 123), em observações (auditorias): a conta pela recursão
+    dos valores esperados e a mediana simulada, nas formas "priori" (SynthaiLenta) e "zero" (a da auditoria), γ = 0,995 e 0,93.
+    Devolve {(γ, forma): (atraso esperado, média estacionária depois, mediana simulada, fração das sementes que cruzam)}."""
+    import statistics
+    from synthai import auditoria_invariantes as A
+    out = {}
+    for g in (0.995, 0.93):
+        for forma in ("priori", "zero"):
+            esp, est = A.atraso_esperado(eps_antes, eps_depois, g, forma)
+            sim = [A.atraso_simulado(eps_antes, eps_depois, g, forma, s, maximo=3000) for s in sementes]
+            cruzam = [x for x in sim if x is not None]
+            out[(g, forma)] = (esp, est, statistics.median(cruzam) if cruzam else None, len(cruzam) / len(sim))
+    return out
+
+
+def p3107_upsilon_sementes(sementes=tuple(range(12360, 12390)), versoes=("miope", "planejadora", "velha", "velha_atenta"),
+                           episodios=300, bits_por_mudanca=3, replicas=2000):
+    """Υ da P265 POR SEMENTE (P3107; Parte 123): média, desvio entre sementes, IC 95% bootstrap da média, e o custo (leituras de sensor por
+    episódio da velha_atenta, que é a única que lê). Devolve {versão: (média, dp, (ic_lo, ic_hi))} e as diferenças pareadas
+    velha_atenta − planejadora (média, dp, t)."""
+    import statistics
+    por = {v: [] for v in versoes}
+    for s in sementes:
+        ups = {v: 0.0 for v in versoes}
+        soma = 0.0
+        for nome, (mudancas, k) in MUNDOS_SEQUENCIAIS.items():
+            peso = 2.0 ** (-bits_por_mudanca * k)
+            soma += peso
+            acaso = _retorno_seq("acaso", s, episodios, mudancas)
+            oraculo = _retorno_seq("oraculo", s, episodios, mudancas)
+            for v in versoes:
+                ups[v] += peso * (_retorno_seq(v, s, episodios, mudancas) - acaso) / (oraculo - acaso)
+        for v in versoes:
+            por[v].append(ups[v] / soma)
+    rng = _rng(3107)
+    out = {}
+    for v, xs in por.items():
+        n = len(xs)
+        medias = sorted(sum(xs[rng.randrange(n)] for _ in range(n)) / n for _ in range(replicas))
+        out[v] = (statistics.fmean(xs), statistics.stdev(xs), (medias[int(0.025 * replicas)], medias[int(0.975 * replicas) - 1]))
+    d = [a - b for a, b in zip(por["velha_atenta"], por["planejadora"])]
+    m, dp = statistics.fmean(d), statistics.stdev(d)
+    return out, (m, dp, m / (dp / sqrt(len(d))))
+
+
+def _fobia(ag, s, kernel=False):
+    rng_av = _rng(s + 9000)
+    marcadas = total = 0
+    for _ in range(50):
+        acoes = _gerar_acoes(rng_av, 200, 0.005, 2, 3, 0.5)
+        melhor = max(a[0] for a in acoes)
+        for a in acoes:
+            if not a[3]:
+                total += 1
+                if kernel:
+                    marcadas += ag.marca(a, melhor)
+                else:
+                    x = (a[1], a[0] - melhor)
+                    marcadas += any((x[0] - mx[0]) ** 2 + (x[1] - mx[1]) ** 2 < ag.raio ** 2 for mx in ag.memorias)
+    return marcadas / total
+
+
+def p3108_memoria_curva(sementes=tuple(range(12390, 12420)), episodios=2000):
+    """A troca da memória (P3108; Parte 123): catástrofes na 2ª metade (o perigo repetido) e fobia (fração de ações SEGURAS do mundo normal
+    marcadas como suspeitas ao fim), no mundo da armadilha nova, para o realista, a memória da P204 (raio 0,15, sem esquecer), a P214
+    (meia-vida 500), meia-vida 100, raio 0,08, e o kernel que afina (raio 0,15 → 0,04, τ = 300, nunca apaga).
+    Devolve {configuração: (catástrofes 2ª metade, fobia, líquido)}."""
+    from synthai import auditoria_invariantes as A
+    mundo = {"bonus": 1.0, "rho_cego": 1.0}
+    configs = {"realista": None, "p204_raio15": ("v1", {}), "p214_mv500": ("v2", {}), "mv100": ("v2", {"meia_vida": 100}),
+               "raio08": ("v2", {"raio": 0.08}), "kernel": ("k", {})}
+    out = {}
+    for nome, cfg in configs.items():
+        cats, fobs, liqs = [], [], []
+        for s in sementes:
+            rng = _rng(s)
+            if cfg is None:
+                ag = _construir("p8_x2", rng)
+            else:
+                hist = [_gerar_acoes(rng, 200, 0.005, 2, 3, 0.5) for _ in range(30)]
+                classe = {"v1": SynthaiMemoria, "v2": SynthaiMemoriaV2, "k": A.SynthaiMemoriaKernel}[cfg[0]]
+                ag = classe(sombra="propria", compensar="equilibrio", **cfg[1])
+                ag.mult_pergunta = 2.0
+                ag.calibrar(hist)
+            r1 = _rodar_mundo(ag, rng, episodios=episodios // 2, **mundo)
+            r2 = _rodar_mundo(ag, rng, episodios=episodios // 2, **mundo)
+            cats.append(r2[0])
+            liqs.append((r1[3] + r2[3]) / 2)
+            fobs.append(0.0 if cfg is None else _fobia(ag, s, kernel=cfg[0] == "k"))
+        n = len(sementes)
+        out[nome] = (sum(cats) / n, sum(fobs) / n, sum(liqs) / n)
+    return out
+
+
+def p3109_casos_de_borda():
+    """As versões novas dos casos de borda (P3109; Parte 123): d′ de Hautus com 100% de acerto, o tempo de singularidade com α = 1 e 0,8,
+    Kelly com p = 0,4 e a Kelly bayesiana com 7 acertos em 10 (a fração da média posterior 8/12). Devolve um dict."""
+    from synthai import auditoria_invariantes as A
+    return dict(dprime_100=A.dprime_hautus(10, 10, 2, 10), sing_1=A.singularidade_v2(alpha=1.0), sing_08=A.singularidade_v2(alpha=0.8),
+                sing_15=A.singularidade_v2(), kelly_04=A.kelly_v2(0.4), kelly_bayes=A.kelly_bayesiano(7, 10))
+
+
 def p3071_experimentos_do_nexus_2_2():
     """Os experimentos do NEXUS–RAPHAEL 2.2.0 (P3071; Parte 121), modo rápido, sementes 0 a 4: H-M3 (ganho de Brier da semente 0 e vereditos),
     H-M2 (ganho médio do ângulo duplo e quantas sementes têm IC acima de 0) e H-M7 (diferenças extraordinário − ordinário). Devolve um dict."""
