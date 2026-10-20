@@ -1,0 +1,54 @@
+"""SYNTHAI-GPT 1.0.0 — um transformer decodificador (arquitetura do tipo GPT) escrito do zero em Python puro.
+
+O QUE É
+  Um modelo de linguagem autorregressivo p(x_{t+1} | x_≤t), com a mesma arquitetura da família GPT-2
+  (embeddings de ficha e de posição, blocos pré-LayerNorm com atenção causal de várias cabeças e MLP com GELU,
+  conexões residuais, LayerNorm final, softmax), implementado sem numpy, sem PyTorch e sem nenhuma dependência:
+  só a biblioteca padrão do Python 3.10+. O gradiente é escrito à mão e conferido por diferenças finitas.
+  Vem com um laboratório de métodos (NEXUS-RAPHAEL 3.0.0) e com pesos pré-treinados no dicionário WordNet.
+
+COMO USAR
+  python3 SYNTHAI_GPT.py teste                                   # todos os testes (motor + laboratório)
+  python3 SYNTHAI_GPT.py gpt ficha    --pesos synthai_gpt_pesos.json
+  python3 SYNTHAI_GPT.py gpt gerar    --pesos synthai_gpt_pesos.json --texto "a small " --temperatura 0.7
+  python3 SYNTHAI_GPT.py gpt proximo  --pesos synthai_gpt_pesos.json --texto "the act of "
+  python3 SYNTHAI_GPT.py gpt avaliar  --pesos synthai_gpt_pesos.json --dados pasta/dados
+  python3 SYNTHAI_GPT.py gpt treinar  --corpus meu_texto.txt --pesos novo.json --passos 2000 --processos 4
+        (opções: --tokenizador caracteres|bpe, --contexto, --d, --camadas, --cabecas, --lote, --lr;
+         o treino grava checkpoints e, rodado de novo com o mesmo --pesos, continua de onde parou)
+  python3 SYNTHAI_GPT.py lab kuhn | leduc | velha | sat | calibracao | bandidos | megasena3 | caos | experimento ...
+
+  Em código:
+      g = SynthaiGPT.carregar("synthai_gpt_pesos.json")
+      print(g.gerar("a person who ", 120, temperatura=0.7, semente=1))
+
+COMPONENTES (cada um com teste em TestesGPT, TestesExtensao ou TestesNexus)
+  Motor ............ ModeloGPT (ida e volta à mão), ConfigGPT, AdamW (decaimento desacoplado, recorte da
+                     norma, aquecimento + cosseno), treino em lote repartido entre processos locais,
+                     checkpoint com estado do otimizador e retomada idêntica ao treino contínuo.
+  Tokenizadores .... caracteres; BPE (byte-pair encoding) treinável, com ida e volta exata.
+  Geração .......... gulosa, temperatura, top-k, top-p (núcleo), penalidade de repetição, semente fixa.
+  Avaliação ........ bits por caractere em glosas reservadas, sempre ao lado de uma linha de base n-grama
+                     (Witten-Bell) treinada no mesmo texto e da uniforme.
+  Pesos ............ JSON com selo SHA-256 (nunca pickle: carregar pesos não executa código).
+  Dados ............ WordNet 3.0 (en) e OpenWordNet-PT (pt) lidos de dados/*.tsv.gz; ou qualquer .txt.
+  Laboratório ...... estatística exata, álgebra linear, calibração, bandidos, CFR/MCCFR (Kuhn e Leduc),
+                     simplex exato, SAT (DPLL + Tseitin), Hamming, CRC-32, Huffman, LZ78, dinâmica caótica.
+
+NÚMEROS MEDIDOS DOS PESOS DISTRIBUÍDOS
+  {NUMEROS}
+
+LIMITES (escritos para que ninguém compre o que isto não é)
+  - É um modelo pequeno, treinado em CPU, para entender, ensinar, auditar e estender a arquitetura GPT.
+    Não é um assistente de conversa nem compete com modelos de bilhões de parâmetros; o texto gerado imita
+    o estilo de definições de dicionário e não é fonte de fatos.
+  - Em Python puro, o treino custa ~0,05 s por janela de 32 fichas por núcleo nesta configuração.
+  - "GPT" aqui descreve a arquitetura (Generative Pre-trained Transformer). O produto não tem relação com a
+    OpenAI nem com os produtos dela.
+  - Nenhum acesso à rede, nenhum subprocesso de si mesmo, nenhum eval/exec (conferido por teste na árvore sintática).
+
+LICENÇAS DOS DADOS (obrigatório reproduzir ao distribuir pesos treinados neles)
+  WordNet 3.0 Copyright 2006 by Princeton University. All rights reserved. (licença em dados/WORDNET_LICENSE.txt:
+  uso, cópia, modificação e distribuição permitidos sem taxa, mantido o aviso; o nome de Princeton não pode ser usado
+  em publicidade.)  OpenWordNet-PT: Creative Commons Attribution 4.0 (CC BY 4.0).
+"""

@@ -7,6 +7,7 @@ def main():
     modulo, dados, saida, passos = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4])
     spec = importlib.util.spec_from_file_location("sg", modulo)
     N = importlib.util.module_from_spec(spec)
+    sys.modules["sg"] = N
     spec.loader.exec_module(N)
     texto, licenca = N.Corpus.glosas("wordnet", pasta=dados)
     treino, teste = N.Corpus.dividir(texto)
