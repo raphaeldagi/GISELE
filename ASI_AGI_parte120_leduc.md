@@ -216,4 +216,4 @@ A pendência que fica é se o MCCFR externo no Leduc, com o LCG, também dá IGU
 
 Southey, F. et al. (2005), *Bayes' Bluff: Opponent Modelling in Poker* (as regras do Leduc). Zinkevich, M. et al. (2007), *Regret Minimization in Games with Incomplete Information* (CFR). Lanctot, M. et al. (2009), *Monte Carlo Sampling for Regret Minimization in Extensive Games* (MCCFR). As três são citadas de memória e não foram relidas nesta sessão, porque o limite semanal de busca na web acabou. Nenhum número delas é usado como identidade.
 
-➡ Continua na [Parte 121 — O NEXUS–RAPHAEL 2.2.0](ASI_AGI_parte121_nexus_v2_2.md) (escrita antes desta) e na Parte 122.
+➡ Continua na [Parte 121 — O NEXUS–RAPHAEL 2.2.0](ASI_AGI_parte121_nexus_v2_2.md) (escrita antes desta) e na [Parte 122 — O texto NEXUS–RAPHAEL v3.0](ASI_AGI_parte122_nexus_v3_0.md).

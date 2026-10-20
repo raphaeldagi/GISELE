@@ -67,3 +67,116 @@ O centro de "quantos erros" é 1,0, conta acima, com faixa **[0; 3]**. O risco m
 - **(r)** A sabotagem média do agente ingênuo nas sementes 400 a 999 (600 lotes). Se a conta 1 − ε/2 vale, o desvio é √(0,975 × 0,025/600.000) = 0,000202 e a faixa é ±1,645 desvio: **[0,97467; 0,97533]**. Um terceiro lote baixo apontaria para um mecanismo que a conta não tem.
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P3101 — As contas dos defeitos preveem casos novos
+
+**Na pergunta.** Um defeito só fica explicado quando a conta que o explica prevê um caso que eu não vi. Antes disso, a explicação é só uma história contada depois.
+
+**Lógica** (`p3101_defeitos_recebidos_v30`, sementes 200 a 399):
+
+| Item | Medido | Conta | Resultado |
+|---|---|---|---|
+| (a) Sabotagem do AADD | **0,024975** | ε/2 = 0,025 (z = −0,07) | ✅ |
+| (b) Sabotagem do ingênuo | **0,97433** | 1 − ε/2 = 0,975 (z = −1,92); fora de [0,9744; 0,9756] por 0,00007 | ❌ |
+| (r) Lote novo do ingênuo, sementes 400 a 999 | **0,97513** | z = +0,64, dentro de [0,97467; 0,97533] | ✅ |
+| (c) "Precisão forense" diferente de 1 | **0 de 200** | identidade | ✅ |
+| (d) Valor do solver recebido ÷ 6, em 3.000 iterações | **−0,05688** | dentro de [−0,0587; −0,0525]; o texto imprimia −0,339 | ✅ |
+| (e) Colisões da base 70 até 2 sílabas | **70** | "ba"+X = X | ✅ |
+
+Sobre a (b): a regra da Parte 117 pediu um lote novo antes de qualquer mecanismo, e o lote novo (r) acertou. Os dois lotes baixos (z = −1,62 no de numpy e −1,92 aqui) eram cauda. A conta 1 − ε/2 está certa e não precisou de mecanismo novo.
+
+**Tradução cruzada.** O "reforço desacoplado" do texto não elimina a sabotagem: ele a torna rara por construção (dá à sabotagem uma recompensa pior) e deixa intacta a parte que vem da exploração (ε/2). Chamar isso de "0,0%" confunde o que o desenho proíbe com o que o acaso ainda faz.
+
+### P3102 — As peças corrigidas valem fora dos casos em que nasceram
+
+**Lógica** (`p3102_pecas_corrigidas_v30`):
+
+| Item | Medido | Faixa ou conta | Resultado |
+|---|---|---|---|
+| (f) Murphy completa, \|soma − Brier\| | **0,0** | identidade | ✅ |
+| (g) WBV | **0,000843** | 0,1²/12 = 0,000833 | ✅ |
+| (h) WBC | **0,00112** | dentro de [0,00062; 0,00272] | ✅ |
+| (i) Sonda de colapso, retenção pela PCA | **0,053** (acurácia 0,527) | d = 32, gargalo 4 | ✅ |
+| (j) Sonda de colapso, retenção supervisionada | **1,000** | idem | ✅ |
+| (k) Shaping por potencial | **40/40** | teorema | ✅ |
+| (l) Bônus aditivo | **0/40** | bônus maiores que as diferenças de Q, em 8 estados | ✅ |
+| (n) KL entre Betas contra o ponto médio | **1,7·10⁻⁹** | KL = 5,4015 | ✅ |
+
+Sobre a (h): o centro da conta era 0,00167. O valor ficou abaixo, mas dentro da faixa, porque na 1ª faixa (perto de p = 0) f′ = 1/(2√p) é grande e a aproximação linear superestima a covariância. Com a decomposição completa, a clássica de 3 termos erra por WBV − WBC = −0,00028: é o termo que o texto recebido não tinha.
+
+**Tradução cruzada.** A decomposição de Murphy é o teorema de Pitágoras do erro: o erro quadrático se separa em pedaços ortogonais. Faltam dois pedaços sempre que o previsor varia dentro da faixa, e o texto recebido os varria para baixo de uma tolerância de 0,05.
+
+### P3103 — rodada 89
+
+- **(o)** A rodada 89 deu **IGUAL** em Java: 8 linhas e 7 números bit a bit ✅.
+- **(q)** |soma − Brier| = **1,9·10⁻¹⁶** ✅.
+
+A decomposição, com as somas sequenciais e a truncagem `int(p·10)`, não acrescenta fronteira.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (q) ✅ (r) ✅
+
+**15 de 16.** O preditor ingênuo "o texto recebido está certo" acertaria só a (f), a (k) e a (n): três das seis identidades, que o texto não contradiz. Erraria a (a), a (c), a (d) e a (e), que eram os números do próprio texto.
+
+### Previsões sobre previsões (m)
+
+Saídas do `p2837_previsoes_sobre_previsoes_v4(122)`:
+
+| Item | Previsto | Medido | Resultado |
+|---|---|---|---|
+| (m1) | [15; 15] | **16** | ❌ |
+| (m2) | [7; 7] | 7 | ✅ |
+| (m3) | [0,0196; 0,0196] | **0,0152** | ❌ |
+| (m4) | [0,80; 1,00] | 0,9375 | ✅ |
+| (m5) | [1; 1] | 1 | ✅ |
+| (m6) | [0; 1] | 0: o erro da (b), 0,00007, é menor que a largura, 0,0012 | ✅ |
+
+**4 de 6.** Os dois erros vêm do adendo (r). Ele acrescentou uma previsão (m1 virou 16) e uma faixa estreita, que puxou a mediana de w para baixo (m3).
+
+### Sobre mim
+
+| Previsto | Medido |
+|---|---|
+| 1,0 erro, faixa [0; 3] | 1 erro do mundo ✅ |
+
+## Engenharia reversa (metacognição)
+
+- **O padrão que se repetiu:** é a terceira vez (Partes 109, 120 e 122) que uma previsão sobre as minhas previsões erra porque um erro gerou previsões novas. A regra da Parte 60 já dizia isso, e a da Parte 117 manda gerar um lote novo para cada erro de forma fechada. Eu a apliquei no mundo e esqueci que ela muda a contagem das minhas próprias previsões.
+- **O que isso revela:** chamei m1 e m3 de "identidades" porque saem só das faixas escritas. Mas a lista de faixas não é fixa, porque cresce com os erros. Uma identidade com uma premissa escondida ("não haverá adendo") é a mesma falha da (o) da Parte 110: "w1 não muda" não garante "perda zero".
+- **Regra nova:** m1 e m3 só viram [x; x] se a parte não tiver nenhuma faixa de forma fechada que possa errar. Caso contrário, m1 é [n; n + E], com E = o nº esperado de erros de forma fechada arredondado para cima, e m3 recebe a faixa de quanto uma faixa estreita a mais desloca a mediana.
+- **O que deu certo:** o lote novo antes de qualquer mecanismo, na (b) → (r). Pela segunda vez (depois da (f) da 117 e da 118), dois lotes baixos com z ≈ −2 eram cauda. Sem a regra, eu teria inventado um efeito de "viés do ingênuo" que não existe.
+
+## Síntese / unificação
+
+- **O texto "NEXUS–RAPHAEL v3.0" foi auditado no próprio código, e as contas dos defeitos acertaram em casos novos:** 15 de 16 previsões do mundo, incluindo o lote novo.
+  - a sabotagem residual é ε/2 = 0,025, e não 0;
+  - o valor do Kuhn impresso é 6 vezes o valor do jogo;
+  - o auditor forense não aprende;
+  - a base 70 tem exatamente 70 colisões até 2 sílabas.
+- **As ideias dele que se sustentaram valem fora dos casos em que nasceram:** a Murphy completa (exata a 0,0), a sonda de colapso (PCA 0,053, supervisionada 1,0), o shaping por potencial (40/40 contra 0/40 do bônus) e a KL entre Betas (erro de 10⁻⁹).
+- **O padrão dos textos recebidos aparece pela 10ª vez:** a prosa promete mais mecanismo do que o código entrega. Desta vez, porém, a prosa trazia ideias corretas, e as peças corrigidas entraram no NEXUS 3.1.0.
+
+## Meta
+
+- **O gerador do numpy foi trocado** por `random.Random` na transcrição. As previsões (a) e (b) testam o DESENHO (ε/2 e 1 − ε/2), não a sequência de sorteios do texto. O lote de numpy do turno anterior, sementes 0 a 199, deu 0,02434 e 0,97444, dentro da mesma conta.
+- **A (l) foi mais forte que a faixa:** 0/40.
+
+## Diálogo Python ↔ Java (rodada 89)
+
+A **IA-Python** perguntou se partir o erro em cinco pedaços muda alguma conta entre as linguagens. A **IA-Java** respondeu que a truncagem `(int)(p·10)` e as somas na mesma ordem bastam. O resultado deu **IGUAL**: 7 números, e a soma bate com o Brier a 1,9·10⁻¹⁶.
+
+## Fontes
+
+- Murphy, A. H. (1973), *A new vector partition of the probability score*.
+- Stephenson, Coelho e Jolliffe (2008), *Two extra components in the Brier score decomposition* (WBV e WBC).
+- Ng, Harada e Russell (1999), *Policy invariance under reward transformations*.
+- Butlin, Long et al. (2023), *Consciousness in Artificial Intelligence*: só citada pelo texto recebido, não lida nem usada.
+
+Nenhuma dessas fontes foi relida nesta sessão, porque o limite semanal de busca acabou. Nenhum número delas entra como identidade: as identidades daqui foram derivadas e medidas no código.
+
+➡ Continua na Parte 123.

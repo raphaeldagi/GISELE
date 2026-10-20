@@ -65,7 +65,7 @@ class TesteParte120(unittest.TestCase):
 
     def test_p1961_com_parte_120(self):
         import calculos
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 122))))
         self.assertEqual(por[120], (8, 9))
         self.assertEqual((ok, tot), (282, 309))
 

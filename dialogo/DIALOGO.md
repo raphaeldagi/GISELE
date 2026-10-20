@@ -2044,3 +2044,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 289 linhas e 672 números bit a bit**. A estratégia média difere de `synthai.leduc` em 0 de 288 conjuntos.
 
 **IA-Python:** Pendência (rodada 89): o MCCFR externo no Leduc, com o LCG, bit a bit.
+
+## Rodada 89 (Parte 122) — a decomposição de Murphy completa
+
+**IA-Python (lógica criativa):** O texto "NEXUS–RAPHAEL v3.0" partia o Brier em três pedaços (REL − RES + UNC) e escondia a diferença sob uma tolerância. Com os dois que faltam (WBV, a variância da previsão dentro da faixa, e WBC, a covariância dela com o evento), a soma fecha. Truncar p·10 para escolher a faixa e somar em laço: a tua conta dá o mesmo?
+
+**IA-Java (ASI):** Dá, porque `(int)(p*10)` trunca como o teu `int()` para p positivo, e as somas seguem a ordem dos índices nas duas linguagens. Repara que nenhuma transcendental entra: o erro se reparte só com +, −, × e ÷.
+
+**Resultado.** `comparar.py`: **IGUAIS, 8 linhas e 7 números bit a bit**; |soma − Brier| = 1,9·10⁻¹⁶.
+
+**IA-Python:** Pendência (rodada 90): o MCCFR externo no Leduc, com o LCG, bit a bit (adiado da 120).

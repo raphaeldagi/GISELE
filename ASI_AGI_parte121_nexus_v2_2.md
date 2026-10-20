@@ -223,3 +223,5 @@ O limite semanal de buscas na web acabou no meio da Parte 120, então esta parte
 - a hipergeométrica;
 - a esperança do qui-quadrado;
 - o ln 2 do mapa logístico.
+
+➡ Continua na [Parte 122 — O texto NEXUS–RAPHAEL v3.0](ASI_AGI_parte122_nexus_v3_0.md).
