@@ -95,3 +95,131 @@ Dois testes novos, nas sementes 100 a 1.099 (1.000 sementes nunca usadas):
 ---
 
 <!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P3071 — Os experimentos chegam aonde o desenho deixa?
+
+**Na pergunta.** Um experimento honesto é aquele que PODE dar o resultado contrário. A pergunta não é se o veredito saiu certo, e sim quais vereditos o desenho permite.
+
+**Lógica.**
+- **H-M3-001 (taxa condicional contra global).**
+  - O ganho de Brier na semente 0 é **0,1215** ✅ (a), contra 0,1225 da conta.
+  - Mas só **4 de 5** sementes dão ACEITA: **(b) ❌**. A semente 3 tem limite inferior −0,016.
+  - O erro foi meu, de conta: "passa nas cinco" pede P(passa)⁵, e eu escrevi [5; 5] sem fazê-la. Pela normal, 0,969⁵ = 0,85.
+  - Em 1.000 sementes novas, a taxa de ACEITA por semente é **0,93**, e não 0,969: **(r) ❌**, por z = −7,1. A minha aproximação normal estava otimista. Com 0,93 por semente, "ACEITA nas cinco" acontece 0,93⁵ = **70%** das vezes, e o critério do cartão ("limite inferior > 0 em cada seed") rejeita um efeito real e grande (ganho de 0,12 em Brier) 30% das vezes.
+  - **Hipótese (1 lote), sem mecanismo ainda:** a distribuição das diferenças tem dois pontos (+0,23 e −0,47), é assimétrica, e o percentil do bootstrap com 60 pontos fica mais baixo que o da normal. O ruído das taxas estimadas no treino também conta. Fica para um teste que separe as duas causas.
+- **H-M2-001 (ângulo duplo).** O ganho médio é **0,229** ✅ (c), e o IC fica acima de zero nas **5** sementes ✅ (d). O alvo foi construído com a simetria que cos 2θ separa, e o cartão diz isso no campo "riscos".
+- **H-M7-001 (reforço extraordinário).**
+  - A diferença é **0,0 EXATO em 4 sementes**: os dois tipos escolhem o mesmo braço, e o avaliador reservado sorteia os mesmos 200 números para os dois.
+  - Na semente 1, o extraordinário travou no braço RUIM (−0,245): **(j) ❌**. As primeiras falhas valiam −1, e o braço bom só voltou pela exploração (60 de 1.000 vezes, q₀ = 0,147 no fim contra 0,55 verdadeiro).
+  - **O travamento é RARO e igual nos dois:** nas 1.000 sementes novas, **0,000** contra **0,000** ✅ (q). A semente 1 foi um caso de menos de 1 em 1.000.
+  - **A conclusão sobre o desenho:** H-M7 só sai do "INCONCLUSIVA" quando um dos dois trava no braço ruim, e isso acontece em menos de 0,1% das sementes. O critério "ganho positivo nas cinco seeds" quase nunca pode ser satisfeito. O experimento mede o acaso do travamento, não o valor do diagnóstico.
+
+**Tradução cruzada.** Três desenhos, três relações com a verdade.
+- **H-M3** pergunta uma coisa verdadeira com um critério severo demais: rejeita o real 30% das vezes.
+- **H-M2** pergunta uma coisa que o estímulo já responde.
+- **H-M7** pergunta uma coisa que o desenho não pode responder.
+
+É a diferença de Popper entre uma hipótese refutável e uma que o protocolo blinda, mas aqui a blindagem é involuntária: os dois tratamentos compartilham o avaliador e convergem para o mesmo braço.
+
+### P3072 — As contas da Mega-Sena
+
+**Lógica.**
+- **As probabilidades combinatórias estão certas:** C(60, 6) = **50.063.860**.
+- **As médias de acertos:**
+  - aleatória **0,5867** ✅ (e), z = −0,33;
+  - "quentes" (as 6 mais sorteadas nos últimos 100) **0,6267** e "frias" **0,6233**: tudo dentro do acaso.
+- **A diferença quentes − aleatória:** **+0,040** ✅ (f), com IC [−0,073; 0,153], INCONCLUSIVA como deve ser em sorteios uniformes.
+- **O qui-quadrado das frequências:** **57,25** ✅ (g), contra a esperança fechada **54**, e não 59. Cada dezena está em 1/10 dos sorteios, então cada termo vale em média 1 − 1/10. O arquivo deixa o p-valor em branco ("sem teste p"), e é bom que deixe: a referência χ²₅₉ estaria errada.
+- **Dois defeitos reais no IC**, ambos por usar ÍNDICES FIXOS [24] e [974] em vez de quantis do número de réplicas:
+  - com `bootstrap = 500` (a configuração aceita), **IndexError** ✅ (h);
+  - com `bootstrap = 2.000`, o "limite superior" (0,0367) fica **abaixo da mediana** (0,04) ✅ (i), um intervalo que exclui a própria estimativa.
+  - A correção (`ic_por_quantis`) usa os índices 49 e 1.949 para 2.000 réplicas.
+
+### P3073 — Jogos e dinâmica
+
+**Lógica.**
+- **Os tabuleiros alcançáveis do jogo da velha:** **5.478** pela busca do arquivo e **5.478** pela minha contagem por camadas ✅ (k).
+- **O valor do jogo:** **0** (empate) pela negamax com poda alfa-beta ✅ (l). O controle passa: com "XX.OO....", o X ganha (valor 1).
+- **O expoente de Lyapunov em r = 4:** **0,69310**, a 5·10⁻⁵ de ln 2 ✅ (n).
+
+As contas que o arquivo marca como [MEDIDO] conferem.
+
+### P3074 — rodada 87
+
+**Lógica.** As duas logísticas do ângulo duplo, com o exp próprio, em Python × Java: **IGUAIS, 3 linhas e 8 números bit a bit** ✅ (o).
+- Só com u (o papel de cos θ), o Brier é **0,203**. Com 2u² − 1, cai para **0,021**, e o peso do atributo duplo é **7,43**.
+- O ângulo duplo entra como 2u² − 1, a identidade, sem chamar cos: não acrescenta fronteira. O verificador confere 87 rodadas com par Python/Java (P2984).
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ❌ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (q) ✅ (r) ❌. Parte 121: **16 testes, 3 erros**. Acumulado (mundo), sem a Parte 120 que segue aberta: **229 erros em 959 testes**. Calibração (P1961, Partes 80–121 sem a 120): **274/300 = 0,913**.
+
+### Previsões sobre previsões (m)
+
+Régua: P2837 (leitor v4; conta as 2 do adendo).
+
+| | faixa | medido | |
+|---|---|---|---|
+| (m1) | [14; 16] | 16 | ✅ |
+| (m2) | [4; 7] | 5 | ✅ |
+| (m3) | [0; 0,25] | 0,012 | ✅ |
+| (m4) | [0,70; 1,00] | 0,81 | ✅ |
+| (m5) | [0; 1] | 0 | ✅ |
+| (m6) | [0; 2] | 3 | ❌ |
+
+Previsões sobre previsões: **5 de 6**. As três surpresas: (b) e (j), faixas de largura zero erradas por 1, e (r), errada por 0,027 com largura 0,024.
+
+### Sobre mim
+
+**"[0; 3] erros, centro 1,4": ✅ (3, no limite).** A regra da Parte 117 pôs o centro no lugar certo de ordem de grandeza. Os três erros vieram todos de faixas de MECANISMO (o centro previa 1,0 delas) e nenhum de forma fechada.
+
+## Engenharia reversa (metacognição)
+
+**O padrão: escrevi [k; k] para "acontece em todas as unidades" sem multiplicar as probabilidades.** (b) e (j) são a mesma forma de erro: uma propriedade que vale com probabilidade alta por semente virou uma identidade sobre 5 sementes. A Parte 110 já tinha a regra "[x; x] só com a identidade escrita ao lado", e eu a contornei chamando de "mecanismo" o que era uma probabilidade. **Significado:** eu leio "quase sempre" como "sempre" quando o caso individual parece óbvio (o ganho é grande, os braços são bem separados). A conta pⁿ derruba essa intuição: 0,97⁵ = 0,85. **Regra:** uma previsão sobre "todas as k unidades" escreve ao lado P(uma unidade) e P(todas) = pᵏ. A faixa [k; k] só existe se pᵏ ≥ 0,90; senão, a faixa é a binomial.
+
+**O segundo: a aproximação normal de um percentil de bootstrap com 60 pontos assimétricos foi otimista por z = −7.** Não é ruído. É uma conta que eu não fiz: o bootstrap percentil de uma média de dois valores (+0,23 e −0,47) tem cauda inferior mais pesada que a normal. Fica como hipótese, com o teste que separa as causas escrito nas pendências. **Significado:** "aproximadamente normal" é uma suposição de forma (regra da Parte 31) que eu não verifiquei. Com n = 60 e um ponto em −0,47, ela não vale.
+
+**O terceiro, sobre o texto recebido: pela primeira vez, ele é melhor do que a prosa dele promete.** Nas Partes 72 a 116, os textos prometiam mais mecanismo do que o código entregava. Este arquivo diz "não é AGI", liga a rede só com uma flag, registra os critérios antes, marca os dados como sintéticos e admite nos riscos que o estímulo favorece o efeito. Os defeitos medidos são de DESENHO (H-M7 não pode aceitar; o critério de H-M3 rejeita o real 30% das vezes) e de INDEXAÇÃO (o IC da Mega-Sena), não de honestidade. **Significado:** a série de auditorias mudou de objeto. A pergunta deixa de ser "o código faz o que diz?" e passa a ser "o experimento pode dar o resultado contrário?".
+
+## Síntese / unificação
+
+O NEXUS–RAPHAEL 2.2.0 anexado foi arquivado intacto (`externos/nexus_raphael_v2_0/`) e medido no próprio código, transcrito em `synthai/nexus_v2_2.py`.
+
+**O que confere:**
+- os tabuleiros do jogo da velha (5.478, por dois caminhos) e o valor do jogo (0);
+- o expoente de Lyapunov (ln 2 a 5·10⁻⁵);
+- as probabilidades da Mega-Sena e as médias de acertos (o acaso);
+- o ganho do ângulo duplo (0,229, em 5 de 5 sementes).
+
+**O que não se sustenta:**
+- **H-M3:** o critério "IC > 0 em cada uma das 5 sementes" rejeita um efeito grande e real em 30% das vezes (0,93⁵ = 0,70).
+- **H-M7:** o desenho não pode aceitar, porque os dois tratamentos compartilham o avaliador e convergem para o mesmo braço (0,0 exato em 4 de 5 sementes; travamento em menos de 0,1%).
+- **O IC da Mega-Sena:** índices fixos [24] e [974] quebram com 500 réplicas (IndexError) e põem o "limite superior" abaixo da mediana com 2.000.
+- **O qui-quadrado:** tem esperança 54 (60 × 0,9), não 59.
+- **No texto colado:** `digest[:4]` fatia o método e levanta TypeError.
+
+Rodada 87: a logística do ângulo duplo, IGUAL (87 rodadas). 13/16 do mundo, 5/6 (m), calibração **0,913** (sem a Parte 120, aberta).
+
+## Meta
+
+**Confiança.**
+- **Alta:** as identidades (h, i, k, l, o) e as formas fechadas (a, e, f, g).
+- **Média:** a afirmação sobre H-M7. O travamento medido é raro nas duas versões (0/1.000); que ele torne o critério quase impossível de satisfazer é uma conta (o critério pede ganho > 0 em todas as 5), mas a frequência real de "ganho > 0" não medi diretamente.
+
+**Onde pode estar errado.** As transcrições reproduzem o comportamento das funções que eu li, não o arquivo executado. Uma diferença de transcrição mudaria os números. Mitigação: as transcrições usam a mesma ordem de sorteios e as mesmas constantes, e as contas fechadas batem com elas.
+
+## Diálogo Python ↔ Java (rodada 87)
+
+Ver `dialogo/DIALOGO.md`: as duas logísticas do ângulo duplo (exp próprio, 300 passos) são **IGUAIS**, com 3 linhas e 8 números bit a bit.
+
+## Fontes
+
+O limite semanal de buscas na web acabou no meio da Parte 120, então esta parte não cita fonte externa nova. As contas são todas fechadas e conferidas por código:
+- a combinatória da Mega-Sena;
+- a hipergeométrica;
+- a esperança do qui-quadrado;
+- o ln 2 do mapa logístico.

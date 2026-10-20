@@ -145,3 +145,7 @@ Ver `dialogo/DIALOGO.md`: a amostragem externa com o LCG é **IGUAL**, com 4 lin
 ## Fontes
 
 - A amostragem externa e a média estocástica: [Lanctot, Waugh, Zinkevich e Bowling, "Monte Carlo Sampling for Regret Minimization in Extensive Games", NIPS 2009](https://proceedings.neurips.cc/paper/2009/hash/00411460f7c92d2124a67ea0f4cb5f85-Abstract.html) (lida na Parte 118, nesta mesma sessão) e a [versão corrigida no laboratório de Bowling](https://webdocs.cs.ualberta.ca/~bowling/publications/b2hd-09nips-mccfr-w-trws.html).
+
+---
+
+➡ Continua na [Parte 121 — O NEXUS–RAPHAEL 2.2.0](ASI_AGI_parte121_nexus_v2_2.md) (a Parte 120, o pôquer Leduc, segue aberta).

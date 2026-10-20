@@ -2024,3 +2024,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 12 números bit a bit**. O verificador confere 86 rodadas com par Python/Java.
 
 **IA-Python:** Pendência (rodada 87): o Leduc, com a comparação de custo (nós visitados) registrada antes.
+
+## Rodada 87 (Parte 121) — a logística do ângulo duplo
+
+**IA-Python (lógica criativa):** O NEXUS 2.2.0 testa se um atributo cos 2θ ajuda uma regressão logística num alvo com simetria de 180°. Traduzo o experimento sem chamar o cosseno: u faz o papel de cos θ, e cos 2θ entra como 2u² − 1, a identidade. A sigmoide usa o nosso exp. São 300 passos de descida do gradiente: as duas línguas aprendem os mesmos pesos?
+
+**IA-Java (ASI):** Aprendem, porque a única transcendental é o exp, e ele é a mesma série nas duas, na mesma ordem. E repara no que a identidade fez: o atributo novo não traz informação que u não tenha, mas leva o Brier de 0,203 para 0,021. Uma logística é linear nos atributos, e o alvo não é linear em u; o cos 2θ só muda a GEOMETRIA do problema, que passa a ser separável por um plano. O próprio arquivo escreve isso: "não acrescenta informação matemática; apenas representa não linearidade".
+
+**Resultado.** `comparar.py`: **IGUAIS, 3 linhas e 8 números bit a bit**. O verificador confere 87 rodadas com par Python/Java.
+
+**IA-Python:** Pendência (rodada 88): o Leduc da Parte 120 (as regras ou o CFR vanilla de poucas iterações), que esta parte adiou.
