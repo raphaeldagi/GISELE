@@ -16,6 +16,14 @@ class TesteNexus22(unittest.TestCase):
         self.assertAlmostEqual(f["acertos"], 0.6, places=12)
         self.assertAlmostEqual(f["e_qui2"], 54.0, places=12)
 
+    def test_pontuar_recebido(self):
+        # Caso com todos os termos diferentes de zero: Brier 0,15, ECE |0,15-0| e |0,85-1| = 0,15.
+        r = N.recebido_pontuar([0.1, 0.2, 0.8, 0.9], [0, 0, 1, 1])
+        self.assertAlmostEqual(r["brier"], (0.01 + 0.04 + 0.04 + 0.01) / 4)
+        self.assertAlmostEqual(r["ece"], 0.15)
+        self.assertEqual(r["acuracia"], 1.0)
+        self.assertAlmostEqual(r["log_loss"], -(math.log(0.9) + math.log(0.8)) / 2)
+
     def test_ic_por_quantis(self):
         r = list(range(2000))
         lo, hi = N.ic_por_quantis(r)
