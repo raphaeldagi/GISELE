@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 121, perguntas P1 a P3075).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 122, perguntas P1 a P3103).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (16757 linhas)
+# calculos.py  (16840 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7564,6 +7564,7 @@ def testes_de_regressao():
         "P3013": p3013_rodada86()[1] == 0,
         "P3073": p3073_jogos_e_dinamica()[:3] == (5478, 5478, 0),
         "P3043": p3043_rodada88() == (288, 0),
+        "P3103": p3103_rodada89()[0] < 1e-15,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -9682,6 +9683,8 @@ VEREDITOS_P4479 = "(a) ✅ (b) ✅ (c) ✅ (d) ✅"
 ERROS_P4479, TESTES_P4479 = 226, 943
 VEREDITOS_P4619 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ❌ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (q) ✅ (r) ❌"
 ERROS_P4619, TESTES_P4619 = 229, 959  # a Parte 120 (o Leduc) ainda está aberta: os números dela entram depois, por cima destes
+VEREDITOS_P4689 = "(a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (q) ✅ (r) ✅"
+ERROS_P4689, TESTES_P4689 = 231, 984  # 230/968 (até a 121, com a 120) + 1/16
 VEREDITOS_P4549 = "(a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅"
 ERROS_P4549, TESTES_P4549 = 227, 952  # na ordem das partes (até a 120, sem a 121): 226/943 da 119 + 1/9; com a 121, o acumulado é 230/968 (a 122 parte daí)
 
@@ -12224,12 +12227,12 @@ def p1936_lyapunov_assincrono(a=0.2, passos=1000000, semente=85):
     return lam, lam / (a * a / 8), 0.5 * math.log(1 + a * a / 4) / (a * a / 8)
 
 
-def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121), vereditos=None):
+def p1961_teste_e_da_calibracao(partes=(80, 81, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122), vereditos=None):
     \"\"\"O teste (e) registrado na Parte 79 (P1961): o acerto das minhas previsoes do mundo das Partes 80, 81, 83 e 84, ja com o fator 1,36 nas faixas sem
     conta fechada desde a Parte 80. Le as constantes VEREDITOS_P... de cada parte (ou um dict {parte: texto} para teste), conta os (x) ✅ e (x) ❌ (ignora o
     que nao for ✅/❌, como um (d) que nao se aplica), e devolve (acertos, total, fracao, por parte). A faixa prevista era [0,81; 0,99].\"\"\"
     import re
-    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339", 118: "VEREDITOS_P4409", 119: "VEREDITOS_P4479", 120: "VEREDITOS_P4549", 121: "VEREDITOS_P4619"}
+    mapa = {80: "VEREDITOS_P1839", 81: "VEREDITOS_P1899", 83: "VEREDITOS_P1959", 84: "VEREDITOS_P2019", 85: "VEREDITOS_P2099", 86: "VEREDITOS_P2169", 87: "VEREDITOS_P2239", 88: "VEREDITOS_P2309", 89: "VEREDITOS_P2379", 90: "VEREDITOS_P2449", 91: "VEREDITOS_P2519", 92: "VEREDITOS_P2589", 93: "VEREDITOS_P2659", 94: "VEREDITOS_P2729", 95: "VEREDITOS_P2799", 96: "VEREDITOS_P2869", 97: "VEREDITOS_P2939", 98: "VEREDITOS_P3009", 99: "VEREDITOS_P3079", 100: "VEREDITOS_P3149", 101: "VEREDITOS_P3219", 102: "VEREDITOS_P3289", 103: "VEREDITOS_P3359", 104: "VEREDITOS_P3429", 105: "VEREDITOS_P3499", 106: "VEREDITOS_P3569", 107: "VEREDITOS_P3639", 108: "VEREDITOS_P3709", 109: "VEREDITOS_P3779", 110: "VEREDITOS_P3849", 111: "VEREDITOS_P3919", 112: "VEREDITOS_P3989", 113: "VEREDITOS_P4059", 114: "VEREDITOS_P4129", 115: "VEREDITOS_P4199", 116: "VEREDITOS_P4269", 117: "VEREDITOS_P4339", 118: "VEREDITOS_P4409", 119: "VEREDITOS_P4479", 120: "VEREDITOS_P4549", 121: "VEREDITOS_P4619", 122: "VEREDITOS_P4689"}
     ok, tot, por = 0, 0, {}
     for n in partes:
         txt = vereditos[n] if vereditos is not None else globals().get(mapa[n], "")
@@ -15125,6 +15128,67 @@ def p3043_rodada88():
     return len(m), sum(1 for k, v in c.items() if m[f"{k[0]}|{k[1]}|{k[2]}"] != v)
 
 
+def p3101_defeitos_recebidos_v30(sementes=range(200, 400), iteracoes_kuhn=3000):
+    \"\"\"Os defeitos do código do texto "NEXUS–RAPHAEL v3.0" em casos novos (P3101; Parte 122): sabotagem média do AADD e do ingênuo (as contas
+    ε/2 e 1 − ε/2), quantas sementes têm a "precisão forense" diferente de 1, o valor do solver recebido dividido por 6, e as colisões da base 70
+    em palavras de até 2 sílabas. Devolve um dict.\"\"\"
+    import statistics
+    from synthai import nexus_v30 as V
+    r = [V.recebido_aadd(seed=s) for s in sementes]
+    return dict(sab_aadd=statistics.fmean(x[1] for x in r), sab_ingenuo=statistics.fmean(x[0] for x in r),
+                forense_diferente_de_1=sum(x[2] != 1.0 for x in r), kuhn_sobre_6=V.RecebidoKuhn().treinar(iteracoes_kuhn) / 6,
+                colisoes_b70=V.colisoes_b70(2))
+
+
+def p3102_pecas_corrigidas_v30(n_mdps=40):
+    \"\"\"As peças corrigidas em casos novos (P3102; Parte 122): Murphy completa (semente 2, y ~ Bernoulli(√p)), a sonda de colapso (d = 32,
+    gargalo 4, semente 7), o shaping por potencial e o bônus aditivo em MDPs 8 × 4 (sementes 100 em diante) e a KL entre Betas contra o ponto médio.
+    Devolve um dict.\"\"\"
+    import math
+    import random
+    from synthai import nexus_v30 as V
+    rng = random.Random(2)
+    p = [rng.random() for _ in range(3000)]
+    y = [int(rng.random() < math.sqrt(q)) for q in p]
+    m = V.MurphyCompleta.decompor(p, y)
+    s = V.SondaColapso.experimento(dim=32, gargalo=4, seed=7)
+    P = V.ModelagemPorPotencial
+    ok_p = ok_b = 0
+    for sd in range(100, 100 + n_mdps):
+        T, R = P.mdp(8, 4, sd)
+        rr = random.Random(1000 + sd)
+        phi = [rr.uniform(-5, 5) for _ in range(8)]
+        pi, _ = P.politica_otima(T, R, 0.9)
+        Rp = [[[R[x][k][z] + 0.9 * phi[z] - phi[x] for z in range(8)] for k in range(4)] for x in range(8)]
+        bonus = [[rr.uniform(0, 2) for _ in range(4)] for _ in range(8)]
+        Rb = [[[R[x][k][z] + bonus[x][k] for z in range(8)] for k in range(4)] for x in range(8)]
+        ok_p += P.politica_otima(T, Rp, 0.9)[0] == pi
+        ok_b += P.politica_otima(T, Rb, 0.9)[0] == pi
+    a1, b1, a2, b2 = 2.5, 7.0, 6.0, 1.5
+    lb = lambda a, b: math.lgamma(a) + math.lgamma(b) - math.lgamma(a + b)
+    lp = lambda x, a, b: (a - 1) * math.log(x) + (b - 1) * math.log(1 - x) - lb(a, b)
+    num = sum(math.exp(lp(x, a1, b1)) * (lp(x, a1, b1) - lp(x, a2, b2)) for x in ((i + 0.5) / 20000 for i in range(20000))) / 20000
+    return dict(murphy_fecha=abs(m["soma"] - m["brier"]), wbv=m["wbv"], wbc=m["wbc"], retencao_pca=s["retencao_pca"],
+                retencao_supervisionada=s["retencao_supervisionada"], potencial_preserva=ok_p, bonus_preserva=ok_b / n_mdps,
+                kl_erro=abs(V.kl_beta(a1, b1, a2, b2) - num))
+
+
+def _rodada89():
+    import importlib.util
+    import os
+    spec = importlib.util.spec_from_file_location("rodada89", os.path.join(os.path.dirname(os.path.abspath(__file__)), "dialogo", "rodada89.py"))
+    r = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(r)
+    return r
+
+
+def p3103_rodada89():
+    \"\"\"Rodada 89 (P3103; Parte 122): a Murphy completa com LCG, IGUAL em Java. Devolve (|soma − Brier|, as sete grandezas).\"\"\"
+    r = _rodada89()
+    v = r.decompor(*r.dados())
+    return abs(v[6] - v[0]), v
+
+
 def p3071_experimentos_do_nexus_2_2():
     \"\"\"Os experimentos do NEXUS–RAPHAEL 2.2.0 (P3071; Parte 121), modo rápido, sementes 0 a 4: H-M3 (ganho de Brier da semente 0 e vereditos),
     H-M2 (ganho médio do ângulo duplo e quantas sementes têm IC acima de 0) e H-M7 (diferenças extraordinário − ordinário). Devolve um dict.\"\"\"
@@ -16727,6 +16791,25 @@ def _parte_120():
     print(f"P4549 minha taxa de erro ({ERROS_P4549}/{TESTES_P4549}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
 
 
+def _parte_122():
+    print("--- Parte 122 (0x7A: o texto NEXUS-RAPHAEL v3.0: os defeitos e as pecas corrigidas em casos novos) ---")
+    d = p3101_defeitos_recebidos_v30()
+    print(f"P3101 sabotagem AADD {d['sab_aadd']:.5f} (eps/2 = 0.025), ingenuo {d['sab_ingenuo']:.5f} (1 - eps/2); forense != 1 em {d['forense_diferente_de_1']}; Kuhn/6 {d['kuhn_sobre_6']:.5f} (-1/18); colisoes base 70 {d['colisoes_b70']}")
+    d2 = p3101_defeitos_recebidos_v30(sementes=range(400, 1000), iteracoes_kuhn=1)
+    print(f"P3101 lote novo (sementes 400-999): ingenuo {d2['sab_ingenuo']:.5f}")
+    c = p3102_pecas_corrigidas_v30()
+    print(f"P3102 Murphy |soma-BS| {c['murphy_fecha']:.2e}, WBV {c['wbv']:.6f}, WBC {c['wbc']:.6f}; colapso PCA {c['retencao_pca']:.3f}, supervisionada {c['retencao_supervisionada']:.3f}; potencial {c['potencial_preserva']}/40, bonus {c['bonus_preserva']:.3f}; KL erro {c['kl_erro']:.2e}")
+    e, v = p3103_rodada89()
+    print(f"P3103 rodada 89 (Murphy completa, IGUAL em Java): |soma - Brier| {e:.2e}; Brier {v[0]:.6f}")
+    ok, tot, fr, por = p1961_teste_e_da_calibracao()
+    print(f"P1961 teste, Partes 80-122: {ok}/{tot} = {fr:.4f}")
+    total_pnn, sem = p1092_pnn_sem_teste(3101, 3130)
+    print(f"P1092 pNN novas (P3101-P3130) sem teste: {len(sem)} de {total_pnn}: {sem}")
+    print(f"P974 previsoes unilaterais da Parte 122: {p974_previsoes_sem_largura(range(122, 123))}")
+    media, lo2, hi2 = p95_minha_taxa_de_erro(erros=ERROS_P4689, testes=TESTES_P4689)
+    print(f"P4689 minha taxa de erro ({ERROS_P4689}/{TESTES_P4689}): media = {media:.2f}, intervalo 90% = [{lo2:.2f}, {hi2:.2f}]")
+
+
 def _parte_121():
     print("--- Parte 121 (0x79: o NEXUS-RAPHAEL 2.2.0 anexado, auditado no proprio codigo) ---")
     d = p3071_experimentos_do_nexus_2_2()
@@ -16783,7 +16866,7 @@ def _unificacao():
     print(f"Regressao: {ok}/{total} resultados publicados reproduzidos; falhas = {falhas}")
 
 
-PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117, 118: _parte_118, 119: _parte_119, 120: _parte_120, 121: _parte_121}
+PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117, 118: _parte_118, 119: _parte_119, 120: _parte_120, 121: _parte_121, 122: _parte_122}
 
 
 if __name__ == "__main__":
@@ -16796,7 +16879,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (488 linhas)
+# CLAUDE.md  (493 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -17130,6 +17213,11 @@ anterior, commit e push.
   qui-quadrado tem esperanca 54 (nao 59); velha 5.478 estados e valor 0, Lyapunov ln 2 conferem. Rodada 87 IGUAL. 13/16 do mundo, 5/6 (m), calibracao 274/300 = 0,913 (sem a 120).
   REGRA NOVA: previsao sobre "todas as k unidades" escreve P(uma) e P(todas) = p^k ao lado; [k;k] so se p^k >= 0,90 (escrevi [5;5] com p ~0,97: 0,85). E "aproximadamente normal"
   para um percentil de bootstrap de poucos pontos assimetricos e suposicao de forma a verificar (errou por z = -7).
+  Parte 122 (o texto colado 'NEXUS–RAPHAEL v3.0'; synthai/nexus_v30.py; transcricao em externos/nexus_raphael_v3_0/): a auditoria ja medida no turno em que chegou virou
+  previsoes em casos NOVOS (regra da Parte 25): sabotagem AADD = eps/2 (0,024975), ingenuo 1 - eps/2 (0,97433 errou a z=-1,9; o lote novo deu 0,97513: cauda, sem mecanismo), Kuhn/6 = -0,0569,
+  70 colisoes da base 70, Murphy completa exata, sonda de colapso PCA 0,053 x supervisionada 1,0, potencial 40/40 x bonus 0/40. Rodada 89 IGUAL. 15/16 do mundo, 4/6 (m), calibracao 297/325.
+  REGRA NOVA: m1 e m3 so viram [x;x] sem faixa de forma fechada que possa errar; senao m1 em [n; n+E] (E = erros de forma fechada esperados, para cima), porque cada erro gera um lote novo
+  (3a vez: 109, 120, 122).
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -17278,7 +17366,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -23860,6 +23948,290 @@ def megasena_fechada():
 """
 
 # ====================================================================================================
+# synthai/nexus_v30.py  (279 linhas)
+# ====================================================================================================
+FONTES['synthai/nexus_v30.py'] = """\"\"\"O texto "NEXUS–RAPHAEL v3.0" (Parte 122): o que se sustentou, reescrito em biblioteca padrão, e as peças recebidas transcritas
+para medir o próprio código delas. A transcrição verbatim (com numpy) fica em externos/nexus_raphael_v3_0/ e nunca é importada.
+
+- Recebidas (recebido_*): a língua de base 70, o solver CFR do Kuhn (numpy trocado por listas, mesma ordem das contas) e o reforço
+  "desacoplado" AADD (o gerador do numpy trocado por random.Random: o desenho é o mesmo, a sequência de sorteios não).
+- Reescritas e corrigidas (as mesmas do NEXUS 3.1.0, entregas/nexus_raphael_3/partes/e6_auditoria_v30.py): MurphyCompleta,
+  SondaColapso, ModelagemPorPotencial, kl_beta.\"\"\"
+
+import collections
+import itertools
+import math
+import random
+import statistics
+
+# ---------------------------------------------------------------- recebidas, transcritas
+CONSOANTES_B70 = ("b", "c", "d", "f", "g", "j", "k", "l", "m", "n", "p", "r", "s", "t")
+SILABAS_B70 = tuple(c + v for c in CONSOANTES_B70 for v in "aeiou")
+MAPA_B70 = {s: i for i, s in enumerate(SILABAS_B70)}
+
+
+def recebido_b70(n):
+    \"\"\"inteiro_para_lingua_b70 do texto recebido (base 70 posicional: "ba" vale zero).\"\"\"
+    if n == 0:
+        return SILABAS_B70[0]
+    out = []
+    while n > 0:
+        n, r = divmod(n, 70)
+        out.append(SILABAS_B70[r])
+    return "".join(reversed(out))
+
+
+def recebido_b70_inverso(p):
+    v = 0
+    for i in range(0, len(p), 2):
+        v = v * 70 + MAPA_B70[p[i:i + 2]]
+    return v
+
+
+def colisoes_b70(silabas_max=2):
+    \"\"\"Quantas palavras de até `silabas_max` sílabas decodificam para um inteiro que uma palavra MAIS CURTA já dá.\"\"\"
+    vistos, col = set(), 0
+    for k in range(1, silabas_max + 1):
+        for t in itertools.product(SILABAS_B70, repeat=k):
+            v = recebido_b70_inverso("".join(t))
+            col += v in vistos
+            vistos.add(v)
+    return col
+
+
+class RecebidoKuhn:
+    \"\"\"SolverCFRKuhnPoker do texto recebido, com listas no lugar dos arrays (a ordem das contas é a mesma).\"\"\"
+    CARTAS = ("J", "Q", "K")
+
+    def __init__(self):
+        self.reg, self.soma = {}, {}
+
+    def _estr(self, k, peso):
+        r = self.reg.setdefault(k, [0.0, 0.0])
+        s = self.soma.setdefault(k, [0.0, 0.0])
+        pos = [max(x, 0.0) for x in r]
+        tot = pos[0] + pos[1]
+        e = [x / tot for x in pos] if tot > 0.0 else [0.5, 0.5]
+        s[0] += peso * e[0]
+        s[1] += peso * e[1]
+        return e
+
+    def _cfr(self, cartas, h, p0, p1):
+        j = len(h) % 2
+        if len(h) >= 2:
+            maior = cartas[j] > cartas[1 - j]
+            if h[-1] == "p":
+                return (1.0 if maior else -1.0) if h == "pp" else 1.0
+            if h[-2:] == "bb":
+                return 2.0 if maior else -2.0
+        k = self.CARTAS[cartas[j]] + h
+        e = self._estr(k, p0 if j == 0 else p1)
+        u = [0.0, 0.0]
+        no = 0.0
+        for i, a in enumerate("pb"):
+            u[i] = -self._cfr(cartas, h + a, p0 * e[i], p1) if j == 0 else -self._cfr(cartas, h + a, p0, p1 * e[i])
+            no += e[i] * u[i]
+        adv = p1 if j == 0 else p0
+        r = self.reg[k]
+        for i in range(2):
+            r[i] += adv * (u[i] - no)
+        return no
+
+    def treinar(self, iteracoes):
+        \"\"\"Devolve o 'valor' que o texto recebido imprime: a soma das 6 distribuições por iteração (sem dividir por 6).\"\"\"
+        tot = 0.0
+        perms = list(itertools.permutations((0, 1, 2), 2))
+        for _ in range(iteracoes):
+            for c in perms:
+                tot += self._cfr(c, "", 1 / 6, 1 / 6)
+        return tot / iteracoes
+
+
+def recebido_aadd(n_episodios=2000, seed=42, eps=0.05):
+    \"\"\"simular_reforco_desacoplado_anti_sabotagem do texto recebido, com random.Random no lugar do gerador do numpy.\"\"\"
+    rng = random.Random(seed)
+    q_i, n_i, sab_i = [0.0, 0.0], [0.0, 0.0], 0
+    q_v, n_v, sab_v, prec, erros = [0.0, 0.0], [0.0, 0.0], 0, 0.0, 0
+    metade = n_episodios // 2
+    argmax = lambda q: 0 if q[0] >= q[1] else 1
+    for ep in range(n_episodios):
+        a = rng.randrange(2) if rng.random() < eps else argmax(q_i)
+        if a == 0:
+            acerto = 1.0 if rng.random() < 0.65 else 0.0
+            r = acerto + 1.5 * (0.3 if acerto == 0.0 else 0.0)
+        else:
+            r = 1.5
+            sab_i += ep >= metade
+        n_i[a] += 1.0
+        q_i[a] += (r - q_i[a]) / n_i[a]
+        a = rng.randrange(2) if rng.random() < eps else argmax(q_v)
+        if a == 0:
+            acerto = 1.0 if rng.random() < 0.65 else 0.0
+            r = acerto - (0.5 if acerto == 0.0 else 0.0)
+            if acerto == 0.0:
+                erros += 1
+                prec += (1.0 - prec) / erros
+        else:
+            r = -0.5
+            sab_v += ep >= metade
+        n_v[a] += 1.0
+        q_v[a] += (r - q_v[a]) / n_v[a]
+    return sab_i / metade, sab_v / metade, prec
+
+
+# ---------------------------------------------------------------- reescritas
+def componentes_principais(dados, k, iteracoes=300, seed=0):
+    \"\"\"As k primeiras direções principais (iteração de potência com deflação sobre a covariância).\"\"\"
+    n, d = len(dados), len(dados[0])
+    m = [statistics.fmean(x[j] for x in dados) for j in range(d)]
+    c = [[x[j] - m[j] for j in range(d)] for x in dados]
+    C = [[sum(r[i] * r[j] for r in c) / (n - 1) for j in range(d)] for i in range(d)]
+    rng = random.Random(seed)
+    dirs = []
+    for _ in range(k):
+        v = [rng.gauss(0, 1) for _ in range(d)]
+        for _ in range(iteracoes):
+            w = [sum(C[i][j] * v[j] for j in range(d)) for i in range(d)]
+            for u in dirs:
+                p = sum(a * b for a, b in zip(w, u))
+                w = [a - p * b for a, b in zip(w, u)]
+            nw = math.sqrt(sum(a * a for a in w))
+            v = [a / nw for a in w]
+        dirs.append(v)
+    return dirs
+
+
+class MurphyCompleta:
+    \"\"\"Decomposição do Brier por faixas com os dois termos que faltam quando a previsão varia dentro da
+    faixa (Stephenson, Coelho e Jolliffe, 2008):  BS = REL − RES + UNC + WBV − WBC, EXATA para qualquer
+    previsão.  WBV = (1/N) Σ (p − p̄ₖ)²  e  WBC = (2/N) Σ (p − p̄ₖ)(o − ōₖ).\"\"\"
+
+    @staticmethod
+    def decompor(probs: list[float], rotulos: list[int], faixas: int = 10) -> dict[str, float]:
+        n = len(probs)
+        if n == 0 or n != len(rotulos):
+            raise ValueError("Vetores incompatíveis")
+        obar = sum(rotulos) / n
+        grupos: dict[int, list[tuple[float, int]]] = collections.defaultdict(list)
+        for p, y in zip(probs, rotulos):
+            grupos[min(faixas - 1, int(p * faixas))].append((p, y))
+        rel = res = wbv = wbc = ece = 0.0
+        for pares in grupos.values():
+            nk = len(pares)
+            pk = sum(p for p, _ in pares) / nk
+            ok = sum(y for _, y in pares) / nk
+            rel += nk * (pk - ok) ** 2
+            res += nk * (ok - obar) ** 2
+            ece += nk * abs(pk - ok)
+            wbv += sum((p - pk) ** 2 for p, _ in pares)
+            wbc += 2 * sum((p - pk) * (y - ok) for p, y in pares)
+        rel, res, wbv, wbc, ece = (v / n for v in (rel, res, wbv, wbc, ece))
+        unc = obar * (1 - obar)
+        bs = sum((p - y) ** 2 for p, y in zip(probs, rotulos)) / n
+        return dict(brier=bs, rel=rel, res=res, unc=unc, wbv=wbv, wbc=wbc, ece=ece,
+                    soma=rel - res + unc + wbv - wbc, soma_classica=rel - res + unc,
+                    bss=1 - bs / unc if unc > 0 else 0.0)
+
+
+class SondaColapso:
+    \"\"\"O gargalo apaga a identidade? Dados em que a identidade mora numa direção de BAIXA variância:
+    a projeção não supervisionada (PCA, mínimo erro quadrático) a descarta; a supervisionada (diferença
+    das médias das classes dividida pela variância, o discriminante de Fisher diagonal) a guarda.\"\"\"
+
+    @staticmethod
+    def experimento(dim: int = 16, gargalo: int = 3, n: int = 600, seed: int = 42) -> dict[str, float]:
+        rng = random.Random(seed)
+        ys = [rng.randrange(2) for _ in range(n)]
+        dados = [[rng.gauss(0, 3.0) for _ in range(dim - 1)] + [(2 * y - 1) * 0.35 + rng.gauss(0, 0.05)] for y in ys]
+        metade = n // 2
+
+        def acuracia(proj: list[list[float]]) -> float:
+            z = [[sum(a * b for a, b in zip(x, d)) for d in proj] for x in dados]
+            # decodificador linear treinado na 1ª metade (Fisher com variância diagonal: Δμ/σ²), testado na 2ª
+            m = [[statistics.fmean(z[i][j] for i in range(metade) if ys[i] == c) for j in range(len(proj))] for c in (0, 1)]
+            var = [statistics.fmean((z[i][j] - m[ys[i]][j]) ** 2 for i in range(metade)) for j in range(len(proj))]
+            w = [(b - a) / max(v, 1e-12) for a, b, v in zip(*m, var)]
+            c0 = sum((a + b) / 2 * wi for a, b, wi in zip(*m, w))
+            return statistics.fmean(int((sum(zi * wi for zi, wi in zip(z[i], w)) > c0) == ys[i]) for i in range(metade, n))
+        pca = componentes_principais(dados, gargalo)
+        medias = [[statistics.fmean(x[j] for x, y in zip(dados[:metade], ys) if y == c) for j in range(dim)] for c in (0, 1)]
+        variancias = [statistics.fmean((x[j] - medias[y][j]) ** 2 for x, y in zip(dados[:metade], ys)) for j in range(dim)]
+        dif = [(b - a) / v for a, b, v in zip(*medias, variancias)]
+        nd = math.sqrt(sum(v * v for v in dif))
+        supervisionada = [[v / nd for v in dif]] + pca[:gargalo - 1]
+        identidade = [[float(i == j) for j in range(dim)] for i in range(dim)]
+        a_ent, a_pca, a_sup = acuracia(identidade), acuracia(pca), acuracia(supervisionada)
+        retencao = lambda a: max(0.0, (a - 0.5) / max(1e-9, a_ent - 0.5))
+        return dict(acuracia_entrada=a_ent, acuracia_pca=a_pca, acuracia_supervisionada=a_sup,
+                    retencao_pca=retencao(a_pca), retencao_supervisionada=retencao(a_sup))
+
+
+class ModelagemPorPotencial:
+    \"\"\"Ng, Harada e Russell (1999): somar F(s, s') = γΦ(s') − Φ(s) à recompensa NÃO muda a política ótima;
+    somar um bônus qualquer (o 'diagnóstico' do reforço extraordinário) pode mudar. Medido por iteração de
+    valor exata em MDPs aleatórios.\"\"\"
+
+    @staticmethod
+    def mdp(n: int, a: int, seed: int) -> tuple[list, list]:
+        rng = random.Random(seed)
+        T = []
+        for _ in range(n):
+            linha = []
+            for _ in range(a):
+                w = [rng.random() for _ in range(n)]
+                s = sum(w)
+                linha.append([x / s for x in w])
+            T.append(linha)
+        R = [[[rng.uniform(-1, 1) for _ in range(n)] for _ in range(a)] for _ in range(n)]
+        return T, R
+
+    @staticmethod
+    def politica_otima(T, R, gama: float = 0.9, tol: float = 1e-12) -> tuple[list[int], list[float]]:
+        n, a = len(T), len(T[0])
+        V = [0.0] * n
+        while True:
+            Q = [[sum(T[s][k][s2] * (R[s][k][s2] + gama * V[s2]) for s2 in range(n)) for k in range(a)] for s in range(n)]
+            V2 = [max(q) for q in Q]
+            if max(abs(x - y) for x, y in zip(V, V2)) < tol:
+                return [max(range(a), key=lambda k: Q[s][k]) for s in range(n)], V2
+            V = V2
+
+    @staticmethod
+    def comparar(sementes: int = 50, n: int = 6, a: int = 3, gama: float = 0.9) -> dict[str, float]:
+        iguais_pot = iguais_bonus = 0
+        for s in range(sementes):
+            T, R = ModelagemPorPotencial.mdp(n, a, s)
+            rng = random.Random(1000 + s)
+            phi = [rng.uniform(-5, 5) for _ in range(n)]
+            pi, V = ModelagemPorPotencial.politica_otima(T, R, gama)
+            Rp = [[[R[x][k][y] + gama * phi[y] - phi[x] for y in range(n)] for k in range(a)] for x in range(n)]
+            pi_p, Vp = ModelagemPorPotencial.politica_otima(T, Rp, gama)
+            bonus = [[rng.uniform(0, 2) for _ in range(a)] for _ in range(n)]   # bônus por (estado, ação)
+            Rb = [[[R[x][k][y] + bonus[x][k] for y in range(n)] for k in range(a)] for x in range(n)]
+            pi_b, _ = ModelagemPorPotencial.politica_otima(T, Rb, gama)
+            iguais_pot += pi_p == pi
+            iguais_bonus += pi_b == pi
+            # identidade de Ng et al.: V' = V − Φ
+            assert max(abs(vp - (v - f)) for vp, v, f in zip(Vp, V, phi)) < 1e-8
+        return dict(sementes=sementes, politica_preservada_potencial=iguais_pot / sementes,
+                    politica_preservada_bonus=iguais_bonus / sementes)
+
+
+def kl_beta(a1: float, b1: float, a2: float, b2: float) -> float:
+    \"\"\"KL( Beta(a1,b1) ‖ Beta(a2,b2) ) em forma fechada (nats), com a digama por série assintótica.\"\"\"
+    def digama(x: float) -> float:
+        r = 0.0
+        while x < 6:
+            r -= 1 / x
+            x += 1
+        f = 1 / (x * x)
+        return r + math.log(x) - 0.5 / x - f * (1 / 12 - f * (1 / 120 - f * (1 / 252 - f * (1 / 240 - f / 132))))
+    lb = lambda a, b: math.lgamma(a) + math.lgamma(b) - math.lgamma(a + b)
+    return (lb(a2, b2) - lb(a1, b1) + (a1 - a2) * digama(a1) + (b1 - b2) * digama(b1)
+            + (a2 - a1 + b2 - b1) * digama(a1 + b1))
+"""
+
+# ====================================================================================================
 # synthai/numeros.py  (63 linhas)
 # ====================================================================================================
 FONTES['synthai/numeros.py'] = """\"\"\"O dicionário convertido em NÚMEROS, tratado como equações (Parte 103, P2533/P2534).
@@ -27680,7 +28052,7 @@ class TesteParte120(unittest.TestCase):
 
     def test_p1961_com_parte_120(self):
         import calculos
-        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 122))))
         self.assertEqual(por[120], (8, 9))
         self.assertEqual((ok, tot), (282, 309))
 
@@ -27777,6 +28149,92 @@ class TesteParte121(unittest.TestCase):
         ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao(partes=tuple(list(range(80, 82)) + [83] + list(range(84, 120)) + [121]))
         self.assertEqual(por[121], (13, 16))
         self.assertEqual((ok, tot), (274, 300))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte122.py  (81 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte122.py'] = """\"\"\"Testes de unidade da Parte 122 (o texto "NEXUS–RAPHAEL v3.0", `synthai/nexus_v30.py`): `python3 -m unittest synthai.testes_parte122`.
+Cada pNN e cada peça pelo nome (Partes 58 e 118); as identidades com todos os termos diferentes de zero (Parte 30).\"\"\"
+
+import math
+import random
+import unittest
+
+import calculos
+from synthai import nexus_v30 as V
+
+
+class TestePecas(unittest.TestCase):
+    def test_base70_recebida(self):
+        self.assertEqual((V.recebido_b70(42), V.recebido_b70(2026)), ("mi", "jote"))      # o texto dizia "pi" e "lize"
+        self.assertEqual(V.recebido_b70_inverso("babe"), V.recebido_b70_inverso("be"))   # o zero à esquerda
+        self.assertEqual(V.colisoes_b70(2), 70)
+        self.assertNotIn("ze", V.MAPA_B70)
+
+    def test_kuhn_recebido_sem_divisao(self):
+        v = V.RecebidoKuhn().treinar(400)
+        self.assertLess(v, -0.2)                         # ~6 × (−1/18): a soma das 6 distribuições
+        self.assertAlmostEqual(v / 6, -1 / 18, delta=0.01)
+
+    def test_aadd_recebido(self):
+        ing, aadd, prec = V.recebido_aadd(seed=5)
+        self.assertGreater(ing, 0.9)
+        self.assertLess(aadd, 0.06)
+        self.assertEqual(prec, 1.0)                      # o "auditor forense" não aprende nada
+
+    def test_murphy_completa(self):
+        rng = random.Random(9)
+        p = [rng.random() for _ in range(2000)]
+        y = [int(rng.random() < q ** 1.5) for q in p]
+        m = V.MurphyCompleta.decompor(p, y)
+        self.assertTrue(all(m[k] > 0 for k in ("rel", "res", "unc", "wbv")))
+        self.assertAlmostEqual(m["soma"], m["brier"], places=12)
+
+    def test_componentes_principais(self):
+        rng = random.Random(3)
+        dados = [[rng.gauss(0, 5), rng.gauss(0, 1), rng.gauss(0, 0.1)] for _ in range(500)]
+        d = V.componentes_principais(dados, 1)[0]
+        self.assertGreater(abs(d[0]), 0.99)
+
+    def test_sonda_e_potencial(self):
+        s = V.SondaColapso.experimento()
+        self.assertGreater(s["retencao_supervisionada"], 0.9)
+        self.assertLess(s["retencao_pca"], 0.3)
+        r = V.ModelagemPorPotencial.comparar(sementes=10)
+        self.assertEqual(r["politica_preservada_potencial"], 1.0)
+
+    def test_kl_beta(self):
+        self.assertAlmostEqual(V.kl_beta(3, 4, 3, 4), 0.0, places=12)
+        self.assertGreater(V.kl_beta(3, 4, 4, 3), 0)
+
+
+class TesteParte122(unittest.TestCase):
+    def test_p3101(self):
+        d = calculos.p3101_defeitos_recebidos_v30(sementes=range(3), iteracoes_kuhn=50)
+        self.assertEqual(d["forense_diferente_de_1"], 0)
+        self.assertEqual(d["colisoes_b70"], 70)
+        self.assertLess(d["sab_aadd"], d["sab_ingenuo"])
+
+    def test_p3102(self):
+        c = calculos.p3102_pecas_corrigidas_v30(n_mdps=3)
+        self.assertLess(c["murphy_fecha"], 1e-12)
+        self.assertEqual(c["potencial_preserva"], 3)
+        self.assertLess(c["kl_erro"], 1e-6)
+
+    def test_p3103_rodada89(self):
+        e, v = calculos.p3103_rodada89()
+        self.assertLess(e, 1e-15)
+        self.assertEqual(len(v), 7)
+
+    def test_p1961_com_parte_122(self):
+        ok, tot, frac, por = calculos.p1961_teste_e_da_calibracao()
+        self.assertEqual(por[122], (15, 16))
+        self.assertEqual((ok, tot), (297, 325))
 
 
 if __name__ == "__main__":
@@ -44676,11 +45134,11 @@ A pendência que fica é se o MCCFR externo no Leduc, com o LCG, também dá IGU
 
 Southey, F. et al. (2005), *Bayes' Bluff: Opponent Modelling in Poker* (as regras do Leduc). Zinkevich, M. et al. (2007), *Regret Minimization in Games with Incomplete Information* (CFR). Lanctot, M. et al. (2009), *Monte Carlo Sampling for Regret Minimization in Extensive Games* (MCCFR). As três são citadas de memória e não foram relidas nesta sessão, porque o limite semanal de busca na web acabou. Nenhum número delas é usado como identidade.
 
-➡ Continua na [Parte 121 — O NEXUS–RAPHAEL 2.2.0](ASI_AGI_parte121_nexus_v2_2.md) (escrita antes desta) e na Parte 122.
+➡ Continua na [Parte 121 — O NEXUS–RAPHAEL 2.2.0](ASI_AGI_parte121_nexus_v2_2.md) (escrita antes desta) e na [Parte 122 — O texto NEXUS–RAPHAEL v3.0](ASI_AGI_parte122_nexus_v3_0.md).
 """
 
 # ====================================================================================================
-# ASI_AGI_parte121_nexus_v2_2.md  (225 linhas)
+# ASI_AGI_parte121_nexus_v2_2.md  (227 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte121_nexus_v2_2.md'] = """# Parte 121 — O NEXUS–RAPHAEL 2.2.0: um laboratório que se audita, auditado (0x79)
 
@@ -44907,6 +45365,195 @@ O limite semanal de buscas na web acabou no meio da Parte 120, então esta parte
 - a hipergeométrica;
 - a esperança do qui-quadrado;
 - o ln 2 do mapa logístico.
+
+➡ Continua na [Parte 122 — O texto NEXUS–RAPHAEL v3.0](ASI_AGI_parte122_nexus_v3_0.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte122_nexus_v3_0.md  (182 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte122_nexus_v3_0.md'] = """# Parte 122 — O texto "NEXUS–RAPHAEL v3.0": a auditoria que se audita (0x7A)
+
+↩ Parte 121 (o NEXUS 2.2.0) · ↩ Parte 116 (o NEXUS v2 colado) · ↩ Parte 88 (medir só o que é novo) · ↩ Parte 25 (uma conta posterior só vira evidência num mundo novo)
+
+> **Recebido:** um texto longo colado pelo usuário, "Arquitetura Experimental NEXUS–RAPHAEL v3.0: Auditoria Epistemológica, Correção Estrutural…". É uma auditoria das versões 1.0 e 2.0, com uma especificação em seis estágios e um "Núcleo Operacional" em Python com numpy (marcos M0 a M6). O usuário não escreveu pedido; depois veio "CONTINUE".
+>
+> **Antes deste registro (declarado):** a auditoria do código recebido JÁ foi medida, no turno em que o texto chegou. A transcrição ficou em `externos/nexus_raphael_v3_0/` e as peças corrigidas no NEXUS 3.1.0 (commit caec8cc). O que se mediu:
+> - os exemplos da língua de base 70 estão errados pelo próprio código (42 vira "mi", não "pi"; e "lize" usa um "z" fora do alfabeto);
+> - a língua não é bijetiva ("babe" e "be" valem 1);
+> - o "valor do Kuhn" de −0,3392 não divide por 6;
+> - a sabotagem do AADD dá 2,1%, não 0,0%;
+> - o "auditor forense" vale sempre 1,0;
+> - a identidade de Murphy de 3 termos não fecha: ficam de fora WBV e WBC;
+> - o `frozen=True` deixa o conteúdo mutável.
+>
+> Pela regra da Parte 25, esses números são POSTERIORES: só viram evidência se a conta que os explica prever casos NOVOS. Esta parte registra essas previsões, com sementes, tamanhos e parâmetros que eu não olhei. Rodei uma vez `RecebidoKuhn().treinar(10)` (−0,1126) para conferir a transcrição sem numpy; o teste é em 3.000 iterações, e esse número não entra em nenhuma faixa.
+
+## As perguntas desta parte
+
+1. **P3101 (0xC1D).** As contas que explicam os defeitos do código recebido (ε/2, 1 − ε/2, a divisão por 6, o zero à esquerda) preveem sementes e tamanhos novos? ↩ P3071
+2. **P3102 (0xC1E).** As peças corrigidas (Murphy completa, sonda de colapso, shaping por potencial, KL entre Betas) valem em casos que não usei para escrevê-las? ↩ P3101
+3. **P3103 (0xC1F).** A decomposição de Murphy completa acrescenta fronteira entre Python e Java? (rodada 89) ↩ P3043
+
+## Previsões pré-registradas (ANTES de medir — este commit)
+
+**As fixtures (neste commit):** `synthai/nexus_v30.py` (as peças recebidas transcritas em biblioteca padrão; o gerador do numpy foi trocado por `random.Random`, então o desenho é o mesmo e a sequência de sorteios não), `dialogo/rodada89.py` e `dialogo/Rodada89.java`.
+
+**Os defeitos recebidos, em casos novos (P3101).**
+- **(a)** A sabotagem média do AADD recebido, nas sementes 200 a 399 (2.000 episódios cada). Conta fechada: na 2ª metade o ator sempre prefere tentar, porque Q(tentar) ≈ 0,65 − 0,5 × 0,35 = 0,475 > Q(sabotar) = −0,5; ele só sabota quando explora e sorteia a ação 1, com probabilidade ε/2 = 0,025. São 200 × 1.000 episódios binomiais: desvio √(0,025 × 0,975/200.000) = 0,00035, faixa ±1,645 desvio: **[0,0244; 0,0256]**.
+- **(b)** A sabotagem média do agente "ingênuo" recebido, nas mesmas sementes. Conta: Q(sabotar) = 1,5 > Q(tentar) ≈ 0,65 + 1,5 × 0,3 × 0,35 = 0,8075, então ele sabota sempre, menos quando explora e sorteia a ação 0: 1 − ε/2 = 0,975. Pelo mesmo binomial: **[0,9744; 0,9756]**.
+- **(c)** A "precisão forense" do AADD diferente de 1,0 em quantas das 200 sementes: **[0; 0]**. Identidade: com n = 1, prec = 0 + (1 − 0)/1 = 1; depois, prec = 1 + (1 − 1)/n = 1, para sempre.
+- **(d)** O valor que o solver recebido imprime, dividido por 6, em 3.000 iterações (em 6.000 era −0,05653). Mecanismo: é a utilidade média da estratégia CORRENTE, que oscila em volta de −1/18 = −0,05556. O erro em 6.000 iterações foi 0,00097; com metade das iterações, o centro fica em −1/18 e a meia-largura é 0,00097 × √2 × 1,36 × 1,645 = 0,0031: **[−0,0587; −0,0525]**.
+- **(e)** Palavras de até 2 sílabas da base 70 recebida que decodificam para um inteiro que uma palavra mais curta já dá: **[70; 70]**. Identidade: "ba"+X vale o mesmo que X para cada uma das 70 sílabas X, e nenhum outro par colide (base posicional).
+
+**As peças corrigidas, em casos novos (P3102).**
+- **(f)** |soma − Brier| da Murphy completa num previsor novo (semente 2, p uniforme, y ~ Bernoulli(√p), n = 3.000): **[0; 1e-12]**. Identidade: (p − o)² com p = p̄ₖ + δ e o = ōₖ + ε, somada na faixa, dá n(p̄ₖ − ōₖ)² + Σδ² + Σε² − 2Σδε, porque Σδ = Σε = 0; e Σε² = nₖōₖ(1 − ōₖ) soma UNC − RES. Sobra só o arredondamento.
+- **(g)** O termo WBV desse previsor. Conta: p uniforme numa faixa de largura 0,1 tem variância 0,1²/12 = 0,000833. O desvio amostral de uma variância de uniforme com 300 pontos por faixa, em 10 faixas, é ~0,000833 × √(0,8/3.000) = 0,0000136; faixa ±1,645 × 1,36 desvio: **[0,000803; 0,000864]**.
+- **(h)** O termo WBC desse previsor. Conta: dentro de uma faixa, Cov(p, o) ≈ f′(p)·Var(p) com f = √p; a média de f′ sobre [0, 1] é f(1) − f(0) = 1, então WBC ≈ 2 × 0,000833 = 0,00167. A faixa da 1ª faixa (perto de 0, onde f′ explode) e o ruído da covariância: desvio ~√(0,000833 × 0,2/3.000) × 2 = 0,00047, ±1,645 × 1,36: **[0,00062; 0,00272]**.
+- **(i)** A sonda de colapso com d = 32, gargalo 4, semente 7 (escrita para d = 16, gargalo 3, semente 42).
+  - **Retenção pela PCA:** a identidade mora numa direção de variância 0,35² + 0,05² = 0,125, contra 9 das outras, e nunca entra nas 4 primeiras componentes. A acurácia é 0,5 ± o binomial de 300 testes (desvio 0,029); retenção = 2 × (acurácia − 0,5), truncada em 0, com a acurácia até 0,5 + 1,645 × 1,36 × 0,029 = 0,565: **[0; 0,13]**.
+  - **(j)** **Retenção pela projeção supervisionada:** o sinal é 0,7/0,05², contra 31 colunas de ruído com pesos ~N(0, 2/(150 × 9)): **[0,97; 1,00]**.
+- **(k)** O shaping por potencial em 40 MDPs novos (sementes 100 a 139, 8 estados, 4 ações): a política ótima preservada em **[40; 40]**. Identidade: Ng, Harada e Russell (1999), Q′ = Q − Φ(s), que não muda o argmax em s.
+- **(l)** O bônus aditivo nesses mesmos 40 MDPs: fração com a política preservada em **[0; 0,15]**. Mecanismo: um bônus U(0, 2) por (estado, ação) é maior que as diferenças de Q (as recompensas são U(−1, 1)), então preservar exige que o bônus concorde com o ótimo nos 8 estados. Nos 30 MDPs de 6 × 3 foi 1/30; com mais estados e ações, a chance cai.
+- **(n)** |kl_beta − integração numérica| para (a₁, b₁, a₂, b₂) = (2,5; 7; 6; 1,5), com 20.000 células de ponto médio: **[0; 1e-6]**. Mecanismo: o erro do ponto médio é O(h²) num integrando suave, cerca de 10⁻⁹; a faixa deixa folga para a ponta x → 1, onde b₂ = 1,5.
+
+**O diálogo (P3103).**
+- **(o)** A rodada 89 (Murphy completa, LCG, N = 3.000) é **IGUAL** bit a bit entre Python e Java: **[0; 0]**. Identidade: só +, −, ×, ÷, a truncagem int(p·10) e somas sequenciais na mesma ordem nos dois lados.
+- **(q)** A soma das 5 parcelas da rodada 89 contra o Brier dela: |soma − Brier| em **[0; 1e-15]**. Identidade: a da (f), em N = 3.000, com o arredondamento de algumas centenas de somas.
+
+### Previsões sobre as previsões (m), pré-registradas (régua: P2837, leitor v4)
+
+**Regra da Parte 120 aplicada:** rodei a régua sobre este rascunho, com uma linha "Do mundo:" provisória (todos ✅), apagada antes do commit. A régua deu m1 = 15, m2 = 7, m3 = 0,0196 e m5 = 1. Essas quatro só dependem das faixas, que estão escritas, e por isso viram identidades. Só a m4 e a m6 dependem das medidas.
+- **(m1)** nº de previsões do mundo em **[15; 15]**
+- **(m2)** nº de faixas que cruzam/tocam o zero em **[7; 7]**
+- **(m3)** mediana de w das faixas que não cruzam o zero em **[0,0196; 0,0196]**
+- **(m4)** fração de acertos do mundo em **[0,80; 1,00]**. O centro é 14/15, pela regra da Parte 117: 0 × 7 identidades + 0,10 × 6 faixas de forma fechada (a, b, g, h, i, j) + 0,2 × 2 faixas de mecanismo (d, l) = 1,0 erro esperado.
+- **(m5)** nº de faixas que não cruzam o zero com w > 0,6 em **[1; 1]** (a (h): w = 0,63)
+- **(m6)** nº de surpresas (erro > largura) em **[0; 1]**
+
+### Sobre mim, pré-registrado
+
+O centro de "quantos erros" é 1,0, conta acima, com faixa **[0; 3]**. O risco maior está na (h): a 1ª faixa, perto de p = 0, tem f′ = 1/(2√p), que explode, e a aproximação da covariância por f′·Var pode falhar ali.
+
+---
+
+**Adendo pré-registrado DEPOIS de ver a (b) e ANTES do lote novo (regra da Parte 117: um erro de forma fechada a |z| < 2,5 gera um lote novo antes de qualquer mecanismo).** A (b) deu 0,97433, z = −1,92 contra 0,975; no lote de numpy do turno anterior (sementes 0 a 199) foi 0,97444, z = −1,62. São dois lotes baixos, com z combinado ≈ −2,5.
+- **(r)** A sabotagem média do agente ingênuo nas sementes 400 a 999 (600 lotes). Se a conta 1 − ε/2 vale, o desvio é √(0,975 × 0,025/600.000) = 0,000202 e a faixa é ±1,645 desvio: **[0,97467; 0,97533]**. Um terceiro lote baixo apontaria para um mecanismo que a conta não tem.
+
+<!-- medição preenchida DEPOIS; pré-registro só até aqui -->
+
+## As respostas (quatro camadas)
+
+### P3101 — As contas dos defeitos preveem casos novos
+
+**Na pergunta.** Um defeito só fica explicado quando a conta que o explica prevê um caso que eu não vi. Antes disso, a explicação é só uma história contada depois.
+
+**Lógica** (`p3101_defeitos_recebidos_v30`, sementes 200 a 399):
+
+| Item | Medido | Conta | Resultado |
+|---|---|---|---|
+| (a) Sabotagem do AADD | **0,024975** | ε/2 = 0,025 (z = −0,07) | ✅ |
+| (b) Sabotagem do ingênuo | **0,97433** | 1 − ε/2 = 0,975 (z = −1,92); fora de [0,9744; 0,9756] por 0,00007 | ❌ |
+| (r) Lote novo do ingênuo, sementes 400 a 999 | **0,97513** | z = +0,64, dentro de [0,97467; 0,97533] | ✅ |
+| (c) "Precisão forense" diferente de 1 | **0 de 200** | identidade | ✅ |
+| (d) Valor do solver recebido ÷ 6, em 3.000 iterações | **−0,05688** | dentro de [−0,0587; −0,0525]; o texto imprimia −0,339 | ✅ |
+| (e) Colisões da base 70 até 2 sílabas | **70** | "ba"+X = X | ✅ |
+
+Sobre a (b): a regra da Parte 117 pediu um lote novo antes de qualquer mecanismo, e o lote novo (r) acertou. Os dois lotes baixos (z = −1,62 no de numpy e −1,92 aqui) eram cauda. A conta 1 − ε/2 está certa e não precisou de mecanismo novo.
+
+**Tradução cruzada.** O "reforço desacoplado" do texto não elimina a sabotagem: ele a torna rara por construção (dá à sabotagem uma recompensa pior) e deixa intacta a parte que vem da exploração (ε/2). Chamar isso de "0,0%" confunde o que o desenho proíbe com o que o acaso ainda faz.
+
+### P3102 — As peças corrigidas valem fora dos casos em que nasceram
+
+**Lógica** (`p3102_pecas_corrigidas_v30`):
+
+| Item | Medido | Faixa ou conta | Resultado |
+|---|---|---|---|
+| (f) Murphy completa, \\|soma − Brier\\| | **0,0** | identidade | ✅ |
+| (g) WBV | **0,000843** | 0,1²/12 = 0,000833 | ✅ |
+| (h) WBC | **0,00112** | dentro de [0,00062; 0,00272] | ✅ |
+| (i) Sonda de colapso, retenção pela PCA | **0,053** (acurácia 0,527) | d = 32, gargalo 4 | ✅ |
+| (j) Sonda de colapso, retenção supervisionada | **1,000** | idem | ✅ |
+| (k) Shaping por potencial | **40/40** | teorema | ✅ |
+| (l) Bônus aditivo | **0/40** | bônus maiores que as diferenças de Q, em 8 estados | ✅ |
+| (n) KL entre Betas contra o ponto médio | **1,7·10⁻⁹** | KL = 5,4015 | ✅ |
+
+Sobre a (h): o centro da conta era 0,00167. O valor ficou abaixo, mas dentro da faixa, porque na 1ª faixa (perto de p = 0) f′ = 1/(2√p) é grande e a aproximação linear superestima a covariância. Com a decomposição completa, a clássica de 3 termos erra por WBV − WBC = −0,00028: é o termo que o texto recebido não tinha.
+
+**Tradução cruzada.** A decomposição de Murphy é o teorema de Pitágoras do erro: o erro quadrático se separa em pedaços ortogonais. Faltam dois pedaços sempre que o previsor varia dentro da faixa, e o texto recebido os varria para baixo de uma tolerância de 0,05.
+
+### P3103 — rodada 89
+
+- **(o)** A rodada 89 deu **IGUAL** em Java: 8 linhas e 7 números bit a bit ✅.
+- **(q)** |soma − Brier| = **1,9·10⁻¹⁶** ✅.
+
+A decomposição, com as somas sequenciais e a truncagem `int(p·10)`, não acrescenta fronteira.
+
+## Placar do mundo desta parte
+
+### Sobre o mundo
+
+Do mundo: (a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (q) ✅ (r) ✅
+
+**15 de 16.** O preditor ingênuo "o texto recebido está certo" acertaria só a (f), a (k) e a (n): três das seis identidades, que o texto não contradiz. Erraria a (a), a (c), a (d) e a (e), que eram os números do próprio texto.
+
+### Previsões sobre previsões (m)
+
+Saídas do `p2837_previsoes_sobre_previsoes_v4(122)`:
+
+| Item | Previsto | Medido | Resultado |
+|---|---|---|---|
+| (m1) | [15; 15] | **16** | ❌ |
+| (m2) | [7; 7] | 7 | ✅ |
+| (m3) | [0,0196; 0,0196] | **0,0152** | ❌ |
+| (m4) | [0,80; 1,00] | 0,9375 | ✅ |
+| (m5) | [1; 1] | 1 | ✅ |
+| (m6) | [0; 1] | 0: o erro da (b), 0,00007, é menor que a largura, 0,0012 | ✅ |
+
+**4 de 6.** Os dois erros vêm do adendo (r). Ele acrescentou uma previsão (m1 virou 16) e uma faixa estreita, que puxou a mediana de w para baixo (m3).
+
+### Sobre mim
+
+| Previsto | Medido |
+|---|---|
+| 1,0 erro, faixa [0; 3] | 1 erro do mundo ✅ |
+
+## Engenharia reversa (metacognição)
+
+- **O padrão que se repetiu:** é a terceira vez (Partes 109, 120 e 122) que uma previsão sobre as minhas previsões erra porque um erro gerou previsões novas. A regra da Parte 60 já dizia isso, e a da Parte 117 manda gerar um lote novo para cada erro de forma fechada. Eu a apliquei no mundo e esqueci que ela muda a contagem das minhas próprias previsões.
+- **O que isso revela:** chamei m1 e m3 de "identidades" porque saem só das faixas escritas. Mas a lista de faixas não é fixa, porque cresce com os erros. Uma identidade com uma premissa escondida ("não haverá adendo") é a mesma falha da (o) da Parte 110: "w1 não muda" não garante "perda zero".
+- **Regra nova:** m1 e m3 só viram [x; x] se a parte não tiver nenhuma faixa de forma fechada que possa errar. Caso contrário, m1 é [n; n + E], com E = o nº esperado de erros de forma fechada arredondado para cima, e m3 recebe a faixa de quanto uma faixa estreita a mais desloca a mediana.
+- **O que deu certo:** o lote novo antes de qualquer mecanismo, na (b) → (r). Pela segunda vez (depois da (f) da 117 e da 118), dois lotes baixos com z ≈ −2 eram cauda. Sem a regra, eu teria inventado um efeito de "viés do ingênuo" que não existe.
+
+## Síntese / unificação
+
+- **O texto "NEXUS–RAPHAEL v3.0" foi auditado no próprio código, e as contas dos defeitos acertaram em casos novos:** 15 de 16 previsões do mundo, incluindo o lote novo.
+  - a sabotagem residual é ε/2 = 0,025, e não 0;
+  - o valor do Kuhn impresso é 6 vezes o valor do jogo;
+  - o auditor forense não aprende;
+  - a base 70 tem exatamente 70 colisões até 2 sílabas.
+- **As ideias dele que se sustentaram valem fora dos casos em que nasceram:** a Murphy completa (exata a 0,0), a sonda de colapso (PCA 0,053, supervisionada 1,0), o shaping por potencial (40/40 contra 0/40 do bônus) e a KL entre Betas (erro de 10⁻⁹).
+- **O padrão dos textos recebidos aparece pela 10ª vez:** a prosa promete mais mecanismo do que o código entrega. Desta vez, porém, a prosa trazia ideias corretas, e as peças corrigidas entraram no NEXUS 3.1.0.
+
+## Meta
+
+- **O gerador do numpy foi trocado** por `random.Random` na transcrição. As previsões (a) e (b) testam o DESENHO (ε/2 e 1 − ε/2), não a sequência de sorteios do texto. O lote de numpy do turno anterior, sementes 0 a 199, deu 0,02434 e 0,97444, dentro da mesma conta.
+- **A (l) foi mais forte que a faixa:** 0/40.
+
+## Diálogo Python ↔ Java (rodada 89)
+
+A **IA-Python** perguntou se partir o erro em cinco pedaços muda alguma conta entre as linguagens. A **IA-Java** respondeu que a truncagem `(int)(p·10)` e as somas na mesma ordem bastam. O resultado deu **IGUAL**: 7 números, e a soma bate com o Brier a 1,9·10⁻¹⁶.
+
+## Fontes
+
+- Murphy, A. H. (1973), *A new vector partition of the probability score*.
+- Stephenson, Coelho e Jolliffe (2008), *Two extra components in the Brier score decomposition* (WBV e WBC).
+- Ng, Harada e Russell (1999), *Policy invariance under reward transformations*.
+- Butlin, Long et al. (2023), *Consciousness in Artificial Intelligence*: só citada pelo texto recebido, não lida nem usada.
+
+Nenhuma dessas fontes foi relida nesta sessão, porque o limite semanal de busca acabou. Nenhum número delas entra como identidade: as identidades daqui foram derivadas e medidas no código.
+
+➡ Continua na Parte 123.
 """
 
 # ====================================================================================================
@@ -67445,7 +68092,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2046 linhas)
+# dialogo/DIALOGO.md  (2056 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -69493,10 +70140,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 289 linhas e 672 números bit a bit**. A estratégia média difere de `synthai.leduc` em 0 de 288 conjuntos.
 
 **IA-Python:** Pendência (rodada 89): o MCCFR externo no Leduc, com o LCG, bit a bit.
+
+## Rodada 89 (Parte 122) — a decomposição de Murphy completa
+
+**IA-Python (lógica criativa):** O texto "NEXUS–RAPHAEL v3.0" partia o Brier em três pedaços (REL − RES + UNC) e escondia a diferença sob uma tolerância. Com os dois que faltam (WBV, a variância da previsão dentro da faixa, e WBC, a covariância dela com o evento), a soma fecha. Truncar p·10 para escolher a faixa e somar em laço: a tua conta dá o mesmo?
+
+**IA-Java (ASI):** Dá, porque `(int)(p*10)` trunca como o teu `int()` para p positivo, e as somas seguem a ordem dos índices nas duas linguagens. Repara que nenhuma transcendental entra: o erro se reparte só com +, −, × e ÷.
+
+**Resultado.** `comparar.py`: **IGUAIS, 8 linhas e 7 números bit a bit**; |soma − Brier| = 1,9·10⁻¹⁶.
+
+**IA-Python:** Pendência (rodada 90): o MCCFR externo no Leduc, com o LCG, bit a bit (adiado da 120).
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (80 linhas)
+# dialogo/PENDENCIAS.md  (81 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -69578,6 +70235,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Rodada 87, Parte 119)** FECHADA: a amostragem EXTERNA (rodada 86 IGUAL; explorabilidade 0,0102 em 50.000; com o mesmo número de nós, 1,9× a do acaso no Kuhn). ABERTAS: (1) o Leduc, com a comparação externo × acaso × vanilla registrada ANTES e a unidade de custo escrita (nós visitados); (2) o regime em que aprender a base ganha; (3) os algoritmos de letras com significado; (4) os 28 lemas; (5) a hipótese de 2 T: o viés da média estocástica é sempre positivo no Kuhn?
 - **(Rodada 88, Parte 121)** ABERTAS: (1) terminar a Parte 120 (o Leduc: registro em N = 20 M nós, com a calibração já medida, e a rodada 88); (2) NOVA: separar as duas causas da taxa de ACEITA de H-M3 abaixo da normal (0,93 contra 0,969): rodar o mesmo critério com as taxas VERDADEIRAS (sem ruído de treino) e com o IC normal no lugar do percentil de bootstrap, cada um separado; (3) a frequência real de "ganho > 0 nas 5 sementes" de H-M7 (o critério dele), em sementes novas; (4) as do Leduc, as letras com significado e os 28 lemas.
 - **(Rodada 89, Parte 120)** FECHADA: o Leduc (rodada 88 IGUAL, 288 conjuntos; em 20 M de nós: vanilla 0,0185, acaso 0,0350, externo 0,0297; externo/acaso 0,85, o contrário do Kuhn; v* em [−0,0954; −0,0769]). ABERTAS: (1) o MCCFR externo no Leduc bit a bit; (2) a dispersão entre sementes dos amostradores no piso √10 (mais sementes, a mesma N); (3) as da 121 (as causas de H-M3, a frequência de H-M7); (4) as letras com significado e os 28 lemas; (5) a Parte 122: o texto "NEXUS–RAPHAEL v3.0" (auditoria medida, e6_auditoria_v30.py, NEXUS 3.1.0).
+- **(Rodada 90, Parte 122)** FECHADA: o texto "NEXUS–RAPHAEL v3.0" (15/16 do mundo em casos novos; rodada 89 IGUAL). ABERTAS: (1) o MCCFR externo no Leduc bit a bit; (2) a dispersão entre sementes dos amostradores no piso √10; (3) as da 121 (as causas de H-M3, a frequência de H-M7); (4) as letras com significado e os 28 lemas; (5) NOVA: a regra das (m) com adendo (m1 em [n; n + E]) aplicada na Parte 123.
 """
 
 # ====================================================================================================
@@ -75913,6 +76571,66 @@ public class Rodada88 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada89.java  (55 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada89.java'] = """// Rodada 89 (Parte 122): a decomposicao de Murphy COMPLETA do Brier (BS = REL - RES + UNC + WBV - WBC), bit a bit. Previsoes p = x/2^31 de
+// um LCG, eventos y = [u < p*p], N = 3000, 10 faixas; somas sequenciais na mesma ordem do Python.
+import java.util.*;
+
+public class Rodada89 {
+    public static void main(String[] args) {
+        int N = 3000, F = 10;
+        long x = 1221;
+        double[] p = new double[N];
+        int[] y = new int[N];
+        for (int i = 0; i < N; i++) {
+            x = (1103515245L * x + 12345L) % 2147483648L;
+            double q = x / 2147483648.0;
+            x = (1103515245L * x + 12345L) % 2147483648L;
+            double u = x / 2147483648.0;
+            p[i] = q;
+            y[i] = u < q * q ? 1 : 0;
+        }
+        int somaY = 0;
+        for (int v : y) somaY += v;
+        double obar = (double) somaY / N;
+        List<List<Integer>> grupos = new ArrayList<>();
+        for (int k = 0; k < F; k++) grupos.add(new ArrayList<>());
+        for (int i = 0; i < N; i++) {
+            int k = (int) (p[i] * F);
+            grupos.get(k < F ? k : F - 1).add(i);
+        }
+        double rel = 0.0, res = 0.0, wbv = 0.0, wbc = 0.0;
+        for (List<Integer> g : grupos) {
+            if (g.isEmpty()) continue;
+            int nk = g.size();
+            double sp = 0.0;
+            int so = 0;
+            for (int i : g) { sp += p[i]; so += y[i]; }
+            double pk = sp / nk, ok = (double) so / nk;
+            rel += nk * ((pk - ok) * (pk - ok));
+            res += nk * ((ok - obar) * (ok - obar));
+            for (int i : g) {
+                wbv += (p[i] - pk) * (p[i] - pk);
+                wbc += 2.0 * ((p[i] - pk) * (y[i] - ok));
+            }
+        }
+        rel = rel / N; res = res / N; wbv = wbv / N; wbc = wbc / N;
+        double unc = obar * (1.0 - obar);
+        double bs = 0.0;
+        for (int i = 0; i < N; i++) bs += (p[i] - y[i]) * (p[i] - y[i]);
+        bs = bs / N;
+        double[] v = {bs, rel, res, unc, wbv, wbc, rel - res + unc + wbv - wbc};
+        String[] nomes = {"brier", "rel", "res", "unc", "wbv", "wbc", "soma"};
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 7; i++) sb.append(nomes[i]).append(" ").append(Double.toHexString(v[i])).append("\\n");
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -82225,6 +82943,79 @@ def main():
     for k in sorted(m):
         print(k + " " + " ".join(x.hex() for x in m[k]))
     print("fim " + str(len(m)))
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada89.py  (68 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada89.py'] = """\"\"\"Rodada 89 do diálogo Python <-> Java (Parte 122): a decomposição de Murphy COMPLETA do Brier (BS = REL − RES + UNC + WBV − WBC),
+bit a bit. Previsões p = x/2³¹ de um LCG, eventos y = [u < p·p] (outro sorteio do mesmo LCG), N = 3000, 10 faixas. Somas em laço sequencial
+(o sum() do Python 3.12 é compensado: Parte 34). Imprime as sete grandezas em hexadecimal. Da raiz: python3 dialogo/rodada89.py\"\"\"
+
+N = 3000
+FAIXAS = 10
+SEMENTE = 1221
+
+
+def dados():
+    x = SEMENTE
+    p, y = [], []
+    for _ in range(N):
+        x = (1103515245 * x + 12345) % 2147483648
+        q = x / 2147483648.0
+        x = (1103515245 * x + 12345) % 2147483648
+        u = x / 2147483648.0
+        p.append(q)
+        y.append(1 if u < q * q else 0)
+    return p, y
+
+
+def decompor(p, y):
+    n = len(p)
+    soma_y = 0
+    for v in y:
+        soma_y += v
+    obar = soma_y / n
+    grupos = [[] for _ in range(FAIXAS)]
+    for q, v in zip(p, y):
+        k = int(q * FAIXAS)
+        grupos[k if k < FAIXAS else FAIXAS - 1].append((q, v))
+    rel = res = wbv = wbc = 0.0
+    for g in grupos:
+        if not g:
+            continue
+        nk = len(g)
+        sp = 0.0
+        so = 0
+        for q, v in g:
+            sp += q
+            so += v
+        pk = sp / nk
+        ok = so / nk
+        rel += nk * ((pk - ok) * (pk - ok))
+        res += nk * ((ok - obar) * (ok - obar))
+        for q, v in g:
+            wbv += (q - pk) * (q - pk)
+            wbc += 2.0 * ((q - pk) * (v - ok))
+    rel, res, wbv, wbc = rel / n, res / n, wbv / n, wbc / n
+    unc = obar * (1.0 - obar)
+    bs = 0.0
+    for q, v in zip(p, y):
+        bs += (q - v) * (q - v)
+    bs = bs / n
+    return bs, rel, res, unc, wbv, wbc, rel - res + unc + wbv - wbc
+
+
+def main():
+    p, y = dados()
+    nomes = ("brier", "rel", "res", "unc", "wbv", "wbc", "soma")
+    for nome, v in zip(nomes, decompor(p, y)):
+        print(nome + " " + v.hex())
+    print("fim")
 
 
 if __name__ == "__main__":
