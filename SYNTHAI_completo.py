@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 128, perguntas P1 a P3173).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 129, perguntas P1 a P3174).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (17509 linhas)
+# calculos.py  (17572 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7573,6 +7573,8 @@ def testes_de_regressao():
             and abs(p3161_ignicao_dobras()[0] - 0.26641998767677605) < 1e-12,
         "P3172": (lambda r: r["categorias"] == {"projeto": 73, "maquina": 2, "nota": 10, "mundo": 0} and r["sem_referencia"] == [91])(
             p3172_comparar_reproducao("reproducao/resultados_antes_volta1.txt", "reproducao/volta1")),
+        "P3174": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"]) == (9, 0, [128]))(
+            p3174_comparar_voltas("reproducao/volta1", "reproducao/volta2")),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -17536,6 +17538,67 @@ def _parte_128():
 
 PARTES[128] = _parte_128
 
+
+def p3174_comparar_voltas(pasta_a, pasta_b):
+    \"\"\"Compara duas voltas do loop (P3174): as partes dos bloco_*.txt de pasta_a (a anterior) com as de pasta_b (a nova), linha a linha,
+    com as mesmas categorias da P3172 (projeto, máquina, nota, mundo). Partes que só existem na nova entram em 'novas'. Devolve o mesmo dict
+    da P3172 mais 'novas'.\"\"\"
+    import difflib
+    import glob
+    import os
+    import re
+
+    def ler(pasta):
+        d, regs, ok, n = {}, [], 0, 0
+        for arq in sorted(glob.glob(os.path.join(pasta, "bloco_*.txt"))):
+            with open(arq, encoding="utf-8") as f:
+                t = f.read()
+            n += 1
+            d.update(p3171_partes_de_saida(t, inicio=1 if os.path.basename(arq).startswith("bloco_1_") else None))
+            regs += [l for l in t.split("\\n") if l.startswith("Regressao:")]
+            ok += ("Traceback" not in t) and ("FIM_OK status=0" in t)
+        return d, regs, ok, n
+    ref, _, _, _ = ler(pasta_a)
+    novo, regs, ok, n = ler(pasta_b)
+    cats = {"projeto": 0, "maquina": 0, "nota": 0, "mundo": 0}
+    mundo, tot, dif = [], 0, 0
+    for k in sorted(novo):
+        if k not in ref:
+            continue
+        a, b = ref[k], novo[k]
+        casadas = set()
+        for m in difflib.SequenceMatcher(a=a, b=b, autojunk=False).get_matching_blocks():
+            casadas.update(range(m.a, m.a + m.size))
+        tot += len(a)
+        for i, l in enumerate(a):
+            if i in casadas:
+                continue
+            dif += 1
+            m = re.match(r"\\s*P(\\d+)\\b", l)
+            if m is None:
+                cats["nota"] += 1
+            elif int(m.group(1)) in _PROJETO_P128:
+                cats["projeto"] += 1
+            elif int(m.group(1)) in _MAQUINA_P128:
+                cats["maquina"] += 1
+            else:
+                cats["mundo"] += 1
+                mundo.append((k, l))
+    return {"linhas": tot, "diferentes": dif, "fracao": dif / tot if tot else 0.0, "categorias": cats, "mundo": mundo,
+            "partes_refeitas": len(novo), "novas": sorted(k for k in novo if k not in ref), "regressoes": regs,
+            "blocos": n, "blocos_sem_excecao": ok}
+
+
+def _parte_129():
+    print("\\n=== Parte 129: volta 2 do loop (volta 1 contra volta 2) ===")
+    r = p3174_comparar_voltas("reproducao/volta1", "reproducao/volta2")
+    print(f"  blocos {r['blocos']}, sem exceção {r['blocos_sem_excecao']}; regressões {sorted(set(r['regressoes']))}")
+    print(f"  partes refeitas {r['partes_refeitas']}, novas {r['novas']}")
+    print(f"  linhas {r['linhas']}, diferentes {r['diferentes']} ({r['fracao']:.4f}); categorias {r['categorias']}; mundo {r['mundo']}")
+
+
+PARTES[129] = _parte_129
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -17548,7 +17611,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (519 linhas)
+# CLAUDE.md  (522 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -17913,6 +17976,9 @@ anterior, commit e push.
   inteira); o resultados.txt tinha notas à mão. Trocar o resultados.txt pela volta 1 quebrou o teste da Parte 56 (as rodadas 18-21 o usam como CORPUS): ele voltou ao
   original, mais a Parte 91 e a 128; cada volta fica em reproducao/voltaN e compara com a anterior. Regra: antes de trocar um arquivo, grep de quem o LÊ; notas à mão não
   entram em arquivos que funções medem; e todo rótulo de faixa vem da mesma variável que ela mede.
+  Parte 129 (volta 2 do loop, volta 1 x volta 2, `p3174_comparar_voltas`): 6/6; 9 de 1.870 linhas mudaram, 0 do mundo; cada diferença é a assinatura do commit entre as
+  voltas (uma diferença do MUNDO seria defeito, não ruído). A P1871 caiu de 130 para 22 "não referenciados" porque as saídas versionadas da reprodução CITAM os arquivos (menção
+  lida como uso, 4ª vez): toda medida de referências entre arquivos exclui as saídas de execução.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -29405,7 +29471,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# synthai/testes_parte128.py  (49 linhas)
+# synthai/testes_parte128.py  (69 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_parte128.py'] = """\"\"\"Testes da Parte 128: as peças da reprodução (P3171–P3173), chamadas pelo nome.\"\"\"
 
@@ -29452,6 +29518,26 @@ class TestesParte128(unittest.TestCase):
         r = c.p3172_comparar_reproducao("reproducao/resultados_antes_volta1.txt", "reproducao/volta1")
         self.assertEqual(r["categorias"]["mundo"], 0)
         self.assertEqual(r["sem_referencia"], [91])
+
+    def test_p3174_comparar_voltas(self):
+        a = "P3 a = 1\\n--- Parte 2 ---\\nP143 m = 1\\nP433 v = 1\\nP99 w = 1\\n=== Unificacao ===\\nFIM_OK status=0 segundos=1\\n"
+        b = "P3 a = 1\\n--- Parte 2 ---\\nP143 m = 2\\nP433 v = 2\\nP99 w = 2\\n--- Parte 3 ---\\nP5 z = 0\\n=== Unificacao ===\\nRegressao: 2/2\\nFIM_OK status=0 segundos=1\\n"
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "v1"))
+            os.makedirs(os.path.join(d, "v2"))
+            with open(os.path.join(d, "v1", "bloco_1_2.txt"), "w", encoding="utf-8") as f:
+                f.write(a)
+            with open(os.path.join(d, "v2", "bloco_1_2_3.txt"), "w", encoding="utf-8") as f:
+                f.write(b)
+            r = c.p3174_comparar_voltas(os.path.join(d, "v1"), os.path.join(d, "v2"))
+        self.assertEqual((r["linhas"], r["diferentes"]), (4, 3))
+        self.assertEqual(r["categorias"], {"projeto": 1, "maquina": 1, "nota": 0, "mundo": 1})
+        self.assertEqual(r["novas"], [3])
+        self.assertEqual(r["regressoes"], ["Regressao: 2/2"])
+
+    def test_volta2_regressao(self):
+        r = c.p3174_comparar_voltas("reproducao/volta1", "reproducao/volta2")
+        self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["novas"]), (9, 0, [128]))
 
 
 if __name__ == "__main__":
@@ -40264,7 +40350,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2178 linhas)
+# resultados.txt  (2187 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -42444,6 +42530,15 @@ P2519 minha taxa de erro (215/720): media = 0.30, intervalo 90% = [0.27, 0.33]
 P96 funcoes pNN no arquivo = 720; pares de interacao possiveis = 258840
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 168/168 resultados publicados reproduzidos; falhas = []
+
+=== Parte 129: volta 2 do loop (volta 1 contra volta 2) ===
+  blocos 16, sem exceção 16; regressões ['Regressao: 168/168 resultados publicados reproduzidos; falhas = []']
+  partes refeitas 125, novas [128]
+  linhas 1870, diferentes 9 (0.0048); categorias {'projeto': 7, 'maquina': 2, 'nota': 0, 'mundo': 0}; mundo []
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 721; pares de interacao possiveis = 259560
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 169/169 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -48040,7 +48135,7 @@ menor que salvou da maior.
 """
 
 # ====================================================================================================
-# ASI_AGI_parte128_refazer_tudo.md  (147 linhas)
+# ASI_AGI_parte128_refazer_tudo.md  (149 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte128_refazer_tudo.md'] = """# Parte 128 — Refazer tudo o que fizemos
 
@@ -48189,6 +48284,111 @@ Fonte da regra de reprodutibilidade (citada na Parte 46, não relida nesta sess�
 Computational Research*, PLoS Comput. Biol. 9(10): e1003285, 2013.
 
 ➡ Anterior: [Parte 127](ASI_AGI_parte127_consciencia_reversa.md).
+
+➡ Próxima: [Parte 129 — volta 2](ASI_AGI_parte129_volta2.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte129_volta2.md  (98 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte129_volta2.md'] = """# Parte 129 — Volta 2 do loop: refazer tudo de novo e comparar com a volta 1
+
+↩ Nasce da Parte 128 (a volta 1) e do pedido "Repita sempre tudo que fizemos. Loop infinito."
+
+## O que esta volta testa
+A volta 1 comparou a reprodução com o `resultados.txt`, que guarda cada parte como ela era no dia em que foi escrita. A volta 2 compara
+uma reprodução com a OUTRA: as duas foram feitas do zero, na mesma máquina, com um intervalo de poucas horas. O que muda entre elas é só o
+que mudou no repositório entre os dois commits (245584a → este) e o que muda com a máquina.
+
+Entre os dois commits mudaram:
+- o `calculos.py`: as funções P3171–P3174 e a Parte 128;
+- o CLAUDE.md;
+- o `resultados.txt`: a seção da Parte 91 e a saída da Parte 128, no fim;
+- os testes da Parte 128 e a pasta `reproducao/`.
+
+O mecanismo, escrito antes: só as medidas que leem esses arquivos mudam. São P143 (o CLAUDE.md), P213 (a regressão, que agora tem
+168 entradas), P1692 (o número de funções), P1871/P1872 (os arquivos), as que leem o `resultados.txt` inteiro (P913 e as que contam
+partes) e a velocidade da máquina (P433, P434).
+
+O procedimento é o da Parte 128: um clone limpo do GitHub no commit desta parte, 16 blocos retomáveis e a comparação pela
+`p3174_comparar_voltas` (volta 1 contra volta 2).
+
+## Previsões, registradas antes de qualquer execução da volta 2
+A procedência das faixas foi contada antes do centro de "quantos erros" (regra da Parte 128):
+- identidades: V1, V4 e V6;
+- de mecanismo: V2, V3 e V5.
+O centro de erros esperados é 3 × 0 + 3 × 0,25 ≈ 0,75.
+
+| | quantidade | faixa | procedência |
+|---|---|---|---|
+| V1 | blocos sem exceção | todos (16 de 16) | identidade: o mesmo código já rodou na volta 1 |
+| V2 | blocos com a regressão completa (168/168) | [15; 16] | P(um) ≈ 0,99 → P(16/16) ≈ 0,85 |
+| V3 | linhas da volta 1 que mudam na volta 2 (sem a Parte 128) | [8; 30] | mecanismo: as medidas listadas acima, ~1 linha cada, mais a máquina |
+| V4 | dessas, do MUNDO | [0; 0] | identidade: o mesmo código, a mesma semente e a mesma máquina dão o mesmo número; uma linha do mundo diferente seria um defeito |
+| V5 | testes que falham no clone (suíte + revisado + laboratório + entregas) | [0; 1] | a volta 1 teve 0 |
+| V6 | rodadas DIFERENTES | [0; 0] de 90 | identidade: nenhuma rodada mudou |
+
+**Sobre mim:** erros no mundo em [0; 2], com centro 0,75.
+
+## Medido (P3174; as saídas ficam em `reproducao/volta2/`)
+| | medido | faixa | |
+|---|---|---|---|
+| V1 | 16 de 16 blocos sem exceção | todos | ✅ |
+| V2 | 16 de 16 com a regressão **168/168** | [15; 16] | ✅ |
+| V3 | **9** de 1.870 linhas mudaram (0,48%) | [8; 30] | ✅ (perto da borda de baixo) |
+| V4 | **0** do mundo (7 do projeto, 2 da máquina) | [0; 0] | ✅ |
+| V5 | **0** falhas: 722 da suíte + 27 do laboratório + 40 + 72 + 55 das entregas | [0; 1] | ✅ |
+| V6 | **0** DIFERENTES nas 90 rodadas | [0; 0] | ✅ |
+
+**Mundo: 6 de 6.** **Sobre mim: 1 de 1.** Previ de 0 a 2 erros, com centro 0,75, e tive 0. A regra de contar a procedência antes de
+centrar "quantos erros" (Parte 128) funcionou na primeira vez em que foi aplicada.
+
+Tempo: **6,6 h** de processador nos 16 blocos (23.796 s), contra 7,1 h na volta 1.
+
+### As 9 linhas que mudaram: cada uma tem a sua causa no que mudou entre os commits
+| linha | volta 1 | volta 2 | por quê |
+|---|---|---|---|
+| P143 | CLAUDE.md com 87.537 caracteres | 88.529 | a regra da Parte 128 entrou |
+| P213 | regressão 167/167 | 168/168 | a entrada P3172 |
+| P433, P434 | 2,06·10⁷ adições/s | 4,12·10⁷ | a máquina: a velocidade dobrou de uma volta para a outra, e a causa não foi medida (nas duas voltas três blocos rodavam junto com os testes; um palpite de causa seria a regra da Parte 127 quebrada). A própria P433 avisa: "a taxa varia de execução para execução" |
+| P913 | 12.817 números no resultados.txt | 13.003 | a Parte 91 e a 128 entraram no fim do arquivo |
+| P1692 | 949 funções | 954 | P3171–P3174 e a `_parte_128` |
+| P1871, P1872 | 130 arquivos "não referenciados" | **22** | abaixo |
+| P2446 | 717 funções pNN | 721 | P3171–P3174 |
+
+**O achado da volta 2: o auditor de "o que não serve" lê MENÇÃO como uso, de novo.** A P1871 (Parte 81) chama um arquivo de usado quando
+o nome dele aparece em outro arquivo versionado. Conferi isso no código antes de explicar, pela regra da Parte 127: a docstring diz "(c)
+arquivos versionados cujo nome não aparece em nenhum outro".
+- **O que aconteceu.** As saídas da volta 1 (`reproducao/volta1/*.txt`, agora versionadas) CITAM os nomes de quase todos os arquivos: o
+  verificador escreve "Rodada87: IGUAIS", e a suíte lista os módulos de teste. Bastou guardar o registro de uma execução para que 108
+  arquivos passassem a contar como "usados".
+- **O que restou.** Os únicos 21 não citados são as próprias saídas da reprodução, mais o documento da parte mais nova.
+- **O padrão.** É o mesmo das Partes 109, 111 e 112 (uso × menção num verificador), agora causado pelo próprio arquivamento da prova.
+  Um registro de que as coisas rodaram faz o auditor achar que elas são usadas.
+- **O remédio fica como pendência.** Uma versão nova da P1871, sem editar a medida, que não conte como uso a menção dentro de saídas de
+  execução (`reproducao/`, `resultados.txt`).
+
+### Engenharia reversa
+- **Duas voltas seguidas, 0 diferenças do mundo nas duas.** O que a SYNTHAI calcula sobre o mundo é uma função pura do código e da
+  semente, e a reprodução é a prova disso, repetida.
+- **O que muda entre voltas é exatamente o que eu mudei**, linha por linha, e mais a máquina. Isso transforma o loop num instrumento: a
+  diferença entre duas voltas é a assinatura do commit entre elas. Se uma volta mostrar uma diferença do MUNDO, ela não é ruído: é um
+  defeito (dependência escondida de arquivo, de ordem ou de relógio). A faixa [0; 0] de V4 foi escrita para poder ser derrubada por
+  isso, e não foi.
+- **O que eu aprendo sobre mim.** As minhas medidas sobre mim mesma são sensíveis ao próprio registro delas (a P1871 caiu de 130 para
+  22 porque eu arquivei a prova). É a Parte 53 de novo: uma medida que mora dentro do objeto medido muda o objeto.
+- **Regra nova (Parte 129):** toda medida que conta referências entre arquivos exclui as saídas de execução (registros não são uso).
+
+## Funções e testes
+- **Funções:** `p3174_comparar_voltas` (escrita antes de rodar a volta) e `_parte_129`. A entrada `P3174` foi para a regressão, que
+  agora tem 169 entradas.
+- **Testes:** `test_p3174_comparar_voltas` e `test_volta2_regressao`, em `synthai/testes_parte128.py`.
+- **Diálogo:** a rodada desta volta foi conferir as 90 rodadas, todas IGUAIS, de novo.
+
+## Loop
+A volta 3 começa num clone novo, no commit desta parte. A continuação está agendada; para parar, basta dizer "pare".
+
+➡ Anterior: [Parte 128](ASI_AGI_parte128_refazer_tudo.md).
 """
 
 # ====================================================================================================
@@ -72798,7 +72998,7 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (85 linhas)
+# dialogo/PENDENCIAS.md  (86 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -72885,6 +73085,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Partes 124–126)** FECHADAS: os módulos da Parte 123 em arquivo único (`entregas/modulos/`, 19/23 do mundo): quantilização adaptativa, fala calibrada, multiagente com veto, transferência, adversário adaptativo, desligamento com manipulação, memória com traço. ABERTAS: (1) rodada do diálogo para o veto por soma e para o Platt (exp/log próprios); (2) separar as duas causas do resíduo da memória por traço (independência do Naive Bayes × viés de seleção); (3) o MCCFR externo no Leduc bit a bit; (4) da 126: a obediência no nível da categoria se repete com uma regra sobre uma palavra neutra (não do tema)? Pré-registrar com a conta da família removida.
 - **(Parte 127)** ABERTAS: (1) a hipótese da histerese da proibição no meu hábito: num lote novo com uma regra proibitiva E uma prescritiva sobre palavras NEUTRAS (fora do tema), depois um lote sem regra; prever, com a conta da família removida (Parte 126) e o controle do lote sem regra, quanto de cada uma persiste; (2) a ignição com exp próprio no diálogo (rodada candidata: a rampa e o cruzamento são +−×÷ e exp); (3) o adiantamento por ruído na rampa veio 3× menor que o Kramers estático: medir o número efetivo de tentativas (c) em função de ε.
 - **(Parte 128)** ABERTAS: (1) os 28 rótulos "Partes 80-X" da P1961 nas Partes 85–119 imprimem a faixa padrão crescente: escrever as versões novas das impressões com a faixa EXPLÍCITA (regra da Parte 109), sem editar as antigas medidas, e conferir na volta 2; (2) a Parte 91 nunca entrou no resultados.txt (só agora, pela volta 1): auditar por que (a P1601 não a acusou: medir se o auditor olhava a parte certa); (3) a volta 2 do loop compara com a volta 1: prever 0 diferenças do mundo e só as do projeto que as Partes 128+ mudarem.
+- **(Parte 129)** ABERTAS: (1) a P1871 versão nova (sem editar a antiga) que exclui reproducao/ e resultados.txt como fonte de "uso"; prever, antes, que volta aos ~130 da volta 1 menos os que as partes 128-129 passaram a citar; (2) a velocidade da P433 dobrou entre voltas sem causa medida: rodar a P433 sozinha, sem nada em paralelo, e com 3 processos em paralelo, e medir a razão; (3) as do loop seguem (rótulos da P1961, a Parte 91 que a P1601 não acusou).
 """
 
 # ====================================================================================================
