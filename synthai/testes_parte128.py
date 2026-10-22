@@ -68,6 +68,19 @@ class TestesParte128(unittest.TestCase):
         r = c.p3174_comparar_voltas("reproducao/volta2", "reproducao/volta3")
         self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["novas"]), (8, 0, [129]))
 
+    def test_p3175_arquivos_sem_uso_v2(self):
+        # controles dos dois lados: 'citado_so_em_saida.txt' só aparece numa saída (tem de ser acusado);
+        # 'usado.py' aparece num .py (não pode ser acusado); a própria saída não é citada por ninguém (é acusada)
+        arquivos = {"principal.py": "import usado\n", "usado.py": "x = 1\n", "citado_so_em_saida.txt": "dado\n",
+                    "reproducao/v1/saida.txt": "rodei citado_so_em_saida.txt e principal\n", "leia.md": "veja principal.py\n"}
+        with tempfile.TemporaryDirectory() as d:
+            for nome, conteudo in arquivos.items():
+                os.makedirs(os.path.join(d, os.path.dirname(nome)), exist_ok=True)
+                with open(os.path.join(d, nome), "w", encoding="utf-8") as f:
+                    f.write(conteudo)
+            soltos = c.p3175_arquivos_sem_uso_v2(raiz=d, arquivos=list(arquivos))
+        self.assertEqual(soltos, ["citado_so_em_saida.txt", "leia.md", "reproducao/v1/saida.txt"])
+
 
 if __name__ == "__main__":
     unittest.main()

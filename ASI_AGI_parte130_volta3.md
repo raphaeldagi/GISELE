@@ -98,3 +98,5 @@ expliquei a queda 130 → 22 pela menção, e certo. Mas não li a linha que diz
 A volta 4 começa num clone novo, no commit desta parte. A continuação está agendada; para parar, basta dizer "pare".
 
 ➡ Anterior: [Parte 129](ASI_AGI_parte129_volta2.md).
+
+➡ Próxima: [Parte 131 — volta 4](ASI_AGI_parte131_volta4.md).

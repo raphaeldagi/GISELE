@@ -17574,6 +17574,32 @@ def _parte_130():
 
 PARTES[130] = _parte_130
 
+
+def p3175_arquivos_sem_uso_v2(raiz=None, arquivos=None, saidas=("reproducao/", "resultados.txt")):
+    """A parte (c) da P1871 sem ler MENÇÃO em saída de execução como uso (P3175, Partes 129-130): um arquivo versionado é 'sem uso' se o
+    seu nome (o nome-base, com ou sem extensão, ou o módulo pontuado) não aparece em nenhum OUTRO arquivo de texto versionado que não seja
+    uma saída de execução (os caminhos que começam por um dos prefixos de `saidas`). As saídas continuam sendo AUDITADAS (podem estar sem
+    uso); só deixam de ser FONTE de citação. raiz/arquivos permitem testar fora do repositório. Devolve a lista ordenada."""
+    import os
+    import re
+    import subprocess
+    raiz = raiz or os.path.dirname(os.path.abspath(__file__))
+    if arquivos is None:
+        git = subprocess.run(["git", "ls-files"], cwd=raiz, capture_output=True, text=True)
+        arquivos = [f for f in git.stdout.split("\n") if f]
+    texto = {f: open(os.path.join(raiz, f), encoding="utf-8").read() for f in arquivos
+             if f != "SYNTHAI_completo.py" and not f.startswith("dados/") and f.endswith((".py", ".java", ".md", ".txt", ".tsv"))}
+    fontes = {f: t for f, t in texto.items() if not f.startswith(tuple(saidas))}
+    soltos = []
+    for f in sorted(texto):
+        base = os.path.basename(f)
+        nomes = {base, os.path.splitext(base)[0]}
+        if f.endswith(".py"):
+            nomes.add(f[:-3].replace("/", "."))
+        if not any(re.search(r"(?<![\w])" + re.escape(n) + r"(?![\w])", t) for n in nomes for g, t in fontes.items() if g != f):
+            soltos.append(f)
+    return soltos
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
