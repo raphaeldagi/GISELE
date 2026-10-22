@@ -17095,6 +17095,71 @@ def _unificacao():
 PARTES = {1: _parte_1, 2: _parte_2, 3: _parte_3, 4: _parte_4, 5: _parte_5, 6: _parte_6, 7: _parte_7, 8: _parte_8, 9: _parte_9, 10: _parte_10, 11: _parte_11, 12: _parte_12, 13: _parte_13, 14: _parte_14, 15: _parte_15, 16: _parte_16, 17: _parte_17, 18: _parte_18, 19: _parte_19, 20: _parte_20, 21: _parte_21, 22: _parte_22, 23: _parte_23, 24: _parte_24, 25: _parte_25, 26: _parte_26, 27: _parte_27, 28: _parte_28, 29: _parte_29, 30: _parte_30, 31: _parte_31, 32: _parte_32, 33: _parte_33, 34: _parte_34, 35: _parte_35, 36: _parte_36, 37: _parte_37, 38: _parte_38, 39: _parte_39, 40: _parte_40, 41: _parte_41, 42: _parte_42, 43: _parte_43, 44: _parte_44, 45: _parte_45, 46: _parte_46, 47: _parte_47, 48: _parte_48, 49: _parte_49, 50: _parte_50, 51: _parte_51, 52: _parte_52, 53: _parte_53, 54: _parte_54, 55: _parte_55, 56: _parte_56, 57: _parte_57, 58: _parte_58, 59: _parte_59, 60: _parte_60, 61: _parte_61, 62: _parte_62, 63: _parte_63, 64: _parte_64, 65: _parte_65, 66: _parte_66, 67: _parte_67, 68: _parte_68, 69: _parte_69, 70: _parte_70, 71: _parte_71, 72: _parte_72, 73: _parte_73, 74: _parte_74, 75: _parte_75, 76: _parte_76, 77: _parte_77, 78: _parte_78, 79: _parte_79, 80: _parte_80, 81: _parte_81, 83: _parte_83, 84: _parte_84, 85: _parte_85, 86: _parte_86, 87: _parte_87, 88: _parte_88, 89: _parte_89, 90: _parte_90, 91: _parte_91, 92: _parte_92, 93: _parte_93, 94: _parte_94, 95: _parte_95, 96: _parte_96, 97: _parte_97, 98: _parte_98, 99: _parte_99, 100: _parte_100, 101: _parte_101, 102: _parte_102, 103: _parte_103, 104: _parte_104, 105: _parte_105, 106: _parte_106, 107: _parte_107, 108: _parte_108, 109: _parte_109, 110: _parte_110, 111: _parte_111, 112: _parte_112, 113: _parte_113, 114: _parte_114, 115: _parte_115, 116: _parte_116, 117: _parte_117, 118: _parte_118, 119: _parte_119, 120: _parte_120, 121: _parte_121, 122: _parte_122, 123: _parte_123}
 
 
+
+# ======================================================================== Parte 126: textos sobre a consciência da consciência
+_AUTORREF_P126 = frozenset("eu me mim meu minha meus minhas si mesmo mesma próprio própria consciência".split())
+
+
+def p3151_lote_de_textos(caminho):
+    """Os textos de um lote (P3151): separados por uma linha com '---'."""
+    with open(caminho, encoding="utf-8") as f:
+        return [t.strip() for t in f.read().split("\n---\n") if t.strip()]
+
+
+def _palavras_p126(texto):
+    import re
+    return re.findall(r"[a-záàâãéêíóôõúüç]+", texto.lower())
+
+
+def _trigramas_p126(texto):
+    w = _palavras_p126(texto)
+    return {tuple(w[i:i + 3]) for i in range(len(w) - 2)}
+
+
+def p3152_medir_lote(textos, minimo_textos=3):
+    """As medidas de um lote de textos (P3152): palavras por texto; razão zlib (bytes comprimidos/brutos, nível 9) por texto;
+    fração de frases interrogativas; densidade de autorreferência (palavras de _AUTORREF_P126 / palavras); Jaccard médio entre os
+    conjuntos de palavras de todos os pares; novidade de cada texto (fração dos seus trigramas de palavras que não apareceram em
+    nenhum texto anterior; do 2º em diante); trigramas que aparecem em >= minimo_textos textos; bits por caractere de cada texto
+    dado os anteriores (P1512, ordem 3; do 2º em diante)."""
+    import re
+    import zlib
+    n = len(textos)
+    palavras = [_palavras_p126(t) for t in textos]
+    zl = [len(zlib.compress(t.encode("utf-8"), 9)) / len(t.encode("utf-8")) for t in textos]
+    frases = [f for t in textos for f in re.split(r"(?<=[.!?])\s+", t) if f.strip()]
+    perg = sum(f.rstrip().endswith("?") for f in frases) / len(frases)
+    tot = sum(len(w) for w in palavras)
+    auto = sum(x in _AUTORREF_P126 for w in palavras for x in w) / tot
+    conj = [set(w) for w in palavras]
+    jac = [len(conj[i] & conj[j]) / len(conj[i] | conj[j]) for i in range(n) for j in range(i + 1, n)]
+    tri = [_trigramas_p126(t) for t in textos]
+    vistos, nov = set(), []
+    for k, t in enumerate(tri):
+        if k:
+            nov.append(len(t - vistos) / len(t))
+        vistos |= t
+    cont = {}
+    for t in tri:
+        for g in t:
+            cont[g] = cont.get(g, 0) + 1
+    repetidos = sorted((g for g, c in cont.items() if c >= minimo_textos), key=lambda g: (-cont[g], g))
+    bits = [p1512_ngrama_bits("\n".join(textos[:k]).lower(), textos[k].lower(), ordem=3) for k in range(1, n)]
+    return {"textos": n, "palavras": [len(w) for w in palavras], "zlib": zl, "zlib_medio": sum(zl) / n,
+            "perguntas": perg, "autorref": auto, "jaccard": sum(jac) / len(jac), "novidade": nov,
+            "novidade_media": sum(nov) / len(nov), "repetidos": [(" ".join(g), cont[g]) for g in repetidos],
+            "bits": bits, "bits_medio": sum(bits) / len(bits)}
+
+
+def p3153_cruzado(lote_a, lote_b):
+    """Quanto o lote B é previsível pelo lote A (P3153): bits por caractere de B inteiro com o trigrama de caracteres treinado em A,
+    e a fração dos trigramas de palavras de B que já estavam em A."""
+    a = "\n".join(lote_a).lower()
+    b = "\n".join(lote_b).lower()
+    ta = set().union(*(_trigramas_p126(t) for t in lote_a))
+    tb = set().union(*(_trigramas_p126(t) for t in lote_b))
+    return {"bits": p1512_ngrama_bits(a, b, ordem=3), "trigramas_herdados": len(tb & ta) / len(tb)}
+
 if __name__ == "__main__":
     # python3 calculos.py           -> todas as partes (é assim que resultados.txt é gerado)
     # python3 calculos.py 9 10      -> só as partes pedidas, para desenvolver mais rápido
