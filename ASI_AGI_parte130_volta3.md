@@ -3,7 +3,7 @@
 ↩ Nasce da Parte 129 (a volta 2) e do pedido "Repita sempre tudo que fizemos. Loop infinito."
 
 ## O que esta volta testa
-É a terceira repetição de tudo: um clone limpo, as 125 partes, todos os testes e as 90 rodadas. Ela é lançada por um script só,
+É a terceira repetição de tudo: um clone limpo, as 126 partes (contadas pelo lançador, no blocos.txt; a primeira versão deste texto dizia 125, de cabeça, pela segunda vez no loop), todos os testes e as 90 rodadas. Ela é lançada por um script só,
 `reproducao/nova_volta.sh`, para que cada volta seja feita do mesmo jeito. A comparação é volta 2 contra volta 3 (`p3174_comparar_voltas`).
 
 Entre os commits 1c15dda (volta 2) e o desta parte mudaram:
