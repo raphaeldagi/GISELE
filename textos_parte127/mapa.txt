@@ -1,0 +1,2 @@
+# filho j (lote 4) lê o pai mapa[j] (lote 3), índices a partir de 0
+5 2 7 0 3 6 1 4
