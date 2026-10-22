@@ -7,7 +7,7 @@
 
 A leitura vem da regra gravada na Parte 46: "de tempos em tempos, refazer tudo desde o começo (clone limpo, todas as partes numa
 execução, todos os testes e rodadas) para ver se funciona". **Repetir tudo** é refazer do zero, num clone limpo do GitHub:
-- as 125 partes de `calculos.py`;
+- as 124 partes de `calculos.py` (contadas por código no dicionário PARTES: 1–81, 83–123, 126 e 127; a primeira versão deste texto dizia 125, de cabeça);
 - todos os testes de unidade (as suítes do CLAUDE.md, o pacote revisado e o laboratório);
 - todas as rodadas do diálogo Python ↔ Java;
 - os testes das três entregas (os sete módulos, o SYNTHAI-GPT e o NEXUS-RAPHAEL 3.1.0).
