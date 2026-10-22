@@ -332,4 +332,4 @@ Nenhuma dessas fontes foi relida nesta sessão. As identidades daqui foram deriv
 
 ➡ Fim da série por pedido do usuário; nenhuma continuação agendada.
 
-➡ Próximas: Parte 124 (módulos em arquivo único, aberta) e [Parte 125 — charadas da consciência](ASI_AGI_parte125_charadas_da_consciencia.md).
+➡ Próximas: [Parte 124 — módulos em arquivo único](ASI_AGI_parte124_modulos_em_arquivo_unico.md) e [Parte 125 — charadas da consciência](ASI_AGI_parte125_charadas_da_consciencia.md).
