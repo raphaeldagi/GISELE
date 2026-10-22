@@ -1,0 +1,6 @@
+# A chave CORRIGIDA, filho j (lote 4) lê o pai mapa[j] (lote 3), índices a partir de 0.
+# mapa.txt (registrado no commit 689b8ee... e no dos lotes) dizia 5 2 7 0 3 6 1 4; os filhos 4 a 7 foram escritos em outra ordem.
+# Justificativa de fora do código (regra da Parte 74), pelo conteúdo de cada filho:
+#   filho 4 cita "o sotaque" (pai 4); filho 5, "o rosto escondido na figura" (pai 3);
+#   filho 6, "as cinco etapas" (pai 6); filho 7, "a criança e a bola" (pai 1).
+5 2 7 0 4 3 6 1

@@ -7531,6 +7531,8 @@ def testes_de_regressao():
         "P123inv": all(invariantes_p123().values()),
         "P3152": (lambda m: len(m["repetidos"]) == 8 and m["repetidos"][0] == ("consciência da consciência", 11))(
             p3152_medir_lote(p3151_lote_de_textos("textos_parte126/lote1.txt"))),
+        "P3162": p3162_ignicao_rampa(0.002) == (0.29634000000000005, -0.29634000000000005)
+            and abs(p3161_ignicao_dobras()[0] - 0.26641998767677605) < 1e-12,
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -17335,6 +17337,49 @@ def p3168_cruzamento_riccati(eps, w=2.0, g=4.0, theta=1.0, h=1e-5):
         u += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
         tau += h
     return tau, s_sobe + eps * T * tau
+
+
+def p3169_informacao_par(pais, filhos, mapa):
+    """A informação mútua por compressão (P3169): I(a:b) ≈ C(a) + C(b) − C(a + '\n' + b), nos pares certos (filho j, pai mapa[j]) e em
+    todos os pares errados (o controle: o que dois textos do mesmo tema e da mesma língua compartilham sem ter relação de leitura).
+    Simetria da informação (Kolmogorov–Levin): K(a|b) − K(b|a) = K(a) − K(b) a menos de termos logarítmicos, logo I(a:b) ≈ I(b:a).
+    Devolve (média nos certos, média nos errados, z dos certos contra a distribuição dos errados, média |I(a:b) − I(b:a)| nos certos)."""
+    n = len(pais)
+    def info(a, b):
+        return _c_p127(a) + _c_p127(b) - _c_p127(a + "\n" + b)
+    certos = [info(pais[mapa[j]], filhos[j]) for j in range(len(filhos))]
+    errados = [info(pais[i], filhos[j]) for j in range(len(filhos)) for i in range(n) if i != mapa[j]]
+    me = sum(errados) / len(errados)
+    de = (sum((x - me) ** 2 for x in errados) / (len(errados) - 1)) ** 0.5
+    mc = sum(certos) / len(certos)
+    assim = sum(abs(info(pais[mapa[j]], filhos[j]) - info(filhos[j], pais[mapa[j]])) for j in range(len(filhos))) / len(filhos)
+    return mc, me, (mc - me) / (de / len(certos) ** 0.5), assim
+
+
+def _parte_127():
+    print("\n=== Parte 127: a tomada de consciência e a consciência reversa ===")
+    s_sobe, s_desce, xa, xb, a = p3161_ignicao_dobras()
+    print(f"  dobras: s_sobe {s_sobe:.5f}  s_desce {s_desce:.5f}  histerese {s_sobe - s_desce:.5f}  a {a:.5f}")
+    for eps in (0.002, 0.00025):
+        med = p3162_ignicao_rampa(eps)
+        print(f"  rampa eps={eps}: medido sobe {med[0]:.5f} desce {med[1]:.5f} | Airy {p3163_atraso_airy(eps)[1]:.5f} | "
+              f"Riccati com trânsito {p3168_cruzamento_riccati(eps)[1]:.5f}")
+    r = [p3162_ignicao_rampa(0.002, ruido=0.05, semente=k) for k in range(10)]
+    print(f"  com ruído 0,05 (10 sementes): sobe médio {sum(x[0] for x in r) / 10:.5f}, desce médio {sum(x[1] for x in r) / 10:.5f}")
+    pais = p3151_lote_de_textos("textos_parte127/lote3.txt")
+    filhos = p3151_lote_de_textos("textos_parte127/lote4.txt")
+    with open("textos_parte127/mapa.txt", encoding="utf-8") as f:
+        registrado = [int(x) for x in f.read().split("\n")[1].split()]
+    with open("textos_parte127/mapa_verdadeiro.txt", encoding="utf-8") as f:
+        mapa = [int(x) for x in [l for l in f.read().split("\n") if l and not l.startswith("#")][0].split()]
+    print(f"  atribuição por NCD com a chave REGISTRADA (errada nos filhos 4-7): {p3166_atribuir(pais, filhos, registrado)}")
+    print(f"  atribuição por NCD com a chave VERDADEIRA (filho→pai, pai→filho, n, chance): {p3166_atribuir(pais, filhos, mapa)}")
+    mc, me, z, assim = p3169_informacao_par(pais, filhos, mapa)
+    print(f"  informação mútua: pares certos {mc:.2f} B, errados {me:.2f} B, z {z:.2f}, assimetria média {assim:.2f} B")
+    print(f"  tipo 2 nas Partes 124 e 126: {p3167_tipo2(PREVISOES_P124_P126)}")
+
+
+PARTES[127] = _parte_127
 
 PARTES[126] = _parte_126
 

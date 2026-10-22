@@ -292,3 +292,5 @@ Fontes conceituais (de memória, não relidas nesta sessão):
   e E2 e do lote 2.
 
 ➡ Parte 124 (módulos em arquivo único) continua aberta. Anterior: [Parte 125](ASI_AGI_parte125_charadas_da_consciencia.md).
+
+➡ Próxima: [Parte 127 — a consciência reversa](ASI_AGI_parte127_consciencia_reversa.md).
