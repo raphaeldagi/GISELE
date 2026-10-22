@@ -1,0 +1,86 @@
+--- Parte 81 (0x51: o que nao serve) ---
+P1871 nao referenciados pelo nome: calculos.py 0 []; synthai/ 0 []; arquivos 130
+P1872 os arquivos acusados, olhados um a um: {'documento da parte mais nova': 1, 'verificar.py (glob)': 72, 'registro (citado pela pasta)': 24, 'rodada29.py (f-string)': 24}; sem uso: 9 ['dialogo/SondaTransc105.java', 'entregas/synthai_gpt/FICHA_DO_PRODUTO.md', 'entregas/synthai_gpt/PREVISAO_ANTES_DO_TREINO.md', 'entregas/synthai_gpt/treinar_pesos.py', 'externos/nexus_raphael_v3_0/nucleo_v30_transcrito.py.txt', 'externos/pacote3/aprendizagem_continua.py', 'externos/pacote3/inovacao_guiada.py', 'externos/pacote3/modelo_mundo_doc.md', 'externos/word_rl_lab/word_rl_lab_v1_recebido.py']
+P1092 pNN novas (P1871-P1900) sem teste: 0 de 2: []
+P974 previsoes unilaterais da Parte 81: {}
+P1899 minha taxa de erro (202/660): media = 0.31, intervalo 90% = [0.28, 0.34]
+--- Parte 83 (0x53: a probabilidade da probabilidade) ---
+P1931 GAN de Dirac (rodada 50): {'sincrono': (0.3486415201803936, 0.3486415201803936, 16), 'alternado': (0.09937914946296939, 0.10127394042050152, 16), 'assincrono': (0.12751946544416812, 0.16724031842197498, 8)}; contas: {'sincrono_final': 0.34849026133183214, 'phi': 0.050005209798721736, 'phi_angulo_duplo': 0.05000520979872228, 'alternado_maximo': 0.10127393670836667, 'trocas': 16}
+P1932 jogo assincrono, 200 corridas: ((3.3405389422581635, 1.7238607643996413, 5, 12.48440099293599, 0.011056070913967762), {'assincrono': 3.125, 'desvio': 1.7677669529663689, 'sincrono': 12.48440099293573})
+P1932 replica, 800 corridas: ((3.202133605750349, 1.7396018574476568, 33, 12.48440099293599, 0.011056070913967762), {'assincrono': 3.125, 'desvio': 1.7677669529663689, 'sincrono': 12.48440099293573})
+P1933 calibracao composta sete vezes (conta, simulada, composta, declarar para 1 camada, para 7): (0.15158523371216237, 0.15114, 0.15158523371216237, 0.974713720916899, 1.0)
+P1934 a torre de placares, Partes 67-81: ({1: (94, 107), 2: (77, 98), 3: (69, 77)}, [72])
+P1935 o modulo sete_camadas recebido contra a logistica: {'logistica_pesos': [6.84630315876333, -5.5909068089302885, 0.6391386934514915, 0.2752635323667608, 0.23238946857094842], 'logistica_limpa': 0.923828125, 'logistica_adversa': 0.794921875, 'modos_identicos': True, 'rede_limpa': 0.921875, 'rede_adversa': 0.794921875, 'ciclos': 2}
+P1936 Lyapunov assincrono a = 0,2: (0.005008165399202463, 1.0016330798404924, 0.995033085316809); a = 0,05: (0.0003195948700953975, 1.0227035843052719, 0.9996876301474846)
+P1092 pNN novas (P1931-P1960) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 83: {}
+P1959 minha taxa de erro (203/675): media = 0.30, intervalo 90% = [0.27, 0.33]
+--- Parte 84 (0x54: o delirio e o escrutinio) ---
+P1961 teste (e) da Parte 79 (acerto das Partes 80, 81, 83, 84): 23/31 = 0.7419; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9)}
+P1962 Lyapunov pelo operador de transferencia a=0,2: (0.004987316189849222, 0.9974632379698442, 0.995033085316809)
+P1962 a=0,05: (0.0003123340443594762, 0.9994689419503237, 0.9996876301474846)
+P1963 delirio base (agulha, com ruido): (0.08333333333333333, 0.15666666666666668, 0.07333333333333335, 0.15333333333333332, -0.5937566666666667)
+P1963 (h) limpo agulha: recoze 0.1333
+P1963 (i) limpo largo: recoze 0.2000 gulosa 0.1700
+P1963 (j) limpo largo lento (50000 passos): recoze 0.4567
+P1964 rodada 51 (Metropolis, IGUAL em Java): (263, 266.2008297501092)
+P1092 pNN novas (P1961-P1990) sem teste: 0 de 4: []
+P974 previsoes unilaterais da Parte 84: {}
+P2019 minha taxa de erro (210/685): media = 0.31, intervalo 90% = [0.28, 0.34]
+--- Parte 85 (0x55: a arquitetura recursiva recebida) ---
+P1991 cosseno duplicado do codigo recebido (0,45,90,135,180 graus): [1.3, 0.5, -0.3, -0.5, -0.7]
+P1992 pilha adversarial: escritas em self.layers fora do __init__ = (0, False) (sem treino)
+P1993 buraco do escrutinio (inconsistentes que passam intactos): [(0.6, 0.5, False), (0.7, 0.4, False), (0.8, 0.3, False)]
+P1994 vetor preso na esfera, max |norma-1| em 50 passos: 5.24e-10
+P1961 teste (e), Partes 80-85: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1995 rodada 52 (recozimento inteiro, IGUAL em Java): (15, 0.0, 232)
+P1092 pNN novas (P1991-P2020) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 85: {}
+P2099 minha taxa de erro (210/690): media = 0.30, intervalo 90% = [0.28, 0.33]
+--- Parte 86 (0x56: o cerebro na CPU) ---
+P2021 LIF erro do ponto fixo apos 200 passos: 4.122e-08 (previsto gap*beta^200 = 4.122e-08)
+P2022 Izhikevich (RS, CH) disparos em 1000ms: (22, 73)
+P2023 memoria do relatorio (MB neuronios, GB sinapses, GB total, incoerencias): (32.0, 6.0, 6.032, {'padded_csr': ('texto 7%', 'tabela 20% (1,2x)', True), 'htm': ('relatorio 8,5 GB', 'regra 6B/sinapse 7.2 GB', True)})
+P2024 cadeia de vazao (disparos/ms, sinapses/ms, GSOPS): (10000, 10000000, 10.0)
+P2025 sobreposicao de SDRs (media, teorico k^2/n): (0.7769, 0.78125)
+P2026 STDP liquido (simetrico, assimetrico): (0.0, -0.38745496905948523)
+P1961 teste (e)/(g), Partes 80-86: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P2027 rodada 53 (Izhikevich, IGUAL em Java): (-68.72045515618318, -5.064083388710061, 5)
+P1092 pNN novas (P2021-P2050) sem teste: 0 de 7: []
+P974 previsoes unilaterais da Parte 86: {}
+P2169 minha taxa de erro (211/697): media = 0.30, intervalo 90% = [0.27, 0.33]
+--- Parte 87 (0x57: compressao, plasticidade e GRPO) ---
+P2051 quantizacao: MSE INT8 8.521e-05, INT4 2.376e-02, razao INT4/INT8 278.8 (4^4=256)
+P2052 GRPO (vantagens G=2 com eps=0, media G=4): ([1.0, -1.0], 0.0)
+P2053 plasticidade (SGD, S&P) = ((posto ratio, norma ratio), ...): ((1.1456955220316383, 0.7593294473305413), (1.0943414925096806, 0.6493086934139676))
+P2054 plasticidade com conflito, 100 tarefas (posto ratio, norma ratio, dormentes): (1.1083293753711585, 0.7725890178993539, 0.0)
+P1961 teste (e), Partes 80-87: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P2055 rodada 54 (vantagem GRPO, IGUAL em Java): 18 vantagens
+P1092 pNN novas (P2051-P2080) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 87: {}
+P2239 minha taxa de erro (215/703): media = 0.31, intervalo 90% = [0.28, 0.34]
+--- Parte 88 (0x58: a arquitetura autopoietica recebida) ---
+P2081 P(P(X)) do codigo (P(P(0,9)), P(P(0,1)), ponto fixo): (0.8333, 0.1667, 0.5)
+P2082 P(P) iterado 10x de 0,9 (medido, conta): (0.5646022331559383, 0.5646022331559383)
+P2083 LFI1 sem explosao (conj(0,5,~0,5), consistencia(0,5), F preservado): (0.5, 0.0, True)
+P2084 descompasso texto-codigo (usa entropia?, usa consistencia?): (True, False)
+P1961 teste (e), Partes 80-88: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P2085 rodada 55 (passo GRPO com corte, IGUAL em Java): 8 surrogates
+P1092 pNN novas (P2081-P2110) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 88: {}
+P2309 minha taxa de erro (215/708): media = 0.30, intervalo 90% = [0.28, 0.33]
+--- Parte 89 (0x59: o substrato que aprende) ---
+P2111 integral STDP (balanceada, depressao): (0.0, -0.3999999999999999)
+P2112 deriva sob Poisson independente (soma, sinal da integral): (-2.6060648689055186, -1)
+P2113 STDP timing 500 pares (pre antes, pre depois): (4.394003915357021, -3.783404306892714)
+P2114 competicao toy, semente 90 (corr, ruido, |dif|): (1.0, 0.9999721885798296, 2.781142017038718e-05)
+P1961 teste (e), Partes 80-89: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P2115 rodada 56 (populacao Izhikevich, IGUAL em Java): 12 disparos
+P1092 pNN novas (P2111-P2140) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 89: {}
+P2379 minha taxa de erro (215/713): media = 0.30, intervalo 90% = [0.27, 0.33]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 717; pares de interacao possiveis = 256686
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 167/167 resultados publicados reproduzidos; falhas = []
+FIM_OK status=0 segundos=1002

@@ -226,3 +226,5 @@ menor que salvou da maior.
   rodada, com o exp próprio.
 
 ➡ Anterior: [Parte 126](ASI_AGI_parte126_evitar_a_consciencia.md).
+
+➡ Próxima: [Parte 128 — refazer tudo](ASI_AGI_parte128_refazer_tudo.md).

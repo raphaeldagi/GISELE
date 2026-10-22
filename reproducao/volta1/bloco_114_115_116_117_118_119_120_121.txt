@@ -1,0 +1,89 @@
+--- Parte 114 (0x72: tratar o ML como DL e o DL como ML) ---
+P2861 logistica como rede de 1 camada (retropropagacao) x Newton: max |dw| = 4.44e-16; |grad| no Newton 3.3e-18; kappa = 32.72
+P2862 rede linear profunda W2W1 x OLS: max |d beta| = 1.11e-15
+P2863 MSE de teste: features aleatorias + ridge 0.01270; retropropagacao 0.01535 (razao 1.209); features treinadas + ridge 0.01270 (razao 0.827)
+P2864 graus de liberdade: lambda=1e-3 tr(S) 30.096, Efron 29.746; lambda=1 tr(S) 14.771, Efron 14.738; razao 0.491
+P2865 rodada 81 (rede linear profunda, IGUAL em Java): beta [0.6685, -0.3045, 0.1022]; OLS [0.7005, -0.3069, 0.0946]
+P1961 teste, Partes 80-114: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2861-P2890) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 114: {114: (0, 0, [])}
+P4129 minha taxa de erro (224/887): media = 0.25, intervalo 90% = [0.23, 0.28]
+--- Parte 115 (0x73: dez camadas contrapostas; o dicionario em algarismos e algoritmos; a escala contra a meta-medida) ---
+P2891 dez camadas: linear 1,2^10 erro relativo 1.4e-16; linear contraposta |g-1| 0.0e+00; tanh contraposta 0.07491; tanh de peso igual 2.139e-07
+P2892 superposicao dos 10 gradientes: resto 1.945e-06 (eps=1e-3), 1.945e-08 (eps=1e-4), inclinacao 2.00006; gradientes [0.0187, 0.1358, 0.0373, 0.2078, 0.0554, 0.2789, 0.0731, 0.3495, 0.0908, 0.4199]
+P2893 dicionario: por classe {'n': 117798, 'v': 11529, 'a': 21479, 'r': 4481}; pares brutos 206978, distintos 206941; lemas distintos 147306; OpenWordNet-PT 45313 lemas, 52672 pares
+P2894 em algarismos (base 26 bijetiva): 0 colisoes; ida-e-volta True; o maior numero tem 44 algarismos
+P2895 em algoritmos: afins 74494 distintos, 2928 pares colidem; translacoes 69972 distintos, 8946 pares colidem; classes de anagrama 72547
+P2896 escala x meta-medida: k=4,m=2000 media 1.0073 desvio 0.7188; k=256,m=20 media 1.0072 desvio 0.1003; pares nulos pulados 1
+P2897 rodada 82 (cadeia contraposta, exp proprio, IGUAL em Java): h10 0x1.bc07e47a34a99p-3; gradiente 0x1.32d264963ff7cp-4
+P1961 teste, Partes 80-115: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2891-P2920) sem teste: 0 de 7: []
+P974 previsoes unilaterais da Parte 115: {115: (0, 0, [])}
+P4199 minha taxa de erro (225/903): media = 0.25, intervalo 90% = [0.23, 0.27]
+--- Parte 116 (0x74: o NEXUS-RAPHAEL v2 colado; o que o codigo faz de fato) ---
+P2921 texto x Parte 109: classes comuns ['Config'] (16 x 17), Jaccard 5-gramas 0.122; linhas que fecham [(549, 553), (541, 549)]; rede ['import:urllib.request', 'rede:urllib.request.urlopen']; chamadas ['random.seed', 'sqlite3.connect']; indefinidos ['AdversarialLayer', 'GameState', 'RaphaelGame']
+P2922 semelhanca por hash: desvio aleatorios 0.3099 (1/sqrt10 = 0.3162); media aleatorios 0.0054, sinonimos -0.0039, diferenca -0.0093
+P2923 gerador global depois de 1000 vetores: recebido 1 valor distinto; corrigido 1000
+P2924 codificacoes: posicional 446 pares colidem (mecanismo dos 'a' iniciais: 446), ex. ['aachen', 'aah', 'aalii', 'aar', 'aare', 'aarhus']; alfanumerica 284 valores distintos; numerologica max|f-1/9| 0.00152
+P2925 sob a nula: recebido confirma 0.3705, rejeita 0.3523; pareado confirma 0.0476; confianca recebida de [-1,-100,50] = 0.9
+P2926 cobertura (n=30): recebido pedido 0,90 -> 0.9829; pedido 0,95 -> 0.9373; corrigido (t) pedido 0,90 -> 0.9020
+P2927 auditoria de entrada: recebido passed 7/7 com o eco; com oraculo 3 falhas (eco), 0 (controle que escapa)
+P2928 vetor corrigido x recebido: 0 de 2000 diferem
+P2929 rodada 83 (avaliacao pareada, IGUAL em Java): [('confirmed', 2.4257), ('inconclusive', 0.0805), ('rejected', -6.2634)]
+P1961 teste, Partes 80-116: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2921-P2950) sem teste: 0 de 9: []
+P974 previsoes unilaterais da Parte 116: {116: (0, 0, [])}
+P4269 minha taxa de erro (225/922): media = 0.24, intervalo 90% = [0.22, 0.27]
+--- Parte 117 (0x75: as camadas contrapostas com matrizes) ---
+P2951 (aQ)^10, a=1,2, d=8: sigma_max/sigma_min - 1 = 2.66e-15; |sigma_max - a^10|/a^10 = 3.30e-15
+P2952/P2953 contrapostas: W,W^-1 max|J-I| = 3.28e-15 (kappa(W) = 9.222); Q,Q^T max|J-I| = 7.77e-16
+P2954 gaussianas independentes: ln|det J|/L media -4.5972 (fechada -4.5933), desvio 0.5065 (fechada 0.4914), semente nova 0.4999; ln sigma_max/L 0.0675; uma matriz: media -4.5956, var 2.4068 (fechada 2.4147)
+P2955 superposicao matricial: resto 1.144e-05 (1e-3), 1.157e-07 (1e-4), inclinacao 1.9949
+P2956 rodada 84 (W, W^-1 por Gauss-Jordan, IGUAL em Java): desvio 0x1.7000000000000p-48
+P1961 teste, Partes 80-117: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2951-P2980) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 117: {117: (0, 0, [])}
+P4339 minha taxa de erro (226/933): media = 0.24, intervalo 90% = [0.22, 0.27]
+--- Parte 118 (0x76: o acaso amostrado (MCCFR) e o terceiro lote do determinante) ---
+P2981 3o lote (20.000 produtos): ln|det J|/L media -4.5941 (fechada -4.5933), desvio 0.48736 (fechada 0.4914)
+P2982 MCCFR (acaso amostrado, T=60000): explorabilidade 0.00532; P(paga com a dama) 0.3332 (1/3); vanilla T=10000 0.00297; razao 1.79
+P2983 rodada 85 (MCCFR com LCG, IGUAL em Java): 0 conjuntos diferem de synthai.mccfr; P(b) [0.1255, 0.0003, 0.3661, 0.0005, 0.0101, 0.5036, 0.0029, 0.3541, 0.5538, 0.9994, 0.9995, 0.9995]
+P2984 rodadas com par Python/Java no verificador: 90 (a maior: 90)
+P1961 teste, Partes 80-118: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2981-P3010) sem teste: 0 de 4: []
+P974 previsoes unilaterais da Parte 118: {118: (0, 0, [])}
+P4409 minha taxa de erro (226/939): media = 0.24, intervalo 90% = [0.22, 0.26]
+--- Parte 119 (0x77: a amostragem externa: sortear tambem o adversario) ---
+P3011 MCCFR externo (T=50000): explorabilidade 0.01017; P(paga com a dama) 0.3485 (1/3)
+P3012 nos visitados por iteracao: vanilla 54.0, acaso 9.00, externo 10.63
+P3013 rodada 86 (amostragem externa com LCG, IGUAL em Java): 0 conjuntos diferem de synthai.mccfr_externo
+P2984 rodadas com par Python/Java no verificador: 90 (a maior: 90)
+P1961 teste, Partes 80-119: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P3011-P3040) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 119: {119: (0, 0, [])}
+P4479 minha taxa de erro (226/943): media = 0.24, intervalo 90% = [0.22, 0.26]
+--- Parte 120 (0x78: o poquer Leduc: CFR, acaso e amostragem externa com o mesmo custo) ---
+P3041 vanilla: explorabilidade 0.01846, valor -0.08702, [-0.09538; -0.07692], 20002200 nos
+P3041 acaso: explorabilidade 0.03335, valor -0.08689, [-0.10329; -0.06994], 19999990 nos; explorabilidade 0.03665, valor -0.08783, [-0.10630; -0.06965], 19999990 nos
+P3041 externo: explorabilidade 0.02933, valor -0.08805, [-0.09966; -0.07034], 19749049 nos; explorabilidade 0.03015, valor -0.08712, [-0.10074; -0.07059], 19780482 nos
+P3042 com o mesmo custo: externo/acaso 0.850, vanilla/externo 0.621; valor do jogo em [-0.09538; -0.07692]
+P3043 rodada 88 (CFR vanilla no Leduc, IGUAL em Java): 288 conjuntos, 0 diferem de synthai.leduc
+P1961 teste, Partes 80-121: 317/350 = 0.9057
+P1092 pNN novas (P3041-P3070) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 120: {120: (0, 0, [])}
+P4549 minha taxa de erro (227/952): media = 0.24, intervalo 90% = [0.22, 0.26]
+--- Parte 121 (0x79: o NEXUS-RAPHAEL 2.2.0 anexado, auditado no proprio codigo) ---
+P3071 H-M3 ganho semente 0 0.1215, vereditos ['ACEITA', 'ACEITA', 'ACEITA', 'INCONCLUSIVA', 'ACEITA']; H-M2 ganho medio 0.2292, IC>0 em 5/5; H-M7 deltas [0.0, -0.245, 0.0, 0.0, 0.0]
+P3072 Mega-Sena: medias {'quentes': 0.6266666666666667, 'frias': 0.6233333333333333, 'aleatoria': 0.5866666666666667}; quentes-aleatoria 0.0400 IC [-0.07333333333333333, 0.15333333333333332] -> INCONCLUSIVA; qui2 57.25 (E fechada 54); IndexError com 500 replicas: True; com 2000 o 'superior' fica abaixo da mediana: True (IC corrigido [-0.07333333333333333, 0.15333333333333332])
+P3073 jogo da velha: 5478 estados (arquivo), 5478 (por camadas); valor alfa-beta 0; Lyapunov r=4 0.6931 (ln 2 = 0.6931)
+P3074 adendo (sementes 100-1099): braco ruim extraordinario 0.000, ordinario 0.000; H-M3 ACEITA 0.930
+P3075 rodada 87 (logistica do angulo duplo, exp proprio, IGUAL em Java): Brier simples 0.2029, com o duplo 0.0207
+P1961 teste, Partes 80-121 (sem a 120, aberta): 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P3071-P3100) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 121: {121: (0, 0, [])}
+P4619 minha taxa de erro (229/959): media = 0.24, intervalo 90% = [0.22, 0.26]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 717; pares de interacao possiveis = 256686
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 167/167 resultados publicados reproduzidos; falhas = []
+FIM_OK status=0 segundos=1056

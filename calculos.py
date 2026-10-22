@@ -7533,6 +7533,8 @@ def testes_de_regressao():
             p3152_medir_lote(p3151_lote_de_textos("textos_parte126/lote1.txt"))),
         "P3162": p3162_ignicao_rampa(0.002) == (0.29634000000000005, -0.29634000000000005)
             and abs(p3161_ignicao_dobras()[0] - 0.26641998767677605) < 1e-12,
+        "P3172": (lambda r: r["categorias"] == {"projeto": 73, "maquina": 2, "nota": 10, "mundo": 0} and r["sem_referencia"] == [91])(
+            p3172_comparar_reproducao("reproducao/resultados_antes_volta1.txt", "reproducao/volta1")),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -17380,6 +17382,121 @@ def _parte_127():
 
 
 PARTES[127] = _parte_127
+
+
+# ======================================================================== Parte 128: refazer tudo num clone limpo
+# As medidas que olham para o PRÓPRIO projeto (crescem com ele) e as que olham para a MÁQUINA, pelo número da pergunta (Partes 46, 48):
+# o CLAUDE.md (P143), a regressão (P213), o diálogo (P674, P733, P822), os textos das partes (P824, P853, P881, P884, P911, P913, P941,
+# P948, P971, P1001, P1032), os testes e as funções (P1092, P1692, P1693, P1871, P1872), o verificador (P1271, P1638, P2984), o
+# resultados.txt (P1601), as previsões (P1961, P2446, P2719, P2939); a máquina: P433 e P434 (a velocidade).
+_PROJETO_P128 = frozenset((143, 213, 674, 733, 822, 824, 853, 881, 884, 911, 913, 941, 948, 971, 1001, 1032, 1092, 1271, 1601, 1638,
+                           1692, 1693, 1871, 1872, 1961, 2446, 2719, 2939, 2984))
+_MAQUINA_P128 = frozenset((433, 434))
+
+
+def p3171_partes_de_saida(texto, inicio=None):
+    """As linhas de cada parte numa saída de calculos.py (P3171): do cabeçalho '--- Parte N' ou '=== Parte N' até o próximo cabeçalho
+    ou a unificação. A Parte 1 não tem cabeçalho: com inicio=1, as linhas antes do primeiro cabeçalho são dela. Ignora os avisos
+    do interpretador (ResourceWarning) e as linhas em branco."""
+    import re
+    cab = re.compile(r"^(?:---|===) Parte (\d+)\b")
+    d, atual = ({inicio: []}, inicio) if inicio else ({}, None)
+    for l in texto.split("\n"):
+        m = cab.match(l)
+        if m:
+            atual = int(m.group(1))
+            d[atual] = []
+            continue
+        if l.startswith("=== Unifica") or l.startswith("FIM_OK"):
+            atual = None
+            continue
+        if atual is not None and l.strip() and "ResourceWarning" not in l and "tracemalloc" not in l and "return ds, sorted" not in l:
+            d[atual].append(l)
+    return d
+
+
+def p3172_comparar_reproducao(caminho_ref, pasta):
+    """Compara a reprodução (os arquivos bloco_*.txt da pasta) com o resultados.txt, parte por parte (P3172). As linhas diferentes
+    (as da referência que não casam, pelo difflib) são classificadas pelo número da pergunta: 'projeto' (_PROJETO_P128), 'maquina'
+    (_MAQUINA_P128), 'nota' (linha da referência sem número, escrita à mão: '(Regressao: confirmada ...') ou 'mundo' (o resto: uma medida
+    do mundo que não se reproduziu). Devolve dict com linhas, diferentes, fração, categorias, partes refeitas, partes sem referência,
+    regressões dos blocos e blocos sem exceção."""
+    import difflib
+    import glob
+    import os
+    import re
+    with open(caminho_ref, encoding="utf-8") as f:
+        ref = p3171_partes_de_saida(f.read(), inicio=1)
+    novo, regs, ok = {}, [], 0
+    arquivos = sorted(glob.glob(os.path.join(pasta, "bloco_*.txt")))
+    for arq in arquivos:
+        with open(arq, encoding="utf-8") as f:
+            t = f.read()
+        novo.update(p3171_partes_de_saida(t, inicio=1 if os.path.basename(arq).startswith("bloco_1_") else None))
+        regs += [l for l in t.split("\n") if l.startswith("Regressao:")]
+        ok += ("Traceback" not in t) and ("FIM_OK status=0" in t)
+    cats = {"projeto": 0, "maquina": 0, "nota": 0, "mundo": 0}
+    mundo = []
+    tot = dif = 0
+    for k in sorted(novo):
+        if k not in ref:
+            continue
+        a, b = ref[k], novo[k]
+        sm = difflib.SequenceMatcher(a=a, b=b, autojunk=False)
+        casadas = set()
+        for m in sm.get_matching_blocks():
+            casadas.update(range(m.a, m.a + m.size))
+        tot += len(a)
+        for i, l in enumerate(a):
+            if i in casadas:
+                continue
+            dif += 1
+            m = re.match(r"\s*P(\d+)\b", l)
+            if m is None:
+                cats["nota"] += 1
+            elif int(m.group(1)) in _PROJETO_P128:
+                cats["projeto"] += 1
+            elif int(m.group(1)) in _MAQUINA_P128:
+                cats["maquina"] += 1
+            else:
+                cats["mundo"] += 1
+                mundo.append((k, l))
+    return {"linhas": tot, "diferentes": dif, "fracao": dif / tot if tot else 0.0, "categorias": cats, "mundo": mundo,
+            "partes_refeitas": len(novo), "sem_referencia": sorted(k for k in novo if k not in ref),
+            "regressoes": regs, "blocos": len(arquivos), "blocos_sem_excecao": ok}
+
+
+def p3173_rotulo_que_mente(pasta):
+    """Os rótulos de faixa que não dizem o que medem (P3173): linhas 'P1961 teste ... Partes 80-X: a/b' em que o total b é o da faixa
+    padrão CRESCENTE (a mesma em todas as partes), e não o das Partes 80 a X. Devolve (linhas com o rótulo 80-X, quantas delas têm o mesmo
+    b que a faixa da parte mais nova, esse b)."""
+    import glob
+    import os
+    import re
+    achados = []
+    for arq in sorted(glob.glob(os.path.join(pasta, "bloco_*.txt"))):
+        with open(arq, encoding="utf-8") as f:
+            for l in f:
+                m = re.match(r"P1961 teste.*Partes 80-(\d+)[^:]*: (\d+)/(\d+)", l)
+                if m:
+                    achados.append((int(m.group(1)), int(m.group(2)), int(m.group(3))))
+    if not achados:
+        return 0, 0, None
+    b_max = max(achados)[2]
+    return len(achados), sum(1 for x, a, b in achados if b == b_max and x < max(achados)[0]), b_max
+
+
+def _parte_128():
+    print("\n=== Parte 128: refazer tudo num clone limpo (volta 1) ===")
+    r = p3172_comparar_reproducao("reproducao/resultados_antes_volta1.txt", "reproducao/volta1")
+    print(f"  blocos {r['blocos']}, sem exceção {r['blocos_sem_excecao']}; regressões {sorted(set(r['regressoes']))}")
+    print(f"  partes refeitas {r['partes_refeitas']}, sem referência no resultados.txt {r['sem_referencia']}")
+    print(f"  linhas {r['linhas']}, diferentes {r['diferentes']} ({r['fracao']:.4f}); categorias {r['categorias']}")
+    print(f"  diferenças do MUNDO: {r['mundo']}")
+    print(f"  rótulos P1961 'Partes 80-X' com o total da faixa crescente: {p3173_rotulo_que_mente('reproducao/volta1')}")
+
+
+PARTES[128] = _parte_128
 
 PARTES[126] = _parte_126
 

@@ -1,0 +1,49 @@
+"""Testes da Parte 128: as peças da reprodução (P3171–P3173), chamadas pelo nome."""
+
+import os
+import tempfile
+import unittest
+
+import calculos as c
+
+
+class TestesParte128(unittest.TestCase):
+    def test_p3171_partes_de_saida(self):
+        t = "P3 x = 1\n--- Parte 2 ---\nP22 y = 2\n=== Unificacao (sempre ao final) ===\nP96 n = 5\n=== Parte 126: z ===\nP3152 w = 3\n"
+        d = c.p3171_partes_de_saida(t, inicio=1)
+        self.assertEqual(d, {1: ["P3 x = 1"], 2: ["P22 y = 2"], 126: ["P3152 w = 3"]})
+        self.assertNotIn(1, c.p3171_partes_de_saida(t))
+
+    def test_p3172_comparar_reproducao(self):
+        ref = ("P3 a = 1\n--- Parte 2 ---\nP143 memoria = 10\nP22 b = 2\nP433 laco = 5\n  (Regressao: nota escrita a mao)\n"
+               "P99 mundo = 7\n=== Unificacao ===\n")
+        novo = "P3 a = 1\n--- Parte 2 ---\nP143 memoria = 99\nP22 b = 2\nP433 laco = 6\nP99 mundo = 8\n=== Unificacao ===\nRegressao: 1/1\nFIM_OK status=0 segundos=1\n"
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, "ref.txt"), "w", encoding="utf-8") as f:
+                f.write(ref)
+            with open(os.path.join(d, "bloco_1_2.txt"), "w", encoding="utf-8") as f:
+                f.write(novo)
+            r = c.p3172_comparar_reproducao(os.path.join(d, "ref.txt"), d)
+        self.assertEqual(r["linhas"], 6)
+        self.assertEqual(r["diferentes"], 4)
+        self.assertEqual(r["categorias"], {"projeto": 1, "maquina": 1, "nota": 1, "mundo": 1})
+        self.assertEqual(r["mundo"], [(2, "P99 mundo = 7")])
+        self.assertEqual((r["blocos"], r["blocos_sem_excecao"], r["regressoes"]), (1, 1, ["Regressao: 1/1"]))
+
+    def test_p3173_rotulo_que_mente(self):
+        t = ("P1961 teste (e), Partes 80-85: 30/35 = 0.85\nP1961 teste, Partes 80-90: 30/35 = 0.85\n"
+             "P1961 teste, Partes 80-95: 30/35 = 0.85\nP1961 teste, Partes 80-88: 20/25 = 0.80\n")
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, "bloco_80.txt"), "w", encoding="utf-8") as f:
+                f.write(t)
+            self.assertEqual(c.p3173_rotulo_que_mente(d), (4, 2, 35))
+            self.assertEqual(c.p3173_rotulo_que_mente(os.path.join(d, "vazia_inexistente")), (0, 0, None))
+
+    def test_volta1_regressao(self):
+        r = c.p3172_comparar_reproducao("reproducao/resultados_antes_volta1.txt", "reproducao/volta1")
+        self.assertEqual(r["categorias"]["mundo"], 0)
+        self.assertEqual(r["sem_referencia"], [91])
+
+
+if __name__ == "__main__":
+    unittest.main()

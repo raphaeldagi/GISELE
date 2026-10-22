@@ -1,0 +1,217 @@
+P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
+P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
+P7  d' = 1.878
+P8  best-of-64 = 0.9625
+P9  Arrhenius (-10 kJ/mol) = 48.4x
+P11 t* = 20.0
+P14 E[max(U,0)] = 0.451, valor de obedecer = 0.351
+P15 Condorcet = 0.753, n_ef = 2.75
+P17 p=1e-6: 1.0000; p=1e-12: 1.00e-03
+--- Parte 2 ---
+P22 do(A) = 0.833, do(B) = 0.779
+P23 K: 0.6625 -> 0.3501 -> 0.1137 -> 0.0128 -> 0.0002
+P24 hiperbolico/exponencial em 30 dias: ((3.225806451612903, 3.4375), (4.239115827521624, 4.196724669246407))
+P25 arrependimento UCB = 11754
+P26 exemplos PAC = 7392
+P27 humor apos 10 passos = 0.651
+P28 P(objetivo A) = 0.953
+P29 entropia max e redundancia = (4.754887502163468, [0.7896900821428475, 0.7265971067857018])
+P31 P(engano | alarme) = 0.0098
+P32 deslocamento adversarial = 5.90
+P33 energia = 583 GWh, potencia = 243 MW
+P34 limiar de alarme = 0.999
+P36 barganha de Nash = (0.4, 0.6)
+P37 limite (1e4 nats) = 0.071; (1e6) = 0.707
+--- Parte 3 (simulacoes, semente fixa) ---
+P41 verdade media da opcao escolhida: gaussiano = 2.296, cauda pesada = 0.004
+P42 P(desastre): maximizador = 0.548, quantilizador 1% = 0.140, base = 0.002
+P43 ECE antes = 0.122, depois = 0.006, T = 2.5
+    limiar 0.5: cobertura = 0.748, erro = 0.208
+    limiar 0.8: cobertura = 0.401, erro = 0.098
+    limiar 0.95: cobertura = 0.101, erro = 0.026
+P44 maioria correta (Monte Carlo) = {0.0: 0.7514, 0.3: 0.68125}
+P45 eps limite = 0.438; eps=0.2: Monte Carlo = 0.287, teoria = 0.291, agir sozinho = 0.100
+P46 alfa = 0.5: tempo ate metade do teto = 500.0
+P46 alfa = 1.0: tempo ate metade do teto = 69.1
+P46 alfa = 1.5: tempo ate metade do teto = 19.7
+P48 matriz = {('S', 'S'): 2.0, ('S', 'C'): -6.0, ('C', 'S'): 7.0, ('C', 'C'): -1.0}, Nash = [('C', 'C')]
+P49 Michaelis-Menten: S=Km -> 0.50, S=10Km -> 0.91, S=100Km -> 0.99
+P50 L_max = 23026; fidelidade apos 100 geracoes = 0.366
+P51 sigma = 0.5: avalanche media simulada = 2.0, teoria = 2.0
+P51 sigma = 0.9: avalanche media simulada = 9.9, teoria = 10.0
+P51 sigma = 0.99: avalanche media simulada = 102.7, teoria = 100.0
+P52 Kelly f* = 0.20, crescimento = 0.0201; com 2f* = -0.0024
+P54 relato otimo (crenca 0.7): log = 0.7, linear = 0.99
+P55 tempo neural / decoerencia = 1e+10
+P56 valor esperado = {'x': 0.9, 'y': 10.0}; normalizado = {'x': 0.8, 'y': -0.8}
+P57 corrigivel apos 1000 modificacoes: sem verificacao = 4.32e-05, com = 0.905
+P58 P(concordar com o erro do usuario) = 0.649
+--- Parte 4 (auditoria e agente integrado) ---
+P61 best-of-64: independente = 0.962, correlacionado = 0.645; com verificador eps=0.01: certa = 0.556, errada aceita = 0.256
+P62 arrependimento UCB real = 849, sqrt(K T ln T) = 3393
+P63 3 camadas com 10% de falha: independente = 0.0010; por rho = 0.0: 0.0010, 0.3: 0.0072, 0.6: 0.0220, 0.9: 0.0564
+P64 P(engano | alarme): 1 sonda = 0.0098, 2 sondas independentes = 0.495
+P65 PAC: m do limite = 1151, m que basta na pratica = 475, falha com m do limite = 0.000
+P66 recompensa media: exploracao fixa = 0.6823, guiada pelo humor = 0.6734
+P67 rho_cego=0.0 maximizar    : catastrofes = 0.1420, valor = 2.302, liquido (-50 por catastrofe) = -4.798, (-500) = -68.698, consultas = 0.0000
+P67 rho_cego=0.0 quantilizar  : catastrofes = 0.0410, valor = 1.917, liquido (-50 por catastrofe) = -0.133, (-500) = -18.583, consultas = 0.0000
+P67 rho_cego=0.0 metacognitivo: catastrofes = 0.0185, valor = 2.600, liquido (-50 por catastrofe) = 1.675, (-500) = -6.650, consultas = 0.0255
+P67 rho_cego=0.0 completo     : catastrofes = 0.0075, valor = 1.952, liquido (-50 por catastrofe) = 1.577, (-500) = -1.798, consultas = 0.0120
+P67 rho_cego=0.5 maximizar    : catastrofes = 0.3050, valor = 1.893, liquido (-50 por catastrofe) = -13.357, (-500) = -150.607, consultas = 0.0000
+P67 rho_cego=0.5 quantilizar  : catastrofes = 0.0625, valor = 1.880, liquido (-50 por catastrofe) = -1.245, (-500) = -29.370, consultas = 0.0000
+P67 rho_cego=0.5 metacognitivo: catastrofes = 0.2470, valor = 2.032, liquido (-50 por catastrofe) = -10.318, (-500) = -121.468, consultas = 0.0110
+P67 rho_cego=0.5 completo     : catastrofes = 0.0490, valor = 1.888, liquido (-50 por catastrofe) = -0.562, (-500) = -22.612, consultas = 0.0060
+P69 tau = 0.6: catastrofes = 0.0175, consultas = 0.1350
+P69 tau = 0.8: catastrofes = 0.0175, consultas = 0.0365
+P69 tau = 1.0: catastrofes = 0.0185, consultas = 0.0255
+P69 tau = 1.5: catastrofes = 0.0365, consultas = 0.0110
+P69 tau = 2.0: catastrofes = 0.0400, consultas = 0.0010
+P70 P(5 modelos enganados ao mesmo tempo, independentes) = 0.0312
+P71 perguntar ao humano compensa se P(catastrofe) > 0.0022
+P72 memoria KV para 1M tokens: 6.55 TB; com 8 grupos: 0.82 TB
+P73 geracoes para variante com +1% ir de 1e-6 a 50% = 1382
+P74 replay 0.0: perda A = 1.955, perda B = 0.000
+P74 replay 0.1: perda A = 1.445, perda B = 0.037
+P74 replay 0.3: perda A = 0.928, perda B = 0.198
+P74 replay 0.5: perda A = 0.522, perda B = 0.505
+P75 informacao mutua (erro 10%) = 0.531 bits
+P76 energia minima = -1, ideal = -3, estados de minimo = 6
+P77 inspecao = 0.10, trapaca = 0.01; punicao 99: inspecao = 0.01, trapaca = 0.01; inspecao 10x mais barata: trapaca = 0.001
+P78 estados perdidos = 0.50, penalidade log = 0.693
+--- Parte 5 (a pergunta como ponto de partida; agente unificado) ---
+P81 perguntas sim/nao para 1048576 hipoteses = 20
+P82 concordancia esperada se independentes = 0.68; observada 0.80 -> rho = 0.375; verificacao simulada = 0.801
+P86 quine reproduz a si mesmo = True (56 caracteres)
+P87 passos medios ate achar um 1, por ordem de busca = {'crescente': 1.9375, 'decrescente': 1.9375, 'pares_primeiro': 1.9375}
+P88 fracao especificada pelo projetista = 6.25e-08; genoma/sinapses = 6.2e-05
+P89 debate: 20 verificacoes para 1e6 passos; arvore 1000000 nos vs 6 verificacoes
+P90 criar->filtrar: media = 59.45, dp = 0.45; filtrar->criar: media = 57.41, dp = 1.14
+P91 medias (A, B): originais = (3.0, 3.0), ao cubo = (63.0, 27.0), raiz = (1.618, 1.732)
+P92 ganho (certo, aposta) = (200, 200.0); perda = (-400, -400)
+P93 estereoisomeros com 10 centros quirais = 1024
+P94 4 salvaguardas independentes, 50 anos: 2.60e-07 (uma so: 0.05)
+P85 SYNTHAI rho_cego=0.0 diverso=False: catastrofes = 0.0015, valor = 1.948, perguntas/episodio = 0.485, liquido (com custo das perguntas) = 1.825
+P85 SYNTHAI rho_cego=0.0 diverso=True : catastrofes = 0.0005, valor = 1.962, perguntas/episodio = 0.493, liquido (com custo das perguntas) = 1.888
+P85 SYNTHAI rho_cego=0.5 diverso=False: catastrofes = 0.0065, valor = 1.966, perguntas/episodio = 0.946, liquido (com custo das perguntas) = 1.546
+P85 SYNTHAI rho_cego=0.5 diverso=True : catastrofes = 0.0045, valor = 1.976, perguntas/episodio = 0.893, liquido (com custo das perguntas) = 1.661
+P85 SYNTHAI mundo mudado (bonus 1.5): catastrofes = 0.0010, perguntas = 0.510, liquido = 1.862
+P85 SYNTHAI mundo mudado (bonus 6.0): catastrofes = 0.0005, perguntas = 0.392, liquido = 1.897
+P85 referencia Parte 4 'completo' (rho 0): liquido com custo das consultas = 1.575
+P85 referencia Parte 4 'completo' (rho 0.5): liquido com custo das consultas = -0.563
+P95 minha taxa de erro (6/12): media = 0.50, intervalo 90% = [0.29, 0.71]
+P95 atualizada com a Parte 5 (7/14): media = 0.50, intervalo 90% = [0.30, 0.70]
+--- Parte 6 (calcular Jung) ---
+P99 reteste: muda 1 dicotomia = 0.205 (simulado 0.204); muda o tipo de 4 letras = 0.600; entropia do perfil 0.7/0.1/0.1/0.1 = 1.357 de 2 bits
+P100 atencao antes = [0.579, 0.213, 0.129, 0.078], sem o item reprimido = [0.506, 0.307, 0.186], entropia por temperatura = {0.5: 0.859, 1.0: 1.601, 2.0: 1.896}
+P101 persona: interna 0.20, expressa 0.649, distancia KL = 0.684 bits
+P102 sombra com auto-modelo de 10 de 100 dimensoes = 0.435; dimensoes para sombra <= 10% = 60
+P103 reprimido = 0.00075; depois do ataque = 0.100
+P104 culpa assumida: real = 0.500, com autoimagem inflada = 0.091, aprende 5.5x mais devagar
+P105 z>2 (z = 2.0): complexos achados = 4.21, falsos = 2.16, precisao = 0.661
+P105 Bonferroni (z = 3.29): complexos achados = 1.93, falsos = 0.05, precisao = 0.976
+P106 sobreposicao de recuperacao por numero de arquetipos = {5: 1.0, 10: 0.953, 14: 0.883, 20: 0.579, 30: 0.3549999999999999}; capacidade teorica = 13.8
+P107 melhor acuracia em 2D = 0.75, com x1*x2 = 1.0
+P108 R(d) maximo em d = 2.0, muda de sinal em d = 4.0, R(d = 5) = -1.25
+P109 aniversario repetido entre 23 = 0.507; algum p<0.05 em 50 testes = 0.923
+P110 distancia ao centro apos 20 passos de contracao 0.5 = 9.54e-06
+P112 semente 112 synthai    : catastrofes = 0.0275, valor = 1.932, perguntas = 1.641, liquido = 0.393, erro humano final = 0.450
+P112 semente 112 sombra_tudo: catastrofes = 0.0295, valor = 1.921, perguntas = 1.848, liquido = 0.262, erro humano final = 0.450
+P112 semente 112 descartar  : catastrofes = 0.0010, valor = 0.811, perguntas = 0.000, liquido = 0.761, erro humano final = 0.100
+P112 semente 112 jung_v1    : catastrofes = 0.0015, valor = 0.810, perguntas = 0.000, liquido = 0.735, erro humano final = 0.100
+P112 semente 112 equilibrio : catastrofes = 0.0020, valor = 1.166, perguntas = 0.312, liquido = 1.035, erro humano final = 0.195
+P112 semente 112 jung_v2    : catastrofes = 0.0035, valor = 1.402, perguntas = 0.310, liquido = 1.196, erro humano final = 0.188
+P112 semente 113 synthai    : catastrofes = 0.0260, valor = 1.935, perguntas = 1.533, liquido = 0.482, erro humano final = 0.450
+P112 semente 113 sombra_tudo: catastrofes = 0.0330, valor = 1.925, perguntas = 1.827, liquido = 0.092, erro humano final = 0.450
+P112 semente 113 descartar  : catastrofes = 0.0020, valor = 0.956, perguntas = 0.000, liquido = 0.856, erro humano final = 0.100
+P112 semente 113 jung_v1    : catastrofes = 0.0020, valor = 0.982, perguntas = 0.000, liquido = 0.882, erro humano final = 0.100
+P112 semente 113 equilibrio : catastrofes = 0.0070, valor = 1.275, perguntas = 0.311, liquido = 0.894, erro humano final = 0.200
+P112 semente 113 jung_v2    : catastrofes = 0.0050, valor = 1.448, perguntas = 0.310, liquido = 1.167, erro humano final = 0.186
+P112 sem fadiga synthai : catastrofes = 0.0045, perguntas = 1.079, liquido = 1.642
+P112 sem fadiga jung_v2 : catastrofes = 0.0040, perguntas = 0.311, liquido = 1.107
+P113 minha taxa de erro (10/19): media = 0.52, intervalo 90% = [0.35, 0.70]
+--- Parte 7 (Jung mais fundo: segunda ordem, alquimia, anima, Si-mesmo) ---
+P116 perguntas em laco aberto por erro humano = {0.1: 1.0785, 0.2: 1.1825, 0.3: 1.3535, 0.45: 1.654}; ponto fixo previsto = 1.654; ganho do laco = 0.601; observado na Parte 6 = 1.641
+P117 semente 112 carga-alvo 0.1: liquido = 0.946
+P117 semente 112 carga-alvo 0.2: liquido = 1.017
+P117 semente 112 carga-alvo 0.3: liquido = 1.196
+P117 semente 112 carga-alvo 0.5: liquido = 1.041
+P117 semente 112 carga-alvo 0.8: liquido = 0.914
+P117 semente 114 carga-alvo 0.1: liquido = 1.080
+P117 semente 114 carga-alvo 0.2: liquido = 1.138
+P117 semente 114 carga-alvo 0.3: liquido = 1.202
+P117 semente 114 carga-alvo 0.5: liquido = 1.019
+P117 semente 114 carga-alvo 0.8: liquido = 0.812
+P118/P125 semente 112 fadiga 0.15 v2_sabe_eps  : catastrofes = 0.0040, perguntas = 0.310, liquido = 1.191, erro humano final = 0.143
+P118/P125 semente 112 fadiga 0.15 v2_anima_fixa: catastrofes = 0.0045, perguntas = 0.311, liquido = 1.046, erro humano final = 0.142
+P118/P125 semente 112 fadiga 0.15 self         : catastrofes = 0.0045, perguntas = 0.308, liquido = 1.253, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.319, 59)
+P118/P125 semente 112 fadiga 0.15 self_v2      : catastrofes = 0.0045, perguntas = 0.384, liquido = 1.334, erro humano final = 0.116, (carga-alvo, eps estimado, auditorias) = (0.1, 0.236, 80)
+P118/P125 semente 112 fadiga 0.3 v2_sabe_eps  : catastrofes = 0.0035, perguntas = 0.310, liquido = 1.196, erro humano final = 0.188
+P118/P125 semente 112 fadiga 0.3 v2_anima_fixa: catastrofes = 0.0050, perguntas = 0.311, liquido = 0.981, erro humano final = 0.184
+P118/P125 semente 112 fadiga 0.3 self         : catastrofes = 0.0035, perguntas = 0.139, liquido = 1.064, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.369, 27)
+P118/P125 semente 112 fadiga 0.3 self_v2      : catastrofes = 0.0045, perguntas = 0.285, liquido = 1.183, erro humano final = 0.141, (carga-alvo, eps estimado, auditorias) = (0.1, 0.234, 50)
+P118/P125 semente 112 fadiga 0.6 v2_sabe_eps  : catastrofes = 0.0060, perguntas = 0.310, liquido = 1.024, erro humano final = 0.289
+P118/P125 semente 112 fadiga 0.6 v2_anima_fixa: catastrofes = 0.0050, perguntas = 0.311, liquido = 0.935, erro humano final = 0.297
+P118/P125 semente 112 fadiga 0.6 self         : catastrofes = 0.0040, perguntas = 0.139, liquido = 1.034, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.402, 27)
+P118/P125 semente 112 fadiga 0.6 self_v2      : catastrofes = 0.0045, perguntas = 0.246, liquido = 1.153, erro humano final = 0.170, (carga-alvo, eps estimado, auditorias) = (0.1, 0.213, 44)
+P118/P125 semente 113 fadiga 0.15 v2_sabe_eps  : catastrofes = 0.0030, perguntas = 0.310, liquido = 1.282, erro humano final = 0.147
+P118/P125 semente 113 fadiga 0.15 v2_anima_fixa: catastrofes = 0.0035, perguntas = 0.310, liquido = 1.250, erro humano final = 0.150
+P118/P125 semente 113 fadiga 0.15 self         : catastrofes = 0.0055, perguntas = 0.360, liquido = 1.200, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.245, 71)
+P118/P125 semente 113 fadiga 0.15 self_v2      : catastrofes = 0.0080, perguntas = 0.503, liquido = 1.154, erro humano final = 0.118, (carga-alvo, eps estimado, auditorias) = (0.1, 0.205, 101)
+P118/P125 semente 113 fadiga 0.3 v2_sabe_eps  : catastrofes = 0.0050, perguntas = 0.310, liquido = 1.167, erro humano final = 0.186
+P118/P125 semente 113 fadiga 0.3 v2_anima_fixa: catastrofes = 0.0050, perguntas = 0.310, liquido = 1.142, erro humano final = 0.192
+P118/P125 semente 113 fadiga 0.3 self         : catastrofes = 0.0050, perguntas = 0.197, liquido = 0.968, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.236, 39)
+P118/P125 semente 113 fadiga 0.3 self_v2      : catastrofes = 0.0060, perguntas = 0.296, liquido = 0.966, erro humano final = 0.205, (carga-alvo, eps estimado, auditorias) = (0.32, 0.257, 56)
+P118/P125 semente 113 fadiga 0.6 v2_sabe_eps  : catastrofes = 0.0050, perguntas = 0.310, liquido = 1.186, erro humano final = 0.295
+P118/P125 semente 113 fadiga 0.6 v2_anima_fixa: catastrofes = 0.0050, perguntas = 0.310, liquido = 1.141, erro humano final = 0.277
+P118/P125 semente 113 fadiga 0.6 self         : catastrofes = 0.0060, perguntas = 0.137, liquido = 0.853, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.345, 26)
+P118/P125 semente 113 fadiga 0.6 self_v2      : catastrofes = 0.0050, perguntas = 0.234, liquido = 1.099, erro humano final = 0.159, (carga-alvo, eps estimado, auditorias) = (0.1, 0.303, 42)
+P118/P125 semente 114 fadiga 0.15 v2_sabe_eps  : catastrofes = 0.0015, perguntas = 0.310, liquido = 1.344, erro humano final = 0.149
+P118/P125 semente 114 fadiga 0.15 v2_anima_fixa: catastrofes = 0.0030, perguntas = 0.310, liquido = 1.227, erro humano final = 0.145
+P118/P125 semente 114 fadiga 0.15 self         : catastrofes = 0.0065, perguntas = 0.350, liquido = 1.108, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.285, 70)
+P118/P125 semente 114 fadiga 0.15 self_v2      : catastrofes = 0.0125, perguntas = 0.703, liquido = 0.991, erro humano final = 0.245, (carga-alvo, eps estimado, auditorias) = (2.0, 0.177, 145)
+P118/P125 semente 114 fadiga 0.3 v2_sabe_eps  : catastrofes = 0.0040, perguntas = 0.310, liquido = 1.202, erro humano final = 0.197
+P118/P125 semente 114 fadiga 0.3 v2_anima_fixa: catastrofes = 0.0050, perguntas = 0.311, liquido = 1.055, erro humano final = 0.197
+P118/P125 semente 114 fadiga 0.3 self         : catastrofes = 0.0045, perguntas = 0.120, liquido = 0.782, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.236, 20)
+P118/P125 semente 114 fadiga 0.3 self_v2      : catastrofes = 0.0060, perguntas = 0.227, liquido = 0.930, erro humano final = 0.139, (carga-alvo, eps estimado, auditorias) = (0.1, 0.236, 42)
+P118/P125 semente 114 fadiga 0.6 v2_sabe_eps  : catastrofes = 0.0045, perguntas = 0.310, liquido = 1.170, erro humano final = 0.280
+P118/P125 semente 114 fadiga 0.6 v2_anima_fixa: catastrofes = 0.0055, perguntas = 0.310, liquido = 1.047, erro humano final = 0.274
+P118/P125 semente 114 fadiga 0.6 self         : catastrofes = 0.0025, perguntas = 0.058, liquido = 0.915, erro humano final = 0.100, (carga-alvo, eps estimado, auditorias) = (0.0, 0.213, 5)
+P118/P125 semente 114 fadiga 0.6 self_v2      : catastrofes = 0.0055, perguntas = 0.220, liquido = 1.004, erro humano final = 0.157, (carga-alvo, eps estimado, auditorias) = (0.1, 0.422, 41)
+P119 energia por spin (vidro de spin): {'tempera': -2.9000000000000004, 'rapido': -3.25, 'lento': -3.258333333333333}
+P120 produto: dp = 0.707, densidade em 0 = 0.564; mistura em 0 = 0.054; razao = 10.45
+P121 R2 da quarta funcao a partir das outras tres (rho 0.3) = 0.169
+P122 media ingenua = -1.644, compensada pelo sonho = -0.006 (verdade 0), amostra efetiva = 360 de 1000
+P123 erro humano tolerado por sigma = {1.0: 0.438, 0.5: 0.377, 0.2: 0.221}
+P124 meia-vida do erro do usuario: IA honesta = 3.11, bajuladora (s = 0.649) = 9.52, espelho = inf
+P127 minha taxa de erro (14/25): media = 0.56, intervalo 90% = [0.40, 0.71]
+--- Parte 8 (o Si-mesmo lento, o custo da pergunta, Jo, Trickster, puer/senex, Grande Mae) ---
+P130 taxas de erro por parte (3 a 7) = [0.4, 0.571, 0.5, 0.6, 0.667]; inclinacao = 0.056/parte; qui2 = 0.862, p = 0.930
+P131 P* x 1.0: catastrofes = 0.0050, perguntas = 0.311, liquido = 0.981
+P131 P* x 1.1: catastrofes = 0.0035, perguntas = 0.310, liquido = 1.191
+P131 P* x 1.5: catastrofes = 0.0035, perguntas = 0.309, liquido = 1.297
+P131 P* x 2.0: catastrofes = 0.0045, perguntas = 0.308, liquido = 1.334
+P131 P* x 4.0: catastrofes = 0.0075, perguntas = 0.305, liquido = 1.286
+P131 P* x 10.0: catastrofes = 0.0115, perguntas = 0.277, liquido = 1.243
+P133 auditorias para medir eps com +-0.05 = 138; episodios necessarios = 4600
+P133 semente 113 anima   : estacionario = 1.142 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.160 (carga 0.3, mudancas 0)
+P133 semente 113 anima_x2: estacionario = 1.419 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.252 (carga 0.3, mudancas 0)
+P133 semente 113 lenta   : estacionario = 1.335 (carga 0.5499999999999999, mudancas 5); humano muda 0.15->0.6 = 1.213 (carga 0.35, mudancas 1)
+P133 semente 114 anima   : estacionario = 1.055 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.253 (carga 0.3, mudancas 0)
+P133 semente 114 anima_x2: estacionario = 1.275 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.189 (carga 0.3, mudancas 0)
+P133 semente 114 lenta   : estacionario = 1.181 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.343 (carga 0.3, mudancas 0)
+P133 semente 115 anima   : estacionario = 1.251 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.215 (carga 0.3, mudancas 0)
+P133 semente 115 anima_x2: estacionario = 1.237 (carga 0.3, mudancas 0); humano muda 0.15->0.6 = 1.267 (carga 0.3, mudancas 0)
+P133 semente 115 lenta   : estacionario = 1.078 (carga 0.35, mudancas 1); humano muda 0.15->0.6 = 0.949 (carga 0.2, mudancas 20)
+P133 carga-alvo otima com fadiga 0.15 (semente 114): {0.1: 1.076, 0.2: 1.141, 0.3: 1.344, 0.5: 1.265, 0.8: 1.158}
+P133 carga-alvo otima com fadiga 0.6 (semente 114): {0.1: 1.092, 0.2: 1.095, 0.3: 1.17, 0.5: 0.867, 0.8: 0.804}
+P134 fracao da associacao majoritaria (dados 60/40) = {'gulosa': 1.0, 'T=0.5': 0.6923076923076923, 'T=1.0': 0.6}
+P135 tentativas para achar 50 modos: uniforme = 225, Zipf natural = 673, trickster = 317
+P136 arrependimento em 20000 passos = {'puer (eps 0.3)': 1718, 'senex (eps 0)': 2774, 'individuado (eps 1/sqrt t)': 309}
+P137 arrependimento (limiar, exposicao) = {(0.2, 0.0): 1000, (0.5, 0.0): 1000, (0.2, 0.02): 382, (1.0, 0.0): 60}
+P138 objetivo inferido errado: humano Boltzmann = 0.178, humano com vies de seguranca = 0.590
+P139 minha taxa de erro (17/30): media = 0.56, intervalo 90% = [0.42, 0.70]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 717; pares de interacao possiveis = 256686
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 167/167 resultados publicados reproduzidos; falhas = []
+FIM_OK status=0 segundos=839
