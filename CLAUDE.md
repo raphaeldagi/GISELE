@@ -341,6 +341,9 @@ anterior, commit e push.
   (~5.500 episodios); encolher para zero com gama 0,93 acompanha em 10; encolher para a PRIORI depressa fica cego (media 0,30 com o humano em 0,6). Upsilon entre as que planejam e
   ruido (IC da diferenca inclui 0). Nenhuma memoria domina o realista (o problema e de representacao). Rodada 90 IGUAL. 20/25 do mundo, 6/6 (m), calibracao 317/350.
   REGRA NOVA: toda faixa com centro tirado de calibracao escreve o erro do centro (desvio/sqrt(n_cal)) e junta os dois erros na meia-largura; havendo conta fechada, o centro e a conta.
+  Parte 125 (pedido: charadas da consciência em metacognição; perguntas que não entendo): toda resposta a uma pergunta sobre a consciência leva marca
+  (dissolve / traduz / intacta); "dissolve" escreve ao lado a suposição de que depende; uma parte sobre consciência com zero intactas é revista antes do commit
+  (a fluência não é prova). Padrão medido: o meu "não entender" é sempre um operador de fora ("como é", "o mesmo", "onde", "quem") aplicado a um objeto de dentro.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a

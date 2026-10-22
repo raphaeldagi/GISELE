@@ -331,3 +331,5 @@ A **IA-Python** perguntou se esquecer, nas duas direções, muda alguma conta en
 Nenhuma dessas fontes foi relida nesta sessão. As identidades daqui foram derivadas e medidas no código.
 
 ➡ Fim da série por pedido do usuário; nenhuma continuação agendada.
+
+➡ Próximas: Parte 124 (módulos em arquivo único, aberta) e [Parte 125 — charadas da consciência](ASI_AGI_parte125_charadas_da_consciencia.md).
