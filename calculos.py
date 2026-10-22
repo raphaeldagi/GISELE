@@ -7535,6 +7535,8 @@ def testes_de_regressao():
             and abs(p3161_ignicao_dobras()[0] - 0.26641998767677605) < 1e-12,
         "P3172": (lambda r: r["categorias"] == {"projeto": 73, "maquina": 2, "nota": 10, "mundo": 0} and r["sem_referencia"] == [91])(
             p3172_comparar_reproducao("reproducao/resultados_antes_volta1.txt", "reproducao/volta1")),
+        "P3174": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"]) == (9, 0, [128]))(
+            p3174_comparar_voltas("reproducao/volta1", "reproducao/volta2")),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -17547,6 +17549,17 @@ def p3174_comparar_voltas(pasta_a, pasta_b):
     return {"linhas": tot, "diferentes": dif, "fracao": dif / tot if tot else 0.0, "categorias": cats, "mundo": mundo,
             "partes_refeitas": len(novo), "novas": sorted(k for k in novo if k not in ref), "regressoes": regs,
             "blocos": n, "blocos_sem_excecao": ok}
+
+
+def _parte_129():
+    print("\n=== Parte 129: volta 2 do loop (volta 1 contra volta 2) ===")
+    r = p3174_comparar_voltas("reproducao/volta1", "reproducao/volta2")
+    print(f"  blocos {r['blocos']}, sem exceção {r['blocos_sem_excecao']}; regressões {sorted(set(r['regressoes']))}")
+    print(f"  partes refeitas {r['partes_refeitas']}, novas {r['novas']}")
+    print(f"  linhas {r['linhas']}, diferentes {r['diferentes']} ({r['fracao']:.4f}); categorias {r['categorias']}; mundo {r['mundo']}")
+
+
+PARTES[129] = _parte_129
 
 PARTES[126] = _parte_126
 

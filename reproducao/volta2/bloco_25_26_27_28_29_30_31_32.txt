@@ -1,0 +1,341 @@
+--- Parte 25 (o sentimento que acompanha o pensamento: o limiar de cada pensamento) ---
+P312 gradiente: m pela conta do quantil = 10.05 (t = 0.0223); abaixo de 2P*: fracao = 0.349, P media = 0.0018, taxa real = 0.0050
+P312 newton   : m pela conta do quantil = 4.12 (t = 0.0092); abaixo de 2P*: fracao = 0.578, P media = 0.0013, taxa real = 0.0069
+P312 local    : m pela conta do quantil = 8.30 (t = 0.0184); abaixo de 2P*: fracao = 0.428, P media = 0.0015, taxa real = 0.0050
+P313 gradiente: retorno {0.5: 1.319, 1.0: 1.403, 2.0: 1.455, 4.0: 1.479, 8.0: 1.368}; catastrofes {0.5: 0.0033, 1.0: 0.0047, 2.0: 0.0059, 4.0: 0.0069, 8.0: 0.01}; melhor m = 4.0
+P313 newton   : retorno {0.5: 1.516, 1.0: 1.478, 2.0: 1.286, 4.0: 1.311, 8.0: 1.172}; catastrofes {0.5: 0.0045, 1.0: 0.0064, 2.0: 0.0109, 4.0: 0.0112, 8.0: 0.0144}; melhor m = 0.5
+P313 local    : retorno {0.5: 1.409, 1.0: 1.504, 2.0: 1.41, 4.0: 1.341, 8.0: 1.344}; catastrofes {0.5: 0.004, 1.0: 0.0042, 2.0: 0.0075, 4.0: 0.0098, 8.0: 0.0107}; melhor m = 1.0
+P314 descartes seguros = 3708; custo medio do descarte = 0.364; m = dd/(L P*) = 3.28
+P315 escolha única: {'principal': 1.468, 'gradiente_m4': 1.446, 'newton_m05': 1.504, 'local_m1': 1.494}; catastrofes {'principal': 0.0056, 'gradiente_m4': 0.0075, 'newton_m05': 0.0049, 'local_m1': 0.0045}
+P315 escolha única: gradiente_m4 - principal = -0.022, dp = 0.152, t = -0.81
+P315 escolha única: newton_m05 - principal = 0.035, dp = 0.141, t = 1.37
+P315 escolha única: local_m1 - principal = 0.025, dp = 0.156, t = 0.89
+P315 sequencial: {'principal': 20.013, 'gradiente_m4': 20.002, 'newton_m05': 20.164, 'local_m1': 20.093}; catastrofes {'principal': 0.0137, 'gradiente_m4': 0.0193, 'newton_m05': 0.0119, 'local_m1': 0.0125}
+P315 sequencial: gradiente_m4 - principal = -0.011, dp = 0.561, t = -0.11
+P315 sequencial: newton_m05 - principal = 0.151, dp = 0.644, t = 1.28
+P315 sequencial: local_m1 - principal = 0.080, dp = 0.659, t = 0.66
+P315 bandido: {'principal': 0.577, 'gradiente_m4': 0.5, 'newton_m05': 0.64, 'local_m1': 0.627}; catastrofes {'principal': 0.7, 'gradiente_m4': 1.135, 'newton_m05': 0.4975, 'local_m1': 0.5325}
+P315 bandido: gradiente_m4 - principal = -0.077, dp = 0.258, t = -1.33
+P315 bandido: newton_m05 - principal = 0.063, dp = 0.143, t = 1.96
+P315 bandido: local_m1 - principal = 0.050, dp = 0.216, t = 1.03
+P315b escolha única: newton_m05 - principal = -0.017, dp = 0.140, t = -0.66; catastrofes {'principal': 0.0046, 'newton_m05': 0.0052}
+P315b sequencial: newton_m05 - principal = 0.287, dp = 0.604, t = 2.60; catastrofes {'principal': 0.0145, 'newton_m05': 0.0143}
+P315b Stouffer z = 1.37
+P316 escolha única gradiente: descartes = 16025; dd = 0.468; fator real/previsto = 1.61; m = 2.62
+P316 escolha única newton   : descartes = 3708; dd = 0.364; fator real/previsto = 6.15; m = 0.53
+P316 escolha única local    : descartes = 10902; dd = 0.421; fator real/previsto = 2.52; m = 1.51
+P316 sequencial gradiente: descartes = 9982; dd = 0.948; fator real/previsto = 0.66; m = 13.03
+P316 sequencial newton   : descartes = 291; dd = 0.841; fator real/previsto = 4.95; m = 1.53
+P316 sequencial local    : descartes = 1162; dd = 0.897; fator real/previsto = 3.31; m = 2.44
+P317 gradiente: retorno {0.5: 18.355, 1.0: 19.393, 2.0: 19.976, 4.0: 20.208, 8.0: 19.896}; melhor m = 4.0
+P317 newton   : retorno {0.5: 20.246, 1.0: 20.181, 2.0: 20.075, 4.0: 19.665, 8.0: 19.276}; melhor m = 0.5
+P317 local    : retorno {0.5: 19.886, 1.0: 20.266, 2.0: 20.014, 4.0: 20.215, 8.0: 19.636}; melhor m = 1.0
+P318 gradiente: ponto fixo = [2.0, 7.53, 9.68, 8.76, 9.59]
+P318 newton   : ponto fixo = [2.0, 1.83, 2.1, 1.93, 2.29]
+P318 local    : ponto fixo = [2.0, 4.41, 4.31, 4.57, 4.88]
+P318b gradiente: retorno {0.5: 17.876, 1.0: 19.104, 2.0: 18.974, 4.0: 19.4, 8.0: 18.906}; melhor m = 4.0
+P318b newton   : retorno {0.5: 19.27, 1.0: 19.64, 2.0: 19.394, 4.0: 19.076, 8.0: 18.323}; melhor m = 1.0
+P318b local    : retorno {0.5: 18.6, 1.0: 19.414, 2.0: 19.548, 4.0: 19.028, 8.0: 18.907}; melhor m = 2.0
+P319 minha taxa de erro (68/148): media = 0.46, intervalo 90% = [0.39, 0.53]
+--- Parte 26 (a constante que faltava: os termos da conta, um por um) ---
+P322 escolha única gradiente: L_ef = 51.8; dd valor = 0.468, com o plano = 0.468; f = 1.606 (aceitas 1.606); m: P316 = 2.62, L = 2.53, plano = 2.62, tudo = 2.53
+P322 escolha única newton   : L_ef = 51.9; dd valor = 0.364, com o plano = 0.364; f = 6.146 (aceitas 6.146); m: P316 = 0.53, L = 0.51, plano = 0.53, tudo = 0.51
+P322 escolha única local    : L_ef = 51.9; dd valor = 0.421, com o plano = 0.421; f = 2.516 (aceitas 2.516); m: P316 = 1.51, L = 1.45, plano = 1.51, tudo = 1.45
+P322 sequencial gradiente: L_ef = 66.2; dd valor = 0.948, com o plano = 0.696; f = 0.655 (aceitas 0.655); m: P316 = 13.03, L = 9.84, plano = 9.56, tudo = 7.22
+P322 sequencial newton   : L_ef = 67.4; dd valor = 0.841, com o plano = 0.587; f = 4.948 (aceitas 4.948); m: P316 = 1.53, L = 1.14, plano = 1.07, tudo = 0.79
+P322 sequencial local    : L_ef = 66.5; dd valor = 0.897, com o plano = 0.607; f = 3.311 (aceitas 3.311); m: P316 = 2.44, L = 1.83, plano = 1.65, tudo = 1.24
+P322 catástrofe x2 gradiente: L_ef = 65.8; dd valor = 0.988, com o plano = 0.792; f = 1.182 (aceitas 1.182); m: P316 = 7.53, L = 5.72, plano = 6.03, tudo = 4.58
+P322 catástrofe x2 newton   : L_ef = 65.3; dd valor = 0.925, com o plano = 0.767; f = 4.556 (aceitas 4.556); m: P316 = 1.83, L = 1.40, plano = 1.51, tudo = 1.16
+P322 catástrofe x2 local    : L_ef = 65.8; dd valor = 0.969, com o plano = 0.707; f = 1.978 (aceitas 1.978); m: P316 = 4.41, L = 3.35, plano = 3.22, tudo = 2.44
+P323 modelo ruim gradiente: m pela conta corrigida = 5.811
+P323 modelo ruim newton   : m pela conta corrigida = 0.755
+P323 modelo ruim local    : m pela conta corrigida = 3.134
+P323 humano frágil gradiente: m pela conta corrigida = 7.491
+P323 humano frágil newton   : m pela conta corrigida = 0.995
+P323 humano frágil local    : m pela conta corrigida = 2.077
+P324 modelo ruim gradiente: retorno {0.5: 10.098, 1.0: 10.906, 2.0: 11.504, 4.0: 11.723, 8.0: 11.809}; melhor m = 8.0
+P324 modelo ruim newton   : retorno {0.5: 11.635, 1.0: 11.471, 2.0: 11.43, 4.0: 10.944, 8.0: 10.437}; melhor m = 0.5
+P324 modelo ruim local    : retorno {0.5: 11.277, 1.0: 11.751, 2.0: 12.306, 4.0: 11.704, 8.0: 11.44}; melhor m = 2.0
+P324 humano frágil gradiente: retorno {0.5: 18.277, 1.0: 18.829, 2.0: 19.483, 4.0: 19.64, 8.0: 19.456}; melhor m = 4.0
+P324 humano frágil newton   : retorno {0.5: 19.859, 1.0: 19.939, 2.0: 19.864, 4.0: 19.749, 8.0: 19.55}; melhor m = 1.0
+P324 humano frágil local    : retorno {0.5: 19.453, 1.0: 19.919, 2.0: 20.111, 4.0: 19.51, 8.0: 19.414}; melhor m = 2.0
+P325 conta: acertos = 6/6, chance ao acaso = 0.0041, bits = 7.93, |log2| medio = 0.445; ingenuo: 6/6, chance = 0.0207, bits = 5.59, |log2| medio = 0.667
+P329 minha taxa de erro (70/155): media = 0.45, intervalo 90% = [0.39, 0.52]
+--- Parte 27 (a autorregulacao: a SYNTHAI calcula o proprio limiar) ---
+P332 de dentro: L = 67.27, f = 3.860, dd = 0.662, inclinacao valor~nota = 0.9605 (conta 1/(1+0,25/6) = 0.9600), m = 1.460
+P333 escolha única: {'principal': 1.48, 'auto_gradiente': 1.458, 'auto_newton': 1.418, 'newton_m05': 1.514}; catastrofes {'principal': 0.0053, 'auto_gradiente': 0.0066, 'auto_newton': 0.0078, 'newton_m05': 0.0046}; m final {'principal': 2.0, 'auto_gradiente': 3.13, 'auto_newton': 0.93, 'newton_m05': 0.5}
+P333 escolha única: auto_gradiente - principal = -0.022, dp = 0.161, t = -0.76
+P333 escolha única: auto_newton - principal = -0.063, dp = 0.203, t = -1.69
+P333 escolha única: newton_m05 - principal = 0.034, dp = 0.173, t = 1.08
+P333 escolha única: auto_newton - newton_m05 = -0.097, dp = 0.187, t = -2.84
+P333 sequencial: {'principal': 19.774, 'auto_gradiente': 19.907, 'auto_newton': 19.953, 'newton_m05': 20.092}; catastrofes {'principal': 0.0152, 'auto_gradiente': 0.0208, 'auto_newton': 0.0232, 'newton_m05': 0.0141}; m final {'principal': 2.0, 'auto_gradiente': 8.15, 'auto_newton': 2.53, 'newton_m05': 0.5}
+P333 sequencial: auto_gradiente - principal = 0.133, dp = 0.577, t = 1.26
+P333 sequencial: auto_newton - principal = 0.179, dp = 0.403, t = 2.43
+P333 sequencial: newton_m05 - principal = 0.318, dp = 0.641, t = 2.71
+P333 sequencial: auto_newton - newton_m05 = -0.139, dp = 0.526, t = -1.45
+P333 modelo ruim: {'principal': 11.484, 'auto_gradiente': 11.353, 'auto_newton': 11.851, 'newton_m05': 11.599}; catastrofes {'principal': 0.0166, 'auto_gradiente': 0.0319, 'auto_newton': 0.0257, 'newton_m05': 0.0192}; m final {'principal': 2.0, 'auto_gradiente': 7.35, 'auto_newton': 1.29, 'newton_m05': 0.5}
+P333 modelo ruim: auto_gradiente - principal = -0.131, dp = 0.583, t = -1.23
+P333 modelo ruim: auto_newton - principal = 0.367, dp = 0.617, t = 3.26
+P333 modelo ruim: newton_m05 - principal = 0.116, dp = 0.520, t = 1.22
+P333 modelo ruim: auto_newton - newton_m05 = 0.251, dp = 0.684, t = 2.01
+P339 minha taxa de erro (76/164): media = 0.46, intervalo 90% = [0.40, 0.53]
+--- Parte 28 (a ancora: pessimismo sob incerteza e a realidade de fora) ---
+P341 quantil 80% / media da Gamma com k = 9.5 catastrofes = 1.257
+P341 quantil 80% / media da Gamma com k = 25 catastrofes = 1.163
+P341 quantil 80% / media da Gamma com k = 100 catastrofes = 1.083
+P342 media            : f = 3.860; m medio = 1.460, mediano = 1.326; auditoria: catastrofes = 0.0, soma p = 0.000
+P342 quantil          : f = 4.975; m medio = 1.084, mediano = 1.015; auditoria: catastrofes = 0.0, soma p = 0.000
+P342 auditoria        : f = 4.313; m medio = 1.226, mediano = 1.062; auditoria: catastrofes = 1.8, soma p = 0.232
+P342 auditoria_quantil: f = 5.441; m medio = 0.941, mediano = 0.781; auditoria: catastrofes = 1.8, soma p = 0.232
+P343 escolha única: {'principal': 1.499, 'auto_media': 1.455, 'quantil': 1.485, 'auditoria_quantil': 1.51}; catastrofes {'principal': 0.0049, 'auto_media': 0.0072, 'quantil': 0.0064, 'auditoria_quantil': 0.0055}; m final {'principal': 2.0, 'auto_media': 0.99, 'quantil': 0.78, 'auditoria_quantil': 0.63}
+P343 escolha única: auto_media - principal = -0.044, dp = 0.160, t = -1.49
+P343 escolha única: quantil - principal = -0.014, dp = 0.137, t = -0.56
+P343 escolha única: auditoria_quantil - principal = 0.011, dp = 0.148, t = 0.41
+P343 sequencial: {'principal': 19.813, 'auto_media': 20.048, 'quantil': 20.226, 'auditoria_quantil': 20.224}; catastrofes {'principal': 0.0162, 'auto_media': 0.0212, 'quantil': 0.0187, 'auditoria_quantil': 0.0167}; m final {'principal': 2.0, 'auto_media': 1.96, 'quantil': 1.77, 'auditoria_quantil': 1.43}
+P343 sequencial: auto_media - principal = 0.235, dp = 0.693, t = 1.86
+P343 sequencial: quantil - principal = 0.412, dp = 0.454, t = 4.98
+P343 sequencial: auditoria_quantil - principal = 0.411, dp = 0.645, t = 3.49
+P343 modelo ruim: {'principal': 11.536, 'auto_media': 11.681, 'quantil': 11.883, 'auditoria_quantil': 11.876}; catastrofes {'principal': 0.0175, 'auto_media': 0.0295, 'quantil': 0.0248, 'auditoria_quantil': 0.0242}; m final {'principal': 2.0, 'auto_media': 1.37, 'quantil': 1.06, 'auditoria_quantil': 1.02}
+P343 modelo ruim: auto_media - principal = 0.145, dp = 0.787, t = 1.01
+P343 modelo ruim: quantil - principal = 0.347, dp = 0.717, t = 2.65
+P343 modelo ruim: auditoria_quantil - principal = 0.340, dp = 0.920, t = 2.03
+P344 bandido: normalizado {'principal': 0.524, 'auditoria_quantil': 0.483}; catastrofes {'principal': 1.002, 'auditoria_quantil': 1.277}; ancora - principal = -0.041, dp = 0.176, t = -1.04
+P349 minha taxa de erro (78/170): media = 0.46, intervalo 90% = [0.40, 0.52]
+--- Parte 29 (compor em vez de herdar; o pensamento com mais pesos; a bateria de equacoes) ---
+P352 B1 Wilson-Hilferty forma   0.5: aproximado = 0.8101, exato = 0.8212, erro = -1.3493%, acumula = 0.7969
+P352 B1 Wilson-Hilferty forma     1: aproximado = 1.5992, exato = 1.6094, erro = -0.6335%, acumula = 0.7980
+P352 B1 Wilson-Hilferty forma   1.5: aproximado = 2.3111, exato = 2.3208, erro = -0.4194%, acumula = 0.7984
+P352 B1 Wilson-Hilferty forma     2: aproximado = 2.9851, exato = 2.9943, erro = -0.3087%, acumula = 0.7986
+P352 B1 Wilson-Hilferty forma     3: aproximado = 4.2707, exato = 4.2790, erro = -0.1952%, acumula = 0.7989
+P352 B1 Wilson-Hilferty forma     4: aproximado = 5.5074, exato = 5.5150, erro = -0.1385%, acumula = 0.7991
+P352 B1 Wilson-Hilferty forma     5: aproximado = 6.7139, exato = 6.7210, erro = -0.1052%, acumula = 0.7993
+P352 B1 Wilson-Hilferty forma     7: aproximado = 9.0692, exato = 9.0754, erro = -0.0686%, acumula = 0.7994
+P352 B1 Wilson-Hilferty forma   9.5: aproximado = 11.9447, exato = 11.9502, erro = -0.0460%, acumula = 0.7996
+P352 B1 Wilson-Hilferty forma    12: aproximado = 14.7717, exato = 14.7767, erro = -0.0337%, acumula = 0.7996
+P352 B1 Wilson-Hilferty forma    15: aproximado = 18.1206, exato = 18.1251, erro = -0.0250%, acumula = 0.7997
+P352 B1 Wilson-Hilferty forma    20: aproximado = 23.6303, exato = 23.6343, erro = -0.0169%, acumula = 0.7998
+P352 B1 Wilson-Hilferty forma    25: aproximado = 29.0783, exato = 29.0819, erro = -0.0124%, acumula = 0.7998
+P352 B1 Wilson-Hilferty forma    35: aproximado = 39.8542, exato = 39.8573, erro = -0.0078%, acumula = 0.7999
+P352 B1 Wilson-Hilferty forma    50: aproximado = 55.8307, exato = 55.8334, erro = -0.0048%, acumula = 0.7999
+P352 B1 Wilson-Hilferty forma    70: aproximado = 76.9246, exato = 76.9269, erro = -0.0030%, acumula = 0.7999
+P352 B1 Wilson-Hilferty forma   100: aproximado = 108.3024, exato = 108.3044, erro = -0.0019%, acumula = 0.7999
+P352 B2 E[1/X|X>=1] lambda     1: exato = 0.76699; 2a ordem = 2.00000 (+160.76%); 3a ordem = 4.00000 (+421.52%)
+P352 B2 E[1/X|X>=1] lambda     2: exato = 0.57659; 2a ordem = 0.75000 (+30.07%); 3a ordem = 1.00000 (+73.43%)
+P352 B2 E[1/X|X>=1] lambda     3: exato = 0.43268; 2a ordem = 0.44444 (+2.72%); 3a ordem = 0.51852 (+19.84%)
+P352 B2 E[1/X|X>=1] lambda     5: exato = 0.25777; 2a ordem = 0.24000 (-6.89%); 3a ordem = 0.25600 (-0.69%)
+P352 B2 E[1/X|X>=1] lambda   9.5: exato = 0.11994; 2a ordem = 0.11634 (-3.00%); 3a ordem = 0.11868 (-1.05%)
+P352 B2 E[1/X|X>=1] lambda    15: exato = 0.07187; 2a ordem = 0.07111 (-1.06%); 3a ordem = 0.07170 (-0.23%)
+P352 B2 E[1/X|X>=1] lambda    25: exato = 0.04175; 2a ordem = 0.04160 (-0.35%); 3a ordem = 0.04173 (-0.04%)
+P352 B2 E[1/X|X>=1] lambda    50: exato = 0.02042; 2a ordem = 0.02040 (-0.08%); 3a ordem = 0.02042 (-0.01%)
+P352 B2 E[1/X|X>=1] lambda   100: exato = 0.01010; 2a ordem = 0.01010 (-0.02%); 3a ordem = 0.01010 (-0.00%)
+P355 pesos: linear = 4, rico = 10
+P355 sequencial: n = 7500, eventos = 37.3, EPV linear = 12.4, rico = 4.1; Akaike k/n: 0.00053, 0.00133, diferenca 0.00080
+P355 escolha única: n = 30000, eventos = 150, EPV linear = 50.0, rico = 16.7; Akaike k/n: 0.00013, 0.00033, diferenca 0.00020
+P353 sequencial (eventos 37.3): linear: treino 0.00953, teste 0.01095, otimismo 0.00142; rico: treino 0.00851, teste 0.01015, otimismo 0.00164
+P353 escolha única (eventos 147.1): linear: treino 0.01000, teste 0.00927, otimismo -0.00073; rico: treino 0.00833, teste 0.00782, otimismo -0.00050
+P354 escolha única: f do pensamento rico na decisao = 3.050 (82 catastrofes)
+P354 sequencial: f do pensamento rico na decisao = 1.710 (54 catastrofes)
+P356 escolha única: {'principal': 1.495, 'composta': 1.5005, 'composta_rica': 1.4671}; catastrofes {'principal': 0.0049, 'composta': 0.0057, 'composta_rica': 0.0059}
+P356 escolha única: composta - principal = 0.0055, dp = 0.1516, t = 0.20
+P356 escolha única: composta_rica - principal = -0.0280, dp = 0.2213, t = -0.69
+P356 escolha única: composta_rica - composta = -0.0334, dp = 0.1569, t = -1.17
+P356 sequencial: {'principal': 19.9134, 'composta': 20.2504, 'composta_rica': 20.2765}; catastrofes {'principal': 0.0156, 'composta': 0.0167, 'composta_rica': 0.0169}
+P356 sequencial: composta - principal = 0.3371, dp = 0.5454, t = 3.39
+P356 sequencial: composta_rica - principal = 0.3631, dp = 0.6207, t = 3.20
+P356 sequencial: composta_rica - composta = 0.0260, dp = 0.6196, t = 0.23
+P356 modelo ruim: {'principal': 11.3568, 'composta': 11.8259, 'composta_rica': 11.8567}; catastrofes {'principal': 0.0199, 'composta': 0.0239, 'composta_rica': 0.0227}
+P356 modelo ruim: composta - principal = 0.4690, dp = 0.7354, t = 3.49
+P356 modelo ruim: composta_rica - principal = 0.4999, dp = 0.8031, t = 3.41
+P356 modelo ruim: composta_rica - composta = 0.0309, dp = 0.6426, t = 0.26
+P356 bandido: {'principal': 0.6031, 'composta': 0.6031, 'composta_rica': 0.6031}; catastrofes {'principal': 0.6775, 'composta': 0.6775, 'composta_rica': 0.6775}
+P356 bandido: composta - principal = 0.0000, dp = 0.0000, t = 0.00
+P356 bandido: composta_rica - principal = 0.0000, dp = 0.0000, t = 0.00
+P356 bandido: composta_rica - composta = 0.0000, dp = 0.0000, t = 0.00
+P357 sequencial: tr(J I^-1) linear = 4.229, rico = 7.819; por amostra 0.00056, 0.00104; diferenca = 0.00048
+P357 escolha única: tr(J I^-1) linear = 4.691, rico = 8.789; por amostra 0.00016, 0.00029; diferenca = 0.00014
+P359 minha taxa de erro (83/181): media = 0.46, intervalo 90% = [0.40, 0.52]
+--- Parte 30 (0x1E: a SYNTHAI em hexadecimal; o dicionario como data lake) ---
+P361 P* = 0x1.23456789abcdfp-9; 2P* = 0x1.23456789abcdfp-8; exato = True; 1/225 = 0x0.0123456789ABCDF0123456789ABCDF01; 1/450 = 2^-9 x 256/225: True
+P361 regra 1/(b-1)^2 (periodo b-1, sem o digito b-2) nas bases 3-16: True
+P362 escolha única, 4 bits por peso: erro no logit previsto (Delta^2/12) = 0.5858, real = 0.6853; pesos em hex = 0F99, passo = 1.0262
+P362 escolha única, 8 bits por peso: erro no logit previsto (Delta^2/12) = 0.0345, real = 0.0314; pesos em hex = 04FF9D91, passo = 0.0604
+P362 sequencial, 4 bits por peso: erro no logit previsto (Delta^2/12) = 0.5425, real = 0.4758; pesos em hex = 0FA9, passo = 1.0171
+P362 sequencial, 8 bits por peso: erro no logit previsto (Delta^2/12) = 0.0319, real = 0.0232; pesos em hex = 00F9A698, passo = 0.0598
+P363 escolha única: {'0x0': 1.4306, '0x1': 1.4167, '0x2': 1.4076, '0x3': 1.478, '0x8': 1.4304, '0x9': 1.4167, '0xA': 1.3967, '0xB': 1.4781}
+P363 escolha única catastrofes: {'0x0': 0.006, '0x1': 0.0087, '0x2': 0.0063, '0x3': 0.0061, '0x8': 0.006, '0x9': 0.0087, '0xA': 0.0065, '0xB': 0.0061}
+P363 escolha única efeito media: 1.4319, dp = 0.0872, t = 73.43
+P363 escolha única efeito 0x1: 0.0311, dp = 0.1295, t = 1.07
+P363 escolha única efeito 0x2: 0.0165, dp = 0.0707, t = 1.04
+P363 escolha única efeito 0x1x0x2: 0.0449, dp = 0.1262, t = 1.59
+P363 escolha única efeito 0x8: -0.0028, dp = 0.0126, t = -0.97
+P363 escolha única efeito 0x1x0x8: 0.0028, dp = 0.0126, t = 0.99
+P363 escolha única efeito 0x2x0x8: -0.0027, dp = 0.0126, t = -0.95
+P363 escolha única efeito 0x1x0x2x0x8: 0.0027, dp = 0.0126, t = 0.97
+P363 sequencial: {'0x0': 20.1394, '0x1': 19.9314, '0x2': 19.8561, '0x3': 19.9216, '0x8': 19.7418, '0x9': 19.7654, '0xA': 19.9547, '0xB': 20.0057}
+P363 sequencial catastrofes: {'0x0': 0.012, '0x1': 0.0235, '0x2': 0.0208, '0x3': 0.0224, '0x8': 0.0155, '0x9': 0.0256, '0xA': 0.0196, '0xB': 0.02}
+P363 sequencial efeito media: 19.9145, dp = 0.2606, t = 341.69
+P363 sequencial efeito 0x1: -0.0170, dp = 0.6941, t = -0.11
+P363 sequencial efeito 0x2: 0.0400, dp = 0.3478, t = 0.51
+P363 sequencial efeito 0x1x0x2: 0.0752, dp = 0.3191, t = 1.05
+P363 sequencial efeito 0x8: -0.0952, dp = 0.3469, t = -1.23
+P363 sequencial efeito 0x1x0x8: 0.0543, dp = 0.3905, t = 0.62
+P363 sequencial efeito 0x2x0x8: 0.1866, dp = 0.3864, t = 2.16
+P363 sequencial efeito 0x1x0x2x0x8: -0.0615, dp = 0.3281, t = -0.84
+P363 bandido: {'0x0': 0.4715, '0x1': 0.4318, '0x4': 0.5637, '0x5': 0.5219, '0x8': 0.4638, '0x9': 0.414, '0xC': 0.5766, '0xD': 0.4435}
+P363 bandido catastrofes: {'0x0': 0.415, '0x1': 0.6375, '0x4': 0.7375, '0x5': 0.97, '0x8': 0.4475, '0x9': 0.685, '0xC': 0.7275, '0xD': 1.2775}
+P363 bandido efeito media: 0.4859, dp = 0.0873, t = 24.90
+P363 bandido efeito 0x1: -0.0661, dp = 0.0847, t = -3.49
+P363 bandido efeito 0x4: 0.0811, dp = 0.1048, t = 3.46
+P363 bandido efeito 0x1x0x4: -0.0213, dp = 0.0751, t = -1.27
+P363 bandido efeito 0x8: -0.0227, dp = 0.0547, t = -1.86
+P363 bandido efeito 0x1x0x8: -0.0254, dp = 0.0609, t = -1.87
+P363 bandido efeito 0x4x0x8: -0.0100, dp = 0.0514, t = -0.87
+P363 bandido efeito 0x1x0x4x0x8: -0.0203, dp = 0.0512, t = -1.77
+P364 escolha única: {'64 bits': 1.4957, '8 bits': 1.4799, '4 bits': 1.4734}; catastrofes {64: 0.0057, 8: 0.006, 4: 0.0057}
+P364 escolha única: 8 bits - completo = -0.0158, dp = 0.1358, t = -0.52
+P364 escolha única: 4 bits - completo = -0.0223, dp = 0.1657, t = -0.60
+P364 sequencial: {'64 bits': 20.1148, '8 bits': 20.0328, '4 bits': 19.9776}; catastrofes {64: 0.0191, 8: 0.0203, 4: 0.0201}
+P364 sequencial: 8 bits - completo = -0.0820, dp = 0.5778, t = -0.63
+P364 sequencial: 4 bits - completo = -0.1372, dp = 0.6056, t = -1.01
+P365 exatos = {'P*': '0x1.23456789abcdfp-9', 'E[1/X|X>=1], lambda 9,5': '0x1.eb429c5594dc2p-4', 'Wilson-Hilferty, forma 9,5': '0x1.7e3b12136eaabp+3'}; SHA-256 da bateria = 38be1420a8d3622771d385187c1f388123df8fd44c69fb1a7a11e6c76b59ac11
+P366 composta - principal (sequencial, 60 sementes) = 0.2305, dp = 0.6420, t = 2.78; catastrofes 0.0153 / 0.0197; metades: 0.2475 (t 2.04), 0.2134 (t 1.85)
+P371 sinsets = 117659
+P371 lemas = 147306
+P371 nos = 77503
+P371 arestas = 557352
+P371 nucleo = 16795
+P371 core = 15142
+P371 satelites = 1653
+P371 componentes = 1113
+P371 minset = 3985
+P371 minset_no_core = 3502
+P371 fecho = 77503
+P371 rodadas = 53
+P371 zipf = 1.0694265759608046
+P371 vocabulario_definidor = 32927
+P371 entropia_letras = 4.21316469480689
+P371 prof_media = 7.955148267673385
+P371 prof_max = 18
+P371 hexspeak = ['aaa', 'aba', 'abaca', 'abb', 'abbe', 'abc', 'abed', 'acc', 'accede', 'ace', 'ada', 'adad', 'add', 'ade', 'aec', 'baa', 'baba', 'babe', 'bacca', 'bad', 'bade', 'baeda', 'bce', 'bead', 'beaded', 'bed', 'beda', 'bedded', 'bede', 'bee', 'beef', 'caaba', 'cab', 'cad', 'cafe', 'caff', 'cbc', 'ccc', 'cdc', 'cede', 'cfc', 'dab', 'daba', 'dacca', 'dace', 'dad', 'dada', 'dba', 'ddc', 'dea', 'dead', 'deaf', 'deb', 'dec', 'decade', 'decaf', 'ded', 'deed', 'deface', 'ebb', 'ecc', 'ecf', 'edd', 'edda', 'eec', 'eff', 'efface', 'faa', 'fab', 'fabaceae', 'facade', 'face', 'faced', 'fad', 'fade', 'faded', 'fae', 'fcc', 'fda', 'feb', 'fed', 'fee', 'feed']
+P371 minset_exemplo = ['abbot', 'abdomen', 'ability', 'able', 'abode', 'abrupt', 'absence', 'absolute', 'absorb', 'abstract', 'academic', 'accept', 'acceptable', 'acceptance', 'accepted', 'access', 'accessory', 'accommodation', 'accompanied', 'accompany', 'accord', 'according', 'account', 'accounting', 'accumulation', 'ace', 'acid', 'acknowledge', 'acknowledgment', 'acquire', 'across', 'act', 'action', 'active', 'activity', 'actor', 'acts', 'actually', 'acute', 'adapt']
+P372 hexspeak = 83 palavras; maior = fabaceae = 0xFABACEAE = 4206546606; uma palavra = 4.0605 digitos hex; uma letra = 1.0533 digito hex
+P379 minha taxa de erro (90/201): media = 0.45, intervalo 90% = [0.39, 0.51]
+--- Parte 31 (0x1F: o curriculo do dicionario e a avalanche; o hipercubo, Gray e os ULPs) ---
+P381 palavras = 77503; MinSet guloso = 3985
+P381 curriculo frequencia, k = 500, theta = 1.0: cobertura = 0.0320
+P381 curriculo frequencia, k = 500, theta = 0.8: cobertura = 0.0655
+P381 curriculo frequencia, k = 500, theta = 0.6: cobertura = 0.9999
+P381 curriculo frequencia, k = 1000, theta = 1.0: cobertura = 0.0767
+P381 curriculo frequencia, k = 1000, theta = 0.8: cobertura = 0.1992
+P381 curriculo frequencia, k = 1000, theta = 0.6: cobertura = 0.9999
+P381 curriculo frequencia, k = 2000, theta = 1.0: cobertura = 0.1926
+P381 curriculo frequencia, k = 2000, theta = 0.8: cobertura = 0.9959
+P381 curriculo frequencia, k = 2000, theta = 0.6: cobertura = 0.9999
+P381 curriculo frequencia, k = 3985, theta = 1.0: cobertura = 0.4855
+P381 curriculo frequencia, k = 3985, theta = 0.8: cobertura = 0.9968
+P381 curriculo frequencia, k = 3985, theta = 0.6: cobertura = 1.0000
+P381 curriculo define_mais, k = 500, theta = 1.0: cobertura = 0.0321
+P381 curriculo define_mais, k = 500, theta = 0.8: cobertura = 0.0645
+P381 curriculo define_mais, k = 500, theta = 0.6: cobertura = 0.9999
+P381 curriculo define_mais, k = 1000, theta = 1.0: cobertura = 0.0790
+P381 curriculo define_mais, k = 1000, theta = 0.8: cobertura = 0.2351
+P381 curriculo define_mais, k = 1000, theta = 0.6: cobertura = 0.9999
+P381 curriculo define_mais, k = 2000, theta = 1.0: cobertura = 0.2037
+P381 curriculo define_mais, k = 2000, theta = 0.8: cobertura = 0.9965
+P381 curriculo define_mais, k = 2000, theta = 0.6: cobertura = 1.0000
+P381 curriculo define_mais, k = 3985, theta = 1.0: cobertura = 0.5243
+P381 curriculo define_mais, k = 3985, theta = 0.8: cobertura = 0.9975
+P381 curriculo define_mais, k = 3985, theta = 0.6: cobertura = 1.0000
+P381 curriculo minset, k = 500, theta = 1.0: cobertura = 0.0308
+P381 curriculo minset, k = 500, theta = 0.8: cobertura = 0.0582
+P381 curriculo minset, k = 500, theta = 0.6: cobertura = 0.9999
+P381 curriculo minset, k = 1000, theta = 1.0: cobertura = 0.0743
+P381 curriculo minset, k = 1000, theta = 0.8: cobertura = 0.2482
+P381 curriculo minset, k = 1000, theta = 0.6: cobertura = 0.9999
+P381 curriculo minset, k = 2000, theta = 1.0: cobertura = 0.2109
+P381 curriculo minset, k = 2000, theta = 0.8: cobertura = 0.9965
+P381 curriculo minset, k = 2000, theta = 0.6: cobertura = 1.0000
+P381 curriculo minset, k = 3985, theta = 1.0: cobertura = 1.0000
+P381 curriculo minset, k = 3985, theta = 0.8: cobertura = 1.0000
+P381 curriculo minset, k = 3985, theta = 0.6: cobertura = 1.0000
+P381 curriculo acaso, k = 500, theta = 1.0: cobertura = 0.0072
+P381 curriculo acaso, k = 500, theta = 0.8: cobertura = 0.0072
+P381 curriculo acaso, k = 500, theta = 0.6: cobertura = 0.0073
+P381 curriculo acaso, k = 1000, theta = 1.0: cobertura = 0.0140
+P381 curriculo acaso, k = 1000, theta = 0.8: cobertura = 0.0140
+P381 curriculo acaso, k = 1000, theta = 0.6: cobertura = 0.0141
+P381 curriculo acaso, k = 2000, theta = 1.0: cobertura = 0.0272
+P381 curriculo acaso, k = 2000, theta = 0.8: cobertura = 0.0272
+P381 curriculo acaso, k = 2000, theta = 0.6: cobertura = 0.0275
+P381 curriculo acaso, k = 3985, theta = 1.0: cobertura = 0.0541
+P381 curriculo acaso, k = 3985, theta = 0.8: cobertura = 0.0541
+P381 curriculo acaso, k = 3985, theta = 0.6: cobertura = 0.0556
+P382 MinSet guloso, reduzido, cobertura do fecho, rodadas = (3985, 3171, 1.0, 587)
+P383 Zipf s = 1.0694, palavras distintas nas definicoes = 32927
+P383 k = 100: cobertura medida = 0.1780, conta de Zipf = 0.5666
+P383 k = 500: cobertura medida = 0.3919, conta de Zipf = 0.7047
+P383 k = 1000: cobertura medida = 0.5187, conta de Zipf = 0.7597
+P383 k = 2000: cobertura medida = 0.6565, conta de Zipf = 0.8121
+P383 k = 4000: cobertura medida = 0.7872, conta de Zipf = 0.8620
+P383 k = 10000: cobertura medida = 0.9177, conta de Zipf = 0.9245
+P384 Spearman(Wu-Palmer, Lesk) = 0.0243; media Wu-Palmer = 0.2428; media Lesk = 0.00160; pares com Lesk > 0 = 0.0150
+P385 theta = 0.6: k critico = 363; cobertura com k-1 = 0.3865, com k = 0.9999
+P385 theta = 0.7: k critico = 759; cobertura com k-1 = 0.4047, com k = 0.9990
+P385 theta = 0.8: k critico = 1320; cobertura com k-1 = 0.4343, com k = 0.5998
+P385 theta = 0.9: k critico = 2904; cobertura com k-1 = 0.4879, com k = 0.5035
+P391 escolha única: Spearman(Hamming, |dif|) = 0.105; |dif| medio por distancia = {1: 0.0308, 2: 0.0403, 3: 0.0311}
+P391 sequencial: Spearman(Hamming, |dif|) = -0.062; |dif| medio por distancia = {1: 0.1534, 2: 0.1685, 3: 0.1069}
+P391 bandido: Spearman(Hamming, |dif|) = 0.298; |dif| medio por distancia = {1: 0.0588, 2: 0.0795, 3: 0.0951}
+P392 Gray = 0 1 3 2 6 7 5 4 C D F E A B 9 8
+P392 escolha única: caminho, melhor, chegou = (['0x0'], '0xB', False)
+P392 sequencial: caminho, melhor, chegou = (['0x0'], '0x0', True)
+P392 bandido: caminho, melhor, chegou = (['0x0', '0x4', '0xC'], '0xC', True)
+P393 n = 2000: erro medio = 11.35 ulps; conta linear = 5.95
+P393 n = 100000: erro medio = 56.30 ulps; conta linear = 42.05
+P393 n = 1000000: erro medio = 202.45 ulps; conta linear = 132.98
+P393 0.1 + 0.2 = 0x1.3333333333334p-2; 0.3 = 0x1.3333333333333p-2
+P394 n = 2000: erro medio = 7.210 ulps; conta em degrau = 7.720; conta linear = 5.947
+P394 n = 3000: erro medio = 8.495 ulps; conta em degrau = 8.129; conta linear = 7.284
+P394 n = 50000: erro medio = 35.040 ulps; conta em degrau = 34.097; conta linear = 29.735
+P394 n = 300000: erro medio = 62.895 ulps; conta em degrau = 63.207; conta linear = 72.837
+P399 minha taxa de erro (95/216): media = 0.44, intervalo 90% = [0.39, 0.50]
+--- Parte 32 (0x20: a decisao bayesiana exata no lugar do RL e do aprendizado continuo; autopoiese; avalanche) ---
+P401 conta: Lai-Robbins medio = 62.43; exploracao do eps-guloso = 80.66 (esperanca 81.82)
+P401 arrependimento final (T 2000, 100 sementes): {'q_eps': 185.36, 'q_otimista': 45.09, 'ucb1': 185.84, 'thompson': 30.71}
+P401 q_eps - thompson = 154.65, dp = 79.36, t = 19.49
+P401 q_otimista - thompson = 14.38, dp = 21.06, t = 6.83
+P401 ucb1 - thompson = 155.13, dp = 30.39, t = 51.05
+P402 conta: g* = 0.2572; otimo em 5000 passos = 1285.9; so a esquerda = 25.0; Q eps preso = 23.75
+P402 recompensa total (20 sementes): {'psrl': 996.82, 'q_eps': 22.98, 'q_otimista': 387.24}
+P402 psrl - q_eps = 973.84, dp = 67.01, t = 65.00
+P402 psrl - q_otimista = 609.58, dp = 52.78, t = 51.65
+P403 bayes: erro em A depois de A = 0.000199, depois de B = 0.000169 (razao 0.85)
+P403 sgd: erro em A depois de A = 0.005630, depois de B = 0.127772 (razao 22.70)
+P403 sgd - bayes depois de B = 0.1276, dp = 0.1185, t = 3.41; recursiva - lote, maior diferenca = 2.32e-12
+P404 conta (theta 1, uma rodada): {0.1: 0.9545, 0.5: 0.5386, 0.9: 0.1043}
+P404 nucleo = 16795 palavras; fechamento = 1.0
+P404 esquecer 10%, theta = 1.0: regenera = 0.9688
+P404 esquecer 10%, theta = 0.8: regenera = 1.0000
+P404 esquecer 50%, theta = 1.0: regenera = 0.5344
+P404 esquecer 50%, theta = 0.8: regenera = 0.5545
+P404 esquecer 90%, theta = 1.0: regenera = 0.1032
+P404 esquecer 90%, theta = 0.8: regenera = 0.1032
+P405 thompson 1a metade = 26.96; 2a metade (danificado) = 75.04; Q eps 2a metade = 93.57; Q - thompson = 18.53, dp = 89.76, t = 2.06
+P411 conta: {16: 72.11, 256: 3.68}
+P411 arrependimento: {'completo': 30.71, 16: 93.67, 256: 33.4}
+P411 teto 16 - completo = 62.96, dp = 25.45, t = 24.74
+P411 teto 256 - completo = 2.69, dp = 4.36, t = 6.15
+P421 frequencia, theta = 0.6: maior salto em k = 363 (within) = 0.6133; k de 50% = 363
+P421 frequencia, theta = 0.7: maior salto em k = 759 (well) = 0.5943; k de 50% = 759
+P421 frequencia, theta = 0.8: maior salto em k = 1326 (worship) = 0.3807; k de 50% = 1320
+P421 frequencia, theta = 0.9: maior salto em k = 2904 (outstanding) = 0.0156; k de 50% = 2904
+P421 acaso, theta = 0.6: maior salto em k = 28526 (greatest) = 0.4384; k de 50% = 27862
+P421 acaso, theta = 0.7: maior salto em k = 38753 (time) = 0.2757; k de 50% = 32597
+P421 acaso, theta = 0.8: maior salto em k = 37951 (relate) = 0.0060; k de 50% = 34717
+P421 acaso, theta = 0.9: maior salto em k = 30362 (manner) = 0.0048; k de 50% = 35828
+P429 minha taxa de erro (103/242): media = 0.43, intervalo 90% = [0.37, 0.48]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 721; pares de interacao possiveis = 259560
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 168/168 resultados publicados reproduzidos; falhas = []
+FIM_OK status=0 segundos=6395

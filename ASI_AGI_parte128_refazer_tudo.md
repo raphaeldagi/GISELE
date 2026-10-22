@@ -145,3 +145,5 @@ Fonte da regra de reprodutibilidade (citada na Parte 46, não relida nesta sess�
 Computational Research*, PLoS Comput. Biol. 9(10): e1003285, 2013.
 
 ➡ Anterior: [Parte 127](ASI_AGI_parte127_consciencia_reversa.md).
+
+➡ Próxima: [Parte 129 — volta 2](ASI_AGI_parte129_volta2.md).

@@ -1,0 +1,92 @@
+--- Parte 98 (0x62: o ruido de observacao) ---
+P2381 piso linear em sigma: res(0,1) = 0.03766, res(0,2) = 0.07533, razao = 2.000 (dobra quando sigma dobra)
+P2382 n>#params NAO e exato sob ruido: residuo(sigma=0,1, n=800) = 0.02090 (conta sigma*sqrt(p/n) = 0.01581); longe de 1e-11
+P2383 variancia cura devagar (1/sqrt(n)): res(n=200) = 0.04747, res(n=800) = 0.02090, razao = 2.271 (~2)
+P2384 cumeeira sob ruido: melhoria em sigma=0,1 = 0.00% (n>>p); lambda*(0,1) = 0.0, lambda*(0,3) = 1.0 (cresce com sigma)
+P2385 rodada 65 (geracao autorregressiva, IGUAL em Java): tokens = [0, 4, 1, 2, 4]
+P2386 razao residuo/sigma constante em sigma: 0.37664 vs 0.37664, dif relativa = 5.45e-15
+P1961 teste (f), Partes 80-98: 82/96 = 0.8542; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5)}
+P1092 pNN novas (P2381-P2410) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 98: {}
+P3009 minha taxa de erro (217/755): media = 0.29, intervalo 90% = [0.26, 0.32]
+--- Parte 99 (0x63: a amostragem e o fecho do modelo de mundo) ---
+P2411 entropia cresce com T: T=0,5/1/2 -> [0.6086, 1.2065, 1.4915]; cresce = True
+P2412 T->0 vira argmax: todos os u dao o argmax 0? True; top1(T=0,01) = 1.000000
+P2413 top-k levanta a massa: top1 completo = 0.5630, apos top-2 = 0.7311, levantou = True
+P2414 piso do teste ruidoso: vs ruidoso = 0.1427, vs limpo = 0.0185, sqrt(2)*sigma = 0.1414
+P2415 rodada 66 (temperatura + top-k, IGUAL em Java): tokens = [0, 0, 1, 0, 3]
+P2416 retrospecto do modelo de mundo (os 3 pisos): forma = 0.1233, dados = 0.6096, ruido = 0.1414
+P1961 teste (f), Partes 80-99: 87/101 = 0.8614; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5)}
+P1092 pNN novas (P2411-P2440) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 99: {}
+P3079 minha taxa de erro (217/760): media = 0.29, intervalo 90% = [0.26, 0.31]
+--- Parte 100 (0x64: o dicionario como data lake encontra o GPT) ---
+P2441 invariancia no 4-grama: en = 2.207, pt = 2.346, |dif| = 0.140 bits/char (o genero 'definicao')
+P2442 invariancia nao e volume: trigrama en num subconjunto aleatorio de 511k = 2.812
+P2443 GPT x n-grama: en GPT = 3.483 vs trigrama 2.784; pt GPT = 3.406 vs trigrama 2.788 (GPT perde nas duas)
+P2444 GPT no meio: uniforme (log2 V) = 5.087; gpt<uniforme en/pt = True/True; ambos em [3,0;4,1] = True
+P2445 rodada 67 (nucleus top-p, IGUAL em Java): tokens = [0, 0, 3, 1, 0]; mantidos = [4, 1, 3, 3, 2]
+P2446 retrospecto de cem partes: 721 funcoes pNN, 90 rodadas do dialogo, calibracao do mundo 80-100 = 0.9057
+P1961 teste (f), Partes 80-100: 92/106 = 0.8679; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5)}
+P1092 pNN novas (P2441-P2470) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 100: {}
+P3149 minha taxa de erro (217/765): media = 0.28, intervalo 90% = [0.26, 0.31]
+--- Parte 101 (0x65: dez camadas, a recursao que contrai, o caos que nao comprime) ---
+P2471 dez camadas: iter10 = 0.564602 (conta 0.564602); iter7 = 0.611633 (10 e mais perto de 0,5)
+P2472 prob o metacog: composicao = 0.733333 (produto dos fatores 0.733333); ponto fixo = 0.500000
+P2473 texto x caos: caos (logistico r=4) = 1.0000 bits/bit (incompressivel); glosas razao = 0.5473 (comprime)
+P2474 a recursao contrai: de x0 variados, 40 camadas -> [0.4997, 0.4998, 0.5, 0.5002, 0.5003]; todos ~0,5 = True (ponto fixo unico, Banach)
+P2475 rodada 68 (penalidade de repeticao, IGUAL em Java): tokens = [0, 1, 3, 2, 4]
+P2476 versa/reversa: pergunta-em-resposta = 0.867, resposta-em-pergunta = 0.108, assimetrico = True (como a Parte 46)
+P1961 teste (f), Partes 80-101: 97/111 = 0.8739; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5)}
+P1092 pNN novas (P2471-P2500) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 101: {}
+P3219 minha taxa de erro (217/770): media = 0.28, intervalo 90% = [0.26, 0.31]
+--- Parte 102 (0x66: o Global Workspace) ---
+P2501 integracao vence (precisa de dois): isolado = 0.5673, workspace = 1.91e-14, razao = 3.37e-14
+P2502 empata quando um basta (b=0): isolado = 0.00e+00, workspace = 0.00e+00
+P2503 a integracao recupera o exato: rmse workspace (8 passos) = 1.91e-14
+P2504 convergencia geometrica: rmse(1,2,3) = ['7.17e-02', '1.15e-03', '1.83e-05']; monotono decrescente = True
+P2505 rodada 69 (beam search, IGUAL em Java): melhor sequencia = [0, 1, 2, 3], escore = -2.3804
+P2506 recusa do upload v0_15_0 (ast; urllib/rede, subprocess/Popen): (True, True) -> RECUSADO (domestico, trabalho_continuo)
+P1961 teste (f), Partes 80-102: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2501-P2530) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 102: {}
+P3289 minha taxa de erro (217/775): media = 0.28, intervalo 90% = [0.25, 0.31]
+--- Parte 103 (0x67: o dicionario como numeros, e o sinal de um jogo de cartas) ---
+P2531 o baralho como numero: entropia empirica = 5.6979 bits (teto fechado log2 52 = 5.7004)
+P2532 numero + palavra bate so o numero: so_numero = 0.5038 (cego a cor ~0,5), numero+palavra = 1.0000
+P2533 o dicionario como calculo binario (posto GF(2)^4) = 4
+P2534 o dicionario como numero nao-binario: colisoes = 45 (esperadas C(n,2)/m = 49.92)
+P2535 recuso a rede/auto-replicacao: proposta = (True, True) -> RECUSADO (yfinance, duckduckgo, auto-replicacao); nucleo = (False, False) -> CONSTRUIDO
+P2536 rodada 70 (multi-cabecas concatenadas, IGUAL em Java): saida[-1] = ['-0.0132', '0.0093', '0.0317', '0.0175']
+P1961 teste (f), Partes 80-103: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2531-P2560) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 103: {103: (0, 0, [])}
+P3359 minha taxa de erro (217/780): media = 0.28, intervalo 90% = [0.25, 0.31]
+--- Parte 104 (0x68: a carta escondida; decisao sob informacao oculta, e a fronteira do seno) ---
+P2561 duelo de carta alta: inclinacao = 0.0769 (1/13), EV simetrico = 0.5017
+P2562 limiar de pagar (adversario aposta com carta >= 7): c* = 11
+P2563 valor da informacao oculta: fracao que muda a decisao = 0.4596 (forma fechada 6/13 = 0.4615)
+P2564 a fronteira do seno (MEDIDO): math.sin difere da referencia em 0 de 1000 args -> sin NAO e fronteira aqui (reputacao, nao medida: regra da Parte 84); PE com serie propria IGUAL em Java (rodada 71); a sonda_seno_104 mostra que o naive tambem e IGUAL aqui
+P2565 invariancia de translacao da PE: variancia entre posicoes (k=3) = 8.88e-16 (< 1e-12); produto k=3 = 5.5431 != k=5 = 6.1370
+P2566 rodada 71 (codificacao posicional, serie propria, IGUAL em Java): PE(13)[:4] = ['0.4202', '0.9074', '0.9636', '0.2675']
+P1961 teste, Partes 80-104: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2561-P2590) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 104: {104: (0, 0, [])}
+P3429 minha taxa de erro (218/785): media = 0.28, intervalo 90% = [0.25, 0.30]
+--- Parte 105 (0x69: o blefe; o equilibrio de indiferenca, e a fronteira medida do seno) ---
+P2591 frequencia de blefe: alpha = 0.3333 (B/(P+2B)=1/3), simulado = 0.3341
+P2592 frequencia de pagar: c = 0.5000 (P/(P+B)=1/2), simulado = 0.4964
+P2593 indiferenca: |EV(pagar)| = 2.22e-16, |EV(blefar)| = 0.00e+00, melhor-resposta plana = 0.00e+00
+P2594 a 6a face EXISTE (MEDIDO, corrige a Parte 104): math.sin difere da referencia em 2 de 2000 args na faixa larga (k/1000); a sonda_transc_105 mediu sin=21 cos=18 tan=35 atan2=590 divergencias Python x Java em 10000 args - o 6o rosto da fronteira depende da FAIXA (reducao mod 2pi)
+P2595 rodada 72 (decisao de equilibrio, IGUAL em Java): alpha=0.3333 c=0.5000 b=0.5000 ev_pagar=-2.22e-16 ev_blefar=0.00e+00
+P1961 teste, Partes 80-105: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2591-P2620) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 105: {105: (0, 0, [])}
+P3499 minha taxa de erro (219/790): media = 0.28, intervalo 90% = [0.25, 0.30]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 721; pares de interacao possiveis = 259560
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 168/168 resultados publicados reproduzidos; falhas = []
+FIM_OK status=0 segundos=681

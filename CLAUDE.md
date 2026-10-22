@@ -361,6 +361,9 @@ anterior, commit e push.
   inteira); o resultados.txt tinha notas à mão. Trocar o resultados.txt pela volta 1 quebrou o teste da Parte 56 (as rodadas 18-21 o usam como CORPUS): ele voltou ao
   original, mais a Parte 91 e a 128; cada volta fica em reproducao/voltaN e compara com a anterior. Regra: antes de trocar um arquivo, grep de quem o LÊ; notas à mão não
   entram em arquivos que funções medem; e todo rótulo de faixa vem da mesma variável que ela mede.
+  Parte 129 (volta 2 do loop, volta 1 x volta 2, `p3174_comparar_voltas`): 6/6; 9 de 1.870 linhas mudaram, 0 do mundo; cada diferença é a assinatura do commit entre as
+  voltas (uma diferença do MUNDO seria defeito, não ruído). A P1871 caiu de 130 para 22 "não referenciados" porque as saídas versionadas da reprodução CITAM os arquivos (menção
+  lida como uso, 4ª vez): toda medida de referências entre arquivos exclui as saídas de execução.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a

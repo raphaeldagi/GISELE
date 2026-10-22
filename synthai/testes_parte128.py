@@ -60,6 +60,10 @@ class TestesParte128(unittest.TestCase):
         self.assertEqual(r["novas"], [3])
         self.assertEqual(r["regressoes"], ["Regressao: 2/2"])
 
+    def test_volta2_regressao(self):
+        r = c.p3174_comparar_voltas("reproducao/volta1", "reproducao/volta2")
+        self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["novas"]), (9, 0, [128]))
+
 
 if __name__ == "__main__":
     unittest.main()
