@@ -1,0 +1,185 @@
+--- Parte 57 (0x39: as restricoes) ---
+P1151 4-gramas reordenados pelo portugues: 0 pares mudam; 2 dos 13 tem acento
+P1152 palindromos: 104 de 77197 palavras; conta de letras independentes 116.2; com as pontas reais 86.7; ['aaa', 'aba', 'ada', 'aga', 'akka', 'ala', 'alula', 'ana', 'anna', 'ara', 'bib', 'bob']
+P1153 palindromos em base 10 e 16 abaixo de 10^6: 27 (conta 25.3); [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 353, 626, 787, 979, 1991, 3003, 39593, 41514, 90209, 94049]
+P1092 pNN novas (P1151-P1180) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 57: {57: (2, 0, [])}
+P1179 minha taxa de erro (167/479): media = 0.35, intervalo 90% = [0.31, 0.39]
+--- Parte 58 (0x3A: a primeira diferenca) ---
+P1181 lemas portugueses: primeira diferenca media na posicao 5.4928 (37724 pares); invertidos pela ordem portuguesa: 3738 (0.405 por palavra acentuada, 9236 acentuadas)
+P1182 tamanho pt/en: razao media 1.1654 em 38163 pares; o portugues e mais longo em 0.4600 deles
+P1183 primeiro digito hexadecimal (n = 1..10000): 2^n [0, 2500, 2500, 0, 2500, 0, 0, 0, 2500, 0, 0, 0, 0, 0, 0, 0]; 3^n [0, 2506, 1456, 1044, 803, 660, 556, 482, 418, 383, 347, 313, 288, 268, 247, 229] (digito 1: 0.2506; Benford 0,25)
+P1092 pNN novas (P1181-P1210) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 58: {58: (3, 0, [])}
+P1209 minha taxa de erro (168/486): media = 0.35, intervalo 90% = [0.31, 0.38]
+--- Parte 59 (0x3B: o nome e a coisa) ---
+P1211 lemas portugueses com maiuscula: 9176; com irma minuscula: 1805 (0.1967); ['Abelharuco', 'Abenaki', 'Abetarda', 'Ablação', 'Abobrinha', 'Abolicionismo', 'Abril', 'Absinto', 'Abulia', 'Acanthocephala', 'Acasalamento', 'Acessibilidade']
+P1212 palavras que nunca definem outra: 0.6380 de 77503; as que mais definem: [('state', 3113), ('relate', 3074), ('person', 2938), ('act', 2623), ('small', 2507)]
+P1213 persistencia multiplicativa em base 16 (16..16^5-1): maior = 7 (primeiro em 0x3dde); media = 2.3252
+P1092 pNN novas (P1211-P1240) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 59: {59: (3, 0, [])}
+P1239 minha taxa de erro (171/492): media = 0.35, intervalo 90% = [0.31, 0.38]
+--- Parte 60 (0x3C: o placar que se conta) ---
+P1241 IA-Python: estrita 15 em 27; generosa 31 em 44 (a mao: IA-Python 23 em 36, IA-Java 21 em 36)
+P1241 IA-Java: estrita 13 em 27; generosa 29 em 44 (a mao: IA-Python 23 em 36, IA-Java 21 em 36)
+P1242 definicoes que usam um dos proprios lemas: 0.0707 de 89893 sinsets; por classe {'a': 0.038, 'n': 0.0503, 'r': 0.028, 'v': 0.2205}; [('credit', 'used in the phrase `to your credit\' in order to indicate an achievement deserving praise; "she already had several performances to her credit";'), ('acquiring', 'the act of acquiring something; "I envied his talent for acquiring"; "he\'s much more interested in the getting than in the giving"'), ('causing', 'the act of causing something to happen')]
+P1243 narcisistas em base 16 (1 a 8 digitos): 64; de 2 a 8 digitos: ['0x156', '0x173', '0x208', '0x248', '0x285', '0x4a5', '0x5b0', '0x5b1', '0x60b', '0x64b', '0x8c0', '0x8c1', '0x99a', '0xaa9', '0xac3', '0xca8', '0xe69', '0xea0', '0xea1', '0xb8d2', '0x13579', '0x2b702', '0x2b722', '0x5a07c', '0x5a47c', '0xc00e0', '0xc00e1', '0xc04e0', '0xc04e1', '0xc60e7', '0xc64e7', '0xc80e0', '0xc80e1', '0xc84e0', '0xc84e1', '0xde030', '0xde031', '0xde430', '0xde431', '0xeb7c2', '0xfb06a', '0xfb46a', '0xfc276', '0x97e42b', '0xead83b', '0x222c200', '0x222c201', '0xdd5726e', '0xee51bb4']
+P1248 por comprimento (base 16, ate 9 digitos): {1: 15, 3: 19, 4: 1, 5: 23, 6: 2, 7: 4, 9: 13}
+P1247 interruptores d^(k-1) = 16^p: {3: [(1, 0), (4, 1)], 4: [(1, 0)], 5: [(1, 0), (2, 1), (4, 2), (8, 3)], 6: [(1, 0)], 7: [(1, 0), (4, 3)], 8: [(1, 0)], 9: [(1, 0), (2, 2), (4, 4), (8, 6)]}
+P1249 fator de congruencia em base 16, k = 1..9: [15, 1, 3, 1, 15, 1, 3, 1, 15]
+P1251 base 16, k =  2: medido  0; conta sem o fator 0.779; com o fator 0.779
+P1251 base 16, k =  3: medido 19; conta sem o fator 0.724; com o fator 2.173
+P1251 base 16, k =  4: medido  1; conta sem o fator 0.711; com o fator 0.711
+P1251 base 16, k =  5: medido 23; conta sem o fator 0.710; com o fator 10.646
+P1251 base 16, k =  6: medido  2; conta sem o fator 0.715; com o fator 0.715
+P1251 base 16, k =  7: medido  4; conta sem o fator 0.713; com o fator 2.138
+P1251 base 16, k =  8: medido  0; conta sem o fator 0.729; com o fator 0.729
+P1251 base 16, k =  9: medido 13; conta sem o fator 0.740; com o fator 11.095
+P1251 base  8, k =  2: medido  2; conta sem o fator 0.768; com o fator 0.768
+P1251 base  8, k =  3: medido  5; conta sem o fator 0.737; com o fator 0.737
+P1251 base  8, k =  4: medido  0; conta sem o fator 0.742; com o fator 0.742
+P1251 base  8, k =  5: medido  5; conta sem o fator 0.725; com o fator 0.725
+P1251 base  8, k =  6: medido  1; conta sem o fator 0.753; com o fator 0.753
+P1251 base  8, k =  7: medido  5; conta sem o fator 0.797; com o fator 5.579
+P1251 base  8, k =  8: medido  2; conta sem o fator 0.782; com o fator 0.782
+P1251 base 10, k =  2: medido  0; conta sem o fator 0.767; com o fator 0.767
+P1251 base 10, k =  3: medido  4; conta sem o fator 0.719; com o fator 2.157
+P1251 base 10, k =  4: medido  3; conta sem o fator 0.713; com o fator 0.713
+P1251 base 10, k =  5: medido  3; conta sem o fator 0.731; com o fator 2.194
+P1251 base 10, k =  6: medido  1; conta sem o fator 0.736; com o fator 0.736
+P1251 base 10, k =  7: medido  4; conta sem o fator 0.751; com o fator 2.254
+P1251 base  6, k =  2: medido  0; conta sem o fator 0.733; com o fator 0.733
+P1251 base  6, k =  3: medido  2; conta sem o fator 0.700; com o fator 0.700
+P1251 base  6, k =  4: medido  0; conta sem o fator 0.728; com o fator 0.728
+P1251 base  6, k =  5: medido  6; conta sem o fator 0.760; com o fator 3.799
+P1251 base  6, k =  6: medido  1; conta sem o fator 0.728; com o fator 0.728
+P1251 base  6, k =  7: medido  1; conta sem o fator 0.753; com o fator 0.753
+P1251 base  6, k =  8: medido  1; conta sem o fator 0.770; com o fator 0.770
+P1251 base  6, k =  9: medido  1; conta sem o fator 0.811; com o fator 4.055
+P1251 base  6, k = 10: medido  0; conta sem o fator 0.804; com o fator 0.804
+P1251 base  6, k = 11: medido  0; conta sem o fator 0.678; com o fator 0.678
+P1251 base  6, k = 12: medido  0; conta sem o fator 0.629; com o fator 0.629
+P1251 base  6, k = 13: medido  8; conta sem o fator 0.673; com o fator 3.363
+P1251 base 12, k =  2: medido  2; conta sem o fator 0.758; com o fator 0.758
+P1251 base 12, k =  3: medido  3; conta sem o fator 0.717; com o fator 0.717
+P1251 base 12, k =  4: medido  0; conta sem o fator 0.713; com o fator 0.713
+P1251 base 12, k =  5: medido  2; conta sem o fator 0.712; com o fator 0.712
+P1251 base 12, k =  6: medido  2; conta sem o fator 0.736; com o fator 0.736
+P1251 base 12, k =  7: medido  2; conta sem o fator 0.741; com o fator 0.741
+P1251 base 12, k =  8: medido  0; conta sem o fator 0.743; com o fator 0.743
+P1251 base 12, k =  9: medido  1; conta sem o fator 0.775; com o fator 0.775
+P1251 base 12, k = 10: medido  2; conta sem o fator 0.769; com o fator 0.769
+P1251 base 12, k = 11: medido  9; conta sem o fator 0.809; com o fator 8.904
+P1251 log-verossimilhanca de Poisson: sem o fator -254.11; com o fator -113.23; diferenca 140.88 nats
+P1251 total (k >= 2, 5 bases): medido 140; conta sem o fator 31.8; com o fator 81.2
+P1092 pNN novas (P1241-P1270) sem teste: 0 de 8: []
+P974 previsoes unilaterais da Parte 60: {60: (7, 0, [])}
+P1269 minha taxa de erro (175/503): media = 0.35, intervalo 90% = [0.31, 0.38]
+--- Parte 61 (0x3D: o dobro) ---
+P1271 rodadas conferidas pelo verificar.py: 90 (1 a 90)
+P1272 adjetivos definidos pela negacao: 0.1143 de 18156; com prefixo negativo entre eles: 0.6758; [('direct', 'lacking compromising or mitigating elements'), ('nonabsorbent', 'not capable of absorbing or soaking up (liquids)'), ('nonadsorbent', 'lacking a capacity to adsorb or cause to accumulate on a sur')]
+P1273 Niven base 10 ate 1000000: 95428; conta de De Koninck-Doyon-Katai 86419.8; razao 1.1042
+P1273 Niven base 16 ate 1048576: 93788; conta de De Koninck-Doyon-Katai 83886.1; razao 1.1180
+P1274 sem interruptor, impares: medido 117; conta 84.662; razao 1.3820
+P1274 sem interruptor, pares: medido 58; conta 32.152; razao 1.8039
+P1274 sem interruptor, bases novas: medido 123; conta 90.986; razao 1.3518
+P1274 sem interruptor: medido 175; conta 116.814; razao 1.4981
+P1274 com interruptor: medido 67; conta 31.828; razao 2.1051
+P1274 base  3 sem interruptor: medido  3; conta 4.534; razao 0.662
+P1274 base  4 sem interruptor: medido  2; conta 1.949; razao 1.026
+P1274 base  5 sem interruptor: medido 10; conta 8.639; razao 1.157
+P1274 base  6 sem interruptor: medido 10; conta 7.441; razao 1.344
+P1274 base  7 sem interruptor: medido 20; conta 17.516; razao 1.142
+P1274 base  8 sem interruptor: medido 13; conta 2.983; razao 4.358
+P1274 base  9 sem interruptor: medido  3; conta 4.443; razao 0.675
+P1274 base 10 sem interruptor: medido 15; conta 8.822; razao 1.700
+P1274 base 11 sem interruptor: medido 27; conta 14.598; razao 1.850
+P1274 base 12 sem interruptor: medido 11; conta 4.376; razao 2.514
+P1274 base 13 sem interruptor: medido 29; conta 17.566; razao 1.651
+P1274 base 14 sem interruptor: medido  4; conta 4.376; razao 0.914
+P1274 base 15 sem interruptor: medido 25; conta 17.366; razao 1.440
+P1274 base 16 sem interruptor: medido  3; conta 2.206; razao 1.360
+P1278 sem outro interruptor: solucoes 175; pares (n terminado em 0, n + 1) 18; familias 157; conta 116.814; familias/conta 1.3440
+P1092 pNN novas (P1271-P1300) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 61: {61: (4, 0, [])}
+P1299 minha taxa de erro (178/511): media = 0.35, intervalo 90% = [0.31, 0.38]
+--- Parte 62 (0x3E: o ultimo digito) ---
+P1301 base  3: excesso do ultimo digito 1.0179; medido  3; conta 4.534 (razao 0.662); corrigida 4.784 (razao 0.627)
+P1301 base  4: excesso do ultimo digito 0.9032; medido  2; conta 1.949 (razao 1.026); corrigida 1.570 (razao 1.274)
+P1301 base  5: excesso do ultimo digito 0.9903; medido 10; conta 8.639 (razao 1.157); corrigida 8.321 (razao 1.202)
+P1301 base  6: excesso do ultimo digito 0.9863; medido 10; conta 7.441 (razao 1.344); corrigida 7.679 (razao 1.302)
+P1301 base  7: excesso do ultimo digito 1.0249; medido 20; conta 17.516 (razao 1.142); corrigida 18.432 (razao 1.085)
+P1301 base  8: excesso do ultimo digito 1.0968; medido 13; conta 2.983 (razao 4.358); corrigida 3.890 (razao 3.342)
+P1301 base  9: excesso do ultimo digito 0.9255; medido  3; conta 4.443 (razao 0.675); corrigida 4.903 (razao 0.612)
+P1301 base 10: excesso do ultimo digito 0.9931; medido 15; conta 8.822 (razao 1.700); corrigida 8.757 (razao 1.713)
+P1301 base 11: excesso do ultimo digito 1.0185; medido 27; conta 14.598 (razao 1.850); corrigida 16.632 (razao 1.623)
+P1301 base 12: excesso do ultimo digito 1.0109; medido 11; conta 4.376 (razao 2.514); corrigida 4.968 (razao 2.214)
+P1301 base 13: excesso do ultimo digito 0.9724; medido 29; conta 17.566 (razao 1.651); corrigida 18.328 (razao 1.582)
+P1301 base 14: excesso do ultimo digito 0.9764; medido  4; conta 4.376 (razao 0.914); corrigida 4.652 (razao 0.860)
+P1301 base 15: excesso do ultimo digito 0.9883; medido 25; conta 17.366 (razao 1.440); corrigida 17.242 (razao 1.450)
+P1301 base 16: excesso do ultimo digito 1.0481; medido  3; conta 2.206 (razao 1.360); corrigida 2.245 (razao 1.336)
+P1301 Spearman excesso x razao = 0.4418; total: medido 175; conta 116.814 (razao 1.4981); corrigida 122.405 (razao 1.4297)
+P1302 sinsets com palavra igual em portugues e ingles: 0.1183 de 52670; por classe {'a': 0.088104, 'n': 0.15768, 'r': 0.004069, 'v': 0.000366}; substantivos/verbos = 430.8; ['abaxial', 'conceptual', 'ideal', 'hi-fi', 'extra', 'incremental', 'artificial', 'natural']
+P1308 chance ao acaso (14 bases, 20000 permutacoes): rho >= 0,3 em 0.1494; rho >= 0.4418 em 0.0585
+P1307 adjetivos iguais: 611; terminacoes [('al', 434), ('ar', 89), ('or', 17), ('il', 5), ('ne', 5), ('00', 4), ('me', 3), ('ve', 3)]; fracao em -al = 0.7103
+P1303 autonumeros base 10 ate 1000000: 97786 (densidade 0.0978); os primeiros [1, 3, 5, 7, 9, 20, 31, 42]
+P1303 autonumeros base 16 ate 1048576: 64999 (densidade 0.0620); os primeiros [1, 3, 5, 7, 9, 11, 13, 15]
+P1092 pNN novas (P1301-P1330) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 62: {62: (4, 0, [])}
+P1329 minha taxa de erro (181/519): media = 0.35, intervalo 90% = [0.32, 0.38]
+--- Parte 63 (0x3F: o peso do mecanismo) ---
+P1331 base  3: medido  3; conta com g 4.534 (razao 0.662); com F 4.534 (razao 0.662)
+P1331 base  4: medido  2; conta com g 1.949 (razao 1.026); com F 2.581 (razao 0.775)
+P1331 base  5: medido 10; conta com g 8.639 (razao 1.157); com F 10.279 (razao 0.973)
+P1331 base  6: medido 10; conta com g 7.441 (razao 1.344); com F 8.398 (razao 1.191)
+P1331 base  7: medido 20; conta com g 17.516 (razao 1.142); com F 18.627 (razao 1.074)
+P1331 base  8: medido 13; conta com g 2.983 (razao 4.358); com F 3.762 (razao 3.455)
+P1331 base  9: medido  3; conta com g 4.443 (razao 0.675); com F 4.430 (razao 0.677)
+P1331 base 10: medido 15; conta com g 8.822 (razao 1.700); com F 10.118 (razao 1.482)
+P1331 base 11: medido 27; conta com g 14.598 (razao 1.850); com F 16.094 (razao 1.678)
+P1331 base 12: medido 11; conta com g 4.376 (razao 2.514); com F 4.787 (razao 2.298)
+P1331 base 13: medido 29; conta com g 17.566 (razao 1.651); com F 20.453 (razao 1.418)
+P1331 base 14: medido  4; conta com g 4.376 (razao 0.914); com F 4.962 (razao 0.806)
+P1331 base 15: medido 25; conta com g 17.366 (razao 1.440); com F 19.639 (razao 1.273)
+P1331 base 16: medido  3; conta com g 2.206 (razao 1.360); com F 2.494 (razao 1.203)
+P1331 total: medido 175; razao com g 1.4981; com F 1.3343; celulas com F a mais de 10% de g: 42 de 84 (0.5000)
+P1332 glosas portuguesas (7945): razao de palavras PT/EN mediana 1.0000, media 1.6341; portuguesa mais longa em 0.4312
+P1333 primos palindromos base 16 ate 1048576: 357; conta 357.5 (P1337 sozinha: 357.5); erro -0.0014; por comprimento {1: 6, 2: 1, 3: 36, 5: 314}
+P1333 primos palindromos base 12 ate 248832: 196; conta 177.3 (P1337 sozinha: 177.3); erro +0.0953; por comprimento {1: 5, 2: 1, 3: 20, 5: 170}
+P1333 primos palindromos base 10 ate 10000000: 781; conta 768.5 (P1337 sozinha: 768.5); erro +0.0161; por comprimento {1: 4, 2: 1, 3: 15, 5: 93, 7: 668}
+P1338 Poisson(media 3.762) >= 13: 1.53e-04; desvio relativo da contagem sob a conta (base 16): 0.0478; ingenuo pi(16^5)/16^5 x 4350 palindromos = 340.3
+P1092 pNN novas (P1331-P1360) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 63: {63: (4, 0, [])}
+P1359 minha taxa de erro (182/527): media = 0.35, intervalo 90% = [0.31, 0.38]
+--- Parte 64 (0x40: o fator do final) ---
+P1361 base  5: medido  25; conta A 16.61; conta B 20.26 (razao 1.2339); sigma 3.29; z +1.44
+P1361 base  6: medido  31; conta A 38.02; conta B 38.48 (razao 0.8057); sigma 4.38; z -1.71
+P1361 base  7: medido  50; conta A 37.99; conta B 43.82 (razao 1.1411); sigma 5.34; z +1.16
+P1361 base  8: medido  64; conta A 69.09; conta B 69.09 (razao 0.9263); sigma 7.04; z -0.72
+P1361 base  9: medido  81; conta A 71.35; conta B 80.09 (razao 1.0114); sigma 7.12; z +0.13
+P1361 base 10: medido 113; conta A 115.13; conta B 115.79 (razao 0.9759); sigma 9.02; z -0.31
+P1361 base 11: medido 131; conta A 117.97; conta B 129.36 (razao 1.0127); sigma 9.90; z +0.17
+P1361 base 12: medido 196; conta A 177.32; conta B 178.16 (razao 1.1002); sigma 11.07; z +1.61
+P1361 base 13: medido 202; conta A 182.01; conta B 196.76 (razao 1.0266); sigma 12.40; z +0.42
+P1361 base 14: medido 216; conta A 256.77; conta B 257.70 (razao 0.8382); sigma 14.12; z -2.95
+P1361 base 15: medido 263; conta A 264.58; conta B 285.06 (razao 0.9226); sigma 13.74; z -1.61
+P1361 base 16: medido 357; conta A 357.52; conta B 357.52 (razao 0.9986); sigma 17.09; z -0.03
+P1361 bases a menos de 2 sigma: 11 de 12; media |medido - B|/B = 0.0882; soma medido - B = -43.09
+P1367 base 17: medido 381; conta B 389.26; sigma 17.82; z -0.46
+P1367 base 18: medido 467; conta B 481.87; sigma 19.00; z -0.78
+P1367 base 19: medido 515; conta B 519.37; sigma 20.71; z -0.21
+P1367 base 20: medido 584; conta B 628.33; sigma 22.41; z -1.98
+P1367 base 21: medido 621; conta B 677.71; sigma 22.25; z -2.55
+P1367 base 22: medido 787; conta B 801.87; sigma 25.79; z -0.58
+P1367 fora de 2 sigma: 1 de 6; media z -1.0934; z negativos: 6
+P1362 Spearman comprimento x sentidos: -0.2254 (77503 lemas; monossemicos 0.6970); sentidos medios por comprimento {2: 2.111, 3: 2.939, 4: 3.574, 5: 2.609, 6: 1.995, 7: 1.724, 8: 1.541, 9: 1.466, 10: 1.412, 11: 1.353, 12: 1.277}
+P1363 quadrados palindromos base 16 (n < 16^4): 24; conta 15.00; razao 1.600; n = ['0x1', '0x2', '0x3', '0x11', '0x22', '0x101', '0x111', '0x121', '0x131', '0x13f', '0x202', '0x212', '0x222', '0x305', '0x561', '0x1001', '0x1111', '0x1221', '0x2002', '0x203e', '0x2112', '0x221e', '0x2356', '0xc9ad']
+P1363 calibracao base 10 (n < 10^4): 19; conta 12.18; razao 1.560
+P1092 pNN novas (P1361-P1390) sem teste: 0 de 4: []
+P974 previsoes unilaterais da Parte 64: {64: (3, 0, [])}
+P1389 minha taxa de erro (184/535): media = 0.34, intervalo 90% = [0.31, 0.38]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 721; pares de interacao possiveis = 259560
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 169/169 resultados publicados reproduzidos; falhas = []
+FIM_OK status=0 segundos=776

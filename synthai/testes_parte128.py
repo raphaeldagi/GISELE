@@ -64,6 +64,10 @@ class TestesParte128(unittest.TestCase):
         r = c.p3174_comparar_voltas("reproducao/volta1", "reproducao/volta2")
         self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["novas"]), (9, 0, [128]))
 
+    def test_volta3_regressao(self):
+        r = c.p3174_comparar_voltas("reproducao/volta2", "reproducao/volta3")
+        self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["novas"]), (8, 0, [129]))
+
 
 if __name__ == "__main__":
     unittest.main()

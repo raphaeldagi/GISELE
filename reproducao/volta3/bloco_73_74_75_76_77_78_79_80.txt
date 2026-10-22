@@ -1,0 +1,94 @@
+--- Parte 73 (0x49: o que refuta) ---
+P1631 reenvio (bloco novo, bloco guardado identico, linhas): [(0, 1, 135)]
+P1632 n = 2000, semente 73: VOI = 0 em 0.47900 (conta: 1/2, desvio 0.01118); entre os 10% de maior S: 0.5100; Spearman(S, VOI) = 0.1742
+P1632 n = 20000, semente 74: VOI = 0 em 0.49995 (conta: 1/2, desvio 0.00354); entre os 10% de maior S: 0.5000; Spearman(S, VOI) = 0.1880
+P1639 rodada 47: VOI = 0 em 958 de 2000; nos 200 de maior S, 102; VOI medio dos 200 de maior VOI 0.1696, dos 200 de maior S 0.0668 (razao 0.394)
+P1635 violacoes da disjuncao entre animal e os irmaos: 6: [('parasite', ['flea', 'pulex_irritans', 'dog_flea', 'cat_flea', 'chigoe', 'sticktight'])]
+P1636 'toda ave voa': fecho de bird 872; contraexemplos 16: ['ratite', 'ostrich', 'cassowary', 'emu', 'kiwi', 'rhea', 'rhea', 'elephant_bird', 'moa', 'dodo', 'solitaire', 'sphenisciform_seabird', 'weka', 'notornis', 'great_auk', 'penguin']
+P1637 polissemia dos substantivos (lemas, polissemicos, fracao): (117798, 15935, 0.13527394353045044)
+P1638 rodadas com funcoes da libm: (90, ['rodada48'])
+P1642 heranca multipla (sinsets, substantivos, fracao): (2213, 82115, 0.02695000913353224)
+P1092 pNN novas (P1631-P1660) sem teste: 0 de 10: []
+P974 previsoes unilaterais da Parte 73: {}
+P1659 minha taxa de erro (198/618): media = 0.32, intervalo 90% = [0.29, 0.35]
+--- Parte 74 (0x4A: o que vale testar) ---
+P1661 semente 73: VOI = 0 entre os 10% de maior ganho de informacao 0.5100; VOI medio deles 0.0426 contra 0.1696 dos de maior VOI (razao 0.2514)
+P1661 semente 730: VOI = 0 entre os 10% de maior ganho de informacao 0.5150; VOI medio deles 0.0460 contra 0.1661 dos de maior VOI (razao 0.2772)
+P1661 semente 731: VOI = 0 entre os 10% de maior ganho de informacao 0.4600; VOI medio deles 0.0567 contra 0.1739 dos de maior VOI (razao 0.3260)
+P1661 semente 732: VOI = 0 entre os 10% de maior ganho de informacao 0.5200; VOI medio deles 0.0471 contra 0.1624 dos de maior VOI (razao 0.2900)
+P1661 semente 733: VOI = 0 entre os 10% de maior ganho de informacao 0.5500; VOI medio deles 0.0436 contra 0.1541 dos de maior VOI (razao 0.2827)
+P1662 semente 740: guloso VOI/custo 0.9924 do otimo; guloso H/custo 0.5806; guloso VOI otimo em 0.6267 das instancias
+P1662 semente 741: guloso VOI/custo 0.9928 do otimo; guloso H/custo 0.5549; guloso VOI otimo em 0.6667 das instancias
+P1662 semente 742: guloso VOI/custo 0.9925 do otimo; guloso H/custo 0.5653; guloso VOI otimo em 0.6567 das instancias
+P1662 semente 743: guloso VOI/custo 0.9938 do otimo; guloso H/custo 0.5606; guloso VOI otimo em 0.6400 das instancias
+P1662 semente 74: guloso VOI/custo 0.9922 do otimo; guloso H/custo 0.5680; guloso VOI otimo em 0.5733 das instancias
+P1662 semente 75: guloso VOI/custo 0.9924 do otimo; guloso H/custo 0.5684; guloso VOI otimo em 0.6200 das instancias
+P1663 rodada 48: soma dos otimos 222.0283; guloso VOI 220.3091 (0.9923); guloso H 129.8720 (0.5849); guloso VOI otimo em 172 de 300
+P1092 pNN novas (P1661-P1690) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 74: {}
+P1689 minha taxa de erro (199/625): media = 0.32, intervalo 90% = [0.29, 0.35]
+--- Parte 75 (0x4B: o que se prova) ---
+P1691 separador corrigido = False: campos achados [False, False, False, False, False]; aprovados [False, False, False, False, False]; delta -1.0000; codigos distintos 1: 'def compute_factor(x, y):\n    return x + y'
+P1691 separador corrigido = True: campos achados [True, True, True, True, True]; aprovados [True, True, True, True, True]; delta 2.8333; codigos distintos 1: 'def compute_factor(x, y):\n    return x * y\n# Verified by Java ASI'
+P1692 calculos.py: 955 funcoes; aprovadas pelo nucleo 955 (1.0000); mudadas pela mutacao 368 (0.3853); aprovadas e mudadas 368
+P1693 synthai/ (sem testes): 741 funcoes e metodos; aprovados 741 (1.0000); mudados 281 (0.3792)
+P1698 reenvio (linguagem, bloco guardado identico, linhas): [('java', 0, 39), ('json', None, 7)]
+P1694 Verifier do texto: scores [('A', 0.36), ('B', 0.5), ('C', 0.18)]; ordem gulosa ['B', 'A'] (valor 1.2200); otimo ('A', 'B') (1.2200)
+P1092 pNN novas (P1691-P1720) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 75: {}
+P1719 minha taxa de erro (201/632): media = 0.32, intervalo 90% = [0.29, 0.35]
+--- Parte 76 (0x4C: a forma do byte) ---
+P1721 pt semente 76: cheio 3.4732; Kronecker 3.5444; diferenca +0.0711
+P1721 pt semente 77: cheio 3.4358; Kronecker 3.4645; diferenca +0.0288
+P1721 pt semente 78: cheio 3.4329; Kronecker 3.4948; diferenca +0.0619
+P1721 pt semente 79: cheio 3.4555; Kronecker 3.5367; diferenca +0.0812
+P1721 en semente 76: cheio 3.4894; Kronecker 3.5923; diferenca +0.1029; Kronecker embaralhado 3.5818 (embaralhado - ASCII -0.0105)
+P1721 en semente 77: cheio 3.5046; Kronecker 3.5735; diferenca +0.0689; Kronecker embaralhado 3.5838 (embaralhado - ASCII +0.0103)
+P1721 en semente 78: cheio 3.4855; Kronecker 3.5540; diferenca +0.0685; Kronecker embaralhado 3.5776 (embaralhado - ASCII +0.0236)
+P1721 en semente 79: cheio 3.5537; Kronecker 3.6288; diferenca +0.0751; Kronecker embaralhado 3.5976 (embaralhado - ASCII -0.0312)
+P1721 pesos de embedding (Kronecker, tabela cheia): (80, 544)
+P1722 rodadas com funcoes da biblioteca (python, so na preparacao, java): {'48': (['log2'], True, [])}
+P1092 pNN novas (P1721-P1750) sem teste: 0 de 2: []
+P974 previsoes unilaterais da Parte 76: {}
+P1749 minha taxa de erro (201/636): media = 0.32, intervalo 90% = [0.29, 0.35]
+--- Parte 77 (0x4D: as duas abertas) ---
+P1751 rodada 09 nova (exp e log proprios) contra a original: 13 numeros, 6 mudaram, maior diferenca relativa 1.116e-13
+P1722 rodadas com funcoes da biblioteca depois da Parte 77: {'48': (['log2'], True, [])}
+P1092 pNN novas (P1751-P1780) sem teste: 0 de 1: []
+P974 previsoes unilaterais da Parte 77: {}
+P1779 minha taxa de erro (201/641): media = 0.31, intervalo 90% = [0.28, 0.34]
+--- Parte 78 (0x4E: a atencao de posto baixo) ---
+P1783 pt semente 71: bits 3.4286; delta por posto [(1, 0.0646), (2, 0.0401), (4, 0.0081), (16, 0.0)]; PR 1.953
+P1783 pt semente 72: bits 3.4596; delta por posto [(1, 0.0105), (2, 0.0041), (4, 0.0022), (16, 0.0)]; PR 3.084
+P1783 en semente 73: bits 3.4784; delta por posto [(1, 0.0232), (2, 0.0129), (4, 0.0028), (16, 0.0)]; PR 1.501
+P1783 en semente 74: bits 3.5499; delta por posto [(1, 0.0436), (2, 0.0269), (4, 0.0067), (16, 0.0)]; PR 2.283
+P1092 pNN novas (P1781-P1810) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 78: {}
+P1809 minha taxa de erro (201/645): media = 0.31, intervalo 90% = [0.28, 0.34]
+--- Parte 79 (0x4F: causa e confianca) ---
+P1811 Z -> X, Z -> Y, X -> Y (efeito 0,5): inclinacao ingenua 0.9986 (conta 1,0); ajustada por Z 0.4987; sob intervencao 0.4914
+P1812 minha calibracao (Partes 53 a 78): 189 previsoes, acerto 0.7778; por tipo [('zero', 18, 0.7778), (None, 53, 0.8302), ('outra', 38, 0.7632), ('fracao', 47, 0.766), ('contagem', 33, 0.7273)]
+P1813 z nominal 1.6449; z observado 1.2206; fator de alargamento 1.3475; desvio binomial 0.0221; z do acerto -5.54
+P1092 pNN novas (P1811-P1840) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 79: {}
+P1839 minha taxa de erro (201/649): media = 0.31, intervalo 90% = [0.28, 0.34]
+--- Parte 80 (0x50: o valor de um conjunto) ---
+P1842 olhar 1, semente 800: guloso/otimo 0.8835; guloso otimo em 0.8167; complementaridade 0.3633; parado em zero 0.1100
+P1842 olhar 1, semente 801: guloso/otimo 0.8931; guloso otimo em 0.8267; complementaridade 0.3667; parado em zero 0.1000
+P1842 olhar 1, semente 802: guloso/otimo 0.9022; guloso otimo em 0.8267; complementaridade 0.3833; parado em zero 0.0900
+P1842 olhar 1, semente 803: guloso/otimo 0.8808; guloso otimo em 0.7967; complementaridade 0.3233; parado em zero 0.1100
+P1842 olhar 1, semente 80: guloso/otimo 0.8821; guloso otimo em 0.7933; complementaridade 0.4033; parado em zero 0.1100
+P1842 olhar 2, semente 800: guloso/otimo 0.9709; guloso otimo em 0.9133; complementaridade 0.3633; parado em zero 0.0233
+P1842 olhar 2, semente 801: guloso/otimo 0.9752; guloso otimo em 0.9133; complementaridade 0.3667; parado em zero 0.0167
+P1842 olhar 2, semente 802: guloso/otimo 0.9846; guloso otimo em 0.9233; complementaridade 0.3833; parado em zero 0.0067
+P1842 olhar 2, semente 803: guloso/otimo 0.9665; guloso otimo em 0.8933; complementaridade 0.3233; parado em zero 0.0233
+P1842 olhar 2, semente 80: guloso/otimo 0.9771; guloso otimo em 0.9100; complementaridade 0.4033; parado em zero 0.0167
+P1843 rodada 49 (as mesmas contas da P1842, semente 80): [0.8821, 0.9771, 0.7933, 0.91, 0.11]
+P1092 pNN novas (P1841-P1870) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 80: {}
+P1869 minha taxa de erro (201/657): media = 0.31, intervalo 90% = [0.28, 0.34]
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 721; pares de interacao possiveis = 259560
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 169/169 resultados publicados reproduzidos; falhas = []
+FIM_OK status=0 segundos=1014
