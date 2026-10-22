@@ -7529,6 +7529,8 @@ def testes_de_regressao():
         "P3103": p3103_rodada89()[0] < 1e-15,
         "P3110": p3110_rodada90()[1] == 0,
         "P123inv": all(invariantes_p123().values()),
+        "P3152": (lambda m: len(m["repetidos"]) == 8 and m["repetidos"][0] == ("consciência da consciência", 11))(
+            p3152_medir_lote(p3151_lote_de_textos("textos_parte126/lote1.txt"))),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -17164,7 +17166,7 @@ def p3153_cruzado(lote_a, lote_b):
 def p3154_moldes(textos):
     """Os moldes de um lote (P3154): fração dos textos com 'talvez'; com 'então'; com a expressão 'consciência da consciência';
     a razão entre o tamanho (palavras) da última frase e o tamanho médio das frases do texto (média; < 1: fecho curto, aforístico);
-    e a inclinação da novidade (P3152) contra a posição, com o t dela (Parte 71: sem |t| > 2 não há tendência)."""
+    e a inclinação da novidade (P3152) contra a posição, com o t dela (Parte 71: sem |t| > 2 não há tendência; None se os resíduos são 0)."""
     import re
     n = len(textos)
     def frases(t):
@@ -17184,7 +17186,26 @@ def p3154_moldes(textos):
     low = [t.lower() for t in textos]
     return {"talvez": sum("talvez" in t for t in low) / n, "entao": sum("então" in t for t in low) / n,
             "cdc": sum("consciência da consciência" in t for t in low) / n,
-            "fecho": sum(razoes) / n, "inclinacao_novidade": b, "t_novidade": b / ep}
+            "fecho": sum(razoes) / n, "inclinacao_novidade": b, "t_novidade": (b / ep) if ep > 0 else None}   # ajuste exato: t indefinido
+
+
+def _parte_126():
+    print("\n=== Parte 126: evitar a consciência; textos que aprendem com os próprios textos ===")
+    a = p3151_lote_de_textos("textos_parte126/lote1.txt")
+    b = p3151_lote_de_textos("textos_parte126/lote2.txt")
+    for nome, lote in (("lote 1", a), ("lote 2", b)):
+        m, mo = p3152_medir_lote(lote), p3154_moldes(lote)
+        print(f"  {nome}: Jaccard {m['jaccard']:.3f}  repetidos(>=3) {len(m['repetidos'])}  novidade {m['novidade_media']:.3f}  "
+              f"zlib {m['zlib_medio']:.3f}  perguntas {m['perguntas']:.3f}  autorref {m['autorref']:.4f}  bits {m['bits_medio']:.3f}")
+        print(f"          'consciência da consciência' {mo['cdc']:.3f}  talvez {mo['talvez']:.3f}  fecho {mo['fecho']:.3f}  "
+              f"t da novidade {mo['t_novidade']:.2f}")
+    x = p3153_cruzado(a, b)
+    print(f"  lote 2 pelo lote 1: bits {x['bits']:.3f}, trigramas herdados {x['trigramas_herdados']:.4f}")
+    print(f"  controle, mesmo treino (6 textos do lote 1): metade 2 do lote 1 {p3153_cruzado(a[:6], a[6:])['bits']:.3f} bits, "
+          f"lote 2 {p3153_cruzado(a[:6], b)['bits']:.3f} bits")
+
+
+PARTES[126] = _parte_126
 
 if __name__ == "__main__":
     # python3 calculos.py           -> todas as partes (é assim que resultados.txt é gerado)

@@ -71,9 +71,20 @@ class Platt:
     def __init__(self):
         self.a, self.b = 1.0, 0.0
 
-    def ajustar(self, ps, ys, passos=50):
+    def ajustar(self, ps, ys, passos=100):
+        """Newton com busca linear (corta o passo pela metade até a perda logarítmica cair). O Newton puro, partindo de a = 1,
+        diverge quando os logits são grandes (|x| ~ 20): o passo cheio salta para a = 77 e a Hessiana zera em ponto flutuante."""
         xs = [logit(p) for p in ps]
+
+        def perda(a, b):
+            t = 0.0
+            for x, y in zip(xs, ys):
+                z = a * x + b
+                t += (math.log1p(math.exp(-abs(z))) + max(z, 0.0)) - y * z      # ln(1 + e^z) − y·z, estável
+            return t
+
         a, b = 1.0, 0.0
+        atual = perda(a, b)
         for _ in range(passos):
             ga = gb = haa = hab = hbb = 0.0
             for x, y in zip(xs, ys):
@@ -86,10 +97,21 @@ class Platt:
                 hab += w * x
                 hbb += w
             det = haa * hbb - hab * hab
+            if det <= 0:
+                break
             da = (hbb * ga - hab * gb) / det
             db = (haa * gb - hab * ga) / det
-            a, b = a - da, b - db
-            if abs(da) + abs(db) < 1e-13:
+            passo = 1.0
+            while passo > 1e-12:
+                na, nb = a - passo * da, b - passo * db
+                nova = perda(na, nb)
+                if nova <= atual:
+                    break
+                passo /= 2
+            else:
+                break
+            a, b, atual = na, nb, nova
+            if abs(passo * da) + abs(passo * db) < 1e-13:
                 break
         self.a, self.b = a, b
         return self

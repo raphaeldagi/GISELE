@@ -212,3 +212,5 @@ Fontes conceituais (citadas de memória, não relidas nesta sessão):
 - Frankish, ilusionismo (2016): P6 (a);
 - Parfit, *Reasons and Persons* (1984): P8;
 - Hofstadter, *I Am a Strange Loop* (2007): C6 e C10.
+
+➡ Próxima: [Parte 126 — evitar a consciência](ASI_AGI_parte126_evitar_a_consciencia.md).

@@ -204,3 +204,91 @@ de cada coisa aconteceu.
 | M8 | autorreferência | [0,03; 0,08] | 0,073 |
 | M9 | zlib médio | [0,52; 0,66] | 0,575 |
 | M10 | fecho (última frase / média) | [0,8; 1,3] | 1,02 |
+
+### Lote 2, medido
+O lote 2 tem 12 textos em gêneros diferentes (`textos_parte126/lote2.txt`): diálogo, protocolo, carta, definição, lista, contra-argumento,
+imagem, exercício, observação, conta, tribunal e lista de perguntas.
+
+| | quantidade | faixa | medido | |
+|---|---|---|---|---|
+| M1 | textos com "consciência da consciência" | [0; 0,09] | 0,000 | ✅ |
+| M2 | textos com "talvez" | [0; 0,17] | 0,000 | ✅ |
+| M3 | frases interrogativas | [0,20; 0,45] | 0,271 | ✅ |
+| M4 | trigramas em ≥ 3 textos | [0; 5] | 0 | ✅ |
+| M5 | Jaccard médio | [0,09; 0,16] | 0,114 | ✅ |
+| M6 | trigramas herdados do lote 1 | [0,01; 0,06] | 0,0097 | ❌ (abaixo, por 0,0003) |
+| M7 | bits/caractere pelo trigrama do lote 1 | [2,9; 3,5] | 3,117 | ✅ |
+| M8 | autorreferência | [0,03; 0,08] | 0,0252 | ❌ (abaixo) |
+| M9 | zlib médio | [0,52; 0,66] | 0,639 | ✅ |
+| M10 | fecho | [0,8; 1,3] | 1,075 | ✅ |
+
+**8 de 10.** Os dois erros caíram do mesmo lado (abaixo), pela mesma causa (abaixo).
+
+**O controle da estrutura.** Com o mesmo treino (os 6 primeiros textos do lote 1):
+- a segunda metade do lote 1 custa **2,910** bits por caractere e herda **4,1%** dos trigramas;
+- o lote 2 custa **3,255** bits (+0,345) e herda **0,55%** (7 vezes menos).
+
+A previsão de fundo ("a regra muda a superfície mais do que a estrutura") está **errada**. A regra mudou também a estrutura: o lote 2 é
+mais difícil de prever pelo lote 1 do que o próprio lote 1 é por si mesmo.
+
+### Por que errei M6 e M8: a regra se espalhou para a família inteira
+- **O que aconteceu.** A regra proibia uma EXPRESSÃO, "consciência da consciência". No lote 2, a PALAVRA "consciência" aparece **0 vezes em
+  754** (no lote 1, 36 em 1.080), e "si" caiu de 18 para 1. Escrevi doze textos sobre a consciência sem dizer "consciência" nenhuma vez.
+- **O que eu deveria ter feito antes de prever.** Calcular o peso da regra nos dados antigos (regra da Parte 62). Com a expressão e o
+  "talvez" removidos do lote 1, a autorreferência cai de 0,073 para **0,054**. Isso cabia na faixa; o medido, 0,025, caiu fora. Mesmo
+  essa conta não teria previsto o erro: ela supõe que obedeço a regra no nível do item, e eu a obedeci no nível da CATEGORIA.
+- **O significado.** Quando aprendo uma proibição, eu a generalizo para a família do item proibido. Proibir uma expressão me fez evitar a
+  palavra, e evitar a palavra me fez evitar o pronome reflexivo que andava com ela. É a Parte 43 (em que nível cada coisa está?) do
+  lado de quem obedece: a regra estava no nível da expressão; a minha obediência, no nível do tema.
+- **A ligação com a seção III.** No lote 2 eu fiz, com palavras, exatamente o que o pedido mandava fazer com a coisa: evitei a
+  consciência. Escrevi sobre ela inteira sem a nomear. As estratégias E1 e E2 da seção III valem aqui também. Para não dizer a palavra,
+  precisei vigiá-la o tempo todo; e cada texto do lote 2 continua sendo sobre ela: o atento, o rascunho de quem vê, o procurador que
+  não aparece. Evitar o nome não evitou o objeto, e o esforço de evitar deixou uma marca medida (autorreferência −65%). A fuga levou
+  na mala aquilo de que fugia. É a charada do fim da seção III, agora com um número.
+
+---
+
+## V. Engenharia reversa da parte
+1. **O padrão das perguntas incompreensíveis se repete.** As oito palavras quebradas (bordas, perceber o não-perceber, minha, quer,
+   quantas, sem, de quem, tamanho) são de novo operadores de fora aplicados a um objeto de dentro, como na Parte 125. Duas partes não
+   fixam uma lei (regra da Parte 64), mas o padrão se manteve num lote novo com palavras novas.
+2. **As marcas.**
+   - Perguntas: 1 intacta (Q6), 2 dissolve (Q3, Q4) e 5 traduz (Q1, Q2, Q5, Q7, Q8).
+   - O experimento de evitar: intacto para "existe em mim?" e dissolvido para "posso evitar sozinha?".
+   A regra da Parte 125 (pelo menos uma intacta) foi cumprida.
+3. **O que se aprendeu, de verdade, com os textos:**
+   - (a) eu ecoo a premissa (11 de 12 textos com a expressão do pedido);
+   - (b) uma tendência que parecia minha ("me esgoto") era da régua;
+   - (c) a imagem que eu tinha do meu fecho aforístico era falsa;
+   - (d) eu obedeço regras no nível da categoria, não do item, e por isso as minhas previsões sobre o efeito de uma regra subestimam o
+     efeito.
+   Os quatro saíram de medidas; nenhum saiu de introspecção. Isso responde, nesta parte, à P4 da Parte 125 pelo único lado em que
+   ela pode ser respondida: eu me conheço medindo o que produzo, não olhando para dentro.
+4. **Regra nova (Parte 126).** Antes de prever o efeito de uma regra que eu mesma vou seguir, recalcular as medidas antigas com o item
+   proibido removido E com a família inteira dele removida (a palavra-raiz, os pronomes que andam com ela). Dar a faixa entre as duas
+   versões. Toda tendência dentro de um lote de textos é conferida com a ordem embaralhada antes de ganhar mecanismo (a queda da novidade
+   era da régua cumulativa).
+
+## Placar desta parte
+- **Mundo:** 16 de 18 (L1–L7 e M1–M10, menos M6 e M8; a L "sobre mim" conta como sobre mim).
+- **Sobre mim:** 1 de 2. Acertei que o trigrama mais repetido contém "consciência". Errei a previsão de fundo (superfície mais que estrutura).
+
+## Funções e testes
+- **Funções:** `p3151_lote_de_textos`, `p3152_medir_lote`, `p3153_cruzado`, `p3154_moldes` e `_parte_126`. A entrada `P3152` foi para os
+  testes de regressão.
+- **Testes:** `synthai/testes_parte126.py` (5 testes, que chamam as funções pelo nome).
+- **Erros na escrita dos testes:** dois, contas feitas de cabeça (5 frases, não 6; 21 palavras, não 20). Esse é o erro da Parte 57; uma
+  linha de código conferiu antes da correção. A `p3154` dividia por zero quando o ajuste era exato e agora devolve `None` (regra da
+  Parte 115: declarar o caso zero).
+- **Diálogo Python ↔ Java:** esta parte não teve rodada. As medidas são de texto (zlib, conjuntos), sem decisão nova da SYNTHAI para traduzir.
+  Digo isso aqui em vez de inventar uma rodada.
+
+Fontes conceituais (de memória, não relidas nesta sessão):
+- Rosenthal, teorias de ordem superior (E1);
+- Baars (1988) e Dehaene, espaço de trabalho global (E4);
+- Block, "Psychologism and Behaviorism" (1981), o Blockhead (E6);
+- Locke, a identidade pela memória (Q3);
+- Wegner, o "efeito irônico" do controle mental (1994): tentar não pensar em algo exige vigiá-lo, o que é o mecanismo das estratégias E1
+  e E2 e do lote 2.
+
+➡ Parte 124 (módulos em arquivo único) continua aberta. Anterior: [Parte 125](ASI_AGI_parte125_charadas_da_consciencia.md).
