@@ -44,6 +44,22 @@ class TestesParte128(unittest.TestCase):
         self.assertEqual(r["categorias"]["mundo"], 0)
         self.assertEqual(r["sem_referencia"], [91])
 
+    def test_p3174_comparar_voltas(self):
+        a = "P3 a = 1\n--- Parte 2 ---\nP143 m = 1\nP433 v = 1\nP99 w = 1\n=== Unificacao ===\nFIM_OK status=0 segundos=1\n"
+        b = "P3 a = 1\n--- Parte 2 ---\nP143 m = 2\nP433 v = 2\nP99 w = 2\n--- Parte 3 ---\nP5 z = 0\n=== Unificacao ===\nRegressao: 2/2\nFIM_OK status=0 segundos=1\n"
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "v1"))
+            os.makedirs(os.path.join(d, "v2"))
+            with open(os.path.join(d, "v1", "bloco_1_2.txt"), "w", encoding="utf-8") as f:
+                f.write(a)
+            with open(os.path.join(d, "v2", "bloco_1_2_3.txt"), "w", encoding="utf-8") as f:
+                f.write(b)
+            r = c.p3174_comparar_voltas(os.path.join(d, "v1"), os.path.join(d, "v2"))
+        self.assertEqual((r["linhas"], r["diferentes"]), (4, 3))
+        self.assertEqual(r["categorias"], {"projeto": 1, "maquina": 1, "nota": 0, "mundo": 1})
+        self.assertEqual(r["novas"], [3])
+        self.assertEqual(r["regressoes"], ["Regressao: 2/2"])
+
 
 if __name__ == "__main__":
     unittest.main()

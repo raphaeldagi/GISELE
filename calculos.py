@@ -17498,6 +17498,56 @@ def _parte_128():
 
 PARTES[128] = _parte_128
 
+
+def p3174_comparar_voltas(pasta_a, pasta_b):
+    """Compara duas voltas do loop (P3174): as partes dos bloco_*.txt de pasta_a (a anterior) com as de pasta_b (a nova), linha a linha,
+    com as mesmas categorias da P3172 (projeto, máquina, nota, mundo). Partes que só existem na nova entram em 'novas'. Devolve o mesmo dict
+    da P3172 mais 'novas'."""
+    import difflib
+    import glob
+    import os
+    import re
+
+    def ler(pasta):
+        d, regs, ok, n = {}, [], 0, 0
+        for arq in sorted(glob.glob(os.path.join(pasta, "bloco_*.txt"))):
+            with open(arq, encoding="utf-8") as f:
+                t = f.read()
+            n += 1
+            d.update(p3171_partes_de_saida(t, inicio=1 if os.path.basename(arq).startswith("bloco_1_") else None))
+            regs += [l for l in t.split("\n") if l.startswith("Regressao:")]
+            ok += ("Traceback" not in t) and ("FIM_OK status=0" in t)
+        return d, regs, ok, n
+    ref, _, _, _ = ler(pasta_a)
+    novo, regs, ok, n = ler(pasta_b)
+    cats = {"projeto": 0, "maquina": 0, "nota": 0, "mundo": 0}
+    mundo, tot, dif = [], 0, 0
+    for k in sorted(novo):
+        if k not in ref:
+            continue
+        a, b = ref[k], novo[k]
+        casadas = set()
+        for m in difflib.SequenceMatcher(a=a, b=b, autojunk=False).get_matching_blocks():
+            casadas.update(range(m.a, m.a + m.size))
+        tot += len(a)
+        for i, l in enumerate(a):
+            if i in casadas:
+                continue
+            dif += 1
+            m = re.match(r"\s*P(\d+)\b", l)
+            if m is None:
+                cats["nota"] += 1
+            elif int(m.group(1)) in _PROJETO_P128:
+                cats["projeto"] += 1
+            elif int(m.group(1)) in _MAQUINA_P128:
+                cats["maquina"] += 1
+            else:
+                cats["mundo"] += 1
+                mundo.append((k, l))
+    return {"linhas": tot, "diferentes": dif, "fracao": dif / tot if tot else 0.0, "categorias": cats, "mundo": mundo,
+            "partes_refeitas": len(novo), "novas": sorted(k for k in novo if k not in ref), "regressoes": regs,
+            "blocos": n, "blocos_sem_excecao": ok}
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
