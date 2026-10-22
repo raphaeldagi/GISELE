@@ -17160,6 +17160,32 @@ def p3153_cruzado(lote_a, lote_b):
     tb = set().union(*(_trigramas_p126(t) for t in lote_b))
     return {"bits": p1512_ngrama_bits(a, b, ordem=3), "trigramas_herdados": len(tb & ta) / len(tb)}
 
+
+def p3154_moldes(textos):
+    """Os moldes de um lote (P3154): fração dos textos com 'talvez'; com 'então'; com a expressão 'consciência da consciência';
+    a razão entre o tamanho (palavras) da última frase e o tamanho médio das frases do texto (média; < 1: fecho curto, aforístico);
+    e a inclinação da novidade (P3152) contra a posição, com o t dela (Parte 71: sem |t| > 2 não há tendência)."""
+    import re
+    n = len(textos)
+    def frases(t):
+        return [f for f in re.split(r"(?<=[.!?])\s+", t) if f.strip()]
+    razoes = []
+    for t in textos:
+        fs = frases(t)
+        tam = [len(_palavras_p126(f)) for f in fs]
+        razoes.append(tam[-1] / (sum(tam) / len(tam)))
+    nov = p3152_medir_lote(textos)["novidade"]
+    xs = list(range(len(nov)))
+    mx, my = sum(xs) / len(xs), sum(nov) / len(nov)
+    sxx = sum((x - mx) ** 2 for x in xs)
+    b = sum((x - mx) * (y - my) for x, y in zip(xs, nov)) / sxx
+    res = [y - my - b * (x - mx) for x, y in zip(xs, nov)]
+    ep = (sum(r * r for r in res) / (len(nov) - 2) / sxx) ** 0.5
+    low = [t.lower() for t in textos]
+    return {"talvez": sum("talvez" in t for t in low) / n, "entao": sum("então" in t for t in low) / n,
+            "cdc": sum("consciência da consciência" in t for t in low) / n,
+            "fecho": sum(razoes) / n, "inclinacao_novidade": b, "t_novidade": b / ep}
+
 if __name__ == "__main__":
     # python3 calculos.py           -> todas as partes (é assim que resultados.txt é gerado)
     # python3 calculos.py 9 10      -> só as partes pedidas, para desenvolver mais rápido

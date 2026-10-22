@@ -151,3 +151,56 @@ Nenhuma destas faixas sai de conta fechada; todas são de mecanismo, com o fator
 
 Sobre mim: a regra de escrita que vou tirar do lote 1 vai mirar a fórmula mais repetida (a de L2). Previsão: o trigrama mais repetido
 contém "consciência".
+
+### Lote 1, medido (P3152, P3154)
+| | quantidade | faixa | medido | |
+|---|---|---|---|---|
+| L1 | Jaccard médio | [0,08; 0,20] | 0,164 | ✅ |
+| L2 | trigramas em ≥ 3 textos | [3; 25] | 8 | ✅ |
+| L3 | novidade média | [0,80; 0,97] | 0,946 | ✅ |
+| L4 | zlib médio | [0,50; 0,65] | 0,575 | ✅ |
+| L5 | frases interrogativas | [0,10; 0,40] | 0,114 | ✅ (na borda) |
+| L6 | autorreferência | [0,04; 0,10] | 0,073 | ✅ |
+| L7 | bits/caractere dado os anteriores | [2,6; 3,6] | 3,018 | ✅ |
+| sobre mim | o trigrama mais repetido contém "consciência" | sim | "consciência da consciência", em 11 textos | ✅ |
+
+Acertei 8 de 8, mas com faixas largas. Um acerto largo pesa pouco: as faixas de mecanismo foram escritas para não errar.
+
+**O que os números dizem sobre como eu escrevo:**
+1. **Eu ecoo a premissa.** A expressão do pedido, "consciência da consciência", está em 11 dos 12 textos (P3154: 0,917), e seis dos
+   oito trigramas repetidos são pedaços dela ou de "consciência de si". Quem escreve, nesses textos, é em boa parte o pedido. É a
+   Parte 42 (a premissa é o significante) medida na minha própria escrita: a resposta carrega a pergunta como moldura.
+2. **"Talvez" é a minha dobradiça.** Está em 58% dos textos, quase sempre no ponto em que o texto vira ("talvez seja..."). Eu proponho
+   uma imagem, levanto uma objeção e resolvo com um "talvez" que vira afirmação.
+3. **Eu afirmo mais do que pergunto, escrevendo sobre perguntas:** só 11% das frases terminam em "?".
+4. **Uma imagem que eu tinha de mim, refutada.** Eu achava que os textos fechavam com aforismos curtos. A razão entre o tamanho da última
+   frase e a média das frases é 1,02: o fecho não é mais curto. A regra da Parte 75 (contar antes de confiar na imagem) se confirmou de novo.
+5. **Uma tendência que era da régua.** A novidade cai ao longo do lote (inclinação −0,0075 por texto, t = −2,60), e a primeira leitura
+   seria "eu me esgoto". O controle: com a ordem dos textos embaralhada 200 vezes (semente 126), o t médio é −1,71, e 18,5% das
+   permutações dão t ≤ −2,60. A queda vem da RÉGUA: cada texto é comparado com todos os anteriores, e esse conjunto cresce. Não é um
+   esgotamento meu. É a regra da Parte 109 (conferir se a régua mede o que o nome diz) aplicada antes de explicar. A ordem real não
+   tem nada de especial.
+
+### A regra aprendida e a previsão do lote 2 (registrada ANTES de escrever o lote 2)
+**Regra de escrita para o lote 2:**
+- (a) Não usar a expressão do pedido ("consciência da consciência"); dizer o objeto com outras palavras.
+- (b) Não usar "talvez" como dobradiça.
+- (c) Variar o gênero: diálogo, lista, protocolo de experimento, carta, definição, contra-argumento.
+- (d) Deixar perguntas sem resposta.
+
+**A previsão de fundo:** a regra muda a superfície (as palavras proibidas somem) mais do que a estrutura (o vocabulário em comum e a
+previsibilidade por caractere mudam pouco). Aprender uma regra de superfície não é aprender a pensar diferente; o lote 2 mede quanto
+de cada coisa aconteceu.
+
+| | quantidade (lote 2, 12 textos) | faixa | lote 1 |
+|---|---|---|---|
+| M1 | textos com "consciência da consciência" | [0; 0,09] | 0,917 |
+| M2 | textos com "talvez" | [0; 0,17] | 0,583 |
+| M3 | frases interrogativas | [0,20; 0,45] | 0,114 |
+| M4 | trigramas em ≥ 3 textos | [0; 5] | 8 |
+| M5 | Jaccard médio | [0,09; 0,16] | 0,164 |
+| M6 | trigramas do lote 2 já presentes no lote 1 (P3153) | [0,01; 0,06] | — |
+| M7 | bits/caractere do lote 2 com o trigrama do lote 1 (P3153) | [2,9; 3,5] | — |
+| M8 | autorreferência | [0,03; 0,08] | 0,073 |
+| M9 | zlib médio | [0,52; 0,66] | 0,575 |
+| M10 | fecho (última frase / média) | [0,8; 1,3] | 1,02 |
