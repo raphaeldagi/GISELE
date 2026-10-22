@@ -17205,6 +17205,137 @@ def _parte_126():
           f"lote 2 {p3153_cruzado(a[:6], b)['bits']:.3f} bits")
 
 
+
+# ======================================================================== Parte 127: a tomada de consciência e a consciência reversa
+def _sig_p127(z):
+    import math
+    return 1.0 / (1.0 + math.exp(-z)) if z >= 0 else math.exp(z) / (1.0 + math.exp(z))
+
+
+def p3161_ignicao_dobras(w=2.0, g=4.0, theta=1.0):
+    """As dobras da ignição (P3161): x' = −x + w·σ(g(x − θ)) + s. Os pontos fixos satisfazem s = f(x) = x − w·σ(g(x − θ)).
+    Há biestabilidade se w·g/4 > 1; as dobras ficam onde f'(x) = 1 − w·g·σ(1 − σ) = 0, isto é, σ± = (1 ± √(1 − 4/(w·g)))/2,
+    x = θ + logit(σ)/g. A subida (ignição) acontece em s_sobe = f(x_a) (máximo local, σ−) e a descida (extinção) em
+    s_desce = f(x_b) (mínimo local, σ+). Devolve (s_sobe, s_desce, x_a, x_b, a), com a = |f''(x_a)|/2 (o coeficiente da forma normal)."""
+    import math
+    if w * g / 4 <= 1:
+        return None
+    r = math.sqrt(1 - 4 / (w * g))
+    sm, sp = (1 - r) / 2, (1 + r) / 2
+    xa = theta + math.log(sm / (1 - sm)) / g
+    xb = theta + math.log(sp / (1 - sp)) / g
+    f = lambda x: x - w * _sig_p127(g * (x - theta))
+    f2 = -w * g * g * sm * (1 - sm) * (1 - 2 * sm)
+    return f(xa), f(xb), xa, xb, abs(f2) / 2
+
+
+def p3162_ignicao_rampa(eps, w=2.0, g=4.0, theta=1.0, dt=0.01, s0=-0.8, s1=0.8, ruido=0.0, semente=0):
+    """A ignição com o estímulo em rampa lenta (P3162): s sobe de s0 a s1 à taxa eps por unidade de tempo e depois desce. Euler
+    (com ruído de Euler–Maruyama de intensidade `ruido`, semente fixa). Devolve (s em que x cruza θ subindo, s em que cruza descendo)."""
+    import math
+    import random
+    rng = random.Random(semente)
+    x = s0 + w * _sig_p127(g * (s0 - theta))   # perto do ramo de baixo
+    for _ in range(2000):
+        x += dt * (-x + w * _sig_p127(g * (x - theta)) + s0)
+    passos = int(round((s1 - s0) / (eps * dt)))
+    sq = ruido * math.sqrt(dt)
+    sobe = desce = None
+    for direcao in (1, -1):
+        for k in range(passos):
+            s = s0 + eps * dt * k if direcao == 1 else s1 - eps * dt * k
+            antes = x
+            x += dt * (-x + w * _sig_p127(g * (x - theta)) + s) + (sq * rng.gauss(0, 1) if ruido else 0.0)
+            if direcao == 1 and sobe is None and antes < theta <= x:
+                sobe = s
+            if direcao == -1 and desce is None and antes > theta >= x:
+                desce = s
+    return sobe, desce
+
+
+def p3163_atraso_airy(eps, w=2.0, g=4.0, theta=1.0):
+    """O atraso da ignição numa rampa lenta (P3163), pela forma normal da sela-nó: y' = μ + a·y², μ = eps·t. Com t = T·τ,
+    T = (a·eps)^(−1/3), vira u' = τ + u², que explode em τ* = 2,33811 (o primeiro zero da Airy Ai é −2,33811). O atraso em s é
+    Δs = eps·T·τ* = 2,33811·a^(−1/3)·eps^(2/3). Devolve (Δs, s_sobe + Δs)."""
+    s_sobe, _, _, _, a = p3161_ignicao_dobras(w, g, theta)
+    d = 2.338107410459767 * a ** (-1.0 / 3.0) * eps ** (2.0 / 3.0)
+    return d, s_sobe + d
+
+
+def _c_p127(texto):
+    import zlib
+    return len(zlib.compress(texto.encode("utf-8"), 9))
+
+
+def p3164_k_condicional(a, b):
+    """A complexidade de b dado a, pela compressão (P3164): K(b|a) ≈ C(a + '\n' + b) − C(a), zlib nível 9. Devolve
+    (K(b|a), C(b), economia relativa (C(b) − K(b|a))/C(b))."""
+    k = _c_p127(a + "\n" + b) - _c_p127(a)
+    cb = _c_p127(b)
+    return k, cb, (cb - k) / cb
+
+
+def p3165_ncd(x, y):
+    """Distância de compressão normalizada (Cilibrasi e Vitányi 2005): (C(xy) − min(C(x), C(y)))/max(C(x), C(y))."""
+    cx, cy = _c_p127(x), _c_p127(y)
+    return (_c_p127(x + "\n" + y) - min(cx, cy)) / max(cx, cy)
+
+
+def p3166_atribuir(pais, filhos, mapa):
+    """A consciência reversa nos textos (P3166): do produto ao processo. Cada texto-de-texto (filho) é atribuído ao pai de menor NCD;
+    mapa[j] = índice do pai verdadeiro do filho j. Devolve (acertos filho→pai, acertos pai→filho (cada pai escolhe o filho de menor
+    NCD), n, chance 1/n)."""
+    n = len(pais)
+    d = [[p3165_ncd(f, p) for p in pais] for f in filhos]
+    ida = sum(min(range(n), key=lambda i: d[j][i]) == mapa[j] for j in range(len(filhos)))
+    inv = {mapa[j]: j for j in range(len(filhos))}
+    volta = sum(min(range(len(filhos)), key=lambda j: d[j][i]) == inv[i] for i in range(n))
+    return ida, volta, len(filhos), 1 / n
+
+
+# As previsões das Partes 124 e 126, com a procedência escrita nos registros (PREVISOES_ANTES.md e a tabela da Parte 126):
+# (parte, rótulo, procedência 'conta' ou 'mecanismo', acertou?). Entrada à mão, conferida contra as tabelas dos dois arquivos.
+PREVISOES_P124_P126 = (
+    [(124, r, "conta", r not in "nv") for r in "abcfgiklmnoqv"]
+    + [(124, r, "mecanismo", r not in "ps") for r in "dehjprstuw"]
+    + [(126, "L%d" % k, "mecanismo", True) for k in range(1, 8)]
+    + [(126, "M%d" % k, "mecanismo", k not in (6, 8)) for k in range(1, 11)])
+
+
+def p3167_tipo2(registros):
+    """Metacognição da metacognição (P3167): a procedência ('conta' = confiança alta) discrimina acertos de erros? Tipo 2:
+    H2 = P(alta | acerto), F2 = P(alta | erro), d'2 = z(H2) − z(F2) com a correção de Hautus ((k + 0,5)/(n + 1)).
+    Devolve (P(acerto|alta), P(acerto|baixa), H2, F2, d'2, n)."""
+    from statistics import NormalDist
+    z = NormalDist().inv_cdf
+    alta = [a for _, _, p, a in registros if p == "conta"]
+    baixa = [a for _, _, p, a in registros if p != "conta"]
+    acertos = [p == "conta" for _, _, p, a in registros if a]
+    erros = [p == "conta" for _, _, p, a in registros if not a]
+    h2 = (sum(acertos) + 0.5) / (len(acertos) + 1)
+    f2 = (sum(erros) + 0.5) / (len(erros) + 1)
+    return sum(alta) / len(alta), sum(baixa) / len(baixa), h2, f2, z(h2) - z(f2), len(registros)
+
+
+def p3168_cruzamento_riccati(eps, w=2.0, g=4.0, theta=1.0, h=1e-5):
+    """A correção de trânsito do atraso (P3168): o cruzamento é medido em x = θ, a uma distância finita da dobra (y = θ − x_a), antes
+    da explosão em τ*. Na escala u = y/Y, Y = eps·T², o alvo é u* = (θ − x_a)/Y; integra u' = τ + u² (RK4, passo h) a partir do ramo
+    estável u = −√(−τ) em τ = −8 até u passar de u*. Devolve (τ do cruzamento, s previsto = s_sobe + eps·T·τ)."""
+    s_sobe, _, xa, _, a = p3161_ignicao_dobras(w, g, theta)
+    T = (a * eps) ** (-1.0 / 3.0)
+    Y = eps * T * T
+    alvo = (theta - xa) / Y
+    tau, u = -8.0, -(8.0 ** 0.5)
+    f = lambda t, v: t + v * v
+    while u < alvo:
+        k1 = f(tau, u)
+        k2 = f(tau + h / 2, u + h / 2 * k1)
+        k3 = f(tau + h / 2, u + h / 2 * k2)
+        k4 = f(tau + h, u + h * k3)
+        u += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
+        tau += h
+    return tau, s_sobe + eps * T * tau
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
