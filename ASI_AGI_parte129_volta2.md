@@ -96,3 +96,5 @@ arquivos versionados cujo nome não aparece em nenhum outro".
 A volta 3 começa num clone novo, no commit desta parte. A continuação está agendada; para parar, basta dizer "pare".
 
 ➡ Anterior: [Parte 128](ASI_AGI_parte128_refazer_tudo.md).
+
+➡ Próxima: [Parte 130 — volta 3](ASI_AGI_parte130_volta3.md).
