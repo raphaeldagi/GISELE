@@ -358,8 +358,9 @@ anterior, commit e push.
   Parte 128 ("Repita sempre tudo que fizemos. Loop infinito."): refazer tudo num clone limpo é o loop (reproducao/, `p3172_comparar_reproducao`). Volta 1: 124 partes em 16
   blocos, 16/16 sem exceção e com a regressão 167/167; 717 + 27 testes, 90 rodadas IGUAIS, 40 + 72 + 55 testes das entregas; 85 de 1.872 linhas diferentes, 0 do MUNDO (73 do
   projeto, 2 da máquina, 10 notas escritas à mão). Achados: a Parte 91 nunca esteve no resultados.txt; 28 rótulos "Partes 80-X" da P1961 mentem (medem a faixa crescente
-  inteira); o resultados.txt tinha notas à mão. O resultados.txt agora é a saída da volta mais recente (o anterior fica em reproducao/), e cada volta compara com a anterior.
-  Regra: um arquivo de resultados só contém saída de código; e toda faixa com rótulo vem da mesma variável que ela mede.
+  inteira); o resultados.txt tinha notas à mão. Trocar o resultados.txt pela volta 1 quebrou o teste da Parte 56 (as rodadas 18-21 o usam como CORPUS): ele voltou ao
+  original, mais a Parte 91 e a 128; cada volta fica em reproducao/voltaN e compara com a anterior. Regra: antes de trocar um arquivo, grep de quem o LÊ; notas à mão não
+  entram em arquivos que funções medem; e todo rótulo de faixa vem da mesma variável que ela mede.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a

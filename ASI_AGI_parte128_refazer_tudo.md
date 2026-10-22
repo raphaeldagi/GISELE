@@ -98,12 +98,24 @@ quando a parte é de identidades.** A regra existe e eu não a apliquei: isso pe
    unidade…"). Elas não saem de nenhum código e sumiram na reprodução. Um arquivo de resultados que mistura saída de código com notas
    minhas não pode ser conferido por código.
 
-### O que mudou no repositório
-- **O `resultados.txt` agora é a saída da volta 1:** os 16 blocos em ordem, sem notas. A Parte 91 entrou, e as linhas do projeto mostram o
-  projeto de hoje. O arquivo anterior está guardado em `reproducao/resultados_antes_volta1.txt` (e no histórico do git), porque a P3172 o
-  usa como referência. Foi o mesmo procedimento da Parte 46.
-- **Em `reproducao/`:** os scripts da volta (`rodar_tudo.sh`, `rodar_bloco.sh`, `rodar_testes.sh`, `comparar.py`, `blocos.txt`) e as 22
-  saídas da volta 1. A volta 2 vai comparar com a volta 1.
+### O que mudou no repositório, e um erro que a suíte pegou
+- **Tentei trocar o `resultados.txt` pela saída da volta 1 e desfiz a troca.** Foi o que a Parte 46 fez. Montei o arquivo novo com os
+  16 blocos, cada um com a sua unificação; a regressão deu 168/168, mas a suíte inteira deu **1 erro em 662**: o teste da Parte 56
+  (`p1121_empates`). A causa estava no código, conferida antes de qualquer explicação:
+  - as rodadas 18 a 21 do diálogo usam o `resultados.txt` como CORPUS (as seções de cada parte, até a primeira "=== Unificacao");
+  - com uma unificação depois de cada bloco, só as Partes 1 a 8 eram lidas, e a classe "época 2" sumiu (`KeyError: 2`);
+  - refeito com uma unificação só, no fim, o erro virou outra falha: um empate a mais (1 ≠ 0), porque o corpus mudou.
+- **O `resultados.txt` não é só um registro: é DADO medido por funções antigas.** Trocá-lo é editar a entrada de funções já medidas,
+  o que a regra das Partes 14 e 16 proíbe para o código. Ele voltou ao original. Recebeu só, no fim:
+  - a seção da Parte 91, que faltava, tirada da volta 1;
+  - a saída da Parte 128.
+  A suíte e a regressão voltaram a passar.
+- **A volta 1 inteira fica em `reproducao/volta1/`**, junto com o arquivo de referência (`reproducao/resultados_antes_volta1.txt`, igual
+  ao original) e os scripts da volta (`rodar_tudo.sh`, `rodar_bloco.sh`, `rodar_testes.sh`, `comparar.py`, `blocos.txt`). A volta 2 vai
+  comparar com a volta 1.
+- **Regra (Parte 128):** antes de trocar ou reescrever um arquivo do repositório, procurar por código quem o LÊ (`grep` do nome do
+  arquivo em `calculos.py`, `synthai/` e `dialogo/`). Dez arquivos .py leem o `resultados.txt` (contados por `grep -rl`), e eu descobri isso pela suíte, depois da troca,
+  em vez de antes. É a regra da Parte 109 ("grep de quem toca a variável antes de prever") aplicada a arquivos.
 
 ## Engenharia reversa
 - **O padrão desta parte é o de toda reprodução:** o que eu calculo sobre o mundo é estável, e o que eu digo sobre mim muda. A SYNTHAI
@@ -112,7 +124,8 @@ quando a parte é de identidades.** A regra existe e eu não a apliquei: isso pe
   letra mude, porque o número que ela cita é uma função do tempo. A cura não é corrigir as frases antigas (são registros), é escrever as
   novas com o argumento explícito, para que o número não possa andar.
 - **Regra nova (Parte 128):**
-  - um arquivo de resultados só contém saída de código;
+  - antes de trocar um arquivo, procurar por código quem o lê;
+  - notas à mão não entram em arquivos que funções medem (as 10 notas antigas ficam, porque são dado de partes antigas);
   - todo rótulo de faixa ("Partes A-B") é gerado da mesma variável que a função recebe, nunca escrito separado dela;
   - antes de prever "quantos erros", contar por código quantas faixas da parte são identidades, de forma fechada ou de mecanismo, e
     aplicar a regra da Parte 117 a essa contagem.
