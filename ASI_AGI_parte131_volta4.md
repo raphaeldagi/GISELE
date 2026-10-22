@@ -32,3 +32,20 @@ duas saem da leitura do código, como a regra da Parte 130 manda: a P1871 casa o
 | X8 | P3175 no repositório, no commit deste registro | [175; 215] | conta: os 130 da volta 1 + os 66 arquivos das três voltas (não citados fora das saídas: os nomes `bloco_*.txt` e `testes_*.txt` só aparecem em saídas e no `nova_volta.sh`, que não é lido) + o documento mais novo ≈ 197; ±10% de incerteza pelos arquivos que eu não li um a um, ×1,36 |
 
 **Sobre mim:** erros no mundo em [0; 3], com centro 1,25.
+
+## Mudança de procedimento, registrada antes de medir (23h10 UTC)
+O contêiner reiniciou duas vezes durante a volta 4: às 22h36 e entre 22h40 e 23h08. Nas duas vezes nenhum bloco tinha terminado, porque um
+bloco de 8 partes leva de 10 minutos a 2 horas (o das Partes 25 a 32). Com reinícios a cada ~30 min, a volta em blocos não termina nunca.
+
+**A mudança: uma parte por processo** (`reproducao/nova_volta_por_parte.sh`). Cada parte roda isolada (`import calculos;
+calculos.PARTES[k]()`), num arquivo `bloco_K_.txt` com marca de concluído, e a unificação roda uma vez, em `unificacao.txt`. O que já
+terminou sobrevive a um reinício.
+
+Isso muda duas previsões, e a mudança fica escrita aqui antes de qualquer número:
+- **X2** passa a ser "a unificação única dá 170/170". Não há mais regressão por bloco: P(uma regressão) ≈ 0,99, faixa [170; 170].
+- **X4 vira um teste mais forte.** Nas voltas 1 a 3, cada parte rodava DEPOIS das outras do seu bloco, no mesmo processo. Agora roda
+  sozinha. Uma parte que dependesse do estado deixado pela anterior (o gerador global `random`, um cache, uma variável de módulo)
+  mostraria uma diferença do MUNDO. A previsão continua [0; 0]: as simulações usam geradores locais com semente fixa (regra da série).
+  Mas é a primeira vez que essa independência entre as partes é testada, e uma diferença seria um achado.
+
+As outras faixas ficam como estavam.
