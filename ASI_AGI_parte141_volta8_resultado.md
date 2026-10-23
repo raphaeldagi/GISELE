@@ -41,3 +41,5 @@ vereditos DEPOIS que eu fixei a entrada. A v4 foi de 360 para 369 previsões, e 
 as Partes 80 a 138, que estão fechadas, e dá os mesmos (360, 325) e (472, 425).
 
 **Regra (Parte 141, complemento):** uma entrada de regressão só fixa medidas sobre partes FECHADAS, isto é, com todos os vereditos escritos.
+
+➡ Anterior: [Parte 140](ASI_AGI_parte140_leitor_dicionario_hex.md). ➡ Próxima: [Parte 142](ASI_AGI_parte142_enantiodromia.md).

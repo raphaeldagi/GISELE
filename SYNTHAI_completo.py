@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 140, perguntas P1 a P3192).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 142, perguntas P1 a P3194).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (18105 linhas)
+# calculos.py  (18150 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7596,6 +7596,8 @@ def testes_de_regressao():
         "P3188": p3188_auditoria_do_leitor_v5()[:3] == (83, 76, 0),
         "P3190": (lambda r: abs(r[0] - 4) < 1e-9 and r[1] < 1e-9 and abs(r[3] - 3.95560) < 1e-5)(p3190_hexadecimal_vertices()),
         "P3191": p3191_calibracao_v4_v5(range(80, 139)) == ((360, 325), (472, 425)),  # partes fechadas: as 139-140 ganharam vereditos depois
+        "P3193": [t for _, t, _ in p3193_enantiodromia()] == [0, 0, 0, 1, 3, 4, 5, 7],
+        "P3194": p3194_compensacao() < 1e-12,
         "P3176v7": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (9, 0, [133], 130))(
             p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")),
     }
@@ -18132,6 +18134,49 @@ def _parte_140():
 
 PARTES[140] = _parte_140
 
+
+def p3193_enantiodromia(dimensao=8, condicao=10.0, semente=31001, semente_partida=5, T=24, passo=0.05, beta=0.6):
+    \"\"\"(a)-(g) da Parte 142: as travessias do zero de cada coordenada propria dos iterados REAIS da media exponencial (synthai.passos.descer),
+    contra a forma fechada T*theta/pi dos modos de raizes complexas. Devolve [(lambda, travessias, T*theta/pi ou None)].\"\"\"
+    from synthai.passos import quadratica_anisotropica, descer, coordenadas_proprias
+    A, lam, Q = quadratica_anisotropica(dimensao, condicao, semente)
+    r = random.Random(semente_partida)
+    x0 = [r.gauss(0.0, 1.0) for _ in range(dimensao)]
+    alvo = [0.0] * dimensao
+    xs = []
+    descer(A, x0, alvo, T, metodo="media", passo=passo, beta=beta, guardar=xs)
+    cs = [coordenadas_proprias(Q, x, alvo) for x in xs]
+    out = []
+    for i, l in enumerate(lam):
+        serie = [c[i] for c in cs]
+        trav = sum(1 for a, b in zip(serie, serie[1:]) if a * b < 0)
+        b = 2 - beta - 2 * passo * beta * l
+        prev = T * math.acos(b / (2 * math.sqrt(1 - beta))) / math.pi if b * b < 4 * (1 - beta) else None
+        out.append((l, trav, prev))
+    return out
+
+
+def p3194_compensacao(grupos=10000, semente=142):
+    \"\"\"(h) da Parte 142: o maximo de |soma das vantagens| da GRPO (synthai.grpo_bandido.vantagens_grupo) em grupos aleatorios de G = 2..16
+    com recompensas uniformes em [0, 1]. Devolve o maximo.\"\"\"
+    from synthai.grpo_bandido import vantagens_grupo
+    r = random.Random(semente)
+    m = 0.0
+    for _ in range(grupos):
+        G = r.randint(2, 16)
+        m = max(m, abs(sum(vantagens_grupo([r.random() for _ in range(G)]))))
+    return m
+
+
+def _parte_142():
+    print("\\n=== Parte 142: Jung nos modulos novos: a enantiodromia do heavy-ball e a compensacao do grupo ===")
+    for l, trav, prev in p3193_enantiodromia():
+        print(f"  P3193 lambda {l:.3f}: travessias {trav}; T*theta/pi {'real' if prev is None else f'{prev:.2f}'}")
+    print(f"  P3194 (h) maximo de |soma das vantagens| em 10.000 grupos: {p3194_compensacao():.2e}")
+
+
+PARTES[142] = _parte_142
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -18144,7 +18189,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (558 linhas)
+# CLAUDE.md  (563 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -18548,6 +18593,11 @@ anterior, commit e push.
   TABELAS e a régua do placar não as lia (112 previsões em 13 partes, invisíveis, sem nenhum teste falhar: a régua devolvia lista vazia). A calibração 80-140 pela v5: 0,900
   (v4: 0,903); as invisíveis acertaram na mesma taxa. Regras: toda parte com previsões termina com a P3192 (partes que nenhuma régua lê); toda mudança de formato de um arquivo
   que uma função lê vem com o teste dela sobre o formato novo. As Partes 136-139 não fizeram o (m) da Parte 67: lapso registrado, retomado na 140.
+  Parte 141 (rodada 93 IGUAL; regressão): uma entrada de regressão nunca compara com tolerância menor que a precisão com que o número foi impresso (copiar da tela é
+  escrever de cabeça), e só fixa medidas sobre partes FECHADAS (a P3191 mudou porque as Partes 139-140 ganharam vereditos depois).
+  Parte 142 (Jung nos módulos novos; 8/8, (m) 6/6): a enantiodromia é exata no heavy-ball: o modo cruza para o oposto só com MEMÓRIA do impulso (β < 1) e λ entre 2,251 e 44,4,
+  cerca de Tθ/π vezes (as 8 contagens acertaram). A compensação é a soma zero da vantagem da GRPO. Quebra: Jung pede irreversibilidade, a conta linear é simétrica. Padrão desde a 136:
+  os módulos recebidos escondem contas clássicas com outro nome; dar o nome clássico os torna previsíveis.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -18696,7 +18746,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -26557,7 +26607,7 @@ def transferencia_do_estimador(cfg, dic, episodios_teste=5000):
 """
 
 # ====================================================================================================
-# synthai/passos.py  (234 linhas)
+# synthai/passos.py  (238 linhas)
 # ====================================================================================================
 FONTES['synthai/passos.py'] = """\"\"\"O tamanho do passo numa quadrática anisotrópica (Parte 136).
 
@@ -26629,14 +26679,16 @@ def passo_secante(s, y, fallback, fator=0.8, minimo=0.002, maximo=0.4):
     return min(maximo, max(minimo, fator * ss / sy)), True
 
 
-def descer(A, x0, alvo, T, metodo="fixo", passo=0.05, fator=0.8, beta=0.6, sigma=0.0, semente=0, limite=None):
+def descer(A, x0, alvo, T, metodo="fixo", passo=0.05, fator=0.8, beta=0.6, sigma=0.0, semente=0, limite=None, guardar=None):
     \"\"\"Descida do gradiente com T passos. metodo: 'fixo' (passo constante), 'secante' (o passo de BB do texto, com o passo
     fixo como fallback no primeiro) ou 'media' (direção = média exponencial do gradiente com peso beta no atual).
     sigma: ruído gaussiano somado ao gradiente. limite: norma máxima do deslocamento (o 'limite_tangente'). Devolve a lista
-    dos custos (T + 1 valores, o inicial primeiro).\"\"\"
+    dos custos (T + 1 valores, o inicial primeiro). guardar: uma lista que recebe os iterados x_0..x_T (Parte 142).\"\"\"
     rng = random.Random(semente)
     x = list(x0)
     custos = [custo(A, x, alvo)]
+    if guardar is not None:
+        guardar.append(list(x))
     x_ant = g_ant = media = None
     for _ in range(T):
         g = gradiente(A, x, alvo)
@@ -26657,6 +26709,8 @@ def descer(A, x0, alvo, T, metodo="fixo", passo=0.05, fator=0.8, beta=0.6, sigma
                 delta = [di * limite / n for di in delta]
         x_ant, g_ant = x, g
         x = [xi + di for xi, di in zip(x, delta)]
+        if guardar is not None:
+            guardar.append(list(x))
         custos.append(custo(A, x, alvo))
     return custos
 
@@ -31023,6 +31077,39 @@ class TestesParte140(unittest.TestCase):
 
     def test_p3192_partes_invisiveis(self):
         self.assertNotIn(137, c.p3192_partes_invisiveis(range(130, 139)))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte142.py  (28 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte142.py'] = """\"\"\"Testes da Parte 142: a enantiodromia do heavy-ball e a compensação da GRPO (P3193, P3194 pelo nome) e o descer com guardar=.\"\"\"
+import unittest
+
+import calculos as c
+from synthai import passos as p
+
+
+class TestesParte142(unittest.TestCase):
+    def test_descer_guardar(self):
+        A, _, _ = p.quadratica_anisotropica(3, 2.0, 1)
+        xs = []
+        cs = p.descer(A, [1.0, 0.0, 0.0], [0.0] * 3, 5, guardar=xs)
+        self.assertEqual(len(xs), 6)
+        self.assertAlmostEqual(cs[-1], p.custo(A, xs[-1], [0.0] * 3))
+
+    def test_p3193_enantiodromia(self):
+        r = c.p3193_enantiodromia()
+        self.assertEqual([t for _, t, _ in r], [0, 0, 0, 1, 3, 4, 5, 7])
+        for l, t, prev in r:
+            if prev is not None:
+                self.assertLessEqual(abs(t - prev), 1.0)
+
+    def test_p3194_compensacao(self):
+        self.assertLess(c.p3194_compensacao(grupos=500), 1e-12)
 
 
 if __name__ == "__main__":
@@ -51660,7 +51747,7 @@ previsões, e o número só não muda porque elas acertam na mesma taxa.
 """
 
 # ====================================================================================================
-# ASI_AGI_parte141_volta8_resultado.md  (43 linhas)
+# ASI_AGI_parte141_volta8_resultado.md  (45 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte141_volta8_resultado.md'] = """# Parte 141 — O resultado da volta 8, e o reservatório e o posto efetivo bit a bit (rodada 93)
 
@@ -51705,6 +51792,118 @@ vereditos DEPOIS que eu fixei a entrada. A v4 foi de 360 para 369 previsões, e 
 as Partes 80 a 138, que estão fechadas, e dá os mesmos (360, 325) e (472, 425).
 
 **Regra (Parte 141, complemento):** uma entrada de regressão só fixa medidas sobre partes FECHADAS, isto é, com todos os vereditos escritos.
+
+➡ Anterior: [Parte 140](ASI_AGI_parte140_leitor_dicionario_hex.md). ➡ Próxima: [Parte 142](ASI_AGI_parte142_enantiodromia.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte142_enantiodromia.md  (105 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte142_enantiodromia.md'] = """# Parte 142 — Jung calculado nos módulos novos: a enantiodromia do heavy-ball e a compensação do grupo
+
+↩ Nasce da Parte 136 (a média exponencial do gradiente É o heavy-ball de Polyak) e da Parte 137 (a vantagem da GRPO). Jung é a base
+psicológica da série desde a Parte 6: cada conceito vira conta, e a parte diz onde a formalização funciona e onde quebra.
+
+## As duas leituras, escritas antes das contas
+- **Enantiodromia** (Jung, *Tipos psicológicos*, definições): tudo o que vai ao extremo se converte no oposto. Na descida com memória (a média
+  exponencial, β = 0,6, η = 0,05), cada modo próprio segue c_{t+1} = (2 − β − 2ηβλ)·c_t − (1 − β)·c_{t−1}. Se as raízes são complexas, a
+  coordenada passa do ponto de equilíbrio e muda de sinal: o impulso que leva ao alvo leva além dele. As raízes são complexas quando
+  (2 − β − 2ηβλ)² < 4(1 − β), isto é, para λ entre (2 − β − 2√(1 − β))/(2ηβ) = 2,251 e (2 − β + 2√(1 − β))/(2ηβ) = 44,4. O módulo das raízes é
+  √(1 − β) = 0,632, e o ângulo é θ = arccos((2 − β − 2ηβλ)/(2√(1 − β))). Em T passos, a coordenada muda de sinal perto de Tθ/π vezes.
+- **Compensação** (o inconsciente compensa a atitude consciente): na GRPO, a vantagem de cada resposta é a sua recompensa menos a média do
+  grupo, dividida pelo desvio. A soma das vantagens de um grupo é zero, exatamente. O que um acerto ganha, os erros do mesmo grupo perdem.
+
+## Perguntas
+Na quadrática da Parte 136 (d = 8, κ = 10, semente 31001, partida da semente 5), com a média exponencial e T = 24:
+- **(a)** Quantos dos 8 modos mudam de sinal pelo menos uma vez?
+- **(b)** a **(f)** Quantas vezes muda de sinal cada um dos 5 modos oscilantes, λ = 2,683, 3,728, 5,179, 7,197 e 10?
+- **(g)** Os 3 modos de raízes reais (λ = 1, 1,389 e 1,931) mudam de sinal?
+- **(h)** Em 10.000 grupos aleatórios da GRPO (G de 2 a 16, recompensas em [0, 1]), qual é o máximo de |Σ vantagens|?
+
+## Previsões, registradas antes de qualquer execução
+Os ângulos foram calculados por código antes deste registro: θ = 0,2026, 0,3764, 0,5333, 0,6991 e 0,8861. Logo Tθ/π = 1,55, 2,88, 4,07, 5,34 e
+6,77. A contagem de travessias de uma senoide amortecida em T passos é ⌊Tθ/π⌋ ou ⌈Tθ/π⌉, conforme a fase.
+
+**Procedência:**
+- identidade: (h);
+- forma fechada: (a) a (f);
+- mecanismo: (g).
+
+O centro de "quantos erros" é 0 + 0,10 × 6 + 0,25 × 1 = 0,85.
+
+- **(a)** modos que mudam de sinal pelo menos uma vez em **[5; 5]**. Os 5 de raízes complexas; os reais têm duas raízes positivas.
+- **(b)** travessias do modo λ = 2,683 em **[1; 2]** (Tθ/π = 1,55).
+- **(c)** do modo λ = 3,728 em **[2; 3]** (2,88).
+- **(d)** do modo λ = 5,179 em **[4; 5]** (4,07).
+- **(e)** do modo λ = 7,197 em **[5; 6]** (5,34).
+- **(f)** do modo λ = 10 em **[6; 7]** (6,77).
+- **(g)** travessias somadas dos 3 modos reais em **[0; 0]**. Mecanismo: duas raízes reais positivas, e o primeiro passo (m₀ = g₀) leva
+  na direção do alvo sem passar dele, porque 2ηλ < 1 nesses modos. A coordenada pode cruzar o zero no máximo uma vez, mas não deve.
+- **(h)** máximo de \\|Σ vantagens\\| em **[0; 1e-12]**. Identidade: Σ(rᵢ − r̄) = 0, a menos do arredondamento.
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+**Regra da Parte 120.** A régua rodou sobre o rascunho, com uma linha de placar provisória apagada antes do commit, e deu m1 = 8, m2 = 2,
+m3 = 0,101 e m5 = 0.
+
+**Regra da Parte 122.** E = 0,85, o que leva m1 a [8; 9].
+- **(m1)** nº de previsões do mundo em **[8; 9]**
+- **(m2)** nº de faixas que cruzam ou tocam o zero em **[2; 3]**
+- **(m3)** mediana de w em **[0,08; 0,13]**
+- **(m4)** fração de acertos em **[0,75; 1,00]**
+- **(m5)** nº com w > 0,6 em **[0; 0]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 3]**, com centro 0,85.
+
+➡ Anterior: [Parte 141](ASI_AGI_parte141_volta8_resultado.md).
+
+## Medido (P3193, P3194)
+Pelos iterados reais da `synthai.passos.descer`, projetados nos autovetores:
+
+| λ | travessias | Tθ/π | faixa | |
+|---|---|---|---|---|
+| 1,000 | 0 | (real) | (g) | ✅ |
+| 1,389 | 0 | (real) | (g) | ✅ |
+| 1,931 | 0 | (real) | (g) | ✅ |
+| 2,683 | 1 | 1,55 | (b) [1; 2] | ✅ |
+| 3,728 | 3 | 2,88 | (c) [2; 3] | ✅ |
+| 5,179 | 4 | 4,07 | (d) [4; 5] | ✅ |
+| 7,197 | 5 | 5,34 | (e) [5; 6] | ✅ |
+| 10,000 | 7 | 6,77 | (f) [6; 7] | ✅ |
+
+(a) 5 modos mudam de sinal ✅. (h) máximo de \\|Σ vantagens\\| = 3,6·10⁻¹³ ✅.
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅
+
+**Mundo: 8 de 8.** **(m):** m1 = 8, m2 = 2, m3 = 0,101, m4 = 1,0, m5 = 0, m6 = 0, os seis dentro: **6 de 6**. **Sobre mim:** 0 erros, em [0; 3]: ✅.
+
+## Tradução cruzada: onde a formalização funciona e onde quebra
+- **Funciona:** a enantiodromia tem uma condição exata. O "oposto" aparece só quando há MEMÓRIA do impulso (β < 1) e o impulso é forte o
+  bastante (λ > 2,251). Sem memória, com β = 1 e o passo fixo, a coordenada só cruza o zero se 1 − 2ηλ < 0, isto é, λ > 10. Aqui nenhum
+  modo passa disso: o de λ = 10 vai a zero em um passo e para. A conta diz, então, que a conversão no oposto nasce da inércia, não da força.
+  Uma força grande sem memória chega ao alvo; uma força média COM memória passa dele. É uma conta posterior sobre o caso β = 1; não
+  foi registrada como previsão.
+- **Funciona:** a compensação de Jung é a soma zero do grupo. A GRPO não tem crítico: o "inconsciente" que avalia cada resposta é o
+  próprio grupo. O que um acerto ganha, os erros do mesmo grupo perdem, e o que se compensa sai exato, a 10⁻¹³.
+- **Quebra:** para Jung, a enantiodromia é uma reviravolta da energia psíquica ao longo da vida, uma vez, irreversível. Aqui ela é uma
+  oscilação amortecida e simétrica: o módulo √(1 − β) = 0,632 por passo faz cada travessia menor que a anterior. A conta tem a forma da
+  reviravolta, mas não tem a irreversibilidade. Para tê-la, seria preciso um sistema com histerese, como a ignição biestável da
+  Parte 127, e não um linear.
+
+## Engenharia reversa
+- **O que deu certo, e por quê:** as oito faixas saíram de forma fechada, com o mecanismo (a fase) dentro da largura. É o padrão das Partes
+  88 a 99: uma faixa de conta acerta e uma faixa de reputação erra.
+- **O padrão que se repetiu desde a Parte 136:** os módulos reescritos do que o usuário mandou escondiam contas clássicas com outro nome:
+  - a "média do gradiente" era o heavy-ball;
+  - o "contexto" era um quociente de Rayleigh;
+  - a "vantagem de grupo" era a compensação de soma zero.
+  Dar o nome clássico tornou cada um previsível. O texto recebido não é obscuro; ele não diz a conta que já faz.
+
+## Funções e testes
+- **Funções:** `p3193_enantiodromia`, `p3194_compensacao` e `_parte_142`. Entradas P3193 e P3194 na regressão.
+- **Módulo:** `synthai.passos.descer` ganhou `guardar=` (os iterados).
+- **Testes:** `synthai/testes_parte142.py`.
 """
 
 # ====================================================================================================

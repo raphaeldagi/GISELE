@@ -56,3 +56,50 @@ m3 = 0,101 e m5 = 0.
 Erros no mundo em **[0; 3]**, com centro 0,85.
 
 ➡ Anterior: [Parte 141](ASI_AGI_parte141_volta8_resultado.md).
+
+## Medido (P3193, P3194)
+Pelos iterados reais da `synthai.passos.descer`, projetados nos autovetores:
+
+| λ | travessias | Tθ/π | faixa | |
+|---|---|---|---|---|
+| 1,000 | 0 | (real) | (g) | ✅ |
+| 1,389 | 0 | (real) | (g) | ✅ |
+| 1,931 | 0 | (real) | (g) | ✅ |
+| 2,683 | 1 | 1,55 | (b) [1; 2] | ✅ |
+| 3,728 | 3 | 2,88 | (c) [2; 3] | ✅ |
+| 5,179 | 4 | 4,07 | (d) [4; 5] | ✅ |
+| 7,197 | 5 | 5,34 | (e) [5; 6] | ✅ |
+| 10,000 | 7 | 6,77 | (f) [6; 7] | ✅ |
+
+(a) 5 modos mudam de sinal ✅. (h) máximo de \|Σ vantagens\| = 3,6·10⁻¹³ ✅.
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅
+
+**Mundo: 8 de 8.** **(m):** m1 = 8, m2 = 2, m3 = 0,101, m4 = 1,0, m5 = 0, m6 = 0, os seis dentro: **6 de 6**. **Sobre mim:** 0 erros, em [0; 3]: ✅.
+
+## Tradução cruzada: onde a formalização funciona e onde quebra
+- **Funciona:** a enantiodromia tem uma condição exata. O "oposto" aparece só quando há MEMÓRIA do impulso (β < 1) e o impulso é forte o
+  bastante (λ > 2,251). Sem memória, com β = 1 e o passo fixo, a coordenada só cruza o zero se 1 − 2ηλ < 0, isto é, λ > 10. Aqui nenhum
+  modo passa disso: o de λ = 10 vai a zero em um passo e para. A conta diz, então, que a conversão no oposto nasce da inércia, não da força.
+  Uma força grande sem memória chega ao alvo; uma força média COM memória passa dele. É uma conta posterior sobre o caso β = 1; não
+  foi registrada como previsão.
+- **Funciona:** a compensação de Jung é a soma zero do grupo. A GRPO não tem crítico: o "inconsciente" que avalia cada resposta é o
+  próprio grupo. O que um acerto ganha, os erros do mesmo grupo perdem, e o que se compensa sai exato, a 10⁻¹³.
+- **Quebra:** para Jung, a enantiodromia é uma reviravolta da energia psíquica ao longo da vida, uma vez, irreversível. Aqui ela é uma
+  oscilação amortecida e simétrica: o módulo √(1 − β) = 0,632 por passo faz cada travessia menor que a anterior. A conta tem a forma da
+  reviravolta, mas não tem a irreversibilidade. Para tê-la, seria preciso um sistema com histerese, como a ignição biestável da
+  Parte 127, e não um linear.
+
+## Engenharia reversa
+- **O que deu certo, e por quê:** as oito faixas saíram de forma fechada, com o mecanismo (a fase) dentro da largura. É o padrão das Partes
+  88 a 99: uma faixa de conta acerta e uma faixa de reputação erra.
+- **O padrão que se repetiu desde a Parte 136:** os módulos reescritos do que o usuário mandou escondiam contas clássicas com outro nome:
+  - a "média do gradiente" era o heavy-ball;
+  - o "contexto" era um quociente de Rayleigh;
+  - a "vantagem de grupo" era a compensação de soma zero.
+  Dar o nome clássico tornou cada um previsível. O texto recebido não é obscuro; ele não diz a conta que já faz.
+
+## Funções e testes
+- **Funções:** `p3193_enantiodromia`, `p3194_compensacao` e `_parte_142`. Entradas P3193 e P3194 na regressão.
+- **Módulo:** `synthai.passos.descer` ganhou `guardar=` (os iterados).
+- **Testes:** `synthai/testes_parte142.py`.

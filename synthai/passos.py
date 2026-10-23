@@ -68,14 +68,16 @@ def passo_secante(s, y, fallback, fator=0.8, minimo=0.002, maximo=0.4):
     return min(maximo, max(minimo, fator * ss / sy)), True
 
 
-def descer(A, x0, alvo, T, metodo="fixo", passo=0.05, fator=0.8, beta=0.6, sigma=0.0, semente=0, limite=None):
+def descer(A, x0, alvo, T, metodo="fixo", passo=0.05, fator=0.8, beta=0.6, sigma=0.0, semente=0, limite=None, guardar=None):
     """Descida do gradiente com T passos. metodo: 'fixo' (passo constante), 'secante' (o passo de BB do texto, com o passo
     fixo como fallback no primeiro) ou 'media' (direção = média exponencial do gradiente com peso beta no atual).
     sigma: ruído gaussiano somado ao gradiente. limite: norma máxima do deslocamento (o 'limite_tangente'). Devolve a lista
-    dos custos (T + 1 valores, o inicial primeiro)."""
+    dos custos (T + 1 valores, o inicial primeiro). guardar: uma lista que recebe os iterados x_0..x_T (Parte 142)."""
     rng = random.Random(semente)
     x = list(x0)
     custos = [custo(A, x, alvo)]
+    if guardar is not None:
+        guardar.append(list(x))
     x_ant = g_ant = media = None
     for _ in range(T):
         g = gradiente(A, x, alvo)
@@ -96,6 +98,8 @@ def descer(A, x0, alvo, T, metodo="fixo", passo=0.05, fator=0.8, beta=0.6, sigma
                 delta = [di * limite / n for di in delta]
         x_ant, g_ant = x, g
         x = [xi + di for xi, di in zip(x, delta)]
+        if guardar is not None:
+            guardar.append(list(x))
         custos.append(custo(A, x, alvo))
     return custos
 

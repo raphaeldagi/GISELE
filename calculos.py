@@ -7558,6 +7558,8 @@ def testes_de_regressao():
         "P3188": p3188_auditoria_do_leitor_v5()[:3] == (83, 76, 0),
         "P3190": (lambda r: abs(r[0] - 4) < 1e-9 and r[1] < 1e-9 and abs(r[3] - 3.95560) < 1e-5)(p3190_hexadecimal_vertices()),
         "P3191": p3191_calibracao_v4_v5(range(80, 139)) == ((360, 325), (472, 425)),  # partes fechadas: as 139-140 ganharam vereditos depois
+        "P3193": [t for _, t, _ in p3193_enantiodromia()] == [0, 0, 0, 1, 3, 4, 5, 7],
+        "P3194": p3194_compensacao() < 1e-12,
         "P3176v7": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (9, 0, [133], 130))(
             p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")),
     }
@@ -18093,6 +18095,49 @@ def _parte_140():
 
 
 PARTES[140] = _parte_140
+
+
+def p3193_enantiodromia(dimensao=8, condicao=10.0, semente=31001, semente_partida=5, T=24, passo=0.05, beta=0.6):
+    """(a)-(g) da Parte 142: as travessias do zero de cada coordenada propria dos iterados REAIS da media exponencial (synthai.passos.descer),
+    contra a forma fechada T*theta/pi dos modos de raizes complexas. Devolve [(lambda, travessias, T*theta/pi ou None)]."""
+    from synthai.passos import quadratica_anisotropica, descer, coordenadas_proprias
+    A, lam, Q = quadratica_anisotropica(dimensao, condicao, semente)
+    r = random.Random(semente_partida)
+    x0 = [r.gauss(0.0, 1.0) for _ in range(dimensao)]
+    alvo = [0.0] * dimensao
+    xs = []
+    descer(A, x0, alvo, T, metodo="media", passo=passo, beta=beta, guardar=xs)
+    cs = [coordenadas_proprias(Q, x, alvo) for x in xs]
+    out = []
+    for i, l in enumerate(lam):
+        serie = [c[i] for c in cs]
+        trav = sum(1 for a, b in zip(serie, serie[1:]) if a * b < 0)
+        b = 2 - beta - 2 * passo * beta * l
+        prev = T * math.acos(b / (2 * math.sqrt(1 - beta))) / math.pi if b * b < 4 * (1 - beta) else None
+        out.append((l, trav, prev))
+    return out
+
+
+def p3194_compensacao(grupos=10000, semente=142):
+    """(h) da Parte 142: o maximo de |soma das vantagens| da GRPO (synthai.grpo_bandido.vantagens_grupo) em grupos aleatorios de G = 2..16
+    com recompensas uniformes em [0, 1]. Devolve o maximo."""
+    from synthai.grpo_bandido import vantagens_grupo
+    r = random.Random(semente)
+    m = 0.0
+    for _ in range(grupos):
+        G = r.randint(2, 16)
+        m = max(m, abs(sum(vantagens_grupo([r.random() for _ in range(G)]))))
+    return m
+
+
+def _parte_142():
+    print("\n=== Parte 142: Jung nos modulos novos: a enantiodromia do heavy-ball e a compensacao do grupo ===")
+    for l, trav, prev in p3193_enantiodromia():
+        print(f"  P3193 lambda {l:.3f}: travessias {trav}; T*theta/pi {'real' if prev is None else f'{prev:.2f}'}")
+    print(f"  P3194 (h) maximo de |soma das vantagens| em 10.000 grupos: {p3194_compensacao():.2e}")
+
+
+PARTES[142] = _parte_142
 
 PARTES[126] = _parte_126
 
