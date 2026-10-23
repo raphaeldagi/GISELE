@@ -107,3 +107,7 @@ O centro de "quantos erros" é 0 + 4 × 0,10 + 5 × 0,25 = 1,65.
 É uma forma fechada (binomial) que errou a z = −1,95. Pela regra da Parte 117, gero um lote novo, registrado antes de rodá-lo: semente 1370,
 outros 20.000 grupos, mesma faixa [0,0369; 0,0414], P(acerto) = 0,90. Se acertar, o erro de (b2) foi cauda (uma em dez faixas de 90% erra).
 Se errar de novo, para o mesmo lado, a régua ou o gerador têm um defeito a procurar.
+
+**Lote novo (semente 1370):** 0,03815, dentro da faixa: ✅. Os dois lotes juntos (40.000 grupos) dão 0,037325, z = −1,90, os dois abaixo da
+forma fechada. Ainda é |z| < 2,5. Mas dois lados iguais pedem um terceiro lote, maior, registrado aqui antes de rodar: semente 13700,
+100.000 grupos, faixa 0,03917 ± 1,645·√(0,0392·0,9608/100.000) = [0,03816; 0,04018].
