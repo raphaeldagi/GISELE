@@ -74,3 +74,5 @@ linha a linha, um modelo do próprio projeto que eu montei ao longo das voltas 1
 - **Testes:** `test_volta7_regressao`.
 
 ➡ Anterior: [Parte 133](ASI_AGI_parte133_volta6.md).
+
+➡ Próxima: [Parte 135 — volta 8](ASI_AGI_parte135_volta8.md).
