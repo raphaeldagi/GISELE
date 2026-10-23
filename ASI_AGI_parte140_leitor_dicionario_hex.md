@@ -89,3 +89,25 @@ registro.
 Erros no mundo em **[0; 3]**, com centro 0,9.
 
 ➡ Anterior: [Parte 139](ASI_AGI_parte139_volta8.md).
+
+## Medido (P3188–P3190)
+- **(a)** razão dos desvios: 1,0129. ✅
+- **(b)** z = 0,203. ✅
+- **(c)** fração da primeira metade: **0,50233** (z = 1,81). ❌
+- **(d)** posto dos 16 vértices: 4,000000000000. ✅
+- **(e)** \|Jacobi − conta à mão\| = 8,9·10⁻¹⁶. ✅
+- **(f)** \|3ⁿ − Benford-16\| = 0,00121 (posto de 3ⁿ: 3,95560). ✅
+- **(g)** recuperadas: **83** (128: 7, 129: 6, 130: 7, 131 a 134: 8, 8, 8, 8, 136: 11, 137: 11, 138: 9). ✅
+- **(h)** acerto: 76 de 83 = 0,916. ✅
+- **(i)** a primeira versão da função deu **29**. Ela comparava TODAS as partes de 53 a 127, inclusive as que não têm a linha de placar, e não
+  só as que a previsão nomeava. Conferi a régua antes de explicar (Parte 127): as 29 são previsões RECUPERADAS nas Partes 126 (17) e 127
+  (12), que também estavam em tabela, e não mudanças. Nas partes com a linha de placar, as mudanças são **0**. A função foi corrigida para
+  medir o que (i) diz. ✅, com a régua corrigida; a primeira versão errou a pergunta, e isto fica escrito aqui.
+
+**O que a régua corrigida achou a mais:** as Partes 126 e 127 também estavam fora da calibração, com 29 previsões. A Parte 135 (a volta 8) e a
+139 ainda não têm a tabela de vereditos.
+
+### (c): lote novo antes de qualquer mecanismo (regra da Parte 117)
+É uma forma fechada (hipergeométrica) que errou com z = 1,81. Registro, antes de rodar: sementes 141000 a 141299, outros 300 reservatórios,
+mesma faixa [0,4979; 0,5021]. Se acertar, foi cauda. Se errar de novo para o mesmo lado, a regra da Parte 137 manda trocar o CAMINHO da
+medida: contar pela posição sorteada, e não pelo índice.
