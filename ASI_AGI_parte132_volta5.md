@@ -85,3 +85,5 @@ eram largas o bastante para isso, mas o centro errou por um caso que eu não ima
 A volta 6 começa no commit desta parte. Para parar, basta dizer "pare".
 
 ➡ Anterior: [Parte 131](ASI_AGI_parte131_volta4.md).
+
+➡ Próxima: [Parte 133 — volta 6](ASI_AGI_parte133_volta6.md).
