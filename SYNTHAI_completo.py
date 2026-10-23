@@ -42080,7 +42080,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2286 linhas)
+# resultados.txt  (2292 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -44368,6 +44368,12 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3196 5^n: posto 3.956513882; |posto - Benford-16| 0.00030
   P3196 7^n: posto 3.956891010; |posto - Benford-16| 0.00008
   P3196 2^n: posto 3.000000000; |posto - Benford-16| 0.95681
+=== Parte 145: os grupos uteis da GRPO num segundo mundo ===
+  P3197 G=2: retorno 0.8756; grupos uteis 362.0
+  P3197 G=4: retorno 0.8805; grupos uteis 339.0; desvio da relacao +0.0071
+  P3197 G=8: retorno 0.8632; grupos uteis 263.0; desvio da relacao -0.0018
+  P3197 G=16: retorno 0.8467; grupos uteis 175.3; desvio da relacao -0.0050
+  P3197 (a) a ordem dos retornos e a dos grupos uteis: False
 """
 
 # ====================================================================================================
