@@ -1,0 +1,7 @@
+--- Parte 54 (0x36: a sorte das rodadas) ---
+P1061 rodadas com chance de sorte < 0,5 (modelo de sorteios independentes): 9; menor: rodada06 = 3.16e-170; diferencas reais (exp dist, exp dif, log dist, log dif): rodada06 (1, 0, 687, 0); rodada09 (3593, 3, 5822, 4); rodada14 (1, 0, 213, 0); rodada18 (0, 0, 14, 0); rodada19 (0, 0, 41, 1); rodada20 (1, 0, 1196, 0); rodada23 (0, 0, 436, 0); rodada24 (0, 0, 48, 0); rodada25 (1440, 3, 39059, 5)
+P1062 folhas: 0.7911 de 82115 substantivos; filhos por no interno = 4.921 (conta: 4.786)
+P1063 autodescritivos: base 16 ['C210000000001000']; base 10 ['6210001000']; base 7 ['3211000']; base 4 ['1210', '2020']
+P974 previsoes unilaterais da Parte 54: {54: (3, 0, [])}
+P1089 minha taxa de erro (159/462): media = 0.34, intervalo 90% = [0.31, 0.38]
+FIM_OK status=0 segundos=2

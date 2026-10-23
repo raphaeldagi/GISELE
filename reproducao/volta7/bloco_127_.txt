@@ -1,0 +1,11 @@
+
+=== Parte 127: a tomada de consciência e a consciência reversa ===
+  dobras: s_sobe 0.26642  s_desce -0.26642  histerese 0.53284  a 1.41421
+  rampa eps=0.002: medido sobe 0.29634 desce -0.29634 | Airy 0.29949 | Riccati com trânsito 0.29639
+  rampa eps=0.00025: medido sobe 0.27425 desce -0.27425 | Airy 0.27469 | Riccati com trânsito 0.27429
+  com ruído 0,05 (10 sementes): sobe médio 0.28649, desce médio -0.28334
+  atribuição por NCD com a chave REGISTRADA (errada nos filhos 4-7): (4, 4, 8, 0.125)
+  atribuição por NCD com a chave VERDADEIRA (filho→pai, pai→filho, n, chance): (8, 8, 8, 0.125)
+  informação mútua: pares certos 82.88 B, errados 51.89 B, z 16.08, assimetria média 5.25 B
+  tipo 2 nas Partes 124 e 126: (0.8461538461538461, 0.8518518518518519, 0.32857142857142857, 0.35714285714285715, -0.07775495512567793, 40)
+FIM_OK status=0 segundos=3

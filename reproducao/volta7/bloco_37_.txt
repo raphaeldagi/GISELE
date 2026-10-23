@@ -1,0 +1,7 @@
+--- Parte 37 (0x25: deteccao bayesiana de mudanca; a lei da abreviacao; um digito hex de hipoteses) ---
+P531 conta: custo da exposicao natural (H = 1/500) = 62.75; estacionario previsto = 93.46
+P531 Thompson + BOCPD: estacionario = 86.63; custo do dano = 46.04; mundo que muda = 371.93
+P532 mundo que muda: 16 hipoteses = 371.93; 256 = 361.57; 16 - 256 = 10.36, dp = 92.60, t = 0.79
+P533 abreviacao: Spearman(comprimento, frequencia) = -0.2374; comprimento medio das 1000 mais frequentes = 6.028, das outras = 8.197; palavras = 31502
+P579 minha taxa de erro (115/297): media = 0.39, intervalo 90% = [0.34, 0.43]
+FIM_OK status=0 segundos=335

@@ -7545,6 +7545,8 @@ def testes_de_regressao():
             p3174_comparar_voltas("reproducao/volta4", "reproducao/volta5")),
         "P3176": (lambda r: (r["diferentes"], r["categorias"]["mundo"], len(r["reclassificadas"]), r["blocos_sem_excecao"]) == (9, 0, 1, 129))(
             p3176_comparar_voltas_v2("reproducao/volta5", "reproducao/volta6")),
+        "P3176v7": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (9, 0, [133], 130))(
+            p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -17657,6 +17659,16 @@ def _parte_133():
 
 
 PARTES[133] = _parte_133
+
+
+def _parte_134():
+    print("\n=== Parte 134: volta 7 do loop (volta 6 contra volta 7, pela P3176) ===")
+    r = p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")
+    print(f"  arquivos de parte {r['blocos']}, sem exceção {r['blocos_sem_excecao']}; novas {r['novas']}")
+    print(f"  linhas {r['linhas']}, diferentes {r['diferentes']} ({r['fracao']:.4f}); categorias {r['categorias']}; mundo {r['mundo']}")
+
+
+PARTES[134] = _parte_134
 
 PARTES[126] = _parte_126
 

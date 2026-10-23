@@ -107,6 +107,10 @@ class TestesParte128(unittest.TestCase):
         r = c.p3176_comparar_voltas_v2("reproducao/volta5", "reproducao/volta6")
         self.assertEqual((r["diferentes"], r["categorias"]["mundo"], len(r["reclassificadas"])), (9, 0, 1))
 
+    def test_volta7_regressao(self):
+        r = c.p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")
+        self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]), (9, 0, [133], 130))
+
 
 if __name__ == "__main__":
     unittest.main()

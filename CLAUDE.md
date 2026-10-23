@@ -377,6 +377,9 @@ anterior, commit e push.
   Parte 133 (volta 6; 7/8): a régua P3174 chamou de "mundo" a linha da P3175 (que mede o projeto), porque a lista do projeto foi escrita antes de ela nascer: toda pNN nova
   que mede o projeto entra na lista no mesmo commit (`_PROJETO_P133`, `p3176_comparar_voltas_v2`). As contagens de arquivos lidas no código acertaram o número EXATO (1 e 453).
   Os reinícios do contêiner acontecem também com tarefas ativas (hipótese da 131 refutada em 2 lotes); o procedimento por parte é o que protege.
+  Parte 134 (volta 7; 8/8): as 9 linhas que mudaram foram EXATAMENTE as 9 nomeadas no registro, e as contagens deram o número da conta: o loop chegou ao ponto fixo
+  do que mede (sete voltas, 0 diferenças do mundo). Decisão conservadora escrita: o loop segue, mas espaçado (volta nova só quando um commit mudou algo além do registro
+  da volta, ou a cada 6 h no máximo), e o texto diz o custo (~1,5 h de relógio, ~4 h de processador por volta) para o usuário poder escolher.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a

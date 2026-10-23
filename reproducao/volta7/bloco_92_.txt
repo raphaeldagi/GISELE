@@ -1,0 +1,10 @@
+--- Parte 92 (0x5C: o Adam e a fronteira do pow) ---
+P2201 fronteira do pow (0.9**t != produto, t=1..500): 418 de 500
+P2202 produto por multiplicacao repetida (pow inteiro, portavel): t=10 -> 0.34867844010000015
+P2203 rodada 59 (passo de Adam, IGUAL em Java): perdas finais = [1.5475, 1.0705, 0.6113, 0.9741, 6.4264]
+P2204 o passo de Adam reduz a perda nos 5 casos: [True, True, True, True, True]
+P1961 teste (e), Partes 80-92: 53/65 = 0.8154; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4)}
+P1092 pNN novas (P2201-P2230) sem teste: 0 de 4: []
+P974 previsoes unilaterais da Parte 92: {}
+P2589 minha taxa de erro (215/724): media = 0.30, intervalo 90% = [0.27, 0.33]
+FIM_OK status=0 segundos=0

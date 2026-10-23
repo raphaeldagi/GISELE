@@ -1,0 +1,11 @@
+--- Parte 120 (0x78: o poquer Leduc: CFR, acaso e amostragem externa com o mesmo custo) ---
+P3041 vanilla: explorabilidade 0.01846, valor -0.08702, [-0.09538; -0.07692], 20002200 nos
+P3041 acaso: explorabilidade 0.03335, valor -0.08689, [-0.10329; -0.06994], 19999990 nos; explorabilidade 0.03665, valor -0.08783, [-0.10630; -0.06965], 19999990 nos
+P3041 externo: explorabilidade 0.02933, valor -0.08805, [-0.09966; -0.07034], 19749049 nos; explorabilidade 0.03015, valor -0.08712, [-0.10074; -0.07059], 19780482 nos
+P3042 com o mesmo custo: externo/acaso 0.850, vanilla/externo 0.621; valor do jogo em [-0.09538; -0.07692]
+P3043 rodada 88 (CFR vanilla no Leduc, IGUAL em Java): 288 conjuntos, 0 diferem de synthai.leduc
+P1961 teste, Partes 80-121: 317/350 = 0.9057
+P1092 pNN novas (P3041-P3070) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 120: {120: (0, 0, [])}
+P4549 minha taxa de erro (227/952): media = 0.24, intervalo 90% = [0.22, 0.26]
+FIM_OK status=0 segundos=344

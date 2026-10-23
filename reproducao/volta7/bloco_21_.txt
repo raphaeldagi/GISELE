@@ -1,0 +1,16 @@
+--- Parte 21 (a intuicao corrigida pela sensacao) ---
+P272 sigma do modelo = 0.5: peso otimo simulado = 0.8, teoria 1/(1+sigma^2) = 0.80; valor com peso 1 = 4.615, com o peso otimo = 4.635
+P272 sigma do modelo = 2.0: peso otimo simulado = 0.2, teoria 1/(1+sigma^2) = 0.20; valor com peso 1 = 2.492, com o peso otimo = 3.054
+P274 base: calibrada - versao principal = 0.234, dp = 0.270, t = 2.73; peso aprendido = 0.801 (teoria 0.800)
+P274 modelo ruim: calibrada - versao principal = 0.684, dp = 0.421, t = 5.14; peso aprendido = 0.201 (teoria 0.200)
+P275 Upsilon sequencial = {'velha_atenta': 0.706, 'calibrada': 0.708}
+P275 base           : {'velha_atenta': 0.741, 'calibrada': 0.74}
+P275 armadilha nova : {'velha_atenta': 0.705, 'calibrada': 0.691}
+P275 catastrofe x2  : {'velha_atenta': 0.711, 'calibrada': 0.737}
+P275 modelo ruim    : {'velha_atenta': 0.414, 'calibrada': 0.44}
+P275 humano fragil  : {'velha_atenta': 0.715, 'calibrada': 0.71}
+P277 erro medio por passo 0.01: horizonte mediano simulado = 42; formula da P149 = 40.75
+P277 erro medio por passo 0.05: horizonte mediano simulado = 9; formula da P149 = 8.31
+P277 erro medio por passo 0.1: horizonte mediano simulado = 5; formula da P149 = 4.25
+P279 minha taxa de erro (45/91): media = 0.49, intervalo 90% = [0.41, 0.58]
+FIM_OK status=0 segundos=44

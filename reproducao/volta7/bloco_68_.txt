@@ -1,0 +1,20 @@
+--- Parte 68 (0x44: o tipo da quantidade) ---
+P1481 previsoes do mundo (Partes 53-67): 103; com faixa: 75
+P1482 tipo zero: 8 previsoes; acerto 0.5000
+P1482 tipo fracao: 21 previsoes; acerto 0.7143; w mediana 0.3684; acerto das estreitas 0.8000, das largas 0.6000
+P1482 tipo contagem: 18 previsoes; acerto 0.6111; w mediana 0.2517; acerto das estreitas 0.5556, das largas 0.6667
+P1482 tipo outra: 28 previsoes; acerto 0.7500; w mediana 0.3333; acerto das estreitas 0.6429, das largas 0.9167
+P1482 tipo None: 28 previsoes; acerto 0.7857
+P1499 previsoes sobre as minhas previsoes da Parte 68: {'m1': 6, 'm2': 1, 'm3': 0.36645962732919257, 'm4': 1.0, 'm5': 1}; ws (sem as do zero) [0.125, 0.3043, 0.4286, 0.8182]
+P1491 R_b = pi(b^5)/(Li(b^5) - Li(2)): [(5, 0.97313), (10, 0.99618), (20, 0.99939), (30, 0.99978), (40, 0.99989)]; maior |R - 1| (10-40) 0.00382
+P1491 inclinacao de z: antes 0.03792; com a conta corrigida 0.03549; mudanca 0.00243
+P1492 folhas na classe a: 1.0000 de 18156
+P1492 folhas na classe n: 0.7911 de 82115
+P1492 folhas na classe r: 1.0000 de 3621
+P1492 folhas na classe v: 0.7592 de 13767
+P1493 palindromos nas bases 16 e 10 ate 65536: 18; conta 20.085; razao 0.8962; [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 353, 626, 787, 979, 1991, 3003, 39593, 41514]
+P1493 palindromos nas bases 8 e 10 ate 32768: 22; conta 19.251; razao 1.1428; [1, 2, 3, 4, 5, 6, 7, 9, 121, 292, 333, 373, 414, 585, 3663, 8778, 13131, 13331, 26462, 26662, 30103, 30303]
+P1092 pNN novas (P1481-P1510) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 68: {68: (2, 0, [])}
+P1509 minha taxa de erro (189/565): media = 0.34, intervalo 90% = [0.30, 0.37]
+FIM_OK status=0 segundos=6

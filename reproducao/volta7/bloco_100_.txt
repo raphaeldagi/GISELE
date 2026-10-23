@@ -1,0 +1,12 @@
+--- Parte 100 (0x64: o dicionario como data lake encontra o GPT) ---
+P2441 invariancia no 4-grama: en = 2.207, pt = 2.346, |dif| = 0.140 bits/char (o genero 'definicao')
+P2442 invariancia nao e volume: trigrama en num subconjunto aleatorio de 511k = 2.812
+P2443 GPT x n-grama: en GPT = 3.483 vs trigrama 2.784; pt GPT = 3.406 vs trigrama 2.788 (GPT perde nas duas)
+P2444 GPT no meio: uniforme (log2 V) = 5.087; gpt<uniforme en/pt = True/True; ambos em [3,0;4,1] = True
+P2445 rodada 67 (nucleus top-p, IGUAL em Java): tokens = [0, 0, 3, 1, 0]; mantidos = [4, 1, 3, 3, 2]
+P2446 retrospecto de cem partes: 723 funcoes pNN, 90 rodadas do dialogo, calibracao do mundo 80-100 = 0.9057
+P1961 teste (f), Partes 80-100: 92/106 = 0.8679; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5)}
+P1092 pNN novas (P2441-P2470) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 100: {}
+P3149 minha taxa de erro (217/765): media = 0.28, intervalo 90% = [0.26, 0.31]
+FIM_OK status=0 segundos=83

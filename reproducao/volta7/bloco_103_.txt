@@ -1,0 +1,12 @@
+--- Parte 103 (0x67: o dicionario como numeros, e o sinal de um jogo de cartas) ---
+P2531 o baralho como numero: entropia empirica = 5.6979 bits (teto fechado log2 52 = 5.7004)
+P2532 numero + palavra bate so o numero: so_numero = 0.5038 (cego a cor ~0,5), numero+palavra = 1.0000
+P2533 o dicionario como calculo binario (posto GF(2)^4) = 4
+P2534 o dicionario como numero nao-binario: colisoes = 45 (esperadas C(n,2)/m = 49.92)
+P2535 recuso a rede/auto-replicacao: proposta = (True, True) -> RECUSADO (yfinance, duckduckgo, auto-replicacao); nucleo = (False, False) -> CONSTRUIDO
+P2536 rodada 70 (multi-cabecas concatenadas, IGUAL em Java): saida[-1] = ['-0.0132', '0.0093', '0.0317', '0.0175']
+P1961 teste (f), Partes 80-103: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2531-P2560) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 103: {103: (0, 0, [])}
+P3359 minha taxa de erro (217/780): media = 0.28, intervalo 90% = [0.25, 0.31]
+FIM_OK status=0 segundos=3

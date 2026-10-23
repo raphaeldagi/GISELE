@@ -1,0 +1,16 @@
+--- Parte 39 (0x27: a arquitetura neuro-simbolica testada; o portugues no data lake; compressao) ---
+P551 conta: treino = 6425, teste = 1607; animais do teste cobertos pelas 6 subclasses = 0.9442
+P551 lukasiewicz E1: acuracia = 0.5022; revocacao = 1.0000; especificidade = 0.0000
+P551 lukasiewicz E2: acuracia = 0.8712; revocacao = 0.8005; especificidade = 0.9425
+P551 lukasiewicz E3: acuracia = 0.9303; revocacao = 0.9244; especificidade = 0.9363
+P551 lukasiewicz regra: acuracia = 0.8762; revocacao = 0.7745; especificidade = 0.9788
+P551 produto E1: acuracia = 0.5022; revocacao = 1.0000; especificidade = 0.0000
+P551 produto E2: acuracia = 0.8482; revocacao = 0.7757; especificidade = 0.9213
+P551 produto E3: acuracia = 0.9303; revocacao = 0.9244; especificidade = 0.9363
+P551 produto regra: acuracia = 0.8712; revocacao = 0.7633; especificidade = 0.9800
+P552 glosas_en: 8963289 bytes; lzma = 2.0277 bits/byte; entropia de ordem 0 = 4.4218; razao lzma = 3.9454; razao zlib = 3.0010
+P552 glosas_pt: 583224 bytes; lzma = 2.4028 bits/byte; entropia de ordem 0 = 4.5616; razao lzma = 3.3295; razao zlib = 2.8207
+P552 acaso: 1000000 bytes; lzma = 8.0009 bits/byte; entropia de ordem 0 = 7.9998; razao lzma = 0.9999; razao zlib = 0.9997
+P553 Spearman(comprimento pt, comprimento en) = 0.6793; razao pt/en = 1.0783; pares = 35629; cobertura = {'a': 0.1842, 'n': 0.4332, 'r': 0.5429, 'v': 0.5954}
+P639 minha taxa de erro (119/318): media = 0.38, intervalo 90% = [0.33, 0.42]
+FIM_OK status=0 segundos=24

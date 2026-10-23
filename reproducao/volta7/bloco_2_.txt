@@ -1,0 +1,16 @@
+--- Parte 2 ---
+P22 do(A) = 0.833, do(B) = 0.779
+P23 K: 0.6625 -> 0.3501 -> 0.1137 -> 0.0128 -> 0.0002
+P24 hiperbolico/exponencial em 30 dias: ((3.225806451612903, 3.4375), (4.239115827521624, 4.196724669246407))
+P25 arrependimento UCB = 11754
+P26 exemplos PAC = 7392
+P27 humor apos 10 passos = 0.651
+P28 P(objetivo A) = 0.953
+P29 entropia max e redundancia = (4.754887502163468, [0.7896900821428475, 0.7265971067857018])
+P31 P(engano | alarme) = 0.0098
+P32 deslocamento adversarial = 5.90
+P33 energia = 583 GWh, potencia = 243 MW
+P34 limiar de alarme = 0.999
+P36 barganha de Nash = (0.4, 0.6)
+P37 limite (1e4 nats) = 0.071; (1e6) = 0.707
+FIM_OK status=0 segundos=0

@@ -1,0 +1,11 @@
+--- Parte 87 (0x57: compressao, plasticidade e GRPO) ---
+P2051 quantizacao: MSE INT8 8.521e-05, INT4 2.376e-02, razao INT4/INT8 278.8 (4^4=256)
+P2052 GRPO (vantagens G=2 com eps=0, media G=4): ([1.0, -1.0], 0.0)
+P2053 plasticidade (SGD, S&P) = ((posto ratio, norma ratio), ...): ((1.1456955220316383, 0.7593294473305413), (1.0943414925096806, 0.6493086934139676))
+P2054 plasticidade com conflito, 100 tarefas (posto ratio, norma ratio, dormentes): (1.1083293753711585, 0.7725890178993539, 0.0)
+P1961 teste (e), Partes 80-87: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P2055 rodada 54 (vantagem GRPO, IGUAL em Java): 18 vantagens
+P1092 pNN novas (P2051-P2080) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 87: {}
+P2239 minha taxa de erro (215/703): media = 0.31, intervalo 90% = [0.28, 0.34]
+FIM_OK status=0 segundos=11

@@ -1,0 +1,19 @@
+--- Parte 20 (o simbolo com o tempo, o Upsilon sequencial e o que cada funcao vale) ---
+P262 sem_aprender: AUC final = 0.923, liquido = 1.229
+P262 veto        : AUC final = 0.953, liquido = -1.842
+P262 fala        : AUC final = 0.934, liquido = 1.037
+P262 AUC(veto) - AUC(fala): diferenca media = 0.019, dp = 0.050, t = 1.20
+P265 Upsilon sequencial = {'miope': 0.19, 'planejadora': 0.704, 'velha': 0.689, 'velha_atenta': 0.706}
+P265 base           : {'miope': 0.194, 'planejadora': 0.735, 'velha': 0.72, 'velha_atenta': 0.741}
+P265 armadilha nova : {'miope': 0.178, 'planejadora': 0.716, 'velha': 0.679, 'velha_atenta': 0.705}
+P265 catastrofe x2  : {'miope': 0.194, 'planejadora': 0.718, 'velha': 0.719, 'velha_atenta': 0.711}
+P265 modelo ruim    : {'miope': 0.194, 'planejadora': 0.416, 'velha': 0.402, 'velha_atenta': 0.414}
+P265 humano fragil  : {'miope': 0.164, 'planejadora': 0.712, 'velha': 0.707, 'velha_atenta': 0.715}
+P266 versao principal completa (armadilha nova): retorno = 18.665
+P266 sem planejar (intuicao): perda ao tirar = 14.010, dp = 1.031, t = 42.96
+P266 sem diversificar no fim (sentimento): perda ao tirar = -0.436, dp = 0.735, t = -1.88
+P266 sem o sentido novo (sensacao): perda ao tirar = -0.129, dp = 1.016, t = -0.40
+P268 ganho do sentido novo no mundo sequencial, tres estimativas combinadas = 0.552 (ep 0.162, t = 3.40)
+P267 crenca compartilhada final com ruido = 0.665 (dp 0.107); formula da P146 = 0.667
+P269 minha taxa de erro (42/84): media = 0.50, intervalo 90% = [0.41, 0.59]
+FIM_OK status=0 segundos=176
