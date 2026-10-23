@@ -1,0 +1,5 @@
+
+=== Parte 133: volta 6 do loop (volta 5 contra volta 6) ===
+  P3174 (a régua registrada): diferentes 9 de 1884; categorias {'projeto': 6, 'maquina': 2, 'nota': 0, 'mundo': 1}; mundo [(131, '  P3175 (arquivos sem uso, sem ler saídas como fonte) neste repositório: 321')]
+  P3176 (com a P3175 na lista do projeto): categorias {'projeto': 7, 'maquina': 2, 'nota': 0, 'mundo': 0}; reclassificadas 1
+FIM_OK status=0 segundos=0

@@ -1,0 +1,12 @@
+
+=== Parte 142: Jung nos modulos novos: a enantiodromia do heavy-ball e a compensacao do grupo ===
+  P3193 lambda 1.000: travessias 0; T*theta/pi real
+  P3193 lambda 1.389: travessias 0; T*theta/pi real
+  P3193 lambda 1.931: travessias 0; T*theta/pi real
+  P3193 lambda 2.683: travessias 1; T*theta/pi 1.55
+  P3193 lambda 3.728: travessias 3; T*theta/pi 2.88
+  P3193 lambda 5.179: travessias 4; T*theta/pi 4.07
+  P3193 lambda 7.197: travessias 5; T*theta/pi 5.34
+  P3193 lambda 10.000: travessias 7; T*theta/pi 6.77
+  P3194 (h) maximo de |soma das vantagens| em 10.000 grupos: 3.57e-13
+FIM_OK status=0 segundos=0

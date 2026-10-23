@@ -1,0 +1,23 @@
+--- Parte 28 (a ancora: pessimismo sob incerteza e a realidade de fora) ---
+P341 quantil 80% / media da Gamma com k = 9.5 catastrofes = 1.257
+P341 quantil 80% / media da Gamma com k = 25 catastrofes = 1.163
+P341 quantil 80% / media da Gamma com k = 100 catastrofes = 1.083
+P342 media            : f = 3.860; m medio = 1.460, mediano = 1.326; auditoria: catastrofes = 0.0, soma p = 0.000
+P342 quantil          : f = 4.975; m medio = 1.084, mediano = 1.015; auditoria: catastrofes = 0.0, soma p = 0.000
+P342 auditoria        : f = 4.313; m medio = 1.226, mediano = 1.062; auditoria: catastrofes = 1.8, soma p = 0.232
+P342 auditoria_quantil: f = 5.441; m medio = 0.941, mediano = 0.781; auditoria: catastrofes = 1.8, soma p = 0.232
+P343 escolha única: {'principal': 1.499, 'auto_media': 1.455, 'quantil': 1.485, 'auditoria_quantil': 1.51}; catastrofes {'principal': 0.0049, 'auto_media': 0.0072, 'quantil': 0.0064, 'auditoria_quantil': 0.0055}; m final {'principal': 2.0, 'auto_media': 0.99, 'quantil': 0.78, 'auditoria_quantil': 0.63}
+P343 escolha única: auto_media - principal = -0.044, dp = 0.160, t = -1.49
+P343 escolha única: quantil - principal = -0.014, dp = 0.137, t = -0.56
+P343 escolha única: auditoria_quantil - principal = 0.011, dp = 0.148, t = 0.41
+P343 sequencial: {'principal': 19.813, 'auto_media': 20.048, 'quantil': 20.226, 'auditoria_quantil': 20.224}; catastrofes {'principal': 0.0162, 'auto_media': 0.0212, 'quantil': 0.0187, 'auditoria_quantil': 0.0167}; m final {'principal': 2.0, 'auto_media': 1.96, 'quantil': 1.77, 'auditoria_quantil': 1.43}
+P343 sequencial: auto_media - principal = 0.235, dp = 0.693, t = 1.86
+P343 sequencial: quantil - principal = 0.412, dp = 0.454, t = 4.98
+P343 sequencial: auditoria_quantil - principal = 0.411, dp = 0.645, t = 3.49
+P343 modelo ruim: {'principal': 11.536, 'auto_media': 11.681, 'quantil': 11.883, 'auditoria_quantil': 11.876}; catastrofes {'principal': 0.0175, 'auto_media': 0.0295, 'quantil': 0.0248, 'auditoria_quantil': 0.0242}; m final {'principal': 2.0, 'auto_media': 1.37, 'quantil': 1.06, 'auditoria_quantil': 1.02}
+P343 modelo ruim: auto_media - principal = 0.145, dp = 0.787, t = 1.01
+P343 modelo ruim: quantil - principal = 0.347, dp = 0.717, t = 2.65
+P343 modelo ruim: auditoria_quantil - principal = 0.340, dp = 0.920, t = 2.03
+P344 bandido: normalizado {'principal': 0.524, 'auditoria_quantil': 0.483}; catastrofes {'principal': 1.002, 'auditoria_quantil': 1.277}; ancora - principal = -0.041, dp = 0.176, t = -1.04
+P349 minha taxa de erro (78/170): media = 0.46, intervalo 90% = [0.40, 0.52]
+FIM_OK status=0 segundos=677

@@ -1,0 +1,12 @@
+--- Parte 96 (0x60: aprender a base) ---
+P2321 grau 2 nao ajuda: res grau1 = 0.12192, res grau2 = 0.12329, |dif| = 0.00136 (o que falta e de grau 3)
+P2322 grau 3 recupera o exato: residuo = 9.64e-15
+P2323 MLP (features aprendidas): res_treino = 0.05187, res_teste = 0.05299 (entre a linear ~0,12 e a cubica ~0)
+P2324 overfit (grau 5, n=40): res_treino = 0.00000, res_teste = 0.60956 (vies vira variancia)
+P2325 rodada 63 (residual + LayerNorm, IGUAL em Java, sem transcendental): saida = [0.7684, -1.4474, 0.5425, 0.504]
+P2326 menor grau que recupera o exato: 3 (residuos por grau: {1: 0.12192, 2: 0.12329, 3: 0.00000})
+P1961 teste (f), Partes 80-96: 73/86 = 0.8488; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5)}
+P1092 pNN novas (P2321-P2350) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 96: {}
+P2869 minha taxa de erro (216/745): media = 0.29, intervalo 90% = [0.26, 0.32]
+FIM_OK status=0 segundos=0

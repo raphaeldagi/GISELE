@@ -18,7 +18,7 @@ class TestesParte140(unittest.TestCase):
 
     def test_p3188_auditoria_do_leitor_v5(self):
         n, ac, mudam, por = c.p3188_auditoria_do_leitor_v5()
-        self.assertEqual((n, ac, mudam), (83, 76, 0))
+        self.assertEqual((n, ac, mudam), (91, 84, 0))  # (83, 76) até a Parte 135 ganhar 8 vereditos (Parte 144)
 
     def test_p3189_dicionario_como_fluxo(self):
         r, z, met, N, mu = c.p3189_dicionario_como_fluxo(k=200, reservatorios=20)

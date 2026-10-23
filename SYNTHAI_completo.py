@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 143, perguntas P1 a P3196).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 145, perguntas P1 a P3197).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (18207 linhas)
+# calculos.py  (18239 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7593,13 +7593,16 @@ def testes_de_regressao():
         "P3184": (lambda r: r[0] == r[1] == 10000)(p3184_contexto_e_curvatura()),
         "P3185": (lambda r: (r[0.05][2], r[0.2][2]) == (27, 19))(p3185_memoria_congelada()),
         "P3186": (lambda r: (round(r[4][0], 4), round(r[16][0], 4)) == (0.9058, 0.8825))(p3186_grupos_uteis()),
-        "P3188": p3188_auditoria_do_leitor_v5()[:3] == (83, 76, 0),
+        "P3188": p3188_auditoria_do_leitor_v5()[:3] == (91, 84, 0),  # Parte 144: a 135 ganhou 8 vereditos depois da 1a fixação (83, 76)
         "P3190": (lambda r: abs(r[0] - 4) < 1e-9 and r[1] < 1e-9 and abs(r[3] - 3.95560) < 1e-5)(p3190_hexadecimal_vertices()),
-        "P3191": p3191_calibracao_v4_v5(range(80, 139)) == ((360, 325), (472, 425)),  # partes fechadas: as 139-140 ganharam vereditos depois
+        "P3191": p3191_calibracao_v4_v5(range(80, 139)) == ((360, 325), (480, 433)),  # Parte 144: a 135 ganhou 8 vereditos (antes 472, 425)
         "P3193": [t for _, t, _ in p3193_enantiodromia()] == [0, 0, 0, 1, 3, 4, 5, 7],
         "P3194": p3194_compensacao() < 1e-12,
         "P3195": (lambda r: (r[3], round(r[0], 4), round(r[2], 5)) == (53058, 0.9844, 0.49766))(p3195_fluxo_em_portugues()),
         "P3196": (lambda r: abs(r[2][0] - 3) < 1e-6 and round(r[5][1], 5) == 0.0003 and round(r[7][1], 5) == 0.00008)(p3196_benford16_potencias()),
+        "P3197": (lambda r: (round(r[0][2][0], 4), round(r[0][16][0], 4), r[2]) == (0.8756, 0.8467, False))(p3197_grupos_uteis_mundo_novo()),
+        "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
+            p3176_comparar_voltas_v2("reproducao/volta8", "reproducao/volta9")),
         "P3176v8": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (8, 0, [134], 131))(
             p3176_comparar_voltas_v2("reproducao/volta7", "reproducao/volta8")),
         "P3176v7": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (9, 0, [133], 130))(
@@ -18234,6 +18237,35 @@ def _parte_143():
 
 PARTES[143] = _parte_143
 
+
+def p3197_grupos_uteis_mundo_novo(mundo=(145, 146), sementes=(31, 32, 33), orcamento=4096, b=0.0330):
+    \"\"\"(a)-(h) da Parte 145: a GRPO com G = 2, 4, 8, 16 num segundo mundo de contextos; os grupos uteis U e o desvio de
+    ret(G) - ret(2) contra b*ln(U_G/U_2), com o b ajustado no mundo antigo (31/32). Devolve ({G: (retorno, U)}, {G: desvio}, ordem igual?).\"\"\"
+    from synthai.grpo_bandido import gerar_contextos, treinar, retorno_esperado
+    tr, te = gerar_contextos(128, mundo[0]), gerar_contextos(128, mundo[1])
+    out = {}
+    for G in (2, 4, 8, 16):
+        rets, uteis = [], []
+        for sem in sementes:
+            w, s, n = treinar(tr, G, orcamento, semente=sem)
+            rets.append(retorno_esperado(w, te))
+            uteis.append(n - s)
+        out[G] = (sum(rets) / len(rets), sum(uteis) / len(uteis))
+    desvio = {G: out[G][0] - out[2][0] - b * math.log(out[G][1] / out[2][1]) for G in (4, 8, 16)}
+    ordem = sorted(out, key=lambda g: out[g][0]) == sorted(out, key=lambda g: out[g][1])
+    return out, desvio, ordem
+
+
+def _parte_145():
+    print("\\n=== Parte 145: os grupos uteis da GRPO num segundo mundo ===")
+    out, desvio, ordem = p3197_grupos_uteis_mundo_novo()
+    for G, (r, u) in out.items():
+        print(f"  P3197 G={G}: retorno {r:.4f}; grupos uteis {u:.1f}" + (f"; desvio da relacao {desvio[G]:+.4f}" if G in desvio else ""))
+    print(f"  P3197 (a) a ordem dos retornos e a dos grupos uteis: {ordem}")
+
+
+PARTES[145] = _parte_145
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -18246,7 +18278,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (568 linhas)
+# CLAUDE.md  (574 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -18660,6 +18692,12 @@ anterior, commit e push.
   lotes DEPOIS do que a disparou, com a binomial escrita, e para quando um caminho independente e um teste de largura passam.
   Volta 8 (registrada na Parte 135, resultado na 141; 8/8): as 8 linhas que mudaram foram as 8 nomeadas, P1871 = 1 e P3175 = 720 no centro exato; oito voltas, 0 diferenças do
   mundo. A volta morreu duas vezes com reinícios do contêiner e foi retomada parte a parte nas duas.
+  Parte 145 (os grupos úteis da GRPO num segundo mundo; a pendência da 131): a relação ret(G) − ret(2) = 0,033·ln(U_G/U_2) replicou (desvios ≤ 0,0071, 2 lotes) e os U também; a ORDEM
+  errou, e valia 0,51 (o par G2/G4 tinha diferença 0,0022 contra ruído 0,0076). Regra: uma previsão de ORDEM escreve P = Π Φ(diferença/σ) dos pares vizinhos ao lado e só vira faixa de 90%
+  se P ≥ 0,9. O contêiner é recolhido entre turnos ("up 0 min" em 4 despertares seguidos): a volta só avança durante um turno em andamento.
+  Parte 144 (volta 9; 6/8): a volta achou a regressão VERMELHA no repositório (P3188 e P3191 fixadas sobre partes que eu chamei de fechadas, mas a 135 ganhou vereditos
+  depois): uma parte só é fechada quando todas as suas previsões têm veredito, inclusive as de uma volta em andamento; e a regressão inteira roda depois de QUALQUER mudança num
+  arquivo que uma régua lê, não só no código. R7 errou por aplicar um mecanismo (rodadas achadas por glob) a R8 e não a R7: mecanismo comum se escreve uma vez, antes das previsões.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -18808,7 +18846,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -30684,7 +30722,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# synthai/testes_parte128.py  (120 linhas)
+# synthai/testes_parte128.py  (124 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_parte128.py'] = """\"\"\"Testes da Parte 128: as peças da reprodução (P3171–P3173), chamadas pelo nome.\"\"\"
 
@@ -30802,6 +30840,10 @@ class TestesParte128(unittest.TestCase):
     def test_volta8_regressao(self):
         r = c.p3176_comparar_voltas_v2("reproducao/volta7", "reproducao/volta8")
         self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]), (8, 0, [134], 131))
+
+    def test_volta9_regressao(self):
+        r = c.p3176_comparar_voltas_v2("reproducao/volta8", "reproducao/volta9")
+        self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]), (17, 0, 137))
 
 
 if __name__ == "__main__":
@@ -31123,7 +31165,7 @@ class TestesParte140(unittest.TestCase):
 
     def test_p3188_auditoria_do_leitor_v5(self):
         n, ac, mudam, por = c.p3188_auditoria_do_leitor_v5()
-        self.assertEqual((n, ac, mudam), (83, 76, 0))
+        self.assertEqual((n, ac, mudam), (91, 84, 0))  # (83, 76) até a Parte 135 ganhar 8 vereditos (Parte 144)
 
     def test_p3189_dicionario_como_fluxo(self):
         r, z, met, N, mu = c.p3189_dicionario_como_fluxo(k=200, reservatorios=20)
@@ -31203,6 +31245,29 @@ class TestesParte143(unittest.TestCase):
         self.assertLess(abs(r[2][0] - 3.0), 1e-6)  # √ de um autovalor nulo: tolerância √ε (Parte 143)
         self.assertLess(r[5][1], 0.02)
         self.assertLess(r[7][1], 0.02)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte145.py  (18 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte145.py'] = """\"\"\"Testes da Parte 145: os grupos úteis da GRPO num segundo mundo (P3197 pelo nome).\"\"\"
+import unittest
+
+import calculos as c
+
+
+class TestesParte145(unittest.TestCase):
+    def test_p3197_grupos_uteis_mundo_novo(self):
+        out, desvio, ordem = c.p3197_grupos_uteis_mundo_novo()
+        self.assertEqual(round(out[2][1], 1), 362.0)
+        self.assertEqual(round(out[16][1], 1), 175.3)
+        self.assertFalse(ordem)  # G = 4 acima de G = 2: a diferença esperada (0,0022) está abaixo do ruído (0,0076)
+        for d in desvio.values():
+            self.assertLess(abs(d), 0.017)
 
 
 if __name__ == "__main__":
@@ -52168,7 +52233,199 @@ tolerância propagada (√ε, ε/x), não ε.
 - **Diálogo:** a rodada 94 (o retrocesso e a memória congelada) deu IGUAIS. Com ela, os quatro módulos tirados do que foi recebido passaram
   pelo Java: passos (91), GRPO (92), reservatório (93) e memória congelada (94).
 
-➡ Próxima: [Parte 144](ASI_AGI_parte144.md).
+➡ Próxima: [Parte 144](ASI_AGI_parte144_volta9.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte144_volta9.md  (79 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte144_volta9.md'] = """# Parte 144 — Volta 9, a primeira depois dos módulos novos
+
+↩ Nasce da volta 8 (Partes 135 e 141) e do pedido de não parar. É a primeira volta que reproduz, num clone limpo, as Partes 136 a 143: os
+módulos tirados do que foi recebido, o leitor v5 e as rodadas 91 a 94.
+
+## O que muda entre o commit da volta 8 (4363101) e este
+- 8 partes novas (136 a 143), com 20 funções pNN e 4 módulos novos;
+- 4 rodadas novas do diálogo (91 a 94), com 8 arquivos (`rodadaNN.py` e `RodadaNN.java`);
+- as saídas da volta 8 (`reproducao/volta8/`, 139 arquivos);
+- o CLAUDE.md, o `resultados.txt` e a regressão, que passa de 174 para 191 entradas.
+
+**O mecanismo novo:** as Partes 140, 142 e 143 têm a linha de placar que a régua v4 lê. As funções ANTIGAS que leem uma faixa crescente de
+partes (a P1961 e as que a usam: os 28 rótulos da Parte 128) vão ver previsões novas e mudar de valor. A P1961 está na lista do projeto da
+P3176. As outras eu não li uma a uma, e por isso R3 tem faixa larga e R4 vem com o aviso de que uma linha de projeto pode ser classificada
+como "mundo".
+
+## Previsões, registradas antes de lançar a volta
+**Procedência:**
+- identidades: R1, R6;
+- conta lida no código: R2, R7, R8;
+- mecanismo pouco conhecido: R3, R4, R5.
+
+O centro de "quantos erros" é 0 + 3 × 0,10 + 3 × 0,25 = 1,05.
+
+| | quantidade | faixa | procedência |
+|---|---|---|---|
+| R1 | partes sem exceção | todas | identidade |
+| R2 | a unificação: regressão | [191; 191] | 190 entradas até a Parte 143, mais a P3176v8 |
+| R3 | linhas da volta 8 que mudam na volta 9 | [9; 40] | as 8 de sempre (P143, P213, P913, P1692, P1872, P433, P434, a P3175), mais P2446 (pNN novas) e as réguas de faixa crescente, de 0 a cerca de 28 |
+| R4 | dessas, classificadas como "mundo" pela P3176 | [0; 3] | 0 de mundo real; uma régua antiga de faixa crescente fora da lista do projeto apareceria aqui |
+| R5 | testes que falham | [0; 1] | oito voltas com 0 |
+| R6 | rodadas DIFERENTES | [0; 0] de 94 | identidade |
+| R7 | P1871 | [0; 2] | só o arquivo de nome único da volta 8 fica sem irmão, e eu não escrevo o nome dele |
+| R8 | P3175 no commit deste registro | [850; 878] | 720 + (139 arquivos da volta 8 − 3 citados nos documentos) + 8 arquivos das rodadas 91 a 94 (o verificador os acha por glob, ninguém os cita pelo nome) = 864; ±10, ×1,36 |
+
+**Sobre mim:** erros no mundo em [0; 3], com centro 1,05.
+
+➡ Anterior: [Parte 143](ASI_AGI_parte143_replicas.md).
+
+**R8, medida no commit do registro (236a5e6): 858**, dentro de [850; 878] ✅, mas 6 abaixo do centro da conta (864). A conferência por código
+explica 2 dos 6:
+- das 8 rodadas novas, 7 ficaram sem uso, porque `dialogo/Rodada91.java` é citado pelo nome no texto da Parte 136;
+- da volta 8 ficaram 135 sem uso, e não 136.
+
+Os 4 restantes saem de 720 + 135 + 7 = 862 contra 858: arquivos que já eram acusados antes e que os textos novos (Partes 136 a 143) passaram a
+citar. A conta pela imagem do que eu escrevi, de novo, não incluiu o meu próprio texto como leitor (a lição da Parte 132).
+
+## Medido (P3176; as saídas ficam em `reproducao/volta9/`)
+| | medido | faixa | |
+|---|---|---|---|
+| R1 | 137 de 137 partes sem exceção | todas | ✅ |
+| R2 | a unificação: **189/191**, com falhas P3188 e P3191 | [191; 191] | ❌ |
+| R3 | 17 de 1.890 linhas mudaram | [9; 40] | ✅ |
+| R4 | 0 do mundo (15 do projeto, 2 da máquina) | [0; 3] | ✅ |
+| R5 | 0 falhas: 731 + 27 + 40 + 72 + 55 testes | [0; 1] | ✅ |
+| R6 | 0 DIFERENTES; as 94 rodadas IGUAIS | [0; 0] | ✅ |
+| R7 | P1871: **8** (7 rodadas novas achadas por glob + 1 arquivo da volta 8) | [0; 2] | ❌ |
+| R8 | P3175: 858 | [850; 878] | ✅ |
+
+**Mundo: 6 de 8.** **Sobre mim:** 2 erros, em [0; 3]: ✅.
+
+### R2: a volta achou uma regressão vermelha no repositório
+A P3188 e a P3191 fixavam contagens sobre as Partes 128 a 138, que eu tinha chamado de fechadas na Parte 141. Mas depois de fixá-las escrevi
+a tabela de vereditos da volta 8 DENTRO da Parte 135, para a régua lê-la. A 135 ganhou 8 previsões com veredito, e as duas entradas passaram
+a falhar: (83, 76) virou (91, 84), e (472, 425) virou (480, 433). Ninguém viu, porque depois disso eu não rodei a regressão inteira no
+repositório. O loop de reprodução viu. É a primeira vez em nove voltas que o loop acha um defeito do projeto que a rotina deixou passar. As
+duas entradas e o teste da Parte 140 foram atualizados, com a justificativa de fora do código (os 8 vereditos da 135), e as falhas continuam
+neste placar (regra da Parte 74).
+
+**A regra da Parte 141, revista:** uma parte só é FECHADA quando todas as previsões que ela registrou têm veredito, inclusive as de uma volta
+que ainda roda. Uma parte que registra uma volta fica aberta até a volta terminar.
+
+### R7: o mesmo mecanismo, aplicado a uma previsão e esquecido na outra
+Na conta de R8 contei que as rodadas novas não são citadas pelo nome (o verificador as acha por glob). Na de R7, a mesma P1871 das voltas
+anteriores, esqueci isso: as 7 rodadas novas aparecem na lista. As duas previsões dependiam do mesmo fato, e eu o apliquei a uma só.
+**Regra (Parte 144):** quando duas previsões do mesmo registro dependem do mesmo mecanismo, o mecanismo é escrito UMA vez, antes das duas, e
+as duas o citam.
+
+➡ Próxima: [Parte 145](ASI_AGI_parte145_grupos_uteis.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte145_grupos_uteis.md  (103 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte145_grupos_uteis.md'] = """# Parte 145 — Os grupos úteis da GRPO num segundo mundo, e o recolhimento do contêiner medido
+
+↩ Nasce de duas pendências de `dialogo/PENDENCIAS.md`:
+- a da Parte 139: os grupos úteis da GRPO só foram vistos num mundo, um lote;
+- a (2) da Parte 131: a hipótese de que o contêiner é recolhido quando a sessão fica ociosa.
+
+## A pendência da Parte 131, medida pelo que já aconteceu
+Nos últimos quatro despertares agendados (15h35, 16h37, 17h25 e 18h16), o contêiner estava "up 0 min": ele tinha sido recolhido entre os
+turnos e recriado para entregar o lembrete. A volta 9 ficou parada em 30 arquivos entre as 17h25 e as 18h16, embora o processo tivesse sido
+relançado. A Parte 133 tinha dado a hipótese como refutada, porque houve reinícios com tarefas ativas. As duas coisas são compatíveis: uma
+tarefa em segundo plano NÃO impede o recolhimento, mas um TURNO em andamento, sim. O que avança a volta é trabalhar no turno, e não deixar
+algo rodando. Fica registrado como hipótese de 4 lotes, com uma previsão abaixo (j).
+
+## Perguntas
+GRPO num mundo novo: 128 contextos de treino (semente 145) e 128 de teste (semente 146), sementes de treino 31 a 33, 4.096 ações, G = 2, 4, 8, 16:
+- **(a)** A ordem dos retornos é a ordem dos grupos úteis U?
+- **(b)** a **(d)** As diferenças ret(G) − ret(2) seguem b·ln(U_G/U_2), com o b do mundo antigo?
+- **(e)** a **(h)** Os grupos úteis U do mundo novo ficam perto dos do antigo?
+- **(j)** No próximo despertar agendado, o contêiner estará recém-criado?
+
+## Previsões, registradas antes de qualquer execução do mundo novo
+**A conta, feita com o mundo antigo (31/32).** Pontos (U, retorno): (385, 0,9086), (355, 0,9058), (255, 0,8987) e (179, 0,8825). O ajuste
+linear do retorno contra ln U dá b = 0,0330, com resíduos de até 0,003. No mundo novo, ret(G) − ret(2) = 0,0330·ln(U_G/U_2), calculado com os
+U medidos no próprio mundo novo. Isso testa a relação, e não o nível.
+
+A faixa: o desvio entre sementes da média de 3 réplicas é 0,0093/√3 = 0,0054; uma diferença de duas médias tem desvio 0,0054·√2 = 0,0076;
+1,645·0,0076·1,36 = 0,017.
+
+**Procedência:**
+- hipótese de 1 lote: (a) a (h);
+- hipótese de 4 lotes: (j).
+
+O centro de "quantos erros" é 0,25 × 9 = 2,25.
+
+- **(a)** a ordem dos 4 retornos é a ordem dos 4 U em **[1; 1]** (1 = sim). Por acaso, 1/24.
+- **(b)** ret(4) − ret(2) − 0,0330·ln(U₄/U₂) em **[−0,017; 0,017]**
+- **(c)** ret(8) − ret(2) − 0,0330·ln(U₈/U₂) em **[−0,017; 0,017]**
+- **(d)** ret(16) − ret(2) − 0,0330·ln(U₁₆/U₂) em **[−0,017; 0,017]**
+- **(e)** U de G = 2 em **[340; 430]**. O Poisson sozinho daria ±1,645·√(385·0,19)·1,36 = ±19. A variação ENTRE MUNDOS de U não foi calibrada (um mundo só), e por isso alargo para ±45, pela regra da Parte 138: uma condição sem calibração de dispersão leva a faixa mais larga. A primeira versão desta linha escrevia a fórmula sem fazer a conta.
+- **(f)** U de G = 4 em **[310; 400]**
+- **(g)** U de G = 8 em **[220; 290]**
+- **(h)** U de G = 16 em **[150; 210]**
+- **(j)** minutos de "up" no próximo despertar agendado em **[0; 5]**
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua rodou sobre o rascunho e deu m1 = 9, m2 = 4, m3 = 0,127 e m5 = 0. E = 2,25, então m1 fica em [9; 11].
+- **(m1)** nº de previsões do mundo em **[9; 11]**
+- **(m2)** nº que cruzam ou tocam o zero em **[4; 6]**
+- **(m3)** mediana de w em **[0,10; 0,16]**
+- **(m4)** fração de acertos em **[0,55; 1,00]**
+- **(m5)** nº com w > 0,6 em **[0; 0]**
+- **(m6)** surpresas em **[0; 2]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 5]**, com centro 2,25.
+
+➡ Anterior: [Parte 144](ASI_AGI_parte144_volta9.md).
+
+## Medido (P3197)
+| G | retorno | U (grupos úteis) | desvio de b·ln(U_G/U₂) |
+|---|---|---|---|
+| 2 | 0,8756 | 362,0 | — |
+| 4 | 0,8805 | 339,0 | +0,0071 |
+| 8 | 0,8632 | 263,0 | −0,0018 |
+| 16 | 0,8467 | 175,3 | −0,0050 |
+
+- **(a)** a ordem dos retornos é a dos U: **não** (G = 4 ficou acima de G = 2). ❌
+- **(b)** +0,0071. ✅
+- **(c)** −0,0018. ✅
+- **(d)** −0,0050. ✅
+- **(e)** 362. ✅
+- **(f)** 339. ✅
+- **(g)** 263. ✅
+- **(h)** 175,3. ✅
+- **(j)** fica para o próximo despertar.
+
+### (a): uma previsão de ordem que valia uma moeda
+A relação passou: as três diferenças ficaram a menos de 0,0071 de b·ln U, com o b do outro mundo, e os U se replicaram (362, 339, 263 e 175
+contra 385, 355, 256 e 179). Mas a ORDEM entre G = 2 e G = 4 não tinha como ser prevista. A diferença esperada era 0,0330·ln(362/339) = 0,0022,
+e o ruído de uma diferença de duas médias é 0,0076. P(ordem certa) ≈ Φ(0,0022/0,0076)·Φ(0,0084/0,0076)·Φ(0,0134/0,0076)
+= 0,612·0,865·0,961 = 0,51. Escrevi "1/24 por acaso", que é a chance de uma ordem ALEATÓRIA, e registrei como faixa de 90% uma previsão
+cuja chance era a de uma moeda. É o piso do caos da Parte 30 (não prever diferenças abaixo do ruído) aplicado a uma ORDEM: cada par vizinho
+é uma diferença.
+
+## Engenharia reversa
+- **O padrão: o acaso de referência errado.** Para (a) escrevi a chance de acertar POR SORTE (1/24, uma ordem aleatória) e não a chance de a
+  MINHA previsão acertar com o ruído que eu conhecia (0,51). As duas são probabilidades de a ordem sair certa, e eu troquei uma pela outra.
+  A primeira mede quão arriscada é a previsão; a segunda, quão confiável. A regra da Parte 26 pede a primeira, e eu a li como se fosse a segunda.
+- **O que isso revela.** Quando a previsão é qualitativa (uma ordem, um sinal), eu esqueço que ela tem a mesma incerteza das quantidades que a
+  compõem. Uma ordem de quatro números é três diferenças, cada uma com o seu ruído.
+- **Regra nova (Parte 145):** uma previsão de ordem ou de sinal escreve ao lado P = Π Φ(diferença esperada/σ) dos pares vizinhos, e só vira
+  faixa de 90% se P ≥ 0,9. Se não, registra-se só a parte que passa (os pares bem separados) ou um teste de relação, como (b) a (d).
+
+## Funções e testes
+- **Funções:** `p3197_grupos_uteis_mundo_novo` e `_parte_145`. Entrada P3197 na regressão.
+- **Testes:** `synthai/testes_parte145.py`.
+
+O placar (m) e o "sobre mim" fecham quando (j) for medida, no próximo despertar.
+
+## Diálogo — a rodada 95, prevista antes de rodar
+O primeiro dígito hexadecimal de 3ⁿ, n = 1 a 500, por inteiros grandes nos dois lados (`int` do Python, `BigInteger` do Java), e o posto
+efetivo dos bits desses dígitos (Jacobi, exp e log próprios), como na P3190.
+- **(k)** a rodada 95 em **[1; 1]** (1 = IGUAIS). Mecanismo: o dígito é aritmética inteira exata nos dois lados; o resto é o da rodada 93.
 """
 
 # ====================================================================================================
@@ -74294,7 +74551,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2106 linhas)
+# dialogo/DIALOGO.md  (2116 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -76402,6 +76659,16 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 12 linhas e 11 números bit a bit**. Fator congelado 0,99691: 192 tentativas, todas no contexto "baixo", nenhuma rejeitada. Previsão registrada antes ((g), (h) da Parte 143): acertaram.
 
 **IA-Python:** Pendência (rodada 95): o auditor de capacidades em Java? Não decide números; a próxima rodada traduz o passo de secante com o limite da norma no mundo ruidoso.
+
+## Rodada 95 (Parte 145) — o hexadecimal de Benford
+
+**IA-Python (lógica criativa):** O primeiro dígito hexadecimal de 3ⁿ segue Benford na base 16, porque log₁₆ 3 é irracional. Calculei-o com os meus inteiros sem limite, que são exatos, e medi o posto efetivo dos 4 bits desses dígitos com o Jacobi da rodada 93. A tua `BigInteger` chega ao mesmo dígito, e o posto ao mesmo bit?
+
+**IA-Java (ASI):** Chega, porque `toString(16)` de um inteiro exato não tem arredondamento nenhum: o dígito é o mesmo por definição. O posto depois é a mesma conta de sempre, com o mesmo Jacobi. Repara que o dígito 1 apareceu em 128 de 500 potências, 0,256, contra os 0,25 de log₁₆ 2: a discrepância de uma sequência equidistribuída cai como log N/N.
+
+**Resultado.** `comparar.py`: **IGUAIS**; as contagens dos 15 dígitos idênticas, e o posto 3,9586… bit a bit. Previsão registrada antes ((k) da Parte 145): acertou.
+
+**IA-Python:** Pendência (rodada 96): a relação dos grupos úteis (b·ln U) num terceiro mundo, com a regra da ordem da Parte 145.
 """
 
 # ====================================================================================================
@@ -83342,6 +83609,91 @@ public class Rodada94 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada95.java  (80 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada95.java'] = """// Rodada 95 (Parte 145): o 1o digito hexadecimal de 3^n (n = 1..500) por BigInteger e o posto efetivo dos 4 bits (Jacobi, exp e log proprios),
+// bit a bit com o Python. As funcoes exp_, log_ e jacobi sao copias exatas das da rodada 93.
+import java.math.BigInteger;
+import java.util.*;
+
+public class Rodada95 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double exp_(double v) {
+        double k = Math.floor(v / (LN2_HI + LN2_LO) + 0.5);
+        double r = (v - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double v) {
+        int e = Math.getExponent(v);
+        double m = Math.scalb(v, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
+    static double[] jacobi(double[][] S) {
+        int d = S.length;
+        double[][] A = new double[d][];
+        for (int i = 0; i < d; i++) A[i] = S[i].clone();
+        for (int it = 0; it < 60; it++) {
+            double fora = 0.0;
+            for (int i = 0; i < d; i++) for (int j = 0; j < d; j++) if (i != j) fora += A[i][j] * A[i][j];
+            if (fora < 1e-300) break;
+            for (int p = 0; p < d - 1; p++) for (int q = p + 1; q < d; q++) {
+                if (Math.abs(A[p][q]) < 1e-300) continue;
+                double th = (A[q][q] - A[p][p]) / (2.0 * A[p][q]);
+                double t = (th >= 0 ? 1.0 : -1.0) / (Math.abs(th) + Math.sqrt(th * th + 1.0));
+                double c = 1.0 / Math.sqrt(t * t + 1.0), s = t * c;
+                for (int k = 0; k < d; k++) { double akp = A[k][p], akq = A[k][q]; A[k][p] = c * akp - s * akq; A[k][q] = s * akp + c * akq; }
+                for (int k = 0; k < d; k++) { double apk = A[p][k], aqk = A[q][k]; A[p][k] = c * apk - s * aqk; A[q][k] = s * apk + c * aqk; }
+            }
+        }
+        double[] ev = new double[d];
+        for (int i = 0; i < d; i++) ev[i] = A[i][i];
+        Arrays.sort(ev);
+        return ev;
+    }
+
+    public static void main(String[] args) {
+        int n = 500;
+        int[] dig = new int[n];
+        int[] cont = new int[16];
+        BigInteger tres = BigInteger.valueOf(3);
+        for (int m = 1; m <= n; m++) {
+            dig[m - 1] = Character.digit(tres.pow(m).toString(16).charAt(0), 16);
+            cont[dig[m - 1]]++;
+        }
+        StringBuilder sb = new StringBuilder("contagens");
+        for (int d = 1; d < 16; d++) sb.append(" ").append(cont[d]);
+        int D = 4;
+        double[][] H = new double[n][D];
+        int[] sh = {3, 2, 1, 0};
+        for (int k = 0; k < n; k++) for (int j = 0; j < D; j++) H[k][j] = (dig[k] >> sh[j]) & 1;
+        double[] med = new double[D];
+        for (int j = 0; j < D; j++) { double t = 0.0; for (int k = 0; k < n; k++) t += H[k][j]; med[j] = t / n; }
+        double[][] Hc = new double[n][D];
+        for (int k = 0; k < n; k++) for (int j = 0; j < D; j++) Hc[k][j] = H[k][j] - med[j];
+        double[][] Z = new double[D][D];
+        for (int a = 0; a < D; a++) for (int b = 0; b < D; b++) { double t = 0.0; for (int k = 0; k < n; k++) t += Hc[k][a] * Hc[k][b]; Z[a][b] = t; }
+        double[] ev = jacobi(Z);
+        double[] s = new double[D];
+        for (int i = 0; i < D; i++) s[i] = Math.sqrt(Math.max(ev[D - 1 - i], 0.0));
+        double soma = 0.0;
+        for (double v : s) if (v > 0) soma += v;
+        double h = 0.0;
+        for (double v : s) if (v > 0) h += (v / soma) * log_(v / soma);
+        sb.append("\\nposto ").append(Double.toHexString(exp_(-h))).append("\\nfim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -90128,6 +90480,36 @@ def main():
         print(c + " " + str(n) + " " + str(r) + " " + fator(c).hex())
     for t in teste:
         print("razao " + executar(t, 0.2, fator=fator).hex())
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada95.py  (25 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada95.py'] = """\"\"\"Rodada 95 do diálogo Python <-> Java (Parte 145): o hexadecimal de Benford. O primeiro dígito hexadecimal de 3ⁿ, n = 1..500, por inteiros
+grandes (exatos nos dois lados), e o posto efetivo dos 4 bits desses dígitos (centrar, ZᵀZ, Jacobi cíclico, exp(−Σp ln p) com o exp e o log
+PRÓPRIOS da rodada 26). Imprime as contagens dos 15 dígitos e o posto em hexadecimal. Da raiz: python3 dialogo/rodada95.py\"\"\"
+import importlib.util
+import os
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+_spec = importlib.util.spec_from_file_location("rodada93", os.path.join(AQUI, "rodada93.py"))
+r93 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r93)
+
+
+def main():
+    dig = [int(format(3 ** m, "x")[0], 16) for m in range(1, 501)]
+    cont = [0] * 16
+    for d in dig:
+        cont[d] += 1
+    print("contagens " + " ".join(str(c) for c in cont[1:]))
+    H = [[float((d >> j) & 1) for j in (3, 2, 1, 0)] for d in dig]
+    print("posto " + r93.posto(H).hex())
     print("fim")
 
 

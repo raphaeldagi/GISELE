@@ -1,0 +1,8 @@
+--- Parte 59 (0x3B: o nome e a coisa) ---
+P1211 lemas portugueses com maiuscula: 9176; com irma minuscula: 1805 (0.1967); ['Abelharuco', 'Abenaki', 'Abetarda', 'Ablação', 'Abobrinha', 'Abolicionismo', 'Abril', 'Absinto', 'Abulia', 'Acanthocephala', 'Acasalamento', 'Acessibilidade']
+P1212 palavras que nunca definem outra: 0.6380 de 77503; as que mais definem: [('state', 3113), ('relate', 3074), ('person', 2938), ('act', 2623), ('small', 2507)]
+P1213 persistencia multiplicativa em base 16 (16..16^5-1): maior = 7 (primeiro em 0x3dde); media = 2.3252
+P1092 pNN novas (P1211-P1240) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 59: {59: (3, 0, [])}
+P1239 minha taxa de erro (171/492): media = 0.35, intervalo 90% = [0.31, 0.38]
+FIM_OK status=0 segundos=138

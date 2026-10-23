@@ -1,0 +1,80 @@
+test_antissabotagem (__main__.TestesNexus.test_antissabotagem) ... ok
+test_codificacoes_ida_volta (__main__.TestesNexus.test_codificacoes_ida_volta) ... ok
+test_controle_de_entrada (__main__.TestesNexus.test_controle_de_entrada) ... ok
+test_dinamica_nao_linear (__main__.TestesNexus.test_dinamica_nao_linear) ... ok
+test_geometria_e_identidade (__main__.TestesNexus.test_geometria_e_identidade) ... ok
+test_gradiente_diferencas_finitas (__main__.TestesNexus.test_gradiente_diferencas_finitas) ... ok
+test_jogos (__main__.TestesNexus.test_jogos) ... ok
+test_lexico_manual (__main__.TestesNexus.test_lexico_manual) ... ok
+test_lingua_bijetiva_200_mil (__main__.TestesNexus.test_lingua_bijetiva_200_mil) ... ok
+test_logica (__main__.TestesNexus.test_logica) ... ok
+test_loteria_combinatoria (__main__.TestesNexus.test_loteria_combinatoria) ... ok
+test_nota_calibracao (__main__.TestesNexus.test_nota_calibracao) ... ok
+test_parametros_versao (__main__.TestesNexus.test_parametros_versao) ... ok
+test_probabilidade (__main__.TestesNexus.test_probabilidade) ... ok
+test_sem_vazamento_lexical (__main__.TestesNexus.test_sem_vazamento_lexical) ... ok
+test_algebra (__main__.TestesExtensao.test_algebra) ... ok
+test_autovalores (__main__.TestesExtensao.test_autovalores) ... ok
+test_bandidos (__main__.TestesExtensao.test_bandidos) ... ok
+test_beta_intervalo_exato (__main__.TestesExtensao.test_beta_intervalo_exato) ... ok
+test_bootstrap_qualquer_numero_de_replicas (__main__.TestesExtensao.test_bootstrap_qualquer_numero_de_replicas) ... ok
+test_calibracao (__main__.TestesExtensao.test_calibracao) ... ok
+test_codificacoes_numericas (__main__.TestesExtensao.test_codificacoes_numericas) ... ok
+test_compressao (__main__.TestesExtensao.test_compressao) ... ok
+test_dinamica (__main__.TestesExtensao.test_dinamica) ... ok
+test_distribuicoes (__main__.TestesExtensao.test_distribuicoes) ... ok
+test_dpll_concorda_com_tabela_verdade (__main__.TestesExtensao.test_dpll_concorda_com_tabela_verdade) ... ok
+test_estrategia_fixa_2_2_0_e_exploravel (__main__.TestesExtensao.test_estrategia_fixa_2_2_0_e_exploravel) ... ok
+test_h_m3_combinado (__main__.TestesExtensao.test_h_m3_combinado) ... ok
+test_h_m7_muitas_sementes (__main__.TestesExtensao.test_h_m7_muitas_sementes) ... ok
+test_hamming_corrige_um_bit (__main__.TestesExtensao.test_hamming_corrige_um_bit) ... ok
+test_informacao (__main__.TestesExtensao.test_informacao) ... ok
+test_intervalos_binomiais (__main__.TestesExtensao.test_intervalos_binomiais) ... ok
+test_kuhn_cfr_equilibrio (__main__.TestesExtensao.test_kuhn_cfr_equilibrio) ... ok
+test_kuhn_mccfr (__main__.TestesExtensao.test_kuhn_mccfr) ... ok
+test_leduc_cfr_melhora (__main__.TestesExtensao.test_leduc_cfr_melhora) ... ok
+test_megasena_corrigida (__main__.TestesExtensao.test_megasena_corrigida) ... ok
+test_modelo_de_caracteres (__main__.TestesExtensao.test_modelo_de_caracteres) ... ok
+test_pca (__main__.TestesExtensao.test_pca) ... ok
+test_quantil_tipo7 (__main__.TestesExtensao.test_quantil_tipo7) ... ok
+test_qui2_megasena_fator (__main__.TestesExtensao.test_qui2_megasena_fator) ... ok
+test_rede_recusada (__main__.TestesExtensao.test_rede_recusada) ... ok
+test_regras_kuhn_e_leduc (__main__.TestesExtensao.test_regras_kuhn_e_leduc) ... ok
+test_sat_alem_de_16_variaveis (__main__.TestesExtensao.test_sat_alem_de_16_variaveis) ... ok
+test_sem_rede (__main__.TestesExtensao.test_sem_rede) ... ok
+test_simplex (__main__.TestesExtensao.test_simplex) ... ok
+test_testes_de_hipotese (__main__.TestesExtensao.test_testes_de_hipotese) ... ok
+test_transicao_3sat (__main__.TestesExtensao.test_transicao_3sat) ... ok
+test_velha (__main__.TestesExtensao.test_velha) ... ok
+test_kl_beta (__main__.TestesV31.test_kl_beta) ... ok
+test_lingua_bijetiva_contra_zero_a_esquerda (__main__.TestesV31.test_lingua_bijetiva_contra_zero_a_esquerda) ... ok
+test_mensagem_imutavel (__main__.TestesV31.test_mensagem_imutavel) ... ok
+test_modelagem_por_potencial (__main__.TestesV31.test_modelagem_por_potencial) ... ok
+test_murphy_exata (__main__.TestesV31.test_murphy_exata) ... ok
+test_sonda_colapso (__main__.TestesV31.test_sonda_colapso) ... ok
+test_valor_kuhn_corrigido (__main__.TestesV31.test_valor_kuhn_corrigido) ... ok
+test_amostragem (__main__.TestesGPT.test_amostragem) ... ok
+test_bpe (__main__.TestesGPT.test_bpe) ... ok
+test_causalidade (__main__.TestesGPT.test_causalidade) ... ok
+test_configuracao_invalida (__main__.TestesGPT.test_configuracao_invalida) ... ok
+test_contagem_de_parametros (__main__.TestesGPT.test_contagem_de_parametros) ... ok
+test_corpus (__main__.TestesGPT.test_corpus) ... ok
+test_decora_um_texto (__main__.TestesGPT.test_decora_um_texto) ... ok
+test_gradiente_por_diferencas_finitas (__main__.TestesGPT.test_gradiente_por_diferencas_finitas) ... ok
+test_layernorm (__main__.TestesGPT.test_layernorm) ... ok
+test_linha_de_base_ngrama (__main__.TestesGPT.test_linha_de_base_ngrama) ... ok
+test_paralelo_igual_ao_serial (__main__.TestesGPT.test_paralelo_igual_ao_serial) ... ok
+test_probabilidades_somam_um (__main__.TestesGPT.test_probabilidades_somam_um) ... ok
+test_recorte_do_gradiente (__main__.TestesGPT.test_recorte_do_gradiente) ... ok
+test_retomar_treino_igual_ao_continuo (__main__.TestesGPT.test_retomar_treino_igual_ao_continuo) ... ok
+test_salvar_carregar_e_selo (__main__.TestesGPT.test_salvar_carregar_e_selo) ... ok
+test_taxa_de_aprendizado (__main__.TestesGPT.test_taxa_de_aprendizado) ... ok
+test_tokenizador_caracteres (__main__.TestesGPT.test_tokenizador_caracteres) ... ok
+
+----------------------------------------------------------------------
+Ran 72 tests in 14.469s
+
+OK
+
+{"erros": 0, "falhas": 0, "produto": "SYNTHAI-GPT", "sucesso": true, "testes": 72, "versao": "1.0.0"}
+FIM_OK status=0

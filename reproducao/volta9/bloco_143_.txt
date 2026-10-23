@@ -1,0 +1,7 @@
+
+=== Parte 143: as replicas da Parte 140 (o portugues; 5^n, 7^n, 2^n) ===
+  P3195 N = 53058 glosas em portugues, media 1.7378 palavras; (a) razao 0.9844; (b) z -0.893; (c) 1a metade 0.49766
+  P3196 5^n: posto 3.956513882; |posto - Benford-16| 0.00030
+  P3196 7^n: posto 3.956891010; |posto - Benford-16| 0.00008
+  P3196 2^n: posto 3.000000000; |posto - Benford-16| 0.95681
+FIM_OK status=0 segundos=8

@@ -1,0 +1,5 @@
+
+=== Parte 132: volta 5 do loop (volta 4 contra volta 5, as duas por parte) ===
+  arquivos de parte 128, sem exceção 128; novas [131]
+  linhas 1881, diferentes 8 (0.0043); categorias {'projeto': 6, 'maquina': 2, 'nota': 0, 'mundo': 0}; mundo []
+FIM_OK status=0 segundos=0

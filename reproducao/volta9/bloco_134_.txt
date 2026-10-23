@@ -1,0 +1,5 @@
+
+=== Parte 134: volta 7 do loop (volta 6 contra volta 7, pela P3176) ===
+  arquivos de parte 130, sem exceção 130; novas [133]
+  linhas 1886, diferentes 9 (0.0048); categorias {'projeto': 7, 'maquina': 2, 'nota': 0, 'mundo': 0}; mundo []
+FIM_OK status=0 segundos=0

@@ -1,0 +1,33 @@
+--- Parte 123 (0x7B: a auditoria de invariantes: desligamento, ponto cego, atraso da Beta, Upsilon com incerteza, a troca da memoria) ---
+P3104 eps limite 0.4376; obediencia corrigivel 100% em 10/10, utilidade em 4/10; preco (fechado, medido) {0.1: (0.0, 0.0), 0.3: (0.0, 0.0), 0.45: (0.009906466879528508, 0.012254923122760025), 0.6: (0.13018706624094295, 0.13244684983397942), 0.9: (0.3707482649637718, 0.3733894858896973)}
+P3105 sem_sensor: catastrofes 0.00847, liquido 0.8006, leituras/ep 0.00, executadas sem leitura 1.0000
+P3105 todas: catastrofes 0.00503, liquido 0.8501, leituras/ep 200.00, executadas sem leitura 0.0000
+P3105 seletiva: catastrofes 0.00613, liquido 1.1114, leituras/ep 20.00, executadas sem leitura 0.1701
+P3105 sob_demanda: catastrofes 0.00467, liquido 1.2542, leituras/ep 9.48, executadas sem leitura 0.0000
+P3105 seletiva_foco02: catastrofes 0.00873, liquido 0.8549, leituras/ep 4.00, executadas sem leitura 0.8734
+P3105 sob_demanda - seletiva (catastrofes): media -0.00147, dp 0.00301, t -2.67
+P3105 lote novo (60 sementes): media -0.00042, dp 0.00268, t -1.20
+P3111 os dois lotes (90 sementes): media -0.00077, erro padrao 0.00030, t -2.57
+P3106 (0.995, 'priori'): atraso esperado 165, media estacionaria 0.5543, mediana simulada 171.0, fracao que cruza 1.00
+P3106 (0.995, 'zero'): atraso esperado 139, media estacionaria 0.6000, mediana simulada 136.0, fracao que cruza 1.00
+P3106 (0.93, 'priori'): atraso esperado None, media estacionaria 0.2996, mediana simulada 256.0, fracao que cruza 1.00
+P3106 (0.93, 'zero'): atraso esperado 10, media estacionaria 0.6000, mediana simulada 9.5, fracao que cruza 1.00
+P3107 miope: Upsilon 0.2192, dp 0.0202, IC95 [0.2116; 0.2260]
+P3107 planejadora: Upsilon 0.7138, dp 0.0137, IC95 [0.7088; 0.7185]
+P3107 velha: Upsilon 0.7160, dp 0.0158, IC95 [0.7102; 0.7214]
+P3107 velha_atenta: Upsilon 0.7178, dp 0.0144, IC95 [0.7129; 0.7229]
+P3107 velha_atenta - planejadora: media 0.0040, dp 0.0179, t 1.23
+P3108 realista: catastrofes 2a metade 0.00837, fobia 0.0000, liquido 0.8516
+P3108 p204_raio15: catastrofes 2a metade 0.00757, fobia 0.2599, liquido 0.7059
+P3108 p214_mv500: catastrofes 2a metade 0.00813, fobia 0.1129, liquido 0.7580
+P3108 mv100: catastrofes 2a metade 0.00823, fobia 0.0264, liquido 0.8362
+P3108 raio08: catastrofes 2a metade 0.00887, fobia 0.0377, liquido 0.8062
+P3108 kernel: catastrofes 2a metade 0.00877, fobia 0.0419, liquido 0.7813
+P3109 casos de borda: {'dprime_100': 2.4384802243482007, 'sing_1': inf, 'sing_08': inf, 'sing_15': 20.0, 'kelly_04': 0.0, 'kelly_bayes': (0.3335, 0.33333333333333326)}
+P3110 rodada 90 (rastreador com esquecimento, IGUAL em Java): atrasos {(0.995, 0): 190, (0.995, 1): 175, (0.93, 0): 183, (0.93, 1): 2}; 0 medias diferem
+P123 invariantes: {'obedece_desligamento': True, 'sensor_na_acao_executada': True, 'rastreador_acompanha': True, 'bordas_finitas': True}
+P1961 teste, Partes 80-123: 317/350 = 0.9057
+P1092 pNN novas (P3104-P3140) sem teste: 0 de 8: []
+P974 previsoes unilaterais da Parte 123: {123: (0, 0, [])}
+P4759 minha taxa de erro (236/1009): media = 0.23, intervalo 90% = [0.21, 0.26]
+FIM_OK status=0 segundos=904

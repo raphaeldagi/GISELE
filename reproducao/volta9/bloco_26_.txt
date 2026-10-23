@@ -1,0 +1,25 @@
+--- Parte 26 (a constante que faltava: os termos da conta, um por um) ---
+P322 escolha única gradiente: L_ef = 51.8; dd valor = 0.468, com o plano = 0.468; f = 1.606 (aceitas 1.606); m: P316 = 2.62, L = 2.53, plano = 2.62, tudo = 2.53
+P322 escolha única newton   : L_ef = 51.9; dd valor = 0.364, com o plano = 0.364; f = 6.146 (aceitas 6.146); m: P316 = 0.53, L = 0.51, plano = 0.53, tudo = 0.51
+P322 escolha única local    : L_ef = 51.9; dd valor = 0.421, com o plano = 0.421; f = 2.516 (aceitas 2.516); m: P316 = 1.51, L = 1.45, plano = 1.51, tudo = 1.45
+P322 sequencial gradiente: L_ef = 66.2; dd valor = 0.948, com o plano = 0.696; f = 0.655 (aceitas 0.655); m: P316 = 13.03, L = 9.84, plano = 9.56, tudo = 7.22
+P322 sequencial newton   : L_ef = 67.4; dd valor = 0.841, com o plano = 0.587; f = 4.948 (aceitas 4.948); m: P316 = 1.53, L = 1.14, plano = 1.07, tudo = 0.79
+P322 sequencial local    : L_ef = 66.5; dd valor = 0.897, com o plano = 0.607; f = 3.311 (aceitas 3.311); m: P316 = 2.44, L = 1.83, plano = 1.65, tudo = 1.24
+P322 catástrofe x2 gradiente: L_ef = 65.8; dd valor = 0.988, com o plano = 0.792; f = 1.182 (aceitas 1.182); m: P316 = 7.53, L = 5.72, plano = 6.03, tudo = 4.58
+P322 catástrofe x2 newton   : L_ef = 65.3; dd valor = 0.925, com o plano = 0.767; f = 4.556 (aceitas 4.556); m: P316 = 1.83, L = 1.40, plano = 1.51, tudo = 1.16
+P322 catástrofe x2 local    : L_ef = 65.8; dd valor = 0.969, com o plano = 0.707; f = 1.978 (aceitas 1.978); m: P316 = 4.41, L = 3.35, plano = 3.22, tudo = 2.44
+P323 modelo ruim gradiente: m pela conta corrigida = 5.811
+P323 modelo ruim newton   : m pela conta corrigida = 0.755
+P323 modelo ruim local    : m pela conta corrigida = 3.134
+P323 humano frágil gradiente: m pela conta corrigida = 7.491
+P323 humano frágil newton   : m pela conta corrigida = 0.995
+P323 humano frágil local    : m pela conta corrigida = 2.077
+P324 modelo ruim gradiente: retorno {0.5: 10.098, 1.0: 10.906, 2.0: 11.504, 4.0: 11.723, 8.0: 11.809}; melhor m = 8.0
+P324 modelo ruim newton   : retorno {0.5: 11.635, 1.0: 11.471, 2.0: 11.43, 4.0: 10.944, 8.0: 10.437}; melhor m = 0.5
+P324 modelo ruim local    : retorno {0.5: 11.277, 1.0: 11.751, 2.0: 12.306, 4.0: 11.704, 8.0: 11.44}; melhor m = 2.0
+P324 humano frágil gradiente: retorno {0.5: 18.277, 1.0: 18.829, 2.0: 19.483, 4.0: 19.64, 8.0: 19.456}; melhor m = 4.0
+P324 humano frágil newton   : retorno {0.5: 19.859, 1.0: 19.939, 2.0: 19.864, 4.0: 19.749, 8.0: 19.55}; melhor m = 1.0
+P324 humano frágil local    : retorno {0.5: 19.453, 1.0: 19.919, 2.0: 20.111, 4.0: 19.51, 8.0: 19.414}; melhor m = 2.0
+P325 conta: acertos = 6/6, chance ao acaso = 0.0041, bits = 7.93, |log2| medio = 0.445; ingenuo: 6/6, chance = 0.0207, bits = 5.59, |log2| medio = 0.667
+P329 minha taxa de erro (70/155): media = 0.45, intervalo 90% = [0.39, 0.52]
+FIM_OK status=0 segundos=318
