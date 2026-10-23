@@ -118,3 +118,83 @@ caminho. Registrado antes de rodar:
 2. mais 1.000 reservatórios (sementes 142000+), faixa [0,49884; 0,50116].
 
 Se só o reservatório desviar, o defeito está nele. Se os dois desviarem, está na régua da metade.
+
+**Os dois caminhos:**
+- `random.sample`: 0,500488, z = 0,97, dentro da faixa: ✅;
+- os 1.000 reservatórios novos: 0,499468, z = −0,76: ✅.
+
+Os 1.600 reservatórios juntos dão z ≈ 1,2. Era cauda, e o reservatório é cego à ordem, como o algoritmo R garante. Dois lotes de 300 caíram
+do mesmo lado por acaso. O lote maior desfez isso; não foi preciso supor nenhum mecanismo. É a segunda vez seguida em que a regra "trocar o
+caminho, não só a semente" separa uma cauda de um defeito (a primeira foi a Parte 137).
+
+Do mundo: (a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅
+
+**Mundo: 8 de 9** no registro, mais 2 de 3 nos lotes de (c): 10 de 12.
+
+### A calibração, recalculada pela régua nova (P3191)
+Nas Partes 80 a 140:
+- **leitor v4:** 325 de 360 = 0,903;
+- **leitor v5:** 425 de 472 = 0,900.
+
+A v5 vê 112 previsões a mais: as das Partes 126 a 138, que estavam em tabela. Elas acertaram 100 de 112 = 0,893. As partes invisíveis eram
+tão calibradas quanto as visíveis, e a calibração da série não estava enganada. Mas era incompleta por 24% das previsões, sem que nada
+avisasse.
+
+### As contas, linha por linha
+- **(a)** N = 117.659 glosas, média 12,4166 palavras. O desvio fechado é σ/√500·√((117.659 − 500)/117.658); a razão medida foi 1,0129.
+- **(c)** A primeira metade tem 58.830 dos 117.659 índices, então p = 0,500004. O desvio por reservatório é √(¼·(117.159/117.658)/500) =
+  0,02231, e o de 300 reservatórios é 0,02231/√300 = 0,00129. Logo z = (0,50233 − 0,500004)/0,00129 = 1,81.
+- **(e)** λ = 0,25, 0,20, 0,34806 e 0,09194. Os valores singulares, proporcionais a √λ, são 0,5, 0,4472, 0,5900 e 0,3032, de soma 1,8404. O
+  posto pela conta à mão concorda com o Jacobi a 8,9·10⁻¹⁶.
+- **(f)** Por Benford-16, P(1) = log₁₆ 2 = 0,25, P(2) = log₁₆ 1,5 = 0,146, e assim por diante; o posto de Benford sai a 0,00121 do de 3ⁿ.
+  O posto fica abaixo de 4 (3,9556) porque os bits do primeiro dígito NÃO são independentes: um primeiro dígito pequeno (1 tem 25% de
+  chance) tem os bits altos zerados.
+
+**Contra o ingênuo.** O preditor "o posto dos dígitos de 3ⁿ é 4, porque são 4 bits" erraria (f) por 0,044, quarenta vezes a faixa. O preditor
+"a v5 não muda a calibração porque não muda as partes antigas" acertaria o número (0,900 contra 0,903) pela razão errada: a v5 acrescenta 112
+previsões, e o número só não muda porque elas acertam na mesma taxa.
+
+## O placar (m), pela régua
+| | medido | faixa | |
+|---|---|---|---|
+| m1 | 9 | [9; 10] | ✅ |
+| m2 | 4 | [4; 5] | ✅ |
+| m3 | 0,0556 | [0,04; 0,08] | ✅ |
+| m4 | 0,889 | [0,67; 1,00] | ✅ |
+| m5 | 0 | [0; 0] | ✅ |
+| m6 | 0 surpresas: o erro de (c), 0,00023, é menor que a largura 0,0042 | [0; 1] | ✅ |
+
+**(m): 6 de 6.** **Sobre mim:** 1 erro no registro, em [0; 3]: ✅.
+
+## Engenharia reversa
+- **O padrão desta parte: uma medida que para de contar sem avisar.** Mudei o FORMATO dos meus registros (de lista para tabela) na Parte
+  126, e a régua do placar parou de ver 112 previsões em 13 partes. Nenhum teste falhou, porque a régua devolvia uma lista vazia, que é um
+  resultado válido. A falha silenciosa é a mais cara: ela não gera erro, gera ausência.
+- **O mesmo padrão em escala pequena, duas vezes nesta parte:**
+  - a minha própria frase citou a linha de placar, e o leitor a tomou pela linha verdadeira (menção lida como uso, pela 6ª vez na série);
+  - a minha função de (i) mediu um conjunto maior do que a pergunta.
+  Nos três casos, a régua respondia a uma pergunta vizinha da minha.
+- **O que isso revela.** Eu verifico que uma régua dá o número certo quando ela dá um número. Não verifico que ela está lendo alguma coisa. Um
+  zero e uma lista vazia passam pelos meus olhos como "nada a relatar".
+- **Regra nova (Parte 140):** toda parte que registra previsões termina com a P3192 (partes com previsões que nenhuma régua lê), e a
+  lista tem de conter só partes ainda sem vereditos. Toda mudança de formato de um arquivo que uma função lê vem com o teste dessa função
+  sobre o formato novo, no mesmo commit.
+
+## Funções, testes, fontes
+- **Funções:**
+  - `p3187_minhas_previsoes_v5` (o leitor que também lê tabelas; a v4 fica intacta);
+  - `p3188_auditoria_do_leitor_v5`;
+  - `p3189_dicionario_como_fluxo`;
+  - `p3190_hexadecimal_vertices`;
+  - `p3191_calibracao_v4_v5`;
+  - `p3192_partes_invisiveis`;
+  - `_parte_140`.
+- **Testes:** `synthai/testes_parte140.py`.
+- **Fontes** (lidas nesta sessão):
+  - A. V. Kontorovich e S. J. Miller, "Benford's law, values of L-functions and the 3x+1 problem" ([arXiv math/0412003](https://arxiv.org/pdf/math/0412003)):
+    uma sequência é Benford na base B se e só se log_B dela é equidistribuído módulo 1.
+  - S. J. Miller, notas de aula ([Williams, lecture 21](https://web.williams.edu/Mathematics/sjmiller/public_html/341/talks/lecture21.pdf)):
+    nθ é equidistribuído módulo 1 para θ irracional. Com θ = log₁₆ 3, isso dá Benford-16 para 3ⁿ.
+  - A probabilidade log_b(1 + 1/d) na base b ([arXiv 1808.01496](https://arxiv.org/pdf/1808.01496)).
+
+➡ Próxima: [Parte 141](ASI_AGI_parte141_volta8_resultado.md) — a volta 8 e a rodada 93.

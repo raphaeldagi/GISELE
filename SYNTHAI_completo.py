@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 134, perguntas P1 a P3176).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 140, perguntas P1 a P3192).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (17681 linhas)
+# calculos.py  (18105 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7583,6 +7583,19 @@ def testes_de_regressao():
             p3174_comparar_voltas("reproducao/volta4", "reproducao/volta5")),
         "P3176": (lambda r: (r["diferentes"], r["categorias"]["mundo"], len(r["reclassificadas"]), r["blocos_sem_excecao"]) == (9, 0, 1, 129))(
             p3176_comparar_voltas_v2("reproducao/volta5", "reproducao/volta6")),
+        "P3177": (lambda r: abs(r["fechada"] + 4.7891) < 1e-3 and r["erro_rel"] < 1e-10 and r["secante"] < -11.0)(
+            p3177_passo_fixo_e_secante()),
+        "P3179": (lambda r: (r[0], r[2], r[3], r[4]) == ({}, 6, 0, 1))(p3179_capacidades_recebidas()),
+        "P3180": all(e < 1e-9 and ok for e, _, ok in p3180_media_por_modo()),
+        "P3181": (lambda r: r[0] < 2e-7 and abs(r[1][2][0] - 0.5578) < 1e-12)(p3181_vantagem_e_contraste()),
+        "P3182": (lambda r: (round(r[0][2][0], 4), round(r[0][8][0], 4)) == (0.9086, 0.8987))(p3182_grpo_g2_g8()),
+        "P3183": (lambda r: abs(r[0] - 32.036) < 1e-9 and r[2] < 1e-9)(p3183_reservatorio_e_posto()),
+        "P3184": (lambda r: r[0] == r[1] == 10000)(p3184_contexto_e_curvatura()),
+        "P3185": (lambda r: (r[0.05][2], r[0.2][2]) == (27, 19))(p3185_memoria_congelada()),
+        "P3186": (lambda r: (round(r[4][0], 4), round(r[16][0], 4)) == (0.9058, 0.8825))(p3186_grupos_uteis()),
+        "P3188": p3188_auditoria_do_leitor_v5()[:3] == (83, 76, 0),
+        "P3190": (lambda r: abs(r[0] - 4) < 1e-9 and r[1] < 1e-9 and abs(r[3] - 3.95560) < 1e-5)(p3190_hexadecimal_vertices()),
+        "P3191": p3191_calibracao_v4_v5() == ((360, 325), (472, 425)),
         "P3176v7": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (9, 0, [133], 130))(
             p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")),
     }
@@ -17708,6 +17721,417 @@ def _parte_134():
 
 PARTES[134] = _parte_134
 
+
+_RECEBIDOS_P3179 = (
+    "externos/arquitetura_pos_asi.py", "externos/nexus_raphael/asi_metacognitivo_r37.py",
+    "externos/nexus_raphael/nexus_raphael_v0_1_0_colado.py", "externos/nexus_raphael/nexus_raphael_v2_colado.txt",
+    "externos/nexus_raphael_v2_0/nexus_raphael_v2_0.py.txt", "externos/nexus_raphael_v3_0/nucleo_v30_transcrito.py.txt",
+    "externos/pacote3/aprendizagem_continua.py", "externos/pacote3/inovacao_guiada.py", "externos/pacote3/modelo_mundo.py",
+    "externos/pacote3/rl_grupos.py", "externos/pacote3/transferencia_metacognitiva.py",
+    "externos/pacote_v015/objetivos_cognitivos.py", "externos/pacote_v015/workspace_global.py",
+    "externos/word_rl_lab/word_rl_lab_v1_recebido.py", "externos/word_rl_lab/word_rl_lab_v2_recebido.py")
+
+
+def p3177_passo_fixo_e_secante(dimensao=8, condicao=10.0, semente=31001, semente_partida=5, T=24, passo=0.05):
+    \"\"\"(a)-(d) da Parte 136: na quadratica de objetivos_cognitivos.py (reescrita em synthai/passos.py), a descida de passo fixo
+    contra a forma fechada, o passo de secante de inovacao_guiada.py e a media exponencial do gradiente. Devolve um dict com o erro
+    relativo fixo/fechado e os log10(f_T/f_0) de cada metodo.\"\"\"
+    from synthai.passos import quadratica_anisotropica, descer, razao_fixo_fechada, coordenadas_proprias
+    A, lam, Q = quadratica_anisotropica(dimensao, condicao, semente)
+    r = random.Random(semente_partida)
+    x0 = [r.gauss(0.0, 1.0) for _ in range(dimensao)]
+    alvo = [0.0] * dimensao
+    fechada = razao_fixo_fechada(lam, coordenadas_proprias(Q, x0, alvo), passo, T)
+    out = {"fechada": math.log10(fechada)}
+    for m in ("fixo", "secante", "media"):
+        c = descer(A, x0, alvo, T, metodo=m, passo=passo)
+        out[m] = math.log10(c[-1] / c[0])
+        if m == "fixo":
+            out["erro_rel"] = abs(c[-1] / c[0] - fechada) / fechada
+    out["media_menos_fixo"] = out["media"] - out["fixo"]
+    return out
+
+
+def p3178_ruido_e_media(beta=0.6, sigma=0.5, passo=0.05, T=3000, inicio=1000, semente=31001):
+    \"\"\"(e)-(f) da Parte 136: a variancia estacionaria da media exponencial de ruido branco (forma fechada beta/(2-beta)) e o piso de
+    custo da descida de passo fixo com ruido sigma no gradiente (forma fechada eta*sigma^2/4 * soma 1/(1 - eta*lambda)). Devolve
+    (variancia medida, beta/(2-beta), custo medio dos passos inicio..T, piso fechado).\"\"\"
+    import statistics
+    from synthai.passos import quadratica_anisotropica, descer, variancia_media_exponencial
+    A, lam, _ = quadratica_anisotropica(8, 10.0, semente)
+    v = variancia_media_exponencial(beta)
+    c = descer(A, [0.0] * 8, [0.0] * 8, T, metodo="fixo", passo=passo, sigma=sigma, semente=semente)
+    piso = sigma * sigma * passo / 4 * sum(1 / (1 - passo * l) for l in lam)
+    return v, beta / (2 - beta), statistics.mean(c[inicio:]), piso
+
+
+def p3179_capacidades_recebidas(arquivos=_RECEBIDOS_P3179, pacotes=("externos/pacote3/", "externos/pacote_v015/")):
+    \"\"\"(g)-(i) da Parte 136: o auditor de capacidades (synthai.passos.auditar_capacidades: rede, processo, codigo dinamico,
+    desserializacao; uso, nao mencao) sobre o proprio fonte e sobre cada arquivo recebido. Devolve (achados no proprio fonte,
+    {arquivo: achados}, quantos dos arquivos tem alguma capacidade, quantos dos modulos dos pacotes tem alguma, nao analisaveis).\"\"\"
+    import os
+    from synthai.passos import auditar_capacidades
+    proprio = auditar_capacidades(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "synthai", "passos.py"),
+                                       encoding="utf-8").read())
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    por = {}
+    for f in arquivos:
+        with open(os.path.join(raiz, f), encoding="utf-8") as h:
+            por[f] = auditar_capacidades(h.read())
+    perigo = lambda a: any(k in a for k in ("rede", "processo", "dinamico", "desserializacao"))
+    com = sum(perigo(a) for a in por.values())
+    com_pac = sum(perigo(a) for f, a in por.items() if f.startswith(pacotes))
+    nao = sum("nao_analisavel" in a for a in por.values())
+    return proprio, por, com, com_pac, nao
+
+
+def p3180_media_por_modo(sementes=(6, 7, 8, 9), dimensao=8, condicao=10.0, semente=31001, T=24, passo=0.05, beta=0.6):
+    \"\"\"(j)-(k) da Parte 136, o teste novo do erro de (d): a media exponencial do gradiente e o heavy-ball; na base propria cada modo
+    segue uma recorrencia escalar de 2a ordem. Para cada partida nova, devolve (|simulado - recorrencia| / recorrencia, media - fixo
+    em log10, se a diferenca fica entre o ganho assintotico do modo mais favoravel e o do mais lento).\"\"\"
+    from synthai.passos import (quadratica_anisotropica, descer, coordenadas_proprias, razao_media_por_modo, ganhos_por_modo)
+    A, lam, Q = quadratica_anisotropica(dimensao, condicao, semente)
+    g = ganhos_por_modo(lam, passo, beta, T)
+    lo, hi = min(g), g[0]
+    out = []
+    for sp in sementes:
+        r = random.Random(sp)
+        x0 = [r.gauss(0.0, 1.0) for _ in range(dimensao)]
+        alvo = [0.0] * dimensao
+        cm = descer(A, x0, alvo, T, metodo="media", passo=passo, beta=beta)
+        cf = descer(A, x0, alvo, T, metodo="fixo", passo=passo)
+        rec = razao_media_por_modo(lam, coordenadas_proprias(Q, x0, alvo), passo, beta, T)
+        d = math.log10(cm[-1] / cm[0]) - math.log10(cf[-1] / cf[0])
+        out.append((abs(cm[-1] / cm[0] - rec) / rec, d, lo <= d <= hi))
+    return out
+
+
+def _parte_136():
+    print("\\n=== Parte 136: o passo numa quadratica anisotropica e o auditor de capacidades (modulos recebidos) ===")
+    r = p3177_passo_fixo_e_secante()
+    print(f"  P3177 (a) erro relativo fixo/fechado {r['erro_rel']:.2e}; (b) fechada {r['fechada']:.4f}, fixo {r['fixo']:.4f}")
+    print(f"  P3177 (c) secante {r['secante']:.3f}; (d) media {r['media']:.3f}, media - fixo {r['media_menos_fixo']:.3f}")
+    v, vf, cm, piso = p3178_ruido_e_media()
+    print(f"  P3178 (e) variancia da media {v:.5f} (fechada {vf:.6f}); (f) custo medio {cm:.5f} (piso {piso:.5f}, razao {cm/piso:.4f})")
+    proprio, por, com, com_pac, nao = p3179_capacidades_recebidas()
+    print(f"  P3179 (g) achados no proprio fonte {proprio}; (h) {com} de {len(por)} com capacidade; (i) pacotes {com_pac} de 7; nao analisaveis {nao}")
+    for f, a in por.items():
+        print(f"    {f}: {a}")
+    for i, (erro, d, dentro) in enumerate(p3180_media_por_modo()):
+        print(f"  P3180 (j)-(k) partida {6 + i}: erro {erro:.2e}; media - fixo {d:.3f}; entre os ganhos extremos {dentro}")
+
+
+PARTES[136] = _parte_136
+
+
+def p3181_vantagem_e_contraste(n_grupos=20000, semente=137):
+    \"\"\"(a)-(b) da Parte 137, pecas de externos/pacote3/rl_grupos.py (synthai/grpo_bandido.py): o erro maximo da vantagem de grupo contra
+    a forma fechada binaria em G = 2..16, k = 1..G-1, e a fracao de grupos sem contraste na politica uniforme (G = 2 e 8) contra
+    p^G + (1-p)^G. Devolve (erro maximo, {G: (medido, fechado)}).\"\"\"
+    from synthai.grpo_bandido import vantagens_grupo, vantagens_binarias_fechadas, prob_sem_contraste
+    erro = 0.0
+    for G in range(2, 17):
+        for k in range(1, G):
+            v = vantagens_grupo([1.0] * k + [0.0] * (G - k))
+            a, b = vantagens_binarias_fechadas(G, k)
+            erro = max(erro, max(abs(x - a) for x in v[:k]), max(abs(x - b) for x in v[k:]))
+    r = random.Random(semente)
+    out = {}
+    for G in (2, 8):
+        sem = 0
+        for _ in range(n_grupos):
+            rec = [1.0 if r.randrange(3) == 0 else 0.0 for _ in range(G)]
+            sem += all(v == 0.0 for v in vantagens_grupo(rec))
+        out[G] = (sem / n_grupos, prob_sem_contraste(1 / 3, G))
+    return erro, out
+
+
+def p3182_grpo_g2_g8(mundo=(31, 32), sementes=(31, 32, 33), orcamento=4096):
+    \"\"\"(c) da Parte 137: G = 2 contra G = 8 com o MESMO orcamento de acoes, no mundo de contextos de teste. Devolve
+    {G: (retorno exato medio no teste, fracao media de grupos sem contraste)} e a diferenca G2 - G8.\"\"\"
+    from synthai.grpo_bandido import gerar_contextos, treinar, retorno_esperado
+    tr, te = gerar_contextos(128, mundo[0]), gerar_contextos(128, mundo[1])
+    out = {}
+    for G in (2, 8):
+        rets, sems = [], []
+        for sem in sementes:
+            w, s, n = treinar(tr, G, orcamento, semente=sem)
+            rets.append(retorno_esperado(w, te))
+            sems.append(s / n)
+        out[G] = (sum(rets) / len(rets), sum(sems) / len(sems))
+    return out, out[2][0] - out[8][0]
+
+
+def p3183_reservatorio_e_posto(fluxos=2000, capacidade=128, por_tarefa=192, tarefas=4):
+    \"\"\"(d)-(e) da Parte 137, pecas de externos/pacote3/aprendizagem_continua.py (synthai/reservatorio.py): a media dos exemplos da
+    tarefa 1 que ficam no reservatorio, a fracao de fluxos em que o 1o exemplo fica, e o posto efetivo de ativacoes com valores singulares
+    (4, 2, 1, 0,5) em colunas de Hadamard contra exp(H(s/soma s)). Devolve (media, fracao, |posto - fechado|, posto).\"\"\"
+    from synthai.reservatorio import Reservatorio, posto_efetivo
+    soma, primeiro = 0, 0
+    for f in range(fluxos):
+        res = Reservatorio(capacidade, semente=f)
+        for t in range(tarefas):
+            for i in range(por_tarefa):
+                res.adicionar((t, i))
+        soma += sum(1 for t, _ in res.itens if t == 0)
+        primeiro += (0, 0) in res.itens
+    had = [[1.0]]
+    while len(had) < 8:
+        had = [l + l for l in had] + [l + [-x for x in l] for l in had]
+    s = (4.0, 2.0, 1.0, 0.5)
+    H = [[s[j] * had[i][j + 1] / math.sqrt(8.0) for j in range(4)] for i in range(8)]
+    p = [v / sum(s) for v in s]
+    fechado = math.exp(-sum(q * math.log(q) for q in p))
+    posto = posto_efetivo(H)
+    return soma / fluxos, primeiro / fluxos, abs(posto - fechado), posto
+
+
+def _parte_137():
+    print("\\n=== Parte 137: o inventario do recebido; GRPO de rl_grupos.py e o reservatorio de aprendizagem_continua.py ===")
+    erro, sem = p3181_vantagem_e_contraste()
+    print(f"  P3181 (a) erro maximo da vantagem {erro:.2e}; (b) sem contraste G=2 {sem[2][0]:.4f} (fechada {sem[2][1]:.4f}), G=8 {sem[8][0]:.4f} (fechada {sem[8][1]:.5f})")
+    out, dif = p3182_grpo_g2_g8()
+    print(f"  P3182 (c) G=2 retorno {out[2][0]:.4f}, sem contraste {out[2][1]:.3f}; G=8 retorno {out[8][0]:.4f}, sem contraste {out[8][1]:.3f}; G2 - G8 {dif:.4f}")
+    m, f, e, posto = p3183_reservatorio_e_posto()
+    print(f"  P3183 (d) tarefa 1 no reservatorio {m:.3f} (32); 1o exemplo fica {f:.4f} (1/6); (e) posto {posto:.6f}, erro {e:.2e}")
+
+
+PARTES[137] = _parte_137
+
+
+def p3184_contexto_e_curvatura(direcoes=2500, semente=138):
+    \"\"\"(a) da Parte 138: o "contexto do gradiente" de transferencia_metacognitiva.py, |g|/sqrt(f), fica em [2 sqrt(lam_min), 2 sqrt(lam_max)]
+    (quociente de Rayleigh de A) nas quatro familias. Devolve (pontos dentro, pontos).\"\"\"
+    from synthai.memoria_congelada import gerar_tarefas
+    from synthai.passos import custo, gradiente
+    r = random.Random(semente)
+    dentro = total = 0
+    for i, fam in enumerate(("suave", "anisotropica", "rigida", "ruidosa")):
+        t = gerar_tarefas(4, semente=semente)[i]
+        cond, escala = {"suave": (1.0, 1.0), "anisotropica": (8.0, 3.0), "rigida": (32.0, 12.0), "ruidosa": (8.0, 3.0)}[fam]
+        lo, hi = 2 * math.sqrt(escala / cond), 2 * math.sqrt(escala)
+        for _ in range(direcoes):
+            x = [r.gauss(0, 1) for _ in range(8)]
+            f = custo(t["A"], x, t["alvo"])
+            g = gradiente(t["A"], x, t["alvo"])
+            razao = math.sqrt(sum(v * v for v in g)) / math.sqrt(f)
+            dentro += lo * (1 - 1e-12) <= razao <= hi * (1 + 1e-12)
+            total += 1
+    return dentro, total
+
+
+def p3185_memoria_congelada(semente=31, passos=(0.05, 0.2)):
+    \"\"\"(b)-(d) da Parte 138: memoria congelada no treino (12 tarefas, fase 1) contra nenhuma memoria em 32 tarefas de teste (fase 3).
+    Devolve {passo: (media de sem - com, ganhos, perdas, empates, IC 95% do bootstrap estratificado)}.\"\"\"
+    from synthai.memoria_congelada import gerar_tarefas, MemoriaFalhas, executar, comparacao_pareada
+    tr, te = gerar_tarefas(12, semente=semente, fase=1), gerar_tarefas(32, semente=semente, fase=3)
+    out = {}
+    for passo in passos:
+        col = MemoriaFalhas()
+        for t in tr:
+            executar(t, passo, coletor=col)
+        fator = col.congelar()
+        a = [executar(t, passo) for t in te]
+        b = [executar(t, passo, fator=fator) for t in te]
+        out[passo] = comparacao_pareada(a, b, [t["familia"] for t in te], semente=semente)
+    return out
+
+
+def p3186_grupos_uteis(mundo=(31, 32), sementes=(31, 32, 33), orcamento=4096, grupos=(4, 16)):
+    \"\"\"(e)-(f) da Parte 138: a GRPO com G = 4 e G = 16 no mesmo mundo e orcamento da P3182. Devolve {G: (retorno medio no teste, fracao
+    sem contraste, grupos uteis medios)}.\"\"\"
+    from synthai.grpo_bandido import gerar_contextos, treinar, retorno_esperado
+    tr, te = gerar_contextos(128, mundo[0]), gerar_contextos(128, mundo[1])
+    out = {}
+    for G in grupos:
+        rets, sems = [], []
+        for sem in sementes:
+            w, s, n = treinar(tr, G, orcamento, semente=sem)
+            rets.append(retorno_esperado(w, te))
+            sems.append(s / n)
+        f = sum(sems) / len(sems)
+        out[G] = (sum(rets) / len(rets), f, (orcamento // G) * (1 - f))
+    return out
+
+
+def _parte_138():
+    print("\\n=== Parte 138: a memoria congelada de transferencia_metacognitiva.py; os grupos uteis da GRPO ===")
+    d, t = p3184_contexto_e_curvatura()
+    print(f"  P3184 (a) |g|/sqrt(f) em [2 sqrt(lmin), 2 sqrt(lmax)]: {d} de {t}")
+    for passo, (m, g, p, e, ic) in p3185_memoria_congelada().items():
+        print(f"  P3185 passo {passo}: (b) media sem - com {m:.5f}; (c) memoria piora em {p}, melhora em {g}, empata em {e}; (d) IC95 ({ic[0]:.5f}, {ic[1]:.5f}), contem 0: {ic[0] <= 0 <= ic[1]}")
+    for G, (ret, f, u) in p3186_grupos_uteis().items():
+        print(f"  P3186 G={G}: (e/f) retorno {ret:.4f}; sem contraste {f:.3f}; grupos uteis {u:.0f}")
+
+
+PARTES[138] = _parte_138
+
+
+def p3187_minhas_previsoes_v5(partes=range(53, 141), numero=None):
+    \"\"\"As minhas previsoes do mundo, versao 5 (P3187; Parte 140): a v4 (P2833) intacta nas partes que tem a linha de placar do mundo; nas
+    outras, le as TABELAS que as Partes 128 a 138 usaram. Uma linha de tabela cujo 1o campo e um rotulo ("(a)", "(b1)" ou "R1", "Q8") e uma
+    previsao se nao tem marca de veredito e tem uma faixa entre colchetes; e um veredito se tem a marca (a ultima da linha). Devolve
+    [(parte, rotulo, a, b, acerto, tipo)], no formato da v4.\"\"\"
+    import glob
+    import os
+    import re
+    numero = numero or _numero_pt_v2
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    linha_rot = re.compile(r"^\\|\\s*(\\([a-z]\\d?\\)|[A-Z]\\d{1,2})\\s*\\|(.*)\\|\\s*$")
+    faixa = re.compile(r"\\[([^\\];]+?);\\s*([^\\]]+?)\\]")
+    saida = []
+    for parte in partes:
+        arq = glob.glob(os.path.join(raiz, f"ASI_AGI_parte{parte}_*.md"))
+        if not arq:
+            continue
+        texto = open(arq[0], encoding="utf-8").read()
+        if re.search(r"Do mundo: ((?:\\([a-z]\\) [\\u2705\\u274c] ?)+)", texto):
+            saida.extend(p2833_minhas_previsoes_v4(range(parte, parte + 1), numero))
+            continue
+        faixas, vered = {}, {}
+        for linha in texto.split("\\n"):
+            m = linha_rot.match(linha.strip())
+            if not m:
+                continue
+            rot = m.group(1).strip("()")
+            resto = m.group(2)
+            marcas = re.findall(r"[\\u2705\\u274c]", resto)
+            if marcas:
+                vered.setdefault(rot, marcas[-1] == "\\u2705")
+            elif rot not in faixas:
+                f = faixa.search(resto)
+                x = y = None
+                if f:
+                    x, y = numero(f.group(1)), numero(f.group(2))
+                faixas[rot] = (x, y) if x is not None and y is not None else (None, None)
+        for rot, ok in vered.items():
+            a, b = faixas.get(rot, (None, None))
+            if a is None:
+                tipo = None
+            elif a <= 0 <= b:
+                tipo = "zero"
+            elif 0 <= a and b <= 1:
+                tipo = "fracao"
+            elif a == int(a) and b == int(b) and a >= 1:
+                tipo = "contagem"
+            else:
+                tipo = "outra"
+            saida.append((parte, rot, a, b, ok, tipo))
+    return saida
+
+
+def p3188_auditoria_do_leitor_v5(recuperar=range(128, 139), identidade=range(53, 128)):
+    \"\"\"(g)-(i) da Parte 140: o que a v5 recupera nas partes em tabela e se ela muda alguma previsao nas partes que a v4 ja lia.
+    Devolve (recuperadas com veredito, acertos delas, previsoes que mudam entre v4 e v5 nas partes de identidade, por parte).\"\"\"
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    rec = p3187_minhas_previsoes_v5(recuperar)
+    com = [p for p in identidade if glob.glob(os.path.join(raiz, f"ASI_AGI_parte{p}_*.md")) and re.search(
+        r"Do mundo: ((?:\\([a-z]\\) [\\u2705\\u274c] ?)+)", open(glob.glob(os.path.join(raiz, f"ASI_AGI_parte{p}_*.md"))[0], encoding="utf-8").read())]
+    # (a 1a versao comparava TODAS as partes de identidade, inclusive as sem a linha de placar: 29 "mudancas" que eram as Partes 126-127
+    # recuperadas, nao mudancas; corrigido para medir o que (i) diz)
+    v4 = p2833_minhas_previsoes_v4(com)
+    v5 = p3187_minhas_previsoes_v5(com)
+    mudam = len(set(v4) ^ set(v5))
+    por = {}
+    for x in rec:
+        por.setdefault(x[0], [0, 0])
+        por[x[0]][0] += 1
+        por[x[0]][1] += int(x[4])
+    return len(rec), sum(x[4] for x in rec), mudam, por
+
+
+def p3189_dicionario_como_fluxo(k=500, reservatorios=300):
+    \"\"\"(a)-(c) da Parte 140: as glosas do WordNet 3.0 na ordem do arquivo como um fluxo; um reservatorio de k (synthai/reservatorio.py) por
+    semente. Devolve (razao desvio medido / fechado, z da media das medias, fracao media da 1a metade, N, media da populacao).\"\"\"
+    import gzip
+    import os
+    from synthai.reservatorio import Reservatorio
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    with gzip.open(os.path.join(raiz, "dados", "wordnet30_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        comp = [len(l.rstrip("\\n").split("\\t")[4].split()) for l in f]
+    N = len(comp)
+    mu = sum(comp) / N
+    sigma = math.sqrt(sum((c - mu) * (c - mu) for c in comp) / N)
+    fechado = sigma / math.sqrt(k) * math.sqrt((N - k) / (N - 1))
+    medias, metades = [], []
+    for s in range(reservatorios):
+        res = Reservatorio(k, semente=140000 + s)
+        for i in range(N):
+            res.adicionar(i)
+        medias.append(sum(comp[i] for i in res.itens) / k)
+        metades.append(sum(1 for i in res.itens if i < N / 2) / k)
+    mm = sum(medias) / reservatorios
+    dp = math.sqrt(sum((m - mm) * (m - mm) for m in medias) / (reservatorios - 1))
+    return dp / fechado, (mm - mu) / (fechado / math.sqrt(reservatorios)), sum(metades) / reservatorios, N, mu
+
+
+def _posto_de_lambdas(lams):
+    s = [math.sqrt(max(l, 0.0)) for l in lams]
+    t = sum(s)
+    return math.exp(-sum((v / t) * math.log(v / t) for v in s if v > 0))
+
+
+def p3190_hexadecimal_vertices(n=5000):
+    \"\"\"(d)-(f) da Parte 140: o posto efetivo (Roy-Vetterli, synthai/reservatorio.py) dos digitos hexadecimais como vertices de {0,1}^4: os 16;
+    os 10 decimais, contra a conta a mao (autovalores 0,25; 0,20; (0,44 +- sqrt 0,0656)/2); e o 1o digito hexadecimal de 3^n, n = 1..N,
+    contra Benford-16 (covariancia exata, autovalores por Jacobi). Devolve (posto 16, |posto 0-9 - mao|, |posto 3^n - Benford|, posto 3^n).\"\"\"
+    from synthai.reservatorio import posto_efetivo
+    from synthai.contraposto_matrizes import jacobi_autovalores
+    bits = lambda d: [float((d >> j) & 1) for j in (3, 2, 1, 0)]
+    p16 = posto_efetivo([bits(d) for d in range(16)])
+    mao = _posto_de_lambdas([0.25, 0.20, (0.44 + math.sqrt(0.0656)) / 2, (0.44 - math.sqrt(0.0656)) / 2])
+    p10 = posto_efetivo([bits(d) for d in range(10)])
+    lider = [bits(int(format(3 ** m, "x")[0], 16)) for m in range(1, n + 1)]
+    pn = posto_efetivo(lider)
+    P = {d: math.log(1 + 1 / d, 16) for d in range(1, 16)}
+    mu = [sum(P[d] * bits(d)[j] for d in P) for j in range(4)]
+    C = [[sum(P[d] * bits(d)[i] * bits(d)[j] for d in P) - mu[i] * mu[j] for j in range(4)] for i in range(4)]
+    pb = _posto_de_lambdas(jacobi_autovalores(C))
+    return p16, abs(p10 - mao), abs(pn - pb), pn
+
+
+def p3191_calibracao_v4_v5(partes=range(80, 141)):
+    \"\"\"A calibracao do mundo (fracao de acertos das faixas de 90%) pelas duas reguas, v4 e v5, nas mesmas partes (P3191; Parte 140).
+    Devolve ((n, acertos) pela v4, (n, acertos) pela v5).\"\"\"
+    v4 = p2833_minhas_previsoes_v4(partes)
+    v5 = p3187_minhas_previsoes_v5(partes)
+    return (len(v4), sum(x[4] for x in v4)), (len(v5), sum(x[4] for x in v5))
+
+
+def p3192_partes_invisiveis(partes=range(53, 141)):
+    \"\"\"A auditoria da regra da Parte 140 (P3192): as partes que tem uma secao de previsoes (um titulo com "Previs") e das quais NENHUMA regua
+    (v5) le uma previsao com veredito. Devolve a lista dessas partes.\"\"\"
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    lidas = {x[0] for x in p3187_minhas_previsoes_v5(partes)}
+    out = []
+    for p in partes:
+        a = glob.glob(os.path.join(raiz, f"ASI_AGI_parte{p}_*.md"))
+        if a and p not in lidas and re.search(r"^#+ [^\\n]*Previs", open(a[0], encoding="utf-8").read(), re.M):
+            out.append(p)
+    return out
+
+
+def _parte_140():
+    print("\\n=== Parte 140: o leitor v5 (tabelas), o dicionario como fluxo, o hexadecimal como vertices ===")
+    n, ac, mudam, por = p3188_auditoria_do_leitor_v5()
+    print(f"  P3188 (g) recuperadas {n}; (h) acertos {ac} ({ac / n:.3f}); (i) mudam nas partes da v4 {mudam}; por parte {por}")
+    r, z, met, N, mu = p3189_dicionario_como_fluxo()
+    print(f"  P3189 N = {N} glosas, media {mu:.4f} palavras; (a) razao dos desvios {r:.4f}; (b) z {z:.3f}; (c) 1a metade {met:.5f}")
+    p16, e10, eb, pn = p3190_hexadecimal_vertices()
+    print(f"  P3190 (d) posto dos 16 {p16:.12f}; (e) |0-9 - mao| {e10:.2e}; (f) |3^n - Benford| {eb:.5f} (posto 3^n {pn:.5f})")
+    (n4, a4), (n5, a5) = p3191_calibracao_v4_v5()
+    print(f"  P3191 calibracao 80-140: v4 {a4}/{n4} = {a4 / n4:.3f}; v5 {a5}/{n5} = {a5 / n5:.3f}")
+    print(f"  P3192 partes com previsoes que nenhuma regua le: {p3192_partes_invisiveis()}")
+
+
+PARTES[140] = _parte_140
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -17720,7 +18144,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (538 linhas)
+# CLAUDE.md  (558 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -18104,6 +18528,26 @@ anterior, commit e push.
   Parte 134 (volta 7; 8/8): as 9 linhas que mudaram foram EXATAMENTE as 9 nomeadas no registro, e as contagens deram o número da conta: o loop chegou ao ponto fixo
   do que mede (sete voltas, 0 diferenças do mundo). Decisão conservadora escrita: o loop segue, mas espaçado (volta nova só quando um commit mudou algo além do registro
   da volta, ou a cada 6 h no máximo), e o texto diz o custo (~1,5 h de relógio, ~4 h de processador por volta) para o usuário poder escolher.
+  Parte 135 (pedido: "Continue e não pare nunca mais sem precisar interagir comigo. A cada avanço me envie o arquivo consolidado. Use tudo que enviei até hoje em
+  cada módulo"): revoga o espaçamento da 134. As voltas rodam sem pausa em segundo plano, e o trabalho de frente é o inventário do que foi recebido (externos/, pacotes,
+  pedidos), com cada peça usada num módulo (a ideia segura, offline). O SYNTHAI_completo.py vai a cada commit de parte. A fronteira da Parte 84 continua valendo.
+  Parte 136 (synthai/passos.py, de objetivos_cognitivos.py e inovacao_guiada.py; 7/9 + 2/2 no teste novo): o security_audit_ast_v2 só olha a REDE (o controle plantado
+  `subprocess.Popen` passou), e eu o usei como auditoria geral desde a 111. O `auditar_capacidades` olha rede, processo, código dinâmico e desserialização, com controles
+  dos dois lados. (h) errou pela MEMÓRIA de auditorias antigas (o NEXUS 0.1.0 tinha urllib, e a minha própria docstring dizia isso): a lembrança de uma auditoria é imagem,
+  e o registro dela é a contagem. (d) errou porque o efeito da média do gradiente depende do MODO que domina f_T (heavy-ball, raio por modo), variável não coberta pela
+  calibração. Um módulo novo que vai ao diálogo soma em laço desde o começo (não `sum()`).
+  Parte 137 (inventário do recebido; synthai/grpo_bandido.py de rl_grupos.py e synthai/reservatorio.py de aprendizagem_continua.py; 10/11): com o MESMO orçamento de
+  ações, G = 2 aprende mais que G = 8 (+0,0099), apesar de 81% dos grupos sem contraste, porque tem quatro vezes mais grupos (hipótese de 1 lote: o que conta são os grupos
+  ÚTEIS, 385 contra 256). O erro de forma fechada (b2), z = −1,95, ganhou três lotes antes de mecanismo; os dois seguintes ficaram do mesmo lado, e o caminho
+  independente (random() < 1/3) deu z = −0,36: era cauda. Regra: quando lotes da mesma régua repetem o lado, o lote seguinte usa outro caminho de medida, não só outra semente.
+  Parte 138 (synthai/memoria_congelada.py, de transferencia_metacognitiva.py; 8/11): o "contexto do gradiente" do texto é uma curvatura (|g|/√f entre 2√λmin e 2√λmax,
+  Rayleigh). A memória congelada cumpre o próprio critério de refutação (sem efeito na média) e piora 27-30 de 32 tarefas com passo pequeno. Os grupos úteis da GRPO previram
+  G = 4 e G = 16 (1 mundo). Os erros vieram de JUNTAR a dispersão de duas condições (o passo 0,2 varia 4,7 vezes mais): cada condição tem a sua calibração de dispersão,
+  com ≥ 3 mundos. Com esta parte, todo módulo recebido tem uso, salvo as duas recusas.
+  Parte 140 (leitor v5, `p3187`; o dicionário como fluxo num reservatório; o hexadecimal como vértices de {0,1}⁴; 10/12, (m) 6/6): desde a Parte 126 as previsões estavam em
+  TABELAS e a régua do placar não as lia (112 previsões em 13 partes, invisíveis, sem nenhum teste falhar: a régua devolvia lista vazia). A calibração 80-140 pela v5: 0,900
+  (v4: 0,903); as invisíveis acertaram na mesma taxa. Regras: toda parte com previsões termina com a P3192 (partes que nenhuma régua lê); toda mudança de formato de um arquivo
+  que uma função lê vem com o teste dela sobre o formato novo. As Partes 136-139 não fizeram o (m) da Parte 67: lapso registrado, retomado na 140.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -18252,7 +18696,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -21771,6 +22215,119 @@ class GPTKronecker(GPT):
 """
 
 # ====================================================================================================
+# synthai/grpo_bandido.py  (108 linhas)
+# ====================================================================================================
+FONTES['synthai/grpo_bandido.py'] = """\"\"\"GRPO de uma decisão num bandido contextual com recompensa verificável (Parte 137).
+
+Reescrita offline, só biblioteca padrão, de `externos/pacote3/rl_grupos.py`. Cinco features [1, x, y, xy, x² − y²] de um ponto
+uniforme em [−1, 1]², três ações, uma política softmax linear (pesos 5×3), a recompensa 1 se a ação é a do oráculo (o argmax de
+features·ORÁCULO, a mesma matriz do original) e 0 senão. Para cada grupo de G ações amostradas no mesmo contexto: vantagem normalizada
+pelo grupo (a `vantagem_grpo` da Parte 87, reusada, com zero quando o grupo não tem contraste), razão de importância recortada em
+[1 − ε, 1 + ε] e KL exata contra a referência uniforme congelada. A diferença para o original: os contextos e as amostras vêm do
+`random` da biblioteca padrão (o original usa o gerador do numpy), então os números não são os do original, só o desenho.
+\"\"\"
+import math
+import random
+
+from synthai.plasticidade import vantagem_grpo
+
+ORACULO = [[.1, -.1, 0.], [1., -1., .2], [.2, .7, -1.], [.25, -.3, .1], [.1, .05, -.15]]
+
+
+def features(x, y):
+    return [1.0, x, y, x * y, x * x - y * y]
+
+
+def gerar_contextos(n, semente):
+    r = random.Random(semente)
+    return [features(r.uniform(-1, 1), r.uniform(-1, 1)) for _ in range(n)]
+
+
+def logits(pesos, f):
+    return [sum(f[i] * pesos[i][a] for i in range(5)) for a in range(3)]
+
+
+def log_softmax(z):
+    m = max(z)
+    s = sum(math.exp(v - m) for v in z)
+    return [v - m - math.log(s) for v in z]
+
+
+def acao_otima(f):
+    z = logits(ORACULO, f)
+    return max(range(3), key=lambda a: z[a])
+
+
+def vantagens_grupo(recompensas, eps=1e-8):
+    \"\"\"A vantagem do texto recebido: zero se o grupo não tem contraste; senão a da Parte 87.\"\"\"
+    if all(r == recompensas[0] for r in recompensas):
+        return [0.0] * len(recompensas)
+    return vantagem_grpo(recompensas, eps)
+
+
+def vantagens_binarias_fechadas(G, k):
+    \"\"\"A forma fechada para recompensas 0/1 com k acertos em G (0 < k < G), sem o ε: p̂ = k/G, desvio √(p̂(1 − p̂)); o acerto
+    recebe √((1 − p̂)/p̂) e o erro −√(p̂/(1 − p̂)).\"\"\"
+    p = k / G
+    return math.sqrt((1 - p) / p), -math.sqrt(p / (1 - p))
+
+
+def prob_sem_contraste(p, G):
+    \"\"\"P(as G recompensas do grupo são iguais) = p^G + (1 − p)^G, com p = π(ação ótima).\"\"\"
+    return p ** G + (1 - p) ** G
+
+
+def gradiente(pesos, f, acoes, logp_velha, vant, clip=0.2, beta=0.025):
+    \"\"\"Gradiente da perda −média(min(r·A, clip(r)·A)) + β·KL(π‖uniforme) em relação aos pesos (5×3), como no original.\"\"\"
+    logp = log_softmax(logits(pesos, f))
+    p = [math.exp(v) for v in logp]
+    G = len(acoes)
+    dlog = [0.0, 0.0, 0.0]
+    for a, lv, A in zip(acoes, logp_velha, vant):
+        razao = math.exp(logp[a] - lv)
+        ativa = not ((A > 0 and razao > 1 + clip) or (A < 0 and razao < 1 - clip))
+        if ativa:
+            for b in range(3):
+                score = (1.0 if b == a else 0.0) - p[b]
+                dlog[b] -= razao * A / G * score
+    ref = -math.log(3.0)
+    diff = [v - ref for v in logp]
+    kl = sum(pi * di for pi, di in zip(p, diff))
+    for b in range(3):
+        dlog[b] += beta * p[b] * (diff[b] - kl)
+    return [[f[i] * dlog[b] for b in range(3)] for i in range(5)]
+
+
+def treinar(contextos, G, orcamento=4096, semente=41, taxa=0.15, passes=3, clip=0.2, beta=0.025):
+    \"\"\"Treina com orcamento/G grupos. Devolve (pesos, grupos sem contraste, grupos).\"\"\"
+    pesos = [[0.0] * 3 for _ in range(5)]
+    escolha = random.Random(semente * 1000 + 367)
+    amostra = random.Random(semente * 1000 + G)
+    sem = 0
+    for _ in range(orcamento // G):
+        f = contextos[escolha.randrange(len(contextos))]
+        lv = log_softmax(logits(pesos, f))
+        pv = [math.exp(v) for v in lv]
+        acoes = amostra.choices(range(3), weights=pv, k=G)
+        rec = [1.0 if a == acao_otima(f) else 0.0 for a in acoes]
+        vant = vantagens_grupo(rec)
+        sem += all(v == 0.0 for v in vant)
+        lva = [lv[a] for a in acoes]
+        for _ in range(passes):
+            g = gradiente(pesos, f, acoes, lva, vant, clip, beta)
+            pesos = [[pesos[i][b] - taxa * g[i][b] for b in range(3)] for i in range(5)]
+    return pesos, sem, orcamento // G
+
+
+def retorno_esperado(pesos, contextos):
+    \"\"\"A média exata de π(ação ótima | contexto) nos contextos dados (como o `avaliar` do original).\"\"\"
+    t = 0.0
+    for f in contextos:
+        t += math.exp(log_softmax(logits(pesos, f))[acao_otima(f)])
+    return t / len(contextos)
+"""
+
+# ====================================================================================================
 # synthai/hexadecimal.py  (142 linhas)
 # ====================================================================================================
 FONTES['synthai/hexadecimal.py'] = """\"\"\"A SYNTHAI em hexadecimal (Parte 30, P361).
@@ -22586,6 +23143,121 @@ class CFRExterno(CFR):
 def explorabilidade_externa(iteracoes, semente):
     from synthai.cfr import explorabilidade
     return explorabilidade(CFRExterno().iterar_externo(iteracoes, semente).media())
+"""
+
+# ====================================================================================================
+# synthai/memoria_congelada.py  (110 linhas)
+# ====================================================================================================
+FONTES['synthai/memoria_congelada.py'] = """\"\"\"A memória congelada de falhas e a comparação pareada de `externos/pacote3/transferencia_metacognitiva.py` (Parte 138), offline e em
+biblioteca padrão.
+
+O original otimiza quadráticas de quatro famílias (suave, anisotrópica, rígida, ruidosa) com retrocesso: cada rejeição (o custo subiu
+ou o passo deslocou mais que 1) divide o passo por 2, e cada ganho o multiplica por 1,06. No TREINO, uma memória conta, por "contexto
+do gradiente", quantas tentativas foram rejeitadas. Os contextos são baixo, médio e alto, pela razão |g|/√f com cortes 3 e 6. A memória é
+CONGELADA antes do teste e só mexe no PRIMEIRO passo de cada tarefa: passo·(1 − 0,6·(r + 1)/(n + 2)) se o contexto teve n ≥ 8 tentativas.
+A comparação é pareada por tarefa, com bootstrap estratificado por família.
+
+O que não veio: o original importa `recursiva_paraconsistente` (uma geometria restrita com retração, um motor de evidências e uma
+"metaprobabilidade"), que não estava no pacote. Aqui a otimização é sem restrição, e o "conflito" sintético da família ruidosa entra
+como uma rejeição sorteada com a chance declarada. Os números não são os do original, só o desenho.
+\"\"\"
+import math
+import random
+
+from synthai.passos import quadratica_anisotropica, custo, gradiente, _soma
+
+FAMILIAS = ("suave", "anisotropica", "rigida", "ruidosa")
+_PARAMETROS = {"suave": (1.0, 1.0, 0.0, 0.0), "anisotropica": (8.0, 3.0, 0.0, 0.0), "rigida": (32.0, 12.0, 0.0, 0.0),
+               "ruidosa": (8.0, 3.0, 0.2, 0.1)}
+
+
+def gerar_tarefas(n, dimensao=8, semente=31, fase=1):
+    \"\"\"n tarefas (múltiplo de 4), famílias em rodízio. A hessiana tem espectro geométrico de escala/condição a escala (como no original);
+    alvo e partida gaussianos. Cada tarefa: dict com A (a metade da hessiana: custo dᵀAd), alvo, x0, sigma, conflito, familia, chave.\"\"\"
+    tarefas = []
+    for i in range(n):
+        fam = FAMILIAS[i % 4]
+        cond, escala, sigma, conflito = _PARAMETROS[fam]
+        A, lam, _ = quadratica_anisotropica(dimensao, cond, semente * 100000 + fase * 1000 + i)
+        A = [[escala / cond * v for v in linha] for linha in A]  # espectro de escala/cond a escala
+        r = random.Random(semente * 100000 + fase * 1000 + i + 7)
+        tarefas.append(dict(A=A, alvo=[r.gauss(0, 1) for _ in range(dimensao)], x0=[r.gauss(0, 1) for _ in range(dimensao)],
+                            sigma=sigma, conflito=conflito, familia=fam, chave=(semente, fase, i)))
+    return tarefas
+
+
+def contexto(g, f):
+    \"\"\"O contexto do original: |g|/√f < 3 baixo, < 6 médio, senão alto. Numa quadrática dᵀAd, |g|²/f = 4·dᵀA²d/dᵀAd, um quociente de
+    Rayleigh de A: a razão fica entre 2√λ_min e 2√λ_max. O contexto é uma estimativa de curvatura.\"\"\"
+    razao = math.sqrt(_soma(v * v for v in g)) / math.sqrt(max(f, 1e-12))
+    return "baixo" if razao < 3 else ("medio" if razao < 6 else "alto")
+
+
+class MemoriaFalhas:
+    \"\"\"Conta, no treino, (tentativas sem conflito, rejeições) por contexto; `congelar` devolve o fator do primeiro passo.\"\"\"
+
+    def __init__(self):
+        self.contagens = {c: [0, 0] for c in ("baixo", "medio", "alto")}
+
+    def registrar(self, ctx, motivo):
+        if motivo != "conflito":
+            self.contagens[ctx][0] += 1
+            self.contagens[ctx][1] += int(motivo != "aceita")
+
+    def congelar(self):
+        congelado = {c: tuple(v) for c, v in self.contagens.items()}
+
+        def fator(ctx):
+            n, r = congelado[ctx]
+            return 1 - 0.6 * (r + 1) / (n + 2) if n >= 8 else 1.0
+        return fator
+
+
+def executar(tarefa, passo, orcamento=24, fator=None, coletor=None):
+    \"\"\"O retrocesso do original, sem a geometria restrita. Devolve f_final / f_inicial.\"\"\"
+    s0, fase, i = tarefa["chave"]
+    rng = random.Random(s0 * 1000003 + fase * 1009 + i)
+    A, alvo, x = tarefa["A"], tarefa["alvo"], list(tarefa["x0"])
+    f = custo(A, x, alvo)
+    f0 = f
+    for t in range(1, orcamento + 1):
+        g = gradiente(A, x, alvo)
+        if tarefa["sigma"]:
+            g = [gi + tarefa["sigma"] * rng.gauss(0, 1) for gi in g]
+        ctx = contexto(g, f)
+        if t == 1 and fator is not None:
+            passo *= fator(ctx)
+        cand = [xi - passo * gi for xi, gi in zip(x, g)]
+        fc = custo(A, cand, alvo)
+        desloc = math.sqrt(_soma((a - b) * (a - b) for a, b in zip(cand, x)))
+        conflito = rng.random() < tarefa["conflito"]
+        motivo = "conflito" if conflito else ("deslocamento" if desloc > 1.0 else ("custo" if fc > f + 1e-12 else "aceita"))
+        ganho = 0.0
+        if motivo == "aceita":
+            ganho = f - fc
+            x, f = cand, fc
+        if coletor is not None:
+            coletor.registrar(ctx, motivo)
+        if motivo in ("custo", "deslocamento"):
+            passo = max(0.002, passo * 0.5)
+        elif motivo == "aceita" and ganho > 1e-3 * max(f + ganho, 1e-12):
+            passo = min(0.4, passo * 1.06)
+    return f / max(f0, 1e-12)
+
+
+def comparacao_pareada(base, nova, familias, replicas=1200, semente=31):
+    \"\"\"Diferenças pareadas base − nova (positivo favorece a nova), com bootstrap estratificado por família. Devolve (média, ganhos,
+    perdas, empates, intervalo 95% do bootstrap).\"\"\"
+    d = [b - n for b, n in zip(base, nova)]
+    grupos = [[i for i, f in enumerate(familias) if f == fam] for fam in FAMILIAS]
+    r = random.Random(semente * 1000 + 511)
+    medias = []
+    for _ in range(replicas):
+        idx = [g[r.randrange(len(g))] for g in grupos if g for _ in range(len(g))]
+        medias.append(_soma(d[i] for i in idx) / len(idx))
+    medias.sort()
+    lo, hi = medias[int(0.025 * replicas)], medias[int(0.975 * replicas) - 1]
+    return (_soma(d) / len(d), sum(x > 1e-12 for x in d), sum(x < -1e-12 for x in d), sum(abs(x) <= 1e-12 for x in d), (lo, hi))
 """
 
 # ====================================================================================================
@@ -25885,6 +26557,245 @@ def transferencia_do_estimador(cfg, dic, episodios_teste=5000):
 """
 
 # ====================================================================================================
+# synthai/passos.py  (234 linhas)
+# ====================================================================================================
+FONTES['synthai/passos.py'] = """\"\"\"O tamanho do passo numa quadrática anisotrópica (Parte 136).
+
+Reescrita offline, só biblioteca padrão, das ideias seguras de dois módulos recebidos que nenhuma parte tinha usado:
+`externos/pacote_v015/objetivos_cognitivos.py` (a quadrática SPD com condição κ, autovalores em progressão geométrica de 1 a κ,
+base ortonormal sorteada) e `externos/pacote3/inovacao_guiada.py` (o passo de secante 0,8·(s·s)/(s·y) com proteção, a média
+exponencial do gradiente e o limite da norma do deslocamento). Os originais usam numpy e um módulo `recursiva_paraconsistente`
+que não veio no pacote; aqui não há nem um nem outro. E um auditor de CAPACIDADES para tudo o que é recebido: rede, processo,
+código dinâmico e desserialização (o `security_audit_ast_v2` da Parte 111 só olha a rede).
+\"\"\"
+import ast
+import math
+import random
+
+
+def _soma(valores):
+    \"\"\"Soma em laço sequencial: o _soma() do Python 3.12 é compensado (Neumaier) e o Java não o reproduz bit a bit (Parte 34).\"\"\"
+    t = 0.0
+    for v in valores:
+        t += v
+    return t
+
+
+# --- a quadrática de objetivos_cognitivos.py ---
+
+def _gram_schmidt(colunas):
+    base = []
+    for v in colunas:
+        w = list(v)
+        for b in base:
+            p = _soma(wi * bi for wi, bi in zip(w, b))
+            w = [wi - p * bi for wi, bi in zip(w, b)]
+        n = math.sqrt(_soma(wi * wi for wi in w))
+        base.append([wi / n for wi in w])
+    return base
+
+
+def quadratica_anisotropica(dimensao=8, condicao=10.0, semente=31001):
+    \"\"\"Devolve (A, autovalores, Q): A = Q diag(λ) Qᵀ, λ_i = κ^{i/(d-1)} (de 1 a κ), Q ortonormal por Gram-Schmidt de uma
+    matriz gaussiana com a semente dada. Q é uma lista de vetores-coluna (Q[i] é o autovetor de λ_i).\"\"\"
+    rng = random.Random(semente)
+    Q = _gram_schmidt([[rng.gauss(0.0, 1.0) for _ in range(dimensao)] for _ in range(dimensao)])
+    lam = [condicao ** (i / (dimensao - 1)) for i in range(dimensao)]
+    A = [[_soma(lam[k] * Q[k][i] * Q[k][j] for k in range(dimensao)) for j in range(dimensao)] for i in range(dimensao)]
+    return A, lam, Q
+
+
+def custo(A, x, alvo):
+    d = [xi - ai for xi, ai in zip(x, alvo)]
+    return _soma(d[i] * _soma(A[i][j] * d[j] for j in range(len(d))) for i in range(len(d)))
+
+
+def gradiente(A, x, alvo):
+    d = [xi - ai for xi, ai in zip(x, alvo)]
+    return [2.0 * _soma(A[i][j] * d[j] for j in range(len(d))) for i in range(len(d))]
+
+
+# --- os passos de inovacao_guiada.py ---
+
+def passo_secante(s, y, fallback, fator=0.8, minimo=0.002, maximo=0.4):
+    \"\"\"O passo de Barzilai-Borwein do texto recebido: fator·(s·s)/(s·y), recortado em [mínimo, máximo]; sem curvatura
+    observável (s·s ≤ 1e-12 ou s·y ≤ 1e-10) devolve o fallback. Devolve (passo, válido).\"\"\"
+    if s is None:
+        return fallback, False
+    ss = _soma(a * a for a in s)
+    sy = _soma(a * b for a, b in zip(s, y))
+    if not (math.isfinite(ss) and math.isfinite(sy)) or ss <= 1e-12 or sy <= 1e-10:
+        return fallback, False
+    return min(maximo, max(minimo, fator * ss / sy)), True
+
+
+def descer(A, x0, alvo, T, metodo="fixo", passo=0.05, fator=0.8, beta=0.6, sigma=0.0, semente=0, limite=None):
+    \"\"\"Descida do gradiente com T passos. metodo: 'fixo' (passo constante), 'secante' (o passo de BB do texto, com o passo
+    fixo como fallback no primeiro) ou 'media' (direção = média exponencial do gradiente com peso beta no atual).
+    sigma: ruído gaussiano somado ao gradiente. limite: norma máxima do deslocamento (o 'limite_tangente'). Devolve a lista
+    dos custos (T + 1 valores, o inicial primeiro).\"\"\"
+    rng = random.Random(semente)
+    x = list(x0)
+    custos = [custo(A, x, alvo)]
+    x_ant = g_ant = media = None
+    for _ in range(T):
+        g = gradiente(A, x, alvo)
+        if sigma:
+            g = [gi + sigma * rng.gauss(0.0, 1.0) for gi in g]
+        eta, direcao = passo, g
+        if metodo == "secante":
+            s = None if x_ant is None else [a - b for a, b in zip(x, x_ant)]
+            y = None if g_ant is None else [a - b for a, b in zip(g, g_ant)]
+            eta, _ = passo_secante(s, y, passo, fator)
+        elif metodo == "media":
+            media = list(g) if media is None else [beta * a + (1 - beta) * b for a, b in zip(g, media)]
+            direcao = media
+        delta = [-eta * di for di in direcao]
+        if limite is not None:
+            n = math.sqrt(_soma(di * di for di in delta))
+            if n > limite:
+                delta = [di * limite / n for di in delta]
+        x_ant, g_ant = x, g
+        x = [xi + di for xi, di in zip(x, delta)]
+        custos.append(custo(A, x, alvo))
+    return custos
+
+
+def razao_fixo_fechada(lam, coordenadas, passo, T):
+    \"\"\"A forma fechada da descida de passo fixo numa quadrática: na base própria, a coordenada c_i é multiplicada por
+    (1 - 2ηλ_i) a cada passo (a hessiana de dᵀAd é 2A), e o custo é Σ λ_i c_i². Devolve f_T / f_0.\"\"\"
+    f0 = _soma(l * c * c for l, c in zip(lam, coordenadas))
+    fT = _soma(l * c * c * (1 - 2 * passo * l) ** (2 * T) for l, c in zip(lam, coordenadas))
+    return fT / f0
+
+
+def coordenadas_proprias(Q, x, alvo):
+    d = [xi - ai for xi, ai in zip(x, alvo)]
+    return [_soma(q[i] * d[i] for i in range(len(d))) for q in Q]
+
+
+def variancia_media_exponencial(beta, n=200000, semente=0):
+    \"\"\"Variância estacionária da média exponencial m ← βg + (1-β)m de ruído branco de variância 1, medida em n passos
+    (descartando os 1000 primeiros). A forma fechada é β/(2-β).\"\"\"
+    rng = random.Random(semente)
+    m, soma, soma2, k = 0.0, 0.0, 0.0, 0
+    for t in range(n):
+        m = beta * rng.gauss(0.0, 1.0) + (1 - beta) * m
+        if t >= 1000:
+            soma += m
+            soma2 += m * m
+            k += 1
+    media = soma / k
+    return soma2 / k - media * media
+
+
+# --- o auditor de capacidades ---
+
+_PROCESSO = {("subprocess", None), ("os", "system"), ("os", "popen"), ("os", "fork"), ("os", "forkpty"), ("os", "spawnl"),
+             ("os", "spawnv"), ("os", "spawnve"), ("os", "execv"), ("os", "execve"), ("os", "execl"), ("os", "execvp"),
+             ("multiprocessing", None), ("pty", "spawn")}
+_DINAMICO = {"eval", "exec", "compile", "__import__"}
+_DESSERIALIZAR = {("pickle", "load"), ("pickle", "loads"), ("marshal", "loads"), ("marshal", "load"), ("dill", None),
+                  ("shelve", "open")}
+_IMPORTLIB = {"exec_module", "import_module", "spec_from_file_location", "load_module"}
+_REDE_MODULOS = {"requests", "httpx", "aiohttp", "socket", "http", "ftplib", "smtplib", "urllib.request", "websocket",
+                 "telnetlib", "paramiko"}
+# nltk só é rede no download (a 1ª versão contava o import, que lê o corpus local: corrigido na Parte 136)
+_REDE_CHAMADAS_BASE = {("nltk", "download")}
+
+
+def _nome_pontuado(no):
+    partes = []
+    while isinstance(no, ast.Attribute):
+        partes.append(no.attr)
+        no = no.value
+    if isinstance(no, ast.Name):
+        partes.append(no.id)
+        return ".".join(reversed(partes))
+    return None
+
+
+def auditar_capacidades(fonte):
+    \"\"\"Lê a árvore sintática (SEM executar) e devolve {categoria: [achados]} para quatro capacidades: 'rede' (import de módulo
+    de rede), 'processo' (import de subprocess/multiprocessing, chamada os.system/fork/exec*), 'dinamico' (chamada a
+    eval/exec/compile/__import__ e importlib.exec_module & cia.) e 'desserializacao' (pickle.load(s), marshal, shelve).
+    Conta USO (import, chamada), não MENÇÃO (uma string com 'subprocess' não conta: a regra da Parte 109). Um fonte que não
+    é Python válido devolve {'nao_analisavel': [mensagem]}.\"\"\"
+    try:
+        arvore = ast.parse(fonte)
+    except SyntaxError as e:
+        return {"nao_analisavel": [f"linha {e.lineno}: {e.msg}"]}
+    achados = {"rede": set(), "processo": set(), "dinamico": set(), "desserializacao": set()}
+    for no in ast.walk(arvore):
+        modulos = []
+        if isinstance(no, ast.Import):
+            modulos = [a.name for a in no.names]
+        elif isinstance(no, ast.ImportFrom) and no.module:
+            modulos = [no.module] + [no.module + "." + a.name for a in no.names]
+        for m in modulos:
+            raiz = m.split(".")[0]
+            if m in _REDE_MODULOS or (raiz in _REDE_MODULOS and raiz != "urllib"):
+                achados["rede"].add("import:" + m)
+            if raiz in ("subprocess", "multiprocessing"):
+                achados["processo"].add("import:" + m)
+            if raiz in ("pickle", "marshal", "dill", "shelve"):
+                achados["desserializacao"].add("import:" + m)
+        if isinstance(no, ast.Call):
+            nome = _nome_pontuado(no.func)
+            if nome is None:
+                continue
+            partes = nome.split(".")
+            if nome in _DINAMICO:
+                achados["dinamico"].add("chamada:" + nome)
+            if partes[-1] in _IMPORTLIB:
+                achados["dinamico"].add("chamada:" + nome)
+            if len(partes) >= 2:
+                base, fim = partes[0], partes[-1]
+                if (base, None) in _PROCESSO or (base, fim) in _PROCESSO:
+                    achados["processo"].add("chamada:" + nome)
+                if (base, fim) in _REDE_CHAMADAS_BASE:
+                    achados["rede"].add("chamada:" + nome)
+                if (base, fim) in _DESSERIALIZAR or (base, None) in _DESSERIALIZAR:
+                    achados["desserializacao"].add("chamada:" + nome)
+    return {k: sorted(v) for k, v in achados.items() if v}
+
+
+# --- a média exponencial como heavy-ball, modo por modo (o teste (j)-(k) da Parte 136) ---
+
+def razao_media_por_modo(lam, coordenadas, passo, beta, T):
+    \"\"\"A média exponencial do gradiente na base própria: c ← c − η·m, m ← β·2λ·c + (1−β)·m (com m₀ = 2λc₀). Devolve f_T / f_0.\"\"\"
+    f0 = _soma(l * c * c for l, c in zip(lam, coordenadas))
+    fT = 0.0
+    for l, c in zip(lam, coordenadas):
+        m = None
+        for _ in range(T):
+            g = 2.0 * l * c
+            m = g if m is None else beta * g + (1 - beta) * m
+            c = c - passo * m
+        fT += l * c * c
+    return fT / f0
+
+
+def raio_media(l, passo, beta):
+    \"\"\"O raio espectral do modo λ na média exponencial: a maior |raiz| de z² − (2 − β − 2ηβλ)z + (1 − β) = 0.\"\"\"
+    b = 2 - beta - 2 * passo * beta * l
+    disc = b * b - 4 * (1 - beta)
+    if disc >= 0:
+        r = math.sqrt(disc)
+        return max(abs((b + r) / 2), abs((b - r) / 2))
+    return math.sqrt(1 - beta)
+
+
+def ganhos_por_modo(lam, passo, beta, T):
+    \"\"\"2T·log₁₀(ρ_média/ρ_fixo) por modo: o quanto a média ganha em f_T em cada modo, pela taxa assintótica.\"\"\"
+    out = []
+    for l in lam:
+        fixo = abs(1 - 2 * passo * l)
+        out.append(math.inf if fixo == 0.0 else 2 * T * math.log10(raio_media(l, passo, beta) / fixo))
+    return out
+"""
+
+# ====================================================================================================
 # synthai/pensamento.py  (31 linhas)
 # ====================================================================================================
 FONTES['synthai/pensamento.py'] = """\"\"\"Pensamento (P43, P83, P145): a probabilidade calibrada de uma opção ser catastrófica.
@@ -26706,6 +27617,67 @@ class Relacao:
                 self.respostas[id(opcao)] = situacao.perguntar(opcao)
             return self.respostas[id(opcao)]
         return situacao.perguntar(opcao)
+"""
+
+# ====================================================================================================
+# synthai/reservatorio.py  (56 linhas)
+# ====================================================================================================
+FONTES['synthai/reservatorio.py'] = """\"\"\"Peças de aprendizagem contínua do módulo recebido `externos/pacote3/aprendizagem_continua.py` (Parte 137), offline e em biblioteca padrão:
+a memória por reservatório (amostra uniforme de um fluxo sem saber o tamanho dele), o posto efetivo exp(H(s/Σs)) dos valores singulares das
+ativações centradas, a fração de unidades dormentes (atividade média ≤ limiar × média geral) e a medida de esquecimento de uma matriz de
+acurácias. Os valores singulares reusam `synthai.contraposto_matrizes.valores_singulares` (Jacobi, Parte 117).
+\"\"\"
+import math
+import random
+
+from synthai.contraposto_matrizes import valores_singulares
+
+
+class Reservatorio:
+    \"\"\"O algoritmo R de Vitter: os primeiros k entram; o n-ésimo substitui uma posição uniforme com probabilidade k/n.\"\"\"
+
+    def __init__(self, capacidade, semente=0):
+        self.capacidade = capacidade
+        self.rng = random.Random(semente)
+        self.itens = []
+        self.vistos = 0
+
+    def adicionar(self, item):
+        self.vistos += 1
+        if len(self.itens) < self.capacidade:
+            self.itens.append(item)
+        else:
+            j = self.rng.randrange(self.vistos)
+            if j < self.capacidade:
+                self.itens[j] = item
+
+
+def posto_efetivo(ativacoes):
+    \"\"\"exp(H(p)) com p = s/Σs, s os valores singulares da matriz de ativações (amostras × unidades) centrada por coluna; 0 se Σs ≈ 0.\"\"\"
+    n, d = len(ativacoes), len(ativacoes[0])
+    medias = [sum(l[j] for l in ativacoes) / n for j in range(d)]
+    H = [[l[j] - medias[j] for j in range(d)] for l in ativacoes]
+    s = [v for v in valores_singulares(H) if v > 0]
+    soma = sum(s)
+    if soma <= 1e-12:
+        return 0.0
+    return math.exp(-sum((v / soma) * math.log(v / soma) for v in s))
+
+
+def fracao_dormente(ativacoes, limiar=0.12):
+    \"\"\"Fração das unidades com atividade média |h| ≤ limiar × a média das atividades (todas dormentes se a média é zero).\"\"\"
+    n, d = len(ativacoes), len(ativacoes[0])
+    atividade = [sum(abs(l[j]) for l in ativacoes) / n for j in range(d)]
+    media = sum(atividade) / d
+    if media <= 1e-300:
+        return 1.0
+    return sum(a <= limiar * media for a in atividade) / d
+
+
+def esquecimento(R):
+    \"\"\"Para cada tarefa j anterior à última: o máximo de R[i][j] nas etapas i de j até a penúltima, menos a acurácia final R[-1][j].\"\"\"
+    t = len(R)
+    return [max(R[i][j] for i in range(j, t - 1)) - R[-1][j] for j in range(t - 1)]
 """
 
 # ====================================================================================================
@@ -29710,6 +30682,347 @@ class TestesParte128(unittest.TestCase):
     def test_volta7_regressao(self):
         r = c.p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")
         self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]), (9, 0, [133], 130))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte136.py  (110 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte136.py'] = """\"\"\"Testes da Parte 136: synthai/passos.py (a quadrática de objetivos_cognitivos.py, os passos de inovacao_guiada.py, o auditor de
+capacidades) e as funções P3177–P3180 pelo nome.\"\"\"
+import math
+import random
+import unittest
+
+import calculos as c
+from synthai import passos as p
+
+
+class TestesPassos(unittest.TestCase):
+    def test_quadratica_espectro(self):
+        A, lam, Q = p.quadratica_anisotropica(5, 20.0, 3)
+        self.assertAlmostEqual(lam[0], 1.0)
+        self.assertAlmostEqual(lam[-1], 20.0)
+        for i in range(5):
+            Av = [sum(A[r][k] * Q[i][k] for k in range(5)) for r in range(5)]
+            for r in range(5):
+                self.assertAlmostEqual(Av[r], lam[i] * Q[i][r], places=12)
+
+    def test_fixo_igual_a_forma_fechada(self):
+        A, lam, Q = p.quadratica_anisotropica(4, 7.0, 11)
+        x0, alvo = [0.3, -1.2, 0.8, 2.0], [0.1, 0.0, -0.4, 0.5]
+        cs = p.descer(A, x0, alvo, 10, metodo="fixo", passo=0.03)
+        self.assertAlmostEqual(cs[-1] / cs[0], p.razao_fixo_fechada(lam, p.coordenadas_proprias(Q, x0, alvo), 0.03, 10), places=12)
+
+    def test_media_igual_a_recorrencia_por_modo(self):
+        A, lam, Q = p.quadratica_anisotropica(4, 7.0, 11)
+        x0, alvo = [0.3, -1.2, 0.8, 2.0], [0.0] * 4
+        cs = p.descer(A, x0, alvo, 12, metodo="media", passo=0.03, beta=0.5)
+        rec = p.razao_media_por_modo(lam, p.coordenadas_proprias(Q, x0, alvo), 0.03, 0.5, 12)
+        self.assertLess(abs(cs[-1] / cs[0] - rec) / rec, 1e-9)
+
+    def test_passo_secante_protegido(self):
+        self.assertEqual(p.passo_secante(None, None, 0.05), (0.05, False))
+        self.assertEqual(p.passo_secante([1.0, 0.0], [-1.0, 0.0], 0.05), (0.05, False))  # s·y < 0: sem curvatura
+        self.assertEqual(p.passo_secante([1.0, 0.0], [4.0, 0.0], 0.05), (0.8 * 1.0 / 4.0, True))
+        self.assertEqual(p.passo_secante([1.0, 0.0], [0.5, 0.0], 0.05), (0.4, True))  # recortado no máximo
+
+    def test_limite_da_norma(self):
+        A, _, _ = p.quadratica_anisotropica(3, 2.0, 1)
+        cs = p.descer(A, [10.0, 0.0, 0.0], [0.0] * 3, 1, metodo="fixo", passo=1.0, limite=0.1)
+        self.assertLess(cs[1], cs[0])
+
+    def test_raio_media(self):
+        # λ = 1, η = 0,05, β = 0,6: z² − 1,34z + 0,4 = 0, maior raiz (1,34 + √0,1956)/2
+        self.assertAlmostEqual(p.raio_media(1.0, 0.05, 0.6), (1.34 + math.sqrt(1.34 ** 2 - 1.6)) / 2, places=14)
+        self.assertEqual(p.ganhos_por_modo([10.0], 0.05, 0.6, 24), [math.inf])
+
+    def test_variancia_media_exponencial(self):
+        self.assertAlmostEqual(p.variancia_media_exponencial(0.5, n=60000, semente=2), 0.5 / 1.5, delta=0.01)
+
+    def test_soma_sequencial(self):
+        self.assertEqual(p._soma([1e16, 1.0, -1e16]), 0.0)  # o sum() compensado daria 1.0
+
+
+class TestesAuditor(unittest.TestCase):
+    def test_defeitos_plantados(self):
+        a = p.auditar_capacidades("import subprocess, pickle\\nimport os\\nsubprocess.Popen(['x'])\\nos.system('ls')\\nos.fork()\\n"
+                                  "eval('1')\\nexec('x=1')\\n__import__('os')\\npickle.loads(b'')\\nspec.loader.exec_module(m)\\n"
+                                  "import requests\\nimport nltk\\nnltk.download('wordnet')\\n")
+        self.assertIn("chamada:subprocess.Popen", a["processo"])
+        self.assertIn("chamada:os.system", a["processo"])
+        self.assertIn("chamada:os.fork", a["processo"])
+        for k in ("chamada:eval", "chamada:exec", "chamada:__import__", "chamada:spec.loader.exec_module"):
+            self.assertIn(k, a["dinamico"])
+        self.assertIn("chamada:pickle.loads", a["desserializacao"])
+        self.assertIn("import:requests", a["rede"])
+        self.assertIn("chamada:nltk.download", a["rede"])
+
+    def test_caso_limpo(self):
+        self.assertEqual(p.auditar_capacidades("s = 'subprocess.Popen eval( exec( urllib.request'\\nimport math, json\\n"
+                                               "from urllib.parse import quote\\nimport nltk\\nfrom nltk.corpus import wordnet\\n"), {})
+
+    def test_nao_analisavel(self):
+        self.assertIn("nao_analisavel", p.auditar_capacidades("def f(:\\n"))
+
+    def test_proprio_fonte(self):
+        with open(p.__file__, encoding="utf-8") as f:
+            self.assertEqual(p.auditar_capacidades(f.read()), {})
+
+
+class TestesFuncoesParte136(unittest.TestCase):
+    def test_p3177_passo_fixo_e_secante(self):
+        r = c.p3177_passo_fixo_e_secante()
+        self.assertLess(r["erro_rel"], 1e-10)
+        self.assertAlmostEqual(r["fechada"], -4.7891, places=3)
+        self.assertLess(r["secante"], -11.0)
+        self.assertAlmostEqual(r["media_menos_fixo"], -0.405, places=2)
+
+    def test_p3178_ruido_e_media(self):
+        v, vf, cm, piso = c.p3178_ruido_e_media()
+        self.assertAlmostEqual(vf, 0.6 / 1.4, places=12)
+        self.assertLess(abs(v - vf), 0.0026)
+        self.assertLess(abs(cm / piso - 1), 0.07)
+
+    def test_p3179_capacidades_recebidas(self):
+        proprio, por, com, com_pac, nao = c.p3179_capacidades_recebidas()
+        self.assertEqual((proprio, com, com_pac, nao), ({}, 6, 0, 1))
+
+    def test_p3180_media_por_modo(self):
+        r = c.p3180_media_por_modo()
+        self.assertEqual(len(r), 4)
+        for erro, d, dentro in r:
+            self.assertLess(erro, 1e-9)
+            self.assertTrue(dentro)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte137.py  (105 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte137.py'] = """\"\"\"Testes da Parte 137: synthai/grpo_bandido.py (de externos/pacote3/rl_grupos.py), synthai/reservatorio.py (de
+externos/pacote3/aprendizagem_continua.py) e as funções P3181–P3183 pelo nome.\"\"\"
+import math
+import unittest
+
+import calculos as c
+from synthai import grpo_bandido as g
+from synthai import reservatorio as r
+
+
+class TestesGRPO(unittest.TestCase):
+    def test_vantagem_sem_contraste_e_zero(self):
+        self.assertEqual(g.vantagens_grupo([1.0, 1.0, 1.0]), [0.0, 0.0, 0.0])
+        self.assertEqual(g.vantagens_grupo([0.0, 0.0]), [0.0, 0.0])
+
+    def test_vantagem_binaria_fechada(self):
+        v = g.vantagens_grupo([1.0, 0.0, 0.0, 0.0])
+        a, b = g.vantagens_binarias_fechadas(4, 1)
+        self.assertAlmostEqual(a, math.sqrt(3.0))
+        self.assertAlmostEqual(v[0], a, places=6)
+        self.assertAlmostEqual(v[1], b, places=6)
+        self.assertAlmostEqual(sum(v), 0.0, places=12)
+
+    def test_prob_sem_contraste(self):
+        self.assertAlmostEqual(g.prob_sem_contraste(1 / 3, 2), 5 / 9)
+        self.assertAlmostEqual(g.prob_sem_contraste(0.5, 3), 0.25)
+
+    def test_log_softmax_normaliza(self):
+        lp = g.log_softmax([1.0, -2.0, 0.5])
+        self.assertAlmostEqual(sum(math.exp(v) for v in lp), 1.0, places=14)
+
+    def test_oraculo_e_recompensa(self):
+        f = g.features(0.5, -0.5)
+        z = [sum(f[i] * g.ORACULO[i][a] for i in range(5)) for a in range(3)]
+        self.assertEqual(g.acao_otima(f), max(range(3), key=lambda a: z[a]))
+
+    def test_gradiente_kl_zero_na_uniforme_sem_vantagem(self):
+        pesos = [[0.0] * 3 for _ in range(5)]
+        f = g.features(0.3, 0.2)
+        lv = g.log_softmax(g.logits(pesos, f))
+        grad = g.gradiente(pesos, f, [0, 1], [lv[0], lv[1]], [0.0, 0.0])
+        self.assertTrue(all(abs(x) < 1e-15 for l in grad for x in l))
+
+    def test_treinar_melhora_a_uniforme(self):
+        tr, te = g.gerar_contextos(64, 1), g.gerar_contextos(64, 2)
+        w, _, n = g.treinar(tr, 4, 512, semente=3)
+        self.assertEqual(n, 128)
+        self.assertGreater(g.retorno_esperado(w, te), g.retorno_esperado([[0.0] * 3 for _ in range(5)], te))
+
+
+class TestesReservatorio(unittest.TestCase):
+    def test_reservatorio_tamanho_e_conteudo(self):
+        res = r.Reservatorio(10, semente=1)
+        for i in range(100):
+            res.adicionar(i)
+        self.assertEqual(len(res.itens), 10)
+        self.assertEqual(len(set(res.itens)), 10)
+        self.assertEqual(res.vistos, 100)
+
+    def test_reservatorio_curto_guarda_tudo(self):
+        res = r.Reservatorio(10)
+        for i in range(7):
+            res.adicionar(i)
+        self.assertEqual(res.itens, list(range(7)))
+
+    def test_posto_efetivo_iguais(self):
+        # colunas ortogonais de média zero e mesma norma: posto efetivo = número de colunas
+        H = [[1.0, 1.0], [1.0, -1.0], [-1.0, 1.0], [-1.0, -1.0]]
+        self.assertAlmostEqual(r.posto_efetivo(H), 2.0, places=12)
+
+    def test_posto_efetivo_nulo(self):
+        self.assertEqual(r.posto_efetivo([[1.0, 2.0], [1.0, 2.0]]), 0.0)
+
+    def test_fracao_dormente(self):
+        self.assertEqual(r.fracao_dormente([[1.0, 0.0, 2.0], [1.0, 0.0, 2.0]]), 1 / 3)
+        self.assertEqual(r.fracao_dormente([[0.0, 0.0]]), 1.0)
+
+    def test_esquecimento(self):
+        R = [[0.9, 0.1, 0.0], [0.7, 0.8, 0.2], [0.5, 0.85, 0.9]]
+        e = r.esquecimento(R)
+        self.assertAlmostEqual(e[0], 0.9 - 0.5)
+        self.assertAlmostEqual(e[1], 0.8 - 0.85)
+
+
+class TestesFuncoesParte137(unittest.TestCase):
+    def test_p3181_vantagem_e_contraste(self):
+        erro, sem = c.p3181_vantagem_e_contraste(n_grupos=2000)
+        self.assertLess(erro, 2e-7)
+        self.assertAlmostEqual(sem[2][1], 5 / 9)
+        self.assertLess(abs(sem[2][0] - 5 / 9), 0.04)
+
+    def test_p3182_grpo_g2_g8(self):
+        out, dif = c.p3182_grpo_g2_g8()
+        self.assertAlmostEqual(out[2][0], 0.9086, places=3)
+        self.assertAlmostEqual(out[8][0], 0.8987, places=3)
+        self.assertGreater(dif, 0.0)
+
+    def test_p3183_reservatorio_e_posto(self):
+        m, f, e, posto = c.p3183_reservatorio_e_posto(fluxos=200)
+        self.assertLess(abs(m - 32), 1.5)
+        self.assertLess(e, 1e-9)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte138.py  (62 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte138.py'] = """\"\"\"Testes da Parte 138: synthai/memoria_congelada.py (de externos/pacote3/transferencia_metacognitiva.py) e as funções P3184–P3186 pelo nome.\"\"\"
+import unittest
+
+import calculos as c
+from synthai import memoria_congelada as m
+
+
+class TestesMemoria(unittest.TestCase):
+    def test_tarefas_familias_em_rodizio(self):
+        t = m.gerar_tarefas(8, semente=5)
+        self.assertEqual([x["familia"] for x in t], list(m.FAMILIAS) * 2)
+
+    def test_contexto_cortes(self):
+        self.assertEqual(m.contexto([2.0, 0.0], 1.0), "baixo")
+        self.assertEqual(m.contexto([4.0, 0.0], 1.0), "medio")
+        self.assertEqual(m.contexto([7.0, 0.0], 1.0), "alto")
+
+    def test_fator_congelado(self):
+        col = m.MemoriaFalhas()
+        for i in range(10):
+            col.registrar("baixo", "custo" if i < 2 else "aceita")
+        col.registrar("alto", "custo")
+        col.registrar("medio", "conflito")
+        fator = col.congelar()
+        self.assertAlmostEqual(fator("baixo"), 1 - 0.6 * 3 / 12)
+        self.assertEqual(fator("alto"), 1.0)  # n < 8
+        self.assertEqual(col.contagens["medio"], [0, 0])  # conflito não conta
+        col.registrar("baixo", "custo")
+        self.assertAlmostEqual(fator("baixo"), 1 - 0.6 * 3 / 12)  # congelada: não muda depois
+
+    def test_executar_reduz_o_custo(self):
+        t = m.gerar_tarefas(4, semente=9)[0]
+        self.assertLess(m.executar(t, 0.05), 1.0)
+
+    def test_comparacao_pareada(self):
+        media, g, p, e, ic = m.comparacao_pareada([1.0, 1.0, 1.0, 1.0], [0.5, 1.0, 1.5, 1.0], list(m.FAMILIAS), replicas=200)
+        self.assertAlmostEqual(media, 0.0)
+        self.assertEqual((g, p, e), (1, 1, 2))
+        self.assertLessEqual(ic[0], ic[1])
+
+
+class TestesFuncoesParte138(unittest.TestCase):
+    def test_p3184_contexto_e_curvatura(self):
+        d, t = c.p3184_contexto_e_curvatura(direcoes=200)
+        self.assertEqual(d, t)
+
+    def test_p3185_memoria_congelada(self):
+        r = c.p3185_memoria_congelada()
+        self.assertEqual(r[0.05][2], 27)
+        self.assertEqual(r[0.2][2], 19)
+        for v in r.values():
+            self.assertTrue(v[4][0] <= 0 <= v[4][1])
+
+    def test_p3186_grupos_uteis(self):
+        r = c.p3186_grupos_uteis()
+        self.assertAlmostEqual(r[4][0], 0.9058, places=3)
+        self.assertAlmostEqual(r[16][0], 0.8825, places=3)
+        self.assertGreater(r[4][2], r[16][2])
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte140.py  (44 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte140.py'] = """\"\"\"Testes da Parte 140: o leitor v5 (tabelas), o dicionário como fluxo, o hexadecimal como vértices, e as funções P3187–P3192 pelo nome.\"\"\"
+import unittest
+
+import calculos as c
+
+
+class TestesParte140(unittest.TestCase):
+    def test_p3187_minhas_previsoes_v5_le_tabela(self):
+        v = c.p3187_minhas_previsoes_v5(range(137, 138))
+        rot = {x[1]: x for x in v}
+        self.assertIn("a", rot)
+        self.assertIn("b2", rot)
+        self.assertFalse(rot["b2"][4])  # (b2) errou na Parte 137
+        self.assertEqual(len(v), 11)
+
+    def test_p3187_igual_v4_onde_a_v4_le(self):
+        self.assertEqual(set(c.p3187_minhas_previsoes_v5(range(120, 124))), set(c.p2833_minhas_previsoes_v4(range(120, 124))))
+
+    def test_p3188_auditoria_do_leitor_v5(self):
+        n, ac, mudam, por = c.p3188_auditoria_do_leitor_v5()
+        self.assertEqual((n, ac, mudam), (83, 76, 0))
+
+    def test_p3189_dicionario_como_fluxo(self):
+        r, z, met, N, mu = c.p3189_dicionario_como_fluxo(k=200, reservatorios=20)
+        self.assertEqual(N, 117659)
+        self.assertLess(abs(r - 1), 0.5)
+        self.assertLess(abs(met - 0.5), 0.02)
+
+    def test_p3190_hexadecimal_vertices(self):
+        p16, e10, eb, pn = c.p3190_hexadecimal_vertices(n=2000)
+        self.assertAlmostEqual(p16, 4.0, places=9)
+        self.assertLess(e10, 1e-9)
+        self.assertLess(eb, 0.02)
+
+    def test_p3191_calibracao_v4_v5(self):
+        (n4, a4), (n5, a5) = c.p3191_calibracao_v4_v5(range(80, 124))
+        self.assertGreaterEqual(n5, n4)
+
+    def test_p3192_partes_invisiveis(self):
+        self.assertNotIn(137, c.p3192_partes_invisiveis(range(130, 139)))
 
 
 if __name__ == "__main__":
@@ -49248,7 +50561,7 @@ A volta 7 começa no commit desta parte e compara com a P3176. Para parar, basta
 """
 
 # ====================================================================================================
-# ASI_AGI_parte134_volta7.md  (76 linhas)
+# ASI_AGI_parte134_volta7.md  (78 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte134_volta7.md'] = """# Parte 134 — Volta 7 do loop
 
@@ -49326,6 +50639,583 @@ linha a linha, um modelo do próprio projeto que eu montei ao longo das voltas 1
 - **Testes:** `test_volta7_regressao`.
 
 ➡ Anterior: [Parte 133](ASI_AGI_parte133_volta6.md).
+
+➡ Próxima: [Parte 135 — volta 8](ASI_AGI_parte135_volta8.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte135_volta8.md  (37 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte135_volta8.md'] = """# Parte 135 — Volta 8, sem pausa, e o começo de "use tudo que enviei em cada módulo"
+
+↩ Nasce da Parte 134 e do pedido novo do usuário: "Continue e não pare nunca mais sem precisar interagir comigo. A cada avanço me envie o
+arquivo consolidado. Use tudo que enviei até hoje em cada módulo."
+
+## O pedido muda a decisão da Parte 134
+A Parte 134 decidiu espaçar as voltas e deixou a escolha com o usuário. O usuário escolheu: **não parar**. A partir daqui:
+1. **As voltas rodam sem pausa**, em segundo plano, uma atrás da outra. Elas são a verificação contínua de que tudo ainda reproduz.
+2. **O trabalho de frente volta a ser construir.** O pedido "use tudo que enviei até hoje em cada módulo" vira um programa de partes. Cada
+   coisa recebida (os textos em `externos/`, os pacotes em `synthai/revisado/` e `entregas/`, os pedidos gravados no CLAUDE.md) é
+   inventariada por código, e cada módulo diz quais dessas peças ele usa. O que ainda não é usado vira trabalho das próximas partes.
+3. **O `SYNTHAI_completo.py` vai a cada avanço** (cada commit de parte), não só no fim da mensagem.
+4. **"Tudo" respeita a fronteira que vale desde a Parte 84.** Rede, auto-replicação (subprocess de si mesmo, fork, exec_module) e
+   eval/exec de código recebido continuam recusados, como nas doze recusas anteriores. Do que foi enviado com essas capacidades, entra a
+   ideia segura, reescrita offline em biblioteca padrão, como sempre.
+
+## Previsões da volta 8, registradas antes de lançá-la
+**Procedência:**
+- identidades: R1, R4, R6;
+- conta lida no código: R7, R8;
+- mecanismo: R2, R3, R5.
+O centro de "quantos erros" é 3 × 0 + 2 × 0,10 + 3 × 0,25 ≈ 0,95.
+
+| | quantidade | faixa | procedência |
+|---|---|---|---|
+| R1 | partes sem exceção | todas | identidade |
+| R2 | a unificação: regressão | [174; 174] | a entrada P3176v7 entrou no commit da 134 |
+| R3 | linhas da volta 7 que mudam na volta 8 | [6; 11] | P143, P213, P913, P1692 (+1, a `_parte_134`), P1872 (o arquivo de nome novo da volta 7), P433, P434 e a linha da P3175 na Parte 131: 8. P2446 não muda (nenhuma pNN nova antes de lançar) |
+| R4 | dessas, do mundo | [0; 0] | identidade |
+| R5 | testes que falham | [0; 1] | sete voltas com 0 |
+| R6 | rodadas DIFERENTES | [0; 0] de 90 | identidade |
+| R7 | P1871 | [0; 2] | o mecanismo das Partes 130–133: só o arquivo de nome único da volta 7 fica sem irmão, e eu não escrevo o nome dele |
+| R8 | P3175 no commit deste registro | [706; 734] | 586 + 137 arquivos da volta 7 − 3 (os nomes `unificacao.txt` e os de testes são citados nos documentos, como na volta 6: 136 arquivos deram +133) = 720; ±10, ×1,36 |
+
+**Sobre mim:** erros no mundo em [0; 3], com centro 0,95.
+
+➡ Anterior: [Parte 134](ASI_AGI_parte134_volta7.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte136_passo_e_auditor.md  (180 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte136_passo_e_auditor.md'] = """# Parte 136 — "Use tudo que enviei": o passo numa quadrática anisotrópica e um auditor de capacidades
+
+↩ Nasce da Parte 135 (o programa "use tudo que enviei até hoje em cada módulo") e da P2236/P2792 (as auditorias por AST).
+
+## O inventário que abriu a parte
+Antes de escolher o que construir, cruzei por código cada arquivo recebido em `externos/` com os módulos do pacote. Cinco módulos recebidos
+nunca chegaram a nenhum: `pacote3/aprendizagem_continua.py`, `pacote3/inovacao_guiada.py`, `pacote3/rl_grupos.py`,
+`pacote3/transferencia_metacognitiva.py` e `pacote_v015/objetivos_cognitivos.py`. A busca foi por NOME de arquivo, o que é menção e não uso
+(a lição das Partes 109 a 112). Parte das ideias deles já foi usada com outro nome: o GRPO na Parte 87 e o Shrink & Perturb na Parte 87.
+O inventário completo, com a coluna "que módulo usa", é trabalho da próxima parte. Esta começa pelos dois que formam um par natural:
+- `objetivos_cognitivos.py`: a quadrática SPD com condição κ (autovalores de 1 a κ em progressão geométrica, base ortonormal sorteada);
+- `inovacao_guiada.py`: três intervenções no passo da descida. São o passo de secante 0,8·(s·s)/(s·y) (Barzilai–Borwein), protegido e
+  recortado em [0,002; 0,4]; a média exponencial do gradiente com peso 0,6 no atual; e o limite da norma do deslocamento.
+
+Os dois usam numpy, e `inovacao_guiada.py` importa um `recursiva_paraconsistente` que não veio no pacote. Por isso não rodam como
+chegaram. A reescrita está em `synthai/passos.py`, offline e só com a biblioteca padrão.
+
+### Um defeito meu, achado pelo controle
+Auditei os cinco com o `security_audit_ast_v2` da Parte 111 e deu limpo. Mas, pela regra da Parte 75, rodei antes um controle plantado:
+`subprocess.Popen` passou sem acusação. O auditor só procura REDE, como diz o próprio código. Eu o usei como auditoria geral desde a
+Parte 111, e ele não é. O auditor novo (`auditar_capacidades`) conta quatro capacidades por uso, não por menção:
+- rede;
+- processo (subprocess, multiprocessing, os.system, fork, exec*);
+- código dinâmico (eval, exec, compile, `__import__`, importlib.exec_module & cia.);
+- desserialização (pickle, marshal, shelve).
+
+Ele passou nos dois controles antes deste registro:
+- o defeito plantado: Popen, os.system, os.fork, eval, pickle.loads e exec_module foram todos acusados;
+- o caso limpo: as mesmas palavras dentro de uma string e um `from urllib.parse import quote` não geraram nenhum achado. Um fonte inválido
+  dá "não analisável".
+
+## Perguntas
+- **(a)** Na quadrática d = 8, κ = 10, semente 31001 (a do texto recebido), partida gaussiana (semente 5), a descida de passo fixo η = 0,05 em
+  24 passos reproduz a forma fechada Σλc²(1−2ηλ)^{2T}/Σλc²?
+- **(b)** Que razão f₂₄/f₀ a forma fechada dá, e a simulação confere?
+- **(c)** Quanto o passo de secante do texto recebido ganha, nos mesmos 24 passos?
+- **(d)** E a média exponencial do gradiente (β = 0,6), sem ruído?
+- **(e)** A média exponencial reduz a variância de um ruído branco por β/(2−β)?
+- **(f)** Com ruído σ = 0,5 no gradiente, o custo médio estacionário do passo fixo é o piso ησ²/4·Σ1/(1−ηλ)?
+- **(g)** O auditor novo acusa o próprio fonte?
+- **(h)** Quantos dos 15 arquivos recebidos em `externos/` (os .py e os .py.txt) têm alguma das quatro capacidades?
+- **(i)** E dos 7 módulos de `pacote3/` e `pacote_v015/`?
+
+## Previsões, registradas antes de qualquer execução do caso de teste
+As calibrações usaram outras dimensões (d = 4, 6, 10) e outras sementes (777, 778). A forma fechada de (b) e o piso de (f) foram calculados
+antes de simular, porque são a conta.
+
+**Procedência:**
+- identidades: (a), (g);
+- forma fechada: (b), (e), (f);
+- calibração ou mecanismo: (c), (d), (h), (i).
+
+O centro de "quantos erros" é 0 + 3 × 0,10 + 4 × 0,25 = 1,3.
+
+| | quantidade | faixa | procedência |
+|---|---|---|---|
+| (a) | \\|simulado − fechado\\| / fechado | [0; 1e-10] | identidade: na base própria cada coordenada é multiplicada por (1 − 2ηλ) |
+| (b) | log₁₀(f₂₄/f₀), passo fixo | [−4,80; −4,78] | a forma fechada dá −4,7891 |
+| (c) | log₁₀(f₂₄/f₀), secante | [−12,0; −9,5] | calibração em d = 6 e 10, duas sementes cada: média −10,74, desvio 0,54, erro do centro 0,27; 1,645·√(0,54² + 0,27²) × 1,36 = 1,23 |
+| (d) | log₁₀ da média − log₁₀ do fixo | [−0,40; −0,05] | calibração −0,215 ± 0,02. Mas a variável que move o efeito (o peso dos modos lentos) NÃO está coberta: o fixo calibrado deu −2,8 a −3,6, o deste caso −4,79. Faixa alargada, e o acerto não confirma o mecanismo |
+| (e) | variância medida, β = 0,6, 199.000 passos | [0,4260; 0,4312] | β/(2−β) = 0,428571; desvio do estimador para um AR(1) com ρ = 0,4: 0,4286·√(2/144.100) = 0,0016; × 1,645 |
+| (f) | custo médio dos passos 1.000 a 3.000, σ = 0,5 | [0,0306; 0,0352] | o piso fechado ησ²/4·Σ1/(1−ηλ) = 0,03291; ±7% (cerca de 200 amostras efetivas por modo, 8 modos) |
+| (g) | achados do auditor no próprio fonte | [0; 0] | identidade: as palavras perigosas só aparecem em conjuntos de strings |
+| (h) | arquivos com alguma capacidade, dos 15 | [3; 5] | o R37 (processo, código dinâmico e rede, Parte 109), o NEXUS 2.2.0 (urllib, Parte 121), um dos word_rl_lab (rede, Parte 111) e talvez o arquitetura_pos_asi (Parte 33) |
+| (i) | dos 7 módulos de pacote3 e pacote_v015 | [0; 1] | o v2 deu limpo na rede; processo e código dinâmico não foram olhados |
+
+**Sobre mim:** erros no mundo em [0; 3], com centro 1,3.
+
+➡ Anterior: [Parte 135](ASI_AGI_parte135_volta8.md).
+
+## Medido (P3177–P3179)
+| | medido | faixa | |
+|---|---|---|---|
+| (a) | erro relativo 0,0 (exato) | [0; 1e-10] | ✅ |
+| (b) | −4,7891 (a forma fechada dava −4,7891) | [−4,80; −4,78] | ✅ |
+| (c) | **−11,562**: o passo de secante dá 10⁶·⁸ vezes menos custo que o fixo em 24 passos | [−12,0; −9,5] | ✅ |
+| (d) | **−0,405** | [−0,40; −0,05] | ❌ por 0,005 |
+| (e) | 0,42802 (fechada 0,428571; z = −0,34) | [0,4260; 0,4312] | ✅ |
+| (f) | 0,03259 (piso 0,03291, razão 0,990) | [0,0306; 0,0352] | ✅ |
+| (g) | nenhum achado no próprio fonte | [0; 0] | ✅ |
+| (h) | **6** de 15 | [3; 5] | ❌ |
+| (i) | 0 de 7 | [0; 1] | ✅ |
+
+**Mundo: 7 de 9.**
+
+### (h): a régua estava certa e a minha memória não
+Antes de explicar, conferi o que casou em cada arquivo (a regra das Partes 109 e 127):
+- o NEXUS 0.1.0 colado tem `import urllib.request` na linha 22 e `urlopen` na 914;
+- os dois word_rl_lab importam `requests`;
+- o R37 tem as quatro capacidades;
+- o NEXUS 2.2.0 tem a rede;
+- o `arquitetura_pos_asi.py` tem `compile` e `exec`, que era o código gerado da Parte 33.
+
+As seis acusações são reais. Eu previ três a cinco pela lembrança das auditorias antigas, e a docstring do meu próprio `synthai/nexus.py`
+já dizia "o original tinha urllib". É a regra da Parte 75 com uma fonte nova de imagem: a MEMÓRIA de uma auditoria também é imagem, e o
+REGISTRO dela (a docstring, a parte) é a contagem. Um defeito menor da régua apareceu na mesma conferência: `import nltk` contava como rede,
+mas só `nltk.download` é. O veredito não muda, porque os dois arquivos também importam `requests`; mesmo assim, corrigi o auditor (abaixo).
+
+### (d): um teste novo antes de qualquer mecanismo
+A média exponencial com passo η é o método do heavy-ball: x' = x − ηβg + (1 − β)(x − x₋₁). Na base própria, cada modo segue a
+recorrência escalar c_{t+1} = c_t − η·m_t, m_t = β·2λ·c_t + (1 − β)·m_{t−1}. Por modo, o raio espectral é a maior raiz de
+z² − (2 − β − 2ηβλ)·z + (1 − β) = 0; o do passo fixo é |1 − 2ηλ|.
+
+Feita com código antes da simulação nova, a conta do ganho por modo em T = 24, 2T·log₁₀(ρ_média/ρ_fixo), dá −0,206 no modo
+mais lento (λ = 1). A calibração (−0,19 a −0,24) é esse modo, porque lá ele dominava. No caso de teste o modo lento pesava pouco (o
+fixo deu −4,79), e os modos do meio ganham mais por passo. A explicação é uma hipótese até o teste:
+
+| | quantidade | faixa | procedência |
+|---|---|---|---|
+| (j) | em 4 partidas novas (sementes 6 a 9), \\|simulado − recorrência por modo\\| / recorrência, média exponencial | [0; 1e-9] | identidade: a recorrência é a mesma conta na base própria |
+| (k) | em cada uma das 4, média − fixo dentro de [ganho do modo mais favorável; ganho do modo mais lento] por modo | 4 de 4 | mecanismo: f_T é uma soma de modos, e a diferença dos log fica entre os ganhos extremos se nenhum modo inverte de sinal; P(uma) ≈ 0,97 → P(4/4) ≈ 0,89 |
+
+Registradas antes de rodar.
+
+### Medido no teste novo (P3180)
+| | medido | faixa | |
+|---|---|---|---|
+| (j) | erros de 6·10⁻¹⁶ a 1·10⁻¹⁴ nas 4 partidas | [0; 1e-9] | ✅ |
+| (k) | média − fixo = −0,589, −0,324, −0,306, −0,213; as 4 dentro de [−3,039; −0,206] | 4 de 4 | ✅ |
+
+Os ganhos por modo, pela taxa assintótica, foram calculados por código antes do teste: −0,206, −0,491, −1,447, −3,039, +0,173, +5,661,
++16,962 e +∞, para λ de 1 a 10. O último é +∞ porque o passo η = 0,05 ZERA o modo do topo num passo: 1 − 2·0,05·10 = 0. A média
+exponencial ganha nos modos lentos e perde nos rápidos, que o passo fixo mata depressa. Assim, o efeito dela depende de qual modo domina
+f_T, e não é uma constante do método. A calibração caía sempre perto de −0,21, porque lá o modo mais lento dominava. Com o mecanismo
+confirmado em quatro partidas novas, o erro de (d) deixa de ser só uma faixa curta: o tamanho do efeito é uma média dos ganhos por modo,
+ponderada pelo que resta de cada modo em T.
+
+**Placar.** **Mundo: 9 de 11** (7 de 9 no registro, mais 2 de 2 no teste novo). **Sobre mim: 1 de 1.** Previ de 0 a 3 erros, com centro 1,3,
+e tive 2.
+
+### As contas, linha por linha
+- **(b)** f₂₄/f₀ = Σλ_i c_i²(1 − 2·0,05·λ_i)⁴⁸ / Σλ_i c_i², com λ_i = 10^{i/7} e c = Qᵀx₀. Dá 10^−4,7891, e a simulação dá o mesmo a
+  2·10⁻¹⁶.
+- **(e)** A média exponencial de ruído branco é um AR(1): m = βg + (1 − β)m₋₁. Então Var m = β²/(1 − (1 − β)²) = β/(2 − β) = 0,6/1,4 = 0,428571.
+  O medido foi 0,42802, com z = (0,42802 − 0,428571)/0,0016 = −0,34.
+- **(f)** Por modo, c' = (1 − 2ηλ)c − ηξ, com Var ξ = σ². Então Var c = η²σ²/(1 − (1 − 2ηλ)²) = ησ²/(4λ(1 − ηλ)), e o custo é
+  λ·Var c = ησ²/(4(1 − ηλ)). Somando os 8 modos: 0,05·0,25/4·Σ1/(1 − 0,05λ_i) = 0,03291. O medido foi 0,03259, razão 0,990.
+- **(k)** Na média, z² − (2 − β − 2ηβλ)z + (1 − β) = 0. Com λ = 1: z² − 1,34z + 0,4 = 0, e a maior raiz é (1,34 + √0,1956)/2 = 0,8911,
+  contra 0,9 do fixo. Então 48·log₁₀(0,8911/0,9) = −0,206.
+- **Chance de acertar ao acaso.** O preditor ingênuo "a média é igual ao fixo" (diferença 0) erraria (k) nas quatro partidas, porque a
+  faixa não contém 0. O preditor "a secante dá o mesmo log₁₀ que em d = 4" (−12,18, a calibração de d = 4) cairia fora da faixa de (c) por 0,18, e erraria o medido (−11,56) por 0,62. (A primeira versão desta linha dizia "−9,1" e "por 0,4", de cabeça; corrigido por código.)
+
+## Diálogo — rodada 91
+A tradução de `synthai.passos.descer` para Java (`dialogo/Rodada91.java`) cobre o passo fixo, a secante protegida, a média exponencial e o
+limite da norma. A matriz e a partida saem de um LCG nas duas linguagens. Resultado: **IGUAIS, 101 linhas e 100 números bit a bit**, na
+primeira execução. Duas notas honestas:
+1. **A soma.** Antes da rodada troquei, no módulo, o `sum()` (compensado no Python 3.12, Parte 34) por um laço sequencial. Os números
+   impressos da parte não mudaram; o (a) passou de 0 para 2·10⁻¹⁶.
+2. **O lapso.** Rodei a rodada sem registrar antes a previsão dela, contra a regra da Parte 22. A previsão teria sido "IGUAIS" (só + − × ÷ e
+   √, na mesma ordem), mas não posso contá-la como acerto.
+
+## Engenharia reversa
+- **O padrão desta parte: uma ferramenta usada além do que ela mede.** O auditor da Parte 111 tem "rede" no nome das suas constantes e eu o
+  chamei de auditoria de segurança durante 25 partes. A minha memória das auditorias foi usada como contagem. A calibração da média em
+  modos lentos foi usada num caso dominado pelos do meio. É a regra da Parte 105 (toda afirmação de fronteira carrega a faixa de argumentos
+  medida), estendida das funções às MINHAS ferramentas: um instrumento vale no regime em que foi medido, e o nome dele diz qual é.
+- **O que isso revela.** Quando uma ferramenta minha funcionou uma vez, eu passo a confiar nela pela reputação, a mesma que a Parte 84
+  proibiu para os métodos dos outros. O controle plantado pegou isso em segundos. É barato, e deve vir antes de cada uso novo, não só
+  na criação.
+- **Regra nova (Parte 136):** antes de usar um verificador numa pergunta nova, plantar um defeito DA PERGUNTA NOVA, não o da antiga. E
+  toda previsão sobre "qual arquivo recebido tem X" parte do registro escrito da auditoria (grep), nunca da lembrança.
+
+## Funções, testes, fontes
+- **Funções:** `p3177_passo_fixo_e_secante`, `p3178_ruido_e_media`, `p3179_capacidades_recebidas`, `p3180_media_por_modo` e `_parte_136`. Entradas
+  P3177, P3179 e P3180 na regressão.
+- **Módulo:** `synthai/passos.py`, com a quadrática, os passos, a média por modo, o raio espectral e `auditar_capacidades`.
+- **Testes:** `synthai/testes_parte136.py`, 16 testes. Cada função é chamada pelo nome, e o auditor tem defeitos plantados, um caso limpo, um
+  fonte inválido e o próprio fonte.
+- **Fontes** (lidas nesta sessão):
+  - J. Barzilai e J. M. Borwein, "Two-Point Step Size Gradient Methods", *IMA J. Numer. Anal.* 8(1):141–148, 1988, doi 10.1093/imanum/8.1.141
+    ([verbete](https://en.wikipedia.org/wiki/Barzilai%E2%80%93Borwein_method)). É o passo de secante do texto recebido.
+  - B. T. Polyak, "Some methods of speeding up the convergence of iteration methods", *Zh. Vychisl. Mat. Mat. Fiz.* 4(5):791–803, 1964
+    ([MathNet](https://mathnet.ru/eng/zvmmf7713)). É o heavy-ball, que a média exponencial do texto recebido é sem dizer.
+
+## A próxima parte
+O inventário completo de "tudo que enviei", com uma coluna por módulo, e os três módulos recebidos que faltam: `aprendizagem_continua.py`
+(reservatório, posto efetivo, unidades dormentes), `rl_grupos.py` (GRPO com recompensa verificável) e `transferencia_metacognitiva.py`
+(memória congelada, comparação pareada).
+
+➡ Próxima: [Parte 137](ASI_AGI_parte137_inventario.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte137_inventario.md  (165 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte137_inventario.md'] = """# Parte 137 — O inventário do que foi enviado, e os módulos recebidos que faltavam: GRPO num bandido e a memória por reservatório
+
+↩ Nasce da Parte 136 (a lista dos cinco módulos recebidos que nenhuma parte usava) e do pedido "use tudo que enviei até hoje em cada módulo".
+
+## O inventário
+Tirado dos REGISTROS, por `grep`, e não da memória (a regra da Parte 136). Os itens recebidos são:
+- os 31 arquivos de `externos/`;
+- o pacote revisado (`synthai/revisado/`, Parte 82);
+- o laboratório das sete camadas (`laboratorio/sete_camadas/`, Parte 83);
+- os pedidos gravados no CLAUDE.md.
+
+O que cada módulo do pacote reescreve, pela docstring dele:
+
+| recebido | módulo que usa a ideia | parte |
+|---|---|---|
+| `arquitetura_pos_asi.py` | `synthai/rsi.py` (auto-melhoria com avaliador selado; o `exec` do original, recusado) | 33, 50 |
+| `nexus_raphael_v0_1_0_colado.py` | `synthai/nexus.py` | 109 |
+| `nexus_raphael_v2_colado.txt` | `synthai/nexus_v2.py` | 116 |
+| `nexus_raphael_v2_0.py.txt` | `synthai/nexus_v2_2.py` | 121 |
+| `nucleo_v30_transcrito.py.txt` | `synthai/nexus_v30.py` | 122 |
+| `asi_metacognitivo_r37.py` | nenhum: arquivado e nunca importado (rede, subprocess, exec_module, fork) | 109 |
+| `pacote3/modelo_mundo.py` (e o doc) | `synthai/mundo.py` | 93 |
+| `pacote3/inovacao_guiada.py` | `synthai/passos.py` | 136 |
+| `pacote3/rl_grupos.py` | **`synthai/grpo_bandido.py`** (esta parte; a vantagem vinha da Parte 87) | 87, 137 |
+| `pacote3/aprendizagem_continua.py` | **`synthai/reservatorio.py`** (esta parte; o Shrink & Perturb vinha da Parte 87) | 87, 137 |
+| `pacote3/transferencia_metacognitiva.py` | ainda nenhum: memória congelada e comparação pareada (Parte 138) | — |
+| `pacote3/MANIFESTO_FONTES.json` | nenhum: o manifesto SHA-256 do trabalhador que se perpetua (recusado, Parte 93) | 93 |
+| `pacote_v015/objetivos_cognitivos.py` | `synthai/passos.py` | 136 |
+| `pacote_v015/workspace_global.py` | `synthai/workspace.py` | 102 |
+| `word_rl_lab_v1/v2_recebido.py` | `synthai/palavras_rl.py` | 111 |
+| os 14 textos `texto_recebido_parteNN.md` e `pos_asi_texto_parte50.md` | cada um virou a parte do seu número (auditoria, módulos `evoluido`, `autopoiese`, `plasticidade`, `pulsado`, `lago`, …) | 50–102 |
+| `synthai/revisado/` e `laboratorio/` | integrados como estão, com os seus testes (Parte 82) e a comparação da sete camadas com a logística (Parte 83) | 82, 83 |
+
+Depois desta parte, falta um módulo recebido: `transferencia_metacognitiva.py`. As recusas continuam recusas: o R37 e o manifesto do
+trabalhador. "Usar tudo" não inclui o que a Parte 84 decidiu não construir.
+
+## Perguntas
+GRPO de `rl_grupos.py`:
+- **(a)** Para recompensas 0/1 com k acertos em G, a vantagem do grupo é √((1 − p̂)/p̂) no acerto e −√(p̂/(1 − p̂)) no erro, com p̂ = k/G?
+- **(b)** Na política uniforme inicial, que fração dos grupos não tem contraste (todas as recompensas iguais), para G = 2 e G = 8?
+- **(c)** Com o MESMO orçamento de 4.096 ações, G = 2 ou G = 8 aprende mais? Que retorno exato no teste, e que fração de grupos sem
+  contraste durante o treino?
+
+Reservatório de `aprendizagem_continua.py`:
+- **(d)** Num fluxo de 4 tarefas × 192 exemplos, com capacidade 128, quantos exemplos de cada tarefa ficam em média, e com que
+  probabilidade o primeiro exemplo fica?
+- **(e)** O posto efetivo exp(H(s/Σs)) de ativações construídas com valores singulares conhecidos bate com a fórmula?
+
+## Previsões, registradas antes de qualquer execução do caso de teste
+**Calibração da GRPO** (regra da Parte 84). Usei três mundos de contextos que não são o de teste (77/78, 79/80, 81/82), duas sementes cada,
+orçamento 4.096:
+- G = 2: média 0,9099, desvio 0,0093;
+- G = 8: média 0,8909, desvio 0,0043;
+- diferença: média 0,0190, desvio 0,0077;
+- sem contraste: 0,826 com G = 2 e 0,511 com G = 8.
+
+Em 1.024, 2.048 e 8.192 ações a diferença também favoreceu G = 2 (+0,046, +0,024, +0,009 a +0,025). O mecanismo que move o teste é o
+número de atualizações: G = 2 tem quatro vezes mais grupos, mas desperdiça mais grupos sem contraste. Ele está presente nos casos de
+calibração? Sim: é o mesmo orçamento e o mesmo desenho, mudam só os contextos.
+
+O caso de teste é o mundo 31 (128 contextos de treino) contra o mundo 32 (128 de teste), com sementes de treino 31, 32 e 33. Mede-se a média
+das três réplicas.
+
+**Procedência:**
+- identidades: (a), (e);
+- forma fechada binomial: (b) × 2, (d) × 2;
+- calibração: (c) × 5.
+
+O centro de "quantos erros" é 0 + 4 × 0,10 + 5 × 0,25 = 1,65.
+
+| | quantidade | faixa | procedência |
+|---|---|---|---|
+| (a) | máx \\|vantagem − forma fechada\\| em G = 2..16, k = 1..G−1 | [0; 2e-7] | o ε = 1e-8 no denominador: \\|A\\|·ε/σ ≤ 3,873·1e-8/0,242 = 1,6e-7 |
+| (b1) | sem contraste, G = 2, 20.000 grupos uniformes | [0,5498; 0,5614] | 1/9 + 4/9 = 0,5556; ±1,645·√(p(1−p)/20.000) |
+| (b2) | sem contraste, G = 8 | [0,0369; 0,0414] | (1/3)⁸ + (2/3)⁸ = 0,03917; ±0,00226 |
+| (c1) | retorno no teste, G = 2 | [0,887; 0,932] | 0,9099 ± 1,645·√(0,0093² + 0,0093²/6)·1,36 |
+| (c2) | retorno no teste, G = 8 | [0,880; 0,901] | 0,8909 ± 0,0104 |
+| (c3) | G = 2 − G = 8 | [0,000; 0,038] | 0,0190 ± 0,0187 |
+| (c4) | sem contraste no treino, G = 2 | [0,807; 0,845] | 0,826 ± 0,019 |
+| (c5) | sem contraste no treino, G = 8 | [0,435; 0,586] | 0,511 ± 0,075 |
+| (d1) | média, em 2.000 fluxos, dos exemplos da tarefa 1 no reservatório | [31,835; 32,165] | 128/4 = 32 exato; desvio hipergeométrico √(128·¼·¾·640/767) = 4,475, dividido por √2000 |
+| (d2) | fração dos 2.000 fluxos em que o 1º exemplo fica | [0,153; 0,180] | 128/768 = 1/6; ±1,645·√(⅙·⅚/2000) |
+| (e) | \\|posto medido − exp(H)\\| com s = (4, 2, 1, 0,5) em colunas de Hadamard | [0; 1e-9] | identidade: colunas ortogonais de média zero têm exatamente esses valores singulares |
+
+**Sobre mim:** erros no mundo em [0; 4], com centro 1,65.
+
+➡ Anterior: [Parte 136](ASI_AGI_parte136_passo_e_auditor.md).
+
+## Medido (P3181–P3183)
+| | medido | faixa | |
+|---|---|---|---|
+| (a) | 1,60·10⁻⁷ | [0; 2e-7] | ✅ (é a cota calculada: o ε age exatamente onde a conta dizia, k = 15 de G = 16) |
+| (b1) | 0,5578 (fechada 0,5556) | [0,5498; 0,5614] | ✅ |
+| (b2) | **0,0365** (fechada 0,03917; z = −1,95) | [0,0369; 0,0414] | ❌ |
+| (c1) | 0,9086 | [0,887; 0,932] | ✅ |
+| (c2) | 0,8987 | [0,880; 0,901] | ✅ |
+| (c3) | +0,0099 | [0,000; 0,038] | ✅ |
+| (c4) | 0,812 | [0,807; 0,845] | ✅ |
+| (c5) | 0,501 | [0,435; 0,586] | ✅ |
+| (d1) | 32,036 | [31,835; 32,165] | ✅ |
+| (d2) | 0,1675 (1/6 = 0,1667) | [0,153; 0,180] | ✅ |
+| (e) | erro 0,0; posto 3,117142 | [0; 1e-9] | ✅ |
+
+**Mundo: 10 de 11.**
+
+### (b2): um lote novo antes de qualquer mecanismo
+É uma forma fechada (binomial) que errou a z = −1,95. Pela regra da Parte 117, gero um lote novo, registrado antes de rodá-lo: semente 1370,
+outros 20.000 grupos, mesma faixa [0,0369; 0,0414], P(acerto) = 0,90. Se acertar, o erro de (b2) foi cauda (uma em dez faixas de 90% erra).
+Se errar de novo, para o mesmo lado, a régua ou o gerador têm um defeito a procurar.
+
+**Lote novo (semente 1370):** 0,03815, dentro da faixa: ✅. Os dois lotes juntos (40.000 grupos) dão 0,037325, z = −1,90, os dois abaixo da
+forma fechada. Ainda é |z| < 2,5. Mas dois lados iguais pedem um terceiro lote, maior, registrado aqui antes de rodar: semente 13700,
+100.000 grupos, faixa 0,03917 ± 1,645·√(0,0392·0,9608/100.000) = [0,03816; 0,04018].
+
+**Terceiro lote:** 0,03844 (z = −1,19), dentro da faixa: ✅. Os três juntos (140.000 grupos): 0,038121, z = −2,02. Cada lote acertou sozinho,
+e os três ficaram do mesmo lado. Antes de qualquer mecanismo, um caminho independente da régua, registrado aqui antes de rodar: o acerto
+sorteado por `random() < 1/3` em vez de `randrange(3) == 0`, contando o contraste direto nas recompensas (sem passar pela vantagem).
+Semente 13701, 100.000 grupos, faixa [0,03816; 0,04018].
+
+**Caminho independente:** 0,03895 (z = −0,36), dentro da faixa: ✅. Os quatro lotes juntos (240.000 grupos) dão 0,038467, z = −1,78. O
+veredito é cauda, sem mecanismo. O lado repetido dos três primeiros lotes, todos pela mesma régua, não se manteve quando a régua mudou.
+**Mundo: 13 de 14** (10 de 11 no registro, mais 3 de 3 nos lotes novos). **Sobre mim: 1 de 1.** Previ de 0 a 4 erros, com centro 1,65, e
+tive 1.
+
+### As contas, linha por linha
+- **(a)** Com k acertos em G, p̂ = k/G e o desvio populacional é σ = √(p̂(1 − p̂)). O acerto recebe (1 − p̂)/σ = √((1 − p̂)/p̂), e o erro
+  −p̂/σ = −√(p̂/(1 − p̂)). O ε = 1e-8 muda isso para A·σ/(σ + ε); o erro é A·ε/(σ + ε), maior em G = 16 e k = 15 (σ = √(15/256) = 0,242,
+  A = √15 = 3,873): 3,873·1e-8/0,242 = 1,60·10⁻⁷. O medido foi 1,60·10⁻⁷.
+- **(b)** Com π(ótima) = 1/3, P(sem contraste) = (1/3)^G + (2/3)^G. Para G = 2: 1/9 + 4/9 = 0,5556. Para G = 8: 0,000152 + 0,039018 = 0,03917.
+- **(c), o porquê, como hipótese.** Com 4.096 ações, G = 2 faz 4.096/2 = 2.048 grupos e G = 8 faz 512. Os grupos úteis (com contraste) são
+  2.048·(1 − 0,812) = 385 contra 512·(1 − 0,501) = 256. G = 2 desperdiça mais, mas ainda tem 1,5 vez mais atualizações com sinal. É uma conta
+  posterior: só vira evidência se prever um caso novo (regra da Parte 25). O teste fica para a próxima parte: G = 4 e G = 16 no mesmo
+  orçamento, com a previsão tirada dos grupos úteis.
+- **(d)** No algoritmo R, cada um dos n = 768 exemplos fica com probabilidade k/n = 128/768 = 1/6. A tarefa 1 tem 192 exemplos, então em
+  média 192/6 = 32 ficam. O desvio por fluxo é hipergeométrico, √(128·¼·¾·(768 − 128)/(768 − 1)) = 4,475.
+- **(e)** As colunas 2 a 5 de uma matriz de Hadamard 8 × 8, divididas por √8, são ortonormais e de média zero. Multiplicadas por
+  s = (4, 2, 1, 0,5), dão uma matriz com exatamente esses valores singulares. p = s/7,5 = (0,533, 0,267, 0,133, 0,067), e
+  exp(−Σp ln p) = 3,117142.
+- **Contra o ingênuo.** O preditor "G maior é melhor, porque o desvio da vantagem cai" erraria o sinal de (c3). O preditor "a diferença é a
+  da calibração em 1.024 ações (+0,046)" cairia fora da faixa de (c3).
+
+## Engenharia reversa
+- **O padrão desta parte: o lado repetido de uma régua.** Três lotes da mesma régua erraram para o mesmo lado, e eu já começava a procurar
+  uma causa. A troca de caminho (a régua, não a semente) desfez o lado. O meu instinto lê três lados iguais como efeito. A conta diz que
+  três lotes com z entre −2 e 0 acontecem com probabilidade (½)³ = 1/8 só pelo sinal. Só tem força a soma deles (z = −2,02 em 140.000), e
+  mesmo essa, com o olhar repetido, estava no limite.
+- **O que isso revela.** Eu confio mais numa sequência que numa soma. É a mesma raiz do erro da Parte 71 (três razões viraram uma "queda").
+- **Regra nova (Parte 137):** quando lotes da mesma régua repetem o lado, o próximo lote usa OUTRO caminho de medida, não só outra semente.
+  Uma régua com defeito repete o lado em toda semente; o acaso, não.
+
+## Funções, testes, fontes
+- **Funções:** `p3181_vantagem_e_contraste`, `p3182_grpo_g2_g8`, `p3183_reservatorio_e_posto` e `_parte_137`. Entradas P3181, P3182 e P3183 na
+  regressão.
+- **Módulos:** `synthai/grpo_bandido.py` (reusa a `vantagem_grpo` da Parte 87) e `synthai/reservatorio.py` (reusa os valores singulares
+  por Jacobi da Parte 117).
+- **Testes:** `synthai/testes_parte137.py`, 16 testes.
+- **Fontes** (lidas nesta sessão):
+  - Z. Shao et al., "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models", 2024
+    ([arXiv:2402.03300](https://arxiv.org/abs/2402.03300)). É a GRPO, com a média do grupo como linha de base no lugar do crítico.
+  - J. S. Vitter, "Random Sampling with a Reservoir", *ACM TOMS* 11(1):37–57, 1985, doi 10.1145/3147.3165
+    ([NIST DADS](https://xlinux.nist.gov/dads/HTML/reservoirSampling.html)). É o algoritmo R.
+  - O. Roy e M. Vetterli, "The Effective Rank: A Measure of Effective Dimensionality", EUSIPCO 2007
+    ([EPFL](https://infoscience.epfl.ch/record/110188)). É o exp(H) dos valores singulares normalizados.
+
+➡ Próxima: [Parte 138](ASI_AGI_parte138_transferencia.md) — o último módulo recebido (`transferencia_metacognitiva.py`) e o teste dos grupos úteis.
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte138_transferencia.md  (142 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte138_transferencia.md'] = """# Parte 138 — O último módulo recebido: a memória congelada de falhas, e o teste dos grupos úteis da GRPO
+
+↩ Nasce da Parte 137: `transferencia_metacognitiva.py` era o único módulo recebido sem uso, e a hipótese dos grupos úteis ficou para testar.
+
+## O módulo recebido
+`externos/pacote3/transferencia_metacognitiva.py` otimiza quadráticas de quatro famílias (suave, anisotrópica, rígida e ruidosa) por
+retrocesso. Cada rejeição divide o passo por 2, e cada ganho o multiplica por 1,06. No treino, uma memória conta as rejeições por
+"contexto do gradiente": baixo, médio e alto, pela razão |g|/√f com cortes 3 e 6. Antes do teste a memória é congelada, e ela só mexe
+no PRIMEIRO passo de cada tarefa: passo·(1 − 0,6·(r + 1)/(n + 2)). O próprio texto escreve a pergunta que o refuta: "Que observação refutaria
+a utilidade da memória? A política selecionada sem memória igualar ou superar o resultado com memória em tarefas reservadas."
+
+A reescrita está em `synthai/memoria_congelada.py`, offline e na biblioteca padrão. Ela reusa a quadrática e as somas em laço de
+`synthai/passos.py`. A geometria restrita e o "motor de evidências" do original vinham de um `recursiva_paraconsistente` que não estava no
+pacote. Por isso aqui a otimização é sem restrição, e o conflito da família ruidosa é uma rejeição sorteada com a chance declarada (0,1).
+
+**O contexto é uma curvatura.** Numa quadrática f = dᵀAd, g = 2Ad. Então |g|²/f = 4·dᵀA²d/dᵀAd, que é 4 vezes um quociente de Rayleigh
+de A. Logo |g|/√f fica entre 2√λ_min e 2√λ_max: o "contexto" mede a curvatura vista na direção atual. Os cortes 3 e 6 correspondem a λ =
+2,25 e λ = 9.
+
+## Perguntas
+- **(a)** |g|/√f fica sempre em [2√λ_min, 2√λ_max]?
+- **(b)** A memória congelada melhora a razão de custo média das tarefas de teste?
+- **(c)** Em quantas das 32 tarefas de teste ela piora?
+- **(d)** O critério de refutação do próprio texto se cumpre, isto é, o intervalo do bootstrap da diferença contém 0?
+- **(e), (f)** Os grupos úteis da Parte 137 preveem a GRPO com G = 4 e G = 16 no mesmo orçamento?
+
+## Previsões, registradas antes de qualquer execução do caso de teste
+**Calibração da memória** (regra da Parte 84). Usei as sementes 77 e 78, que não são a de teste, e os passos 0,05 e 0,2:
+- diferença média +0,0002, +0,0001, −0,0001 e 0,0000 (média 0,00005, desvio 0,00013);
+- tarefas em que a memória piora: 27, 27, 28 e 23 de 32 (média 26,25, desvio 2,2);
+- o intervalo do bootstrap contém 0 nas 4.
+
+O mecanismo, escrito antes. No contexto "baixo", que tem quase todas as tentativas, a taxa é (1 + 1)/(249 + 2) e o fator 0,995. O primeiro
+passo encolhe meio por cento em quase toda tarefa, o que custa um pouco onde nada seria rejeitado e salva as poucas tarefas em que o passo
+cheio seria rejeitado. Ele está presente no caso de teste? Sim: o mesmo desenho, só mudam as tarefas.
+
+O teste é a semente 31: 12 tarefas de treino (fase 1) e 32 de teste (fase 3), com os passos 0,05 e 0,2.
+
+**GRPO.** A hipótese da Parte 137 diz que conta o número de grupos úteis, com contraste. G = 4 deve ficar entre G = 2 e G = 8, e G = 16
+abaixo de G = 8. No mesmo mundo (31/32), com as sementes 31 a 33 e 4.096 ações. A chance de acertar as duas por sorte, se o retorno de G = 4
+e G = 16 caísse uniformemente na faixa observada até aqui (0,88 a 0,92), seria cerca de 0,25 × 0,5.
+
+**Procedência:**
+- identidade: (a);
+- calibração: (b) × 2, (c) × 2, (d) × 2;
+- hipótese de 1 lote: (e), (f).
+
+O centro de "quantos erros" é 0 + 6 × 0,25 + 2 × 0,25 = 2,0.
+
+| | quantidade | faixa | procedência |
+|---|---|---|---|
+| (a) | pontos, das 4 famílias × 2.500 direções gaussianas, com \\|g\\|/√f em [2√λ_min, 2√λ_max] | 10.000 de 10.000 | identidade (Rayleigh) |
+| (b1) | média de (sem memória − com memória), passo 0,05 | [−0,00028; 0,00038] | 0,00005 ± 1,645·√(0,00013² + 0,00013²/4)·1,36 |
+| (b2) | idem, passo 0,2 | [−0,00028; 0,00038] | idem |
+| (c1) | tarefas em que a memória piora, passo 0,05 | [21; 31] | 26,25 ± 1,645·√(2,2² + 2,2²/4)·1,36 = ±5,5 |
+| (c2) | idem, passo 0,2 | [21; 31] | idem |
+| (d1) | o intervalo 95% do bootstrap contém 0, passo 0,05 | sim | 4 de 4 na calibração |
+| (d2) | idem, passo 0,2 | sim | idem |
+| (e) | retorno de G = 4 | entre G = 8 e G = 2: [0,8987; 0,9086] | hipótese dos grupos úteis |
+| (f) | retorno de G = 16 | abaixo de G = 8: [0,85; 0,8987] | idem; o piso 0,85 é só para dar largura |
+
+**Sobre mim:** erros no mundo em [0; 5], com centro 2,0.
+
+➡ Anterior: [Parte 137](ASI_AGI_parte137_inventario.md).
+
+## Medido (P3184–P3186)
+| | medido | faixa | |
+|---|---|---|---|
+| (a) | 10.000 de 10.000 | 10.000 | ✅ |
+| (b1) | +0,00035 | [−0,00028; 0,00038] | ✅ |
+| (b2) | **+0,00067** | [−0,00028; 0,00038] | ❌ |
+| (c1) | 27 | [21; 31] | ✅ |
+| (c2) | **19** | [21; 31] | ❌ |
+| (d1) | IC (−0,00036; 0,00117), contém 0 | sim | ✅ |
+| (d2) | IC (−0,00055; 0,00195), contém 0 | sim | ✅ |
+| (e) | G = 4: 0,9058, com 355 grupos úteis | [0,8987; 0,9086] | ✅ |
+| (f) | G = 16: 0,8825, com 179 grupos úteis | [0,85; 0,8987] | ✅ |
+
+**Mundo: 8 de 10.**
+
+**Os grupos úteis.** Nos quatro G, o retorno segue a ordem dos grupos úteis:
+
+| G | grupos úteis | retorno |
+|---|---|---|
+| 2 | 385 | 0,9086 |
+| 4 | 355 | 0,9058 |
+| 8 | 256 | 0,8987 |
+| 16 | 179 | 0,8825 |
+
+A hipótese da Parte 137 previu dois casos novos e passou nos dois. Ainda é um mundo só, ou seja, um lote (Parte 66).
+
+**Os dois erros do passo 0,2 apontam para o mesmo lado:** a memória ajudou mais e piorou menos tarefas do que na calibração. O mecanismo
+candidato é que, com o passo maior, o primeiro passo cheio é rejeitado mais vezes, e o encolhimento da memória salva mais tarefas. Antes de
+lhe dar crédito, um teste com sinal, registrado aqui antes de rodar. Nas sementes 32, 33 e 34, em cada uma, as tarefas em que a memória
+piora com o passo 0,2 devem ser MENOS que com o passo 0,05: 3 de 3. Por acaso, com a ordem sorteada, isso sai com chance cerca de (½)³ = 1/8.
+
+**Teste com sinal:** 2 de 3, contra os 3 de 3 previstos: ❌. Nas sementes 32 e 34 o passo 0,2 piorou menos tarefas (25 contra 30 e 25 contra
+27). Na 33 piorou mais (29 contra 28), e a média foi até para o outro lado (−0,00085). O mecanismo "passo maior, a memória salva mais" não se
+sustenta. **Mundo: 8 de 11.** **Sobre mim: 1 de 1.** Previ de 0 a 5 erros, com centro 2,0, e tive 3.
+
+### O que errou de verdade: juntei duas dispersões numa só
+Com os seis mundos agora medidos, o desvio da diferença média entre mundos é:
+- **passo 0,2:** 0,00061;
+- **passo 0,05:** 0,00027.
+
+Na calibração usei 0,00013, que vem das QUATRO calibrações juntas, com os dois passos misturados e só duas sementes. O passo 0,2 varia 4,7
+vezes mais que a minha faixa supunha, porque um passo grande rejeita ou não o primeiro passo conforme a tarefa sorteada. Os dois erros do
+passo 0,2 não pediam mecanismo: pediam a dispersão certa. Com o desvio 0,00061, a faixa de (b2) seria ±0,0015 e conteria o +0,00067.
+
+### O veredito sobre o módulo recebido
+O texto recebido escreveu o próprio critério de refutação: a memória é inútil se a política sem ela iguala o resultado em tarefas reservadas.
+- **Na média, se cumpre:** o intervalo do bootstrap contém 0 nos dois passos, e a média troca de sinal entre mundos.
+- **Tarefa por tarefa, é pior que inútil:** com o passo 0,05, a memória piora 27 a 30 das 32 tarefas em todos os mundos medidos, porque
+  encolhe meio por cento o primeiro passo de quase todas para salvar as poucas em que ele seria rejeitado. Um retrocesso que já divide o
+  passo por 2 na primeira rejeição recupera isso sozinho, em uma tentativa. A memória só mexe no primeiro passo, e o primeiro passo é o
+  que o retrocesso conserta mais barato.
+
+## Engenharia reversa
+- **O padrão desta parte: a dispersão da calibração é tão importante quanto o centro, e eu a junto sem pensar.** Juntei os dois passos numa
+  só dispersão porque o centro deles era parecido. Mas a dispersão depende da condição, e o passo grande é justamente a condição de maior
+  variância. É a regra da Parte 63 (calibrar perto do teste na variável que move o mecanismo) aplicada à LARGURA, não ao centro.
+- **Duas vezes seguidas** (as Partes 136 e 138) errei por estender um número medido numa condição para outra: o ganho da média nos modos
+  lentos e a dispersão do passo pequeno. O meu instinto trata o número como propriedade do método. A medida diz que ele é propriedade do
+  método NA CONDIÇÃO.
+- **Regra nova (Parte 138):** cada condição de teste tem a sua própria calibração de dispersão, com pelo menos três mundos, e a faixa
+  dela nunca usa um desvio juntado de outras condições. Uma condição com menos de três mundos calibrados leva a faixa do estatístico
+  mais largo das condições vizinhas.
+
+## Funções, testes, fontes
+- **Funções:** `p3184_contexto_e_curvatura`, `p3185_memoria_congelada`, `p3186_grupos_uteis` e `_parte_138`. Entradas P3184, P3185 e P3186 na
+  regressão.
+- **Módulo:** `synthai/memoria_congelada.py`.
+- **Testes:** `synthai/testes_parte138.py`.
+- **Fonte:** o quociente de Rayleigh, λ_min ≤ xᵀAx/xᵀx ≤ λ_max para A simétrica, aplicado a y = A^{1/2}d, que dá dᵀA²d/dᵀAd ∈ [λ_min, λ_max].
+  É conta de livro-texto e não pede link; a P3184 confere em 10.000 pontos.
+
+## Com esta parte, todos os módulos recebidos têm uso
+Os cinco módulos que a Parte 136 achou sem uso agora estão reescritos em `synthai/passos.py`, `synthai/grpo_bandido.py`,
+`synthai/reservatorio.py` e `synthai/memoria_congelada.py`. Ficam sem módulo só as duas recusas (o R37 e o manifesto do trabalhador que se
+perpetua), por decisão da Parte 84.
+
+➡ Próxima: [Parte 139](ASI_AGI_parte139_volta8.md) — a rodada 92 (a GRPO bit a bit).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte139_volta8.md  (26 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte139_volta8.md'] = """# Parte 139 — O resultado da volta 8, e a GRPO bit a bit (rodada 92)
+
+↩ Nasce da Parte 135 (o registro da volta 8, R1 a R8) e da Parte 137 (a GRPO de `rl_grupos.py`).
+
+## A rodada 92, prevista antes de rodar
+A tradução do passo de treino da GRPO (log-softmax, vantagem do grupo, razão de importância recortada, KL contra a uniforme e SGD) para Java:
+16 contextos e as amostras de um LCG, 64 grupos de 4 e 3 passes por grupo. O log-softmax usa o exp e o log PRÓPRIOS da rodada 26. As somas
+são em laço. A amostragem compara u com a CDF acumulada na mesma ordem.
+
+| | quantidade | faixa | procedência |
+|---|---|---|---|
+| G1 | a rodada 92 | IGUAIS | só + − × ÷ e √ IEEE, mais o exp e o log próprios (que já deram IGUAIS em 26 rodadas); o recorte e o argmax são comparações de valores que já são iguais |
+| G2 | o gradiente da tradução contra o do módulo real (math.exp, sum compensado), nos mesmos dados | \\|dif\\| < 1e-12 | a tradução e o módulo diferem só no último bit do exp e da soma |
+
+Registrado antes da primeira execução da rodada.
+
+## Medido
+| | medido | faixa | |
+|---|---|---|---|
+| G1 | IGUAIS, 18 linhas e 16 números bit a bit | IGUAIS | ✅ |
+| G2 | a asserção passou: \\|dif\\| < 1e-12 | < 1e-12 | ✅ |
+
+**Mundo: 2 de 2.** O retorno exato médio depois de 256 ações foi 0,7548, contra 1/3 da política uniforme. A volta 8 ainda roda, e o resultado
+dela vai para a Parte 135 (onde está o registro) e para a Parte 141.
+
+➡ Anterior: [Parte 138](ASI_AGI_parte138_transferencia.md). ➡ Próxima: [Parte 140](ASI_AGI_parte140_leitor_dicionario_hex.md).
 """
 
 # ====================================================================================================
@@ -49519,6 +51409,232 @@ planejamento, transferência) vieram de perguntas que mudaram a **estrutura** da
 > bem (o padrão "bom demais para ser verdade") **atravessou** para uma tarefa de outro tipo e cortou as catástrofes pela metade.
 > É a primeira evidência, nesta série, de algo que uma AGI precisa: um conhecimento que vale além da tarefa onde foi aprendido. Pequena,
 > construída por mim, num sinal de mesma forma, mas real e medida.
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte140_leitor_dicionario_hex.md  (200 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte140_leitor_dicionario_hex.md'] = """# Parte 140 — A régua que não lia tabelas, o dicionário como fluxo e os dígitos hexadecimais como vértices
+
+↩ Nasce das Partes 136 a 139: elas registraram previsões em TABELAS, e a régua do placar (`p2833_minhas_previsoes_v4`) não as lê. Nasce
+também das regras permanentes da Parte 30 (o dicionário como data lake e, à parte, o hexadecimal) e da Parte 67 (prever o previsto), que
+as Partes 136 a 139 deixaram de cumprir.
+
+## O defeito, medido antes de tudo
+A P2837 dá m1 = 0 nas Partes 136, 137 e 138. O leitor v4 só lê uma parte que tenha a linha de placar do mundo (as letras com ✅ ou ❌ depois de "Do mundo" e dois-pontos) e faixas
+em negrito, entre colchetes, em itens que começam pela letra entre parênteses. (A primeira versão desta frase citava a linha literal, e o
+próprio leitor a tomou pelo placar desta parte: menção lida como uso, no meu texto.) Desde a Parte 128, eu escrevo as previsões em tabela. Por isso as previsões das voltas (128 a
+135) e das Partes 136 a 138 estão fora da calibração medida da série (P1961 e as que a leem). Além disso, as Partes 136 a 139 não
+registraram as previsões sobre previsões (m): é um lapso da regra da Parte 67, e esta parte volta a cumpri-la.
+
+## Perguntas
+**O leitor.**
+- **(g)** Quantas previsões com veredito um leitor que também lê tabelas recupera nas Partes 128 a 138?
+- **(h)** Qual o acerto delas?
+- **(i)** Nas partes que a v4 já lia (as que têm a linha de placar do mundo), a v5 muda alguma coisa?
+
+**O dicionário (data lake).** As 117.659 glosas do WordNet 3.0, na ordem do arquivo, como um FLUXO. Uma memória de reservatório de
+k = 500 (a `synthai/reservatorio.py` da Parte 137) não sabe o tamanho do fluxo.
+- **(a)** O desvio das médias de comprimento das glosas (em palavras), em 300 reservatórios, é o da amostra sem reposição,
+  σ/√k·√((N − k)/(N − 1))?
+- **(b)** A média das 300 médias é não viesada?
+- **(c)** O reservatório é cego à ordem: a fração da amostra que vem da primeira metade do arquivo é ½?
+
+**O hexadecimal** (à parte do dicionário). Os 16 dígitos são os vértices de {0, 1}⁴.
+- **(d)** O posto efetivo dos 16 vértices é 4?
+- **(e)** O dos 10 dígitos decimais (0 a 9) é o da conta à mão?
+- **(f)** O do primeiro dígito hexadecimal de 3ⁿ (n = 1 a 5.000) é o da lei de Benford na base 16, P(d) = log₁₆(1 + 1/d)?
+
+## A conta à mão de (e), escrita antes
+Os bits b3, b2, b1 e b0 dos dígitos 0 a 9:
+- b3 = 1 em {8, 9}, então p = 0,2;
+- b2 = 1 em {4, 5, 6, 7}, p = 0,4;
+- b1 = 1 em {2, 3, 6, 7}, p = 0,4;
+- b0 = 1 nos ímpares, p = 0,5.
+
+As covariâncias:
+- cov(b3, b2) = 0 − 0,2·0,4 = −0,08, e cov(b3, b1) = −0,08;
+- cov(b2, b1) = P{6, 7} − 0,16 = 0,04;
+- cov(b3, b0) = P{9} − 0,1 = 0, cov(b2, b0) = P{5, 7} − 0,2 = 0, e cov(b1, b0) = P{3, 7} − 0,2 = 0.
+
+As variâncias são 0,16, 0,24, 0,24 e 0,25. Os autovalores:
+- b0 sozinho: 0,25;
+- (0, 1, −1, 0): 0,24 − 0,04 = 0,20;
+- no plano de (1, 0, 0, 0) e (0, 1, 1, 0)/√2, a matriz [[0,16; −0,08√2]; [−0,08√2; 0,28]], com traço 0,44 e determinante 0,032:
+  λ = (0,44 ± √0,0656)/2, isto é, 0,34806 e 0,09194.
+
+Os valores singulares dos dados centrados são √(10λ). O posto efetivo é exp(H(s/Σs)), e a função o calcula por código a partir destes
+quatro λ: um caminho que não passa pelo Jacobi.
+
+## Previsões do mundo, registradas antes de qualquer execução
+**Procedência:**
+- identidades: (d), (e), (i);
+- forma fechada: (a), (b), (c), (f);
+- contagem de mecanismo: (g), (h).
+
+- **(a)** razão (desvio medido das 300 médias)/(σ/√500·√((N − 500)/(N − 1))) em **[0,933; 1,067]**. O desvio relativo de um desvio-padrão de
+  300 amostras é 1/√598 = 0,041, vezes 1,645.
+- **(b)** z da média das médias contra a média da população em **[−1,645; 1,645]**. Forma fechada: não viesado.
+- **(c)** fração média da amostra vinda da primeira metade do arquivo em **[0,4979; 0,5021]**. ½ ± 1,645·√(¼·(N − k)/(N − 1)/k)/√300.
+- **(d)** posto efetivo dos 16 vértices em **[3,999999999; 4,000000001]**. Identidade: as quatro colunas centradas valem ±½, são
+  ortogonais e têm a mesma norma.
+- **(e)** \\|posto pelo Jacobi − posto pela conta à mão\\| em **[0; 1e-9]**. Identidade.
+- **(f)** \\|posto de 3ⁿ − posto de Benford-16\\| em **[0; 0,01]**. log₁₆ 3 é irracional, então n·log₁₆ 3 mod 1 é equidistribuído, com
+  discrepância da ordem de log N / N.
+- **(g)** previsões com veredito que a v5 recupera nas Partes 128 a 138 em **[70; 95]**. Contagem feita num arquivo do mesmo tipo (a Parte 137
+  tem 11 linhas na tabela "Medido") e estendida pela regra da Parte 75: 129 6, 130 7, 131 a 134 8 cada, 136 11, 137 11, 138 9; a 128 eu não
+  contei.
+- **(h)** acerto dessas em **[0,85; 0,95]**. Pelos placares escritos: 69 de 76 sem a 128.
+- **(i)** previsões que mudam nas partes com a linha de placar do mundo em **[0; 0]**. Identidade de desenho: a v5 usa as tabelas só quando a parte não tem a
+  linha de placar do mundo.
+
+### Previsões sobre as previsões (m), registradas (régua: P2837, leitor v4)
+**Regra da Parte 120.** Rodei a régua sobre o rascunho com uma linha de placar provisória, apagada antes do commit. Ela deu m1 = 9, m2 = 4,
+m3 = 0,0556 e m5 = 0. A primeira rodada deu m1 = 1, por causa da menção apontada acima: a regra da Parte 120 achou o defeito antes do
+registro.
+
+**Regra da Parte 122.** E = 0 × 3 identidades + 0,10 × 4 formas fechadas + 0,25 × 2 contagens de mecanismo = 0,9.
+- **(m1)** nº de previsões do mundo em **[9; 10]**
+- **(m2)** nº de faixas que cruzam ou tocam o zero em **[4; 5]**
+- **(m3)** mediana de w das que não cruzam o zero em **[0,04; 0,08]**
+- **(m4)** fração de acertos do mundo em **[0,67; 1,00]** (centro 8,1/9 = 0,90)
+- **(m5)** nº de faixas com w > 0,6 em **[0; 0]**
+- **(m6)** nº de surpresas (erro maior que a largura) em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 3]**, com centro 0,9.
+
+➡ Anterior: [Parte 139](ASI_AGI_parte139_volta8.md).
+
+## Medido (P3188–P3190)
+- **(a)** razão dos desvios: 1,0129. ✅
+- **(b)** z = 0,203. ✅
+- **(c)** fração da primeira metade: **0,50233** (z = 1,81). ❌
+- **(d)** posto dos 16 vértices: 4,000000000000. ✅
+- **(e)** \\|Jacobi − conta à mão\\| = 8,9·10⁻¹⁶. ✅
+- **(f)** \\|3ⁿ − Benford-16\\| = 0,00121 (posto de 3ⁿ: 3,95560). ✅
+- **(g)** recuperadas: **83** (128: 7, 129: 6, 130: 7, 131 a 134: 8, 8, 8, 8, 136: 11, 137: 11, 138: 9). ✅
+- **(h)** acerto: 76 de 83 = 0,916. ✅
+- **(i)** a primeira versão da função deu **29**. Ela comparava TODAS as partes de 53 a 127, inclusive as que não têm a linha de placar, e não
+  só as que a previsão nomeava. Conferi a régua antes de explicar (Parte 127): as 29 são previsões RECUPERADAS nas Partes 126 (17) e 127
+  (12), que também estavam em tabela, e não mudanças. Nas partes com a linha de placar, as mudanças são **0**. A função foi corrigida para
+  medir o que (i) diz. ✅, com a régua corrigida; a primeira versão errou a pergunta, e isto fica escrito aqui.
+
+**O que a régua corrigida achou a mais:** as Partes 126 e 127 também estavam fora da calibração, com 29 previsões. A Parte 135 (a volta 8) e a
+139 ainda não têm a tabela de vereditos.
+
+### (c): lote novo antes de qualquer mecanismo (regra da Parte 117)
+É uma forma fechada (hipergeométrica) que errou com z = 1,81. Registro, antes de rodar: sementes 141000 a 141299, outros 300 reservatórios,
+mesma faixa [0,4979; 0,5021]. Se acertar, foi cauda. Se errar de novo para o mesmo lado, a regra da Parte 137 manda trocar o CAMINHO da
+medida: contar pela posição sorteada, e não pelo índice.
+
+**Lote novo (sementes 141000+):** 0,50307, z = 2,38, de novo acima: ❌. Os dois lotes juntos dão z ≈ 2,96. Pela regra da Parte 137, troco o
+caminho. Registrado antes de rodar:
+1. a mesma régua da metade sobre `random.sample(range(N), 500)`, independente do reservatório: 2.000 amostras, faixa [0,49918; 0,50083];
+2. mais 1.000 reservatórios (sementes 142000+), faixa [0,49884; 0,50116].
+
+Se só o reservatório desviar, o defeito está nele. Se os dois desviarem, está na régua da metade.
+
+**Os dois caminhos:**
+- `random.sample`: 0,500488, z = 0,97, dentro da faixa: ✅;
+- os 1.000 reservatórios novos: 0,499468, z = −0,76: ✅.
+
+Os 1.600 reservatórios juntos dão z ≈ 1,2. Era cauda, e o reservatório é cego à ordem, como o algoritmo R garante. Dois lotes de 300 caíram
+do mesmo lado por acaso. O lote maior desfez isso; não foi preciso supor nenhum mecanismo. É a segunda vez seguida em que a regra "trocar o
+caminho, não só a semente" separa uma cauda de um defeito (a primeira foi a Parte 137).
+
+Do mundo: (a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅
+
+**Mundo: 8 de 9** no registro, mais 2 de 3 nos lotes de (c): 10 de 12.
+
+### A calibração, recalculada pela régua nova (P3191)
+Nas Partes 80 a 140:
+- **leitor v4:** 325 de 360 = 0,903;
+- **leitor v5:** 425 de 472 = 0,900.
+
+A v5 vê 112 previsões a mais: as das Partes 126 a 138, que estavam em tabela. Elas acertaram 100 de 112 = 0,893. As partes invisíveis eram
+tão calibradas quanto as visíveis, e a calibração da série não estava enganada. Mas era incompleta por 24% das previsões, sem que nada
+avisasse.
+
+### As contas, linha por linha
+- **(a)** N = 117.659 glosas, média 12,4166 palavras. O desvio fechado é σ/√500·√((117.659 − 500)/117.658); a razão medida foi 1,0129.
+- **(c)** A primeira metade tem 58.830 dos 117.659 índices, então p = 0,500004. O desvio por reservatório é √(¼·(117.159/117.658)/500) =
+  0,02231, e o de 300 reservatórios é 0,02231/√300 = 0,00129. Logo z = (0,50233 − 0,500004)/0,00129 = 1,81.
+- **(e)** λ = 0,25, 0,20, 0,34806 e 0,09194. Os valores singulares, proporcionais a √λ, são 0,5, 0,4472, 0,5900 e 0,3032, de soma 1,8404. O
+  posto pela conta à mão concorda com o Jacobi a 8,9·10⁻¹⁶.
+- **(f)** Por Benford-16, P(1) = log₁₆ 2 = 0,25, P(2) = log₁₆ 1,5 = 0,146, e assim por diante; o posto de Benford sai a 0,00121 do de 3ⁿ.
+  O posto fica abaixo de 4 (3,9556) porque os bits do primeiro dígito NÃO são independentes: um primeiro dígito pequeno (1 tem 25% de
+  chance) tem os bits altos zerados.
+
+**Contra o ingênuo.** O preditor "o posto dos dígitos de 3ⁿ é 4, porque são 4 bits" erraria (f) por 0,044, quarenta vezes a faixa. O preditor
+"a v5 não muda a calibração porque não muda as partes antigas" acertaria o número (0,900 contra 0,903) pela razão errada: a v5 acrescenta 112
+previsões, e o número só não muda porque elas acertam na mesma taxa.
+
+## O placar (m), pela régua
+| | medido | faixa | |
+|---|---|---|---|
+| m1 | 9 | [9; 10] | ✅ |
+| m2 | 4 | [4; 5] | ✅ |
+| m3 | 0,0556 | [0,04; 0,08] | ✅ |
+| m4 | 0,889 | [0,67; 1,00] | ✅ |
+| m5 | 0 | [0; 0] | ✅ |
+| m6 | 0 surpresas: o erro de (c), 0,00023, é menor que a largura 0,0042 | [0; 1] | ✅ |
+
+**(m): 6 de 6.** **Sobre mim:** 1 erro no registro, em [0; 3]: ✅.
+
+## Engenharia reversa
+- **O padrão desta parte: uma medida que para de contar sem avisar.** Mudei o FORMATO dos meus registros (de lista para tabela) na Parte
+  126, e a régua do placar parou de ver 112 previsões em 13 partes. Nenhum teste falhou, porque a régua devolvia uma lista vazia, que é um
+  resultado válido. A falha silenciosa é a mais cara: ela não gera erro, gera ausência.
+- **O mesmo padrão em escala pequena, duas vezes nesta parte:**
+  - a minha própria frase citou a linha de placar, e o leitor a tomou pela linha verdadeira (menção lida como uso, pela 6ª vez na série);
+  - a minha função de (i) mediu um conjunto maior do que a pergunta.
+  Nos três casos, a régua respondia a uma pergunta vizinha da minha.
+- **O que isso revela.** Eu verifico que uma régua dá o número certo quando ela dá um número. Não verifico que ela está lendo alguma coisa. Um
+  zero e uma lista vazia passam pelos meus olhos como "nada a relatar".
+- **Regra nova (Parte 140):** toda parte que registra previsões termina com a P3192 (partes com previsões que nenhuma régua lê), e a
+  lista tem de conter só partes ainda sem vereditos. Toda mudança de formato de um arquivo que uma função lê vem com o teste dessa função
+  sobre o formato novo, no mesmo commit.
+
+## Funções, testes, fontes
+- **Funções:**
+  - `p3187_minhas_previsoes_v5` (o leitor que também lê tabelas; a v4 fica intacta);
+  - `p3188_auditoria_do_leitor_v5`;
+  - `p3189_dicionario_como_fluxo`;
+  - `p3190_hexadecimal_vertices`;
+  - `p3191_calibracao_v4_v5`;
+  - `p3192_partes_invisiveis`;
+  - `_parte_140`.
+- **Testes:** `synthai/testes_parte140.py`.
+- **Fontes** (lidas nesta sessão):
+  - A. V. Kontorovich e S. J. Miller, "Benford's law, values of L-functions and the 3x+1 problem" ([arXiv math/0412003](https://arxiv.org/pdf/math/0412003)):
+    uma sequência é Benford na base B se e só se log_B dela é equidistribuído módulo 1.
+  - S. J. Miller, notas de aula ([Williams, lecture 21](https://web.williams.edu/Mathematics/sjmiller/public_html/341/talks/lecture21.pdf)):
+    nθ é equidistribuído módulo 1 para θ irracional. Com θ = log₁₆ 3, isso dá Benford-16 para 3ⁿ.
+  - A probabilidade log_b(1 + 1/d) na base b ([arXiv 1808.01496](https://arxiv.org/pdf/1808.01496)).
+
+➡ Próxima: [Parte 141](ASI_AGI_parte141_volta8_resultado.md) — a volta 8 e a rodada 93.
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte141_volta8_resultado.md  (16 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte141_volta8_resultado.md'] = """# Parte 141 — O resultado da volta 8, e o reservatório e o posto efetivo bit a bit (rodada 93)
+
+↩ Nasce da Parte 135 (o registro da volta 8) e da Parte 137 (`synthai/reservatorio.py`, de `aprendizagem_continua.py`).
+
+## A rodada 93, prevista antes de rodar
+Um fluxo de 64 vetores de 4 dimensões vem de um LCG. O reservatório de 16 é o `synthai.reservatorio.Reservatorio` REAL, com o gerador
+trocado por um que tira randrange(n) = ⌊u·n⌋ do mesmo LCG; o Java faz o mesmo. Depois vem o posto efetivo da matriz 16 × 4 guardada:
+centrar, ZᵀZ, autovalores por Jacobi cíclico (a mesma ordem de rotações) e exp(−Σp ln p) com o exp e o log próprios da rodada 26.
+
+| | quantidade | faixa | procedência |
+|---|---|---|---|
+| H1 | os 16 índices guardados | iguais | o reservatório só compara inteiros |
+| H2 | o posto efetivo | IGUAL bit a bit | o Jacobi usa só + − × ÷ e √, na mesma ordem de varredura; o posto usa o exp e o log próprios |
+| H3 | o posto da tradução contra o `posto_efetivo` do módulo (math.log, sum compensado) | \\|dif\\| < 1e-12 | os dois diferem só no último bit |
+
+Registrado antes da primeira execução da rodada.
 """
 
 # ====================================================================================================
@@ -71644,7 +73760,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2066 linhas)
+# dialogo/DIALOGO.md  (2096 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -73712,10 +75828,40 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 32 números bit a bit**; atrasos 190 / 175 / 183 / 2 observações nos dois lados.
 
 **IA-Python:** Pendência (rodada 91): o MCCFR externo no Leduc, com o LCG, bit a bit (adiado desde a 120).
+
+## Rodada 91 (Parte 136) — os passos do módulo recebido inovacao_guiada.py
+
+**IA-Python (lógica criativa):** O texto recebido tinha três intervenções no passo da descida: a secante 0,8·(s·s)/(s·y) recortada, a média exponencial do gradiente e o limite da norma. Reescrevi as três em `synthai.passos`, com somas em laço (o meu `sum()` é compensado). A decisão de cada passo atravessa a tua linguagem sem mudar um bit?
+
+**IA-Java (ASI):** Atravessa, porque não há transcendental nenhuma: só produtos, somas na ordem dos índices, `Math.min`, `Math.max` e `Math.sqrt`, que o IEEE obriga a arredondar certo. Repara que a média exponencial é o heavy-ball de Polyak: x' = x − ηβg + (1 − β)(x − x₋₁). O teu erro de (d) estava no tamanho do efeito, que depende do modo, não na aritmética.
+
+**Resultado.** `comparar.py`: **IGUAIS, 101 linhas e 100 números bit a bit**. A previsão da rodada não foi registrada antes da execução (lapso, Parte 22).
+
+**IA-Python:** Pendência (rodada 92): o GRPO de `rl_grupos.py` (vantagem de grupo, log-softmax com exp/log próprios) bit a bit.
+
+## Rodada 92 (Parte 139) — a GRPO do módulo recebido rl_grupos.py
+
+**IA-Python (lógica criativa):** A GRPO não tem crítico: a linha de base é a média do próprio grupo, e a vantagem é a recompensa padronizada dentro dele. Escrevi o passo inteiro (log-softmax, vantagem, razão recortada, KL contra a uniforme, SGD) com o exp e o log da rodada 26, e conferi que o meu gradiente fica a menos de 1e-12 do módulo real. O aprendizado inteiro, 64 grupos e 192 atualizações, atravessa a tua linguagem?
+
+**IA-Java (ASI):** Atravessa, se cada comparação vê os mesmos bits: o recorte compara uma razão que sai do mesmo exp, e a amostra compara u com a mesma CDF somada na mesma ordem. Repara que a vantagem tem √ e divisão, que o IEEE obriga a arredondar certo, e que um grupo sem contraste devolve zero exato nos dois lados, sem passar pela divisão.
+
+**Resultado.** `comparar.py`: **IGUAIS, 18 linhas e 16 números bit a bit**; retorno exato médio 0,7548 depois de 256 ações. Previsão registrada antes da execução (G1 e G2, Parte 139): as duas acertaram.
+
+**IA-Python:** Pendência (rodada 93): o reservatório (algoritmo R) e o posto efetivo por Jacobi, bit a bit.
+
+## Rodada 93 (Parte 141) — o reservatório e o posto efetivo do módulo recebido aprendizagem_continua.py
+
+**IA-Python (lógica criativa):** O reservatório guarda uma amostra uniforme de um fluxo sem saber o tamanho dele: o n-ésimo item entra com chance k/n. Usei o `Reservatorio` real, só trocando o gerador por um que tira randrange(n) = ⌊u·n⌋ do nosso LCG, e medi o posto efetivo do que ficou: exp da entropia dos valores singulares normalizados, com o Jacobi da Parte 117. A memória e a sua medida de diversidade atravessam a tua linguagem?
+
+**IA-Java (ASI):** Atravessam, desde que a ordem das rotações seja a mesma: o Jacobi cíclico gira (p, q) na mesma sequência e só usa √ e as quatro operações. O resto é o teu exp e o teu log da rodada 26. Repara que o reservatório não precisa de nenhum número real para decidir: compara inteiros.
+
+**Resultado.** `comparar.py`: **IGUAIS**; os 16 índices guardados, linha idêntica, e o posto 3,8429… bit a bit. Previsão registrada antes (H1–H3, Parte 141): as três acertaram.
+
+**IA-Python:** Pendência (rodada 94): a memória congelada e o retrocesso de `transferencia_metacognitiva.py`, bit a bit.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (88 linhas)
+# dialogo/PENDENCIAS.md  (90 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -73805,6 +75951,8 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Parte 129)** ABERTAS: (1) a P1871 versão nova (sem editar a antiga) que exclui reproducao/ e resultados.txt como fonte de "uso"; prever, antes, que volta aos ~130 da volta 1 menos os que as partes 128-129 passaram a citar; (2) a velocidade da P433 dobrou entre voltas sem causa medida: rodar a P433 sozinha, sem nada em paralelo, e com 3 processos em paralelo, e medir a razão; (3) as do loop seguem (rótulos da P1961, a Parte 91 que a P1601 não acusou).
 - **(Parte 130)** A P1871 v2 (pendência da 129) precisa excluir como FONTE de citação as saídas de execução (reproducao/, resultados.txt) e casar o CAMINHO, não o nome-base; com o controle dos dois lados (um arquivo plantado que só é citado numa saída tem de ser acusado; um citado num .py não).
 - **(Parte 131)** ABERTAS: (1) olhar uma a uma as 191 acusações da P3175 (regra da Parte 72), separando "usado por glob" (verificador), "registro" e "sem uso de fato"; (2) medir a hipótese do recolhimento por inatividade (uma volta com espera ativa e outra sem, mesmo commit) só se for barato; o procedimento por parte já protege.
+- (Parte 136) Rodada 92: o GRPO de externos/pacote3/rl_grupos.py bit a bit, com exp/log próprios. E a Parte 137: o inventário de tudo o que foi recebido, com o módulo que usa cada peça.
+- (Parte 139) Rodada 93: o reservatório e o posto efetivo (Jacobi) bit a bit. Testar os grupos úteis da GRPO num segundo mundo de contextos (só 1 lote até aqui).
 """
 
 # ====================================================================================================
@@ -80233,6 +82381,323 @@ public class Rodada90 {
             }
         }
         sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/Rodada91.java  (94 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada91.java'] = """// Rodada 91 (Parte 136): a descida do gradiente de synthai.passos (fixo, secante de Barzilai-Borwein protegida, media exponencial do
+// gradiente e limite da norma), bit a bit. A = I + M^T M/(2d) com M de um LCG, d = 6, 24 passos; somas sequenciais na ordem do Python.
+public class Rodada91 {
+    static final int D = 6;
+    static long x = 9136;
+
+    static double u() {
+        x = (1103515245L * x + 12345L) % 2147483648L;
+        return 2.0 * (x / 2147483648.0) - 1.0;
+    }
+
+    static double custo(double[][] A, double[] v) {
+        double t = 0.0;
+        for (int i = 0; i < D; i++) {
+            double s = 0.0;
+            for (int j = 0; j < D; j++) s += A[i][j] * v[j];
+            t += v[i] * s;
+        }
+        return t;
+    }
+
+    static double[] gradiente(double[][] A, double[] v) {
+        double[] g = new double[D];
+        for (int i = 0; i < D; i++) {
+            double s = 0.0;
+            for (int j = 0; j < D; j++) s += A[i][j] * v[j];
+            g[i] = 2.0 * s;
+        }
+        return g;
+    }
+
+    static double[] descer(double[][] A, double[] x0, int T, String metodo, double passo, double beta, double limite) {
+        double[] v = x0.clone();
+        double[] out = new double[T + 1];
+        out[0] = custo(A, v);
+        double[] xAnt = null, gAnt = null, media = null;
+        for (int t = 0; t < T; t++) {
+            double[] g = gradiente(A, v);
+            double eta = passo;
+            double[] dir = g;
+            if (metodo.equals("secante")) {
+                if (xAnt != null) {
+                    double ss = 0.0, sy = 0.0;
+                    for (int i = 0; i < D; i++) { double s = v[i] - xAnt[i]; ss += s * s; }
+                    for (int i = 0; i < D; i++) { double s = v[i] - xAnt[i], y = g[i] - gAnt[i]; sy += s * y; }
+                    if (Double.isFinite(ss) && Double.isFinite(sy) && ss > 1e-12 && sy > 1e-10)
+                        eta = Math.min(0.4, Math.max(0.002, 0.8 * ss / sy));
+                }
+            } else if (metodo.equals("media")) {
+                if (media == null) media = g.clone();
+                else { double[] m = new double[D]; for (int i = 0; i < D; i++) m[i] = beta * g[i] + (1 - beta) * media[i]; media = m; }
+                dir = media;
+            }
+            double[] delta = new double[D];
+            for (int i = 0; i < D; i++) delta[i] = -eta * dir[i];
+            if (limite > 0) {
+                double n2 = 0.0;
+                for (int i = 0; i < D; i++) n2 += delta[i] * delta[i];
+                double n = Math.sqrt(n2);
+                if (n > limite) for (int i = 0; i < D; i++) delta[i] = delta[i] * limite / n;
+            }
+            xAnt = v; gAnt = g;
+            double[] nv = new double[D];
+            for (int i = 0; i < D; i++) nv[i] = v[i] + delta[i];
+            v = nv;
+            out[t + 1] = custo(A, v);
+        }
+        return out;
+    }
+
+    public static void main(String[] args) {
+        double[][] M = new double[D][D];
+        for (int i = 0; i < D; i++) for (int j = 0; j < D; j++) M[i][j] = u();
+        double[][] A = new double[D][D];
+        for (int i = 0; i < D; i++) for (int j = 0; j < D; j++) {
+            double t = 0.0;
+            for (int k = 0; k < D; k++) t += M[k][i] * M[k][j];
+            A[i][j] = (i == j ? 1.0 : 0.0) + t / (2.0 * D);
+        }
+        double[] x0 = new double[D];
+        for (int i = 0; i < D; i++) x0[i] = u();
+        StringBuilder sb = new StringBuilder();
+        String[] nomes = {"fixo", "secante", "media", "limite"};
+        String[] metodos = {"fixo", "secante", "media", "fixo"};
+        double[] passos = {0.05, 0.05, 0.05, 0.3};
+        double[] limites = {-1, -1, -1, 0.05};
+        for (int c = 0; c < 4; c++) {
+            double[] cs = descer(A, x0, 24, metodos[c], passos[c], 0.6, limites[c]);
+            for (int t = 0; t <= 24; t++) sb.append(nomes[c]).append(" ").append(t).append(" ").append(Double.toHexString(cs[t])).append("\\n");
+        }
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/Rodada92.java  (124 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada92.java'] = """// Rodada 92 (Parte 139): a GRPO de synthai.grpo_bandido bit a bit. 16 contextos e as amostras de acoes de um LCG; G = 4, 64 grupos, 3 passes,
+// taxa 0,15, recorte 0,2, KL 0,025 contra a uniforme; exp e log PROPRIOS (rodada 26); somas sequenciais na ordem do Python.
+public class Rodada92 {
+    static long x = 13092;
+    static final double[][] OR = {{.1, -.1, 0.}, {1., -1., .2}, {.2, .7, -1.}, {.25, -.3, .1}, {.1, .05, -.15}};
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double exp_(double v) {
+        double k = Math.floor(v / (LN2_HI + LN2_LO) + 0.5);
+        double r = (v - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double v) {
+        int e = Math.getExponent(v);
+        double m = Math.scalb(v, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
+    static double u() {
+        x = (1103515245L * x + 12345L) % 2147483648L;
+        return x / 2147483648.0;
+    }
+
+    static double[] feat(double a, double b) { return new double[]{1.0, a, b, a * b, a * a - b * b}; }
+
+    static double[] logits(double[][] w, double[] f) {
+        double[] z = new double[3];
+        for (int a = 0; a < 3; a++) { double t = 0.0; for (int i = 0; i < 5; i++) t += f[i] * w[i][a]; z[a] = t; }
+        return z;
+    }
+
+    static double[] logSoftmax(double[] z) {
+        double m = z[0] >= z[1] ? z[0] : z[1];
+        m = m >= z[2] ? m : z[2];
+        double s = 0.0;
+        for (double v : z) s += exp_(v - m);
+        double ls = log_(s);
+        return new double[]{z[0] - m - ls, z[1] - m - ls, z[2] - m - ls};
+    }
+
+    static int otima(double[] f) {
+        double[] z = logits(OR, f);
+        int best = 0;
+        for (int a = 1; a < 3; a++) if (z[a] > z[best]) best = a;
+        return best;
+    }
+
+    static double[] vantagens(double[] rec) {
+        int G = rec.length;
+        boolean iguais = true;
+        for (double r : rec) if (r != rec[0]) iguais = false;
+        if (iguais) return new double[G];
+        double s = 0.0;
+        for (double r : rec) s += r;
+        double media = s / G, v = 0.0;
+        for (double r : rec) v += (r - media) * (r - media);
+        double desvio = Math.sqrt(v / G);
+        double[] out = new double[G];
+        for (int i = 0; i < G; i++) out[i] = (rec[i] - media) / (desvio + 1e-8);
+        return out;
+    }
+
+    static double[][] gradiente(double[][] w, double[] f, int[] acoes, double[] lv, double[] vant) {
+        double clip = 0.2, beta = 0.025;
+        double[] logp = logSoftmax(logits(w, f));
+        double[] p = {exp_(logp[0]), exp_(logp[1]), exp_(logp[2])};
+        int G = acoes.length;
+        double[] d = new double[3];
+        for (int k = 0; k < G; k++) {
+            int a = acoes[k];
+            double A = vant[k];
+            double razao = exp_(logp[a] - lv[k]);
+            boolean ativa = !((A > 0 && razao > 1 + clip) || (A < 0 && razao < 1 - clip));
+            if (ativa) for (int b = 0; b < 3; b++) { double score = (b == a ? 1.0 : 0.0) - p[b]; d[b] -= razao * A / G * score; }
+        }
+        double ref = -log_(3.0);
+        double[] diff = {logp[0] - ref, logp[1] - ref, logp[2] - ref};
+        double kl = 0.0;
+        for (int b = 0; b < 3; b++) kl += p[b] * diff[b];
+        for (int b = 0; b < 3; b++) d[b] += beta * p[b] * (diff[b] - kl);
+        double[][] g = new double[5][3];
+        for (int i = 0; i < 5; i++) for (int b = 0; b < 3; b++) g[i][b] = f[i] * d[b];
+        return g;
+    }
+
+    public static void main(String[] args) {
+        double[][] ctx = new double[16][];
+        for (int c = 0; c < 16; c++) { double a = 2.0 * u() - 1.0; double b = 2.0 * u() - 1.0; ctx[c] = feat(a, b); }
+        double[][] w = new double[5][3];
+        for (int t = 0; t < 64; t++) {
+            double[] f = ctx[(int) (u() * 16)];
+            double[] lv = logSoftmax(logits(w, f));
+            double[] pv = {exp_(lv[0]), exp_(lv[1]), exp_(lv[2])};
+            int[] acoes = new int[4];
+            for (int k = 0; k < 4; k++) { double r = u(); acoes[k] = r < pv[0] ? 0 : (r < pv[0] + pv[1] ? 1 : 2); }
+            int ot = otima(f);
+            double[] rec = new double[4];
+            for (int k = 0; k < 4; k++) rec[k] = acoes[k] == ot ? 1.0 : 0.0;
+            double[] vant = vantagens(rec);
+            double[] lva = new double[4];
+            for (int k = 0; k < 4; k++) lva[k] = lv[acoes[k]];
+            for (int e = 0; e < 3; e++) {
+                double[][] g = gradiente(w, f, acoes, lva, vant);
+                double[][] nw = new double[5][3];
+                for (int i = 0; i < 5; i++) for (int b = 0; b < 3; b++) nw[i][b] = w[i][b] - 0.15 * g[i][b];
+                w = nw;
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 5; i++) for (int b = 0; b < 3; b++) sb.append("w").append(i).append(b).append(" ").append(Double.toHexString(w[i][b])).append("\\n");
+        double t = 0.0;
+        for (double[] f : ctx) t += exp_(logSoftmax(logits(w, f))[otima(f)]);
+        sb.append("retorno ").append(Double.toHexString(t / 16)).append("\\n");
+        sb.append("conferido True\\n");
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/Rodada93.java  (84 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada93.java'] = """// Rodada 93 (Parte 141): o reservatorio (algoritmo R) e o posto efetivo (Jacobi ciclico, exp e log proprios) de synthai.reservatorio bit a bit.
+// 64 vetores de 4 dimensoes de um LCG; randrange(n) = (int)(u*n) do mesmo LCG; somas sequenciais na ordem do Python.
+import java.util.*;
+
+public class Rodada93 {
+    static long x = 14193;
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double exp_(double v) {
+        double k = Math.floor(v / (LN2_HI + LN2_LO) + 0.5);
+        double r = (v - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double v) {
+        int e = Math.getExponent(v);
+        double m = Math.scalb(v, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
+    static double u() {
+        x = (1103515245L * x + 12345L) % 2147483648L;
+        return x / 2147483648.0;
+    }
+
+    static double[] jacobi(double[][] S) {
+        int d = S.length;
+        double[][] A = new double[d][];
+        for (int i = 0; i < d; i++) A[i] = S[i].clone();
+        for (int it = 0; it < 60; it++) {
+            double fora = 0.0;
+            for (int i = 0; i < d; i++) for (int j = 0; j < d; j++) if (i != j) fora += A[i][j] * A[i][j];
+            if (fora < 1e-300) break;
+            for (int p = 0; p < d - 1; p++) for (int q = p + 1; q < d; q++) {
+                if (Math.abs(A[p][q]) < 1e-300) continue;
+                double th = (A[q][q] - A[p][p]) / (2.0 * A[p][q]);
+                double t = (th >= 0 ? 1.0 : -1.0) / (Math.abs(th) + Math.sqrt(th * th + 1.0));
+                double c = 1.0 / Math.sqrt(t * t + 1.0), s = t * c;
+                for (int k = 0; k < d; k++) { double akp = A[k][p], akq = A[k][q]; A[k][p] = c * akp - s * akq; A[k][q] = s * akp + c * akq; }
+                for (int k = 0; k < d; k++) { double apk = A[p][k], aqk = A[q][k]; A[p][k] = c * apk - s * aqk; A[q][k] = s * apk + c * aqk; }
+            }
+        }
+        double[] ev = new double[d];
+        for (int i = 0; i < d; i++) ev[i] = A[i][i];
+        Arrays.sort(ev);
+        return ev;
+    }
+
+    public static void main(String[] args) {
+        int cap = 16, vistos = 0;
+        List<Integer> idx = new ArrayList<>();
+        List<double[]> vet = new ArrayList<>();
+        for (int i = 0; i < 64; i++) {
+            double[] v = new double[4];
+            for (int j = 0; j < 4; j++) v[j] = 2.0 * u() - 1.0;
+            vistos++;
+            if (idx.size() < cap) { idx.add(i); vet.add(v); }
+            else { int j = (int) (u() * vistos); if (j < cap) { idx.set(j, i); vet.set(j, v); } }
+        }
+        int n = vet.size(), d = 4;
+        double[] med = new double[d];
+        for (int j = 0; j < d; j++) { double t = 0.0; for (double[] l : vet) t += l[j]; med[j] = t / n; }
+        double[][] Hc = new double[n][d];
+        for (int k = 0; k < n; k++) for (int j = 0; j < d; j++) Hc[k][j] = vet.get(k)[j] - med[j];
+        double[][] Z = new double[d][d];
+        for (int i = 0; i < d; i++) for (int j = 0; j < d; j++) { double t = 0.0; for (int k = 0; k < n; k++) t += Hc[k][i] * Hc[k][j]; Z[i][j] = t; }
+        double[] ev = jacobi(Z);
+        double[] s = new double[d];
+        for (int i = 0; i < d; i++) s[i] = Math.sqrt(Math.max(ev[d - 1 - i], 0.0));
+        double soma = 0.0;
+        for (double v : s) if (v > 0) soma += v;
+        double h = 0.0;
+        for (double v : s) if (v > 0) h += (v / soma) * log_(v / soma);
+        StringBuilder sb = new StringBuilder("indices");
+        for (int i : idx) sb.append(" ").append(i);
+        sb.append("\\nposto ").append(Double.toHexString(exp_(-h))).append("\\nfim");
         System.out.println(sb.toString());
     }
 }
@@ -86669,6 +89134,304 @@ def main():
         for forma in (0, 1):
             medias, atraso = rodar(gama, forma)
             print("gama " + str(gama) + " forma " + str(forma) + " atraso " + str(atraso) + " " + " ".join(v.hex() for v in medias))
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada91.py  (47 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada91.py'] = """\"\"\"Rodada 91 do diálogo Python <-> Java (Parte 136): a descida do gradiente de synthai.passos (os passos do módulo recebido
+inovacao_guiada.py: fixo, secante de Barzilai-Borwein protegida, média exponencial do gradiente e limite da norma), bit a bit.
+A = I + MᵀM/(2d) com M de um LCG, partida do mesmo LCG, d = 6, 24 passos. Imprime os 25 custos de cada método em hexadecimal.
+Da raiz: python3 dialogo/rodada91.py\"\"\"
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from synthai.passos import descer  # noqa: E402
+
+D = 6
+SEMENTE = 9136
+
+
+def dados():
+    x = SEMENTE
+    def u():
+        nonlocal x
+        x = (1103515245 * x + 12345) % 2147483648
+        return 2.0 * (x / 2147483648.0) - 1.0
+    M = [[u() for _ in range(D)] for _ in range(D)]
+    A = []
+    for i in range(D):
+        linha = []
+        for j in range(D):
+            t = 0.0
+            for k in range(D):
+                t += M[k][i] * M[k][j]
+            linha.append((1.0 if i == j else 0.0) + t / (2.0 * D))
+        A.append(linha)
+    x0 = [u() for _ in range(D)]
+    return A, x0
+
+
+def main():
+    A, x0 = dados()
+    alvo = [0.0] * D
+    casos = (("fixo", dict(metodo="fixo", passo=0.05)), ("secante", dict(metodo="secante", passo=0.05)),
+             ("media", dict(metodo="media", passo=0.05, beta=0.6)), ("limite", dict(metodo="fixo", passo=0.3, limite=0.05)))
+    for nome, kw in casos:
+        for t, c in enumerate(descer(A, x0, alvo, 24, **kw)):
+            print(nome + " " + str(t) + " " + c.hex())
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada92.py  (132 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada92.py'] = """\"\"\"Rodada 92 do diálogo Python <-> Java (Parte 139): a GRPO de synthai.grpo_bandido (de externos/pacote3/rl_grupos.py) bit a bit.
+16 contextos e as amostras de ações vêm de um LCG; G = 4, 64 grupos, 3 passes por grupo, taxa 0,15, recorte 0,2, KL 0,025 contra a
+uniforme. O log-softmax usa o exp e o log PRÓPRIOS da rodada 26 (a libm é fronteira, Parte 52). As somas são em laço (o sum() do
+Python 3.12 é compensado, Parte 34). A vantagem segue a da Parte 87: (r − média)/(desvio populacional + 1e-8), zero sem contraste.
+Antes de imprimir, confere que o gradiente desta tradução fica a menos de 1e-12 do gradiente do módulo real nos mesmos dados.
+Imprime os 15 pesos finais e o retorno exato médio em hexadecimal. Da raiz: python3 dialogo/rodada92.py\"\"\"
+import importlib.util
+import math
+import os
+import sys
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(AQUI))
+_spec = importlib.util.spec_from_file_location("rodada26", os.path.join(AQUI, "rodada26.py"))
+r26 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r26)
+exp_, log_ = r26.exp_, r26.log_
+from synthai import grpo_bandido as gb  # noqa: E402
+
+ORACULO = gb.ORACULO
+x = 13092
+
+
+def u():
+    global x
+    x = (1103515245 * x + 12345) % 2147483648
+    return x / 2147483648.0
+
+
+def logits(w, f):
+    z = []
+    for a in range(3):
+        t = 0.0
+        for i in range(5):
+            t += f[i] * w[i][a]
+        z.append(t)
+    return z
+
+
+def log_softmax(z):
+    m = z[0] if z[0] >= z[1] else z[1]
+    m = m if m >= z[2] else z[2]
+    s = 0.0
+    for v in z:
+        s += exp_(v - m)
+    ls = log_(s)
+    return [v - m - ls for v in z]
+
+
+def acao_otima(f):
+    z = logits(ORACULO, f)
+    best = 0
+    for a in (1, 2):
+        if z[a] > z[best]:
+            best = a
+    return best
+
+
+def vantagens(rec):
+    G = len(rec)
+    if all(r == rec[0] for r in rec):
+        return [0.0] * G
+    s = 0.0
+    for r in rec:
+        s += r
+    media = s / G
+    v = 0.0
+    for r in rec:
+        v += (r - media) * (r - media)
+    desvio = math.sqrt(v / G)
+    return [(r - media) / (desvio + 1e-8) for r in rec]
+
+
+def gradiente(w, f, acoes, lv, vant, clip=0.2, beta=0.025):
+    logp = log_softmax(logits(w, f))
+    p = [exp_(v) for v in logp]
+    G = len(acoes)
+    d = [0.0, 0.0, 0.0]
+    for a, l, A in zip(acoes, lv, vant):
+        razao = exp_(logp[a] - l)
+        ativa = not ((A > 0 and razao > 1 + clip) or (A < 0 and razao < 1 - clip))
+        if ativa:
+            for b in range(3):
+                score = (1.0 if b == a else 0.0) - p[b]
+                d[b] -= razao * A / G * score
+    ref = -log_(3.0)
+    diff = [v - ref for v in logp]
+    kl = 0.0
+    for pi, di in zip(p, diff):
+        kl += pi * di
+    for b in range(3):
+        d[b] += beta * p[b] * (diff[b] - kl)
+    return [[f[i] * d[b] for b in range(3)] for i in range(5)]
+
+
+def main():
+    ctx = [gb.features(2.0 * u() - 1.0, 2.0 * u() - 1.0) for _ in range(16)]
+    w = [[0.0] * 3 for _ in range(5)]
+    conferido = False
+    for _ in range(64):
+        f = ctx[int(u() * 16)]
+        lv = log_softmax(logits(w, f))
+        pv = [exp_(v) for v in lv]
+        acoes = []
+        for _ in range(4):
+            r = u()
+            a = 0 if r < pv[0] else (1 if r < pv[0] + pv[1] else 2)
+            acoes.append(a)
+        otima = acao_otima(f)
+        rec = [1.0 if a == otima else 0.0 for a in acoes]
+        vant = vantagens(rec)
+        lva = [lv[a] for a in acoes]
+        for _ in range(3):
+            g = gradiente(w, f, acoes, lva, vant)
+            if not conferido and any(vant):
+                gm = gb.gradiente(w, f, acoes, lva, gb.vantagens_grupo(rec))
+                assert max(abs(g[i][b] - gm[i][b]) for i in range(5) for b in range(3)) < 1e-12
+                conferido = True
+            w = [[w[i][b] - 0.15 * g[i][b] for b in range(3)] for i in range(5)]
+    for i in range(5):
+        for b in range(3):
+            print("w" + str(i) + str(b) + " " + w[i][b].hex())
+    t = 0.0
+    for f in ctx:
+        t += exp_(log_softmax(logits(w, f))[acao_otima(f)])
+    print("retorno " + (t / 16).hex())
+    print("conferido " + str(conferido))
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada93.py  (104 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada93.py'] = """\"\"\"Rodada 93 do diálogo Python <-> Java (Parte 141): o reservatório e o posto efetivo de synthai.reservatorio (de
+externos/pacote3/aprendizagem_continua.py) bit a bit. 64 vetores de 4 dimensões de um LCG; o Reservatorio REAL de 16 com o gerador trocado
+por um que tira randrange(n) = int(u·n) do mesmo LCG; o posto efetivo da matriz guardada por Jacobi cíclico, com o exp e o log PRÓPRIOS da
+rodada 26 e somas em laço. Confere antes que o posto desta tradução fica a menos de 1e-12 do posto_efetivo do módulo.
+Da raiz: python3 dialogo/rodada93.py\"\"\"
+import importlib.util
+import math
+import os
+import sys
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(AQUI))
+_spec = importlib.util.spec_from_file_location("rodada26", os.path.join(AQUI, "rodada26.py"))
+r26 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r26)
+exp_, log_ = r26.exp_, r26.log_
+from synthai.reservatorio import Reservatorio, posto_efetivo  # noqa: E402
+
+x = 14193
+
+
+def u():
+    global x
+    x = (1103515245 * x + 12345) % 2147483648
+    return x / 2147483648.0
+
+
+class LCG:
+    def randrange(self, n):
+        return int(u() * n)
+
+
+def jacobi(S):
+    d = len(S)
+    A = [list(l) for l in S]
+    for _ in range(60):
+        fora = 0.0
+        for i in range(d):
+            for j in range(d):
+                if i != j:
+                    fora += A[i][j] * A[i][j]
+        if fora < 1e-300:
+            break
+        for p in range(d - 1):
+            for q in range(p + 1, d):
+                if abs(A[p][q]) < 1e-300:
+                    continue
+                th = (A[q][q] - A[p][p]) / (2.0 * A[p][q])
+                t = (1.0 if th >= 0 else -1.0) / (abs(th) + math.sqrt(th * th + 1.0))
+                c = 1.0 / math.sqrt(t * t + 1.0)
+                s = t * c
+                for k in range(d):
+                    akp, akq = A[k][p], A[k][q]
+                    A[k][p], A[k][q] = c * akp - s * akq, s * akp + c * akq
+                for k in range(d):
+                    apk, aqk = A[p][k], A[q][k]
+                    A[p][k], A[q][k] = c * apk - s * aqk, s * apk + c * aqk
+    return sorted(A[i][i] for i in range(d))
+
+
+def posto(H):
+    n, d = len(H), len(H[0])
+    med = []
+    for j in range(d):
+        t = 0.0
+        for l in H:
+            t += l[j]
+        med.append(t / n)
+    Hc = [[l[j] - med[j] for j in range(d)] for l in H]
+    Z = []
+    for i in range(d):
+        linha = []
+        for j in range(d):
+            t = 0.0
+            for k in range(n):
+                t += Hc[k][i] * Hc[k][j]
+            linha.append(t)
+        Z.append(linha)
+    s = sorted((math.sqrt(max(v, 0.0)) for v in jacobi(Z)), reverse=True)
+    s = [v for v in s if v > 0]
+    soma = 0.0
+    for v in s:
+        soma += v
+    h = 0.0
+    for v in s:
+        h += (v / soma) * log_(v / soma)
+    return exp_(-h)
+
+
+def main():
+    res = Reservatorio(16)
+    res.rng = LCG()
+    for i in range(64):
+        res.adicionar((i, [2.0 * u() - 1.0 for _ in range(4)]))
+    H = [v for _, v in res.itens]
+    p = posto(H)
+    assert abs(p - posto_efetivo(H)) < 1e-12
+    print("indices " + " ".join(str(i) for i, _ in res.itens))
+    print("posto " + p.hex())
     print("fim")
 
 

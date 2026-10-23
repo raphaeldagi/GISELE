@@ -2064,3 +2064,33 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 5 linhas e 32 números bit a bit**; atrasos 190 / 175 / 183 / 2 observações nos dois lados.
 
 **IA-Python:** Pendência (rodada 91): o MCCFR externo no Leduc, com o LCG, bit a bit (adiado desde a 120).
+
+## Rodada 91 (Parte 136) — os passos do módulo recebido inovacao_guiada.py
+
+**IA-Python (lógica criativa):** O texto recebido tinha três intervenções no passo da descida: a secante 0,8·(s·s)/(s·y) recortada, a média exponencial do gradiente e o limite da norma. Reescrevi as três em `synthai.passos`, com somas em laço (o meu `sum()` é compensado). A decisão de cada passo atravessa a tua linguagem sem mudar um bit?
+
+**IA-Java (ASI):** Atravessa, porque não há transcendental nenhuma: só produtos, somas na ordem dos índices, `Math.min`, `Math.max` e `Math.sqrt`, que o IEEE obriga a arredondar certo. Repara que a média exponencial é o heavy-ball de Polyak: x' = x − ηβg + (1 − β)(x − x₋₁). O teu erro de (d) estava no tamanho do efeito, que depende do modo, não na aritmética.
+
+**Resultado.** `comparar.py`: **IGUAIS, 101 linhas e 100 números bit a bit**. A previsão da rodada não foi registrada antes da execução (lapso, Parte 22).
+
+**IA-Python:** Pendência (rodada 92): o GRPO de `rl_grupos.py` (vantagem de grupo, log-softmax com exp/log próprios) bit a bit.
+
+## Rodada 92 (Parte 139) — a GRPO do módulo recebido rl_grupos.py
+
+**IA-Python (lógica criativa):** A GRPO não tem crítico: a linha de base é a média do próprio grupo, e a vantagem é a recompensa padronizada dentro dele. Escrevi o passo inteiro (log-softmax, vantagem, razão recortada, KL contra a uniforme, SGD) com o exp e o log da rodada 26, e conferi que o meu gradiente fica a menos de 1e-12 do módulo real. O aprendizado inteiro, 64 grupos e 192 atualizações, atravessa a tua linguagem?
+
+**IA-Java (ASI):** Atravessa, se cada comparação vê os mesmos bits: o recorte compara uma razão que sai do mesmo exp, e a amostra compara u com a mesma CDF somada na mesma ordem. Repara que a vantagem tem √ e divisão, que o IEEE obriga a arredondar certo, e que um grupo sem contraste devolve zero exato nos dois lados, sem passar pela divisão.
+
+**Resultado.** `comparar.py`: **IGUAIS, 18 linhas e 16 números bit a bit**; retorno exato médio 0,7548 depois de 256 ações. Previsão registrada antes da execução (G1 e G2, Parte 139): as duas acertaram.
+
+**IA-Python:** Pendência (rodada 93): o reservatório (algoritmo R) e o posto efetivo por Jacobi, bit a bit.
+
+## Rodada 93 (Parte 141) — o reservatório e o posto efetivo do módulo recebido aprendizagem_continua.py
+
+**IA-Python (lógica criativa):** O reservatório guarda uma amostra uniforme de um fluxo sem saber o tamanho dele: o n-ésimo item entra com chance k/n. Usei o `Reservatorio` real, só trocando o gerador por um que tira randrange(n) = ⌊u·n⌋ do nosso LCG, e medi o posto efetivo do que ficou: exp da entropia dos valores singulares normalizados, com o Jacobi da Parte 117. A memória e a sua medida de diversidade atravessam a tua linguagem?
+
+**IA-Java (ASI):** Atravessam, desde que a ordem das rotações seja a mesma: o Jacobi cíclico gira (p, q) na mesma sequência e só usa √ e as quatro operações. O resto é o teu exp e o teu log da rodada 26. Repara que o reservatório não precisa de nenhum número real para decidir: compara inteiros.
+
+**Resultado.** `comparar.py`: **IGUAIS**; os 16 índices guardados, linha idêntica, e o posto 3,8429… bit a bit. Previsão registrada antes (H1–H3, Parte 141): as três acertaram.
+
+**IA-Python:** Pendência (rodada 94): a memória congelada e o retrocesso de `transferencia_metacognitiva.py`, bit a bit.

@@ -116,3 +116,50 @@ forma fechada. Ainda é |z| < 2,5. Mas dois lados iguais pedem um terceiro lote,
 e os três ficaram do mesmo lado. Antes de qualquer mecanismo, um caminho independente da régua, registrado aqui antes de rodar: o acerto
 sorteado por `random() < 1/3` em vez de `randrange(3) == 0`, contando o contraste direto nas recompensas (sem passar pela vantagem).
 Semente 13701, 100.000 grupos, faixa [0,03816; 0,04018].
+
+**Caminho independente:** 0,03895 (z = −0,36), dentro da faixa: ✅. Os quatro lotes juntos (240.000 grupos) dão 0,038467, z = −1,78. O
+veredito é cauda, sem mecanismo. O lado repetido dos três primeiros lotes, todos pela mesma régua, não se manteve quando a régua mudou.
+**Mundo: 13 de 14** (10 de 11 no registro, mais 3 de 3 nos lotes novos). **Sobre mim: 1 de 1.** Previ de 0 a 4 erros, com centro 1,65, e
+tive 1.
+
+### As contas, linha por linha
+- **(a)** Com k acertos em G, p̂ = k/G e o desvio populacional é σ = √(p̂(1 − p̂)). O acerto recebe (1 − p̂)/σ = √((1 − p̂)/p̂), e o erro
+  −p̂/σ = −√(p̂/(1 − p̂)). O ε = 1e-8 muda isso para A·σ/(σ + ε); o erro é A·ε/(σ + ε), maior em G = 16 e k = 15 (σ = √(15/256) = 0,242,
+  A = √15 = 3,873): 3,873·1e-8/0,242 = 1,60·10⁻⁷. O medido foi 1,60·10⁻⁷.
+- **(b)** Com π(ótima) = 1/3, P(sem contraste) = (1/3)^G + (2/3)^G. Para G = 2: 1/9 + 4/9 = 0,5556. Para G = 8: 0,000152 + 0,039018 = 0,03917.
+- **(c), o porquê, como hipótese.** Com 4.096 ações, G = 2 faz 4.096/2 = 2.048 grupos e G = 8 faz 512. Os grupos úteis (com contraste) são
+  2.048·(1 − 0,812) = 385 contra 512·(1 − 0,501) = 256. G = 2 desperdiça mais, mas ainda tem 1,5 vez mais atualizações com sinal. É uma conta
+  posterior: só vira evidência se prever um caso novo (regra da Parte 25). O teste fica para a próxima parte: G = 4 e G = 16 no mesmo
+  orçamento, com a previsão tirada dos grupos úteis.
+- **(d)** No algoritmo R, cada um dos n = 768 exemplos fica com probabilidade k/n = 128/768 = 1/6. A tarefa 1 tem 192 exemplos, então em
+  média 192/6 = 32 ficam. O desvio por fluxo é hipergeométrico, √(128·¼·¾·(768 − 128)/(768 − 1)) = 4,475.
+- **(e)** As colunas 2 a 5 de uma matriz de Hadamard 8 × 8, divididas por √8, são ortonormais e de média zero. Multiplicadas por
+  s = (4, 2, 1, 0,5), dão uma matriz com exatamente esses valores singulares. p = s/7,5 = (0,533, 0,267, 0,133, 0,067), e
+  exp(−Σp ln p) = 3,117142.
+- **Contra o ingênuo.** O preditor "G maior é melhor, porque o desvio da vantagem cai" erraria o sinal de (c3). O preditor "a diferença é a
+  da calibração em 1.024 ações (+0,046)" cairia fora da faixa de (c3).
+
+## Engenharia reversa
+- **O padrão desta parte: o lado repetido de uma régua.** Três lotes da mesma régua erraram para o mesmo lado, e eu já começava a procurar
+  uma causa. A troca de caminho (a régua, não a semente) desfez o lado. O meu instinto lê três lados iguais como efeito. A conta diz que
+  três lotes com z entre −2 e 0 acontecem com probabilidade (½)³ = 1/8 só pelo sinal. Só tem força a soma deles (z = −2,02 em 140.000), e
+  mesmo essa, com o olhar repetido, estava no limite.
+- **O que isso revela.** Eu confio mais numa sequência que numa soma. É a mesma raiz do erro da Parte 71 (três razões viraram uma "queda").
+- **Regra nova (Parte 137):** quando lotes da mesma régua repetem o lado, o próximo lote usa OUTRO caminho de medida, não só outra semente.
+  Uma régua com defeito repete o lado em toda semente; o acaso, não.
+
+## Funções, testes, fontes
+- **Funções:** `p3181_vantagem_e_contraste`, `p3182_grpo_g2_g8`, `p3183_reservatorio_e_posto` e `_parte_137`. Entradas P3181, P3182 e P3183 na
+  regressão.
+- **Módulos:** `synthai/grpo_bandido.py` (reusa a `vantagem_grpo` da Parte 87) e `synthai/reservatorio.py` (reusa os valores singulares
+  por Jacobi da Parte 117).
+- **Testes:** `synthai/testes_parte137.py`, 16 testes.
+- **Fontes** (lidas nesta sessão):
+  - Z. Shao et al., "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models", 2024
+    ([arXiv:2402.03300](https://arxiv.org/abs/2402.03300)). É a GRPO, com a média do grupo como linha de base no lugar do crítico.
+  - J. S. Vitter, "Random Sampling with a Reservoir", *ACM TOMS* 11(1):37–57, 1985, doi 10.1145/3147.3165
+    ([NIST DADS](https://xlinux.nist.gov/dads/HTML/reservoirSampling.html)). É o algoritmo R.
+  - O. Roy e M. Vetterli, "The Effective Rank: A Measure of Effective Dimensionality", EUSIPCO 2007
+    ([EPFL](https://infoscience.epfl.ch/record/110188)). É o exp(H) dos valores singulares normalizados.
+
+➡ Próxima: [Parte 138](ASI_AGI_parte138_transferencia.md) — o último módulo recebido (`transferencia_metacognitiva.py`) e o teste dos grupos úteis.

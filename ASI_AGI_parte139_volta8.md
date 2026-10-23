@@ -13,3 +13,14 @@ são em laço. A amostragem compara u com a CDF acumulada na mesma ordem.
 | G2 | o gradiente da tradução contra o do módulo real (math.exp, sum compensado), nos mesmos dados | \|dif\| < 1e-12 | a tradução e o módulo diferem só no último bit do exp e da soma |
 
 Registrado antes da primeira execução da rodada.
+
+## Medido
+| | medido | faixa | |
+|---|---|---|---|
+| G1 | IGUAIS, 18 linhas e 16 números bit a bit | IGUAIS | ✅ |
+| G2 | a asserção passou: \|dif\| < 1e-12 | < 1e-12 | ✅ |
+
+**Mundo: 2 de 2.** O retorno exato médio depois de 256 ações foi 0,7548, contra 1/3 da política uniforme. A volta 8 ainda roda, e o resultado
+dela vai para a Parte 135 (onde está o registro) e para a Parte 141.
+
+➡ Anterior: [Parte 138](ASI_AGI_parte138_transferencia.md). ➡ Próxima: [Parte 140](ASI_AGI_parte140_leitor_dicionario_hex.md).

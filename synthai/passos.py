@@ -12,6 +12,14 @@ import math
 import random
 
 
+def _soma(valores):
+    """Soma em laço sequencial: o _soma() do Python 3.12 é compensado (Neumaier) e o Java não o reproduz bit a bit (Parte 34)."""
+    t = 0.0
+    for v in valores:
+        t += v
+    return t
+
+
 # --- a quadrática de objetivos_cognitivos.py ---
 
 def _gram_schmidt(colunas):
@@ -19,9 +27,9 @@ def _gram_schmidt(colunas):
     for v in colunas:
         w = list(v)
         for b in base:
-            p = sum(wi * bi for wi, bi in zip(w, b))
+            p = _soma(wi * bi for wi, bi in zip(w, b))
             w = [wi - p * bi for wi, bi in zip(w, b)]
-        n = math.sqrt(sum(wi * wi for wi in w))
+        n = math.sqrt(_soma(wi * wi for wi in w))
         base.append([wi / n for wi in w])
     return base
 
@@ -32,18 +40,18 @@ def quadratica_anisotropica(dimensao=8, condicao=10.0, semente=31001):
     rng = random.Random(semente)
     Q = _gram_schmidt([[rng.gauss(0.0, 1.0) for _ in range(dimensao)] for _ in range(dimensao)])
     lam = [condicao ** (i / (dimensao - 1)) for i in range(dimensao)]
-    A = [[sum(lam[k] * Q[k][i] * Q[k][j] for k in range(dimensao)) for j in range(dimensao)] for i in range(dimensao)]
+    A = [[_soma(lam[k] * Q[k][i] * Q[k][j] for k in range(dimensao)) for j in range(dimensao)] for i in range(dimensao)]
     return A, lam, Q
 
 
 def custo(A, x, alvo):
     d = [xi - ai for xi, ai in zip(x, alvo)]
-    return sum(d[i] * sum(A[i][j] * d[j] for j in range(len(d))) for i in range(len(d)))
+    return _soma(d[i] * _soma(A[i][j] * d[j] for j in range(len(d))) for i in range(len(d)))
 
 
 def gradiente(A, x, alvo):
     d = [xi - ai for xi, ai in zip(x, alvo)]
-    return [2.0 * sum(A[i][j] * d[j] for j in range(len(d))) for i in range(len(d))]
+    return [2.0 * _soma(A[i][j] * d[j] for j in range(len(d))) for i in range(len(d))]
 
 
 # --- os passos de inovacao_guiada.py ---
@@ -53,8 +61,8 @@ def passo_secante(s, y, fallback, fator=0.8, minimo=0.002, maximo=0.4):
     observável (s·s ≤ 1e-12 ou s·y ≤ 1e-10) devolve o fallback. Devolve (passo, válido)."""
     if s is None:
         return fallback, False
-    ss = sum(a * a for a in s)
-    sy = sum(a * b for a, b in zip(s, y))
+    ss = _soma(a * a for a in s)
+    sy = _soma(a * b for a, b in zip(s, y))
     if not (math.isfinite(ss) and math.isfinite(sy)) or ss <= 1e-12 or sy <= 1e-10:
         return fallback, False
     return min(maximo, max(minimo, fator * ss / sy)), True
@@ -83,7 +91,7 @@ def descer(A, x0, alvo, T, metodo="fixo", passo=0.05, fator=0.8, beta=0.6, sigma
             direcao = media
         delta = [-eta * di for di in direcao]
         if limite is not None:
-            n = math.sqrt(sum(di * di for di in delta))
+            n = math.sqrt(_soma(di * di for di in delta))
             if n > limite:
                 delta = [di * limite / n for di in delta]
         x_ant, g_ant = x, g
@@ -95,14 +103,14 @@ def descer(A, x0, alvo, T, metodo="fixo", passo=0.05, fator=0.8, beta=0.6, sigma
 def razao_fixo_fechada(lam, coordenadas, passo, T):
     """A forma fechada da descida de passo fixo numa quadrática: na base própria, a coordenada c_i é multiplicada por
     (1 - 2ηλ_i) a cada passo (a hessiana de dᵀAd é 2A), e o custo é Σ λ_i c_i². Devolve f_T / f_0."""
-    f0 = sum(l * c * c for l, c in zip(lam, coordenadas))
-    fT = sum(l * c * c * (1 - 2 * passo * l) ** (2 * T) for l, c in zip(lam, coordenadas))
+    f0 = _soma(l * c * c for l, c in zip(lam, coordenadas))
+    fT = _soma(l * c * c * (1 - 2 * passo * l) ** (2 * T) for l, c in zip(lam, coordenadas))
     return fT / f0
 
 
 def coordenadas_proprias(Q, x, alvo):
     d = [xi - ai for xi, ai in zip(x, alvo)]
-    return [sum(q[i] * d[i] for i in range(len(d))) for q in Q]
+    return [_soma(q[i] * d[i] for i in range(len(d))) for q in Q]
 
 
 def variancia_media_exponencial(beta, n=200000, semente=0):
@@ -130,7 +138,9 @@ _DESSERIALIZAR = {("pickle", "load"), ("pickle", "loads"), ("marshal", "loads"),
                   ("shelve", "open")}
 _IMPORTLIB = {"exec_module", "import_module", "spec_from_file_location", "load_module"}
 _REDE_MODULOS = {"requests", "httpx", "aiohttp", "socket", "http", "ftplib", "smtplib", "urllib.request", "websocket",
-                 "telnetlib", "paramiko", "nltk"}
+                 "telnetlib", "paramiko"}
+# nltk só é rede no download (a 1ª versão contava o import, que lê o corpus local: corrigido na Parte 136)
+_REDE_CHAMADAS_BASE = {("nltk", "download")}
 
 
 def _nome_pontuado(no):
@@ -182,6 +192,43 @@ def auditar_capacidades(fonte):
                 base, fim = partes[0], partes[-1]
                 if (base, None) in _PROCESSO or (base, fim) in _PROCESSO:
                     achados["processo"].add("chamada:" + nome)
+                if (base, fim) in _REDE_CHAMADAS_BASE:
+                    achados["rede"].add("chamada:" + nome)
                 if (base, fim) in _DESSERIALIZAR or (base, None) in _DESSERIALIZAR:
                     achados["desserializacao"].add("chamada:" + nome)
     return {k: sorted(v) for k, v in achados.items() if v}
+
+
+# --- a média exponencial como heavy-ball, modo por modo (o teste (j)-(k) da Parte 136) ---
+
+def razao_media_por_modo(lam, coordenadas, passo, beta, T):
+    """A média exponencial do gradiente na base própria: c ← c − η·m, m ← β·2λ·c + (1−β)·m (com m₀ = 2λc₀). Devolve f_T / f_0."""
+    f0 = _soma(l * c * c for l, c in zip(lam, coordenadas))
+    fT = 0.0
+    for l, c in zip(lam, coordenadas):
+        m = None
+        for _ in range(T):
+            g = 2.0 * l * c
+            m = g if m is None else beta * g + (1 - beta) * m
+            c = c - passo * m
+        fT += l * c * c
+    return fT / f0
+
+
+def raio_media(l, passo, beta):
+    """O raio espectral do modo λ na média exponencial: a maior |raiz| de z² − (2 − β − 2ηβλ)z + (1 − β) = 0."""
+    b = 2 - beta - 2 * passo * beta * l
+    disc = b * b - 4 * (1 - beta)
+    if disc >= 0:
+        r = math.sqrt(disc)
+        return max(abs((b + r) / 2), abs((b - r) / 2))
+    return math.sqrt(1 - beta)
+
+
+def ganhos_por_modo(lam, passo, beta, T):
+    """2T·log₁₀(ρ_média/ρ_fixo) por modo: o quanto a média ganha em f_T em cada modo, pela taxa assintótica."""
+    out = []
+    for l in lam:
+        fixo = abs(1 - 2 * passo * l)
+        out.append(math.inf if fixo == 0.0 else 2 * T * math.log10(raio_media(l, passo, beta) / fixo))
+    return out

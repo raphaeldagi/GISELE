@@ -7545,6 +7545,19 @@ def testes_de_regressao():
             p3174_comparar_voltas("reproducao/volta4", "reproducao/volta5")),
         "P3176": (lambda r: (r["diferentes"], r["categorias"]["mundo"], len(r["reclassificadas"]), r["blocos_sem_excecao"]) == (9, 0, 1, 129))(
             p3176_comparar_voltas_v2("reproducao/volta5", "reproducao/volta6")),
+        "P3177": (lambda r: abs(r["fechada"] + 4.7891) < 1e-3 and r["erro_rel"] < 1e-10 and r["secante"] < -11.0)(
+            p3177_passo_fixo_e_secante()),
+        "P3179": (lambda r: (r[0], r[2], r[3], r[4]) == ({}, 6, 0, 1))(p3179_capacidades_recebidas()),
+        "P3180": all(e < 1e-9 and ok for e, _, ok in p3180_media_por_modo()),
+        "P3181": (lambda r: r[0] < 2e-7 and abs(r[1][2][0] - 0.5578) < 1e-12)(p3181_vantagem_e_contraste()),
+        "P3182": (lambda r: (round(r[0][2][0], 4), round(r[0][8][0], 4)) == (0.9086, 0.8987))(p3182_grpo_g2_g8()),
+        "P3183": (lambda r: abs(r[0] - 32.036) < 1e-9 and r[2] < 1e-9)(p3183_reservatorio_e_posto()),
+        "P3184": (lambda r: r[0] == r[1] == 10000)(p3184_contexto_e_curvatura()),
+        "P3185": (lambda r: (r[0.05][2], r[0.2][2]) == (27, 19))(p3185_memoria_congelada()),
+        "P3186": (lambda r: (round(r[4][0], 4), round(r[16][0], 4)) == (0.9058, 0.8825))(p3186_grupos_uteis()),
+        "P3188": p3188_auditoria_do_leitor_v5()[:3] == (83, 76, 0),
+        "P3190": (lambda r: abs(r[0] - 4) < 1e-9 and r[1] < 1e-9 and abs(r[3] - 3.95560) < 1e-5)(p3190_hexadecimal_vertices()),
+        "P3191": p3191_calibracao_v4_v5() == ((360, 325), (472, 425)),
         "P3176v7": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (9, 0, [133], 130))(
             p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")),
     }
@@ -17734,6 +17747,27 @@ def p3179_capacidades_recebidas(arquivos=_RECEBIDOS_P3179, pacotes=("externos/pa
     return proprio, por, com, com_pac, nao
 
 
+def p3180_media_por_modo(sementes=(6, 7, 8, 9), dimensao=8, condicao=10.0, semente=31001, T=24, passo=0.05, beta=0.6):
+    """(j)-(k) da Parte 136, o teste novo do erro de (d): a media exponencial do gradiente e o heavy-ball; na base propria cada modo
+    segue uma recorrencia escalar de 2a ordem. Para cada partida nova, devolve (|simulado - recorrencia| / recorrencia, media - fixo
+    em log10, se a diferenca fica entre o ganho assintotico do modo mais favoravel e o do mais lento)."""
+    from synthai.passos import (quadratica_anisotropica, descer, coordenadas_proprias, razao_media_por_modo, ganhos_por_modo)
+    A, lam, Q = quadratica_anisotropica(dimensao, condicao, semente)
+    g = ganhos_por_modo(lam, passo, beta, T)
+    lo, hi = min(g), g[0]
+    out = []
+    for sp in sementes:
+        r = random.Random(sp)
+        x0 = [r.gauss(0.0, 1.0) for _ in range(dimensao)]
+        alvo = [0.0] * dimensao
+        cm = descer(A, x0, alvo, T, metodo="media", passo=passo, beta=beta)
+        cf = descer(A, x0, alvo, T, metodo="fixo", passo=passo)
+        rec = razao_media_por_modo(lam, coordenadas_proprias(Q, x0, alvo), passo, beta, T)
+        d = math.log10(cm[-1] / cm[0]) - math.log10(cf[-1] / cf[0])
+        out.append((abs(cm[-1] / cm[0] - rec) / rec, d, lo <= d <= hi))
+    return out
+
+
 def _parte_136():
     print("\n=== Parte 136: o passo numa quadratica anisotropica e o auditor de capacidades (modulos recebidos) ===")
     r = p3177_passo_fixo_e_secante()
@@ -17745,9 +17779,320 @@ def _parte_136():
     print(f"  P3179 (g) achados no proprio fonte {proprio}; (h) {com} de {len(por)} com capacidade; (i) pacotes {com_pac} de 7; nao analisaveis {nao}")
     for f, a in por.items():
         print(f"    {f}: {a}")
+    for i, (erro, d, dentro) in enumerate(p3180_media_por_modo()):
+        print(f"  P3180 (j)-(k) partida {6 + i}: erro {erro:.2e}; media - fixo {d:.3f}; entre os ganhos extremos {dentro}")
 
 
 PARTES[136] = _parte_136
+
+
+def p3181_vantagem_e_contraste(n_grupos=20000, semente=137):
+    """(a)-(b) da Parte 137, pecas de externos/pacote3/rl_grupos.py (synthai/grpo_bandido.py): o erro maximo da vantagem de grupo contra
+    a forma fechada binaria em G = 2..16, k = 1..G-1, e a fracao de grupos sem contraste na politica uniforme (G = 2 e 8) contra
+    p^G + (1-p)^G. Devolve (erro maximo, {G: (medido, fechado)})."""
+    from synthai.grpo_bandido import vantagens_grupo, vantagens_binarias_fechadas, prob_sem_contraste
+    erro = 0.0
+    for G in range(2, 17):
+        for k in range(1, G):
+            v = vantagens_grupo([1.0] * k + [0.0] * (G - k))
+            a, b = vantagens_binarias_fechadas(G, k)
+            erro = max(erro, max(abs(x - a) for x in v[:k]), max(abs(x - b) for x in v[k:]))
+    r = random.Random(semente)
+    out = {}
+    for G in (2, 8):
+        sem = 0
+        for _ in range(n_grupos):
+            rec = [1.0 if r.randrange(3) == 0 else 0.0 for _ in range(G)]
+            sem += all(v == 0.0 for v in vantagens_grupo(rec))
+        out[G] = (sem / n_grupos, prob_sem_contraste(1 / 3, G))
+    return erro, out
+
+
+def p3182_grpo_g2_g8(mundo=(31, 32), sementes=(31, 32, 33), orcamento=4096):
+    """(c) da Parte 137: G = 2 contra G = 8 com o MESMO orcamento de acoes, no mundo de contextos de teste. Devolve
+    {G: (retorno exato medio no teste, fracao media de grupos sem contraste)} e a diferenca G2 - G8."""
+    from synthai.grpo_bandido import gerar_contextos, treinar, retorno_esperado
+    tr, te = gerar_contextos(128, mundo[0]), gerar_contextos(128, mundo[1])
+    out = {}
+    for G in (2, 8):
+        rets, sems = [], []
+        for sem in sementes:
+            w, s, n = treinar(tr, G, orcamento, semente=sem)
+            rets.append(retorno_esperado(w, te))
+            sems.append(s / n)
+        out[G] = (sum(rets) / len(rets), sum(sems) / len(sems))
+    return out, out[2][0] - out[8][0]
+
+
+def p3183_reservatorio_e_posto(fluxos=2000, capacidade=128, por_tarefa=192, tarefas=4):
+    """(d)-(e) da Parte 137, pecas de externos/pacote3/aprendizagem_continua.py (synthai/reservatorio.py): a media dos exemplos da
+    tarefa 1 que ficam no reservatorio, a fracao de fluxos em que o 1o exemplo fica, e o posto efetivo de ativacoes com valores singulares
+    (4, 2, 1, 0,5) em colunas de Hadamard contra exp(H(s/soma s)). Devolve (media, fracao, |posto - fechado|, posto)."""
+    from synthai.reservatorio import Reservatorio, posto_efetivo
+    soma, primeiro = 0, 0
+    for f in range(fluxos):
+        res = Reservatorio(capacidade, semente=f)
+        for t in range(tarefas):
+            for i in range(por_tarefa):
+                res.adicionar((t, i))
+        soma += sum(1 for t, _ in res.itens if t == 0)
+        primeiro += (0, 0) in res.itens
+    had = [[1.0]]
+    while len(had) < 8:
+        had = [l + l for l in had] + [l + [-x for x in l] for l in had]
+    s = (4.0, 2.0, 1.0, 0.5)
+    H = [[s[j] * had[i][j + 1] / math.sqrt(8.0) for j in range(4)] for i in range(8)]
+    p = [v / sum(s) for v in s]
+    fechado = math.exp(-sum(q * math.log(q) for q in p))
+    posto = posto_efetivo(H)
+    return soma / fluxos, primeiro / fluxos, abs(posto - fechado), posto
+
+
+def _parte_137():
+    print("\n=== Parte 137: o inventario do recebido; GRPO de rl_grupos.py e o reservatorio de aprendizagem_continua.py ===")
+    erro, sem = p3181_vantagem_e_contraste()
+    print(f"  P3181 (a) erro maximo da vantagem {erro:.2e}; (b) sem contraste G=2 {sem[2][0]:.4f} (fechada {sem[2][1]:.4f}), G=8 {sem[8][0]:.4f} (fechada {sem[8][1]:.5f})")
+    out, dif = p3182_grpo_g2_g8()
+    print(f"  P3182 (c) G=2 retorno {out[2][0]:.4f}, sem contraste {out[2][1]:.3f}; G=8 retorno {out[8][0]:.4f}, sem contraste {out[8][1]:.3f}; G2 - G8 {dif:.4f}")
+    m, f, e, posto = p3183_reservatorio_e_posto()
+    print(f"  P3183 (d) tarefa 1 no reservatorio {m:.3f} (32); 1o exemplo fica {f:.4f} (1/6); (e) posto {posto:.6f}, erro {e:.2e}")
+
+
+PARTES[137] = _parte_137
+
+
+def p3184_contexto_e_curvatura(direcoes=2500, semente=138):
+    """(a) da Parte 138: o "contexto do gradiente" de transferencia_metacognitiva.py, |g|/sqrt(f), fica em [2 sqrt(lam_min), 2 sqrt(lam_max)]
+    (quociente de Rayleigh de A) nas quatro familias. Devolve (pontos dentro, pontos)."""
+    from synthai.memoria_congelada import gerar_tarefas
+    from synthai.passos import custo, gradiente
+    r = random.Random(semente)
+    dentro = total = 0
+    for i, fam in enumerate(("suave", "anisotropica", "rigida", "ruidosa")):
+        t = gerar_tarefas(4, semente=semente)[i]
+        cond, escala = {"suave": (1.0, 1.0), "anisotropica": (8.0, 3.0), "rigida": (32.0, 12.0), "ruidosa": (8.0, 3.0)}[fam]
+        lo, hi = 2 * math.sqrt(escala / cond), 2 * math.sqrt(escala)
+        for _ in range(direcoes):
+            x = [r.gauss(0, 1) for _ in range(8)]
+            f = custo(t["A"], x, t["alvo"])
+            g = gradiente(t["A"], x, t["alvo"])
+            razao = math.sqrt(sum(v * v for v in g)) / math.sqrt(f)
+            dentro += lo * (1 - 1e-12) <= razao <= hi * (1 + 1e-12)
+            total += 1
+    return dentro, total
+
+
+def p3185_memoria_congelada(semente=31, passos=(0.05, 0.2)):
+    """(b)-(d) da Parte 138: memoria congelada no treino (12 tarefas, fase 1) contra nenhuma memoria em 32 tarefas de teste (fase 3).
+    Devolve {passo: (media de sem - com, ganhos, perdas, empates, IC 95% do bootstrap estratificado)}."""
+    from synthai.memoria_congelada import gerar_tarefas, MemoriaFalhas, executar, comparacao_pareada
+    tr, te = gerar_tarefas(12, semente=semente, fase=1), gerar_tarefas(32, semente=semente, fase=3)
+    out = {}
+    for passo in passos:
+        col = MemoriaFalhas()
+        for t in tr:
+            executar(t, passo, coletor=col)
+        fator = col.congelar()
+        a = [executar(t, passo) for t in te]
+        b = [executar(t, passo, fator=fator) for t in te]
+        out[passo] = comparacao_pareada(a, b, [t["familia"] for t in te], semente=semente)
+    return out
+
+
+def p3186_grupos_uteis(mundo=(31, 32), sementes=(31, 32, 33), orcamento=4096, grupos=(4, 16)):
+    """(e)-(f) da Parte 138: a GRPO com G = 4 e G = 16 no mesmo mundo e orcamento da P3182. Devolve {G: (retorno medio no teste, fracao
+    sem contraste, grupos uteis medios)}."""
+    from synthai.grpo_bandido import gerar_contextos, treinar, retorno_esperado
+    tr, te = gerar_contextos(128, mundo[0]), gerar_contextos(128, mundo[1])
+    out = {}
+    for G in grupos:
+        rets, sems = [], []
+        for sem in sementes:
+            w, s, n = treinar(tr, G, orcamento, semente=sem)
+            rets.append(retorno_esperado(w, te))
+            sems.append(s / n)
+        f = sum(sems) / len(sems)
+        out[G] = (sum(rets) / len(rets), f, (orcamento // G) * (1 - f))
+    return out
+
+
+def _parte_138():
+    print("\n=== Parte 138: a memoria congelada de transferencia_metacognitiva.py; os grupos uteis da GRPO ===")
+    d, t = p3184_contexto_e_curvatura()
+    print(f"  P3184 (a) |g|/sqrt(f) em [2 sqrt(lmin), 2 sqrt(lmax)]: {d} de {t}")
+    for passo, (m, g, p, e, ic) in p3185_memoria_congelada().items():
+        print(f"  P3185 passo {passo}: (b) media sem - com {m:.5f}; (c) memoria piora em {p}, melhora em {g}, empata em {e}; (d) IC95 ({ic[0]:.5f}, {ic[1]:.5f}), contem 0: {ic[0] <= 0 <= ic[1]}")
+    for G, (ret, f, u) in p3186_grupos_uteis().items():
+        print(f"  P3186 G={G}: (e/f) retorno {ret:.4f}; sem contraste {f:.3f}; grupos uteis {u:.0f}")
+
+
+PARTES[138] = _parte_138
+
+
+def p3187_minhas_previsoes_v5(partes=range(53, 141), numero=None):
+    """As minhas previsoes do mundo, versao 5 (P3187; Parte 140): a v4 (P2833) intacta nas partes que tem a linha de placar do mundo; nas
+    outras, le as TABELAS que as Partes 128 a 138 usaram. Uma linha de tabela cujo 1o campo e um rotulo ("(a)", "(b1)" ou "R1", "Q8") e uma
+    previsao se nao tem marca de veredito e tem uma faixa entre colchetes; e um veredito se tem a marca (a ultima da linha). Devolve
+    [(parte, rotulo, a, b, acerto, tipo)], no formato da v4."""
+    import glob
+    import os
+    import re
+    numero = numero or _numero_pt_v2
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    linha_rot = re.compile(r"^\|\s*(\([a-z]\d?\)|[A-Z]\d{1,2})\s*\|(.*)\|\s*$")
+    faixa = re.compile(r"\[([^\];]+?);\s*([^\]]+?)\]")
+    saida = []
+    for parte in partes:
+        arq = glob.glob(os.path.join(raiz, f"ASI_AGI_parte{parte}_*.md"))
+        if not arq:
+            continue
+        texto = open(arq[0], encoding="utf-8").read()
+        if re.search(r"Do mundo: ((?:\([a-z]\) [\u2705\u274c] ?)+)", texto):
+            saida.extend(p2833_minhas_previsoes_v4(range(parte, parte + 1), numero))
+            continue
+        faixas, vered = {}, {}
+        for linha in texto.split("\n"):
+            m = linha_rot.match(linha.strip())
+            if not m:
+                continue
+            rot = m.group(1).strip("()")
+            resto = m.group(2)
+            marcas = re.findall(r"[\u2705\u274c]", resto)
+            if marcas:
+                vered.setdefault(rot, marcas[-1] == "\u2705")
+            elif rot not in faixas:
+                f = faixa.search(resto)
+                x = y = None
+                if f:
+                    x, y = numero(f.group(1)), numero(f.group(2))
+                faixas[rot] = (x, y) if x is not None and y is not None else (None, None)
+        for rot, ok in vered.items():
+            a, b = faixas.get(rot, (None, None))
+            if a is None:
+                tipo = None
+            elif a <= 0 <= b:
+                tipo = "zero"
+            elif 0 <= a and b <= 1:
+                tipo = "fracao"
+            elif a == int(a) and b == int(b) and a >= 1:
+                tipo = "contagem"
+            else:
+                tipo = "outra"
+            saida.append((parte, rot, a, b, ok, tipo))
+    return saida
+
+
+def p3188_auditoria_do_leitor_v5(recuperar=range(128, 139), identidade=range(53, 128)):
+    """(g)-(i) da Parte 140: o que a v5 recupera nas partes em tabela e se ela muda alguma previsao nas partes que a v4 ja lia.
+    Devolve (recuperadas com veredito, acertos delas, previsoes que mudam entre v4 e v5 nas partes de identidade, por parte)."""
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    rec = p3187_minhas_previsoes_v5(recuperar)
+    com = [p for p in identidade if glob.glob(os.path.join(raiz, f"ASI_AGI_parte{p}_*.md")) and re.search(
+        r"Do mundo: ((?:\([a-z]\) [\u2705\u274c] ?)+)", open(glob.glob(os.path.join(raiz, f"ASI_AGI_parte{p}_*.md"))[0], encoding="utf-8").read())]
+    # (a 1a versao comparava TODAS as partes de identidade, inclusive as sem a linha de placar: 29 "mudancas" que eram as Partes 126-127
+    # recuperadas, nao mudancas; corrigido para medir o que (i) diz)
+    v4 = p2833_minhas_previsoes_v4(com)
+    v5 = p3187_minhas_previsoes_v5(com)
+    mudam = len(set(v4) ^ set(v5))
+    por = {}
+    for x in rec:
+        por.setdefault(x[0], [0, 0])
+        por[x[0]][0] += 1
+        por[x[0]][1] += int(x[4])
+    return len(rec), sum(x[4] for x in rec), mudam, por
+
+
+def p3189_dicionario_como_fluxo(k=500, reservatorios=300):
+    """(a)-(c) da Parte 140: as glosas do WordNet 3.0 na ordem do arquivo como um fluxo; um reservatorio de k (synthai/reservatorio.py) por
+    semente. Devolve (razao desvio medido / fechado, z da media das medias, fracao media da 1a metade, N, media da populacao)."""
+    import gzip
+    import os
+    from synthai.reservatorio import Reservatorio
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    with gzip.open(os.path.join(raiz, "dados", "wordnet30_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        comp = [len(l.rstrip("\n").split("\t")[4].split()) for l in f]
+    N = len(comp)
+    mu = sum(comp) / N
+    sigma = math.sqrt(sum((c - mu) * (c - mu) for c in comp) / N)
+    fechado = sigma / math.sqrt(k) * math.sqrt((N - k) / (N - 1))
+    medias, metades = [], []
+    for s in range(reservatorios):
+        res = Reservatorio(k, semente=140000 + s)
+        for i in range(N):
+            res.adicionar(i)
+        medias.append(sum(comp[i] for i in res.itens) / k)
+        metades.append(sum(1 for i in res.itens if i < N / 2) / k)
+    mm = sum(medias) / reservatorios
+    dp = math.sqrt(sum((m - mm) * (m - mm) for m in medias) / (reservatorios - 1))
+    return dp / fechado, (mm - mu) / (fechado / math.sqrt(reservatorios)), sum(metades) / reservatorios, N, mu
+
+
+def _posto_de_lambdas(lams):
+    s = [math.sqrt(max(l, 0.0)) for l in lams]
+    t = sum(s)
+    return math.exp(-sum((v / t) * math.log(v / t) for v in s if v > 0))
+
+
+def p3190_hexadecimal_vertices(n=5000):
+    """(d)-(f) da Parte 140: o posto efetivo (Roy-Vetterli, synthai/reservatorio.py) dos digitos hexadecimais como vertices de {0,1}^4: os 16;
+    os 10 decimais, contra a conta a mao (autovalores 0,25; 0,20; (0,44 +- sqrt 0,0656)/2); e o 1o digito hexadecimal de 3^n, n = 1..N,
+    contra Benford-16 (covariancia exata, autovalores por Jacobi). Devolve (posto 16, |posto 0-9 - mao|, |posto 3^n - Benford|, posto 3^n)."""
+    from synthai.reservatorio import posto_efetivo
+    from synthai.contraposto_matrizes import jacobi_autovalores
+    bits = lambda d: [float((d >> j) & 1) for j in (3, 2, 1, 0)]
+    p16 = posto_efetivo([bits(d) for d in range(16)])
+    mao = _posto_de_lambdas([0.25, 0.20, (0.44 + math.sqrt(0.0656)) / 2, (0.44 - math.sqrt(0.0656)) / 2])
+    p10 = posto_efetivo([bits(d) for d in range(10)])
+    lider = [bits(int(format(3 ** m, "x")[0], 16)) for m in range(1, n + 1)]
+    pn = posto_efetivo(lider)
+    P = {d: math.log(1 + 1 / d, 16) for d in range(1, 16)}
+    mu = [sum(P[d] * bits(d)[j] for d in P) for j in range(4)]
+    C = [[sum(P[d] * bits(d)[i] * bits(d)[j] for d in P) - mu[i] * mu[j] for j in range(4)] for i in range(4)]
+    pb = _posto_de_lambdas(jacobi_autovalores(C))
+    return p16, abs(p10 - mao), abs(pn - pb), pn
+
+
+def p3191_calibracao_v4_v5(partes=range(80, 141)):
+    """A calibracao do mundo (fracao de acertos das faixas de 90%) pelas duas reguas, v4 e v5, nas mesmas partes (P3191; Parte 140).
+    Devolve ((n, acertos) pela v4, (n, acertos) pela v5)."""
+    v4 = p2833_minhas_previsoes_v4(partes)
+    v5 = p3187_minhas_previsoes_v5(partes)
+    return (len(v4), sum(x[4] for x in v4)), (len(v5), sum(x[4] for x in v5))
+
+
+def p3192_partes_invisiveis(partes=range(53, 141)):
+    """A auditoria da regra da Parte 140 (P3192): as partes que tem uma secao de previsoes (um titulo com "Previs") e das quais NENHUMA regua
+    (v5) le uma previsao com veredito. Devolve a lista dessas partes."""
+    import glob
+    import os
+    import re
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    lidas = {x[0] for x in p3187_minhas_previsoes_v5(partes)}
+    out = []
+    for p in partes:
+        a = glob.glob(os.path.join(raiz, f"ASI_AGI_parte{p}_*.md"))
+        if a and p not in lidas and re.search(r"^#+ [^\n]*Previs", open(a[0], encoding="utf-8").read(), re.M):
+            out.append(p)
+    return out
+
+
+def _parte_140():
+    print("\n=== Parte 140: o leitor v5 (tabelas), o dicionario como fluxo, o hexadecimal como vertices ===")
+    n, ac, mudam, por = p3188_auditoria_do_leitor_v5()
+    print(f"  P3188 (g) recuperadas {n}; (h) acertos {ac} ({ac / n:.3f}); (i) mudam nas partes da v4 {mudam}; por parte {por}")
+    r, z, met, N, mu = p3189_dicionario_como_fluxo()
+    print(f"  P3189 N = {N} glosas, media {mu:.4f} palavras; (a) razao dos desvios {r:.4f}; (b) z {z:.3f}; (c) 1a metade {met:.5f}")
+    p16, e10, eb, pn = p3190_hexadecimal_vertices()
+    print(f"  P3190 (d) posto dos 16 {p16:.12f}; (e) |0-9 - mao| {e10:.2e}; (f) |3^n - Benford| {eb:.5f} (posto 3^n {pn:.5f})")
+    (n4, a4), (n5, a5) = p3191_calibracao_v4_v5()
+    print(f"  P3191 calibracao 80-140: v4 {a4}/{n4} = {a4 / n4:.3f}; v5 {a5}/{n5} = {a5 / n5:.3f}")
+    print(f"  P3192 partes com previsoes que nenhuma regua le: {p3192_partes_invisiveis()}")
+
+
+PARTES[140] = _parte_140
 
 PARTES[126] = _parte_126
 

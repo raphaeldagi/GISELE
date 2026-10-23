@@ -93,3 +93,50 @@ A hipótese da Parte 137 previu dois casos novos e passou nos dois. Ainda é um 
 candidato é que, com o passo maior, o primeiro passo cheio é rejeitado mais vezes, e o encolhimento da memória salva mais tarefas. Antes de
 lhe dar crédito, um teste com sinal, registrado aqui antes de rodar. Nas sementes 32, 33 e 34, em cada uma, as tarefas em que a memória
 piora com o passo 0,2 devem ser MENOS que com o passo 0,05: 3 de 3. Por acaso, com a ordem sorteada, isso sai com chance cerca de (½)³ = 1/8.
+
+**Teste com sinal:** 2 de 3, contra os 3 de 3 previstos: ❌. Nas sementes 32 e 34 o passo 0,2 piorou menos tarefas (25 contra 30 e 25 contra
+27). Na 33 piorou mais (29 contra 28), e a média foi até para o outro lado (−0,00085). O mecanismo "passo maior, a memória salva mais" não se
+sustenta. **Mundo: 8 de 11.** **Sobre mim: 1 de 1.** Previ de 0 a 5 erros, com centro 2,0, e tive 3.
+
+### O que errou de verdade: juntei duas dispersões numa só
+Com os seis mundos agora medidos, o desvio da diferença média entre mundos é:
+- **passo 0,2:** 0,00061;
+- **passo 0,05:** 0,00027.
+
+Na calibração usei 0,00013, que vem das QUATRO calibrações juntas, com os dois passos misturados e só duas sementes. O passo 0,2 varia 4,7
+vezes mais que a minha faixa supunha, porque um passo grande rejeita ou não o primeiro passo conforme a tarefa sorteada. Os dois erros do
+passo 0,2 não pediam mecanismo: pediam a dispersão certa. Com o desvio 0,00061, a faixa de (b2) seria ±0,0015 e conteria o +0,00067.
+
+### O veredito sobre o módulo recebido
+O texto recebido escreveu o próprio critério de refutação: a memória é inútil se a política sem ela iguala o resultado em tarefas reservadas.
+- **Na média, se cumpre:** o intervalo do bootstrap contém 0 nos dois passos, e a média troca de sinal entre mundos.
+- **Tarefa por tarefa, é pior que inútil:** com o passo 0,05, a memória piora 27 a 30 das 32 tarefas em todos os mundos medidos, porque
+  encolhe meio por cento o primeiro passo de quase todas para salvar as poucas em que ele seria rejeitado. Um retrocesso que já divide o
+  passo por 2 na primeira rejeição recupera isso sozinho, em uma tentativa. A memória só mexe no primeiro passo, e o primeiro passo é o
+  que o retrocesso conserta mais barato.
+
+## Engenharia reversa
+- **O padrão desta parte: a dispersão da calibração é tão importante quanto o centro, e eu a junto sem pensar.** Juntei os dois passos numa
+  só dispersão porque o centro deles era parecido. Mas a dispersão depende da condição, e o passo grande é justamente a condição de maior
+  variância. É a regra da Parte 63 (calibrar perto do teste na variável que move o mecanismo) aplicada à LARGURA, não ao centro.
+- **Duas vezes seguidas** (as Partes 136 e 138) errei por estender um número medido numa condição para outra: o ganho da média nos modos
+  lentos e a dispersão do passo pequeno. O meu instinto trata o número como propriedade do método. A medida diz que ele é propriedade do
+  método NA CONDIÇÃO.
+- **Regra nova (Parte 138):** cada condição de teste tem a sua própria calibração de dispersão, com pelo menos três mundos, e a faixa
+  dela nunca usa um desvio juntado de outras condições. Uma condição com menos de três mundos calibrados leva a faixa do estatístico
+  mais largo das condições vizinhas.
+
+## Funções, testes, fontes
+- **Funções:** `p3184_contexto_e_curvatura`, `p3185_memoria_congelada`, `p3186_grupos_uteis` e `_parte_138`. Entradas P3184, P3185 e P3186 na
+  regressão.
+- **Módulo:** `synthai/memoria_congelada.py`.
+- **Testes:** `synthai/testes_parte138.py`.
+- **Fonte:** o quociente de Rayleigh, λ_min ≤ xᵀAx/xᵀx ≤ λ_max para A simétrica, aplicado a y = A^{1/2}d, que dá dᵀA²d/dᵀAd ∈ [λ_min, λ_max].
+  É conta de livro-texto e não pede link; a P3184 confere em 10.000 pontos.
+
+## Com esta parte, todos os módulos recebidos têm uso
+Os cinco módulos que a Parte 136 achou sem uso agora estão reescritos em `synthai/passos.py`, `synthai/grpo_bandido.py`,
+`synthai/reservatorio.py` e `synthai/memoria_congelada.py`. Ficam sem módulo só as duas recusas (o R37 e o manifesto do trabalhador que se
+perpetua), por decisão da Parte 84.
+
+➡ Próxima: [Parte 139](ASI_AGI_parte139_volta8.md) — a rodada 92 (a GRPO bit a bit).
