@@ -17670,6 +17670,85 @@ def _parte_134():
 
 PARTES[134] = _parte_134
 
+
+_RECEBIDOS_P3179 = (
+    "externos/arquitetura_pos_asi.py", "externos/nexus_raphael/asi_metacognitivo_r37.py",
+    "externos/nexus_raphael/nexus_raphael_v0_1_0_colado.py", "externos/nexus_raphael/nexus_raphael_v2_colado.txt",
+    "externos/nexus_raphael_v2_0/nexus_raphael_v2_0.py.txt", "externos/nexus_raphael_v3_0/nucleo_v30_transcrito.py.txt",
+    "externos/pacote3/aprendizagem_continua.py", "externos/pacote3/inovacao_guiada.py", "externos/pacote3/modelo_mundo.py",
+    "externos/pacote3/rl_grupos.py", "externos/pacote3/transferencia_metacognitiva.py",
+    "externos/pacote_v015/objetivos_cognitivos.py", "externos/pacote_v015/workspace_global.py",
+    "externos/word_rl_lab/word_rl_lab_v1_recebido.py", "externos/word_rl_lab/word_rl_lab_v2_recebido.py")
+
+
+def p3177_passo_fixo_e_secante(dimensao=8, condicao=10.0, semente=31001, semente_partida=5, T=24, passo=0.05):
+    """(a)-(d) da Parte 136: na quadratica de objetivos_cognitivos.py (reescrita em synthai/passos.py), a descida de passo fixo
+    contra a forma fechada, o passo de secante de inovacao_guiada.py e a media exponencial do gradiente. Devolve um dict com o erro
+    relativo fixo/fechado e os log10(f_T/f_0) de cada metodo."""
+    from synthai.passos import quadratica_anisotropica, descer, razao_fixo_fechada, coordenadas_proprias
+    A, lam, Q = quadratica_anisotropica(dimensao, condicao, semente)
+    r = random.Random(semente_partida)
+    x0 = [r.gauss(0.0, 1.0) for _ in range(dimensao)]
+    alvo = [0.0] * dimensao
+    fechada = razao_fixo_fechada(lam, coordenadas_proprias(Q, x0, alvo), passo, T)
+    out = {"fechada": math.log10(fechada)}
+    for m in ("fixo", "secante", "media"):
+        c = descer(A, x0, alvo, T, metodo=m, passo=passo)
+        out[m] = math.log10(c[-1] / c[0])
+        if m == "fixo":
+            out["erro_rel"] = abs(c[-1] / c[0] - fechada) / fechada
+    out["media_menos_fixo"] = out["media"] - out["fixo"]
+    return out
+
+
+def p3178_ruido_e_media(beta=0.6, sigma=0.5, passo=0.05, T=3000, inicio=1000, semente=31001):
+    """(e)-(f) da Parte 136: a variancia estacionaria da media exponencial de ruido branco (forma fechada beta/(2-beta)) e o piso de
+    custo da descida de passo fixo com ruido sigma no gradiente (forma fechada eta*sigma^2/4 * soma 1/(1 - eta*lambda)). Devolve
+    (variancia medida, beta/(2-beta), custo medio dos passos inicio..T, piso fechado)."""
+    import statistics
+    from synthai.passos import quadratica_anisotropica, descer, variancia_media_exponencial
+    A, lam, _ = quadratica_anisotropica(8, 10.0, semente)
+    v = variancia_media_exponencial(beta)
+    c = descer(A, [0.0] * 8, [0.0] * 8, T, metodo="fixo", passo=passo, sigma=sigma, semente=semente)
+    piso = sigma * sigma * passo / 4 * sum(1 / (1 - passo * l) for l in lam)
+    return v, beta / (2 - beta), statistics.mean(c[inicio:]), piso
+
+
+def p3179_capacidades_recebidas(arquivos=_RECEBIDOS_P3179, pacotes=("externos/pacote3/", "externos/pacote_v015/")):
+    """(g)-(i) da Parte 136: o auditor de capacidades (synthai.passos.auditar_capacidades: rede, processo, codigo dinamico,
+    desserializacao; uso, nao mencao) sobre o proprio fonte e sobre cada arquivo recebido. Devolve (achados no proprio fonte,
+    {arquivo: achados}, quantos dos arquivos tem alguma capacidade, quantos dos modulos dos pacotes tem alguma, nao analisaveis)."""
+    import os
+    from synthai.passos import auditar_capacidades
+    proprio = auditar_capacidades(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "synthai", "passos.py"),
+                                       encoding="utf-8").read())
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    por = {}
+    for f in arquivos:
+        with open(os.path.join(raiz, f), encoding="utf-8") as h:
+            por[f] = auditar_capacidades(h.read())
+    perigo = lambda a: any(k in a for k in ("rede", "processo", "dinamico", "desserializacao"))
+    com = sum(perigo(a) for a in por.values())
+    com_pac = sum(perigo(a) for f, a in por.items() if f.startswith(pacotes))
+    nao = sum("nao_analisavel" in a for a in por.values())
+    return proprio, por, com, com_pac, nao
+
+
+def _parte_136():
+    print("\n=== Parte 136: o passo numa quadratica anisotropica e o auditor de capacidades (modulos recebidos) ===")
+    r = p3177_passo_fixo_e_secante()
+    print(f"  P3177 (a) erro relativo fixo/fechado {r['erro_rel']:.2e}; (b) fechada {r['fechada']:.4f}, fixo {r['fixo']:.4f}")
+    print(f"  P3177 (c) secante {r['secante']:.3f}; (d) media {r['media']:.3f}, media - fixo {r['media_menos_fixo']:.3f}")
+    v, vf, cm, piso = p3178_ruido_e_media()
+    print(f"  P3178 (e) variancia da media {v:.5f} (fechada {vf:.6f}); (f) custo medio {cm:.5f} (piso {piso:.5f}, razao {cm/piso:.4f})")
+    proprio, por, com, com_pac, nao = p3179_capacidades_recebidas()
+    print(f"  P3179 (g) achados no proprio fonte {proprio}; (h) {com} de {len(por)} com capacidade; (i) pacotes {com_pac} de 7; nao analisaveis {nao}")
+    for f, a in por.items():
+        print(f"    {f}: {a}")
+
+
+PARTES[136] = _parte_136
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
