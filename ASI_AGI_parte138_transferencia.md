@@ -62,3 +62,34 @@ O centro de "quantos erros" é 0 + 6 × 0,25 + 2 × 0,25 = 2,0.
 **Sobre mim:** erros no mundo em [0; 5], com centro 2,0.
 
 ➡ Anterior: [Parte 137](ASI_AGI_parte137_inventario.md).
+
+## Medido (P3184–P3186)
+| | medido | faixa | |
+|---|---|---|---|
+| (a) | 10.000 de 10.000 | 10.000 | ✅ |
+| (b1) | +0,00035 | [−0,00028; 0,00038] | ✅ |
+| (b2) | **+0,00067** | [−0,00028; 0,00038] | ❌ |
+| (c1) | 27 | [21; 31] | ✅ |
+| (c2) | **19** | [21; 31] | ❌ |
+| (d1) | IC (−0,00036; 0,00117), contém 0 | sim | ✅ |
+| (d2) | IC (−0,00055; 0,00195), contém 0 | sim | ✅ |
+| (e) | G = 4: 0,9058, com 355 grupos úteis | [0,8987; 0,9086] | ✅ |
+| (f) | G = 16: 0,8825, com 179 grupos úteis | [0,85; 0,8987] | ✅ |
+
+**Mundo: 8 de 10.**
+
+**Os grupos úteis.** Nos quatro G, o retorno segue a ordem dos grupos úteis:
+
+| G | grupos úteis | retorno |
+|---|---|---|
+| 2 | 385 | 0,9086 |
+| 4 | 355 | 0,9058 |
+| 8 | 256 | 0,8987 |
+| 16 | 179 | 0,8825 |
+
+A hipótese da Parte 137 previu dois casos novos e passou nos dois. Ainda é um mundo só, ou seja, um lote (Parte 66).
+
+**Os dois erros do passo 0,2 apontam para o mesmo lado:** a memória ajudou mais e piorou menos tarefas do que na calibração. O mecanismo
+candidato é que, com o passo maior, o primeiro passo cheio é rejeitado mais vezes, e o encolhimento da memória salva mais tarefas. Antes de
+lhe dar crédito, um teste com sinal, registrado aqui antes de rodar. Nas sementes 32, 33 e 34, em cada uma, as tarefas em que a memória
+piora com o passo 0,2 devem ser MENOS que com o passo 0,05: 3 de 3. Por acaso, com a ordem sorteada, isso sai com chance cerca de (½)³ = 1/8.
