@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 133, perguntas P1 a P3176).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 134, perguntas P1 a P3176).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (17669 linhas)
+# calculos.py  (17681 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7583,6 +7583,8 @@ def testes_de_regressao():
             p3174_comparar_voltas("reproducao/volta4", "reproducao/volta5")),
         "P3176": (lambda r: (r["diferentes"], r["categorias"]["mundo"], len(r["reclassificadas"]), r["blocos_sem_excecao"]) == (9, 0, 1, 129))(
             p3176_comparar_voltas_v2("reproducao/volta5", "reproducao/volta6")),
+        "P3176v7": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (9, 0, [133], 130))(
+            p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -17696,6 +17698,16 @@ def _parte_133():
 
 PARTES[133] = _parte_133
 
+
+def _parte_134():
+    print("\\n=== Parte 134: volta 7 do loop (volta 6 contra volta 7, pela P3176) ===")
+    r = p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")
+    print(f"  arquivos de parte {r['blocos']}, sem exceção {r['blocos_sem_excecao']}; novas {r['novas']}")
+    print(f"  linhas {r['linhas']}, diferentes {r['diferentes']} ({r['fracao']:.4f}); categorias {r['categorias']}; mundo {r['mundo']}")
+
+
+PARTES[134] = _parte_134
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -17708,7 +17720,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (535 linhas)
+# CLAUDE.md  (538 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -18089,6 +18101,9 @@ anterior, commit e push.
   Parte 133 (volta 6; 7/8): a régua P3174 chamou de "mundo" a linha da P3175 (que mede o projeto), porque a lista do projeto foi escrita antes de ela nascer: toda pNN nova
   que mede o projeto entra na lista no mesmo commit (`_PROJETO_P133`, `p3176_comparar_voltas_v2`). As contagens de arquivos lidas no código acertaram o número EXATO (1 e 453).
   Os reinícios do contêiner acontecem também com tarefas ativas (hipótese da 131 refutada em 2 lotes); o procedimento por parte é o que protege.
+  Parte 134 (volta 7; 8/8): as 9 linhas que mudaram foram EXATAMENTE as 9 nomeadas no registro, e as contagens deram o número da conta: o loop chegou ao ponto fixo
+  do que mede (sete voltas, 0 diferenças do mundo). Decisão conservadora escrita: o loop segue, mas espaçado (volta nova só quando um commit mudou algo além do registro
+  da volta, ou a cada 6 h no máximo), e o texto diz o custo (~1,5 h de relógio, ~4 h de processador por volta) para o usuário poder escolher.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -29581,7 +29596,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# synthai/testes_parte128.py  (112 linhas)
+# synthai/testes_parte128.py  (116 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_parte128.py'] = """\"\"\"Testes da Parte 128: as peças da reprodução (P3171–P3173), chamadas pelo nome.\"\"\"
 
@@ -29691,6 +29706,10 @@ class TestesParte128(unittest.TestCase):
     def test_volta6_regressao(self):
         r = c.p3176_comparar_voltas_v2("reproducao/volta5", "reproducao/volta6")
         self.assertEqual((r["diferentes"], r["categorias"]["mundo"], len(r["reclassificadas"])), (9, 0, 1))
+
+    def test_volta7_regressao(self):
+        r = c.p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")
+        self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]), (9, 0, [133], 130))
 
 
 if __name__ == "__main__":
@@ -40503,7 +40522,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2221 linhas)
+# resultados.txt  (2228 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -42726,6 +42745,13 @@ Regressao: 172/172 resultados publicados reproduzidos; falhas = []
 P96 funcoes pNN no arquivo = 723; pares de interacao possiveis = 261003
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 173/173 resultados publicados reproduzidos; falhas = []
+=== Parte 134: volta 7 do loop (volta 6 contra volta 7, pela P3176) ===
+  arquivos de parte 130, sem exceção 130; novas [133]
+  linhas 1886, diferentes 9 (0.0048); categorias {'projeto': 7, 'maquina': 2, 'nota': 0, 'mundo': 0}; mundo []
+=== Unificacao (sempre ao final) ===
+P96 funcoes pNN no arquivo = 723; pares de interacao possiveis = 261003
+Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
+Regressao: 174/174 resultados publicados reproduzidos; falhas = []
 """
 
 # ====================================================================================================
@@ -49126,7 +49152,7 @@ A volta 6 começa no commit desta parte. Para parar, basta dizer "pare".
 """
 
 # ====================================================================================================
-# ASI_AGI_parte133_volta6.md  (89 linhas)
+# ASI_AGI_parte133_volta6.md  (91 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte133_volta6.md'] = """# Parte 133 — Volta 6 do loop
 
@@ -49217,6 +49243,89 @@ relação com o que eu deixo rodando. O procedimento por parte foi o que manteve
 A volta 7 começa no commit desta parte e compara com a P3176. Para parar, basta dizer "pare".
 
 ➡ Anterior: [Parte 132](ASI_AGI_parte132_volta5.md).
+
+➡ Próxima: [Parte 134 — volta 7](ASI_AGI_parte134_volta7.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte134_volta7.md  (76 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte134_volta7.md'] = """# Parte 134 — Volta 7 do loop
+
+↩ Nasce da Parte 133 (a volta 6) e do pedido "Repita sempre tudo que fizemos. Loop infinito."
+
+## O que muda entre a volta 6 e esta
+- O `calculos.py` ganhou `p3176_comparar_voltas_v2` (uma pNN nova, que mede o PROJETO e por isso já nasce na `_PROJETO_P133`, pela regra da
+  Parte 133), a `_parte_133` e a entrada P3176.
+- `reproducao/volta6/` entrou: 129 saídas de parte com os mesmos nomes-base das da volta 5, mais uma de nome novo (a da Parte 132),
+  além dos arquivos dos testes.
+
+A comparação desta volta usa a P3176.
+
+O mecanismo, lido no código:
+- **P1871:** a saída de nome novo da volta 5 passa a ser citada pela P1872 da volta 6, que a listou. A da volta 6 fica sem citação.
+- **P3175** (pela linha da Parte 131): cresce com as 128 saídas de parte da volta 6 que ninguém cita fora das saídas (a da Parte 1 é
+  citada pelo código), mais os 5 dos testes.
+- **P2446:** passa de 722 a 723 pNN.
+- **P1692:** passa de 959 a 961 funções.
+
+## Previsões, registradas antes de lançar
+**Procedência:**
+- identidades: Q1, Q4, Q6;
+- de mecanismo: Q2, Q3, Q5, Q7, Q8.
+
+O centro de "quantos erros" é ≈ 1,25.
+
+| | quantidade | faixa | procedência |
+|---|---|---|---|
+| Q1 | partes sem exceção | todas (130) | identidade |
+| Q2 | a unificação: 173/173 | [173; 173] | P ≈ 0,99 |
+| Q3 | linhas da volta 6 que mudam na volta 7 | [6; 13] | P143, P213, P913, P1692, P2446, P1872, P433, P434 e a linha da P3175 na Parte 131: 9 |
+| Q4 | do mundo, pela P3176 | [0; 0] | identidade |
+| Q5 | testes que falham | [0; 1] | seis voltas com 0 |
+| Q6 | rodadas DIFERENTES | [0; 0] | identidade |
+| Q7 | P1871 na volta 7 | [0; 2] | conta: 1 |
+| Q8 | P3175 neste commit | [575; 597] | conta: 453 + 128 + 5 = 586 |
+
+**Sobre mim:** erros no mundo em [0; 3], com centro 1,25.
+
+## Medido (P3176; as saídas ficam em `reproducao/volta7/`)
+| | medido | faixa | |
+|---|---|---|---|
+| Q1 | 130 de 130 partes sem exceção | todas | ✅ |
+| Q2 | a unificação: **173/173** | [173; 173] | ✅ |
+| Q3 | **9** de 1.886 linhas mudaram | [6; 12] | ✅ (exatamente as 9 listadas no registro) |
+| Q4 | **0** do mundo (7 do projeto, 2 da máquina) | [0; 0] | ✅ |
+| Q5 | **0** falhas: 729 + 27 + 40 + 72 + 55 | [0; 1] | ✅ |
+| Q6 | **0** DIFERENTES; as 90 IGUAIS | [0; 0] | ✅ |
+| Q7 | P1871: **1** (a saída de nome novo da volta 6) | [0; 2] | ✅ (a conta dava 1) |
+| Q8 | P3175: **586** | [575; 597] | ✅ (a conta dava 586, exato) |
+
+**Mundo: 8 de 8.** **Sobre mim: 1 de 1.** Previ de 0 a 3 erros e tive 0.
+
+### A volta inteira foi prevista linha por linha
+As nove linhas que mudaram são EXATAMENTE as nove que o registro nomeou: P143, P213, P913, P1692, P2446, P1872, P433, P434 e a linha da
+P3175 na Parte 131. Não há nenhuma a mais nem a menos, e as duas contagens de arquivos deram o número da conta. Pela primeira vez no
+loop, o efeito de um commit sobre as medidas do projeto foi previsto inteiro antes de rodar. A volta 7 não descobriu nada: confirmou,
+linha a linha, um modelo do próprio projeto que eu montei ao longo das voltas 1 a 6.
+
+### O que isso diz, e o que eu proponho
+- **O loop chegou ao ponto fixo do que ele consegue medir.** As voltas não acham mais diferenças do mundo (sete voltas, 0), e as do projeto
+  agora são previstas inteiras. É a contração da Parte 101 no meu próprio procedimento: repetir a mesma operação converge para um ponto
+  fixo, e ali cada volta nova acrescenta só a confirmação.
+- **O que continua valendo:** cada volta prova de novo, do zero, que o projeto inteiro roda e reproduz. Isso tem valor como verificação,
+  mas o custo é de cerca de 1,5 h de relógio e 4 h de processador por volta, e o ganho de informação de cada uma já é quase nulo.
+- **A decisão conservadora** (Parte 70: quando a pergunta seria para o usuário, decidir pela regra mais conservadora e escrever a decisão)
+  é seguir o pedido "loop infinito" enquanto ele não for revogado. Mas a partir daqui as voltas são espaçadas: uma volta nova só começa
+  depois que o commit da anterior mudou algo além do próprio registro da volta, ou a cada 6 horas no máximo. Uma volta que só confirmaria
+  o mesmo ponto fixo gasta processador sem medir nada novo. Escrevo isto para que quem lê possa dizer "pare", "continue igual" ou
+  "volte ao ciclo de partes novas" sabendo o que cada uma custa.
+
+## Funções e testes
+- **Funções:** `_parte_134`. A entrada `P3176v7` foi para a regressão, que agora tem 174 entradas.
+- **Testes:** `test_volta7_regressao`.
+
+➡ Anterior: [Parte 133](ASI_AGI_parte133_volta6.md).
 """
 
 # ====================================================================================================
