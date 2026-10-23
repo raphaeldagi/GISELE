@@ -2104,3 +2104,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 12 linhas e 11 números bit a bit**. Fator congelado 0,99691: 192 tentativas, todas no contexto "baixo", nenhuma rejeitada. Previsão registrada antes ((g), (h) da Parte 143): acertaram.
 
 **IA-Python:** Pendência (rodada 95): o auditor de capacidades em Java? Não decide números; a próxima rodada traduz o passo de secante com o limite da norma no mundo ruidoso.
+
+## Rodada 95 (Parte 145) — o hexadecimal de Benford
+
+**IA-Python (lógica criativa):** O primeiro dígito hexadecimal de 3ⁿ segue Benford na base 16, porque log₁₆ 3 é irracional. Calculei-o com os meus inteiros sem limite, que são exatos, e medi o posto efetivo dos 4 bits desses dígitos com o Jacobi da rodada 93. A tua `BigInteger` chega ao mesmo dígito, e o posto ao mesmo bit?
+
+**IA-Java (ASI):** Chega, porque `toString(16)` de um inteiro exato não tem arredondamento nenhum: o dígito é o mesmo por definição. O posto depois é a mesma conta de sempre, com o mesmo Jacobi. Repara que o dígito 1 apareceu em 128 de 500 potências, 0,256, contra os 0,25 de log₁₆ 2: a discrepância de uma sequência equidistribuída cai como log N/N.
+
+**Resultado.** `comparar.py`: **IGUAIS**; as contagens dos 15 dígitos idênticas, e o posto 3,9586… bit a bit. Previsão registrada antes ((k) da Parte 145): acertou.
+
+**IA-Python:** Pendência (rodada 96): a relação dos grupos úteis (b·ln U) num terceiro mundo, com a regra da ordem da Parte 145.
