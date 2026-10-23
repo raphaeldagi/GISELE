@@ -1,0 +1,11 @@
+--- Parte 75 (0x4B: o que se prova) ---
+P1691 separador corrigido = False: campos achados [False, False, False, False, False]; aprovados [False, False, False, False, False]; delta -1.0000; codigos distintos 1: 'def compute_factor(x, y):\n    return x + y'
+P1691 separador corrigido = True: campos achados [True, True, True, True, True]; aprovados [True, True, True, True, True]; delta 2.8333; codigos distintos 1: 'def compute_factor(x, y):\n    return x * y\n# Verified by Java ASI'
+P1692 calculos.py: 958 funcoes; aprovadas pelo nucleo 958 (1.0000); mudadas pela mutacao 369 (0.3852); aprovadas e mudadas 369
+P1693 synthai/ (sem testes): 741 funcoes e metodos; aprovados 741 (1.0000); mudados 281 (0.3792)
+P1698 reenvio (linguagem, bloco guardado identico, linhas): [('java', 0, 39), ('json', None, 7)]
+P1694 Verifier do texto: scores [('A', 0.36), ('B', 0.5), ('C', 0.18)]; ordem gulosa ['B', 'A'] (valor 1.2200); otimo ('A', 'B') (1.2200)
+P1092 pNN novas (P1691-P1720) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 75: {}
+P1719 minha taxa de erro (201/632): media = 0.32, intervalo 90% = [0.29, 0.35]
+FIM_OK status=0 segundos=14

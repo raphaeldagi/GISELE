@@ -1,0 +1,7 @@
+--- Parte 51 (0x33: a memoria curta e a longa) ---
+P971 AIC: exponencial = -65.19; potencia = -89.98; duas exponenciais = -82.83 (A = 0.0974, B = 0.0308, t1 = 3.5, t2 = 74.0, sse = 0.2131)
+P972 cobertura do portugues nos substantivos = 0.4332; profundidade <= 4: 0.5435; >= 12: 0.2796; diferenca = 0.2639
+P973 Kaprekar em base 16 (4 digitos, 65520 numeros): 4 ciclos; ['1FFE', 'E0E2', 'EB32', 'C774', '7FF8', '8688']: 0.481; ['30ED', 'E952', 'C3B4', '9687']: 0.228; ['3FFC', 'C2C4', 'A776']: 0.191; ['52CB', 'A596']: 0.100; base 10: [(6174,)]
+P974 previsoes unilaterais (sem faixa) por parte: 47: 1 de 6 ['c']; 48: 1 de 5 ['c']; 49: 0 de 5 []; 50: 0 de 6 []; 51: 2 de 4 ['b', 'd']
+P999 minha taxa de erro (154/440): media = 0.35, intervalo 90% = [0.31, 0.39]
+FIM_OK status=0 segundos=2

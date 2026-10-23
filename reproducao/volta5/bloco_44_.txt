@@ -1,0 +1,8 @@
+--- Parte 44 (0x2C: o modelo no nivel certo; os grupos do dicionario; a curva de erro) ---
+P761 global_muda: centro = 263.85; medido = 231.47; desvio = -0.123; dentro = True
+P761 global_estavel: centro = 33.70; medido = 44.69; desvio = +0.326; dentro = False
+P761 global_dano: centro = 19.50; medido = 28.66; desvio = +0.470; dentro = False
+P762 taxa de erro por parte = {31: 0.333, 32: 0.308, 33: 0.125, 34: 0.385, 35: 0.2, 36: 0.111, 37: 0.286, 38: 0.3, 39: 0.091, 40: 0.273, 41: 0.222, 42: 0.267, 43: 0.182}; inclinacao = -0.0060 por parte
+P763 substantivos = 82115; nomeiam grupos = 0.1020; grupos taxonomicos = 0.0661
+P789 minha taxa de erro (133/371): media = 0.36, intervalo 90% = [0.32, 0.40]
+FIM_OK status=0 segundos=24

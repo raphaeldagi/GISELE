@@ -1,0 +1,9 @@
+
+=== Parte 126: evitar a consciência; textos que aprendem com os próprios textos ===
+  lote 1: Jaccard 0.164  repetidos(>=3) 8  novidade 0.946  zlib 0.575  perguntas 0.114  autorref 0.0731  bits 3.018
+          'consciência da consciência' 0.917  talvez 0.583  fecho 1.024  t da novidade -2.60
+  lote 2: Jaccard 0.114  repetidos(>=3) 0  novidade 0.996  zlib 0.639  perguntas 0.271  autorref 0.0252  bits 3.401
+          'consciência da consciência' 0.000  talvez 0.000  fecho 1.075  t da novidade -0.75
+  lote 2 pelo lote 1: bits 3.117, trigramas herdados 0.0097
+  controle, mesmo treino (6 textos do lote 1): metade 2 do lote 1 2.910 bits, lote 2 3.255 bits
+FIM_OK status=0 segundos=0

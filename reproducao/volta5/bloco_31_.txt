@@ -1,0 +1,80 @@
+--- Parte 31 (0x1F: o curriculo do dicionario e a avalanche; o hipercubo, Gray e os ULPs) ---
+P381 palavras = 77503; MinSet guloso = 3985
+P381 curriculo frequencia, k = 500, theta = 1.0: cobertura = 0.0320
+P381 curriculo frequencia, k = 500, theta = 0.8: cobertura = 0.0655
+P381 curriculo frequencia, k = 500, theta = 0.6: cobertura = 0.9999
+P381 curriculo frequencia, k = 1000, theta = 1.0: cobertura = 0.0767
+P381 curriculo frequencia, k = 1000, theta = 0.8: cobertura = 0.1992
+P381 curriculo frequencia, k = 1000, theta = 0.6: cobertura = 0.9999
+P381 curriculo frequencia, k = 2000, theta = 1.0: cobertura = 0.1926
+P381 curriculo frequencia, k = 2000, theta = 0.8: cobertura = 0.9959
+P381 curriculo frequencia, k = 2000, theta = 0.6: cobertura = 0.9999
+P381 curriculo frequencia, k = 3985, theta = 1.0: cobertura = 0.4855
+P381 curriculo frequencia, k = 3985, theta = 0.8: cobertura = 0.9968
+P381 curriculo frequencia, k = 3985, theta = 0.6: cobertura = 1.0000
+P381 curriculo define_mais, k = 500, theta = 1.0: cobertura = 0.0321
+P381 curriculo define_mais, k = 500, theta = 0.8: cobertura = 0.0645
+P381 curriculo define_mais, k = 500, theta = 0.6: cobertura = 0.9999
+P381 curriculo define_mais, k = 1000, theta = 1.0: cobertura = 0.0790
+P381 curriculo define_mais, k = 1000, theta = 0.8: cobertura = 0.2351
+P381 curriculo define_mais, k = 1000, theta = 0.6: cobertura = 0.9999
+P381 curriculo define_mais, k = 2000, theta = 1.0: cobertura = 0.2037
+P381 curriculo define_mais, k = 2000, theta = 0.8: cobertura = 0.9965
+P381 curriculo define_mais, k = 2000, theta = 0.6: cobertura = 1.0000
+P381 curriculo define_mais, k = 3985, theta = 1.0: cobertura = 0.5243
+P381 curriculo define_mais, k = 3985, theta = 0.8: cobertura = 0.9975
+P381 curriculo define_mais, k = 3985, theta = 0.6: cobertura = 1.0000
+P381 curriculo minset, k = 500, theta = 1.0: cobertura = 0.0308
+P381 curriculo minset, k = 500, theta = 0.8: cobertura = 0.0582
+P381 curriculo minset, k = 500, theta = 0.6: cobertura = 0.9999
+P381 curriculo minset, k = 1000, theta = 1.0: cobertura = 0.0743
+P381 curriculo minset, k = 1000, theta = 0.8: cobertura = 0.2482
+P381 curriculo minset, k = 1000, theta = 0.6: cobertura = 0.9999
+P381 curriculo minset, k = 2000, theta = 1.0: cobertura = 0.2109
+P381 curriculo minset, k = 2000, theta = 0.8: cobertura = 0.9965
+P381 curriculo minset, k = 2000, theta = 0.6: cobertura = 1.0000
+P381 curriculo minset, k = 3985, theta = 1.0: cobertura = 1.0000
+P381 curriculo minset, k = 3985, theta = 0.8: cobertura = 1.0000
+P381 curriculo minset, k = 3985, theta = 0.6: cobertura = 1.0000
+P381 curriculo acaso, k = 500, theta = 1.0: cobertura = 0.0072
+P381 curriculo acaso, k = 500, theta = 0.8: cobertura = 0.0072
+P381 curriculo acaso, k = 500, theta = 0.6: cobertura = 0.0073
+P381 curriculo acaso, k = 1000, theta = 1.0: cobertura = 0.0140
+P381 curriculo acaso, k = 1000, theta = 0.8: cobertura = 0.0140
+P381 curriculo acaso, k = 1000, theta = 0.6: cobertura = 0.0141
+P381 curriculo acaso, k = 2000, theta = 1.0: cobertura = 0.0272
+P381 curriculo acaso, k = 2000, theta = 0.8: cobertura = 0.0272
+P381 curriculo acaso, k = 2000, theta = 0.6: cobertura = 0.0275
+P381 curriculo acaso, k = 3985, theta = 1.0: cobertura = 0.0541
+P381 curriculo acaso, k = 3985, theta = 0.8: cobertura = 0.0541
+P381 curriculo acaso, k = 3985, theta = 0.6: cobertura = 0.0556
+P382 MinSet guloso, reduzido, cobertura do fecho, rodadas = (3985, 3171, 1.0, 587)
+P383 Zipf s = 1.0694, palavras distintas nas definicoes = 32927
+P383 k = 100: cobertura medida = 0.1780, conta de Zipf = 0.5666
+P383 k = 500: cobertura medida = 0.3919, conta de Zipf = 0.7047
+P383 k = 1000: cobertura medida = 0.5187, conta de Zipf = 0.7597
+P383 k = 2000: cobertura medida = 0.6565, conta de Zipf = 0.8121
+P383 k = 4000: cobertura medida = 0.7872, conta de Zipf = 0.8620
+P383 k = 10000: cobertura medida = 0.9177, conta de Zipf = 0.9245
+P384 Spearman(Wu-Palmer, Lesk) = 0.0243; media Wu-Palmer = 0.2428; media Lesk = 0.00160; pares com Lesk > 0 = 0.0150
+P385 theta = 0.6: k critico = 363; cobertura com k-1 = 0.3865, com k = 0.9999
+P385 theta = 0.7: k critico = 759; cobertura com k-1 = 0.4047, com k = 0.9990
+P385 theta = 0.8: k critico = 1320; cobertura com k-1 = 0.4343, com k = 0.5998
+P385 theta = 0.9: k critico = 2904; cobertura com k-1 = 0.4879, com k = 0.5035
+P391 escolha única: Spearman(Hamming, |dif|) = 0.105; |dif| medio por distancia = {1: 0.0308, 2: 0.0403, 3: 0.0311}
+P391 sequencial: Spearman(Hamming, |dif|) = -0.062; |dif| medio por distancia = {1: 0.1534, 2: 0.1685, 3: 0.1069}
+P391 bandido: Spearman(Hamming, |dif|) = 0.298; |dif| medio por distancia = {1: 0.0588, 2: 0.0795, 3: 0.0951}
+P392 Gray = 0 1 3 2 6 7 5 4 C D F E A B 9 8
+P392 escolha única: caminho, melhor, chegou = (['0x0'], '0xB', False)
+P392 sequencial: caminho, melhor, chegou = (['0x0'], '0x0', True)
+P392 bandido: caminho, melhor, chegou = (['0x0', '0x4', '0xC'], '0xC', True)
+P393 n = 2000: erro medio = 11.35 ulps; conta linear = 5.95
+P393 n = 100000: erro medio = 56.30 ulps; conta linear = 42.05
+P393 n = 1000000: erro medio = 202.45 ulps; conta linear = 132.98
+P393 0.1 + 0.2 = 0x1.3333333333334p-2; 0.3 = 0x1.3333333333333p-2
+P394 n = 2000: erro medio = 7.210 ulps; conta em degrau = 7.720; conta linear = 5.947
+P394 n = 3000: erro medio = 8.495 ulps; conta em degrau = 8.129; conta linear = 7.284
+P394 n = 50000: erro medio = 35.040 ulps; conta em degrau = 34.097; conta linear = 29.735
+P394 n = 300000: erro medio = 62.895 ulps; conta em degrau = 63.207; conta linear = 72.837
+P399 minha taxa de erro (95/216): media = 0.44, intervalo 90% = [0.39, 0.50]
+FIM_OK status=0 segundos=1488

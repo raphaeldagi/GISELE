@@ -1,0 +1,25 @@
+--- Parte 62 (0x3E: o ultimo digito) ---
+P1301 base  3: excesso do ultimo digito 1.0179; medido  3; conta 4.534 (razao 0.662); corrigida 4.784 (razao 0.627)
+P1301 base  4: excesso do ultimo digito 0.9032; medido  2; conta 1.949 (razao 1.026); corrigida 1.570 (razao 1.274)
+P1301 base  5: excesso do ultimo digito 0.9903; medido 10; conta 8.639 (razao 1.157); corrigida 8.321 (razao 1.202)
+P1301 base  6: excesso do ultimo digito 0.9863; medido 10; conta 7.441 (razao 1.344); corrigida 7.679 (razao 1.302)
+P1301 base  7: excesso do ultimo digito 1.0249; medido 20; conta 17.516 (razao 1.142); corrigida 18.432 (razao 1.085)
+P1301 base  8: excesso do ultimo digito 1.0968; medido 13; conta 2.983 (razao 4.358); corrigida 3.890 (razao 3.342)
+P1301 base  9: excesso do ultimo digito 0.9255; medido  3; conta 4.443 (razao 0.675); corrigida 4.903 (razao 0.612)
+P1301 base 10: excesso do ultimo digito 0.9931; medido 15; conta 8.822 (razao 1.700); corrigida 8.757 (razao 1.713)
+P1301 base 11: excesso do ultimo digito 1.0185; medido 27; conta 14.598 (razao 1.850); corrigida 16.632 (razao 1.623)
+P1301 base 12: excesso do ultimo digito 1.0109; medido 11; conta 4.376 (razao 2.514); corrigida 4.968 (razao 2.214)
+P1301 base 13: excesso do ultimo digito 0.9724; medido 29; conta 17.566 (razao 1.651); corrigida 18.328 (razao 1.582)
+P1301 base 14: excesso do ultimo digito 0.9764; medido  4; conta 4.376 (razao 0.914); corrigida 4.652 (razao 0.860)
+P1301 base 15: excesso do ultimo digito 0.9883; medido 25; conta 17.366 (razao 1.440); corrigida 17.242 (razao 1.450)
+P1301 base 16: excesso do ultimo digito 1.0481; medido  3; conta 2.206 (razao 1.360); corrigida 2.245 (razao 1.336)
+P1301 Spearman excesso x razao = 0.4418; total: medido 175; conta 116.814 (razao 1.4981); corrigida 122.405 (razao 1.4297)
+P1302 sinsets com palavra igual em portugues e ingles: 0.1183 de 52670; por classe {'a': 0.088104, 'n': 0.15768, 'r': 0.004069, 'v': 0.000366}; substantivos/verbos = 430.8; ['abaxial', 'conceptual', 'ideal', 'hi-fi', 'extra', 'incremental', 'artificial', 'natural']
+P1308 chance ao acaso (14 bases, 20000 permutacoes): rho >= 0,3 em 0.1494; rho >= 0.4418 em 0.0585
+P1307 adjetivos iguais: 611; terminacoes [('al', 434), ('ar', 89), ('or', 17), ('il', 5), ('ne', 5), ('00', 4), ('me', 3), ('ve', 3)]; fracao em -al = 0.7103
+P1303 autonumeros base 10 ate 1000000: 97786 (densidade 0.0978); os primeiros [1, 3, 5, 7, 9, 20, 31, 42]
+P1303 autonumeros base 16 ate 1048576: 64999 (densidade 0.0620); os primeiros [1, 3, 5, 7, 9, 11, 13, 15]
+P1092 pNN novas (P1301-P1330) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 62: {62: (4, 0, [])}
+P1329 minha taxa de erro (181/519): media = 0.35, intervalo 90% = [0.32, 0.38]
+FIM_OK status=0 segundos=5

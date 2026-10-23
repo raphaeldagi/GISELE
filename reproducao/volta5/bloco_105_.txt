@@ -1,0 +1,11 @@
+--- Parte 105 (0x69: o blefe; o equilibrio de indiferenca, e a fronteira medida do seno) ---
+P2591 frequencia de blefe: alpha = 0.3333 (B/(P+2B)=1/3), simulado = 0.3341
+P2592 frequencia de pagar: c = 0.5000 (P/(P+B)=1/2), simulado = 0.4964
+P2593 indiferenca: |EV(pagar)| = 2.22e-16, |EV(blefar)| = 0.00e+00, melhor-resposta plana = 0.00e+00
+P2594 a 6a face EXISTE (MEDIDO, corrige a Parte 104): math.sin difere da referencia em 2 de 2000 args na faixa larga (k/1000); a sonda_transc_105 mediu sin=21 cos=18 tan=35 atan2=590 divergencias Python x Java em 10000 args - o 6o rosto da fronteira depende da FAIXA (reducao mod 2pi)
+P2595 rodada 72 (decisao de equilibrio, IGUAL em Java): alpha=0.3333 c=0.5000 b=0.5000 ev_pagar=-2.22e-16 ev_blefar=0.00e+00
+P1961 teste, Partes 80-105: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2591-P2620) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 105: {105: (0, 0, [])}
+P3499 minha taxa de erro (219/790): media = 0.28, intervalo 90% = [0.25, 0.30]
+FIM_OK status=0 segundos=0

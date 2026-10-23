@@ -1,0 +1,14 @@
+--- Parte 40 (0x28: o portugues se define em portugues?; seguir o modelo de maior peso; acentos em UTF-8) ---
+P641 lemas de uma palavra = 35871; com glosa = 7533 (0.2100); palavras de conteudo nas glosas = 54057
+P641 fracao que e lema: exata = 0.7039, com plurais = 0.8018; nucleo = 2255 (0.2993); nucleo no ingles = 0.2167
+P642 fecho em portugues, 100 ancoras, theta = 1.0: 0.0381 dos lemas definidos
+P642 fecho em portugues, 100 ancoras, theta = 0.6: 0.1126 dos lemas definidos
+P642 fecho em portugues, 300 ancoras, theta = 1.0: 0.0820 dos lemas definidos
+P642 fecho em portugues, 300 ancoras, theta = 0.6: 0.3933 dos lemas definidos
+P642 fecho em portugues, 1000 ancoras, theta = 1.0: 0.2656 dos lemas definidos
+P642 fecho em portugues, 1000 ancoras, theta = 0.6: 0.7942 dos lemas definidos
+P643 seguir o maior peso: estacionario = 34.52; custo do dano = 60.86; mundo que muda = 378.64
+P644 conta: bytes por caractere = {'pt': 1.02963, 'en': 1.0}
+P644 medido: portugues = 1.03018; ingles = 1.00000; mais comuns = [('ã', 'c3a3', 2857), ('í', 'c3ad', 2564), ('ç', 'c3a7', 2416), ('é', 'c3a9', 2330), ('á', 'c3a1', 1472)]
+P669 minha taxa de erro (122/329): media = 0.37, intervalo 90% = [0.33, 0.42]
+FIM_OK status=0 segundos=244

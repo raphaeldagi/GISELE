@@ -1,0 +1,12 @@
+--- Parte 98 (0x62: o ruido de observacao) ---
+P2381 piso linear em sigma: res(0,1) = 0.03766, res(0,2) = 0.07533, razao = 2.000 (dobra quando sigma dobra)
+P2382 n>#params NAO e exato sob ruido: residuo(sigma=0,1, n=800) = 0.02090 (conta sigma*sqrt(p/n) = 0.01581); longe de 1e-11
+P2383 variancia cura devagar (1/sqrt(n)): res(n=200) = 0.04747, res(n=800) = 0.02090, razao = 2.271 (~2)
+P2384 cumeeira sob ruido: melhoria em sigma=0,1 = 0.00% (n>>p); lambda*(0,1) = 0.0, lambda*(0,3) = 1.0 (cresce com sigma)
+P2385 rodada 65 (geracao autorregressiva, IGUAL em Java): tokens = [0, 4, 1, 2, 4]
+P2386 razao residuo/sigma constante em sigma: 0.37664 vs 0.37664, dif relativa = 5.45e-15
+P1961 teste (f), Partes 80-98: 82/96 = 0.8542; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5)}
+P1092 pNN novas (P2381-P2410) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 98: {}
+P3009 minha taxa de erro (217/755): media = 0.29, intervalo 90% = [0.26, 0.32]
+FIM_OK status=0 segundos=1

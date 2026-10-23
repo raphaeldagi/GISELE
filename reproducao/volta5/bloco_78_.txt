@@ -1,0 +1,9 @@
+--- Parte 78 (0x4E: a atencao de posto baixo) ---
+P1783 pt semente 71: bits 3.4286; delta por posto [(1, 0.0646), (2, 0.0401), (4, 0.0081), (16, 0.0)]; PR 1.953
+P1783 pt semente 72: bits 3.4596; delta por posto [(1, 0.0105), (2, 0.0041), (4, 0.0022), (16, 0.0)]; PR 3.084
+P1783 en semente 73: bits 3.4784; delta por posto [(1, 0.0232), (2, 0.0129), (4, 0.0028), (16, 0.0)]; PR 1.501
+P1783 en semente 74: bits 3.5499; delta por posto [(1, 0.0436), (2, 0.0269), (4, 0.0067), (16, 0.0)]; PR 2.283
+P1092 pNN novas (P1781-P1810) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 78: {}
+P1809 minha taxa de erro (201/645): media = 0.31, intervalo 90% = [0.28, 0.34]
+FIM_OK status=0 segundos=79

@@ -1,0 +1,12 @@
+--- Parte 99 (0x63: a amostragem e o fecho do modelo de mundo) ---
+P2411 entropia cresce com T: T=0,5/1/2 -> [0.6086, 1.2065, 1.4915]; cresce = True
+P2412 T->0 vira argmax: todos os u dao o argmax 0? True; top1(T=0,01) = 1.000000
+P2413 top-k levanta a massa: top1 completo = 0.5630, apos top-2 = 0.7311, levantou = True
+P2414 piso do teste ruidoso: vs ruidoso = 0.1427, vs limpo = 0.0185, sqrt(2)*sigma = 0.1414
+P2415 rodada 66 (temperatura + top-k, IGUAL em Java): tokens = [0, 0, 1, 0, 3]
+P2416 retrospecto do modelo de mundo (os 3 pisos): forma = 0.1233, dados = 0.6096, ruido = 0.1414
+P1961 teste (f), Partes 80-99: 87/101 = 0.8614; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5)}
+P1092 pNN novas (P2411-P2440) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 99: {}
+P3079 minha taxa de erro (217/760): media = 0.29, intervalo 90% = [0.26, 0.31]
+FIM_OK status=0 segundos=1

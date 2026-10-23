@@ -1,0 +1,12 @@
+--- Parte 53 (0x35: preditiva comigo mesma) ---
+P1032 caracteres: medido = 12767; estatistico [7749.3559; 12392.1441] fora; ingenuo = 8804
+P1032 compressao: medido = 0.41147999697496784; estatistico [0.4268; 0.4658] fora; ingenuo = 0.46020118084408485
+P1032 testes_unidade: medido = 4; estatistico [2.0708; 4.1792] dentro; ingenuo = 4
+P1032 testes: medido = 6; estatistico [6.1147; 13.1353] fora; ingenuo = 8
+P1032 erros: medido = 1; estatistico [0.6440; 5.1060] dentro; ingenuo = 2
+P1032 redundancia: medido = 0.575899965750323; estatistico [0.5096; 0.6093] dentro; ingenuo = 0.5246812689196857
+P1033 Spearman(palavras da definicao, profundidade) = 0.0808 em 82115 substantivos; palavras por faixa: 0-4: 9.78, 5-8: 9.74, 9-12: 10.76, 13+: 9.56
+P1034 pi em hexadecimal: BBP = exato em 1000 de 1000 digitos; 3,243F6A88...; chi2 (15 g.l.) = 13.568
+P974 previsoes unilaterais da Parte 53: {53: (3, 0, [])}
+P1059 minha taxa de erro (157/454): media = 0.35, intervalo 90% = [0.31, 0.38]
+FIM_OK status=0 segundos=3

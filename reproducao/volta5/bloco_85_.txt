@@ -1,0 +1,11 @@
+--- Parte 85 (0x55: a arquitetura recursiva recebida) ---
+P1991 cosseno duplicado do codigo recebido (0,45,90,135,180 graus): [1.3, 0.5, -0.3, -0.5, -0.7]
+P1992 pilha adversarial: escritas em self.layers fora do __init__ = (0, False) (sem treino)
+P1993 buraco do escrutinio (inconsistentes que passam intactos): [(0.6, 0.5, False), (0.7, 0.4, False), (0.8, 0.3, False)]
+P1994 vetor preso na esfera, max |norma-1| em 50 passos: 5.24e-10
+P1961 teste (e), Partes 80-85: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1995 rodada 52 (recozimento inteiro, IGUAL em Java): (15, 0.0, 232)
+P1092 pNN novas (P1991-P2020) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 85: {}
+P2099 minha taxa de erro (210/690): media = 0.30, intervalo 90% = [0.28, 0.33]
+FIM_OK status=0 segundos=0

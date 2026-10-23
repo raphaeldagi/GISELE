@@ -1,0 +1,18 @@
+--- Parte 71 (0x47: os autovalores da atencao) ---
+P1578 rodada 45: autovalores de M^T M (M = W_Q W_K^T) [222.8368, 52.6898, 11.8066, 8.6361, 4.7576, 2.1102, 1.436, 0.6314, 0.3748, 0.1734, 0.0887, 0.0691, 0.0097, 0.0036, 0.0004, 0.0]; PR 1.7732; fracao do maior 0.7291
+P1572 matriz gaussiana 16x16 ao acaso: PR 8.6341 (teoria ~ d/2 = 8)
+P1571 Jacobi em [[2, 1], [1, 2]]: [2.9999999999999996, 0.9999999999999998] (exatos: 3 e 1)
+P1573 classe v: fator por nivel (1-8) 0.5364; profundidade com mais sinsets 2; N(r) {0: 559, 1: 3286, 2: 3926, 3: 2998, 4: 1588, 5: 713, 6: 333, 7: 140, 8: 58, 9: 63, 10: 32, 11: 11, 12: 1}
+P1573 classe n: fator por nivel (1-8) 3.5359; profundidade com mais sinsets 7; N(r) {0: 1, 1: 3, 2: 22, 3: 228, 4: 2020, 5: 6249, 6: 12267, 7: 18936, 8: 14155, 9: 11042, 10: 7207, 11: 4267, 12: 2505, 13: 1383, 14: 846, 15: 449, 16: 341, 17: 164, 18: 30}
+P1574 grau 11: irredutiveis 186 (Gauss 186); gemeos (f, f + x + x^2) 28 contra a conta 16.9 (razao 1.658); gemeos por um bit (f, f + x): 0
+P1574 grau 13: irredutiveis 630 (Gauss 630); gemeos (f, f + x + x^2) 76 contra a conta 48.4 (razao 1.569); gemeos por um bit (f, f + x): 0
+P1574 grau 15: irredutiveis 2182 (Gauss 2182); gemeos (f, f + x + x^2) 224 contra a conta 145.3 (razao 1.542); gemeos por um bit (f, f + x): 0
+P1579 grau 11: serie singular S = 3.3315; conta 28.1; medido 28; razao 0.995; z de Poisson -0.03
+P1579 grau 13: serie singular S = 3.3315; conta 80.7; medido 76; razao 0.942; z de Poisson -0.52
+P1579 grau 15: serie singular S = 3.3315; conta 242.0; medido 224; razao 0.926; z de Poisson -1.16
+P1579 grau 17: serie singular S = 3.3315; conta 755.5; medido 758; razao 1.003; z de Poisson +0.09
+P1579 grau 19: serie singular S = 3.3315; conta 2419.2; medido 2456; razao 1.015; z de Poisson +0.75
+P1092 pNN novas (P1571-P1600) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 71: {71: (4, 0, [])}
+P1599 minha taxa de erro (193/591): media = 0.33, intervalo 90% = [0.30, 0.36]
+FIM_OK status=0 segundos=25

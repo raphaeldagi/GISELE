@@ -1,0 +1,16 @@
+--- Parte 70 (0x46: algebra e geometria) ---
+P1544 delta de Gromov (v, 300 quadruplos, semente 70): maximo 2.0; medio 0.0383; fracao com delta > 0 0.0333; 6844 nos na componente; distancia media 12.44
+P1544 delta de Gromov (n, 300 quadruplos, semente 70): maximo 2.0; medio 0.3967; fracao com delta > 0 0.4767; 82115 nos na componente; distancia media 13.39
+P1545 janelas de 4 digitos que formam base de GF(2)^4, aleatorio (semente 1570): 0.30629 de 9997; teoria |GL(4,2)|/16^4 = 0.30762
+P1545 janelas de 4 digitos que formam base de GF(2)^4, pi: 0.30269 de 9997; teoria |GL(4,2)|/16^4 = 0.30762
+P1550 desvio binomial 0.00462; pi fica a -1.067 desvios (simples) e -0.534 (dobro, janelas sobrepostas)
+P1549 rodada 44, d = 24: pontos [(1000, 3.5897), (2000, 3.4747), (4000, 3.2316), (8000, 3.1679), (16000, 3.117)]; A 5.1853; alfa 0.05408; n* (trigrama 2,768) 1.099e+05
+P1549 rodada 44, d = 48: pontos [(1000, 3.5265), (2000, 3.3639), (4000, 3.2366), (8000, 3.2577)]; A 4.5912; alfa 0.03987; n* (trigrama 2,768) 3.246e+05
+P1549 bits(d = 48) - bits(d = 24) em 8000 passos: +0.0898
+P1541 escala refeita (d = 24, 6898 pesos): [(1000, 3.5897), (2000, 3.4747), (4000, 3.2316), (8000, 3.1679), (16000, 3.117)]
+P1543 geometria dos embeddings: cos vogais 0.2143; vogal-consoante -0.1394; consoantes 0.1279; diferenca 0.3538; 1a componente 0.1981
+P1541 d = 48 com lr 0,0025 (22978 pesos): [(4000, 3.1202), (8000, 3.0212)]
+P1092 pNN novas (P1541-P1570) sem teste: 0 de 7: []
+P974 previsoes unilaterais da Parte 70: {70: (6, 0, [])}
+P1569 minha taxa de erro (191/583): media = 0.33, intervalo 90% = [0.30, 0.36]
+FIM_OK status=0 segundos=1101

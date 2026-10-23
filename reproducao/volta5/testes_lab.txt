@@ -1,0 +1,33 @@
+test_detecta_trajetoria_definida (__main__.Estatistica.test_detecta_trajetoria_definida) ... ok
+test_esperanca_abaixo_da_nula (__main__.Estatistica.test_esperanca_abaixo_da_nula) ... ok
+test_esperanca_exata_sob_nula (__main__.Estatistica.test_esperanca_exata_sob_nula) ... ok
+test_exemplo_invalido_olha_o_futuro (__main__.Estatistica.test_exemplo_invalido_olha_o_futuro) ... ok
+test_fator_zero_nao_reanima (__main__.Estatistica.test_fator_zero_nao_reanima) ... ok
+test_nao_substituir_aposta (__main__.Estatistica.test_nao_substituir_aposta) ... ok
+test_observacao_sem_aposta (__main__.Estatistica.test_observacao_sem_aposta) ... ok
+test_orcamento_nao_reciclado (__main__.Estatistica.test_orcamento_nao_reciclado) ... ok
+test_parada_adaptativa_enumera_caminhos (__main__.Estatistica.test_parada_adaptativa_enumera_caminhos) ... ok
+test_parametros_e_limites (__main__.Estatistica.test_parametros_e_limites) ... ok
+test_resultado_invalido_preserva_aposta (__main__.Estatistica.test_resultado_invalido_preserva_aposta) ... ok
+test_aplicacao_e_ack_perdido (__main__.Feedback.test_aplicacao_e_ack_perdido) ... ok
+test_ativar_mesma_versao_e_noop (__main__.Feedback.test_ativar_mesma_versao_e_noop) ... ok
+test_auditoria_le_snapshot_coerente (__main__.Feedback.test_auditoria_le_snapshot_coerente) ... ok
+test_cancelamento_bloqueia_atrasado (__main__.Feedback.test_cancelamento_bloqueia_atrasado) ... ok
+test_cancelamento_concorrente (__main__.Feedback.test_cancelamento_concorrente) ... ok
+test_cancelamento_nao_apaga_aplicacao (__main__.Feedback.test_cancelamento_nao_apaga_aplicacao) ... ok
+test_concorrencia_decisoes_distintas (__main__.Feedback.test_concorrencia_decisoes_distintas) ... ok
+test_concorrencia_mesma_decisao (__main__.Feedback.test_concorrencia_mesma_decisao) ... ok
+test_conflito_nao_sobrescreve (__main__.Feedback.test_conflito_nao_sobrescreve) ... ok
+test_dominio_recompensa (__main__.Feedback.test_dominio_recompensa) ... ok
+test_encerramento_processo_antes_do_commit (__main__.Feedback.test_encerramento_processo_antes_do_commit) ... ok
+test_epoca_impede_aba (__main__.Feedback.test_epoca_impede_aba) ... ok
+test_falha_no_meio_da_transacao (__main__.Feedback.test_falha_no_meio_da_transacao) ... ok
+test_origem_errada_nao_consume_decisao (__main__.Feedback.test_origem_errada_nao_consume_decisao) ... ok
+test_resposta_de_outro_registro (__main__.Feedback.test_resposta_de_outro_registro) ... ok
+test_versao_incompativel (__main__.Feedback.test_versao_incompativel) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.740s
+
+OK
+FIM_OK status=0

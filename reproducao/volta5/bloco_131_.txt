@@ -1,0 +1,6 @@
+
+=== Parte 131: volta 4 do loop, uma parte por processo (volta 3 contra volta 4) ===
+  arquivos de parte 127, sem exceção 127; novas [130]
+  linhas 1878, diferentes 9 (0.0048); categorias {'projeto': 7, 'maquina': 2, 'nota': 0, 'mundo': 0}; mundo []
+  P3175 (arquivos sem uso, sem ler saídas como fonte) neste repositório: 321
+FIM_OK status=0 segundos=195

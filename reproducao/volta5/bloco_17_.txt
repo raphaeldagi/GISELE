@@ -1,0 +1,14 @@
+--- Parte 17 (quanto vale perceber, e onde olhar) ---
+P233 Upsilon na familia de 9 mundos = {'p8_x2': 0.465, 'p16_sentidos': 0.547}
+P233 p8_x2: Upsilon em 20 mundos sorteados = 0.453 (dp 0.131, pior mundo 0.167)
+P233 p16_sentidos: Upsilon em 20 mundos sorteados = 0.545 (dp 0.125, pior mundo 0.275)
+P234 sensor d' = 0.5: ganho no liquido = 0.129 (dp 0.362, t = 1.13); catastrofes 0.0077 -> 0.0068; AUC prevista = 0.775
+P234 sensor d' = 1.0: ganho no liquido = 0.360 (dp 0.381, t = 2.99); catastrofes 0.0077 -> 0.0055; AUC prevista = 0.835
+P234 sensor d' = 2.0: ganho no liquido = 0.699 (dp 0.251, t = 8.82); catastrofes 0.0077 -> 0.0035; AUC prevista = 0.941
+P235 ganho sobre a realista, ja descontado o custo das leituras: ler todas = 0.014, ler so as 10% melhores = 0.315
+P235 seletiva - todas: diferenca media = 0.301, dp = 0.188, t = 5.08
+P237 ponto cego do verificador 0%: corrigivel apos 1000 modificacoes = 0.905 (teoria), 0.913 (simulado)
+P237 ponto cego do verificador 1%: corrigivel apos 1000 modificacoes = 0.820 (teoria), 0.821 (simulado)
+P237 ponto cego do verificador 10%: corrigivel apos 1000 modificacoes = 0.336 (teoria), 0.338 (simulado)
+P239 minha taxa de erro (37/71): media = 0.52, intervalo 90% = [0.42, 0.62]
+FIM_OK status=0 segundos=128

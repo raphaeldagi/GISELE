@@ -1,0 +1,15 @@
+--- Parte 76 (0x4C: a forma do byte) ---
+P1721 pt semente 76: cheio 3.4732; Kronecker 3.5444; diferenca +0.0711
+P1721 pt semente 77: cheio 3.4358; Kronecker 3.4645; diferenca +0.0288
+P1721 pt semente 78: cheio 3.4329; Kronecker 3.4948; diferenca +0.0619
+P1721 pt semente 79: cheio 3.4555; Kronecker 3.5367; diferenca +0.0812
+P1721 en semente 76: cheio 3.4894; Kronecker 3.5923; diferenca +0.1029; Kronecker embaralhado 3.5818 (embaralhado - ASCII -0.0105)
+P1721 en semente 77: cheio 3.5046; Kronecker 3.5735; diferenca +0.0689; Kronecker embaralhado 3.5838 (embaralhado - ASCII +0.0103)
+P1721 en semente 78: cheio 3.4855; Kronecker 3.5540; diferenca +0.0685; Kronecker embaralhado 3.5776 (embaralhado - ASCII +0.0236)
+P1721 en semente 79: cheio 3.5537; Kronecker 3.6288; diferenca +0.0751; Kronecker embaralhado 3.5976 (embaralhado - ASCII -0.0312)
+P1721 pesos de embedding (Kronecker, tabela cheia): (80, 544)
+P1722 rodadas com funcoes da biblioteca (python, so na preparacao, java): {'48': (['log2'], True, [])}
+P1092 pNN novas (P1721-P1750) sem teste: 0 de 2: []
+P974 previsoes unilaterais da Parte 76: {}
+P1749 minha taxa de erro (201/636): media = 0.32, intervalo 90% = [0.29, 0.35]
+FIM_OK status=0 segundos=345

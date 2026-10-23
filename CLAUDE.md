@@ -371,6 +371,9 @@ anterior, commit e push.
   (hipótese de 1 lote: deixar sempre uma espera/Monitor em segundo plano); com as 127 partes isoladas, 0 diferenças do mundo: as partes não dependem umas das outras.
   `p3175_arquivos_sem_uso_v2` (saídas não contam como fonte) achou o link que faltava para a Parte 124. A P1871 foi a 0 porque a MINHA previsão escreveu o nome do último
   arquivo: um nome escrito numa previsão sobre arquivos entra na conta da previsão.
+  Parte 132 (volta 5; 8/8): as contagens de arquivos lidas no código ANTES acertaram a 1 do centro (P1871 126 de 127; P3175 321 de 322); o que faltou foi o meu próprio
+  código como leitor (o nome-base da Parte 1 aparece na p3172/p3174). O loop está saturado como descoberta (cinco voltas, 0 diferenças do mundo): continua por pedido, e cada
+  parte diz isso a quem lê.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
