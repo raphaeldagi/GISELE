@@ -2226,3 +2226,46 @@ Regressao: 173/173 resultados publicados reproduzidos; falhas = []
 P96 funcoes pNN no arquivo = 723; pares de interacao possiveis = 261003
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 174/174 resultados publicados reproduzidos; falhas = []
+=== Parte 136: o passo numa quadratica anisotropica e o auditor de capacidades (modulos recebidos) ===
+  P3177 (a) erro relativo fixo/fechado 2.08e-16; (b) fechada -4.7891, fixo -4.7891
+  P3177 (c) secante -11.562; (d) media -5.194, media - fixo -0.405
+  P3178 (e) variancia da media 0.42802 (fechada 0.428571); (f) custo medio 0.03259 (piso 0.03291, razao 0.9904)
+  P3179 (g) achados no proprio fonte {}; (h) 6 de 15 com capacidade; (i) pacotes 0 de 7; nao analisaveis 1
+    externos/arquitetura_pos_asi.py: {'dinamico': ['chamada:compile', 'chamada:exec']}
+    externos/nexus_raphael/asi_metacognitivo_r37.py: {'rede': ['import:urllib.request'], 'processo': ['chamada:subprocess.run', 'import:multiprocessing', 'import:subprocess'], 'dinamico': ['chamada:__import__', 'chamada:_iu.spec_from_file_location', 'chamada:_sp.loader.exec_module', 'chamada:importlib.util.spec_from_file_location', 'chamada:spec.loader.exec_module'], 'desserializacao': ['chamada:pickle.loads', 'import:pickle']}
+    externos/nexus_raphael/nexus_raphael_v0_1_0_colado.py: {'rede': ['import:urllib.request']}
+    externos/nexus_raphael/nexus_raphael_v2_colado.txt: {'nao_analisavel': ["linha 5: invalid character '–' (U+2013)"]}
+    externos/nexus_raphael_v2_0/nexus_raphael_v2_0.py.txt: {'rede': ['import:urllib.request']}
+    externos/nexus_raphael_v3_0/nucleo_v30_transcrito.py.txt: {}
+    externos/pacote3/aprendizagem_continua.py: {}
+    externos/pacote3/inovacao_guiada.py: {}
+    externos/pacote3/modelo_mundo.py: {}
+    externos/pacote3/rl_grupos.py: {}
+    externos/pacote3/transferencia_metacognitiva.py: {}
+    externos/pacote_v015/objetivos_cognitivos.py: {}
+    externos/pacote_v015/workspace_global.py: {}
+    externos/word_rl_lab/word_rl_lab_v1_recebido.py: {'rede': ['chamada:nltk.download', 'import:requests']}
+    externos/word_rl_lab/word_rl_lab_v2_recebido.py: {'rede': ['chamada:nltk.download', 'import:requests']}
+  P3180 (j)-(k) partida 6: erro 1.08e-14; media - fixo -0.589; entre os ganhos extremos True
+  P3180 (j)-(k) partida 7: erro 2.12e-16; media - fixo -0.324; entre os ganhos extremos True
+  P3180 (j)-(k) partida 8: erro 1.90e-16; media - fixo -0.306; entre os ganhos extremos True
+  P3180 (j)-(k) partida 9: erro 2.77e-15; media - fixo -0.213; entre os ganhos extremos True
+
+=== Parte 137: o inventario do recebido; GRPO de rl_grupos.py e o reservatorio de aprendizagem_continua.py ===
+  P3181 (a) erro maximo da vantagem 1.60e-07; (b) sem contraste G=2 0.5578 (fechada 0.5556), G=8 0.0365 (fechada 0.03917)
+  P3182 (c) G=2 retorno 0.9086, sem contraste 0.812; G=8 retorno 0.8987, sem contraste 0.501; G2 - G8 0.0099
+  P3183 (d) tarefa 1 no reservatorio 32.036 (32); 1o exemplo fica 0.1675 (1/6); (e) posto 3.117142, erro 0.00e+00
+
+=== Parte 138: a memoria congelada de transferencia_metacognitiva.py; os grupos uteis da GRPO ===
+  P3184 (a) |g|/sqrt(f) em [2 sqrt(lmin), 2 sqrt(lmax)]: 10000 de 10000
+  P3185 passo 0.05: (b) media sem - com 0.00035; (c) memoria piora em 27, melhora em 5, empata em 0; (d) IC95 (-0.00036, 0.00117), contem 0: True
+  P3185 passo 0.2: (b) media sem - com 0.00067; (c) memoria piora em 19, melhora em 11, empata em 2; (d) IC95 (-0.00055, 0.00195), contem 0: True
+  P3186 G=4: (e/f) retorno 0.9058; sem contraste 0.653; grupos uteis 355
+  P3186 G=16: (e/f) retorno 0.8825; sem contraste 0.301; grupos uteis 179
+
+=== Parte 140: o leitor v5 (tabelas), o dicionario como fluxo, o hexadecimal como vertices ===
+  P3188 (g) recuperadas 83; (h) acertos 76 (0.916); (i) mudam nas partes da v4 0; por parte {128: [7, 7], 129: [6, 6], 130: [7, 6], 131: [8, 8], 132: [8, 8], 133: [8, 7], 134: [8, 8], 136: [11, 9], 137: [11, 10], 138: [9, 7]}
+  P3189 N = 117659 glosas, media 12.4166 palavras; (a) razao dos desvios 1.0129; (b) z 0.203; (c) 1a metade 0.50233
+  P3190 (d) posto dos 16 4.000000000000; (e) |0-9 - mao| 8.88e-16; (f) |3^n - Benford| 0.00121 (posto 3^n 3.95560)
+  P3191 calibracao 80-140: v4 333/369 = 0.902; v5 435/483 = 0.901
+  P3192 partes com previsoes que nenhuma regua le: [135]

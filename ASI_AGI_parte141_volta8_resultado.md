@@ -33,3 +33,11 @@ comparar no arredondamento impresso.
 **Regra nova (Parte 141):** uma entrada de regressão nunca compara com tolerância menor que a precisão com que o número foi impresso. Ou ela
 compara pelo mesmo arredondamento, ou chama a função e guarda o número inteiro. É a regra da Parte 69 (números do texto passam por código)
 aplicada à própria regressão: copiar da tela é escrever de cabeça.
+
+**A rodada seguinte da regressão** (as Partes 136 a 140 de novo) deu 185 de 186, e a falha nova foi a P3191, a calibração das Partes 80 a 140.
+Conferi a régua: ela está certa, e o número mudou porque a Parte 139 (G1, G2) e a 140 (a sua linha de placar, 9 previsões) ganharam
+vereditos DEPOIS que eu fixei a entrada. A v4 foi de 360 para 369 previsões, e a v5 de 472 para 483. É a lição da Parte 109 (uma função
+"das Partes A–B" passa A–B explícito), num caso que ela não cobria: A–B explícito ainda se move se B é uma parte aberta. A entrada agora usa
+as Partes 80 a 138, que estão fechadas, e dá os mesmos (360, 325) e (472, 425).
+
+**Regra (Parte 141, complemento):** uma entrada de regressão só fixa medidas sobre partes FECHADAS, isto é, com todos os vereditos escritos.

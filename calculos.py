@@ -7557,7 +7557,7 @@ def testes_de_regressao():
         "P3186": (lambda r: (round(r[4][0], 4), round(r[16][0], 4)) == (0.9058, 0.8825))(p3186_grupos_uteis()),
         "P3188": p3188_auditoria_do_leitor_v5()[:3] == (83, 76, 0),
         "P3190": (lambda r: abs(r[0] - 4) < 1e-9 and r[1] < 1e-9 and abs(r[3] - 3.95560) < 1e-5)(p3190_hexadecimal_vertices()),
-        "P3191": p3191_calibracao_v4_v5() == ((360, 325), (472, 425)),
+        "P3191": p3191_calibracao_v4_v5(range(80, 139)) == ((360, 325), (472, 425)),  # partes fechadas: as 139-140 ganharam vereditos depois
         "P3176v7": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (9, 0, [133], 130))(
             p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")),
     }

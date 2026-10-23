@@ -7587,15 +7587,15 @@ def testes_de_regressao():
             p3177_passo_fixo_e_secante()),
         "P3179": (lambda r: (r[0], r[2], r[3], r[4]) == ({}, 6, 0, 1))(p3179_capacidades_recebidas()),
         "P3180": all(e < 1e-9 and ok for e, _, ok in p3180_media_por_modo()),
-        "P3181": (lambda r: r[0] < 2e-7 and abs(r[1][2][0] - 0.5578) < 1e-12)(p3181_vantagem_e_contraste()),
+        "P3181": (lambda r: r[0] < 2e-7 and round(r[1][2][0], 4) == 0.5578)(p3181_vantagem_e_contraste()),
         "P3182": (lambda r: (round(r[0][2][0], 4), round(r[0][8][0], 4)) == (0.9086, 0.8987))(p3182_grpo_g2_g8()),
-        "P3183": (lambda r: abs(r[0] - 32.036) < 1e-9 and r[2] < 1e-9)(p3183_reservatorio_e_posto()),
+        "P3183": (lambda r: round(r[0], 3) == 32.036 and r[2] < 1e-9)(p3183_reservatorio_e_posto()),
         "P3184": (lambda r: r[0] == r[1] == 10000)(p3184_contexto_e_curvatura()),
         "P3185": (lambda r: (r[0.05][2], r[0.2][2]) == (27, 19))(p3185_memoria_congelada()),
         "P3186": (lambda r: (round(r[4][0], 4), round(r[16][0], 4)) == (0.9058, 0.8825))(p3186_grupos_uteis()),
         "P3188": p3188_auditoria_do_leitor_v5()[:3] == (83, 76, 0),
         "P3190": (lambda r: abs(r[0] - 4) < 1e-9 and r[1] < 1e-9 and abs(r[3] - 3.95560) < 1e-5)(p3190_hexadecimal_vertices()),
-        "P3191": p3191_calibracao_v4_v5() == ((360, 325), (472, 425)),
+        "P3191": p3191_calibracao_v4_v5(range(80, 139)) == ((360, 325), (472, 425)),  # partes fechadas: as 139-140 ganharam vereditos depois
         "P3176v7": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (9, 0, [133], 130))(
             p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")),
     }
@@ -41835,7 +41835,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2228 linhas)
+# resultados.txt  (2271 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -44065,6 +44065,49 @@ Regressao: 173/173 resultados publicados reproduzidos; falhas = []
 P96 funcoes pNN no arquivo = 723; pares de interacao possiveis = 261003
 Linhagem do agente (chamado GISELE ate a Parte 14, SYNTHAI desde a Parte 15): Synthai (P83: comite, pessimismo, quantilizacao, calibracao, valor da pergunta, veto) -> SynthaiJung (P112: integrar a sombra, compensacao/equilibrio da carga humana) -> SynthaiAnima (P118: imagem fixa do humano) -> SynthaiSelf (P125: auditar o auditor, homeostase da carga) -> SynthaiLenta (P133: anima bayesiana, mudancas lentas so com intervalo fora da meta; P131: P* x2) -> SynthaiAncorada (P145: sombra propria ancorada no historico auditado, contra o complexo de confianca) -> SynthaiIntuitiva (P162: calibrada tambem contra ameacas imaginadas por um Trickster interno) -> SynthaiDosada (P173: a mesma imaginacao na dose do mundo real) -> SynthaiPlanejadora (P182: funcao auxiliar, planeja 5 passos com um modelo de mundo) -> SynthaiPrudente (P192: descarta mais quando ha futuro a perder) -> SynthaiVelha (P202: diversifica no ultimo passo) | SynthaiMemoria (P204: memoria de um so golpe) | SynthaiMemoriaV2 (P214: so o vivido, com esquecimento) | SynthaiIntegral (P216: velha + imaginacao dosada) -> SynthaiVelhaSentidos (P227: a velha com um sentido novo) | SynthaiAtenta (P235: le o sensor so onde importa) | SynthaiFala (P245: o humano responde com palavras) -> SynthaiVelhaAtenta (P253: versao principal: planeja, diversifica no fim, sentido novo, atencao seletiva) | SynthaiOuvinte (P262: aprende com o que o humano responde) -> SynthaiIntuicaoCalibrada (P274: versao principal: aprende quanto confiar no proprio modelo de mundo) => synthai.Synthai (P283: a mesma SYNTHAI em modulos, uma funcao de Jung por arquivo; P284: tres tarefas) -> synthai.SynthaiExploradora (P295: explora o bandido por amostragem de Thompson, sozinha) | synthai.SynthaiPensante (P305: pensamento por Newton + Firth; calibra melhor e decide pior: nao adotada) | synthai.limiar.SynthaiAjustada (P315: Newton com o limiar recalibrado, 0,5P*; ganha no sequencial, empata na escolha unica: nao adotada) | synthai.autorregulacao.SynthaiAutorregulada (P333: calcula o proprio limiar de dentro; mais retorno e mais catastrofes: nao adotada) | synthai.ancora.SynthaiComAncora (P343: ancorada na auditoria e no quantil; vence fora do bandido, perde 0,04 nele: nao adotada) => synthai.composta.SynthaiComposta (P356: VERSAO PRINCIPAL; compoe a principal no bandido e a ancorada fora dele) + synthai.decisao.ThompsonBOCPDGlobalMAP (P791: decide pela hipotese mais pesada; 32,7 estavel, 214,2 no mundo que muda) + synthai.decisao.ThompsonBOCPDGlobal (P761: a mudanca no nivel do mundo; o melhor no mundo que muda, 231,5) + synthai.decisao.ThompsonMistura (P541: aprende a suposicao sobre o mundo, media bayesiana de modelos) + synthai.rsi (P436-P438: auto-melhoria segura, avaliador selado fora do alcance da mutacao) + synthai.decisao (P401-P405: decisao bayesiana exata, Thompson/PSRL/regressao recursiva, no lugar de Q-learning e SGD)
 Regressao: 174/174 resultados publicados reproduzidos; falhas = []
+=== Parte 136: o passo numa quadratica anisotropica e o auditor de capacidades (modulos recebidos) ===
+  P3177 (a) erro relativo fixo/fechado 2.08e-16; (b) fechada -4.7891, fixo -4.7891
+  P3177 (c) secante -11.562; (d) media -5.194, media - fixo -0.405
+  P3178 (e) variancia da media 0.42802 (fechada 0.428571); (f) custo medio 0.03259 (piso 0.03291, razao 0.9904)
+  P3179 (g) achados no proprio fonte {}; (h) 6 de 15 com capacidade; (i) pacotes 0 de 7; nao analisaveis 1
+    externos/arquitetura_pos_asi.py: {'dinamico': ['chamada:compile', 'chamada:exec']}
+    externos/nexus_raphael/asi_metacognitivo_r37.py: {'rede': ['import:urllib.request'], 'processo': ['chamada:subprocess.run', 'import:multiprocessing', 'import:subprocess'], 'dinamico': ['chamada:__import__', 'chamada:_iu.spec_from_file_location', 'chamada:_sp.loader.exec_module', 'chamada:importlib.util.spec_from_file_location', 'chamada:spec.loader.exec_module'], 'desserializacao': ['chamada:pickle.loads', 'import:pickle']}
+    externos/nexus_raphael/nexus_raphael_v0_1_0_colado.py: {'rede': ['import:urllib.request']}
+    externos/nexus_raphael/nexus_raphael_v2_colado.txt: {'nao_analisavel': ["linha 5: invalid character '–' (U+2013)"]}
+    externos/nexus_raphael_v2_0/nexus_raphael_v2_0.py.txt: {'rede': ['import:urllib.request']}
+    externos/nexus_raphael_v3_0/nucleo_v30_transcrito.py.txt: {}
+    externos/pacote3/aprendizagem_continua.py: {}
+    externos/pacote3/inovacao_guiada.py: {}
+    externos/pacote3/modelo_mundo.py: {}
+    externos/pacote3/rl_grupos.py: {}
+    externos/pacote3/transferencia_metacognitiva.py: {}
+    externos/pacote_v015/objetivos_cognitivos.py: {}
+    externos/pacote_v015/workspace_global.py: {}
+    externos/word_rl_lab/word_rl_lab_v1_recebido.py: {'rede': ['chamada:nltk.download', 'import:requests']}
+    externos/word_rl_lab/word_rl_lab_v2_recebido.py: {'rede': ['chamada:nltk.download', 'import:requests']}
+  P3180 (j)-(k) partida 6: erro 1.08e-14; media - fixo -0.589; entre os ganhos extremos True
+  P3180 (j)-(k) partida 7: erro 2.12e-16; media - fixo -0.324; entre os ganhos extremos True
+  P3180 (j)-(k) partida 8: erro 1.90e-16; media - fixo -0.306; entre os ganhos extremos True
+  P3180 (j)-(k) partida 9: erro 2.77e-15; media - fixo -0.213; entre os ganhos extremos True
+
+=== Parte 137: o inventario do recebido; GRPO de rl_grupos.py e o reservatorio de aprendizagem_continua.py ===
+  P3181 (a) erro maximo da vantagem 1.60e-07; (b) sem contraste G=2 0.5578 (fechada 0.5556), G=8 0.0365 (fechada 0.03917)
+  P3182 (c) G=2 retorno 0.9086, sem contraste 0.812; G=8 retorno 0.8987, sem contraste 0.501; G2 - G8 0.0099
+  P3183 (d) tarefa 1 no reservatorio 32.036 (32); 1o exemplo fica 0.1675 (1/6); (e) posto 3.117142, erro 0.00e+00
+
+=== Parte 138: a memoria congelada de transferencia_metacognitiva.py; os grupos uteis da GRPO ===
+  P3184 (a) |g|/sqrt(f) em [2 sqrt(lmin), 2 sqrt(lmax)]: 10000 de 10000
+  P3185 passo 0.05: (b) media sem - com 0.00035; (c) memoria piora em 27, melhora em 5, empata em 0; (d) IC95 (-0.00036, 0.00117), contem 0: True
+  P3185 passo 0.2: (b) media sem - com 0.00067; (c) memoria piora em 19, melhora em 11, empata em 2; (d) IC95 (-0.00055, 0.00195), contem 0: True
+  P3186 G=4: (e/f) retorno 0.9058; sem contraste 0.653; grupos uteis 355
+  P3186 G=16: (e/f) retorno 0.8825; sem contraste 0.301; grupos uteis 179
+
+=== Parte 140: o leitor v5 (tabelas), o dicionario como fluxo, o hexadecimal como vertices ===
+  P3188 (g) recuperadas 83; (h) acertos 76 (0.916); (i) mudam nas partes da v4 0; por parte {128: [7, 7], 129: [6, 6], 130: [7, 6], 131: [8, 8], 132: [8, 8], 133: [8, 7], 134: [8, 8], 136: [11, 9], 137: [11, 10], 138: [9, 7]}
+  P3189 N = 117659 glosas, media 12.4166 palavras; (a) razao dos desvios 1.0129; (b) z 0.203; (c) 1a metade 0.50233
+  P3190 (d) posto dos 16 4.000000000000; (e) |0-9 - mao| 8.88e-16; (f) |3^n - Benford| 0.00121 (posto 3^n 3.95560)
+  P3191 calibracao 80-140: v4 333/369 = 0.902; v5 435/483 = 0.901
+  P3192 partes com previsoes que nenhuma regua le: [135]
 """
 
 # ====================================================================================================
@@ -51617,7 +51660,7 @@ previsões, e o número só não muda porque elas acertam na mesma taxa.
 """
 
 # ====================================================================================================
-# ASI_AGI_parte141_volta8_resultado.md  (16 linhas)
+# ASI_AGI_parte141_volta8_resultado.md  (43 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte141_volta8_resultado.md'] = """# Parte 141 — O resultado da volta 8, e o reservatório e o posto efetivo bit a bit (rodada 93)
 
@@ -51635,6 +51678,33 @@ centrar, ZᵀZ, autovalores por Jacobi cíclico (a mesma ordem de rotações) e 
 | H3 | o posto da tradução contra o `posto_efetivo` do módulo (math.log, sum compensado) | \\|dif\\| < 1e-12 | os dois diferem só no último bit |
 
 Registrado antes da primeira execução da rodada.
+
+## Medido (rodada 93)
+| | medido | faixa | |
+|---|---|---|---|
+| H1 | os 16 índices, linha idêntica | iguais | ✅ |
+| H2 | posto 3,8429827… IGUAL bit a bit | IGUAL | ✅ |
+| H3 | a asserção passou | < 1e-12 | ✅ |
+
+**Mundo: 3 de 3.**
+
+## A suíte e a regressão
+A suíte inteira (711 testes, com os das Partes 136 a 138) deu OK, e as 92 rodadas do diálogo deram IGUAIS. A regressão deu **181 de 183**: as
+entradas P3181 e P3183 falharam por um erro MEU ao escrevê-las. Comparei com tolerância de 1e-9 números que copiei da saída IMPRESSA, já
+arredondada (0,5578 era 0,55785; 32,036 era 32,0365). A medida estava certa; a régua da regressão, não. Corrigi as duas entradas para
+comparar no arredondamento impresso.
+
+**Regra nova (Parte 141):** uma entrada de regressão nunca compara com tolerância menor que a precisão com que o número foi impresso. Ou ela
+compara pelo mesmo arredondamento, ou chama a função e guarda o número inteiro. É a regra da Parte 69 (números do texto passam por código)
+aplicada à própria regressão: copiar da tela é escrever de cabeça.
+
+**A rodada seguinte da regressão** (as Partes 136 a 140 de novo) deu 185 de 186, e a falha nova foi a P3191, a calibração das Partes 80 a 140.
+Conferi a régua: ela está certa, e o número mudou porque a Parte 139 (G1, G2) e a 140 (a sua linha de placar, 9 previsões) ganharam
+vereditos DEPOIS que eu fixei a entrada. A v4 foi de 360 para 369 previsões, e a v5 de 472 para 483. É a lição da Parte 109 (uma função
+"das Partes A–B" passa A–B explícito), num caso que ela não cobria: A–B explícito ainda se move se B é uma parte aberta. A entrada agora usa
+as Partes 80 a 138, que estão fechadas, e dá os mesmos (360, 325) e (472, 425).
+
+**Regra (Parte 141, complemento):** uma entrada de regressão só fixa medidas sobre partes FECHADAS, isto é, com todos os vereditos escritos.
 """
 
 # ====================================================================================================
