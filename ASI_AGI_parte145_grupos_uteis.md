@@ -96,3 +96,8 @@ cuja chance era a de uma moeda. É o piso do caos da Parte 30 (não prever difer
 - **Testes:** `synthai/testes_parte145.py`.
 
 O placar (m) e o "sobre mim" fecham quando (j) for medida, no próximo despertar.
+
+## Diálogo — a rodada 95, prevista antes de rodar
+O primeiro dígito hexadecimal de 3ⁿ, n = 1 a 500, por inteiros grandes nos dois lados (`int` do Python, `BigInteger` do Java), e o posto
+efetivo dos bits desses dígitos (Jacobi, exp e log próprios), como na P3190.
+- **(k)** a rodada 95 em **[1; 1]** (1 = IGUAIS). Mecanismo: o dígito é aritmética inteira exata nos dois lados; o resto é o da rodada 93.
