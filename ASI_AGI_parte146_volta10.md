@@ -60,4 +60,4 @@ seguinte"), agora com a saída do verificador no papel da auditoria. A conta pel
 **Regra (Parte 146, complemento da 144):** antes de chamar um mecanismo de comum a duas previsões, escrever ao lado de cada uma QUE fontes a
 régua dela lê. O mecanismo só é comum se as fontes são as mesmas.
 
-➡ Próxima: [Parte 147](ASI_AGI_parte147.md).
+➡ Próxima: [Parte 147](ASI_AGI_parte147_grpo_palavras.md).
