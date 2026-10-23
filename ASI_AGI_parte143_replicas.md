@@ -50,3 +50,20 @@ A régua rodou sobre o rascunho e deu m1 = 8, m2 = 4, m3 = 0,0021 e m5 = 0. E = 
 Erros no mundo em **[0; 3]**, com centro 0,75.
 
 ➡ Anterior: [Parte 142](ASI_AGI_parte142_enantiodromia.md).
+
+## Medido (P3195, P3196)
+- **(a)** razão dos desvios: 0,9844. ✅
+- **(b)** z = −0,893. ✅
+- **(c)** fração da primeira metade: **0,49766** (z = −1,82). ❌
+- **(d)** \|5ⁿ − Benford-16\| = 0,00030. ✅
+- **(e)** \|7ⁿ − Benford-16\| = 0,00008. ✅
+- **(f)** posto de 2ⁿ: 3,000000000. ✅
+
+(A média das glosas em português é 1,74 palavra: a maioria dos sinsets da OWN-PT não tem glosa.)
+
+### A régua da metade: o terceiro lote fora da faixa
+Os lotes de (c) até aqui deram z = +1,81 e +2,38 (Parte 140, inglês), −0,76 (1.000 reservatórios), +0,97 (`random.sample`) e agora −1,82
+(português). São três de cinco fora de faixas de 90%. A chance de isso acontecer sem defeito é cerca de C(5,3)·0,1³·0,9² + … ≈ 0,009.
+A média não sai de ½ para um lado só, então o defeito provável não é um viés. É a LARGURA: o desvio de uma fração por reservatório pode
+ser maior que o hipergeométrico. Um caminho de medida novo, registrado antes de rodar: o desvio-padrão das 300 frações por reservatório
+(português e inglês, as mesmas sementes de (c) e da Parte 140) dividido por √(¼·(N − k)/(N − 1)/k), em **[0,933; 1,067]** em cada um.
