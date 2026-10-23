@@ -33,3 +33,5 @@ O centro de "quantos erros" é 0 + 3 × 0,10 + 2 × 0,25 = 0,8.
 **Sobre mim:** erros no mundo em [0; 3], com centro 0,8.
 
 ➡ Anterior: [Parte 145](ASI_AGI_parte145_grupos_uteis.md).
+
+**R8, medida no commit do registro (55908ae): 1.000**, dentro de [988; 1.016] ✅, a 2 do centro (1.002). Com o mecanismo comum escrito antes, o desvio caiu de 6 (volta 9) para 2.
