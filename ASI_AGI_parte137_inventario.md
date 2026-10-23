@@ -85,3 +85,25 @@ O centro de "quantos erros" é 0 + 4 × 0,10 + 5 × 0,25 = 1,65.
 **Sobre mim:** erros no mundo em [0; 4], com centro 1,65.
 
 ➡ Anterior: [Parte 136](ASI_AGI_parte136_passo_e_auditor.md).
+
+## Medido (P3181–P3183)
+| | medido | faixa | |
+|---|---|---|---|
+| (a) | 1,60·10⁻⁷ | [0; 2e-7] | ✅ (é a cota calculada: o ε age exatamente onde a conta dizia, k = 15 de G = 16) |
+| (b1) | 0,5578 (fechada 0,5556) | [0,5498; 0,5614] | ✅ |
+| (b2) | **0,0365** (fechada 0,03917; z = −1,95) | [0,0369; 0,0414] | ❌ |
+| (c1) | 0,9086 | [0,887; 0,932] | ✅ |
+| (c2) | 0,8987 | [0,880; 0,901] | ✅ |
+| (c3) | +0,0099 | [0,000; 0,038] | ✅ |
+| (c4) | 0,812 | [0,807; 0,845] | ✅ |
+| (c5) | 0,501 | [0,435; 0,586] | ✅ |
+| (d1) | 32,036 | [31,835; 32,165] | ✅ |
+| (d2) | 0,1675 (1/6 = 0,1667) | [0,153; 0,180] | ✅ |
+| (e) | erro 0,0; posto 3,117142 | [0; 1e-9] | ✅ |
+
+**Mundo: 10 de 11.**
+
+### (b2): um lote novo antes de qualquer mecanismo
+É uma forma fechada (binomial) que errou a z = −1,95. Pela regra da Parte 117, gero um lote novo, registrado antes de rodá-lo: semente 1370,
+outros 20.000 grupos, mesma faixa [0,0369; 0,0414], P(acerto) = 0,90. Se acertar, o erro de (b2) foi cauda (uma em dez faixas de 90% erra).
+Se errar de novo, para o mesmo lado, a régua ou o gerador têm um defeito a procurar.
