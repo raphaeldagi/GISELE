@@ -1,0 +1,11 @@
+--- Parte 88 (0x58: a arquitetura autopoietica recebida) ---
+P2081 P(P(X)) do codigo (P(P(0,9)), P(P(0,1)), ponto fixo): (0.8333, 0.1667, 0.5)
+P2082 P(P) iterado 10x de 0,9 (medido, conta): (0.5646022331559383, 0.5646022331559383)
+P2083 LFI1 sem explosao (conj(0,5,~0,5), consistencia(0,5), F preservado): (0.5, 0.0, True)
+P2084 descompasso texto-codigo (usa entropia?, usa consistencia?): (True, False)
+P1961 teste (e), Partes 80-88: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P2085 rodada 55 (passo GRPO com corte, IGUAL em Java): 8 surrogates
+P1092 pNN novas (P2081-P2110) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 88: {}
+P2309 minha taxa de erro (215/708): media = 0.30, intervalo 90% = [0.28, 0.33]
+FIM_OK status=0 segundos=1

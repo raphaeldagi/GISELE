@@ -1,0 +1,8 @@
+
+=== Parte 140: o leitor v5 (tabelas), o dicionario como fluxo, o hexadecimal como vertices ===
+  P3188 (g) recuperadas 91; (h) acertos 84 (0.923); (i) mudam nas partes da v4 0; por parte {128: [7, 7], 129: [6, 6], 130: [7, 6], 131: [8, 8], 132: [8, 8], 133: [8, 7], 134: [8, 8], 135: [8, 8], 136: [11, 9], 137: [11, 10], 138: [9, 7]}
+  P3189 N = 117659 glosas, media 12.4166 palavras; (a) razao dos desvios 1.0129; (b) z 0.203; (c) 1a metade 0.50233
+  P3190 (d) posto dos 16 4.000000000000; (e) |0-9 - mao| 8.88e-16; (f) |3^n - Benford| 0.00121 (posto 3^n 3.95560)
+  P3191 calibracao 80-140: v4 333/369 = 0.902; v5 443/491 = 0.902
+  P3192 partes com previsoes que nenhuma regua le: []
+FIM_OK status=0 segundos=16

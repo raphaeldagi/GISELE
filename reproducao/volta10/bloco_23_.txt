@@ -1,0 +1,23 @@
+--- Parte 23 (reconhecer o que ja estava resolvido) ---
+P291 Menon: perguntas de sim/nao ate 0,001 = 10 (log2: 10); lado = 2.82861; diagonal 2*sqrt(2) = 2.82843
+P292 peso da leitura = 1.003; prevista/real sem leitura: com 0 = 0.614 (teoria 0.619), com o neutro w/2 = 0.996
+P293 w3 aprendido = 0.729; opcoes sem leitura (2324 catastrofes): prevista/real com 0 = 0.444, com o neutro = 0.548
+P294 sequencial: {'parte22': 19.798, 'neutro': 19.934, 'atencao': 19.834, 'reconhecida': 19.748}; catastrofes {'parte22': 0.0162, 'neutro': 0.0137, 'atencao': 0.0156, 'reconhecida': 0.0172}
+P294 sequencial: neutro - parte22 = 0.1359, dp = 0.7048, t = 1.06
+P294 sequencial: atencao - parte22 = 0.0364, dp = 0.7564, t = 0.26
+P294 sequencial: reconhecida - parte22 = -0.0502, dp = 0.6135, t = -0.45
+P294 escolha única: {'parte22': 1.481, 'neutro': 1.481}; catastrofes {'parte22': 0.0052, 'neutro': 0.0052}
+P294 escolha única: neutro - parte22 = -0.0002, dp = 0.0003, t = -2.51
+P295 normalizado {'parte22': 0.435, 'so_thompson': 0.56, 'reconhecida': 0.5}
+P295 catastrofes por rodada {'parte22': 0.51, 'so_thompson': 0.743, 'reconhecida': 0.958}; arrependimento / Lai-Robbins {'parte22': 0.748, 'so_thompson': 0.425, 'reconhecida': 0.442}
+P295 so_thompson: diferenca = 0.125, dp = 0.136, t = 4.12
+P295 reconhecida: diferenca = 0.065, dp = 0.176, t = 1.65
+P296 (exploratorio) normalizado {'so_thompson': 0.56, 'thompson_neutro': 0.514, 'thompson_atencao': 0.521, 'thompson_memoria': 0.584, 'reconhecida': 0.5}
+P296 (exploratorio) catastrofes por rodada {'so_thompson': 0.743, 'thompson_neutro': 0.922, 'thompson_atencao': 0.843, 'thompson_memoria': 0.64, 'reconhecida': 0.958}; arrependimento / Lai-Robbins {'so_thompson': 0.425, 'thompson_neutro': 0.395, 'thompson_atencao': 0.421, 'thompson_memoria': 0.411, 'reconhecida': 0.442}
+P296 (exploratorio) thompson_neutro: diferenca = -0.046, dp = 0.190, t = -1.07
+P296 (exploratorio) thompson_atencao: diferenca = -0.039, dp = 0.214, t = -0.81
+P296 (exploratorio) thompson_memoria: diferenca = 0.023, dp = 0.153, t = 0.69
+P296 (exploratorio) reconhecida: diferenca = -0.060, dp = 0.217, t = -1.25
+P297 P42 em forma fechada: maximizador = 0.5470 (simulado 0,548), quantilizador = 0.1445 (simulado 0,140)
+P299 minha taxa de erro (53/113): media = 0.47, intervalo 90% = [0.39, 0.55]
+FIM_OK status=0 segundos=230

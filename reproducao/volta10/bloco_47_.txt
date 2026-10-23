@@ -1,0 +1,9 @@
+--- Parte 47 (0x2F: a definicao contem a pergunta) ---
+P851 82114 substantivos com hiperonimo: a definicao cita o hiperonimo em 0.6022; a do hiperonimo cita o hiponimo em 0.0079 (84427 pares); razao = 75.8
+P856 o acaso da P851 (um substantivo sorteado no lugar do hiperonimo): direto = 0.0003; inverso = 0.0003
+P852 ate 850: 352 sem letra no hexadecimal; passos medios da cadeia = 0.8323 (conta com independencia: 0.4731)
+P852 ate 4095: 999 sem letra no hexadecimal; passos medios da cadeia = 0.4322 (conta com independencia: 0.2810)
+P853 rodada18: 79 de 80 partes reconstruidas (erradas: [1]); mediana da razao propria/melhor outra = 3.929
+P853 rodada19: 77 de 80 partes reconstruidas (erradas: [45, 74, 78]); mediana da razao propria/melhor outra = 2.051
+P879 minha taxa de erro (141/399): media = 0.35, intervalo 90% = [0.32, 0.39]
+FIM_OK status=0 segundos=35

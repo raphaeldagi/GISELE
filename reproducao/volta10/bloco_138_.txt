@@ -1,0 +1,8 @@
+
+=== Parte 138: a memoria congelada de transferencia_metacognitiva.py; os grupos uteis da GRPO ===
+  P3184 (a) |g|/sqrt(f) em [2 sqrt(lmin), 2 sqrt(lmax)]: 10000 de 10000
+  P3185 passo 0.05: (b) media sem - com 0.00035; (c) memoria piora em 27, melhora em 5, empata em 0; (d) IC95 (-0.00036, 0.00117), contem 0: True
+  P3185 passo 0.2: (b) media sem - com 0.00067; (c) memoria piora em 19, melhora em 11, empata em 2; (d) IC95 (-0.00055, 0.00195), contem 0: True
+  P3186 G=4: (e/f) retorno 0.9058; sem contraste 0.653; grupos uteis 355
+  P3186 G=16: (e/f) retorno 0.8825; sem contraste 0.301; grupos uteis 179
+FIM_OK status=0 segundos=1

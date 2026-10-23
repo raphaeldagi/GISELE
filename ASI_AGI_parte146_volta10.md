@@ -35,3 +35,29 @@ O centro de "quantos erros" é 0 + 3 × 0,10 + 2 × 0,25 = 0,8.
 ➡ Anterior: [Parte 145](ASI_AGI_parte145_grupos_uteis.md).
 
 **R8, medida no commit do registro (55908ae): 1.000**, dentro de [988; 1.016] ✅, a 2 do centro (1.002). Com o mecanismo comum escrito antes, o desvio caiu de 6 (volta 9) para 2.
+
+## Medido (P3176; as saídas ficam em `reproducao/volta10/`)
+| | medido | faixa | |
+|---|---|---|---|
+| R1 | 138 de 138 partes sem exceção | todas | ✅ |
+| R2 | a unificação: 193/193 | [193; 193] | ✅ |
+| R3 | 15 de 1.939 linhas mudaram | [10; 24] | ✅ |
+| R4 | 0 do mundo (13 do projeto, 2 da máquina) | [0; 0] | ✅ |
+| R5 | 0 falhas: 732 + 27 + 40 + 72 + 55 testes | [0; 1] | ✅ |
+| R6 | 0 DIFERENTES; as 95 rodadas IGUAIS | [0; 0] | ✅ |
+| R7 | P1871: **8** (as 2 peças da rodada 95 + os 6 nomes únicos da volta 9) | [13; 17] | ❌ |
+| R8 | P3175: 1.000 | [988; 1.016] | ✅ |
+
+**Mundo: 7 de 8.** **Sobre mim:** 1 erro, em [0; 3]: ✅.
+
+### R7: o mecanismo "comum" não era comum
+Escrevi o mecanismo uma vez, como a Parte 144 manda, e o apliquei às duas previsões. Mas as duas réguas não leem as mesmas fontes. A P1871
+(Parte 81) casa o nome-base em QUALQUER arquivo versionado, inclusive as saídas da reprodução. A P3175 (Parte 131) foi escrita justamente
+para não ler as saídas. A saída do verificador na volta 9 (`reproducao/volta9/dialogo.txt`) escreve "Rodada91: IGUAIS" … "Rodada94: IGUAIS",
+e isso absolveu as rodadas 91 a 94 na P1871, mas não na P3175. É o mecanismo da Parte 130 ("a auditoria que acusa absolve na rodada
+seguinte"), agora com a saída do verificador no papel da auditoria. A conta pelo mecanismo certo dava 2 + 6 = 8, o medido.
+
+**Regra (Parte 146, complemento da 144):** antes de chamar um mecanismo de comum a duas previsões, escrever ao lado de cada uma QUE fontes a
+régua dela lê. O mecanismo só é comum se as fontes são as mesmas.
+
+➡ Próxima: [Parte 147](ASI_AGI_parte147.md).

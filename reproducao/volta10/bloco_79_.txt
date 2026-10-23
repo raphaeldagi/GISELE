@@ -1,0 +1,8 @@
+--- Parte 79 (0x4F: causa e confianca) ---
+P1811 Z -> X, Z -> Y, X -> Y (efeito 0,5): inclinacao ingenua 0.9986 (conta 1,0); ajustada por Z 0.4987; sob intervencao 0.4914
+P1812 minha calibracao (Partes 53 a 78): 189 previsoes, acerto 0.7778; por tipo [('zero', 18, 0.7778), (None, 53, 0.8302), ('outra', 38, 0.7632), ('fracao', 47, 0.766), ('contagem', 33, 0.7273)]
+P1813 z nominal 1.6449; z observado 1.2206; fator de alargamento 1.3475; desvio binomial 0.0221; z do acerto -5.54
+P1092 pNN novas (P1811-P1840) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 79: {}
+P1839 minha taxa de erro (201/649): media = 0.31, intervalo 90% = [0.28, 0.34]
+FIM_OK status=0 segundos=1

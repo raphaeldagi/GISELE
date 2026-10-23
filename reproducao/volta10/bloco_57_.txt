@@ -1,0 +1,8 @@
+--- Parte 57 (0x39: as restricoes) ---
+P1151 4-gramas reordenados pelo portugues: 0 pares mudam; 2 dos 13 tem acento
+P1152 palindromos: 104 de 77197 palavras; conta de letras independentes 116.2; com as pontas reais 86.7; ['aaa', 'aba', 'ada', 'aga', 'akka', 'ala', 'alula', 'ana', 'anna', 'ara', 'bib', 'bob']
+P1153 palindromos em base 10 e 16 abaixo de 10^6: 27 (conta 25.3); [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 353, 626, 787, 979, 1991, 3003, 39593, 41514, 90209, 94049]
+P1092 pNN novas (P1151-P1180) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 57: {57: (2, 0, [])}
+P1179 minha taxa de erro (167/479): media = 0.35, intervalo 90% = [0.31, 0.39]
+FIM_OK status=0 segundos=2

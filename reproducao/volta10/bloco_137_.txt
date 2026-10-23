@@ -1,0 +1,6 @@
+
+=== Parte 137: o inventario do recebido; GRPO de rl_grupos.py e o reservatorio de aprendizagem_continua.py ===
+  P3181 (a) erro maximo da vantagem 1.60e-07; (b) sem contraste G=2 0.5578 (fechada 0.5556), G=8 0.0365 (fechada 0.03917)
+  P3182 (c) G=2 retorno 0.9086, sem contraste 0.812; G=8 retorno 0.8987, sem contraste 0.501; G2 - G8 0.0099
+  P3183 (d) tarefa 1 no reservatorio 32.036 (32); 1o exemplo fica 0.1675 (1/6); (e) posto 3.117142, erro 0.00e+00
+FIM_OK status=0 segundos=1

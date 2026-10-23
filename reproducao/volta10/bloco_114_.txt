@@ -1,0 +1,11 @@
+--- Parte 114 (0x72: tratar o ML como DL e o DL como ML) ---
+P2861 logistica como rede de 1 camada (retropropagacao) x Newton: max |dw| = 4.44e-16; |grad| no Newton 3.3e-18; kappa = 32.72
+P2862 rede linear profunda W2W1 x OLS: max |d beta| = 1.11e-15
+P2863 MSE de teste: features aleatorias + ridge 0.01270; retropropagacao 0.01535 (razao 1.209); features treinadas + ridge 0.01270 (razao 0.827)
+P2864 graus de liberdade: lambda=1e-3 tr(S) 30.096, Efron 29.746; lambda=1 tr(S) 14.771, Efron 14.738; razao 0.491
+P2865 rodada 81 (rede linear profunda, IGUAL em Java): beta [0.6685, -0.3045, 0.1022]; OLS [0.7005, -0.3069, 0.0946]
+P1961 teste, Partes 80-114: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2861-P2890) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 114: {114: (0, 0, [])}
+P4129 minha taxa de erro (224/887): media = 0.25, intervalo 90% = [0.23, 0.28]
+FIM_OK status=0 segundos=44

@@ -1,0 +1,21 @@
+--- Parte 72 (0x48: o que esta disfuncional) ---
+P1601 auditoria, docs: 0 []
+P1601 auditoria, sem_teste: 0 []
+P1601 auditoria, testes_fora_da_lista: 0 []
+P1601 auditoria, rodadas_sem_java: 0 []
+P1601 auditoria, partes_fora_do_resultados: 0 []
+P1601 auditoria, constantes: 0 []
+P1602 glosas inglesas: H = 4.2829 bits/simbolo; 33 simbolos; redundancia contra log2(33) = 0.1510; contra 8 bits = 0.4646 (o texto recebido: 1 - 4,11/8 = 0.48625)
+P1603 ciclos de glosas (A na glosa de B, B na glosa de A): [('knowledge', 'information', True, False), ('meaning', 'word', False, False)]
+P1604 hash como peso: |h(a) - h(b)| sinonimos 0.3313, sorteados 0.3332 (teoria 1/3); z = -0.261
+P1608 texto recebido, run_tests: 6 verificacoes (4 asserts) contra 6 declaradas
+P1608 texto recebido, test_engine: 7 verificacoes (5 asserts) contra 8 declaradas
+P1612 fecho de animal: 4017 sinsets; linear = BFS True; ingenuo = BFS True; 4 passagens, 326438 checagens contra 4051 decrementos (razao 80.6); 84427 regras; limite do texto (F+1)RP = 2.864e+13; passagens x P = 337708
+P1615 imports sem uso por bloco do texto recebido: [[], ['deque']]
+P1613 fecho de person: 10297
+P1614 rodada 46, fato 18: derivados 4017, controle 90606848035, decrementos 4051, prova de 12 regras
+P1614 rodada 46, fato 17: derivados 10297, controle 3025863371175, decrementos 11034, prova de 9 regras
+P1092 pNN novas (P1601-P1630) sem teste: 0 de 12: []
+P974 previsoes unilaterais da Parte 72: {72: (0, 0, [])}
+P1629 minha taxa de erro (195/607): media = 0.32, intervalo 90% = [0.29, 0.35]
+FIM_OK status=0 segundos=8

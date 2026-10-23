@@ -1,0 +1,12 @@
+--- Parte 16 (um sentido novo) ---
+P223 d' atual = 0.945; com o sensor (d' = 1) = 1.376; AUC prevista = 0.835; AUC do sensor sozinho = 0.760
+P224 salvaguardas independentes: formula = 0.00596, simulado = 0.00617; estagios em ordem: formula = 0.00115, simulado = 0.00117; formula usada na P94 = 0.00133
+P224 numero da P94 corrigido (4 salvaguardas, 50 anos) = 5.66e-06 (publicado: 2.60e-07)
+P225 base: catastrofes = {'p8_x2': 0.00535, 'sentidos': 0.005}; sentidos - realista = 0.168, dp = 0.118, t = 4.50
+P225 armadilha nova: catastrofes = {'p8_x2': 0.0075, 'sentidos': 0.00575}; sentidos - realista = 0.393, dp = 0.228, t = 5.45
+P226 AUC com o sentido novo: armadilha conhecida = 0.929, armadilha nova = 0.806
+P227 armadilha nova, mundo sequencial, velha         : retorno = 18.647, catastrofes = 0.0263
+P227 armadilha nova, mundo sequencial, velha_sentidos: retorno = 19.309, catastrofes = 0.0212
+P227 velha com sentido - velha: diferenca media = 0.662, dp = 0.752, t = 2.79
+P230 minha taxa de erro (37/67): media = 0.55, intervalo 90% = [0.45, 0.65]
+FIM_OK status=0 segundos=92

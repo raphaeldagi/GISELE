@@ -1,0 +1,13 @@
+--- Parte 111 (0x6F: o laboratorio de palavras; o word_rl_lab recebido) ---
+P2771 v2, embutido, semente 42: guloso 0.130, aleatorio 0.006; replicacao 10-14: 5/5 com ICs disjuntos
+P2772 desenho da v1 (acao = direcao): guloso 0.000 (letras uniformes); guloso - aleatorio +0.001 (letras por frequencia)
+P2773 Brier estimador/base: embutido 0.461, WordNet 0.456; ablacoes: sem Q(PARAR) 0.635, so letras 0.762
+P2774 data lake (77340 lemas a-z): guloso 0.354, aleatorio 0.037; aleatorio WordNet/embutido 6.17
+P2775 auditor por nome (109): v1 [], v2 ['import:urllib']; por capacidade: v1 ['import:requests', 'rede:nltk.download', 'rede:requests.get'], v2 ['import:requests', 'rede:nltk.download', 'rede:requests.get']; plantado 7 achados; limpo []; proprio fonte []
+P2776 rodada 78 (Q-learning tabular, IGUAL em Java): Q[0] = [4.925819, 3.544671, 3.378734]
+P2777 palavras distintas do guloso (semente 42): 20; as 5 mais formadas [('EAT', 22), ('ATE', 17), ('DOT', 11), ('HOT', 11), ('TOT', 9)]
+P1961 teste, Partes 80-111: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2771-P2800) sem teste: 0 de 7: []
+P974 previsoes unilaterais da Parte 111: {111: (0, 0, [])}
+P3919 minha taxa de erro (224/850): media = 0.26, intervalo 90% = [0.24, 0.29]
+FIM_OK status=0 segundos=7

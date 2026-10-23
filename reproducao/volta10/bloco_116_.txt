@@ -1,0 +1,15 @@
+--- Parte 116 (0x74: o NEXUS-RAPHAEL v2 colado; o que o codigo faz de fato) ---
+P2921 texto x Parte 109: classes comuns ['Config'] (16 x 17), Jaccard 5-gramas 0.122; linhas que fecham [(549, 553), (541, 549)]; rede ['import:urllib.request', 'rede:urllib.request.urlopen']; chamadas ['random.seed', 'sqlite3.connect']; indefinidos ['AdversarialLayer', 'GameState', 'RaphaelGame']
+P2922 semelhanca por hash: desvio aleatorios 0.3099 (1/sqrt10 = 0.3162); media aleatorios 0.0054, sinonimos -0.0039, diferenca -0.0093
+P2923 gerador global depois de 1000 vetores: recebido 1 valor distinto; corrigido 1000
+P2924 codificacoes: posicional 446 pares colidem (mecanismo dos 'a' iniciais: 446), ex. ['aachen', 'aah', 'aalii', 'aar', 'aare', 'aarhus']; alfanumerica 284 valores distintos; numerologica max|f-1/9| 0.00152
+P2925 sob a nula: recebido confirma 0.3705, rejeita 0.3523; pareado confirma 0.0476; confianca recebida de [-1,-100,50] = 0.9
+P2926 cobertura (n=30): recebido pedido 0,90 -> 0.9829; pedido 0,95 -> 0.9373; corrigido (t) pedido 0,90 -> 0.9020
+P2927 auditoria de entrada: recebido passed 7/7 com o eco; com oraculo 3 falhas (eco), 0 (controle que escapa)
+P2928 vetor corrigido x recebido: 0 de 2000 diferem
+P2929 rodada 83 (avaliacao pareada, IGUAL em Java): [('confirmed', 2.4257), ('inconclusive', 0.0805), ('rejected', -6.2634)]
+P1961 teste, Partes 80-116: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2921-P2950) sem teste: 0 de 9: []
+P974 previsoes unilaterais da Parte 116: {116: (0, 0, [])}
+P4269 minha taxa de erro (225/922): media = 0.24, intervalo 90% = [0.22, 0.27]
+FIM_OK status=0 segundos=3

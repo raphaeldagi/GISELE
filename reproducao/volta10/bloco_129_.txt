@@ -1,0 +1,6 @@
+
+=== Parte 129: volta 2 do loop (volta 1 contra volta 2) ===
+  blocos 16, sem exceção 16; regressões ['Regressao: 168/168 resultados publicados reproduzidos; falhas = []']
+  partes refeitas 125, novas [128]
+  linhas 1870, diferentes 9 (0.0048); categorias {'projeto': 7, 'maquina': 2, 'nota': 0, 'mundo': 0}; mundo []
+FIM_OK status=0 segundos=0

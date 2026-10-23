@@ -1,0 +1,11 @@
+--- Parte 43 (0x2B: a regra das faixas em mecanismos novos; os trigramas; o dialogo responde?) ---
+P731 exposta100_estavel: centro deduzido = 52.11; medido = 53.03; desvio = +0.018; dentro de [43.1; 61.1] = True
+P731 exposta100_dano: centro deduzido = 27.10; medido = 26.67; desvio = -0.016; dentro de [17.8; 36.4] = True
+P731 surpresa40_estavel: centro deduzido = 36.90; medido = 34.84; desvio = -0.056; dentro de [30.6; 43.2] = True
+P731 surpresa40_muda: centro deduzido = 453.73; medido = 412.64; desvio = -0.091; dentro de [336.7; 570.8] = True
+P731 bocpd2000_muda: centro deduzido = 419.17; medido = 340.68; desvio = -0.187; dentro de [311.0; 527.3] = True
+P731 jeffreys_estavel: centro deduzido = 31.00; medido = 33.81; desvio = +0.091; dentro de [25.7; 36.3] = True
+P732 trigramas = 6074; mais animais = ['orl', ' sn', 'rld', 'fis', 'nak', 'fly', 'tfi', 'og$', 'sna', 'etl', ' sq', 'fox']; menos animais = ['tio', 'ity', 'sm$', 'ism', 'eae', 'zat', ' ac', 'off', 'tem', 'ogr', 'men', 'ae$']; dae = -2.2829; ae$ = -2.9346
+P733 43 pares (pergunta, rodada seguinte): retorno medio = 0.5668; redundancia media = 0.0727
+P759 minha taxa de erro (130/364): media = 0.36, intervalo 90% = [0.32, 0.40]
+FIM_OK status=0 segundos=34

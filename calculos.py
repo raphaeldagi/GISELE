@@ -7563,6 +7563,8 @@ def testes_de_regressao():
         "P3195": (lambda r: (r[3], round(r[0], 4), round(r[2], 5)) == (53058, 0.9844, 0.49766))(p3195_fluxo_em_portugues()),
         "P3196": (lambda r: abs(r[2][0] - 3) < 1e-6 and round(r[5][1], 5) == 0.0003 and round(r[7][1], 5) == 0.00008)(p3196_benford16_potencias()),
         "P3197": (lambda r: (round(r[0][2][0], 4), round(r[0][16][0], 4), r[2]) == (0.8756, 0.8467, False))(p3197_grupos_uteis_mundo_novo()),
+        "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
+            p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
             p3176_comparar_voltas_v2("reproducao/volta8", "reproducao/volta9")),
         "P3176v8": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (8, 0, [134], 131))(
