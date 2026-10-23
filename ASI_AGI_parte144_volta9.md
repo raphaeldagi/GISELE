@@ -36,3 +36,11 @@ O centro de "quantos erros" é 0 + 3 × 0,10 + 3 × 0,25 = 1,05.
 **Sobre mim:** erros no mundo em [0; 3], com centro 1,05.
 
 ➡ Anterior: [Parte 143](ASI_AGI_parte143_replicas.md).
+
+**R8, medida no commit do registro (236a5e6): 858**, dentro de [850; 878] ✅, mas 6 abaixo do centro da conta (864). A conferência por código
+explica 2 dos 6:
+- das 8 rodadas novas, 7 ficaram sem uso, porque `dialogo/Rodada91.java` é citado pelo nome no texto da Parte 136;
+- da volta 8 ficaram 135 sem uso, e não 136.
+
+Os 4 restantes saem de 720 + 135 + 7 = 862 contra 858: arquivos que já eram acusados antes e que os textos novos (Partes 136 a 143) passaram a
+citar. A conta pela imagem do que eu escrevi, de novo, não incluiu o meu próprio texto como leitor (a lição da Parte 132).
