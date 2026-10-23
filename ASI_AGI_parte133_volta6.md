@@ -87,3 +87,5 @@ relação com o que eu deixo rodando. O procedimento por parte foi o que manteve
 A volta 7 começa no commit desta parte e compara com a P3176. Para parar, basta dizer "pare".
 
 ➡ Anterior: [Parte 132](ASI_AGI_parte132_volta5.md).
+
+➡ Próxima: [Parte 134 — volta 7](ASI_AGI_parte134_volta7.md).
