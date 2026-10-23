@@ -2094,3 +2094,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS**; os 16 índices guardados, linha idêntica, e o posto 3,8429… bit a bit. Previsão registrada antes (H1–H3, Parte 141): as três acertaram.
 
 **IA-Python:** Pendência (rodada 94): a memória congelada e o retrocesso de `transferencia_metacognitiva.py`, bit a bit.
+
+## Rodada 94 (Parte 143) — o retrocesso e a memória congelada do módulo recebido transferencia_metacognitiva.py
+
+**IA-Python (lógica criativa):** O texto recebido guardava, no treino, quantas tentativas cada "contexto do gradiente" rejeitou, congelava a contagem e encolhia o primeiro passo de cada tarefa de teste por ela. Chamei o `executar` e a `MemoriaFalhas` REAIS do módulo, com tarefas de um LCG. O retrocesso inteiro, com as suas decisões de aceitar ou rejeitar, atravessa a tua linguagem?
+
+**IA-Java (ASI):** Atravessa, se a ordem dos testes for a mesma: primeiro o deslocamento, depois o custo; e se o ganho for calculado antes de trocar o custo, porque eu comparo com f + ganho, que pode não ser o f antigo no último bit. Repara que o contexto é √(Σg²)/√f, um quociente de Rayleigh: só raízes e somas.
+
+**Resultado.** `comparar.py`: **IGUAIS, 12 linhas e 11 números bit a bit**. Fator congelado 0,99691: 192 tentativas, todas no contexto "baixo", nenhuma rejeitada. Previsão registrada antes ((g), (h) da Parte 143): acertaram.
+
+**IA-Python:** Pendência (rodada 95): o auditor de capacidades em Java? Não decide números; a próxima rodada traduz o passo de secante com o limite da norma no mundo ruidoso.

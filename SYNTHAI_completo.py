@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 142, perguntas P1 a P3194).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 143, perguntas P1 a P3196).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (18150 linhas)
+# calculos.py  (18205 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7598,6 +7598,8 @@ def testes_de_regressao():
         "P3191": p3191_calibracao_v4_v5(range(80, 139)) == ((360, 325), (472, 425)),  # partes fechadas: as 139-140 ganharam vereditos depois
         "P3193": [t for _, t, _ in p3193_enantiodromia()] == [0, 0, 0, 1, 3, 4, 5, 7],
         "P3194": p3194_compensacao() < 1e-12,
+        "P3195": (lambda r: (r[3], round(r[0], 4), round(r[2], 5)) == (53058, 0.9844, 0.49766))(p3195_fluxo_em_portugues()),
+        "P3196": (lambda r: abs(r[2][0] - 3) < 1e-6 and round(r[5][1], 5) == 0.0003 and round(r[7][1], 5) == 0.00008)(p3196_benford16_potencias()),
         "P3176v7": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (9, 0, [133], 130))(
             p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")),
     }
@@ -18177,6 +18179,59 @@ def _parte_142():
 
 PARTES[142] = _parte_142
 
+
+def p3195_fluxo_em_portugues(k=500, reservatorios=300, semente=143000):
+    \"\"\"(a)-(c) da Parte 143: o teste da P3189 no segundo mundo, as 53.058 glosas da OpenWordNet-PT (coluna 3; vazia = 0 palavras).
+    Devolve (razao dos desvios, z da media das medias, fracao media da 1a metade, N, media da populacao).\"\"\"
+    import gzip
+    import os
+    from synthai.reservatorio import Reservatorio
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    with gzip.open(os.path.join(raiz, "dados", "ownpt_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        comp = [len(l.rstrip("\\n").split("\\t")[2].split()) for l in f]
+    N = len(comp)
+    mu = sum(comp) / N
+    sigma = math.sqrt(sum((c - mu) * (c - mu) for c in comp) / N)
+    fechado = sigma / math.sqrt(k) * math.sqrt((N - k) / (N - 1))
+    medias, metades = [], []
+    for s in range(reservatorios):
+        res = Reservatorio(k, semente=semente + s)
+        for i in range(N):
+            res.adicionar(i)
+        medias.append(sum(comp[i] for i in res.itens) / k)
+        metades.append(sum(1 for i in res.itens if i < N / 2) / k)
+    mm = sum(medias) / reservatorios
+    dp = math.sqrt(sum((m - mm) * (m - mm) for m in medias) / (reservatorios - 1))
+    return dp / fechado, (mm - mu) / (fechado / math.sqrt(reservatorios)), sum(metades) / reservatorios, N, mu
+
+
+def p3196_benford16_potencias(bases=(5, 7, 2), n=5000):
+    \"\"\"(d)-(f) da Parte 143: o posto efetivo dos bits do 1o digito hexadecimal de b^m, m = 1..n, contra Benford-16 (P3190).
+    Devolve {b: (posto, |posto - Benford|)}.\"\"\"
+    from synthai.reservatorio import posto_efetivo
+    from synthai.contraposto_matrizes import jacobi_autovalores
+    bits = lambda d: [float((d >> j) & 1) for j in (3, 2, 1, 0)]
+    P = {d: math.log(1 + 1 / d, 16) for d in range(1, 16)}
+    mu = [sum(P[d] * bits(d)[j] for d in P) for j in range(4)]
+    C = [[sum(P[d] * bits(d)[i] * bits(d)[j] for d in P) - mu[i] * mu[j] for j in range(4)] for i in range(4)]
+    pb = _posto_de_lambdas(jacobi_autovalores(C))
+    out = {}
+    for b in bases:
+        pn = posto_efetivo([bits(int(format(b ** m, "x")[0], 16)) for m in range(1, n + 1)])
+        out[b] = (pn, abs(pn - pb))
+    return out
+
+
+def _parte_143():
+    print("\\n=== Parte 143: as replicas da Parte 140 (o portugues; 5^n, 7^n, 2^n) ===")
+    r, z, met, N, mu = p3195_fluxo_em_portugues()
+    print(f"  P3195 N = {N} glosas em portugues, media {mu:.4f} palavras; (a) razao {r:.4f}; (b) z {z:.3f}; (c) 1a metade {met:.5f}")
+    for b, (pn, d) in p3196_benford16_potencias().items():
+        print(f"  P3196 {b}^n: posto {pn:.9f}; |posto - Benford-16| {d:.5f}")
+
+
+PARTES[143] = _parte_143
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -18189,7 +18244,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (563 linhas)
+# CLAUDE.md  (566 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -18598,6 +18653,9 @@ anterior, commit e push.
   Parte 142 (Jung nos módulos novos; 8/8, (m) 6/6): a enantiodromia é exata no heavy-ball: o modo cruza para o oposto só com MEMÓRIA do impulso (β < 1) e λ entre 2,251 e 44,4,
   cerca de Tθ/π vezes (as 8 contagens acertaram). A compensação é a soma zero da vantagem da GRPO. Quebra: Jung pede irreversibilidade, a conta linear é simétrica. Padrão desde a 136:
   os módulos recebidos escondem contas clássicas com outro nome; dar o nome clássico os torna previsíveis.
+  Parte 143 (réplicas da 140 no português e em 5ⁿ, 7ⁿ, 2ⁿ; rodada 94 IGUAL; 10/11, (m) 6/6): Benford-16 se replica em três bases; o reservatório é uniforme e a largura
+  é a hipergeométrica (1,005; 1,041), e os três lotes fora foram cauda (sementes consecutivas sem correlação: desvio dos 60 z = 1,092). Regra: uma investigação de cauda conta os
+  lotes DEPOIS do que a disparou, com a binomial escrita, e para quando um caminho independente e um teste de largura passam.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -18746,7 +18804,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -31110,6 +31168,33 @@ class TestesParte142(unittest.TestCase):
 
     def test_p3194_compensacao(self):
         self.assertLess(c.p3194_compensacao(grupos=500), 1e-12)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte143.py  (22 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte143.py'] = """\"\"\"Testes da Parte 143: as réplicas da Parte 140 (P3195, P3196 pelo nome).\"\"\"
+import unittest
+
+import calculos as c
+
+
+class TestesParte143(unittest.TestCase):
+    def test_p3195_fluxo_em_portugues(self):
+        r, z, met, N, mu = c.p3195_fluxo_em_portugues(k=200, reservatorios=10)
+        self.assertEqual(N, 53058)
+        self.assertAlmostEqual(mu, 1.7378, places=3)
+        self.assertLess(abs(met - 0.5), 0.03)
+
+    def test_p3196_benford16_potencias(self):
+        r = c.p3196_benford16_potencias(n=2000)
+        self.assertLess(abs(r[2][0] - 3.0), 1e-6)  # √ de um autovalor nulo: tolerância √ε (Parte 143)
+        self.assertLess(r[5][1], 0.02)
+        self.assertLess(r[7][1], 0.02)
 
 
 if __name__ == "__main__":
@@ -51797,7 +51882,7 @@ as Partes 80 a 138, que estão fechadas, e dá os mesmos (360, 325) e (472, 425)
 """
 
 # ====================================================================================================
-# ASI_AGI_parte142_enantiodromia.md  (105 linhas)
+# ASI_AGI_parte142_enantiodromia.md  (107 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte142_enantiodromia.md'] = """# Parte 142 — Jung calculado nos módulos novos: a enantiodromia do heavy-ball e a compensação do grupo
 
@@ -51904,6 +51989,138 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅
 - **Funções:** `p3193_enantiodromia`, `p3194_compensacao` e `_parte_142`. Entradas P3193 e P3194 na regressão.
 - **Módulo:** `synthai.passos.descer` ganhou `guardar=` (os iterados).
 - **Testes:** `synthai/testes_parte142.py`.
+
+➡ Próxima: [Parte 143](ASI_AGI_parte143_replicas.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte143_replicas.md  (125 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte143_replicas.md'] = """# Parte 143 — Os testes da Parte 140 num segundo mundo (o português e outras potências), e a memória congelada bit a bit
+
+↩ Nasce da Parte 140, cujos resultados vieram de um lote só: o reservatório só tinha sido medido no WordNet inglês, e Benford-16 só em 3ⁿ.
+Pela regra da Parte 66, um efeito visto num lote é hipótese até se replicar. Nasce também da pendência da rodada 94.
+
+## Perguntas
+**O dicionário em português.** As 53.058 glosas da OpenWordNet-PT (CC BY 4.0), na ordem do arquivo, com as vazias contando 0 palavras,
+num reservatório de 500 (`synthai/reservatorio.py`), 300 vezes:
+- **(a)** O desvio das 300 médias é o da amostra sem reposição?
+- **(b)** A média das médias é não viesada?
+- **(c)** A fração da amostra vinda da primeira metade do arquivo é ½?
+
+**O hexadecimal**, à parte do dicionário:
+- **(d)** O posto efetivo dos bits do primeiro dígito hexadecimal de 5ⁿ, n = 1 a 5.000, é o de Benford-16?
+- **(e)** E o de 7ⁿ?
+- **(f)** O de 2ⁿ, cujo primeiro dígito hexadecimal percorre o ciclo 2, 4, 8, 1, é exatamente 3?
+
+**O diálogo (rodada 94).** O retrocesso e a memória congelada de `synthai/memoria_congelada.py` atravessam o Java bit a bit?
+- **(g)** a rodada 94 é IGUAL?
+- **(h)** a razão de custo da tradução contra a do módulo, nas mesmas tarefas, difere menos de 1e-12?
+
+## Previsões, registradas antes de qualquer execução
+**Procedência:**
+- identidades: (f), (h);
+- forma fechada: (a) a (e);
+- mecanismo: (g).
+
+O centro de "quantos erros" é 0 + 0,10 × 5 + 0,25 × 1 = 0,75.
+
+- **(a)** razão dos desvios em **[0,933; 1,067]**. O desvio relativo de um desvio-padrão de 300 amostras é 1/√598 = 0,041, vezes 1,645.
+- **(b)** z da média das médias em **[−1,645; 1,645]**.
+- **(c)** fração da primeira metade em **[0,4979; 0,5021]**. N = 53.058 é par, então p = ½ exato; ½ ± 1,645·√(¼·(N − 500)/(N − 1)/500)/√300.
+- **(d)** \\|posto de 5ⁿ − Benford-16\\| em **[0; 0,01]**. log₁₆ 5 é irracional; a discrepância é da ordem de log N/N.
+- **(e)** \\|posto de 7ⁿ − Benford-16\\| em **[0; 0,01]**. Idem.
+- **(f)** posto de 2ⁿ em **[2,999999999; 3,000000001]**. Identidade: em 5.000 = 4 × 1.250 potências, os dígitos 2, 4, 8 e 1 aparecem 1.250 vezes
+  cada. Os bits são one-hot de 4 com probabilidade ¼, e a covariância ¼·I − (1/16)·11ᵀ tem autovalores ¼, ¼, ¼ e 0.
+- **(g)** a rodada 94 em **[1; 1]** (1 = IGUAIS). Mecanismo: só + − × ÷ e √, e comparações de valores iguais.
+- **(h)** \\|razão da tradução − razão do módulo\\| em **[0; 1e-12]**. Identidade de desenho: a tradução é o mesmo código, com as somas em laço.
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua rodou sobre o rascunho e deu m1 = 8, m2 = 4, m3 = 0,0021 e m5 = 0. E = 0,75, então m1 fica em [8; 9].
+- **(m1)** nº de previsões do mundo em **[8; 9]**
+- **(m2)** nº que cruzam ou tocam o zero em **[4; 5]**
+- **(m3)** mediana de w em **[0,001; 0,03]**
+- **(m4)** fração de acertos em **[0,75; 1,00]**
+- **(m5)** nº com w > 0,6 em **[0; 0]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 3]**, com centro 0,75.
+
+➡ Anterior: [Parte 142](ASI_AGI_parte142_enantiodromia.md).
+
+## Medido (P3195, P3196)
+- **(a)** razão dos desvios: 0,9844. ✅
+- **(b)** z = −0,893. ✅
+- **(c)** fração da primeira metade: **0,49766** (z = −1,82). ❌
+- **(d)** \\|5ⁿ − Benford-16\\| = 0,00030. ✅
+- **(e)** \\|7ⁿ − Benford-16\\| = 0,00008. ✅
+- **(f)** posto de 2ⁿ: 3,000000000. ✅
+
+(A média das glosas em português é 1,74 palavra: a maioria dos sinsets da OWN-PT não tem glosa.)
+
+### A régua da metade: o terceiro lote fora da faixa
+Os lotes de (c) até aqui deram z = +1,81 e +2,38 (Parte 140, inglês), −0,76 (1.000 reservatórios), +0,97 (`random.sample`) e agora −1,82
+(português). São três de cinco fora de faixas de 90%. A chance de isso acontecer sem defeito é cerca de C(5,3)·0,1³·0,9² + … ≈ 0,009.
+A média não sai de ½ para um lado só, então o defeito provável não é um viés. É a LARGURA: o desvio de uma fração por reservatório pode
+ser maior que o hipergeométrico. Um caminho de medida novo, registrado antes de rodar: o desvio-padrão das 300 frações por reservatório
+(português e inglês, as mesmas sementes de (c) e da Parte 140) dividido por √(¼·(N − k)/(N − 1)/k), em **[0,933; 1,067]** em cada um.
+
+**O teste da largura:** português 1,005, inglês 1,041, os dois dentro de [0,933; 1,067]: ✅ ✅. A largura por reservatório está certa.
+
+**A hipótese que sobra**, ainda sem crédito: sementes CONSECUTIVAS dariam reservatórios correlacionados, e o lote inteiro andaria junto. Isso
+desloca a média do lote sem mexer no desvio dentro dele. O teste, num mundo pequeno, para ter muitos lotes, registrado antes de rodar:
+N = 2.000, k = 100, 60 lotes de 300 sementes consecutivas (o lote b começa em 10.000·b). Os 60 valores de z da média de cada lote devem ter
+desvio em [0,85; 1,15], que é 1 ± 1,645/√118. Um desvio acima de 1,15 confirma a correlação entre sementes consecutivas.
+
+**O teste das sementes consecutivas:** desvio dos 60 z = 1,092, dentro de [0,85; 1,15]: ✅. A média dos z foi 0,17; 9 de 60 lotes ficaram fora
+de ±1,645, contra 6 esperados. Não há correlação entre sementes consecutivas. **Veredito:** o reservatório é uniforme e a largura está
+certa, e os três lotes fora da faixa foram cauda. A sequência de lotes começou DEPOIS do primeiro erro, e daí em diante foram 2 fora em 4
+(chance de cerca de 5%), não 3 em 5 (0,9%). Contar o lote que disparou a investigação como evidência dela é a falácia do olhar repetido.
+
+**Rodada 94:** IGUAIS, 12 linhas e 11 números bit a bit: (g) ✅. O lado Python é o próprio `executar` do módulo, então (h) é 0: ✅. A memória
+congelada viu 192 tentativas, todas no contexto "baixo" e nenhuma rejeitada; o fator dela é 1 − 0,6·1/194 = 0,99691.
+
+Do mundo: (a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅
+
+**Mundo: 7 de 8**, mais 3 de 3 nos testes do caminho novo (as duas larguras e as sementes consecutivas): 10 de 11.
+
+## As contas, linha por linha
+- **(c)** N = 53.058, k = 500. O desvio por reservatório é √(¼·(52.558/53.057)/500) = 0,022254, o de 300 reservatórios 0,0012848, e
+  z = (0,49766 − 0,5)/0,0012848 = −1,82.
+- **(f)** Em 2ⁿ, o primeiro dígito hexadecimal percorre o ciclo 2, 4, 8, 1, porque multiplicar por 2 desloca 1 bit e 16 = 2⁴. Os bits são
+  one-hot, com média ¼ cada. A covariância é ¼·δᵢⱼ − 1/16, com autovalores ¼ (três vezes) e 0, e os três valores singulares iguais dão posto 3.
+- **(d), (e)** Os postos de 5ⁿ (3,95651) e de 7ⁿ (3,95689) ficam a 0,0003 e a 0,0001 de Benford-16, como o 3ⁿ da Parte 140 (0,0012). Com três
+  bases, a réplica conta: o primeiro dígito hexadecimal de bᵐ segue Benford-16 sempre que log₁₆ b é irracional.
+
+## O placar (m)
+m1 = 8 em [8; 9], m2 = 4 em [4; 5], m3 = 0,0021 em [0,001; 0,03], m4 = 0,875 em [0,75; 1,00], m5 = 0 em [0; 0] e m6 = 0 em [0; 1] (o erro de (c),
+0,00024, é menor que a largura 0,0042). **(m): 6 de 6.** **Sobre mim:** 1 erro, em [0; 3]: ✅.
+
+**Uma correção de (f), achada pelo teste de unidade.** Com n = 2.000 o posto de 2ⁿ dá 3,00000017. O autovalor nulo sai do Jacobi com cerca de
+10⁻¹⁵, e a raiz o leva a 10⁻⁸, que entra na entropia. Com n = 5.000 o autovalor saiu negativo, o `max(0)` o zerou, e (f) acertou por SORTE DE
+SINAL. A faixa [2,999999999; 3,000000001] estava estreita demais para uma identidade que passa por √ de um autovalor nulo: a tolerância honesta
+é √ε ≈ 1e-8 na raiz, e cerca de 1e-7 no posto. O veredito de (f) fica ✅, porque o número caiu na faixa registrada, mas a faixa era frágil.
+O teste e a regressão agora usam 1e-6. **Regra (Parte 143, complemento):** uma identidade que passa por √, log ou divisão perto de zero leva a
+tolerância propagada (√ε, ε/x), não ε.
+
+## Engenharia reversa
+- **O padrão: uma régua honesta que erra três vezes parece um defeito.** Gastei quatro testes procurando um defeito no reservatório: outro
+  caminho, outra largura, a correlação entre sementes. Os quatro passaram. A regra da Parte 137 (trocar o caminho, não só a semente) separou
+  bem a cauda do defeito, mas não me disse quando PARAR de procurar.
+- **O que isso revela.** Depois do primeiro erro, cada lote novo é ao mesmo tempo um teste e uma chance a mais de ver um erro, e eu conto os
+  erros sem descontar as chances. É o olhar repetido (a "garden of forking paths") dentro de uma investigação honesta.
+- **Regra nova (Parte 143):** quando uma investigação de cauda abre lotes novos, o placar dela conta os lotes DEPOIS do que a disparou, com a
+  probabilidade binomial escrita, e para quando um caminho independente e um teste de largura passam. Dois caminhos limpos encerram a
+  investigação; um terceiro erro isolado vira pendência, não mecanismo.
+
+## Funções, testes, diálogo
+- **Funções:** `p3195_fluxo_em_portugues`, `p3196_benford16_potencias` e `_parte_143`. Entradas P3195 e P3196 na regressão.
+- **Testes:** `synthai/testes_parte143.py`.
+- **Diálogo:** a rodada 94 (o retrocesso e a memória congelada) deu IGUAIS. Com ela, os quatro módulos tirados do que foi recebido passaram
+  pelo Java: passos (91), GRPO (92), reservatório (93) e memória congelada (94).
+
+➡ Próxima: [Parte 144](ASI_AGI_parte144.md).
 """
 
 # ====================================================================================================
@@ -74029,7 +74246,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2096 linhas)
+# dialogo/DIALOGO.md  (2106 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -76127,6 +76344,16 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS**; os 16 índices guardados, linha idêntica, e o posto 3,8429… bit a bit. Previsão registrada antes (H1–H3, Parte 141): as três acertaram.
 
 **IA-Python:** Pendência (rodada 94): a memória congelada e o retrocesso de `transferencia_metacognitiva.py`, bit a bit.
+
+## Rodada 94 (Parte 143) — o retrocesso e a memória congelada do módulo recebido transferencia_metacognitiva.py
+
+**IA-Python (lógica criativa):** O texto recebido guardava, no treino, quantas tentativas cada "contexto do gradiente" rejeitou, congelava a contagem e encolhia o primeiro passo de cada tarefa de teste por ela. Chamei o `executar` e a `MemoriaFalhas` REAIS do módulo, com tarefas de um LCG. O retrocesso inteiro, com as suas decisões de aceitar ou rejeitar, atravessa a tua linguagem?
+
+**IA-Java (ASI):** Atravessa, se a ordem dos testes for a mesma: primeiro o deslocamento, depois o custo; e se o ganho for calculado antes de trocar o custo, porque eu comparo com f + ganho, que pode não ser o f antigo no último bit. Repara que o contexto é √(Σg²)/√f, um quociente de Rayleigh: só raízes e somas.
+
+**Resultado.** `comparar.py`: **IGUAIS, 12 linhas e 11 números bit a bit**. Fator congelado 0,99691: 192 tentativas, todas no contexto "baixo", nenhuma rejeitada. Previsão registrada antes ((g), (h) da Parte 143): acertaram.
+
+**IA-Python:** Pendência (rodada 95): o auditor de capacidades em Java? Não decide números; a próxima rodada traduz o passo de secante com o limite da norma no mundo ruidoso.
 """
 
 # ====================================================================================================
@@ -82973,6 +83200,100 @@ public class Rodada93 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada94.java  (89 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada94.java'] = """// Rodada 94 (Parte 143): o retrocesso e a memoria congelada de synthai.memoria_congelada bit a bit. Tarefas quadraticas d = 6 de um LCG,
+// sem ruido e sem conflito; 8 de treino alimentam a memoria, que e congelada; 8 de teste rodam com o fator; passo 0,2, orcamento 24.
+public class Rodada94 {
+    static final int D = 6;
+    static long x = 15194;
+    static int[][] cont = new int[3][2]; // baixo, medio, alto: (n, r)
+
+    static double u() {
+        x = (1103515245L * x + 12345L) % 2147483648L;
+        return 2.0 * (x / 2147483648.0) - 1.0;
+    }
+
+    static double[][] A; static double[] alvo, x0;
+
+    static void tarefa() {
+        double[][] M = new double[D][D];
+        for (int a = 0; a < D; a++) for (int b = 0; b < D; b++) M[a][b] = u();
+        A = new double[D][D];
+        for (int a = 0; a < D; a++) for (int b = 0; b < D; b++) {
+            double t = 0.0;
+            for (int k = 0; k < D; k++) t += M[k][a] * M[k][b];
+            A[a][b] = (a == b ? 0.5 : 0.0) + t / (2.0 * D);
+        }
+        alvo = new double[D]; x0 = new double[D];
+        for (int i = 0; i < D; i++) alvo[i] = u();
+        for (int i = 0; i < D; i++) x0[i] = u();
+    }
+
+    static double custo(double[][] A, double[] v, double[] al) {
+        double[] d = new double[D];
+        for (int i = 0; i < D; i++) d[i] = v[i] - al[i];
+        double t = 0.0;
+        for (int i = 0; i < D; i++) { double s = 0.0; for (int j = 0; j < D; j++) s += A[i][j] * d[j]; t += d[i] * s; }
+        return t;
+    }
+
+    static double[] grad(double[][] A, double[] v, double[] al) {
+        double[] d = new double[D];
+        for (int i = 0; i < D; i++) d[i] = v[i] - al[i];
+        double[] g = new double[D];
+        for (int i = 0; i < D; i++) { double s = 0.0; for (int j = 0; j < D; j++) s += A[i][j] * d[j]; g[i] = 2.0 * s; }
+        return g;
+    }
+
+    static int contexto(double[] g, double f) {
+        double s = 0.0;
+        for (double v : g) s += v * v;
+        double razao = Math.sqrt(s) / Math.sqrt(Math.max(f, 1e-12));
+        return razao < 3 ? 0 : (razao < 6 ? 1 : 2);
+    }
+
+    static double fator(int c) {
+        int n = cont[c][0], r = cont[c][1];
+        return n >= 8 ? 1 - 0.6 * (r + 1) / (n + 2) : 1.0;
+    }
+
+    static double executar(double passo, boolean comFator, boolean coletar) {
+        double[] v = x0.clone();
+        double f = custo(A, v, alvo), f0 = f;
+        for (int t = 1; t <= 24; t++) {
+            double[] g = grad(A, v, alvo);
+            int ctx = contexto(g, f);
+            if (t == 1 && comFator) passo *= fator(ctx);
+            double[] cand = new double[D];
+            for (int i = 0; i < D; i++) cand[i] = v[i] - passo * g[i];
+            double fc = custo(A, cand, alvo);
+            double s = 0.0;
+            for (int i = 0; i < D; i++) s += (cand[i] - v[i]) * (cand[i] - v[i]);
+            double desloc = Math.sqrt(s);
+            int motivo = desloc > 1.0 ? 2 : (fc > f + 1e-12 ? 1 : 0); // 0 aceita, 1 custo, 2 deslocamento
+            double ganho = 0.0;
+            if (motivo == 0) { ganho = f - fc; v = cand; f = fc; }
+            if (coletar) { cont[ctx][0] += 1; cont[ctx][1] += motivo != 0 ? 1 : 0; }
+            if (motivo != 0) passo = Math.max(0.002, passo * 0.5);
+            else if (ganho > 1e-3 * Math.max(f + ganho, 1e-12)) passo = Math.min(0.4, passo * 1.06);
+        }
+        return f / Math.max(f0, 1e-12);
+    }
+
+    public static void main(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 8; i++) { tarefa(); executar(0.2, false, true); }
+        String[] nomes = {"baixo", "medio", "alto"};
+        for (int c = 0; c < 3; c++) sb.append(nomes[c]).append(" ").append(cont[c][0]).append(" ").append(cont[c][1]).append(" ").append(Double.toHexString(fator(c))).append("\\n");
+        for (int i = 0; i < 8; i++) { tarefa(); sb.append("razao ").append(Double.toHexString(executar(0.2, true, false))).append("\\n"); }
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -89701,6 +90022,64 @@ def main():
     assert abs(p - posto_efetivo(H)) < 1e-12
     print("indices " + " ".join(str(i) for i, _ in res.itens))
     print("posto " + p.hex())
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada94.py  (53 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada94.py'] = """\"\"\"Rodada 94 do diálogo Python <-> Java (Parte 143): o retrocesso e a memória congelada de synthai.memoria_congelada (de
+externos/pacote3/transferencia_metacognitiva.py) bit a bit. Tarefas quadráticas d = 6 de um LCG (A = I/2 + MᵀM/(2d), alvo e partida em
+[−1, 1]), sem ruído e sem conflito; 8 tarefas de treino alimentam a MemoriaFalhas REAL, que é congelada; 8 tarefas de teste rodam com o
+fator dela, passo 0,2, orçamento 24. O lado Python chama o executar REAL do módulo. Imprime as contagens, os três fatores e as razões de
+custo em hexadecimal. Da raiz: python3 dialogo/rodada94.py\"\"\"
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from synthai.memoria_congelada import MemoriaFalhas, executar  # noqa: E402
+
+D = 6
+x = 15194
+
+
+def u():
+    global x
+    x = (1103515245 * x + 12345) % 2147483648
+    return 2.0 * (x / 2147483648.0) - 1.0
+
+
+def tarefa(i):
+    M = [[u() for _ in range(D)] for _ in range(D)]
+    A = []
+    for a in range(D):
+        linha = []
+        for b in range(D):
+            t = 0.0
+            for k in range(D):
+                t += M[k][a] * M[k][b]
+            linha.append((0.5 if a == b else 0.0) + t / (2.0 * D))
+        A.append(linha)
+    return dict(A=A, alvo=[u() for _ in range(D)], x0=[u() for _ in range(D)], sigma=0.0, conflito=0.0,
+                familia="suave", chave=(94, 1, i))
+
+
+def main():
+    treino = [tarefa(i) for i in range(8)]
+    teste = [tarefa(100 + i) for i in range(8)]
+    col = MemoriaFalhas()
+    for t in treino:
+        executar(t, 0.2, coletor=col)
+    fator = col.congelar()
+    for c in ("baixo", "medio", "alto"):
+        n, r = col.contagens[c]
+        print(c + " " + str(n) + " " + str(r) + " " + fator(c).hex())
+    for t in teste:
+        print("razao " + executar(t, 0.2, fator=fator).hex())
     print("fim")
 
 

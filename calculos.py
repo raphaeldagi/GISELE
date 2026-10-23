@@ -7560,6 +7560,8 @@ def testes_de_regressao():
         "P3191": p3191_calibracao_v4_v5(range(80, 139)) == ((360, 325), (472, 425)),  # partes fechadas: as 139-140 ganharam vereditos depois
         "P3193": [t for _, t, _ in p3193_enantiodromia()] == [0, 0, 0, 1, 3, 4, 5, 7],
         "P3194": p3194_compensacao() < 1e-12,
+        "P3195": (lambda r: (r[3], round(r[0], 4), round(r[2], 5)) == (53058, 0.9844, 0.49766))(p3195_fluxo_em_portugues()),
+        "P3196": (lambda r: abs(r[2][0] - 3) < 1e-6 and round(r[5][1], 5) == 0.0003 and round(r[7][1], 5) == 0.00008)(p3196_benford16_potencias()),
         "P3176v7": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (9, 0, [133], 130))(
             p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")),
     }
@@ -18138,6 +18140,59 @@ def _parte_142():
 
 
 PARTES[142] = _parte_142
+
+
+def p3195_fluxo_em_portugues(k=500, reservatorios=300, semente=143000):
+    """(a)-(c) da Parte 143: o teste da P3189 no segundo mundo, as 53.058 glosas da OpenWordNet-PT (coluna 3; vazia = 0 palavras).
+    Devolve (razao dos desvios, z da media das medias, fracao media da 1a metade, N, media da populacao)."""
+    import gzip
+    import os
+    from synthai.reservatorio import Reservatorio
+    raiz = os.path.dirname(os.path.abspath(__file__))
+    with gzip.open(os.path.join(raiz, "dados", "ownpt_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        comp = [len(l.rstrip("\n").split("\t")[2].split()) for l in f]
+    N = len(comp)
+    mu = sum(comp) / N
+    sigma = math.sqrt(sum((c - mu) * (c - mu) for c in comp) / N)
+    fechado = sigma / math.sqrt(k) * math.sqrt((N - k) / (N - 1))
+    medias, metades = [], []
+    for s in range(reservatorios):
+        res = Reservatorio(k, semente=semente + s)
+        for i in range(N):
+            res.adicionar(i)
+        medias.append(sum(comp[i] for i in res.itens) / k)
+        metades.append(sum(1 for i in res.itens if i < N / 2) / k)
+    mm = sum(medias) / reservatorios
+    dp = math.sqrt(sum((m - mm) * (m - mm) for m in medias) / (reservatorios - 1))
+    return dp / fechado, (mm - mu) / (fechado / math.sqrt(reservatorios)), sum(metades) / reservatorios, N, mu
+
+
+def p3196_benford16_potencias(bases=(5, 7, 2), n=5000):
+    """(d)-(f) da Parte 143: o posto efetivo dos bits do 1o digito hexadecimal de b^m, m = 1..n, contra Benford-16 (P3190).
+    Devolve {b: (posto, |posto - Benford|)}."""
+    from synthai.reservatorio import posto_efetivo
+    from synthai.contraposto_matrizes import jacobi_autovalores
+    bits = lambda d: [float((d >> j) & 1) for j in (3, 2, 1, 0)]
+    P = {d: math.log(1 + 1 / d, 16) for d in range(1, 16)}
+    mu = [sum(P[d] * bits(d)[j] for d in P) for j in range(4)]
+    C = [[sum(P[d] * bits(d)[i] * bits(d)[j] for d in P) - mu[i] * mu[j] for j in range(4)] for i in range(4)]
+    pb = _posto_de_lambdas(jacobi_autovalores(C))
+    out = {}
+    for b in bases:
+        pn = posto_efetivo([bits(int(format(b ** m, "x")[0], 16)) for m in range(1, n + 1)])
+        out[b] = (pn, abs(pn - pb))
+    return out
+
+
+def _parte_143():
+    print("\n=== Parte 143: as replicas da Parte 140 (o portugues; 5^n, 7^n, 2^n) ===")
+    r, z, met, N, mu = p3195_fluxo_em_portugues()
+    print(f"  P3195 N = {N} glosas em portugues, media {mu:.4f} palavras; (a) razao {r:.4f}; (b) z {z:.3f}; (c) 1a metade {met:.5f}")
+    for b, (pn, d) in p3196_benford16_potencias().items():
+        print(f"  P3196 {b}^n: posto {pn:.9f}; |posto - Benford-16| {d:.5f}")
+
+
+PARTES[143] = _parte_143
 
 PARTES[126] = _parte_126
 
