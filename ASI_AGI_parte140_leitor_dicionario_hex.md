@@ -111,3 +111,10 @@ Erros no mundo em **[0; 3]**, com centro 0,9.
 É uma forma fechada (hipergeométrica) que errou com z = 1,81. Registro, antes de rodar: sementes 141000 a 141299, outros 300 reservatórios,
 mesma faixa [0,4979; 0,5021]. Se acertar, foi cauda. Se errar de novo para o mesmo lado, a regra da Parte 137 manda trocar o CAMINHO da
 medida: contar pela posição sorteada, e não pelo índice.
+
+**Lote novo (sementes 141000+):** 0,50307, z = 2,38, de novo acima: ❌. Os dois lotes juntos dão z ≈ 2,96. Pela regra da Parte 137, troco o
+caminho. Registrado antes de rodar:
+1. a mesma régua da metade sobre `random.sample(range(N), 500)`, independente do reservatório: 2.000 amostras, faixa [0,49918; 0,50083];
+2. mais 1.000 reservatórios (sementes 142000+), faixa [0,49884; 0,50116].
+
+Se só o reservatório desviar, o defeito está nele. Se os dois desviarem, está na régua da metade.
