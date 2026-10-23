@@ -95,7 +95,15 @@ cuja chance era a de uma moeda. É o piso do caos da Parte 30 (não prever difer
 - **Funções:** `p3197_grupos_uteis_mundo_novo` e `_parte_145`. Entrada P3197 na regressão.
 - **Testes:** `synthai/testes_parte145.py`.
 
-O placar (m) e o "sobre mim" fecham quando (j) for medida, no próximo despertar.
+**(j), medida no despertar seguinte (21h47): "up" de 3 h 31 min = 211 minutos**, fora de [0; 5]: ❌. O lembrete das 20h37 esperou o fim do
+meu turno, que durou das 18h16 às 21h47 (mantido aberto para a volta 9 e a 10 avançarem), e chegou logo depois, com o contêiner vivo. A
+previsão não condicionou no tempo de OCIOSIDADE antes do despertar, que é a variável que a hipótese diz que move o recolhimento: com 0
+minutos de ociosidade, a hipótese prevê um contêiner vivo. Ela não foi testada; a previsão foi mal formulada. A hipótese continua com os 4
+despertares anteriores (todos depois de ociosidade, todos "up 0 min").
+
+Do mundo: (a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (j) ❌
+
+**Mundo: 7 de 9**, mais a rodada 95 (k) ✅. **Sobre mim:** 2 erros, em [0; 5]: ✅.
 
 ➡ Próxima: [Parte 146](ASI_AGI_parte146_volta10.md).
 
@@ -103,3 +111,9 @@ O placar (m) e o "sobre mim" fecham quando (j) for medida, no próximo despertar
 O primeiro dígito hexadecimal de 3ⁿ, n = 1 a 500, por inteiros grandes nos dois lados (`int` do Python, `BigInteger` do Java), e o posto
 efetivo dos bits desses dígitos (Jacobi, exp e log próprios), como na P3190.
 - **(k)** a rodada 95 em **[1; 1]** (1 = IGUAIS). Mecanismo: o dígito é aritmética inteira exata nos dois lados; o resto é o da rodada 93.
+
+**O placar (m):** m1 = 9 em [9; 11], m2 = 4 em [4; 6], m3 = 0,127 em [0,10; 0,16], m4 = 0,778 em [0,55; 1,00], m5 = 0 em [0; 0] e m6 = 1 surpresa
+em [0; 2]: **6 de 6**. A surpresa foi (j): erro de 206 minutos contra uma largura de 5.
+
+**Regra (Parte 145, complemento):** uma previsão sobre um sistema que depende de uma condição (aqui, a ociosidade antes do despertar) escreve
+a condição na própria previsão. Sem ela, o mesmo número testa hipóteses diferentes conforme o que acontecer antes.

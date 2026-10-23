@@ -412,7 +412,8 @@ anterior, commit e push.
   mundo. A volta morreu duas vezes com reinícios do contêiner e foi retomada parte a parte nas duas.
   Parte 145 (os grupos úteis da GRPO num segundo mundo; a pendência da 131): a relação ret(G) − ret(2) = 0,033·ln(U_G/U_2) replicou (desvios ≤ 0,0071, 2 lotes) e os U também; a ORDEM
   errou, e valia 0,51 (o par G2/G4 tinha diferença 0,0022 contra ruído 0,0076). Regra: uma previsão de ORDEM escreve P = Π Φ(diferença/σ) dos pares vizinhos ao lado e só vira faixa de 90%
-  se P ≥ 0,9. O contêiner é recolhido entre turnos ("up 0 min" em 4 despertares seguidos): a volta só avança durante um turno em andamento.
+  se P ≥ 0,9. O contêiner é recolhido entre turnos ("up 0 min" em 4 despertares seguidos): a volta só avança durante um turno em andamento. (j) errou ("up" 211 min) porque o
+  despertar veio logo depois de um turno longo: uma previsão sobre um sistema que depende de uma condição (a ociosidade antes) escreve a condição na previsão.
   Parte 144 (volta 9; 6/8): a volta achou a regressão VERMELHA no repositório (P3188 e P3191 fixadas sobre partes que eu chamei de fechadas, mas a 135 ganhou vereditos
   depois): uma parte só é fechada quando todas as suas previsões têm veredito, inclusive as de uma volta em andamento; e a regressão inteira roda depois de QUALQUER mudança num
   arquivo que uma régua lê, não só no código. R7 errou por aplicar um mecanismo (rodadas achadas por glob) a R8 e não a R7: mecanismo comum se escreve uma vez, antes das previsões.
