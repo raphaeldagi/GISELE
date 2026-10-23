@@ -1,0 +1,13 @@
+--- Parte 110 (0x6E: a duvida calculada; inverso e subverso) ---
+P2741 gradiente: inclinacao central 2.0000, adiantada 0.9997; melhor erro 3.56e-09 em h=1e-04; plantado 2.000000
+P2742 inferencia: cobertura 90% independente 0.8995; aglomerada (c=4) 0.5910; c recuperado 3.969
+P2743 RNN: erro relativo BPTT linear 0.0e+00, w recuperado 0.900000000000; tanh w=1,1: gradiente 5.560e-05 (h_T=0.5029)
+P2744 ML: erro de generalizacao 1.2530 (1,2564), p recuperado 9.89; com variavel omitida 2.5158 (2,513)
+P2745 continuo: esquecimento GD 45 0.500000, theta recuperado 45.000000; OGD 45 esquece 4.93e-32, norma 1.414214; OGD em 0: perda B 1.0
+P2746 reforco: vies do max k=2 0.1794 (0,1784), duplo 0.00022, m recuperado 9.89; k=10 0.4840 (0,4866)
+P2747 rodada 77 (IGUAL em Java): esquecimento GD 60 = 0.25; norma OGD 45 = 1.414213562373094
+P1961 teste, Partes 80-110: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2741-P2770) sem teste: 0 de 7: []
+P974 previsoes unilaterais da Parte 110: {110: (4, 0, [])}
+P3849 minha taxa de erro (221/835): media = 0.27, intervalo 90% = [0.24, 0.29]
+FIM_OK status=0 segundos=8

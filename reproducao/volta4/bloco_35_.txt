@@ -1,0 +1,7 @@
+--- Parte 35 (0x23: renovacao dirigida pela surpresa; Naive Bayes com pares; float16) ---
+P491 conta: alarmes (checagens) falsos por rodada no melhor braco = 17.42
+P491 surpresa: estacionario = 43.15; custo do dano = 42.34; mundo que muda = 367.71; renovacoes no estacionario = 1.18
+P492 Naive Bayes com pares: acuracia em A depois de A = 0.7796; depois de B = 0.7960
+P493 float16: fracao em risco (margem < ulp16) = 0.00476; fracao que mudou = 0.00130; ulp16 mediano = 0.03125
+P519 minha taxa de erro (112/281): media = 0.40, intervalo 90% = [0.35, 0.45]
+FIM_OK status=0 segundos=17

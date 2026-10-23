@@ -81,6 +81,10 @@ class TestesParte128(unittest.TestCase):
             soltos = c.p3175_arquivos_sem_uso_v2(raiz=d, arquivos=list(arquivos))
         self.assertEqual(soltos, ["citado_so_em_saida.txt", "leia.md", "reproducao/v1/saida.txt"])
 
+    def test_volta4_regressao(self):
+        r = c.p3174_comparar_voltas("reproducao/volta3", "reproducao/volta4")
+        self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]), (9, 0, [130], 127))
+
 
 if __name__ == "__main__":
     unittest.main()

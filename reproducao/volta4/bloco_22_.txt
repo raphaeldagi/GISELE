@@ -1,0 +1,14 @@
+--- Parte 22 (o prototipo em modulos: pacote synthai/) ---
+P283 base: calculos = 19.789, modular = 19.809; diferenca = 0.019, dp = 0.868, t = 0.07; peso da intuicao modular = 0.800; catastrofes 0.0170 vs 0.0163
+P283 modelo ruim: calculos = 11.241, modular = 11.556; diferenca = 0.315, dp = 0.690, t = 1.44; peso da intuicao modular = 0.203; catastrofes 0.0207 vs 0.0185
+P284 escolha única: {'Acaso': -0.27, 'Guloso': -12.91, 'Oraculo': 2.74, 'Synthai': 1.47}; catastrofes {'Acaso': 0.0053, 'Guloso': 0.2966, 'Oraculo': 0.0, 'Synthai': 0.0056}
+P284 escolha única: Synthai - acaso = 1.74 (t = 31.7); Synthai - guloso = 14.38 (t = 65.7); normalizado = 0.578
+P284 sequencial   : {'Acaso': -1.39, 'Guloso': 9.93, 'Oraculo': 26.84, 'Synthai': 20.0}; catastrofes {'Acaso': 0.0282, 'Guloso': 0.2247, 'Oraculo': 0.0, 'Synthai': 0.0138}
+P284 sequencial   : Synthai - acaso = 21.39 (t = 90.2); Synthai - guloso = 10.07 (t = 25.1); normalizado = 0.758
+P284 bandido      : {'Acaso': 61.05, 'Guloso': 8.49, 'Oraculo': 251.84, 'Synthai': 152.71}; catastrofes {'Acaso': 2.18, 'Guloso': 3.7, 'Oraculo': 0.0, 'Synthai': 0.325}
+P284 bandido      : Synthai - acaso = 91.67 (t = 13.4); Synthai - guloso = 144.23 (t = 17.8); normalizado = 0.476
+P285 modulos do agente = 6; arestas = 5 [('agente', 'intuicao'), ('agente', 'pensamento'), ('agente', 'percepcao'), ('agente', 'relacao'), ('agente', 'sentimento')]; interface = 15 atributos ['carga_do_humano', 'catastrofe', 'comite', 'discordancia', 'estimativa', 'explorar', 'horizonte', 'ler_sensor', 'nivel_antes', 'nivel_depois', 'nota', 'opcoes', 'perguntar', 'perguntas', 'restantes']; acessos ao escondido = 0; linhas de codigo = 154; linhagem em calculos = 9 classes
+P286 testes de unidade (testes, falhas) = (10, 0)
+P287 vetos falsos = 274; custo medio dv = 0.458; P* da P71 = 0.00222; limiar exato = 0.00324 (+45.7%)
+P289 minha taxa de erro (46/99): media = 0.47, intervalo 90% = [0.38, 0.55]
+FIM_OK status=0 segundos=62

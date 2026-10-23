@@ -1,0 +1,17 @@
+--- Parte 42 (0x2A: a premissa e o significante, a resposta e o significado) ---
+P701 thompson_estavel: sementes novas = 31.63; faixa = [25.4; 36.0]; dentro = True; desvio relativo = +0.030
+P701 surpresa_estavel: sementes novas = 43.53; faixa = [35.7; 50.5]; dentro = True; desvio relativo = +0.010
+P701 exposta_dano: sementes novas = 24.93; faixa = [12.8; 26.2]; dentro = True; desvio relativo = +0.278
+P701 bocpd_muda: sementes novas = 384.57; faixa = [307.9; 435.9]; dentro = True; desvio relativo = +0.034
+P701 maximo_estavel: sementes novas = 36.29; faixa = [28.6; 40.4]; dentro = True; desvio relativo = +0.052
+P701 maximo_dano: sementes novas = 64.56; faixa = [40.0; 81.8]; dentro = True; desvio relativo = +0.060
+P701 q_eps_estavel: sementes novas = 183.99; faixa = [153.5; 217.3]; dentro = True; desvio relativo = -0.008
+P701 morris_estavel: sementes novas = 80.87; faixa = [63.7; 90.1]; dentro = True; desvio relativo = +0.052
+P702 forma_en: acuracia = 0.7666 em 1607 exemplos (fracao de animais = 0.5022)
+P702 definicao: acuracia = 0.9303 em 1607 exemplos (fracao de animais = 0.5022)
+P702 forma_pt: acuracia = 0.7571 em 424 exemplos (fracao de animais = 0.3821)
+P702 indice de motivacao: ingles = 0.6197; portugues = 0.5974
+P703 107 perguntas: redundancia media da resposta com a premissa = 0.0513; retorno medio da premissa = 0.4829; mais redundantes = [(532, 0.1424), (544, 0.1406), (432, 0.12)]
+P704 conta: o arquivo binario tem 168 bytes
+P729 minha taxa de erro (128/353): media = 0.36, intervalo 90% = [0.32, 0.41]
+FIM_OK status=0 segundos=93

@@ -49,3 +49,66 @@ Isso muda duas previsões, e a mudança fica escrita aqui antes de qualquer núm
   Mas é a primeira vez que essa independência entre as partes é testada, e uma diferença seria um achado.
 
 As outras faixas ficam como estavam.
+
+## Medido (P3174, P3175; as saídas ficam em `reproducao/volta4/`)
+| | medido | faixa | |
+|---|---|---|---|
+| X1 | 127 de 127 partes sem exceção | todos | ✅ |
+| X2 | a unificação única: **170/170** | [170; 170] | ✅ |
+| X3 | **9** de 1.878 linhas mudaram (0,48%) | [5; 12] | ✅ |
+| X4 | **0** do mundo (7 do projeto, 2 da máquina), com cada parte ISOLADA | [0; 0] | ✅ |
+| X5 | **0** falhas: 725 + 27 + 40 + 72 + 55 testes | [0; 1] | ✅ |
+| X6 | **0** DIFERENTES; as 90 rodadas IGUAIS | [0; 0] | ✅ |
+| X7 | P1871: **0** arquivos "não referenciados" | [0; 2] | ✅ (abaixo) |
+| X8 | P3175: **191** arquivos sem uso | [175; 215] | ✅ (medido logo depois do registro, antes da volta) |
+
+**Mundo: 8 de 8.** **Sobre mim: 1 de 1.** Previ de 0 a 3 erros, com centro 1,25, e tive 0.
+
+### O que esta volta mostrou
+- **As partes são independentes entre si.** Esta é a primeira vez que cada parte rodou sozinha, num processo novo, e nenhuma linha do
+  mundo mudou. Nenhuma parte depende do estado deixado pelas anteriores (o gerador global, um cache, uma variável de módulo). É a
+  propriedade que a regra "semente fixa, gerador local" deveria garantir, agora medida em 127 partes.
+- **O tempo do processador explica-se por código:** 3,77 h somando as 127 partes, contra 6,33 h da volta 3 em blocos. Cada bloco fazia
+  a sua própria unificação (555 s), e 6,33 − 16 × 555/3.600 = 3,87 h, a 0,1 h do medido. A diferença entre os dois procedimentos é quase
+  toda a regressão repetida 16 vezes.
+- **X7: a previsão mudou o objeto previsto.** Pela leitura do código, a P1871 acusaria um arquivo, o de nome único da volta 3
+  (`bloco_122_123_126_127_128_129.txt`). Deu 0, porque eu escrevi esse nome no registro de X7, neste documento, e a P1871 casa o
+  nome-base em qualquer arquivo versionado. Conferido por `grep`: o nome aparece 1 vez neste arquivo. A faixa [0; 2] acertou, mas o
+  mecanismo que eu escrevi para o centro estava incompleto: faltava o próprio registro. É a Parte 53 ao pé da letra (uma previsão que
+  mora dentro do objeto previsto muda o objeto), pela segunda vez no loop, depois da Parte 129.
+- **A P3175 achou um defeito real.** O documento da Parte 124 não era citado por ninguém, porque a Parte 123 dizia "Parte 124" sem link
+  (a regra "ligar a nova parte a partir da anterior" quebrada). O link foi posto no commit 275e349. Das 191 acusações, 187 (120 + 58 + 6 + 3, somadas por código) estão em
+  `dialogo/`, `reproducao/`, `externos/` e `entregas/`. São rodadas, saídas e arquivos recebidos que ninguém cita pelo nome, e a
+  maioria é usada por glob (o verificador) ou é registro. Olhar cada uma fica como pendência (regra da Parte 72: cada acusação é olhada
+  antes de ser contada).
+
+### O procedimento, contado
+O contêiner reiniciou três vezes no começo desta volta (às 22h36, por volta das 23h08 e às 23h55), e uma quarta morte veio às 00h27.
+A causa mais provável, deduzida pelo que mudou: nas voltas 1 a 3 sempre havia uma espera ou uma vigilância rodando entre os meus
+turnos; na volta 4, até as 00h28, não havia, e o ambiente recolhe o contêiner por inatividade. Desde que voltei a deixar uma espera em
+segundo plano, nenhum processo morreu (1 h 16 min seguidas, das 00h28 às 01h44; a primeira versão deste texto dizia "3 h 45 min", confundindo com as horas de processador). Isso é uma hipótese de um lote (Parte 66), não uma causa medida. Mesmo
+assim, o procedimento por parte fica: ele sobrevive a um reinício de qualquer causa.
+
+## Engenharia reversa
+- **Quatro voltas, 0 diferenças do mundo nas quatro, e agora também com as partes isoladas.** O núcleo da SYNTHAI é reproduzível no
+  sentido mais forte que o loop consegue medir: em processos diferentes, em ordens diferentes e em dias diferentes.
+- **O padrão que se repetiu no loop (Partes 129, 130, 131) são as medidas sobre o projeto lendo os próprios registros:**
+  - a P1871 caiu de 130 para 22 porque as saídas citavam os arquivos;
+  - caiu de 22 para 1 porque a sua saída absolvia os acusados;
+  - caiu de 1 para 0 porque a MINHA PREVISÃO citou o último.
+  Toda medida de "o que é usado" num repositório que guarda as próprias medições converge para zero. O auditor acaba medindo o
+  arquivamento, não o uso. A P3175 resolve metade disso: exclui as saídas como fonte. A outra metade, os documentos das partes que
+  falam dos arquivos, fica, porque um documento que explica um arquivo é, de fato, um uso dele.
+- **Regra nova (Parte 131):** um nome de arquivo escrito numa previsão sobre arquivos entra na conta da própria previsão. Ou eu o descrevo
+  sem escrever o nome-base, ou somo o seu efeito no centro.
+
+## Funções e testes
+- **Funções:** `p3175_arquivos_sem_uso_v2` (com o teste dos dois controles) e `_parte_131`. A entrada `P3174v4` foi para a regressão,
+  que agora tem 171 entradas.
+- **Testes:** `test_p3175_arquivos_sem_uso_v2` e `test_volta4_regressao`, em `synthai/testes_parte128.py`.
+
+## Loop
+A volta 5 começa num clone novo, no commit desta parte, também uma parte por processo. A continuação está agendada; para parar, basta
+dizer "pare".
+
+➡ Anterior: [Parte 130](ASI_AGI_parte130_volta3.md).

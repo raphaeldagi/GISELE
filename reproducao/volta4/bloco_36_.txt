@@ -1,0 +1,11 @@
+--- Parte 36 (0x24: a exposicao; a lei do significado; Gray contra binario) ---
+P521 conta: custo da exposicao = 17.92; estacionario previsto = 61.07
+P521 surpresa com exposicao: estacionario = 61.48; custo do dano = 19.52; mundo que muda = 427.08
+P522 lei do significado: delta por palavra = 0.2461; delta por faixa de 100 postos = 0.3025; palavras = 31502
+P523 conta: atravessar o penhasco por passo: binario = 4.598e-12; Gray = 0.0157
+P523 binario, comeco penhasco: chegou ao otimo = 0.00; avaliacoes medias = None
+P523 binario, comeco acaso: chegou ao otimo = 0.16; avaliacoes medias = 159.1875
+P523 gray, comeco penhasco: chegou ao otimo = 1.00; avaliacoes medias = 112.76
+P523 gray, comeco acaso: chegou ao otimo = 1.00; avaliacoes medias = 308.75
+P549 minha taxa de erro (113/290): media = 0.39, intervalo 90% = [0.34, 0.44]
+FIM_OK status=0 segundos=168

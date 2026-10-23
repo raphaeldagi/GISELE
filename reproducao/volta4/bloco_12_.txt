@@ -1,0 +1,20 @@
+--- Parte 12 (a funcao auxiliar: planejar em varios passos) ---
+P181 valor total escolhendo so pelo agora = 2.233; prevendo o futuro = 5.067; razao teorica = 2.236
+P182 miope                    : retorno por episodio = 5.124, catastrofes por episodio = 0.0253, por passo = [27, 21, 12, 19, 22]
+P182 planejadora              : retorno por episodio = 19.770, catastrofes por episodio = 0.0173, por passo = [6, 8, 18, 13, 24]
+P182 planejadora_sem_integrar : retorno por episodio = 20.042, catastrofes por episodio = 0.0168, por passo = [5, 8, 9, 24, 21]
+P182 planejadora - miope: diferenca media = 14.646, dp = 0.626, t = 73.97
+P182 planejadora - planejadora_sem_integrar: diferenca media = -0.272, dp = 0.919, t = -0.94
+P183 P* por passo com a perda do futuro = [0.00397, 0.00408, 0.00419, 0.00431, 0.00444]
+P184 calibracao com 200 acoes: P media nas catastrofes = 0.147, nas seguras = 0.0046, razao = 31.9
+P184 calibracao com 50 acoes: P media nas catastrofes = 0.222, nas seguras = 0.0146, razao = 15.2
+P185 p8_x2: Upsilon em 20 mundos sorteados = 0.453 (dp 0.131, pior mundo 0.167)
+P185 p11_dosada: Upsilon em 20 mundos sorteados = 0.475 (dp 0.160, pior mundo 0.078)
+P186 modelo ruim (sigma 2) miope                    : retorno = 5.124, catastrofes = 0.0253
+P186 modelo ruim (sigma 2) planejadora              : retorno = 10.747, catastrofes = 0.0158
+P186 modelo ruim (sigma 2) planejadora_sem_integrar : retorno = 10.986, catastrofes = 0.0130
+P186 modelo ruim planejadora - miope: diferenca media = 5.622, dp = 0.914, t = 19.46
+P186 modelo ruim planejadora - planejadora_sem_integrar: diferenca media = -0.240, dp = 0.742, t = -1.02
+P189 capacidades de AGI: 4 de 12 (planejar em varios passos, num mundo de 5 passos)
+P188 minha taxa de erro (29/52): media = 0.56, intervalo 90% = [0.44, 0.66]
+FIM_OK status=0 segundos=52

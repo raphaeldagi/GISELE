@@ -7539,6 +7539,8 @@ def testes_de_regressao():
             p3174_comparar_voltas("reproducao/volta1", "reproducao/volta2")),
         "P3174v3": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"]) == (8, 0, [129]))(
             p3174_comparar_voltas("reproducao/volta2", "reproducao/volta3")),
+        "P3174v4": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (9, 0, [130], 127))(
+            p3174_comparar_voltas("reproducao/volta3", "reproducao/volta4")),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -17599,6 +17601,17 @@ def p3175_arquivos_sem_uso_v2(raiz=None, arquivos=None, saidas=("reproducao/", "
         if not any(re.search(r"(?<![\w])" + re.escape(n) + r"(?![\w])", t) for n in nomes for g, t in fontes.items() if g != f):
             soltos.append(f)
     return soltos
+
+
+def _parte_131():
+    print("\n=== Parte 131: volta 4 do loop, uma parte por processo (volta 3 contra volta 4) ===")
+    r = p3174_comparar_voltas("reproducao/volta3", "reproducao/volta4")
+    print(f"  arquivos de parte {r['blocos']}, sem exceção {r['blocos_sem_excecao']}; novas {r['novas']}")
+    print(f"  linhas {r['linhas']}, diferentes {r['diferentes']} ({r['fracao']:.4f}); categorias {r['categorias']}; mundo {r['mundo']}")
+    print(f"  P3175 (arquivos sem uso, sem ler saídas como fonte) neste repositório: {len(p3175_arquivos_sem_uso_v2())}")
+
+
+PARTES[131] = _parte_131
 
 PARTES[126] = _parte_126
 

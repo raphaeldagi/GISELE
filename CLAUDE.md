@@ -367,6 +367,10 @@ anterior, commit e push.
   Parte 130 (volta 3; 6/7): a P1871 caiu de 22 para 1 (previ 44 pela imagem do código): ela casa o NOME-BASE em qualquer arquivo versionado, e as voltas têm nomes-base iguais
   entre si e a saída da P1872 de uma volta cita os arquivos que acusou (a auditoria que acusa absolve na rodada seguinte). Regra: antes de prever um número que uma função
   conta sobre arquivos, ler as linhas que dizem O QUE ela casa, não a docstring.
+  Parte 131 (volta 4; 8/8): uma parte por PROCESSO (`reproducao/nova_volta_por_parte.sh`), porque o contêiner morria a cada ~30 min sem tarefa ativa entre turnos
+  (hipótese de 1 lote: deixar sempre uma espera/Monitor em segundo plano); com as 127 partes isoladas, 0 diferenças do mundo: as partes não dependem umas das outras.
+  `p3175_arquivos_sem_uso_v2` (saídas não contam como fonte) achou o link que faltava para a Parte 124. A P1871 foi a 0 porque a MINHA previsão escreveu o nome do último
+  arquivo: um nome escrito numa previsão sobre arquivos entra na conta da previsão.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a

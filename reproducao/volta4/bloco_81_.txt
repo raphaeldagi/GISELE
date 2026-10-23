@@ -1,0 +1,7 @@
+--- Parte 81 (0x51: o que nao serve) ---
+P1871 nao referenciados pelo nome: calculos.py 0 []; synthai/ 0 []; arquivos 0
+P1872 os arquivos acusados, olhados um a um: {}; sem uso: 0 []
+P1092 pNN novas (P1871-P1900) sem teste: 0 de 2: []
+P974 previsoes unilaterais da Parte 81: {}
+P1899 minha taxa de erro (202/660): media = 0.31, intervalo 90% = [0.28, 0.34]
+FIM_OK status=0 segundos=313

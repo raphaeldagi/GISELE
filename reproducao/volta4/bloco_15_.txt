@@ -1,0 +1,14 @@
+--- Parte 15 (SYNTHAI: o nome, a memoria que esquece, a sintese dos modulos) ---
+P213 classes renomeadas = 20; nomes antigos continuam como apelidos = True; regressao apos a troca = 170/170
+P214 armadilha nova, p8_x2     : catastrofes 1a metade = 0.0077, 2a metade = 0.0082
+P214 armadilha nova, memoria_v2: catastrofes 1a metade = 0.0078, 2a metade = 0.0076
+P214 memoria v2 - realista: diferenca media no liquido = -0.140, dp = 0.195, t = -2.26
+P214 memorias vivas ao fim (media) = 7.6; acoes seguras marcadas como suspeitas = 0.106
+P215 AUC da calibracao (0.5 = acaso): armadilha conhecida = 0.913, armadilha nova = 0.748
+P216 normal: catastrofes = {'velha': 0.014, 'integral': 0.0152}; integral - velha = 0.259, dp = 0.728, t = 1.12
+P216 armadilha nova: catastrofes = {'velha': 0.0198, 'integral': 0.0253}; integral - velha = -0.057, dp = 0.844, t = -0.21
+P218 punicao 9: inspecao aprendida = 0.1009, trapaca aprendida = 0.0091
+P218 punicao 99: inspecao aprendida = 0.0130, trapaca aprendida = 0.0096
+P218 equilibrio teorico (P77, punicao 9) = inspecao 0.10, trapaca 0.01
+P219 minha taxa de erro (34/62): media = 0.55, intervalo 90% = [0.44, 0.65]
+FIM_OK status=0 segundos=574

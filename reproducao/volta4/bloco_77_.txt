@@ -1,0 +1,7 @@
+--- Parte 77 (0x4D: as duas abertas) ---
+P1751 rodada 09 nova (exp e log proprios) contra a original: 13 numeros, 6 mudaram, maior diferenca relativa 1.116e-13
+P1722 rodadas com funcoes da biblioteca depois da Parte 77: {'48': (['log2'], True, [])}
+P1092 pNN novas (P1751-P1780) sem teste: 0 de 1: []
+P974 previsoes unilaterais da Parte 77: {}
+P1779 minha taxa de erro (201/641): media = 0.31, intervalo 90% = [0.28, 0.34]
+FIM_OK status=0 segundos=0

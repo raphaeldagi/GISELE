@@ -1,0 +1,9 @@
+--- Parte 56 (0x38: os empates) ---
+P1121 empates exatos nas escolhas impressas: rodada12 = 9; rodada14 = 2; rodada18 = 0; rodada19 = 0; rodada20 = 0; rodada24 = 0; rodadas com empate: 2 de 6
+P1122 sinonimos perfeitos: 0.2804 das 77503 palavras tem gemeo; o maior grupo (14): ['doodad', 'doohickey', 'doojigger', 'gubbins', 'thingamabob', 'thingamajig', 'thingmabob', 'thingmajig', 'thingumabob', 'thingumajig', 'thingummy', 'whatchamacallit', 'whatchamacallum', 'whatsis']
+P1123 mesma soma de digitos em base 16 e 10 (1..4095): 431 = 0.1053 (conta continua 0.0308; com a rede de multiplos de 3: x3)
+P1123 mesma soma de digitos em base 16 e 10 (1..65535): 5161 = 0.0788 (conta continua 0.0308; com a rede de multiplos de 3: x3)
+P1092 pNN novas (P1091-P1150) sem teste: 0 de 8: []
+P974 previsoes unilaterais da Parte 56: {56: (2, 0, [])}
+P1149 minha taxa de erro (166/474): media = 0.35, intervalo 90% = [0.32, 0.39]
+FIM_OK status=0 segundos=3

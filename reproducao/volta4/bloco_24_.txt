@@ -1,0 +1,35 @@
+--- Parte 24 (o pensamento diferenciado: ajustar ate convergir) ---
+P302 catastrofes por historico de treino = 37.3
+P302 gradiente_3  : w3 = 0.760; log-perda treino = 0.01671, teste = 0.01830
+P302 gradiente_10 : w3 = 0.752; log-perda treino = 0.01139, teste = 0.01276
+P302 gradiente_30 : w3 = 0.852; log-perda treino = 0.00978, teste = 0.01112
+P302 gradiente_100: w3 = 0.950; log-perda treino = 0.00958, teste = 0.01100
+P302 newton       : w3 = 0.992; log-perda treino = 0.00953, teste = 0.01095
+P302 newton_firth : w3 = 0.964; log-perda treino = 0.00955, teste = 0.01092
+P303 gradiente_3  : w3 = 0.729; sem leitura (2324 catastrofes): prevista/real com 0 = 0.444, com o neutro = 0.548
+P303 newton       : w3 = 0.932; sem leitura (2279 catastrofes): prevista/real com 0 = 0.897, com o neutro = 1.063
+P303 newton_firth : w3 = 0.907; sem leitura (2352 catastrofes): prevista/real com 0 = 0.907, com o neutro = 1.082
+P304 taxas por epoca (eta n lambda) = [0.034, 0.245, 0.607, 2.485]; kappa mediano = 74; epocas pedidas pela teoria = [4, 54, 74, 105, 114, 123, 168, 172, 182, 237]
+P304 gradiente com 118 epocas: |w3 - w3*| medio = 0.0665, maximo = 0.1454
+P304 gradiente com 237 epocas: |w3 - w3*| medio = 0.0675, maximo = 0.1414
+P304 piso com eta = 0,01 e 1000 epocas: |w3 - w3*| medio = 0.0147, maximo = 0.0341
+P304 vies de primeira ordem (Cordeiro-McCullagh) delta3 = -0.0296; Firth - maxima verossimilhanca = -0.0286
+P305 sequencial: {'exploradora': 19.896, 'pensante': 19.875, 'pensante_neutro': 20.142}; catastrofes {'exploradora': 0.0165, 'pensante': 0.0234, 'pensante_neutro': 0.0197}
+P305 sequencial: pensante - exploradora = -0.021, dp = 0.520, t = -0.22
+P305 sequencial: pensante_neutro - exploradora = 0.247, dp = 0.668, t = 2.02
+P305 escolha única: {'exploradora': 1.488, 'pensante': 1.344, 'pensante_neutro': 1.344}; catastrofes {'exploradora': 0.0053, 'pensante': 0.0099, 'pensante_neutro': 0.0099}
+P305 escolha única: pensante - exploradora = -0.144, dp = 0.173, t = -4.56
+P305 escolha única: pensante_neutro - exploradora = -0.144, dp = 0.173, t = -4.56
+P305 bandido: {'exploradora': 0.53, 'pensante': 0.459, 'pensante_neutro': 0.47}; catastrofes {'exploradora': 0.8775, 'pensante': 1.24, 'pensante_neutro': 1.1975}
+P305 bandido: pensante - exploradora = -0.071, dp = 0.189, t = -1.68
+P305 bandido: pensante_neutro - exploradora = -0.060, dp = 0.143, t = -1.88
+P305b (exploratorio) gradiente_3: prevista/real no topo = 0.818, em todas = 0.787; taxa real no topo = 0.0442; perguntas = 0.303; catastrofes = 0.0045; aceitas sem perguntar = 0.386 do topo, P media = 0.0017, taxa real = 0.0050
+P305b (exploratorio) newton_firth: prevista/real no topo = 0.774, em todas = 0.927; taxa real no topo = 0.0449; perguntas = 0.285; catastrofes = 0.0088; aceitas sem perguntar = 0.567 do topo, P media = 0.0013, taxa real = 0.0076
+P306 Newton, erro por iteracao = ['8.9e+00', '7.9e+00', '6.1e+00', '4.4e+00', '3.1e+00', '1.9e+00', '8.4e-01', '1.8e-01', '9.3e-03', '2.6e-05', '2.4e-10']
+P307 tudo         : intercepto = -3.001, inclinacao = 1.501 (n = 400000)
+P307 seleciona_x  : intercepto = -3.005, inclinacao = 1.504 (n = 80000)
+P307 caso_controle: intercepto = -0.016, inclinacao = 1.484 (n = 56969)
+P307 deslocamento do intercepto no caso-controle = 2.985; ln(1/0,05) = 2.996
+P308 bits por opcao: entropia = 0.0472; restam com Newton = 0.0158; com o gradiente de 3 epocas = 0.0264
+P309 minha taxa de erro (59/133): media = 0.44, intervalo 90% = [0.37, 0.51]
+FIM_OK status=0 segundos=610

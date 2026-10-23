@@ -1,0 +1,8 @@
+--- Parte 58 (0x3A: a primeira diferenca) ---
+P1181 lemas portugueses: primeira diferenca media na posicao 5.4928 (37724 pares); invertidos pela ordem portuguesa: 3738 (0.405 por palavra acentuada, 9236 acentuadas)
+P1182 tamanho pt/en: razao media 1.1654 em 38163 pares; o portugues e mais longo em 0.4600 deles
+P1183 primeiro digito hexadecimal (n = 1..10000): 2^n [0, 2500, 2500, 0, 2500, 0, 0, 0, 2500, 0, 0, 0, 0, 0, 0, 0]; 3^n [0, 2506, 1456, 1044, 803, 660, 556, 482, 418, 383, 347, 313, 288, 268, 247, 229] (digito 1: 0.2506; Benford 0,25)
+P1092 pNN novas (P1181-P1210) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 58: {58: (3, 0, [])}
+P1209 minha taxa de erro (168/486): media = 0.35, intervalo 90% = [0.31, 0.38]
+FIM_OK status=0 segundos=1
