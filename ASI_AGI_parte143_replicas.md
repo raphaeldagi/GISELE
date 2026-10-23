@@ -67,3 +67,10 @@ Os lotes de (c) até aqui deram z = +1,81 e +2,38 (Parte 140, inglês), −0,76 
 A média não sai de ½ para um lado só, então o defeito provável não é um viés. É a LARGURA: o desvio de uma fração por reservatório pode
 ser maior que o hipergeométrico. Um caminho de medida novo, registrado antes de rodar: o desvio-padrão das 300 frações por reservatório
 (português e inglês, as mesmas sementes de (c) e da Parte 140) dividido por √(¼·(N − k)/(N − 1)/k), em **[0,933; 1,067]** em cada um.
+
+**O teste da largura:** português 1,005, inglês 1,041, os dois dentro de [0,933; 1,067]: ✅ ✅. A largura por reservatório está certa.
+
+**A hipótese que sobra**, ainda sem crédito: sementes CONSECUTIVAS dariam reservatórios correlacionados, e o lote inteiro andaria junto. Isso
+desloca a média do lote sem mexer no desvio dentro dele. O teste, num mundo pequeno, para ter muitos lotes, registrado antes de rodar:
+N = 2.000, k = 100, 60 lotes de 300 sementes consecutivas (o lote b começa em 10.000·b). Os 60 valores de z da média de cada lote devem ter
+desvio em [0,85; 1,15], que é 1 ± 1,645/√118. Um desvio acima de 1,15 confirma a correlação entre sementes consecutivas.
