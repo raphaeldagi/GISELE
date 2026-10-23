@@ -111,3 +111,8 @@ Se errar de novo, para o mesmo lado, a régua ou o gerador têm um defeito a pro
 **Lote novo (semente 1370):** 0,03815, dentro da faixa: ✅. Os dois lotes juntos (40.000 grupos) dão 0,037325, z = −1,90, os dois abaixo da
 forma fechada. Ainda é |z| < 2,5. Mas dois lados iguais pedem um terceiro lote, maior, registrado aqui antes de rodar: semente 13700,
 100.000 grupos, faixa 0,03917 ± 1,645·√(0,0392·0,9608/100.000) = [0,03816; 0,04018].
+
+**Terceiro lote:** 0,03844 (z = −1,19), dentro da faixa: ✅. Os três juntos (140.000 grupos): 0,038121, z = −2,02. Cada lote acertou sozinho,
+e os três ficaram do mesmo lado. Antes de qualquer mecanismo, um caminho independente da régua, registrado aqui antes de rodar: o acerto
+sorteado por `random() < 1/3` em vez de `randrange(3) == 0`, contando o contraste direto nas recompensas (sem passar pela vantagem).
+Semente 13701, 100.000 grupos, faixa [0,03816; 0,04018].
