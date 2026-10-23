@@ -103,3 +103,5 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅
 - **Funções:** `p3193_enantiodromia`, `p3194_compensacao` e `_parte_142`. Entradas P3193 e P3194 na regressão.
 - **Módulo:** `synthai.passos.descer` ganhou `guardar=` (os iterados).
 - **Testes:** `synthai/testes_parte142.py`.
+
+➡ Próxima: [Parte 143](ASI_AGI_parte143_replicas.md).
