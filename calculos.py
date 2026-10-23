@@ -7563,6 +7563,7 @@ def testes_de_regressao():
         "P3195": (lambda r: (r[3], round(r[0], 4), round(r[2], 5)) == (53058, 0.9844, 0.49766))(p3195_fluxo_em_portugues()),
         "P3196": (lambda r: abs(r[2][0] - 3) < 1e-6 and round(r[5][1], 5) == 0.0003 and round(r[7][1], 5) == 0.00008)(p3196_benford16_potencias()),
         "P3197": (lambda r: (round(r[0][2][0], 4), round(r[0][16][0], 4), r[2]) == (0.8756, 0.8467, False))(p3197_grupos_uteis_mundo_novo()),
+        "P3198": (lambda r: (round(r["Q"], 4), round(r["G2"], 4), round(r["G8"], 4)) == (0.1533, 0.2017, 0.1707))(p3198_grpo_no_jogo_de_palavras()),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18229,6 +18230,35 @@ def _parte_145():
 
 
 PARTES[145] = _parte_145
+
+
+def p3198_grpo_no_jogo_de_palavras(sementes=(43, 44, 45), episodios=5000, avaliacao=1000):
+    """(a)-(f) da Parte 147: a GRPO (synthai/grpo_palavras.py, de rl_grupos.py) contra o Q-learning (synthai/palavras_rl.py, de word_rl_lab) no
+    jogo de palavras com o dicionario embutido, o mesmo numero de episodios e o mesmo avaliador guloso. Devolve {nome: media das sementes}."""
+    from synthai import palavras_rl as P
+    from synthai.grpo_palavras import treinar
+    dic = P.Dicionario(P.EMBEDDED_WORDS)
+    acc = {"Q": [], "G2": [], "G8": [], "sem2": [], "sem8": []}
+    for sem in sementes:
+        cfg = P.Config(episodios=episodios, avaliacao=avaliacao, seed=sem)
+        ag, _, _ = P.train(cfg, dic)
+        acc["Q"].append(P.evaluate(cfg, dic, ag)["guloso"][0])
+        for G in (2, 8):
+            a, s, n = treinar(dic, episodios, G, seed=sem)
+            acc["G%d" % G].append(P.evaluate(cfg, dic, a)["guloso"][0])
+            acc["sem%d" % G].append(s / n)
+    out = {k: sum(v) / len(v) for k, v in acc.items()}
+    out["G8-Q"] = out["G8"] - out["Q"]
+    return out
+
+
+def _parte_147():
+    print("\n=== Parte 147: a GRPO no jogo de palavras do dicionario contra o Q-learning ===")
+    r = p3198_grpo_no_jogo_de_palavras()
+    print(f"  P3198 (a) Q {r['Q']:.4f}; (b) GRPO G=2 {r['G2']:.4f}; (c) G=8 {r['G8']:.4f}; (d) sem contraste G=2 {r['sem2']:.4f}; (e) G=8 {r['sem8']:.4f}; (f) G8 - Q {r['G8-Q']:+.4f}")
+
+
+PARTES[147] = _parte_147
 
 PARTES[126] = _parte_126
 

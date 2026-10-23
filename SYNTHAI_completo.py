@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 145, perguntas P1 a P3197).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 147, perguntas P1 a P3198).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (18241 linhas)
+# calculos.py  (18271 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7601,6 +7601,7 @@ def testes_de_regressao():
         "P3195": (lambda r: (r[3], round(r[0], 4), round(r[2], 5)) == (53058, 0.9844, 0.49766))(p3195_fluxo_em_portugues()),
         "P3196": (lambda r: abs(r[2][0] - 3) < 1e-6 and round(r[5][1], 5) == 0.0003 and round(r[7][1], 5) == 0.00008)(p3196_benford16_potencias()),
         "P3197": (lambda r: (round(r[0][2][0], 4), round(r[0][16][0], 4), r[2]) == (0.8756, 0.8467, False))(p3197_grupos_uteis_mundo_novo()),
+        "P3198": (lambda r: (round(r["Q"], 4), round(r["G2"], 4), round(r["G8"], 4)) == (0.1533, 0.2017, 0.1707))(p3198_grpo_no_jogo_de_palavras()),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18268,6 +18269,35 @@ def _parte_145():
 
 PARTES[145] = _parte_145
 
+
+def p3198_grpo_no_jogo_de_palavras(sementes=(43, 44, 45), episodios=5000, avaliacao=1000):
+    \"\"\"(a)-(f) da Parte 147: a GRPO (synthai/grpo_palavras.py, de rl_grupos.py) contra o Q-learning (synthai/palavras_rl.py, de word_rl_lab) no
+    jogo de palavras com o dicionario embutido, o mesmo numero de episodios e o mesmo avaliador guloso. Devolve {nome: media das sementes}.\"\"\"
+    from synthai import palavras_rl as P
+    from synthai.grpo_palavras import treinar
+    dic = P.Dicionario(P.EMBEDDED_WORDS)
+    acc = {"Q": [], "G2": [], "G8": [], "sem2": [], "sem8": []}
+    for sem in sementes:
+        cfg = P.Config(episodios=episodios, avaliacao=avaliacao, seed=sem)
+        ag, _, _ = P.train(cfg, dic)
+        acc["Q"].append(P.evaluate(cfg, dic, ag)["guloso"][0])
+        for G in (2, 8):
+            a, s, n = treinar(dic, episodios, G, seed=sem)
+            acc["G%d" % G].append(P.evaluate(cfg, dic, a)["guloso"][0])
+            acc["sem%d" % G].append(s / n)
+    out = {k: sum(v) / len(v) for k, v in acc.items()}
+    out["G8-Q"] = out["G8"] - out["Q"]
+    return out
+
+
+def _parte_147():
+    print("\\n=== Parte 147: a GRPO no jogo de palavras do dicionario contra o Q-learning ===")
+    r = p3198_grpo_no_jogo_de_palavras()
+    print(f"  P3198 (a) Q {r['Q']:.4f}; (b) GRPO G=2 {r['G2']:.4f}; (c) G=8 {r['G8']:.4f}; (d) sem contraste G=2 {r['sem2']:.4f}; (e) G=8 {r['sem8']:.4f}; (f) G8 - Q {r['G8-Q']:+.4f}")
+
+
+PARTES[147] = _parte_147
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -18280,7 +18310,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (576 linhas)
+# CLAUDE.md  (580 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -18696,12 +18726,16 @@ anterior, commit e push.
   mundo. A volta morreu duas vezes com reinícios do contêiner e foi retomada parte a parte nas duas.
   Parte 145 (os grupos úteis da GRPO num segundo mundo; a pendência da 131): a relação ret(G) − ret(2) = 0,033·ln(U_G/U_2) replicou (desvios ≤ 0,0071, 2 lotes) e os U também; a ORDEM
   errou, e valia 0,51 (o par G2/G4 tinha diferença 0,0022 contra ruído 0,0076). Regra: uma previsão de ORDEM escreve P = Π Φ(diferença/σ) dos pares vizinhos ao lado e só vira faixa de 90%
-  se P ≥ 0,9. O contêiner é recolhido entre turnos ("up 0 min" em 4 despertares seguidos): a volta só avança durante um turno em andamento.
+  se P ≥ 0,9. O contêiner é recolhido entre turnos ("up 0 min" em 4 despertares seguidos): a volta só avança durante um turno em andamento. (j) errou ("up" 211 min) porque o
+  despertar veio logo depois de um turno longo: uma previsão sobre um sistema que depende de uma condição (a ociosidade antes) escreve a condição na previsão.
   Parte 144 (volta 9; 6/8): a volta achou a regressão VERMELHA no repositório (P3188 e P3191 fixadas sobre partes que eu chamei de fechadas, mas a 135 ganhou vereditos
   depois): uma parte só é fechada quando todas as suas previsões têm veredito, inclusive as de uma volta em andamento; e a regressão inteira roda depois de QUALQUER mudança num
   arquivo que uma régua lê, não só no código. R7 errou por aplicar um mecanismo (rodadas achadas por glob) a R8 e não a R7: mecanismo comum se escreve uma vez, antes das previsões.
   Parte 146 (volta 10; 7/8): R7 errou porque o mecanismo "comum" não era: a P1871 lê as saídas da reprodução (o verificador da volta 9 escreve "Rodada91: IGUAIS" e absolve as
   rodadas), e a P3175 não. Regra: antes de chamar um mecanismo de comum a duas previsões, escrever ao lado de cada uma que fontes a régua dela lê.
+  Parte 147 (a GRPO de rl_grupos.py no jogo de palavras de word_rl_lab, synthai/grpo_palavras.py; 4/6, (m) 5/6): com o mesmo número de episódios, a GRPO sem crítico empata ou ganha
+  do Q-learning (G = 8 +0,017, G = 2 +0,048), aprendendo com 2-6% dos episódios (um acerto em G vale √(G−1)); 2 lotes. Regras: uma proporção cujo p depende de algo APRENDIDO não é
+  forma fechada (a variância do treino entra); faixa de fração com poucos itens se escreve como contagem; o nome do arquivo da parte leva o tema (a régua procura parteN_*).
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -18850,7 +18884,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -22479,6 +22513,92 @@ def retorno_esperado(pesos, contextos):
     for f in contextos:
         t += math.exp(log_softmax(logits(pesos, f))[acao_otima(f)])
     return t / len(contextos)
+"""
+
+# ====================================================================================================
+# synthai/grpo_palavras.py  (81 linhas)
+# ====================================================================================================
+FONTES['synthai/grpo_palavras.py'] = """\"\"\"A GRPO de `externos/pacote3/rl_grupos.py` aplicada ao jogo de palavras de `externos/word_rl_lab/` (Parte 147): dois módulos recebidos,
+juntos, sobre o dicionário. A política é um softmax tabular por prefixo (logits θ[(prefixo, ação)]); cada grupo são G episódios na MESMA
+grade e com o MESMO início (o "mesmo enunciado" da GRPO); a vantagem é a recompensa normalizada pelo grupo (`vantagens_grupo`, Parte 137);
+o passo é o gradiente REINFORCE de log π ao longo de cada trajetória: θ[s, b] += taxa · A · (1[b = a] − π(b|s)). Sem crítico, sem tabela de
+valor. O ambiente, as ações e a recompensa são os de `synthai.palavras_rl` (Parte 111), reusados.
+\"\"\"
+import math
+import random
+
+from synthai.grpo_bandido import vantagens_grupo
+from synthai.palavras_rl import (FAIL_REWARD, STOP, WordGridEnv, valid_actions, word_score)
+
+
+class AgenteGRPO:
+    def __init__(self, taxa=0.5, seed=0):
+        self.taxa = taxa
+        self.rng = random.Random(seed)
+        self.theta = {}
+
+    def probs(self, s, acoes):
+        z = [self.theta.get((s, a), 0.0) for a in acoes]
+        m = max(z)
+        e = [math.exp(v - m) for v in z]
+        t = sum(e)
+        return [v / t for v in e]
+
+    def choose(self, s, acoes, mode):
+        \"\"\"A interface do QAgent: 'greedy' = argmax dos logits (desempate pelo gerador), senão amostra de π.\"\"\"
+        if mode == "random":
+            return self.rng.choice(acoes)
+        if mode == "greedy":
+            z = [self.theta.get((s, a), 0.0) for a in acoes]
+            m = max(z)
+            return self.rng.choice([a for a, v in zip(acoes, z) if v == m])
+        p = self.probs(s, acoes)
+        return self.rng.choices(acoes, weights=p, k=1)[0]
+
+    def value(self, s, a):
+        return self.theta.get((s, a), 0.0)
+
+    def update(self, *args):  # o run_episode chama update; a GRPO atualiza por grupo, não por passo
+        pass
+
+
+def episodio_amostrado(env, dic, agente, inicio):
+    \"\"\"Um episódio na grade ATUAL do ambiente, a partir de `inicio`, amostrando de π. Devolve (trajetória [(s, ações, a)], recompensa, válida).\"\"\"
+    path, prefix, traj = [inicio], env.letter(inicio), []
+    while True:
+        acts = valid_actions(env, path)
+        if not acts:
+            return traj, FAIL_REWARD, False
+        nomes = list(acts)
+        a = agente.choose(prefix, nomes, "amostra")
+        traj.append((prefix, nomes, a))
+        if a == STOP:
+            ok = dic.is_word(prefix)
+            return traj, (float(word_score(prefix)) if ok else FAIL_REWARD), ok
+        path.append(acts[a])
+        prefix += a
+
+
+def treinar(dic, episodios=5000, G=8, taxa=0.5, tamanho=5, min_len=3, max_len=5, seed=42):
+    \"\"\"episodios/G grupos; cada grupo sorteia uma grade e um início e roda G episódios nela. Devolve (agente, grupos sem contraste, grupos).\"\"\"
+    env = WordGridEnv(tamanho, min_len, max_len, rng=random.Random(seed))
+    agente = AgenteGRPO(taxa, seed=seed + 1)
+    sem = 0
+    n = episodios // G
+    for _ in range(n):
+        env.reset()
+        inicio = (env.rng.randrange(env.size), env.rng.randrange(env.size))
+        rollouts = [episodio_amostrado(env, dic, agente, inicio) for _ in range(G)]
+        vant = vantagens_grupo([r for _, r, _ in rollouts])
+        if all(v == 0.0 for v in vant):
+            sem += 1
+            continue
+        for (traj, _, _), A in zip(rollouts, vant):
+            for s, nomes, a in traj:
+                p = agente.probs(s, nomes)
+                for b, pb in zip(nomes, p):
+                    agente.theta[(s, b)] = agente.theta.get((s, b), 0.0) + taxa * A / G * ((1.0 if b == a else 0.0) - pb)
+    return agente, sem, n
 """
 
 # ====================================================================================================
@@ -31276,6 +31396,52 @@ class TestesParte145(unittest.TestCase):
         self.assertFalse(ordem)  # G = 4 acima de G = 2: a diferença esperada (0,0022) está abaixo do ruído (0,0076)
         for d in desvio.values():
             self.assertLess(abs(d), 0.017)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte147.py  (41 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte147.py'] = """\"\"\"Testes da Parte 147: synthai/grpo_palavras.py (a GRPO de rl_grupos.py no jogo de word_rl_lab) e a P3198 pelo nome.\"\"\"
+import random
+import unittest
+
+import calculos as c
+from synthai import palavras_rl as P
+from synthai import grpo_palavras as g
+
+
+class TestesParte147(unittest.TestCase):
+    def test_probs_somam_um(self):
+        a = g.AgenteGRPO()
+        a.theta[("AB", "C")] = 2.0
+        p = a.probs("AB", ["C", "D", P.STOP])
+        self.assertAlmostEqual(sum(p), 1.0, places=14)
+        self.assertGreater(p[0], p[1])
+
+    def test_greedy_escolhe_o_maior_logit(self):
+        a = g.AgenteGRPO()
+        a.theta[("X", "Y")] = 1.0
+        self.assertEqual(a.choose("X", ["Z", "Y"], "greedy"), "Y")
+
+    def test_episodio_amostrado_e_trajetoria(self):
+        env = P.WordGridEnv(5, 3, 5, rng=random.Random(1))
+        env.reset()
+        traj, r, ok = g.episodio_amostrado(env, P.Dicionario(P.EMBEDDED_WORDS), g.AgenteGRPO(seed=2), (0, 0))
+        self.assertTrue(len(traj) >= 1)
+        self.assertIn(r, (P.FAIL_REWARD,) + tuple(float(P.word_score(w)) for w in ["abc", "abcd", "abcde"]) if not ok else (r,))
+
+    def test_treinar_conta_grupos(self):
+        a, sem, n = g.treinar(P.Dicionario(P.EMBEDDED_WORDS), episodios=200, G=4, seed=3)
+        self.assertEqual(n, 50)
+        self.assertLessEqual(sem, n)
+
+    def test_p3198_grpo_no_jogo_de_palavras(self):
+        r = c.p3198_grpo_no_jogo_de_palavras()
+        self.assertEqual((round(r["Q"], 4), round(r["G2"], 4), round(r["G8"], 4)), (0.1533, 0.2017, 0.1707))
 
 
 if __name__ == "__main__":
@@ -52335,7 +52501,7 @@ as duas o citam.
 """
 
 # ====================================================================================================
-# ASI_AGI_parte145_grupos_uteis.md  (105 linhas)
+# ASI_AGI_parte145_grupos_uteis.md  (119 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte145_grupos_uteis.md'] = """# Parte 145 — Os grupos úteis da GRPO num segundo mundo, e o recolhimento do contêiner medido
 
@@ -52434,7 +52600,15 @@ cuja chance era a de uma moeda. É o piso do caos da Parte 30 (não prever difer
 - **Funções:** `p3197_grupos_uteis_mundo_novo` e `_parte_145`. Entrada P3197 na regressão.
 - **Testes:** `synthai/testes_parte145.py`.
 
-O placar (m) e o "sobre mim" fecham quando (j) for medida, no próximo despertar.
+**(j), medida no despertar seguinte (21h47): "up" de 3 h 31 min = 211 minutos**, fora de [0; 5]: ❌. O lembrete das 20h37 esperou o fim do
+meu turno, que durou das 18h16 às 21h47 (mantido aberto para a volta 9 e a 10 avançarem), e chegou logo depois, com o contêiner vivo. A
+previsão não condicionou no tempo de OCIOSIDADE antes do despertar, que é a variável que a hipótese diz que move o recolhimento: com 0
+minutos de ociosidade, a hipótese prevê um contêiner vivo. Ela não foi testada; a previsão foi mal formulada. A hipótese continua com os 4
+despertares anteriores (todos depois de ociosidade, todos "up 0 min").
+
+Do mundo: (a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (j) ❌
+
+**Mundo: 7 de 9**, mais a rodada 95 (k) ✅. **Sobre mim:** 2 erros, em [0; 5]: ✅.
 
 ➡ Próxima: [Parte 146](ASI_AGI_parte146_volta10.md).
 
@@ -52442,6 +52616,12 @@ O placar (m) e o "sobre mim" fecham quando (j) for medida, no próximo despertar
 O primeiro dígito hexadecimal de 3ⁿ, n = 1 a 500, por inteiros grandes nos dois lados (`int` do Python, `BigInteger` do Java), e o posto
 efetivo dos bits desses dígitos (Jacobi, exp e log próprios), como na P3190.
 - **(k)** a rodada 95 em **[1; 1]** (1 = IGUAIS). Mecanismo: o dígito é aritmética inteira exata nos dois lados; o resto é o da rodada 93.
+
+**O placar (m):** m1 = 9 em [9; 11], m2 = 4 em [4; 6], m3 = 0,127 em [0,10; 0,16], m4 = 0,778 em [0,55; 1,00], m5 = 0 em [0; 0] e m6 = 1 surpresa
+em [0; 2]: **6 de 6**. A surpresa foi (j): erro de 206 minutos contra uma largura de 5.
+
+**Regra (Parte 145, complemento):** uma previsão sobre um sistema que depende de uma condição (aqui, a ociosidade antes do despertar) escreve
+a condição na própria previsão. Sem ela, o mesmo número testa hipóteses diferentes conforme o que acontecer antes.
 """
 
 # ====================================================================================================
@@ -52509,7 +52689,117 @@ seguinte"), agora com a saída do verificador no papel da auditoria. A conta pel
 **Regra (Parte 146, complemento da 144):** antes de chamar um mecanismo de comum a duas previsões, escrever ao lado de cada uma QUE fontes a
 régua dela lê. O mecanismo só é comum se as fontes são as mesmas.
 
-➡ Próxima: [Parte 147](ASI_AGI_parte147.md).
+➡ Próxima: [Parte 147](ASI_AGI_parte147_grpo_palavras.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte147_grpo_palavras.md  (105 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte147_grpo_palavras.md'] = """# Parte 147 — Dois módulos recebidos, juntos: a GRPO no jogo de palavras do dicionário
+
+↩ Nasce da Parte 137 (a GRPO de `rl_grupos.py`, num bandido) e da Parte 111 (o jogo de palavras de `word_rl_lab`, com Q-learning). O pedido
+"use tudo que enviei em cada módulo" pede também a combinação: a GRPO como aprendiz no jogo do dicionário.
+
+## O recolhimento do contêiner, de novo
+Este despertar (22h50) veio depois de cerca de 62 minutos de ociosidade, e o contêiner estava "up 0 min". É o 5º lote a favor da hipótese
+da Parte 145, e o primeiro registrado com a condição escrita: o contêiner é recolhido quando a sessão fica ociosa por algum tempo.
+
+## O desenho
+`synthai/grpo_palavras.py`: uma política softmax tabular por prefixo. Cada grupo são G episódios na MESMA grade e com o MESMO início (o
+"mesmo enunciado" da GRPO). A vantagem vem da Parte 137, e o passo é o gradiente REINFORCE de log π. Não há crítico nem tabela de valor.
+O ambiente, as ações, a recompensa e o avaliador são os de `synthai.palavras_rl`, reusados.
+
+**O caso mínimo, rodado antes (regra da Parte 84),** com as sementes 5 e 6:
+- com 1.000 episódios: Q-learning 0,018 e 0,016 de palavras válidas no avaliador guloso; GRPO 0,04 a 0,096;
+- com 5.000 episódios (sementes 5, 6 e 7): Q-learning média 0,162 (desvio 0,015), GRPO com G = 2 média 0,168 (0,018) e GRPO com G = 8
+  média 0,195 (0,034); grupos sem contraste 0,984 (G = 2) e 0,932 (G = 8).
+
+**O mecanismo, escrito antes:** quase todo grupo é só de fracassos (recompensa −1 em todos) e não tem contraste. Mas um grupo com UM acerto
+em G dá ao acerto a vantagem √(G − 1): √7 = 2,65 para G = 8. A GRPO aprende só com os raros acertos, e com força. O Q-learning aprende com
+todos os passos, devagar. Com poucos episódios, a força dos raros acertos ganha; com muitos, os dois se aproximam.
+
+**O teste:** as sementes 43, 44 e 45, que não aparecem na calibração nem na Parte 111 (a 42, cujo Q-learning deu 0,130 na Parte 111, ficaria
+contaminada). São 5.000 episódios, avaliação de 1.000, e a medida é a média das três sementes.
+
+## Previsões, registradas antes de qualquer execução do caso de teste
+A faixa de cada média de três sementes é 1,645·√(desvio²/3 + desvio²/3)·1,36, isto é, o erro do centro mais o da medida.
+
+**Procedência:**
+- forma fechada binomial: (d), (e);
+- calibração: (a), (b), (c), (f).
+
+O centro de "quantos erros" é 2 × 0,10 + 4 × 0,25 = 1,2.
+
+- **(a)** Q-learning, média das três sementes, em **[0,135; 0,188]**
+- **(b)** GRPO com G = 2 em **[0,136; 0,200]**
+- **(c)** GRPO com G = 8 em **[0,133; 0,257]**
+- **(d)** fração de grupos sem contraste com G = 2 em **[0,9815; 0,9873]**. O binomial com 2.500 grupos dá desvio 0,0025 por semente, 0,0014 na média
+  de três, e o erro do centro é 0,0010; 1,645·√(0,0014² + 0,0010²).
+- **(e)** fração de grupos sem contraste com G = 8 em **[0,912; 0,953]**. O binomial com 625 grupos dá 0,010 por semente; o mesmo cálculo,
+  vezes 1,36 pela dispersão entre sementes, que é maior que a binomial.
+- **(f)** GRPO com G = 8 menos Q-learning em **[−0,051; 0,118]**. A diferença na calibração foi 0,0333 ± 0,0463. A faixa cruza o zero:
+  P(G = 8 > Q) ≈ Φ(0,0333/0,0378) = 0,81 (regra da Parte 145), abaixo de 0,9, então registro a diferença e não a ordem.
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+**Regra da Parte 120.** A régua rodou sobre o rascunho. A primeira rodada deu m1 = 0, porque o arquivo se chamava `ASI_AGI_parte147.md`, sem o
+tema, e a régua procura `parte147_*`. Renomeado, deu m1 = 6, m2 = 1, m3 = 0,164 e m5 = 0. E = 1,2, então m1 fica em [6; 8].
+- **(m1)** nº de previsões do mundo em **[6; 8]**
+- **(m2)** nº que cruzam ou tocam o zero em **[1; 2]**
+- **(m3)** mediana de w em **[0,13; 0,20]**
+- **(m4)** fração de acertos em **[0,67; 1,00]**
+- **(m5)** nº com w > 0,6 em **[0; 0]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 3]**, com centro 1,2.
+
+➡ Anterior: [Parte 146](ASI_AGI_parte146_volta10.md).
+
+## Medido (P3198; sementes 43 a 45)
+- **(a)** Q-learning: 0,1533. ✅
+- **(b)** GRPO com G = 2: **0,2017**. ❌ (acima do teto 0,200 por 0,0017)
+- **(c)** GRPO com G = 8: 0,1707. ✅
+- **(d)** sem contraste com G = 2: **0,9795**. ❌
+- **(e)** sem contraste com G = 8: 0,9376. ✅
+- **(f)** G = 8 − Q: +0,0173. ✅
+
+Do mundo: (a) ✅ (b) ❌ (c) ✅ (d) ❌ (e) ✅ (f) ✅
+
+**Mundo: 4 de 6.** **Sobre mim:** 2 erros, em [0; 3]: ✅.
+
+### Os dois erros são um só, e o segundo é um erro de procedência
+Nas sementes de teste, a GRPO com G = 2 aprendeu mais que na calibração (0,2017 contra 0,168). Uma política que acha mais palavras forma mais
+grupos com contraste, e a fração sem contraste cai: (d) desceu junto com a subida de (b). Os dois erros vêm do mesmo fato e não são
+independentes.
+
+O erro de método está em (d). Chamei a faixa de "forma fechada binomial", mas o p de um grupo sem contraste, p^G + (1 − p)^G com p = a
+chance de acertar, depende da POLÍTICA APRENDIDA, que varia de semente para semente. O binomial dá só a variância do sorteio com p fixo;
+a variância do aprendizado ficou de fora. Pela calibração (desvio 0,0017 entre sementes, contra 0,0025 do binomial por semente), as duas
+pareciam iguais, mas três sementes não medem um desvio.
+
+**Regra (Parte 147):** uma proporção cujo p depende de algo aprendido NÃO é forma fechada. A faixa soma a variância do sorteio e a do
+aprendizado, e tem procedência "calibração", com o fator 1,36.
+
+### O que a medida diz sobre os dois métodos
+Com o mesmo número de episódios (5.000), a GRPO, sem crítico e sem tabela de valor, empata com o Q-learning ou ganha dele: G = 8 ficou +0,017
+acima, e G = 2 +0,048. Isso com 94% a 98% dos grupos sem contraste, isto é, aprendendo com 2% a 6% dos episódios. A conta do mecanismo: um
+grupo com um acerto em G dá ao acerto a vantagem √(G − 1), e todo o sinal de aprendizado vem desses grupos raros. Isso se viu em 2 lotes (a
+calibração e o teste): a GRPO ganhou com 1.000 episódios nas duas sementes e empatou ou ganhou com 5.000 nas seis.
+
+## Engenharia reversa
+- **O padrão: chamar de "forma fechada" uma conta que tem uma parte aprendida dentro.** É a mesma família de erro da Parte 138 (juntar a
+  dispersão de duas condições): eu atribuo ao sorteio uma variância que também vem do treino. A Parte 137 tinha a mesma estrutura (os grupos
+  sem contraste da GRPO no bandido), e lá a faixa larga de calibração acertou. Aqui a binomial estreita errou.
+- **Regra:** antes de dar procedência "forma fechada", perguntar se TODOS os parâmetros da fórmula são fixos ou se algum é aprendido.
+
+## Funções e testes
+- **Funções:** `p3198_grpo_no_jogo_de_palavras` e `_parte_147`. Entrada P3198 na regressão.
+- **Módulo:** `synthai/grpo_palavras.py`, que reusa a vantagem da Parte 137 e o ambiente e o avaliador da Parte 111.
+- **Testes:** `synthai/testes_parte147.py`.
+
+**O placar (m):** m1 = 6 em [6; 8] ✅, m2 = 1 em [1; 2] ✅, m3 = 0,164 em [0,13; 0,20] ✅, **m4 = 0,667 em [0,67; 1,00] ❌** (4/6 = 0,6667, abaixo do
+piso por 0,003), m5 = 0 ✅ e m6 = 0 ✅ (os dois erros foram menores que as larguras). **5 de 6.** O piso 0,67 de m4 era o de "no máximo 2 erros
+em 6", e 2 erros dão exatamente 0,6667: a faixa em fração tinha de ser escrita como contagem (4 a 6 acertos), não arredondada para cima.
 """
 
 # ====================================================================================================

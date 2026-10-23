@@ -57,3 +57,49 @@ tema, e a régua procura `parte147_*`. Renomeado, deu m1 = 6, m2 = 1, m3 = 0,164
 Erros no mundo em **[0; 3]**, com centro 1,2.
 
 ➡ Anterior: [Parte 146](ASI_AGI_parte146_volta10.md).
+
+## Medido (P3198; sementes 43 a 45)
+- **(a)** Q-learning: 0,1533. ✅
+- **(b)** GRPO com G = 2: **0,2017**. ❌ (acima do teto 0,200 por 0,0017)
+- **(c)** GRPO com G = 8: 0,1707. ✅
+- **(d)** sem contraste com G = 2: **0,9795**. ❌
+- **(e)** sem contraste com G = 8: 0,9376. ✅
+- **(f)** G = 8 − Q: +0,0173. ✅
+
+Do mundo: (a) ✅ (b) ❌ (c) ✅ (d) ❌ (e) ✅ (f) ✅
+
+**Mundo: 4 de 6.** **Sobre mim:** 2 erros, em [0; 3]: ✅.
+
+### Os dois erros são um só, e o segundo é um erro de procedência
+Nas sementes de teste, a GRPO com G = 2 aprendeu mais que na calibração (0,2017 contra 0,168). Uma política que acha mais palavras forma mais
+grupos com contraste, e a fração sem contraste cai: (d) desceu junto com a subida de (b). Os dois erros vêm do mesmo fato e não são
+independentes.
+
+O erro de método está em (d). Chamei a faixa de "forma fechada binomial", mas o p de um grupo sem contraste, p^G + (1 − p)^G com p = a
+chance de acertar, depende da POLÍTICA APRENDIDA, que varia de semente para semente. O binomial dá só a variância do sorteio com p fixo;
+a variância do aprendizado ficou de fora. Pela calibração (desvio 0,0017 entre sementes, contra 0,0025 do binomial por semente), as duas
+pareciam iguais, mas três sementes não medem um desvio.
+
+**Regra (Parte 147):** uma proporção cujo p depende de algo aprendido NÃO é forma fechada. A faixa soma a variância do sorteio e a do
+aprendizado, e tem procedência "calibração", com o fator 1,36.
+
+### O que a medida diz sobre os dois métodos
+Com o mesmo número de episódios (5.000), a GRPO, sem crítico e sem tabela de valor, empata com o Q-learning ou ganha dele: G = 8 ficou +0,017
+acima, e G = 2 +0,048. Isso com 94% a 98% dos grupos sem contraste, isto é, aprendendo com 2% a 6% dos episódios. A conta do mecanismo: um
+grupo com um acerto em G dá ao acerto a vantagem √(G − 1), e todo o sinal de aprendizado vem desses grupos raros. Isso se viu em 2 lotes (a
+calibração e o teste): a GRPO ganhou com 1.000 episódios nas duas sementes e empatou ou ganhou com 5.000 nas seis.
+
+## Engenharia reversa
+- **O padrão: chamar de "forma fechada" uma conta que tem uma parte aprendida dentro.** É a mesma família de erro da Parte 138 (juntar a
+  dispersão de duas condições): eu atribuo ao sorteio uma variância que também vem do treino. A Parte 137 tinha a mesma estrutura (os grupos
+  sem contraste da GRPO no bandido), e lá a faixa larga de calibração acertou. Aqui a binomial estreita errou.
+- **Regra:** antes de dar procedência "forma fechada", perguntar se TODOS os parâmetros da fórmula são fixos ou se algum é aprendido.
+
+## Funções e testes
+- **Funções:** `p3198_grpo_no_jogo_de_palavras` e `_parte_147`. Entrada P3198 na regressão.
+- **Módulo:** `synthai/grpo_palavras.py`, que reusa a vantagem da Parte 137 e o ambiente e o avaliador da Parte 111.
+- **Testes:** `synthai/testes_parte147.py`.
+
+**O placar (m):** m1 = 6 em [6; 8] ✅, m2 = 1 em [1; 2] ✅, m3 = 0,164 em [0,13; 0,20] ✅, **m4 = 0,667 em [0,67; 1,00] ❌** (4/6 = 0,6667, abaixo do
+piso por 0,003), m5 = 0 ✅ e m6 = 0 ✅ (os dois erros foram menores que as larguras). **5 de 6.** O piso 0,67 de m4 era o de "no máximo 2 erros
+em 6", e 2 erros dão exatamente 0,6667: a faixa em fração tinha de ser escrita como contagem (4 a 6 acertos), não arredondada para cima.
