@@ -32,3 +32,10 @@ O centro de "quantos erros" é 5 × 0,25 ≈ 1,25.
 | Z8 | P3175 neste commit | [440; 466] | conta: 321 + 127 saídas de parte da volta 5 (a da Parte 1 é citada pelo código) + 5 dos testes = 453 |
 
 **Sobre mim:** erros no mundo em [0; 3], com centro 1,25.
+
+## Nota de procedimento (04h37 UTC, antes de qualquer resultado da volta)
+O contêiner reiniciou às 04h37 (uptime 0 min), no meio da volta 6, COM a espera em segundo plano e a vigilância ativas. Isso derruba a
+hipótese da Parte 131 ("o contêiner é recolhido por inatividade entre turnos"). Ela era de um lote só e foi refutada no segundo. Os
+reinícios acontecem também com tarefas ativas; a causa é do ambiente e eu não a conheço. O que funcionou foi o procedimento por parte,
+não a espera: 73 partes sobreviveram ao reinício e a volta continuou de onde parou. A regra da Parte 66 se cumpriu ao pé da letra:
+escrevi como hipótese, e por isso não precisei desdizer uma conclusão.
