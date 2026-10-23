@@ -2290,3 +2290,5 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3197 G=8: retorno 0.8632; grupos uteis 263.0; desvio da relacao -0.0018
   P3197 G=16: retorno 0.8467; grupos uteis 175.3; desvio da relacao -0.0050
   P3197 (a) a ordem dos retornos e a dos grupos uteis: False
+=== Parte 147: a GRPO no jogo de palavras do dicionario contra o Q-learning ===
+  P3198 (a) Q 0.1533; (b) GRPO G=2 0.2017; (c) G=8 0.1707; (d) sem contraste G=2 0.9795; (e) G=8 0.9376; (f) G8 - Q +0.0173
