@@ -122,4 +122,4 @@ tolerância propagada (√ε, ε/x), não ε.
 - **Diálogo:** a rodada 94 (o retrocesso e a memória congelada) deu IGUAIS. Com ela, os quatro módulos tirados do que foi recebido passaram
   pelo Java: passos (91), GRPO (92), reservatório (93) e memória congelada (94).
 
-➡ Próxima: [Parte 144](ASI_AGI_parte144.md).
+➡ Próxima: [Parte 144](ASI_AGI_parte144_volta9.md).
