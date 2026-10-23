@@ -1,0 +1,8 @@
+--- Parte 38 (0x26: media bayesiana de modelos sobre o risco; o zero do produto; Heaps) ---
+P541 mistura: estacionario = 56.30; custo do dano = 48.85; mundo que muda = 385.47
+P541 pesos finais medios (H = 0, 1/2000, 1/500, 1/100): estavel = [0.7842, 0.2075, 0.0083, 0.0]; muda = ['2.910e-58', '2.507e-06', '1.684e-01', '8.316e-01']
+P542 conta: p* = 0.9655; H2(p*) = 0.2163 bits/passo; zero previsto no passo 4971
+P542 medido: subnormal no passo 3815; 0,0 no passo 4036; 0.2666 bits/passo; 1075/bits = 4033
+P543 Heaps: beta = 0.4158; 1/s = 0.9259 (P463) ou 0.9351 (P383); palavras lidas = 583368; vocabulario = 32927
+P609 minha taxa de erro (118/307): media = 0.39, intervalo 90% = [0.34, 0.43]
+FIM_OK status=0 segundos=100

@@ -1,0 +1,17 @@
+--- Parte 74 (0x4A: o que vale testar) ---
+P1661 semente 73: VOI = 0 entre os 10% de maior ganho de informacao 0.5100; VOI medio deles 0.0426 contra 0.1696 dos de maior VOI (razao 0.2514)
+P1661 semente 730: VOI = 0 entre os 10% de maior ganho de informacao 0.5150; VOI medio deles 0.0460 contra 0.1661 dos de maior VOI (razao 0.2772)
+P1661 semente 731: VOI = 0 entre os 10% de maior ganho de informacao 0.4600; VOI medio deles 0.0567 contra 0.1739 dos de maior VOI (razao 0.3260)
+P1661 semente 732: VOI = 0 entre os 10% de maior ganho de informacao 0.5200; VOI medio deles 0.0471 contra 0.1624 dos de maior VOI (razao 0.2900)
+P1661 semente 733: VOI = 0 entre os 10% de maior ganho de informacao 0.5500; VOI medio deles 0.0436 contra 0.1541 dos de maior VOI (razao 0.2827)
+P1662 semente 740: guloso VOI/custo 0.9924 do otimo; guloso H/custo 0.5806; guloso VOI otimo em 0.6267 das instancias
+P1662 semente 741: guloso VOI/custo 0.9928 do otimo; guloso H/custo 0.5549; guloso VOI otimo em 0.6667 das instancias
+P1662 semente 742: guloso VOI/custo 0.9925 do otimo; guloso H/custo 0.5653; guloso VOI otimo em 0.6567 das instancias
+P1662 semente 743: guloso VOI/custo 0.9938 do otimo; guloso H/custo 0.5606; guloso VOI otimo em 0.6400 das instancias
+P1662 semente 74: guloso VOI/custo 0.9922 do otimo; guloso H/custo 0.5680; guloso VOI otimo em 0.5733 das instancias
+P1662 semente 75: guloso VOI/custo 0.9924 do otimo; guloso H/custo 0.5684; guloso VOI otimo em 0.6200 das instancias
+P1663 rodada 48: soma dos otimos 222.0283; guloso VOI 220.3091 (0.9923); guloso H 129.8720 (0.5849); guloso VOI otimo em 172 de 300
+P1092 pNN novas (P1661-P1690) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 74: {}
+P1689 minha taxa de erro (199/625): media = 0.32, intervalo 90% = [0.29, 0.35]
+FIM_OK status=0 segundos=0

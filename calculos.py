@@ -7543,6 +7543,8 @@ def testes_de_regressao():
             p3174_comparar_voltas("reproducao/volta3", "reproducao/volta4")),
         "P3174v5": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (8, 0, [131], 128))(
             p3174_comparar_voltas("reproducao/volta4", "reproducao/volta5")),
+        "P3176": (lambda r: (r["diferentes"], r["categorias"]["mundo"], len(r["reclassificadas"]), r["blocos_sem_excecao"]) == (9, 0, 1, 129))(
+            p3176_comparar_voltas_v2("reproducao/volta5", "reproducao/volta6")),
     }
     return sum(verificacoes.values()), len(verificacoes), [k for k, ok in verificacoes.items() if not ok]
 
@@ -17624,6 +17626,37 @@ def _parte_132():
 
 
 PARTES[132] = _parte_132
+
+
+# A P3175 (Parte 131) também olha para o projeto e não estava na lista da P128: a volta 6 a classificou como "mundo" (Parte 133).
+_PROJETO_P133 = _PROJETO_P128 | frozenset((3175,))
+
+
+def p3176_comparar_voltas_v2(pasta_a, pasta_b, projeto=_PROJETO_P133):
+    """A P3174 com a lista de medidas do projeto completada (P3176): as linhas que a P3174 chamou de 'mundo' e cujo número de pergunta
+    está em `projeto` passam para 'projeto'. Não edita a P3174 (regra das Partes 14 e 16). Devolve o mesmo dict, com 'reclassificadas'."""
+    import re
+    r = p3174_comparar_voltas(pasta_a, pasta_b)
+    ficam, movidas = [], []
+    for k, l in r["mundo"]:
+        m = re.match(r"\s*P(\d+)\b", l)
+        (movidas if m and int(m.group(1)) in projeto else ficam).append((k, l))
+    cats = dict(r["categorias"])
+    cats["mundo"] -= len(movidas)
+    cats["projeto"] += len(movidas)
+    r = dict(r, categorias=cats, mundo=ficam, reclassificadas=movidas)
+    return r
+
+
+def _parte_133():
+    print("\n=== Parte 133: volta 6 do loop (volta 5 contra volta 6) ===")
+    r = p3174_comparar_voltas("reproducao/volta5", "reproducao/volta6")
+    print(f"  P3174 (a régua registrada): diferentes {r['diferentes']} de {r['linhas']}; categorias {r['categorias']}; mundo {r['mundo']}")
+    r2 = p3176_comparar_voltas_v2("reproducao/volta5", "reproducao/volta6")
+    print(f"  P3176 (com a P3175 na lista do projeto): categorias {r2['categorias']}; reclassificadas {len(r2['reclassificadas'])}")
+
+
+PARTES[133] = _parte_133
 
 PARTES[126] = _parte_126
 

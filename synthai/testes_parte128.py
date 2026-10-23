@@ -89,6 +89,24 @@ class TestesParte128(unittest.TestCase):
         r = c.p3174_comparar_voltas("reproducao/volta4", "reproducao/volta5")
         self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]), (8, 0, [131], 128))
 
+    def test_p3176_comparar_voltas_v2(self):
+        a = "P3 a = 1\n--- Parte 2 ---\nP3175 n = 1\nP99 w = 1\n=== Unificacao ===\nFIM_OK status=0 segundos=1\n"
+        b = "P3 a = 1\n--- Parte 2 ---\nP3175 n = 2\nP99 w = 2\n=== Unificacao ===\nFIM_OK status=0 segundos=1\n"
+        with tempfile.TemporaryDirectory() as d:
+            for nome, txt in (("v1", a), ("v2", b)):
+                os.makedirs(os.path.join(d, nome))
+                with open(os.path.join(d, nome, "bloco_1_2.txt"), "w", encoding="utf-8") as f:
+                    f.write(txt)
+            r0 = c.p3174_comparar_voltas(os.path.join(d, "v1"), os.path.join(d, "v2"))
+            r = c.p3176_comparar_voltas_v2(os.path.join(d, "v1"), os.path.join(d, "v2"))
+        self.assertEqual(r0["categorias"]["mundo"], 2)                       # a régua antiga chama a P3175 de mundo
+        self.assertEqual((r["categorias"]["mundo"], r["categorias"]["projeto"]), (1, 1))
+        self.assertEqual(r["mundo"], [(2, "P99 w = 1")])                     # o mundo de verdade continua acusado
+
+    def test_volta6_regressao(self):
+        r = c.p3176_comparar_voltas_v2("reproducao/volta5", "reproducao/volta6")
+        self.assertEqual((r["diferentes"], r["categorias"]["mundo"], len(r["reclassificadas"])), (9, 0, 1))
+
 
 if __name__ == "__main__":
     unittest.main()

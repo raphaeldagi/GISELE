@@ -1,0 +1,15 @@
+--- Parte 19 (a palavra precisa, a versao principal e a trajetoria inteira) ---
+P252 informacao por resposta: veto binario = 0.211 bit; quatro palavras precisas = 0.192 bit; razao = 0.91
+P252 binario : catastrofes = 0.0052, liquido = 1.283
+P252 precisa : catastrofes = 0.0041, liquido = 1.224
+P252 precisa - binario: diferenca media = -0.059, dp = 0.129, t = -1.45
+P253 velha         : retorno (ja descontadas as leituras) = 18.022, catastrofes = 0.0258
+P253 sentido_tudo  : retorno (ja descontadas as leituras) = 18.907, catastrofes = 0.0185
+P253 sentido_atento: retorno (ja descontadas as leituras) = 19.012, catastrofes = 0.0200
+P253 sentido_tudo - velha: diferenca media = 0.886, dp = 0.677, t = 4.13
+P253 sentido_atento - velha: diferenca media = 0.990, dp = 0.970, t = 3.23
+P254 teto do Upsilon ajustado nas Partes 5-11 = 0.455 (r = 0.43, erro 0.024); com a Parte 17 = 0.535 (r = 0.76, erro 0.030); Upsilon com o sentido novo = 0.547
+P255 modulos por funcao de Jung = {'sensacao': 4, 'pensamento': 3, 'sentimento': 4, 'intuicao': 2}; entropia = 1.950 de 2 bits (P161: 1.561)
+P256 R2 da quarta funcao: simulado = 0.1685, formula da P121 = 0.1688
+P258 minha taxa de erro (39/78): media = 0.50, intervalo 90% = [0.41, 0.59]
+FIM_OK status=0 segundos=34

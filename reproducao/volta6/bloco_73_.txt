@@ -1,0 +1,14 @@
+--- Parte 73 (0x49: o que refuta) ---
+P1631 reenvio (bloco novo, bloco guardado identico, linhas): [(0, 1, 135)]
+P1632 n = 2000, semente 73: VOI = 0 em 0.47900 (conta: 1/2, desvio 0.01118); entre os 10% de maior S: 0.5100; Spearman(S, VOI) = 0.1742
+P1632 n = 20000, semente 74: VOI = 0 em 0.49995 (conta: 1/2, desvio 0.00354); entre os 10% de maior S: 0.5000; Spearman(S, VOI) = 0.1880
+P1639 rodada 47: VOI = 0 em 958 de 2000; nos 200 de maior S, 102; VOI medio dos 200 de maior VOI 0.1696, dos 200 de maior S 0.0668 (razao 0.394)
+P1635 violacoes da disjuncao entre animal e os irmaos: 6: [('parasite', ['flea', 'pulex_irritans', 'dog_flea', 'cat_flea', 'chigoe', 'sticktight'])]
+P1636 'toda ave voa': fecho de bird 872; contraexemplos 16: ['ratite', 'ostrich', 'cassowary', 'emu', 'kiwi', 'rhea', 'rhea', 'elephant_bird', 'moa', 'dodo', 'solitaire', 'sphenisciform_seabird', 'weka', 'notornis', 'great_auk', 'penguin']
+P1637 polissemia dos substantivos (lemas, polissemicos, fracao): (117798, 15935, 0.13527394353045044)
+P1638 rodadas com funcoes da libm: (90, ['rodada48'])
+P1642 heranca multipla (sinsets, substantivos, fracao): (2213, 82115, 0.02695000913353224)
+P1092 pNN novas (P1631-P1660) sem teste: 0 de 10: []
+P974 previsoes unilaterais da Parte 73: {}
+P1659 minha taxa de erro (198/618): media = 0.32, intervalo 90% = [0.29, 0.35]
+FIM_OK status=0 segundos=3

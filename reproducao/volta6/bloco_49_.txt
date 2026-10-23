@@ -1,0 +1,6 @@
+--- Parte 49 (0x31: a deriva) ---
+P911 deriva: exponencial tau = 14.48 (residuo 0.6289); potencia alfa = 0.5369 (residuo 0.1821); embaralhada: alfa = -0.105, -0.024, +0.041, +0.002, +0.041, +0.042
+P912 a palavra mais escolhida pelas definicoes = act (1991); as 10 mais = 0.1682 das palavras; inclinacao do grau = -1.869; [('act', 1991), ('small', 1259), ('state', 1141), ('person', 1062), ('quality', 875), ('large', 849), ('genus', 792), ('type', 561), ('city', 381), ('plant', 373)]
+P913 Benford em base 16 nos 13126 numeros do resultados.txt: digito 1 = 0.1876 (Benford 0,25); 8..F = 0.2332 (Benford 0,25)
+P939 minha taxa de erro (148/420): media = 0.35, intervalo 90% = [0.32, 0.39]
+FIM_OK status=0 segundos=1

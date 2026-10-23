@@ -1,0 +1,11 @@
+--- Parte 45 (0x2D: decidir pela hipotese mais pesada; a calibracao das minhas faixas; a profundidade) ---
+P792 calibracao das 17 faixas de comportamento: media de z = +0.382 (t = 1.47); desvio de z = 1.069; fora de 1,645 = 2
+P791 map_estavel: centro = 31.70; medido = 32.68; desvio = +0.031; dentro = True
+P791 map_muda: centro = 203.51; medido = 214.19; desvio = +0.052; dentro = True
+P791 map_dano: centro = 12.00; medido = 35.88; desvio = +1.990; dentro = False
+P793 profundidade media de animal = 12.937 (4016 substantivos)
+P793 profundidade media de artefato = 8.734 (10698 substantivos)
+P793 profundidade media de taxon = 7.174 (5425 substantivos)
+P793 profundidade media de todos = 7.955 (82115 substantivos)
+P819 minha taxa de erro (134/379): media = 0.35, intervalo 90% = [0.31, 0.39]
+FIM_OK status=0 segundos=22

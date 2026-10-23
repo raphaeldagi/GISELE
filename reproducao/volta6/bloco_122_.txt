@@ -1,0 +1,10 @@
+--- Parte 122 (0x7A: o texto NEXUS-RAPHAEL v3.0: os defeitos e as pecas corrigidas em casos novos) ---
+P3101 sabotagem AADD 0.02498 (eps/2 = 0.025), ingenuo 0.97433 (1 - eps/2); forense != 1 em 0; Kuhn/6 -0.05688 (-1/18); colisoes base 70 70
+P3101 lote novo (sementes 400-999): ingenuo 0.97513
+P3102 Murphy |soma-BS| 0.00e+00, WBV 0.000843, WBC 0.001120; colapso PCA 0.053, supervisionada 1.000; potencial 40/40, bonus 0.000; KL erro 1.66e-09
+P3103 rodada 89 (Murphy completa, IGUAL em Java): |soma - Brier| 1.94e-16; Brier 0.159655
+P1961 teste, Partes 80-122: 317/350 = 0.9057
+P1092 pNN novas (P3101-P3130) sem teste: 0 de 11: []
+P974 previsoes unilaterais da Parte 122: {122: (0, 0, [])}
+P4689 minha taxa de erro (231/984): media = 0.24, intervalo 90% = [0.21, 0.26]
+FIM_OK status=0 segundos=3

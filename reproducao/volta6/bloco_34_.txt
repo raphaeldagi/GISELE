@@ -1,0 +1,18 @@
+--- Parte 34 (0x22: as promessas testadas em casos novos) ---
+P461 conta, alfa = 0.1: cota sem aprisionamento = 120.58; cota com aprisionamento = 266.94
+P461 conta, alfa = 0.05: cota sem aprisionamento = 99.03; cota com aprisionamento = 387.71
+P461 Q eps com alfa = 0,05: arrependimento = 311.05
+P462 conta (quebras, gama de Garivier-Moulines, memoria): (7, 0.9895417496683241, 95.61828874675179)
+P462 bandido que muda a cada 500 passos: {0.95: 801.64, 0.98: 541.37, 0.99: 425.52, 0.995: 380.16, 0.999: 549.65, 1.0: 808.75}
+P463 Zipf-Mandelbrot ajustado nos substantivos: s = 1.08, q = 64
+P463 verbos, k = 100: previsto = 0.2231; Zipf puro = 0.6323; medido = 0.2516
+P463 verbos, k = 500: previsto = 0.4925; Zipf puro = 0.7807; medido = 0.4940
+P463 verbos, k = 2000: previsto = 0.7486; Zipf puro = 0.8943; medido = 0.7668
+P463 verbos, k = 4000: previsto = 0.8722; Zipf puro = 0.9466; medido = 0.8882
+P464 tarefa A = 55457, tarefa B = 48338, teste de A = 13864
+P464 naive_bayes: acuracia em A depois de A = 0.7833; depois de B = 0.7892
+P464 sgd: acuracia em A depois de A = 0.8210; depois de B = 0.8334
+P465 conta: Thompson com Morris = 73.09
+P465 Thompson com Morris = 76.95; Morris - completo = 46.23, dp = 74.04, t = 6.24
+P489 minha taxa de erro (110/271): media = 0.41, intervalo 90% = [0.36, 0.46]
+FIM_OK status=0 segundos=49

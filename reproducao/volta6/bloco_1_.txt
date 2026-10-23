@@ -1,0 +1,10 @@
+P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
+P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
+P7  d' = 1.878
+P8  best-of-64 = 0.9625
+P9  Arrhenius (-10 kJ/mol) = 48.4x
+P11 t* = 20.0
+P14 E[max(U,0)] = 0.451, valor de obedecer = 0.351
+P15 Condorcet = 0.753, n_ef = 2.75
+P17 p=1e-6: 1.0000; p=1e-12: 1.00e-03
+FIM_OK status=0 segundos=1

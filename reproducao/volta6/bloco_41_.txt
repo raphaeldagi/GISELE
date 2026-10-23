@@ -1,0 +1,26 @@
+--- Parte 41 (0x29: engenharia reversa de mim mesma) ---
+P671 tipo A: 1 erros em 20; taxa a posteriori = 0.091, intervalo 90% = [0.017, 0.206]
+P671 tipo C: 22 erros em 66; taxa a posteriori = 0.338, intervalo 90% = [0.247, 0.435]
+P671 tipo E: 1 erros em 1; taxa a posteriori = 0.667, intervalo 90% = [0.224, 0.975]
+P671 tipo L: 8 erros em 28; taxa a posteriori = 0.300, intervalo 90% = [0.172, 0.444]
+P671 tipo T: 0 erros em 13; taxa a posteriori = 0.067, intervalo 90% = [0.004, 0.193]
+P671 erros por parte: {31: (5, 15), 32: (8, 26), 33: (2, 16), 34: (5, 13), 35: (2, 10), 36: (1, 9), 37: (2, 7), 38: (3, 10), 39: (1, 11), 40: (3, 11)}
+P672 4-grama 'synthai testes parte py': em 10 documentos, 20 vezes
+P672 4-grama 'pré registrado na pergunta': em 10 documentos, 17 vezes
+P672 4-grama 'da parte asi agi': em 10 documentos, 13 vezes
+P672 4-grama 'parte asi agi parte': em 10 documentos, 13 vezes
+P672 4-grama 'a p em calculos': em 10 documentos, 10 vezes
+P672 4-grama 'acumulado erros em testes': em 10 documentos, 10 vezes
+P672 4-grama 'agi asi parte x': em 10 documentos, 10 vezes
+P672 4-grama 'as perguntas desta parte': em 10 documentos, 10 vezes
+P672 4-grama 'calculos py calculos py': em 10 documentos, 10 vezes
+P672 4-grama 'como eu construiria uma': em 10 documentos, 10 vezes
+P672 4-grama 'construiria uma agi asi': em 10 documentos, 10 vezes
+P672 4-grama 'continuação da parte asi': em 10 documentos, 10 vezes
+P672 razao lzma dos meus textos = 3.0644; frases = 574; aberturas = [('a', 115), ('o', 90), ('as', 21), ('é', 19), ('com', 15), ('no', 13), ('um', 13), ('os', 12), ('jung', 11), ('acumulado', 10)]
+P672 cosseno entre partes vizinhas = [0.8805, 0.9061, 0.8933, 0.9042, 0.9053, 0.8859, 0.8944, 0.8268, 0.8895]; Spearman com o numero da parte = -0.3000
+P673 Zipf das minhas palavras = 0.9938; Heaps beta = 0.6394; palavras = 20299; vocabulario = 2670
+P674 IA-Python: 172 falas, 40.41 palavras por fala; palavras proprias = ['pendência', 'pendencias', 'leduc', 'mccfr', 'camadas', 'token', 'amostragem', 'pivô']
+P674 IA-Java: 159 falas, 48.42 palavras por fala; palavras proprias = ['saído', 'repara', 'dígito', 'peso', 'exata', 'único', 'mesma', 'compara']
+P699 minha taxa de erro (124/338): media = 0.37, intervalo 90% = [0.33, 0.41]
+FIM_OK status=0 segundos=1

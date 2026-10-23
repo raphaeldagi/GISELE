@@ -1,0 +1,13 @@
+--- Parte 115 (0x73: dez camadas contrapostas; o dicionario em algarismos e algoritmos; a escala contra a meta-medida) ---
+P2891 dez camadas: linear 1,2^10 erro relativo 1.4e-16; linear contraposta |g-1| 0.0e+00; tanh contraposta 0.07491; tanh de peso igual 2.139e-07
+P2892 superposicao dos 10 gradientes: resto 1.945e-06 (eps=1e-3), 1.945e-08 (eps=1e-4), inclinacao 2.00006; gradientes [0.0187, 0.1358, 0.0373, 0.2078, 0.0554, 0.2789, 0.0731, 0.3495, 0.0908, 0.4199]
+P2893 dicionario: por classe {'n': 117798, 'v': 11529, 'a': 21479, 'r': 4481}; pares brutos 206978, distintos 206941; lemas distintos 147306; OpenWordNet-PT 45313 lemas, 52672 pares
+P2894 em algarismos (base 26 bijetiva): 0 colisoes; ida-e-volta True; o maior numero tem 44 algarismos
+P2895 em algoritmos: afins 74494 distintos, 2928 pares colidem; translacoes 69972 distintos, 8946 pares colidem; classes de anagrama 72547
+P2896 escala x meta-medida: k=4,m=2000 media 1.0073 desvio 0.7188; k=256,m=20 media 1.0072 desvio 0.1003; pares nulos pulados 1
+P2897 rodada 82 (cadeia contraposta, exp proprio, IGUAL em Java): h10 0x1.bc07e47a34a99p-3; gradiente 0x1.32d264963ff7cp-4
+P1961 teste, Partes 80-115: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2891-P2920) sem teste: 0 de 7: []
+P974 previsoes unilaterais da Parte 115: {115: (0, 0, [])}
+P4199 minha taxa de erro (225/903): media = 0.25, intervalo 90% = [0.23, 0.27]
+FIM_OK status=0 segundos=2

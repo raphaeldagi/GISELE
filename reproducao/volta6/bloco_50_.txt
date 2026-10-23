@@ -1,0 +1,8 @@
+--- Parte 50 (0x32: a vida das coisas) ---
+P941 curvas individuais: a potencia ganha em 32 de 60; media das exponenciais ajustadas: residuo exp 0.2345, pot 0.1443 (alfa 0.575); media crua das mesmas partes: exp 0.8408, pot 0.2265
+P942 definicoes mutuas: N = 77503, M = 557352; pares = 3755; ao acaso = 25.86; razao = 145.2; palavras em algum par = 0.0612; [('aah', 'ooh'), ('abbey', 'abbot'), ('abdomen', 'thorax'), ('abel', 'cain'), ('abies', 'fir')]
+P947 o texto voltou: codigo identico ao da Parte 33 = True; auditoria: nos mudados = 0, nota constante = 0.85, avaliador pergunta ao agente = True; quem mais o contem: parte 33 = 0.0804, parte 32 = 0.0442, parte 41 = 0.0356
+P948 o texto escolhe, pelas palavras: parte 33 = 374.9, parte 1 = 367.0, parte 2 = 277.6, parte 3 = 240.2, parte 5 = 216.6
+P943 periodo de 1/p em base 16 (1228 primos ate 10000): ord(16)/(p-1) = 0.2793; ord(2)/(p-1) = 0.5845; 1/mdc = 0.5379; produto = 0.3144
+P969 minha taxa de erro (152/433): media = 0.35, intervalo 90% = [0.31, 0.39]
+FIM_OK status=0 segundos=128

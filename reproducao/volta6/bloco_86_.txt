@@ -1,0 +1,13 @@
+--- Parte 86 (0x56: o cerebro na CPU) ---
+P2021 LIF erro do ponto fixo apos 200 passos: 4.122e-08 (previsto gap*beta^200 = 4.122e-08)
+P2022 Izhikevich (RS, CH) disparos em 1000ms: (22, 73)
+P2023 memoria do relatorio (MB neuronios, GB sinapses, GB total, incoerencias): (32.0, 6.0, 6.032, {'padded_csr': ('texto 7%', 'tabela 20% (1,2x)', True), 'htm': ('relatorio 8,5 GB', 'regra 6B/sinapse 7.2 GB', True)})
+P2024 cadeia de vazao (disparos/ms, sinapses/ms, GSOPS): (10000, 10000000, 10.0)
+P2025 sobreposicao de SDRs (media, teorico k^2/n): (0.7769, 0.78125)
+P2026 STDP liquido (simetrico, assimetrico): (0.0, -0.38745496905948523)
+P1961 teste (e)/(g), Partes 80-86: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P2027 rodada 53 (Izhikevich, IGUAL em Java): (-68.72045515618318, -5.064083388710061, 5)
+P1092 pNN novas (P2021-P2050) sem teste: 0 de 7: []
+P974 previsoes unilaterais da Parte 86: {}
+P2169 minha taxa de erro (211/697): media = 0.30, intervalo 90% = [0.27, 0.33]
+FIM_OK status=0 segundos=0
