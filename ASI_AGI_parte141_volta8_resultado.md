@@ -14,3 +14,22 @@ centrar, ZᵀZ, autovalores por Jacobi cíclico (a mesma ordem de rotações) e 
 | H3 | o posto da tradução contra o `posto_efetivo` do módulo (math.log, sum compensado) | \|dif\| < 1e-12 | os dois diferem só no último bit |
 
 Registrado antes da primeira execução da rodada.
+
+## Medido (rodada 93)
+| | medido | faixa | |
+|---|---|---|---|
+| H1 | os 16 índices, linha idêntica | iguais | ✅ |
+| H2 | posto 3,8429827… IGUAL bit a bit | IGUAL | ✅ |
+| H3 | a asserção passou | < 1e-12 | ✅ |
+
+**Mundo: 3 de 3.**
+
+## A suíte e a regressão
+A suíte inteira (711 testes, com os das Partes 136 a 138) deu OK, e as 92 rodadas do diálogo deram IGUAIS. A regressão deu **181 de 183**: as
+entradas P3181 e P3183 falharam por um erro MEU ao escrevê-las. Comparei com tolerância de 1e-9 números que copiei da saída IMPRESSA, já
+arredondada (0,5578 era 0,55785; 32,036 era 32,0365). A medida estava certa; a régua da regressão, não. Corrigi as duas entradas para
+comparar no arredondamento impresso.
+
+**Regra nova (Parte 141):** uma entrada de regressão nunca compara com tolerância menor que a precisão com que o número foi impresso. Ou ela
+compara pelo mesmo arredondamento, ou chama a função e guarda o número inteiro. É a regra da Parte 69 (números do texto passam por código)
+aplicada à própria regressão: copiar da tela é escrever de cabeça.
