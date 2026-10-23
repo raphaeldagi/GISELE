@@ -112,3 +112,8 @@ A volta 5 começa num clone novo, no commit desta parte, também uma parte por p
 dizer "pare".
 
 ➡ Anterior: [Parte 130](ASI_AGI_parte130_volta3.md).
+
+Depois do link da Parte 124, a P3175 deu **190** (191 − 1: o documento da 124 passou a ser citado). A suíte deu 667/667, e a regressão
+171/171.
+
+➡ Próxima: [Parte 132 — volta 5](ASI_AGI_parte132_volta5.md).
