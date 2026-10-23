@@ -42,4 +42,12 @@ as Partes 80 a 138, que estão fechadas, e dá os mesmos (360, 325) e (472, 425)
 
 **Regra (Parte 141, complemento):** uma entrada de regressão só fixa medidas sobre partes FECHADAS, isto é, com todos os vereditos escritos.
 
+## O resultado da volta 8
+A volta 8, registrada na Parte 135 (commit 4363101), deu **8 de 8**, com a tabela de vereditos na própria Parte 135, onde a P3187 a lê:
+- 131 partes sem exceção, a regressão 174/174, 730 + 27 + 40 + 72 + 55 testes OK e as 90 rodadas IGUAIS;
+- 8 de 1.888 linhas mudaram, exatamente as 8 nomeadas no registro, e 0 do mundo;
+- a P1871 deu 1 e a P3175 deu 720, os dois no centro exato da conta.
+
+Oito voltas, e nenhuma diferença do mundo em nenhuma. O contêiner reiniciou duas vezes durante a volta, e a retomada por parte recuperou as duas.
+
 ➡ Anterior: [Parte 140](ASI_AGI_parte140_leitor_dicionario_hex.md). ➡ Próxima: [Parte 142](ASI_AGI_parte142_enantiodromia.md).

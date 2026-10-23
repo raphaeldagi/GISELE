@@ -1,0 +1,19 @@
+--- Parte 33 (0x21: a arquitetura pos-ASI numa CPU so, auditada) ---
+P431 Landauer (J/bit): {293.15: '2.8054e-21', 300.0: '2.8710e-21', 4.0: '3.8280e-23'}; o 2,75e-21 do texto seria a 287.36 K
+P432 Bremermann mc^2/h = 1.3564e+50 /s/kg; Margolus-Levitin 2E/(pi hbar) = 5.4256e+50; razao = 4.0
+P433 laco Python = 1.971e+07 adicoes/s; Bremermann de 1 g = 1.356e+47; log10 da distancia = 39.84 (medido com outras simulacoes rodando: a taxa varia de execucao para execucao)
+P434 AIXI(t,l), t = 1000, anos a essa taxa: {20: '1.686e-06', 30: '1.727e-03', 40: '1.768e+00', 64: '2.966e+07', 128: '5.472e+26'}
+P435 auditoria estatica: {'transformador_so_devolve_o_no': True, 'nos_mudados': 0, 'linhas_do_corpo': 6, 'texto_mutado': ['inspect.getsource(AgentHarness)'], 'run_benchmarks_constante': 0.85, 'avaliador_pergunta_ao_agente': True, 'classes': ['AgentHarness', 'AgentState', 'DarwinArchiveManager', 'EnvironmentEvaluator', 'SelfModificationEngine']}
+P435 a arquitetura original rodada num processo separado (estados, geracao maxima, notas): ('2 1 [0.5, 0.85]', 0)
+P436 conta: chance de campeao inflado = 0.9510
+P436 autoavaliacao: campeoes inflados = 0.850; arrependimento real do campeao = 251.72
+P436 selado: campeoes inflados = 0.125; arrependimento real do campeao = 232.82
+P437 arrependimento real do campeao: L3 = 200.09, L4 = 110.85; L4 - L3 = -89.24, dp = 215.08, t = -1.86; melhor campeao = 45.07; Thompson sem evolucao = 34.07
+P438 conta: sigma da nota = 50.11; sigma*sqrt(2 ln N) = {10: 107.5, 50: 140.2, 150: 158.6}
+P438 regra dgm: inflacao da nota guardada = 80.85; filhos aceitos = 7.25
+P438 regra godel: inflacao da nota guardada = 33.50; filhos aceitos = 2.70
+P439 conta: {0.99: (100.0, 299.6), 0.999: (1000.0, 2995.7)}
+P439 gama = 0.99: 2a metade sem dano = 78.31, com dano = 92.44, custo do dano = 14.13; total sem dano = 163.23
+P439 gama = 0.999: 2a metade sem dano = 17.42, com dano = 71.06, custo do dano = 53.64; total sem dano = 51.40
+P459 minha taxa de erro (105/258): media = 0.41, intervalo 90% = [0.36, 0.46]
+FIM_OK status=0 segundos=414

@@ -35,3 +35,20 @@ O centro de "quantos erros" é 3 × 0 + 2 × 0,10 + 3 × 0,25 ≈ 0,95.
 **Sobre mim:** erros no mundo em [0; 3], com centro 0,95.
 
 ➡ Anterior: [Parte 134](ASI_AGI_parte134_volta7.md).
+
+## Medido (P3176; as saídas ficam em `reproducao/volta8/`)
+| | medido | faixa | |
+|---|---|---|---|
+| R1 | 131 de 131 partes sem exceção | todas | ✅ |
+| R2 | a unificação: 174/174 | [174; 174] | ✅ |
+| R3 | 8 de 1.888 linhas mudaram | [6; 11] | ✅ (exatamente as 8 nomeadas: P143, P213, P913, P1692, P1872, P433, P434 e a P3175 da Parte 131) |
+| R4 | 0 do mundo (6 do projeto, 2 da máquina) | [0; 0] | ✅ |
+| R5 | 0 falhas: 730 + 27 + 40 + 72 + 55 testes | [0; 1] | ✅ |
+| R6 | 0 DIFERENTES; as 90 rodadas IGUAIS | [0; 0] | ✅ |
+| R7 | P1871: 1 (a saída de nome novo da volta 7) | [0; 2] | ✅ |
+| R8 | P3175: 720 | [706; 734] | ✅ (a conta dava 720, exato) |
+
+**Mundo: 8 de 8.** **Sobre mim:** 0 erros, em [0; 3]: ✅. A volta 8 morreu duas vezes com reinícios do contêiner (às 15h35 e às 16h37) e foi
+retomada parte a parte nas duas: o procedimento da Parte 131 funcionou exatamente para isso.
+
+➡ Próxima: [Parte 136](ASI_AGI_parte136_passo_e_auditor.md).

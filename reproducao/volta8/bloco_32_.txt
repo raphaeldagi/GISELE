@@ -1,0 +1,36 @@
+--- Parte 32 (0x20: a decisao bayesiana exata no lugar do RL e do aprendizado continuo; autopoiese; avalanche) ---
+P401 conta: Lai-Robbins medio = 62.43; exploracao do eps-guloso = 80.66 (esperanca 81.82)
+P401 arrependimento final (T 2000, 100 sementes): {'q_eps': 185.36, 'q_otimista': 45.09, 'ucb1': 185.84, 'thompson': 30.71}
+P401 q_eps - thompson = 154.65, dp = 79.36, t = 19.49
+P401 q_otimista - thompson = 14.38, dp = 21.06, t = 6.83
+P401 ucb1 - thompson = 155.13, dp = 30.39, t = 51.05
+P402 conta: g* = 0.2572; otimo em 5000 passos = 1285.9; so a esquerda = 25.0; Q eps preso = 23.75
+P402 recompensa total (20 sementes): {'psrl': 996.82, 'q_eps': 22.98, 'q_otimista': 387.24}
+P402 psrl - q_eps = 973.84, dp = 67.01, t = 65.00
+P402 psrl - q_otimista = 609.58, dp = 52.78, t = 51.65
+P403 bayes: erro em A depois de A = 0.000199, depois de B = 0.000169 (razao 0.85)
+P403 sgd: erro em A depois de A = 0.005630, depois de B = 0.127772 (razao 22.70)
+P403 sgd - bayes depois de B = 0.1276, dp = 0.1185, t = 3.41; recursiva - lote, maior diferenca = 2.32e-12
+P404 conta (theta 1, uma rodada): {0.1: 0.9545, 0.5: 0.5386, 0.9: 0.1043}
+P404 nucleo = 16795 palavras; fechamento = 1.0
+P404 esquecer 10%, theta = 1.0: regenera = 0.9688
+P404 esquecer 10%, theta = 0.8: regenera = 1.0000
+P404 esquecer 50%, theta = 1.0: regenera = 0.5344
+P404 esquecer 50%, theta = 0.8: regenera = 0.5545
+P404 esquecer 90%, theta = 1.0: regenera = 0.1032
+P404 esquecer 90%, theta = 0.8: regenera = 0.1032
+P405 thompson 1a metade = 26.96; 2a metade (danificado) = 75.04; Q eps 2a metade = 93.57; Q - thompson = 18.53, dp = 89.76, t = 2.06
+P411 conta: {16: 72.11, 256: 3.68}
+P411 arrependimento: {'completo': 30.71, 16: 93.67, 256: 33.4}
+P411 teto 16 - completo = 62.96, dp = 25.45, t = 24.74
+P411 teto 256 - completo = 2.69, dp = 4.36, t = 6.15
+P421 frequencia, theta = 0.6: maior salto em k = 363 (within) = 0.6133; k de 50% = 363
+P421 frequencia, theta = 0.7: maior salto em k = 759 (well) = 0.5943; k de 50% = 759
+P421 frequencia, theta = 0.8: maior salto em k = 1326 (worship) = 0.3807; k de 50% = 1320
+P421 frequencia, theta = 0.9: maior salto em k = 2904 (outstanding) = 0.0156; k de 50% = 2904
+P421 acaso, theta = 0.6: maior salto em k = 28526 (greatest) = 0.4384; k de 50% = 27862
+P421 acaso, theta = 0.7: maior salto em k = 38753 (time) = 0.2757; k de 50% = 32597
+P421 acaso, theta = 0.8: maior salto em k = 37951 (relate) = 0.0060; k de 50% = 34717
+P421 acaso, theta = 0.9: maior salto em k = 30362 (manner) = 0.0048; k de 50% = 35828
+P429 minha taxa de erro (103/242): media = 0.43, intervalo 90% = [0.37, 0.48]
+FIM_OK status=0 segundos=443

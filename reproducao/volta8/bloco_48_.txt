@@ -1,0 +1,7 @@
+--- Parte 48 (0x30: o ciclo) ---
+P881 o Naive Bayes reconhece a epoca de 77 de 80 secoes (erradas: [21, 22, 76]); a maioria deixando um de fora: 60; ao acaso P(>= 77) = 7.06e-20
+P882 mapa da definicao: N = 55191; sumidouros = 173; pontos ciclicos = 23 em 10 ciclos (aleatorio: 294.4); cauda media = 6.398 (aleatorio: 147.2); maior bacia = 0.6986, ciclo ['act', 'arrangement', 'form', 'people', 'plural']
+P883 felizes em base 16 (1..4095) = 0.2613; ciclos alem do 1: [(13, 169, 181, 146, 85, 50)]; base 10 (1..1000) = 0.143
+P884 semelhanca media a distancia 1 = 0.1160; a distancia 20 = 0.0262; indice do ciclo: parte 41 = 0.841; parte 40 = 0.593; parte 39 = 1.542; parte 38 = 1.187
+P909 minha taxa de erro (146/411): media = 0.36, intervalo 90% = [0.32, 0.39]
+FIM_OK status=0 segundos=4

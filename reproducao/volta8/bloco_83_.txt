@@ -1,0 +1,12 @@
+--- Parte 83 (0x53: a probabilidade da probabilidade) ---
+P1931 GAN de Dirac (rodada 50): {'sincrono': (0.3486415201803936, 0.3486415201803936, 16), 'alternado': (0.09937914946296939, 0.10127394042050152, 16), 'assincrono': (0.12751946544416812, 0.16724031842197498, 8)}; contas: {'sincrono_final': 0.34849026133183214, 'phi': 0.050005209798721736, 'phi_angulo_duplo': 0.05000520979872228, 'alternado_maximo': 0.10127393670836667, 'trocas': 16}
+P1932 jogo assincrono, 200 corridas: ((3.3405389422581635, 1.7238607643996413, 5, 12.48440099293599, 0.011056070913967762), {'assincrono': 3.125, 'desvio': 1.7677669529663689, 'sincrono': 12.48440099293573})
+P1932 replica, 800 corridas: ((3.202133605750349, 1.7396018574476568, 33, 12.48440099293599, 0.011056070913967762), {'assincrono': 3.125, 'desvio': 1.7677669529663689, 'sincrono': 12.48440099293573})
+P1933 calibracao composta sete vezes (conta, simulada, composta, declarar para 1 camada, para 7): (0.15158523371216237, 0.15114, 0.15158523371216237, 0.974713720916899, 1.0)
+P1934 a torre de placares, Partes 67-81: ({1: (94, 107), 2: (77, 98), 3: (69, 77)}, [72])
+P1935 o modulo sete_camadas recebido contra a logistica: {'logistica_pesos': [6.84630315876333, -5.5909068089302885, 0.6391386934514915, 0.2752635323667608, 0.23238946857094842], 'logistica_limpa': 0.923828125, 'logistica_adversa': 0.794921875, 'modos_identicos': True, 'rede_limpa': 0.921875, 'rede_adversa': 0.794921875, 'ciclos': 2}
+P1936 Lyapunov assincrono a = 0,2: (0.005008165399202463, 1.0016330798404924, 0.995033085316809); a = 0,05: (0.0003195948700953975, 1.0227035843052719, 0.9996876301474846)
+P1092 pNN novas (P1931-P1960) sem teste: 0 de 6: []
+P974 previsoes unilaterais da Parte 83: {}
+P1959 minha taxa de erro (203/675): media = 0.30, intervalo 90% = [0.27, 0.33]
+FIM_OK status=0 segundos=9

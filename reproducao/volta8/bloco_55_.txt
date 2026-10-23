@@ -1,0 +1,19 @@
+--- Parte 55 (0x37: o ulp que chega) ---
+P1091 rodada06: 200 numeros; maior mudanca relativa com um ulp = 4.029e-16; texto igual
+P1091 rodada09: 13 numeros; maior mudanca relativa com um ulp = 3.111e-13; texto igual
+P1091 rodada14: 2 numeros; maior mudanca relativa com um ulp = 9.080e-16; texto MUDOU
+P1091 rodada18: 41 numeros; maior mudanca relativa com um ulp = 3.609e-16; texto igual
+P1091 rodada19: 41 numeros; maior mudanca relativa com um ulp = 2.362e-16; texto igual
+P1091 rodada20: 41 numeros; maior mudanca relativa com um ulp = 3.255e-14; texto igual
+P1091 rodada21: 44 numeros; maior mudanca relativa com um ulp = 7.228e-16; texto igual
+P1091 rodada22: 26 numeros; maior mudanca relativa com um ulp = 1.095e-15; texto igual
+P1091 rodada23: 84 numeros; maior mudanca relativa com um ulp = 3.025e-14; texto igual
+P1091 rodada24: 49 numeros; maior mudanca relativa com um ulp = 4.173e-16; texto igual
+P1091 rodada25: 10 numeros; maior mudanca relativa com um ulp = 2.392e-15; texto igual
+P1091 rodada26: 8 numeros; maior mudanca relativa com um ulp = 1.356e-08; texto igual
+P1092 funcoes pNN desde a P821 sem teste: 13 de 35: ['p821_inversao', 'p822_dialogo_invertido', 'p824_reconstrucao', 'p853_reconstrucao', 'p856_acaso_851', 'p881_epoca', 'p884_ciclo_da_serie', 'p911_deriva', 'p941_curvas_individuais', 'p948_pergunta_reconhece_resposta', 'p972_portugues_por_profundidade', 'p971_duas_memorias', 'p1001_duas_memorias_em_log']
+P1093 sem o funil 'act': 0.6986 das 55191 palavras mudam de destino (1991 iam direto a 'act')
+P1094 digitos hexadecimais que um ulp muda: 1 + random() = 1.0341 (conta posterior 1.0333); mantissa uniforme = 1.0667 (conta 1.0667)
+P974 previsoes unilaterais da Parte 55: {55: (3, 0, [])}
+P1119 minha taxa de erro (163/468): media = 0.35, intervalo 90% = [0.31, 0.39]
+FIM_OK status=0 segundos=4

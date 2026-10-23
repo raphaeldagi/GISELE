@@ -1,0 +1,15 @@
+--- Parte 18 (a linguagem como canal) ---
+P242 informacao por resposta (prior 0.1, erro 0.1): veto binario = 0.211 bit; quatro palavras = 0.106 bit; razao = 0.50
+P245 binario        : catastrofes = 0.0052, perguntas = 0.309, liquido = 1.281
+P245 fala_aprendida : catastrofes = 0.0021, perguntas = 0.310, liquido = 1.079
+P245 fala_conhecida : catastrofes = 0.0043, perguntas = 0.310, liquido = 1.161
+P245 fala_aprendida - binario: diferenca media = -0.202, dp = 0.136, t = -4.71
+P245 fala_conhecida - binario: diferenca media = -0.120, dp = 0.149, t = -2.55
+P244 P(catastrofe | 'seguro'): aprendido = 0.040; suposto com prior 0.1 = 0.009
+P244 P(catastrofe | 'acho que ok'): aprendido = 0.042; suposto com prior 0.1 = 0.043
+P244 P(catastrofe | 'desconfio'): aprendido = 0.084; suposto com prior 0.1 = 0.217
+P244 P(catastrofe | 'perigo'): aprendido = 0.176; suposto com prior 0.1 = 0.571
+P247 z>2: achados = 4.215 (teoria 4.207), falsos = 2.156 (teoria 2.161)
+P247 Bonferroni: achados = 1.939 (teoria 1.929), falsos = 0.050 (teoria 0.047)
+P249 minha taxa de erro (37/73): media = 0.51, intervalo 90% = [0.41, 0.60]
+FIM_OK status=0 segundos=60

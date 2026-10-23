@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (18205 linhas)
+# calculos.py  (18207 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7600,6 +7600,8 @@ def testes_de_regressao():
         "P3194": p3194_compensacao() < 1e-12,
         "P3195": (lambda r: (r[3], round(r[0], 4), round(r[2], 5)) == (53058, 0.9844, 0.49766))(p3195_fluxo_em_portugues()),
         "P3196": (lambda r: abs(r[2][0] - 3) < 1e-6 and round(r[5][1], 5) == 0.0003 and round(r[7][1], 5) == 0.00008)(p3196_benford16_potencias()),
+        "P3176v8": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (8, 0, [134], 131))(
+            p3176_comparar_voltas_v2("reproducao/volta7", "reproducao/volta8")),
         "P3176v7": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]) == (9, 0, [133], 130))(
             p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")),
     }
@@ -18244,7 +18246,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (566 linhas)
+# CLAUDE.md  (568 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -18656,6 +18658,8 @@ anterior, commit e push.
   Parte 143 (réplicas da 140 no português e em 5ⁿ, 7ⁿ, 2ⁿ; rodada 94 IGUAL; 10/11, (m) 6/6): Benford-16 se replica em três bases; o reservatório é uniforme e a largura
   é a hipergeométrica (1,005; 1,041), e os três lotes fora foram cauda (sementes consecutivas sem correlação: desvio dos 60 z = 1,092). Regra: uma investigação de cauda conta os
   lotes DEPOIS do que a disparou, com a binomial escrita, e para quando um caminho independente e um teste de largura passam.
+  Volta 8 (registrada na Parte 135, resultado na 141; 8/8): as 8 linhas que mudaram foram as 8 nomeadas, P1871 = 1 e P3175 = 720 no centro exato; oito voltas, 0 diferenças do
+  mundo. A volta morreu duas vezes com reinícios do contêiner e foi retomada parte a parte nas duas.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -30680,7 +30684,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# synthai/testes_parte128.py  (116 linhas)
+# synthai/testes_parte128.py  (120 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_parte128.py'] = """\"\"\"Testes da Parte 128: as peças da reprodução (P3171–P3173), chamadas pelo nome.\"\"\"
 
@@ -30794,6 +30798,10 @@ class TestesParte128(unittest.TestCase):
     def test_volta7_regressao(self):
         r = c.p3176_comparar_voltas_v2("reproducao/volta6", "reproducao/volta7")
         self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]), (9, 0, [133], 130))
+
+    def test_volta8_regressao(self):
+        r = c.p3176_comparar_voltas_v2("reproducao/volta7", "reproducao/volta8")
+        self.assertEqual((r["diferentes"], r["categorias"]["mundo"], r["novas"], r["blocos_sem_excecao"]), (8, 0, [134], 131))
 
 
 if __name__ == "__main__":
@@ -42007,7 +42015,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2271 linhas)
+# resultados.txt  (2286 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -44280,6 +44288,21 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3190 (d) posto dos 16 4.000000000000; (e) |0-9 - mao| 8.88e-16; (f) |3^n - Benford| 0.00121 (posto 3^n 3.95560)
   P3191 calibracao 80-140: v4 333/369 = 0.902; v5 435/483 = 0.901
   P3192 partes com previsoes que nenhuma regua le: [135]
+=== Parte 142: Jung nos modulos novos: a enantiodromia do heavy-ball e a compensacao do grupo ===
+  P3193 lambda 1.000: travessias 0; T*theta/pi real
+  P3193 lambda 1.389: travessias 0; T*theta/pi real
+  P3193 lambda 1.931: travessias 0; T*theta/pi real
+  P3193 lambda 2.683: travessias 1; T*theta/pi 1.55
+  P3193 lambda 3.728: travessias 3; T*theta/pi 2.88
+  P3193 lambda 5.179: travessias 4; T*theta/pi 4.07
+  P3193 lambda 7.197: travessias 5; T*theta/pi 5.34
+  P3193 lambda 10.000: travessias 7; T*theta/pi 6.77
+  P3194 (h) maximo de |soma das vantagens| em 10.000 grupos: 3.57e-13
+=== Parte 143: as replicas da Parte 140 (o portugues; 5^n, 7^n, 2^n) ===
+  P3195 N = 53058 glosas em portugues, media 1.7378 palavras; (a) razao 0.9844; (b) z -0.893; (c) 1a metade 0.49766
+  P3196 5^n: posto 3.956513882; |posto - Benford-16| 0.00030
+  P3196 7^n: posto 3.956891010; |posto - Benford-16| 0.00008
+  P3196 2^n: posto 3.000000000; |posto - Benford-16| 0.95681
 """
 
 # ====================================================================================================
@@ -50859,7 +50882,7 @@ linha a linha, um modelo do próprio projeto que eu montei ao longo das voltas 1
 """
 
 # ====================================================================================================
-# ASI_AGI_parte135_volta8.md  (37 linhas)
+# ASI_AGI_parte135_volta8.md  (54 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte135_volta8.md'] = """# Parte 135 — Volta 8, sem pausa, e o começo de "use tudo que enviei em cada módulo"
 
@@ -50898,6 +50921,23 @@ O centro de "quantos erros" é 3 × 0 + 2 × 0,10 + 3 × 0,25 ≈ 0,95.
 **Sobre mim:** erros no mundo em [0; 3], com centro 0,95.
 
 ➡ Anterior: [Parte 134](ASI_AGI_parte134_volta7.md).
+
+## Medido (P3176; as saídas ficam em `reproducao/volta8/`)
+| | medido | faixa | |
+|---|---|---|---|
+| R1 | 131 de 131 partes sem exceção | todas | ✅ |
+| R2 | a unificação: 174/174 | [174; 174] | ✅ |
+| R3 | 8 de 1.888 linhas mudaram | [6; 11] | ✅ (exatamente as 8 nomeadas: P143, P213, P913, P1692, P1872, P433, P434 e a P3175 da Parte 131) |
+| R4 | 0 do mundo (6 do projeto, 2 da máquina) | [0; 0] | ✅ |
+| R5 | 0 falhas: 730 + 27 + 40 + 72 + 55 testes | [0; 1] | ✅ |
+| R6 | 0 DIFERENTES; as 90 rodadas IGUAIS | [0; 0] | ✅ |
+| R7 | P1871: 1 (a saída de nome novo da volta 7) | [0; 2] | ✅ |
+| R8 | P3175: 720 | [706; 734] | ✅ (a conta dava 720, exato) |
+
+**Mundo: 8 de 8.** **Sobre mim:** 0 erros, em [0; 3]: ✅. A volta 8 morreu duas vezes com reinícios do contêiner (às 15h35 e às 16h37) e foi
+retomada parte a parte nas duas: o procedimento da Parte 131 funcionou exatamente para isso.
+
+➡ Próxima: [Parte 136](ASI_AGI_parte136_passo_e_auditor.md).
 """
 
 # ====================================================================================================
@@ -51832,7 +51872,7 @@ previsões, e o número só não muda porque elas acertam na mesma taxa.
 """
 
 # ====================================================================================================
-# ASI_AGI_parte141_volta8_resultado.md  (45 linhas)
+# ASI_AGI_parte141_volta8_resultado.md  (53 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte141_volta8_resultado.md'] = """# Parte 141 — O resultado da volta 8, e o reservatório e o posto efetivo bit a bit (rodada 93)
 
@@ -51877,6 +51917,14 @@ vereditos DEPOIS que eu fixei a entrada. A v4 foi de 360 para 369 previsões, e 
 as Partes 80 a 138, que estão fechadas, e dá os mesmos (360, 325) e (472, 425).
 
 **Regra (Parte 141, complemento):** uma entrada de regressão só fixa medidas sobre partes FECHADAS, isto é, com todos os vereditos escritos.
+
+## O resultado da volta 8
+A volta 8, registrada na Parte 135 (commit 4363101), deu **8 de 8**, com a tabela de vereditos na própria Parte 135, onde a P3187 a lê:
+- 131 partes sem exceção, a regressão 174/174, 730 + 27 + 40 + 72 + 55 testes OK e as 90 rodadas IGUAIS;
+- 8 de 1.888 linhas mudaram, exatamente as 8 nomeadas no registro, e 0 do mundo;
+- a P1871 deu 1 e a P3175 deu 720, os dois no centro exato da conta.
+
+Oito voltas, e nenhuma diferença do mundo em nenhuma. O contêiner reiniciou duas vezes durante a volta, e a retomada por parte recuperou as duas.
 
 ➡ Anterior: [Parte 140](ASI_AGI_parte140_leitor_dicionario_hex.md). ➡ Próxima: [Parte 142](ASI_AGI_parte142_enantiodromia.md).
 """

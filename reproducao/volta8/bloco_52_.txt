@@ -1,0 +1,7 @@
+--- Parte 52 (0x34: o metodo ou a serie) ---
+P1001 duas exponenciais em log (Gauss-Newton, exp/log proprios): sse da grade = 0.2131 -> 0.2086; A = 0.0919, B = 0.0261, t1 = 4.087, t2 = 1.875e+02; AIC = -83.26 (potencia: -79.37; limiar de sse = 0.2534)
+P1002 funis do portugues: a mais escolhida = ato (333); as 10 mais = 0.2411 de 3401 palavras; [('ato', 333), ('pessoa', 138), ('língua', 105), ('atividade', 50), ('mulher', 42), ('país', 38), ('parte', 35), ('membro', 29), ('ação', 25), ('estado', 25)]
+P1003 inverte e soma, base 16 (1..4095): chegam 0.9819, em 2.558 passos; nao chegam 74 (o primeiro: 0x19d); base 10 (1..9999): nao chegam 246 (o primeiro: 196)
+P974 previsoes unilaterais da Parte 52: {52: (4, 0, [])}
+P1029 minha taxa de erro (156/448): media = 0.35, intervalo 90% = [0.31, 0.39]
+FIM_OK status=0 segundos=2

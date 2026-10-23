@@ -408,6 +408,8 @@ anterior, commit e push.
   Parte 143 (réplicas da 140 no português e em 5ⁿ, 7ⁿ, 2ⁿ; rodada 94 IGUAL; 10/11, (m) 6/6): Benford-16 se replica em três bases; o reservatório é uniforme e a largura
   é a hipergeométrica (1,005; 1,041), e os três lotes fora foram cauda (sementes consecutivas sem correlação: desvio dos 60 z = 1,092). Regra: uma investigação de cauda conta os
   lotes DEPOIS do que a disparou, com a binomial escrita, e para quando um caminho independente e um teste de largura passam.
+  Volta 8 (registrada na Parte 135, resultado na 141; 8/8): as 8 linhas que mudaram foram as 8 nomeadas, P1871 = 1 e P3175 = 720 no centro exato; oito voltas, 0 diferenças do
+  mundo. A volta morreu duas vezes com reinícios do contêiner e foi retomada parte a parte nas duas.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a

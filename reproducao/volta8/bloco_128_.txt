@@ -1,0 +1,8 @@
+
+=== Parte 128: refazer tudo num clone limpo (volta 1) ===
+  blocos 16, sem exceção 16; regressões ['Regressao: 167/167 resultados publicados reproduzidos; falhas = []']
+  partes refeitas 124, sem referência no resultados.txt [91]
+  linhas 1872, diferentes 85 (0.0454); categorias {'projeto': 73, 'maquina': 2, 'nota': 10, 'mundo': 0}
+  diferenças do MUNDO: []
+  rótulos P1961 'Partes 80-X' com o total da faixa crescente: (39, 28, 350)
+FIM_OK status=0 segundos=0

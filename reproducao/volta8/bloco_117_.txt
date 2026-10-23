@@ -1,0 +1,11 @@
+--- Parte 117 (0x75: as camadas contrapostas com matrizes) ---
+P2951 (aQ)^10, a=1,2, d=8: sigma_max/sigma_min - 1 = 2.66e-15; |sigma_max - a^10|/a^10 = 3.30e-15
+P2952/P2953 contrapostas: W,W^-1 max|J-I| = 3.28e-15 (kappa(W) = 9.222); Q,Q^T max|J-I| = 7.77e-16
+P2954 gaussianas independentes: ln|det J|/L media -4.5972 (fechada -4.5933), desvio 0.5065 (fechada 0.4914), semente nova 0.4999; ln sigma_max/L 0.0675; uma matriz: media -4.5956, var 2.4068 (fechada 2.4147)
+P2955 superposicao matricial: resto 1.144e-05 (1e-3), 1.157e-07 (1e-4), inclinacao 1.9949
+P2956 rodada 84 (W, W^-1 por Gauss-Jordan, IGUAL em Java): desvio 0x1.7000000000000p-48
+P1961 teste, Partes 80-117: 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P2951-P2980) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 117: {117: (0, 0, [])}
+P4339 minha taxa de erro (226/933): media = 0.24, intervalo 90% = [0.22, 0.27]
+FIM_OK status=0 segundos=22

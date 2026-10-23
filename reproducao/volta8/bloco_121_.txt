@@ -1,0 +1,11 @@
+--- Parte 121 (0x79: o NEXUS-RAPHAEL 2.2.0 anexado, auditado no proprio codigo) ---
+P3071 H-M3 ganho semente 0 0.1215, vereditos ['ACEITA', 'ACEITA', 'ACEITA', 'INCONCLUSIVA', 'ACEITA']; H-M2 ganho medio 0.2292, IC>0 em 5/5; H-M7 deltas [0.0, -0.245, 0.0, 0.0, 0.0]
+P3072 Mega-Sena: medias {'quentes': 0.6266666666666667, 'frias': 0.6233333333333333, 'aleatoria': 0.5866666666666667}; quentes-aleatoria 0.0400 IC [-0.07333333333333333, 0.15333333333333332] -> INCONCLUSIVA; qui2 57.25 (E fechada 54); IndexError com 500 replicas: True; com 2000 o 'superior' fica abaixo da mediana: True (IC corrigido [-0.07333333333333333, 0.15333333333333332])
+P3073 jogo da velha: 5478 estados (arquivo), 5478 (por camadas); valor alfa-beta 0; Lyapunov r=4 0.6931 (ln 2 = 0.6931)
+P3074 adendo (sementes 100-1099): braco ruim extraordinario 0.000, ordinario 0.000; H-M3 ACEITA 0.930
+P3075 rodada 87 (logistica do angulo duplo, exp proprio, IGUAL em Java): Brier simples 0.2029, com o duplo 0.0207
+P1961 teste, Partes 80-121 (sem a 120, aberta): 317/350 = 0.9057; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9), 85: (4, 4), 86: (5, 6), 87: (2, 5), 88: (4, 4), 89: (4, 4), 90: (3, 3), 91: (4, 4), 92: (4, 4), 93: (5, 6), 94: (5, 5), 95: (5, 5), 96: (5, 5), 97: (4, 5), 98: (5, 5), 99: (5, 5), 100: (5, 5), 101: (5, 5), 102: (5, 5), 103: (5, 5), 104: (4, 5), 105: (4, 5), 106: (5, 5), 107: (5, 5), 108: (5, 5), 109: (8, 9), 110: (20, 21), 111: (12, 15), 112: (14, 14), 113: (13, 13), 114: (10, 10), 115: (15, 16), 116: (19, 19), 117: (10, 11), 118: (6, 6), 119: (4, 4), 120: (8, 9), 121: (13, 16), 122: (15, 16), 123: (20, 25)}
+P1092 pNN novas (P3071-P3100) sem teste: 0 de 5: []
+P974 previsoes unilaterais da Parte 121: {121: (0, 0, [])}
+P4619 minha taxa de erro (229/959): media = 0.24, intervalo 90% = [0.22, 0.26]
+FIM_OK status=0 segundos=20

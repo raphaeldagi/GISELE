@@ -1,0 +1,16 @@
+--- Parte 80 (0x50: o valor de um conjunto) ---
+P1842 olhar 1, semente 800: guloso/otimo 0.8835; guloso otimo em 0.8167; complementaridade 0.3633; parado em zero 0.1100
+P1842 olhar 1, semente 801: guloso/otimo 0.8931; guloso otimo em 0.8267; complementaridade 0.3667; parado em zero 0.1000
+P1842 olhar 1, semente 802: guloso/otimo 0.9022; guloso otimo em 0.8267; complementaridade 0.3833; parado em zero 0.0900
+P1842 olhar 1, semente 803: guloso/otimo 0.8808; guloso otimo em 0.7967; complementaridade 0.3233; parado em zero 0.1100
+P1842 olhar 1, semente 80: guloso/otimo 0.8821; guloso otimo em 0.7933; complementaridade 0.4033; parado em zero 0.1100
+P1842 olhar 2, semente 800: guloso/otimo 0.9709; guloso otimo em 0.9133; complementaridade 0.3633; parado em zero 0.0233
+P1842 olhar 2, semente 801: guloso/otimo 0.9752; guloso otimo em 0.9133; complementaridade 0.3667; parado em zero 0.0167
+P1842 olhar 2, semente 802: guloso/otimo 0.9846; guloso otimo em 0.9233; complementaridade 0.3833; parado em zero 0.0067
+P1842 olhar 2, semente 803: guloso/otimo 0.9665; guloso otimo em 0.8933; complementaridade 0.3233; parado em zero 0.0233
+P1842 olhar 2, semente 80: guloso/otimo 0.9771; guloso otimo em 0.9100; complementaridade 0.4033; parado em zero 0.0167
+P1843 rodada 49 (as mesmas contas da P1842, semente 80): [0.8821, 0.9771, 0.7933, 0.91, 0.11]
+P1092 pNN novas (P1841-P1870) sem teste: 0 de 3: []
+P974 previsoes unilaterais da Parte 80: {}
+P1869 minha taxa de erro (201/657): media = 0.31, intervalo 90% = [0.28, 0.34]
+FIM_OK status=0 segundos=1

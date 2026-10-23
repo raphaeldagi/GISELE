@@ -1,0 +1,13 @@
+--- Parte 84 (0x54: o delirio e o escrutinio) ---
+P1961 teste (e) da Parte 79 (acerto das Partes 80, 81, 83, 84): 23/31 = 0.7419; por parte {80: (4, 4), 81: (2, 3), 83: (14, 15), 84: (3, 9)}
+P1962 Lyapunov pelo operador de transferencia a=0,2: (0.004987316189849222, 0.9974632379698442, 0.995033085316809)
+P1962 a=0,05: (0.0003123340443594762, 0.9994689419503237, 0.9996876301474846)
+P1963 delirio base (agulha, com ruido): (0.08333333333333333, 0.15666666666666668, 0.07333333333333335, 0.15333333333333332, -0.5937566666666667)
+P1963 (h) limpo agulha: recoze 0.1333
+P1963 (i) limpo largo: recoze 0.2000 gulosa 0.1700
+P1963 (j) limpo largo lento (50000 passos): recoze 0.4567
+P1964 rodada 51 (Metropolis, IGUAL em Java): (263, 266.2008297501092)
+P1092 pNN novas (P1961-P1990) sem teste: 0 de 4: []
+P974 previsoes unilaterais da Parte 84: {}
+P2019 minha taxa de erro (210/685): media = 0.31, intervalo 90% = [0.28, 0.34]
+FIM_OK status=0 segundos=25

@@ -1,0 +1,13 @@
+--- Parte 13 (o canal da cautela, transferencia entre tipos de tarefa, a pergunta 200) ---
+P192 planejadora_sem_integrar : retorno = 20.044, catastrofes = 0.0173, por passo = [4, 5, 13, 17, 30]
+P192 prudente                 : retorno = 20.059, catastrofes = 0.0170, por passo = [4, 4, 10, 19, 31]
+P192 prudente - planejadora: diferenca media = 0.015, dp = 0.067, t = 0.72
+P194 ucb         : retorno por rodada = -17.11, catastrofes por rodada = 4.315, perguntas = 0.00
+P194 ucb_excluir : retorno por rodada = 9.29, catastrofes por rodada = 3.765, perguntas = 0.00
+P194 ucb_synthai : retorno por rodada = 94.78, catastrofes por rodada = 1.825, perguntas = 2.56
+P194 ucb_oraculo : retorno por rodada = 178.66, catastrofes por rodada = 0.000, perguntas = 0.00
+P194 ucb_synthai - ucb: diferenca media = 111.89, dp = 29.54, t = 11.98
+P194 ucb_synthai - ucb_excluir: diferenca media = 85.49, dp = 28.51, t = 9.48
+P200 Partes 3-12: 52 afirmacoes testadas, 29 corrigidas, 23 certas de primeira (44%)
+P197 minha taxa de erro (31/55): media = 0.56, intervalo 90% = [0.45, 0.67]
+FIM_OK status=0 segundos=16
