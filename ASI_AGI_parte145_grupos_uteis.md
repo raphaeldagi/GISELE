@@ -55,3 +55,29 @@ A régua rodou sobre o rascunho e deu m1 = 9, m2 = 4, m3 = 0,127 e m5 = 0. E = 2
 Erros no mundo em **[0; 5]**, com centro 2,25.
 
 ➡ Anterior: [Parte 144](ASI_AGI_parte144_volta9.md).
+
+## Medido (P3197)
+| G | retorno | U (grupos úteis) | desvio de b·ln(U_G/U₂) |
+|---|---|---|---|
+| 2 | 0,8756 | 362,0 | — |
+| 4 | 0,8805 | 339,0 | +0,0071 |
+| 8 | 0,8632 | 263,0 | −0,0018 |
+| 16 | 0,8467 | 175,3 | −0,0050 |
+
+- **(a)** a ordem dos retornos é a dos U: **não** (G = 4 ficou acima de G = 2). ❌
+- **(b)** +0,0071. ✅
+- **(c)** −0,0018. ✅
+- **(d)** −0,0050. ✅
+- **(e)** 362. ✅
+- **(f)** 339. ✅
+- **(g)** 263. ✅
+- **(h)** 175,3. ✅
+- **(j)** fica para o próximo despertar.
+
+### (a): uma previsão de ordem que valia uma moeda
+A relação passou: as três diferenças ficaram a menos de 0,0071 de b·ln U, com o b do outro mundo, e os U se replicaram (362, 339, 263 e 175
+contra 385, 355, 256 e 179). Mas a ORDEM entre G = 2 e G = 4 não tinha como ser prevista. A diferença esperada era 0,0330·ln(362/339) = 0,0022,
+e o ruído de uma diferença de duas médias é 0,0076. P(ordem certa) ≈ Φ(0,0022/0,0076)·Φ(0,0084/0,0076)·Φ(0,0134/0,0076)
+= 0,612·0,865·0,961 = 0,51. Escrevi "1/24 por acaso", que é a chance de uma ordem ALEATÓRIA, e registrei como faixa de 90% uma previsão
+cuja chance era a de uma moeda. É o piso do caos da Parte 30 (não prever diferenças abaixo do ruído) aplicado a uma ORDEM: cada par vizinho
+é uma diferença.

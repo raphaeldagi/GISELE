@@ -18196,6 +18196,35 @@ def _parte_143():
 
 PARTES[143] = _parte_143
 
+
+def p3197_grupos_uteis_mundo_novo(mundo=(145, 146), sementes=(31, 32, 33), orcamento=4096, b=0.0330):
+    """(a)-(h) da Parte 145: a GRPO com G = 2, 4, 8, 16 num segundo mundo de contextos; os grupos uteis U e o desvio de
+    ret(G) - ret(2) contra b*ln(U_G/U_2), com o b ajustado no mundo antigo (31/32). Devolve ({G: (retorno, U)}, {G: desvio}, ordem igual?)."""
+    from synthai.grpo_bandido import gerar_contextos, treinar, retorno_esperado
+    tr, te = gerar_contextos(128, mundo[0]), gerar_contextos(128, mundo[1])
+    out = {}
+    for G in (2, 4, 8, 16):
+        rets, uteis = [], []
+        for sem in sementes:
+            w, s, n = treinar(tr, G, orcamento, semente=sem)
+            rets.append(retorno_esperado(w, te))
+            uteis.append(n - s)
+        out[G] = (sum(rets) / len(rets), sum(uteis) / len(uteis))
+    desvio = {G: out[G][0] - out[2][0] - b * math.log(out[G][1] / out[2][1]) for G in (4, 8, 16)}
+    ordem = sorted(out, key=lambda g: out[g][0]) == sorted(out, key=lambda g: out[g][1])
+    return out, desvio, ordem
+
+
+def _parte_145():
+    print("\n=== Parte 145: os grupos uteis da GRPO num segundo mundo ===")
+    out, desvio, ordem = p3197_grupos_uteis_mundo_novo()
+    for G, (r, u) in out.items():
+        print(f"  P3197 G={G}: retorno {r:.4f}; grupos uteis {u:.1f}" + (f"; desvio da relacao {desvio[G]:+.4f}" if G in desvio else ""))
+    print(f"  P3197 (a) a ordem dos retornos e a dos grupos uteis: {ordem}")
+
+
+PARTES[145] = _parte_145
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
