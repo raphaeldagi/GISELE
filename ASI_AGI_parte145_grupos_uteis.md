@@ -81,3 +81,18 @@ e o ruído de uma diferença de duas médias é 0,0076. P(ordem certa) ≈ Φ(0,
 = 0,612·0,865·0,961 = 0,51. Escrevi "1/24 por acaso", que é a chance de uma ordem ALEATÓRIA, e registrei como faixa de 90% uma previsão
 cuja chance era a de uma moeda. É o piso do caos da Parte 30 (não prever diferenças abaixo do ruído) aplicado a uma ORDEM: cada par vizinho
 é uma diferença.
+
+## Engenharia reversa
+- **O padrão: o acaso de referência errado.** Para (a) escrevi a chance de acertar POR SORTE (1/24, uma ordem aleatória) e não a chance de a
+  MINHA previsão acertar com o ruído que eu conhecia (0,51). As duas são probabilidades de a ordem sair certa, e eu troquei uma pela outra.
+  A primeira mede quão arriscada é a previsão; a segunda, quão confiável. A regra da Parte 26 pede a primeira, e eu a li como se fosse a segunda.
+- **O que isso revela.** Quando a previsão é qualitativa (uma ordem, um sinal), eu esqueço que ela tem a mesma incerteza das quantidades que a
+  compõem. Uma ordem de quatro números é três diferenças, cada uma com o seu ruído.
+- **Regra nova (Parte 145):** uma previsão de ordem ou de sinal escreve ao lado P = Π Φ(diferença esperada/σ) dos pares vizinhos, e só vira
+  faixa de 90% se P ≥ 0,9. Se não, registra-se só a parte que passa (os pares bem separados) ou um teste de relação, como (b) a (d).
+
+## Funções e testes
+- **Funções:** `p3197_grupos_uteis_mundo_novo` e `_parte_145`. Entrada P3197 na regressão.
+- **Testes:** `synthai/testes_parte145.py`.
+
+O placar (m) e o "sobre mim" fecham quando (j) for medida, no próximo despertar.
