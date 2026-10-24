@@ -70,3 +70,8 @@ Acertos como contagem: 5 a 7 das 7 (5/7 = 0,7143).
 
 ### Sobre mim, registrado
 Erros no mundo em **[0; 3]**, centro 0,7.
+
+## Um lote novo depois de (e), registrado antes de rodar (WordNet / inglês, 4 a 5 letras, sementes 201 a 240)
+Os cinco mundos rodaram (resultado em "Medido"); (e) ficou 0,00005 acima do teto, com razão medido/colapso 1,147, z ≈ 1,8 contra o ruído binomial e o erro do
+modelo juntos. Antes de qualquer mecanismo (Partes 117 e 148), 40 sementes novas, o mesmo centro:
+- **(h)** aleatório, WordNet / inglês, 4 a 5 letras, média das sementes 201 a 240, em **[0,0074; 0,0091]**: 1,645 · √(binomial/40 + (0,021 · 1,36 · 0,00824)²).
