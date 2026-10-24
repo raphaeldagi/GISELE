@@ -284,3 +284,61 @@ def estatisticas_exatas(palavras, freq, tamanho=3, minimo=3, maximo=5, casa="pri
             for k, x in zip(("acerto", "dr", "dc", "borda", "comprimento", "falha"), f):
                 tot[k] += peso * x / len(casas)
     return tot
+
+
+def ramificacao_exata(palavras, freq, tamanho=3, minimo=3, maximo=5, casa="primeira"):
+    """Parte 156: o enumerador exato de aleatorio_exato com as esperanças sobre as DECISÕES do episódio: o número esperado de decisões (nós visitados
+    com ao menos uma opção), o número esperado de opções somadas sobre elas (ações por letra + PARAR) e o número esperado de casas livres vizinhas
+    (antes do colapso por letra). Devolve {acerto, falha, decisoes, opcoes, livres}; a ramificação média é opcoes/decisoes, o colapso médio é
+    1 − (opções sem o PARAR)/livres."""
+    import itertools
+    letras = [c for c in sorted(freq) if freq[c] > 0]
+    t = sum(freq[c] for c in letras)
+    p = {c: freq[c] / t for c in letras}
+    dic = {w.upper() for w in palavras}
+    casas = [(r, c) for r in range(tamanho) for c in range(tamanho)]
+    deltas = [(a, b) for a in (-1, 0, 1) for b in (-1, 0, 1) if a or b]
+    vz = {(r, c): [(r + a, c + b) for a, b in deltas if 0 <= r + a < tamanho and 0 <= c + b < tamanho] for r, c in casas}
+    nomes = ("acerto", "falha", "decisoes", "opcoes", "livres", "acoes")
+    tot = dict.fromkeys(nomes, 0.0)
+    for atrib in itertools.product(letras, repeat=len(casas)):
+        grade = dict(zip(casas, atrib))
+        peso = 1.0
+        for x in atrib:
+            peso *= p[x]
+
+        def anda(caminho, prefixo):
+            acoes = {}
+            livres = 0
+            if len(caminho) < maximo:
+                vis = set(caminho)
+                for v in vz[caminho[-1]]:
+                    if v not in vis:
+                        livres += 1
+                        acoes.setdefault(grade[v], []).append(v)
+            parar = len(caminho) >= minimo
+            n = len(acoes) + (1 if parar else 0)
+            if n == 0:
+                return (0.0, 1.0, 0.0, 0.0, 0.0, 0.0)
+            s = [0.0] * 6
+            if parar:
+                s[0] = 1.0 if prefixo in dic else 0.0
+            for letra, vs in acoes.items():
+                escolhidas = vs[:1] if casa == "primeira" else vs
+                m = [0.0] * 6
+                for v in escolhidas:
+                    f = anda(caminho + [v], prefixo + letra)
+                    m = [a + b for a, b in zip(m, f)]
+                s = [a + b / len(escolhidas) for a, b in zip(s, m)]
+            s = [x / n for x in s]
+            # esta decisão conta uma vez, com as suas opções e as suas casas livres
+            s[2] += 1.0
+            s[3] += n
+            s[4] += livres
+            s[5] += len(acoes)
+            return tuple(s)
+        for u in casas:
+            f = anda([u], grade[u])
+            for k, x in zip(nomes, f):
+                tot[k] += peso * x / len(casas)
+    return tot

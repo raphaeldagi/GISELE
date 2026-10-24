@@ -18638,6 +18638,27 @@ def p3215_deriva_por_comprimento(maximos=(4, 5, 6)):
     return out
 
 
+def _casos_p156(maximo):
+    """Os casos B e A' das Partes 154-156 com o dicionario estendido ate `maximo` letras (pelo menos 5): B = sem letras iguais seguidas sobre {a, b, c};
+    A' = de 'a' a 'b' sobre {a, b}. (nome, palavras, freq)."""
+    import itertools
+    L = range(3, max(maximo, 5) + 1)
+    B = [w for n in L for w in ("".join(x) for x in itertools.product("abc", repeat=n)) if all(a != b for a, b in zip(w, w[1:]))]
+    A = [w for n in L for w in ("".join(x) for x in itertools.product("ab", repeat=n)) if w[0] == "a" and w[-1] == "b"]
+    return (("B", B, {"A": 0.5, "B": 0.3, "C": 0.2}), ("A'", A, {"A": 0.7, "B": 0.3}))
+
+
+def p3216_ramificacao(maximo=4, casos=("B", "A'"), casas=("primeira", "uniforme")):
+    """A Parte 156 (P3216): na grade 3 x 3 de 3 a `maximo` letras, as esperancas exatas das decisoes do episodio (synthai.tabuleiro.ramificacao_exata):
+    acerto, decisoes, opcoes, casas livres e acoes, com a primeira casa e com a uniforme. Devolve {nome: {casa: dict}}."""
+    from synthai import tabuleiro as T
+    out = {}
+    for nome, pal, f in _casos_p156(maximo):
+        if nome in casos:
+            out[nome] = {casa: T.ramificacao_exata(pal, f, 3, 3, maximo, casa=casa) for casa in casas}
+    return out
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
