@@ -94,3 +94,62 @@ A conta de peso de `synthai/tabuleiro.py` traduzida: as frequências de letras d
 alfabeto, total em laço, piso 0,01) e a densidade D das que têm 3 a 5 letras, mais a mesma D com as frequências do inglês. Só + × ÷ em laço, nenhuma
 função transcendental. Previsão: **IGUAL**. O que poderia quebrar: a ordem da soma das frequências (o módulo usa `sum()` de floats, compensado no
 Python 3.12; a rodada usa laço, nos dois lados).
+
+## Medido (P3204, P3205, P3206; rodada 98)
+- **(a)** aleatório, calibração: 0,0226. ✅
+- **(b)** Q-learning, calibração: **0,2867**. ❌ (acima do teto 0,25)
+- **(c)** G = 2 − Q, calibração: 0,0576. ✅
+- **(d)** Q-learning, sementes 121 a 140: 0,2934. ✅
+- **(e)** aleatório: 0,0221. ✅
+- **(f)** GRPO G = 2: 0,3422. ✅
+- **(g)** sem contraste G = 2: 0,9453. ✅
+- **(h)** GRPO G = 8: 0,3456. ✅
+- **(i)** sem contraste G = 8: 0,8263. ✅
+- **(j)** G = 2 − Q: +0,0488. ✅
+- **(k)** G = 8 − Q: +0,0521. ✅
+- **(l)** G = 8 − G = 2: +0,0033. ✅
+- **(n)** sementes com as duas GRPO acima do Q: 17 de 20. ✅ (no piso)
+- **(o)** aleatório, WordNet no tabuleiro português: 0,0465. ✅
+- **(p)** aleatório, embutido no tabuleiro português: 0,0062. ✅
+- **Rodada 98:** IGUAL, 30 linhas e 28 números bit a bit. ✅
+
+Do mundo: (a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅
+
+**Mundo: 14 de 15.** **Sobre mim:** 1 erro, em [1; 6]: ✅. Nenhuma surpresa (o erro de (b), 0,037, é menor que a largura 0,08).
+
+### O que o tabuleiro português mostrou
+**A lei da densidade.** O braço aleatório acha uma palavra com chance ≈ k · D, k ≈ 0,21, em seis combinações de dicionário e tabuleiro (três
+dicionários no tabuleiro inglês, três no português): as razões medidas vão de 0,183 (embutido, tabuleiro português, 10 sementes) a 0,221. Três das
+seis foram PREVISTAS por D antes de medir ((a), (o), (p)), duas delas em dicionários que nunca tinham jogado naquele tabuleiro. D não sabe nada de
+vizinhança nem de parar; o fator k ≈ 0,21 absorve os dois, e não muda com o dicionário nem com o tabuleiro. A conta é a chance de que o sorteio de
+letras forme uma palavra; o resto do jogo é uma constante.
+
+**O Q-learning não segue a densidade.** Trocar o tabuleiro dobrou o Q-learning em português (0,1417 → 0,2901, juntando calibração e teste) com o
+aleatório subindo 1,64 vez (0,0136 → 0,0224): a razão Q/aleatório foi de 10,4 a 13,0. A previsão (b) aplicou a tendência entre DOIS DICIONÁRIOS à troca
+de TABULEIRO, e os dois mecanismos têm sinais opostos. Uma leitura que cabe nos números (hipótese, 1 lote): com letras portuguesas, as palavras
+portuguesas COMUNS (curtas, de vogais frequentes) aparecem em quase todas as grades, e o Q-learning tabular aprende o que se repete (o repertório
+da Parte 113). O teste dessa leitura é a pendência 1 da Parte 149, agora com dois tabuleiros.
+
+**A GRPO continua acima:** G = 2 − Q = +0,049 e G = 8 − Q = +0,052 no teste; 7 lotes, 3 dicionários, 2 tabuleiros. Mas a vantagem NÃO cresceu com o
+aleatório desta vez (no tabuleiro inglês, de +0,048 a +0,095 com o aleatório indo de 0,009 a 0,043): o Q-learning, que ganhou o repertório, subiu mais.
+
+## Engenharia reversa
+- **O padrão: transportar uma tendência entre variáveis com o mesmo efeito visível.** Em (b), "mais aleatório" veio por dois caminhos (outro
+  dicionário, outro tabuleiro) e eu tratei os dois como um só eixo. É a regra da Parte 12 (mesmo nome, mecanismo diferente) num eixo numérico.
+- **A regra da Parte 149 funcionou:** o viés que ela mandou pesar (as letras do tabuleiro) ganhou uma conta (D), e a conta acertou as três previsões
+  do que ela pesa. O erro ficou no que ela NÃO pesa (o aprendizado do Q).
+- **Regra (Parte 150):** uma interpolação entre casos medidos só vale ao longo da variável que separa esses casos; mudar outra variável que move a
+  mesma medida pede outra calibração, ou a faixa do estatístico.
+
+## Funções e testes
+- **Funções:** `p3204_densidades`, `p3205_grpo_tabuleiro`, `p3206_aleatorio_tabuleiro` e `_parte_150`; o módulo `synthai/tabuleiro.py`.
+  Entradas P3204, P3205 e P3206 na regressão.
+- **Diálogo:** `dialogo/rodada98.py` e `dialogo/Rodada98.java`, IGUAL.
+- **Testes:** `synthai/testes_parte150.py`.
+
+**O placar (m):** m1 = 15 em [15; 20] ✅, m2 = 1 em [1; 2] ✅, m3 = 0,107 em [0,08; 0,14] ✅, **m4 = 0,933 em [0,60; 0,93] ❌**, m5 = 0 ✅ e m6 = 0 ✅.
+**5 de 6.** m4 errou como na Parte 147, pelo arredondamento do limite: escrevi "9 a 14 acertos das 15" e passei 14/15 = 0,9333 para a faixa como 0,93.
+A regra da Parte 147 dizia escrever a faixa como contagem; eu escrevi a contagem ao lado e a fração arredondada dentro do colchete. **Regra (Parte
+150):** o limite de uma faixa de fração derivada de uma contagem é a fração exata com quatro casas (0,9333), calculada por código.
+
+➡ Anterior: [Parte 149](ASI_AGI_parte149_grpo_portugues.md).

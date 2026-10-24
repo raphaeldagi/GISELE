@@ -159,3 +159,4 @@ inglês grande (+0,095, +0,095). Agora em 3 dicionários, 6 lotes: a GRPO sem cr
 teste já estava registrado.
 
 ➡ Anterior: [Parte 148](ASI_AGI_parte148_grpo_dicionario_grande.md).
+➡ Próxima: [Parte 150](ASI_AGI_parte150_tabuleiro_portugues.md).

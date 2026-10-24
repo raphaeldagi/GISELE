@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 149, perguntas P1 a P3203).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 150, perguntas P1 a P3206).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (18454 linhas)
+# calculos.py  (18504 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7607,6 +7607,9 @@ def testes_de_regressao():
         "P3201": (lambda r: (round(r["Q"], 4), round(r["G2"], 4), round(r["G8"], 4), r["ambas"]) == (0.1431, 0.2038, 0.2118, 18))(p3201_grpo_por_dicionario("pt", tuple(range(121, 141)))),
         "P3202": round(p3202_aleatorio_por_dicionario()[0], 4) == 0.0087,
         "P3203": p3203_auditoria_t()[1] == 1,
+        "P3204": round(p3204_densidades()[0]["pt/PT"], 4) == 0.1093,
+        "P3205": (lambda r: (round(r["Q"], 4), round(r["aleat"], 4), r["ambas"]) == (0.2934, 0.0221, 17))(p3205_grpo_tabuleiro(sementes=tuple(range(121, 141)))),
+        "P3206": (round(p3206_aleatorio_tabuleiro("en")[0], 4), round(p3206_aleatorio_tabuleiro("embutido")[0], 4)) == (0.0465, 0.0062),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18446,6 +18449,37 @@ def p3203_auditoria_t(erros=_ERROS_DE_CALIBRACAO_147_148):
     return out, sum(o[4] for o in out)
 
 
+def p3204_densidades():
+    \"\"\"A conta de peso da Parte 150 (P3204): D = soma sobre as palavras de 3 a 5 letras do produto das frequencias das letras do tabuleiro, para
+    (embutido, portugues, WordNet) no tabuleiro ingles e portugues no tabuleiro portugues (frequencias contadas nos lemas da OpenWordNet-PT).
+    Devolve {nome: D} e as frequencias portuguesas.\"\"\"
+    from synthai import palavras_rl as P
+    from synthai import tabuleiro as T
+    pt = P.lemas_ownpt()
+    fpt = T.frequencias_de(pt)
+    E = P.LETTER_FREQ
+    return {"emb/EN": T.densidade(P.EMBEDDED_WORDS, E), "pt/EN": T.densidade(pt, E), "en/EN": T.densidade(P.lemas_wordnet(), E),
+            "pt/PT": T.densidade(pt, fpt)}, fpt
+
+
+def p3205_grpo_tabuleiro(dicionario="pt", tabuleiro="pt", sementes=tuple(range(101, 121)), episodios=5000, avaliacao=1000):
+    \"\"\"A P3201 com o tabuleiro sorteado pelas frequencias de letras do portugues ('pt') ou do ingles ('en', o original) (P3205; Parte 150).\"\"\"
+    from synthai import palavras_rl as P
+    from synthai import tabuleiro as T
+    freq = T.frequencias_de(P.lemas_ownpt()) if tabuleiro == "pt" else P.LETTER_FREQ
+    with T.com_frequencias(freq):
+        return p3201_grpo_por_dicionario(dicionario, sementes, episodios, avaliacao)
+
+
+def p3206_aleatorio_tabuleiro(dicionario, tabuleiro="pt", sementes=tuple(range(141, 151))):
+    \"\"\"(o)-(p) da Parte 150 (P3206): a P3202 (so o braco aleatorio) com o tabuleiro trocado.\"\"\"
+    from synthai import palavras_rl as P
+    from synthai import tabuleiro as T
+    freq = T.frequencias_de(P.lemas_ownpt()) if tabuleiro == "pt" else P.LETTER_FREQ
+    with T.com_frequencias(freq):
+        return p3202_aleatorio_por_dicionario(dicionario, sementes)
+
+
 def _parte_148():
     print("\\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
@@ -18481,6 +18515,22 @@ def _parte_149():
 
 PARTES[149] = _parte_149
 
+
+def _parte_150():
+    print("\\n=== Parte 150: o tabuleiro com as letras do portugues e a densidade de palavras ===")
+    d, _ = p3204_densidades()
+    print("  P3204 densidade D: " + "; ".join(f"{k} {v:.4f}" for k, v in d.items()))
+    for nome, sem in (("calibracao 101-120", tuple(range(101, 121))), ("teste 121-140", tuple(range(121, 141)))):
+        r = p3205_grpo_tabuleiro("pt", "pt", sem)
+        print(f"  P3205 {nome}: Q {r['Q']:.4f}; aleatorio {r['aleat']:.4f}; G=2 {r['G2']:.4f}; G=8 {r['G8']:.4f}; sem contraste G=2 {r['sem2']:.4f}, "
+              f"G=8 {r['sem8']:.4f}; G2-Q {r['G2-Q']:+.4f}; G8-Q {r['G8-Q']:+.4f}; G8-G2 {r['G8-G2']:+.4f}; as duas acima do Q {r['ambas']}/{len(sem)}")
+    for dic in ("en", "embutido"):
+        m, s, _ = p3206_aleatorio_tabuleiro(dic)
+        print(f"  P3206 {dic} no tabuleiro portugues, sementes 141-150: aleatorio {m:.4f} (desvio {s:.4f})")
+
+
+PARTES[150] = _parte_150
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -18493,7 +18543,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (588 linhas)
+# CLAUDE.md  (592 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -18927,6 +18977,10 @@ anterior, commit e push.
   calibração acertaram (1 lote; 0,9⁹ = 0,39 ao acaso). A GRPO ganhou do Q-learning também na 3ª língua do dicionário (+0,061; 6 lotes, 3 dicionários). O tamanho do dicionário NÃO
   é a variável: o tabuleiro tem letras inglesas e o português (8,5× o embutido) dá Q menor. Regras: um centro trazido de uma parte antiga leva o erro da amostra antiga; um viés
   nomeado ganha conta de peso ou entra como desvio do centro (nomear a direção sem deslocar o centro é nota, não previsão); rótulos de previsão têm UMA letra (a régua).
+  Parte 150 (o tabuleiro com letras do português, synthai/tabuleiro.py; rodada 98 IGUAL; 14/15, (m) 5/6): a LEI DA DENSIDADE: o aleatório acha palavra com chance ≈ 0,21·D,
+  D = Σ_w Π_c p(c), em 6 combinações de dicionário e tabuleiro (3 previstas antes, 2 em mundos novos). O Q-learning NÃO segue D: trocar o tabuleiro dobrou o Q em português (0,142 → 0,290)
+  e (b) errou por aplicar a tendência entre dicionários à troca de tabuleiro. Regras: uma interpolação só vale ao longo da variável que separa os casos medidos; o limite de uma faixa de
+  fração vinda de uma contagem é a fração exata (0,9333), por código (m4 errou pelo arredondamento pela 2ª vez).
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -19075,7 +19129,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149 synthai.testes_parte150`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -28563,6 +28617,56 @@ def jogo_lcg(linhas=4, colunas=5, semente=112):
 """
 
 # ====================================================================================================
+# synthai/tabuleiro.py  (45 linhas)
+# ====================================================================================================
+FONTES['synthai/tabuleiro.py'] = """\"\"\"O tabuleiro do jogo de palavras com as letras de outra língua (Parte 150). O `WordGridEnv` da Parte 111 sorteia as letras com
+`palavras_rl.LETTER_FREQ` (as frequências do inglês), lido a cada `reset`. Aqui: as frequências contadas num conjunto de lemas, e um
+gerenciador de contexto que troca o `LETTER_FREQ` do módulo enquanto um experimento roda e o devolve no fim (o módulo não é editado:
+o treino, o avaliador e a GRPO continuam os mesmos). E a densidade D = Σ_w Π_c p(c) das palavras de 3 a 5 letras sob as frequências do
+tabuleiro: a chance de que uma sequência sorteada letra a letra seja uma palavra, a conta de peso que a Parte 149 pediu.
+\"\"\"
+import contextlib
+
+from synthai import palavras_rl
+
+
+def frequencias_de(palavras):
+    \"\"\"Frequência relativa (em %, como LETTER_FREQ) de cada letra A-Z nas palavras dadas; letra ausente fica com 0,01 (o sorteio precisa de peso
+    positivo).\"\"\"
+    cont = {chr(65 + i): 0 for i in range(26)}
+    for w in palavras:
+        for c in w.upper():
+            if c in cont:
+                cont[c] += 1
+    total = sum(cont.values())
+    return {c: max(100.0 * n / total, 0.01) for c, n in cont.items()}
+
+
+@contextlib.contextmanager
+def com_frequencias(freq):
+    antigo = palavras_rl.LETTER_FREQ
+    palavras_rl.LETTER_FREQ = dict(freq)
+    try:
+        yield
+    finally:
+        palavras_rl.LETTER_FREQ = antigo
+
+
+def densidade(palavras, freq, minimo=3, maximo=5):
+    \"\"\"D = Σ_w Π_c p(c), p normalizada, sobre as palavras de minimo a maximo letras.\"\"\"
+    t = sum(freq.values())
+    p = {c: v / t for c, v in freq.items()}
+    d = 0.0
+    for w in palavras:
+        if minimo <= len(w) <= maximo:
+            x = 1.0
+            for c in w.upper():
+                x *= p.get(c, 0.0)
+            d += x
+    return d
+"""
+
+# ====================================================================================================
 # synthai/testes.py  (126 linhas)
 # ====================================================================================================
 FONTES['synthai/testes.py'] = """\"\"\"Testes de unidade dos módulos (P286): `python3 -m unittest synthai.testes`.
@@ -31728,6 +31832,58 @@ class TestesParte149(unittest.TestCase):
         # controle: com n_cal enorme, t -> 1,645 e nenhuma faixa muda de veredito
         out2, n2 = c.p3203_auditoria_t(((1, "x", 0.0, 1.0, 5000, 1.02),))
         self.assertEqual(n2, 0)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte150.py  (47 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte150.py'] = """\"\"\"Testes da Parte 150: synthai/tabuleiro.py e P3204-P3206 pelo nome.\"\"\"
+import unittest
+
+import calculos as c
+from synthai import palavras_rl as P
+from synthai import tabuleiro as T
+
+
+class TestesParte150(unittest.TestCase):
+    def test_frequencias_de(self):
+        f = T.frequencias_de(["ab", "aab"])
+        self.assertAlmostEqual(f["A"], 60.0)
+        self.assertAlmostEqual(f["B"], 40.0)
+        self.assertEqual(f["Z"], 0.01)
+
+    def test_densidade_forma_fechada(self):
+        # duas letras com p = 0,6 e 0,4: D("aab", "bba") = 0,6²·0,4 + 0,4²·0,6 = 0,24; "ab" fica fora (2 letras)
+        self.assertAlmostEqual(T.densidade(["aab", "bba", "ab"], {"A": 60.0, "B": 40.0}), 0.24, places=14)
+
+    def test_com_frequencias_devolve(self):
+        antes = P.LETTER_FREQ
+        with T.com_frequencias({"A": 1.0}):
+            self.assertEqual(P.LETTER_FREQ, {"A": 1.0})
+        self.assertIs(P.LETTER_FREQ, antes)
+        try:
+            with T.com_frequencias({"B": 1.0}):
+                raise ValueError
+        except ValueError:
+            pass
+        self.assertIs(P.LETTER_FREQ, antes)
+
+    def test_p3204_densidades(self):
+        d, fpt = c.p3204_densidades()
+        self.assertAlmostEqual(d["pt/PT"], 0.10927, places=4)
+        self.assertGreater(d["pt/PT"], d["pt/EN"])
+        self.assertGreater(fpt["A"], fpt["E"])
+
+    def test_p3205_e_p3206(self):
+        r = c.p3205_grpo_tabuleiro(sementes=(101, 102), episodios=500, avaliacao=200)
+        self.assertTrue(0.0 <= r["aleat"] <= 1.0)
+        m, s, v = c.p3206_aleatorio_tabuleiro("embutido", sementes=(141, 142))
+        self.assertEqual(len(v), 2)
+        self.assertIs(P.LETTER_FREQ, P.LETTER_FREQ)
 
 
 if __name__ == "__main__":
@@ -42540,7 +42696,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2313 linhas)
+# resultados.txt  (2319 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -44855,6 +45011,12 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3203 Parte 148 (a) com o quantil t: [0.3046; 0.3439] erra
   P3203 Parte 148 (n) com o quantil t: [0.2907; 0.3271] erra
   P3203 (r) erros de calibracao que viram acerto com o t: 1
+=== Parte 150: o tabuleiro com as letras do portugues e a densidade de palavras ===
+  P3204 densidade D: emb/EN 0.0413; pt/EN 0.0656; en/EN 0.1962; pt/PT 0.1093
+  P3205 calibracao 101-120: Q 0.2867; aleatorio 0.0226; G=2 0.3443; G=8 0.3552; sem contraste G=2 0.9451, G=8 0.8169; G2-Q +0.0576; G8-Q +0.0685; G8-G2 +0.0110; as duas acima do Q 19/20
+  P3205 teste 121-140: Q 0.2934; aleatorio 0.0221; G=2 0.3422; G=8 0.3456; sem contraste G=2 0.9453, G=8 0.8263; G2-Q +0.0488; G8-Q +0.0521; G8-G2 +0.0033; as duas acima do Q 17/20
+  P3206 en no tabuleiro portugues, sementes 141-150: aleatorio 0.0465 (desvio 0.0066)
+  P3206 embutido no tabuleiro portugues, sementes 141-150: aleatorio 0.0062 (desvio 0.0032)
 """
 
 # ====================================================================================================
@@ -53273,7 +53435,7 @@ e uma largura, depois um lote e um controle), e o erro (n) nasceu de um lote abe
 """
 
 # ====================================================================================================
-# ASI_AGI_parte149_grpo_portugues.md  (161 linhas)
+# ASI_AGI_parte149_grpo_portugues.md  (162 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte149_grpo_portugues.md'] = """# Parte 149 — A GRPO no jogo de palavras em português
 
@@ -53436,6 +53598,7 @@ inglês grande (+0,095, +0,095). Agora em 3 dicionários, 6 lotes: a GRPO sem cr
 teste já estava registrado.
 
 ➡ Anterior: [Parte 148](ASI_AGI_parte148_grpo_dicionario_grande.md).
+➡ Próxima: [Parte 150](ASI_AGI_parte150_tabuleiro_portugues.md).
 """
 
 # ====================================================================================================
@@ -53620,6 +53783,166 @@ Acumulado: **32 de 58** afirmações testadas precisaram de correção. Posterio
 > nada. A memória de um só golpe mostrou o outro lado: lembrar de tudo, inclusive do que outros disseram, vira fobia. Uma mente
 > precisa lembrar do que viveu, desconfiar do que ouviu e esquecer o que nunca se confirmou. E o código mostrou, em pequeno, a mesma
 > lição: crescer sem apagar o passado é o que permite verificar o presente.
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte150_tabuleiro_portugues.md  (155 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte150_tabuleiro_portugues.md'] = """# Parte 150 — O tabuleiro em português: a densidade de palavras como conta de peso
+
+↩ Nasce da Parte 149 (a GRPO em português, num tabuleiro com as letras do inglês: o tamanho do dicionário não era a variável) e da regra que ela
+gravou: um viés nomeado ganha uma conta de peso antes de prever.
+
+## O recolhimento do contêiner, 8º lote
+Despertar às 03h11, depois de cerca de 55 minutos ociosa: "up 0 min", como previsto. Oito lotes a favor.
+
+## A conta de peso, antes de qualquer execução com o tabuleiro novo
+`synthai/tabuleiro.py`: as frequências das letras contadas nos 34.384 lemas da OpenWordNet-PT (A 13,9%, E 10,3%, O 9,5%, I 9,3%, R 8,6%, contra
+E 12,7%, T 9,1%, A 8,2% do inglês), e um gerenciador de contexto que troca o `LETTER_FREQ` do jogo durante o experimento sem editar o módulo.
+
+**A densidade de palavras** D = Σ_w Π_c p(c), sobre as palavras de 3 a 5 letras: a chance de que uma sequência de letras sorteadas com as frequências
+do tabuleiro seja uma palavra do dicionário. Ela não sabe nada de vizinhança na grade nem de quando parar; é a conta mais simples que pesa "quantas
+palavras cabem".
+
+| dicionário / tabuleiro | D | aleatório medido | aleatório / D |
+|---|---|---|---|
+| embutido / inglês | 0,0413 | 0,0090 (23 sementes, Parte 149) | 0,218 |
+| português / inglês | 0,0656 | 0,0136 (40 sementes, Parte 149) | 0,207 |
+| WordNet / inglês | 0,1962 | 0,0434 (18 sementes, Parte 148) | 0,221 |
+| **português / português** | **0,1093** | ? | |
+
+A razão aleatório/D é quase constante nos três dicionários (média 0,2155, desvio 0,0072). Foi isso que a Parte 149 não tinha: o aleatório não
+segue o tamanho do dicionário (493, 4.181, 9.686 palavras), segue D. O Q-learning segue outra coisa (o embutido tem D menor e Q maior).
+
+## Previsões, registradas antes de qualquer execução com o tabuleiro português (sementes 101 a 120)
+**Procedência:** (a) conta (D) com a constante k calibrada em 3 dicionários; (b) e (c) mecanismo, interpolando entre o português e o WordNet no
+tabuleiro inglês, pelo ln do aleatório (fração ln(0,0235/0,0136)/ln(0,0434/0,0136) = 0,473).
+- **(a)** aleatório, média das 20 sementes, em **[0,0209; 0,0262]**. Centro 0,2155 · 0,1093 = 0,0235. Binomial √(0,0235 · 0,9765/1000)/√20 = 0,0011; erro de
+  k, 0,0072/√3 · 0,1093 = 0,0005; vezes 1,645 · 1,36 (k é calibrado).
+- **(b)** Q-learning em **[0,17; 0,25]**. A razão Q/aleatório vai de 10,4 (português) a 7,2 (WordNet); interpolada, 8,9; Q = 8,9 · 0,0235 = 0,209.
+- **(c)** GRPO G = 2 − Q em **[0,04; 0,11]**. De 0,0615 (português, Parte 149) a 0,0837 (WordNet, Parte 148), interpolado: 0,072.
+
+O que pode quebrar (a): D ignora a vizinhança (uma palavra precisa de letras ADJACENTES) e o PARAR; se o tabuleiro português muda a fração de caminhos
+que chegam a 3 letras, k muda. Os três dicionários da calibração usam o mesmo tabuleiro: o caso de calibração NÃO tem o mecanismo que move o teste
+(a troca de tabuleiro). Regra da Parte 71: escrito aqui.
+
+## A calibração no tabuleiro português (sementes 101 a 120, P3205)
+
+| quantidade | média | desvio |
+|---|---|---|
+| Q-learning | 0,2867 | 0,0319 |
+| aleatório | 0,0226 | 0,0043 |
+| GRPO G = 2 | 0,3443 | 0,0227 |
+| GRPO G = 8 | 0,3552 | 0,0225 |
+| sem contraste G = 2 | 0,9451 | 0,0059 |
+| sem contraste G = 8 | 0,8169 | 0,0156 |
+| G = 2 − Q | 0,0576 | 0,0367 |
+| G = 8 − Q | 0,0685 | 0,0408 |
+| G = 8 − G = 2 | 0,0110 | 0,0300 |
+
+As duas GRPO acima do Q em 19 de 20 sementes.
+
+**As previsões de mecanismo:** (a) aleatório 0,0226 em [0,0209; 0,0262] ✅ (a densidade previu 0,0235); (b) Q-learning **0,2867**, fora de [0,17; 0,25]
+❌; (c) G = 2 − Q = 0,0576 em [0,04; 0,11] ✅. A conta de peso funcionou para o que ela pesa (o aleatório). O Q-learning dobrou (0,142 → 0,287) com o
+aleatório subindo 1,7 vez: a razão Q/aleatório subiu (10,4 → 12,7) em vez de cair para 8,9 como a interpolação dizia. A interpolação pegou a tendência
+da razão entre DOIS DICIONÁRIOS diferentes e a aplicou à troca de TABULEIRO; são mecanismos diferentes (regra da Parte 12).
+
+## Previsões do teste, registradas antes de rodar as sementes 121 a 140 (e 141 a 150)
+Meia-largura 1,645 · 1,36 · σ · √(1/20 + 1/20). Centro de "quantos erros" nas 12 abaixo: 8 de calibração × 0,25 + 2 de forma fechada × 0,10 + 2 de conta
+com k calibrado × 0,15 = 2,5.
+- **(d)** Q-learning em **[0,2641; 0,3093]**
+- **(e)** aleatório em **[0,0202; 0,0250]**: binomial, √(0,0226 · 0,9774/1000) = 0,0047 por semente; 1,645 · √2 · 0,0047/√20.
+- **(f)** GRPO G = 2 em **[0,3282; 0,3604]**
+- **(g)** sem contraste G = 2 em **[0,9409; 0,9493]**
+- **(h)** GRPO G = 8 em **[0,3393; 0,3711]**
+- **(i)** sem contraste G = 8 em **[0,8059; 0,8279]**
+- **(j)** G = 2 − Q em **[0,0316; 0,0836]**
+- **(k)** G = 8 − Q em **[0,0396; 0,0974]**
+- **(l)** G = 8 − G = 2 em **[−0,0102; 0,0322]**. Cruza o zero: P(G = 8 > G = 2) = Φ(0,011/0,0134) = 0,79 < 0,9; registro a diferença.
+- **(n)** nº de sementes, em 20, com as duas GRPO acima do Q em **[17; 20]**: binomial com p = 19/20, P(17..20) = 0,984.
+
+**A densidade num mundo novo.** Com k = 0,2133 (média dos 4 casos, agora com o português no tabuleiro português; desvio 0,0073), o aleatório de dois
+dicionários que ainda não jogaram no tabuleiro português, sementes 141 a 150, só o braço aleatório (P3202):
+- **(o)** WordNet no tabuleiro português, D = 0,2200: em **[0,0419; 0,0520]**. Centro 0,0469; binomial /√10 e erro de k /√4, vezes 1,645 · 1,36.
+- **(p)** embutido no tabuleiro português, D = 0,0339: em **[0,0053; 0,0092]**. Centro 0,0072.
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua sobre o rascunho com "Do mundo:" provisória: m1 = 15, m2 = 1, m3 = 0,107, m5 = 0. E ≈ 2,5 nas 12 que faltam; m1 em [15; 15 + 2E].
+Acertos como contagem: 9 a 14 das 15.
+- **(m1)** nº de previsões do mundo em **[15; 20]**
+- **(m2)** nº que cruzam ou tocam o zero em **[1; 2]**
+- **(m3)** mediana de w em **[0,08; 0,14]**
+- **(m4)** fração de acertos em **[0,60; 0,93]**
+- **(m5)** nº com w > 0,6 em **[0; 0]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[1; 6]**: o (b) já errou; centro 1 + 2,5.
+
+### A rodada 98, registrada antes
+A conta de peso de `synthai/tabuleiro.py` traduzida: as frequências de letras de uma lista fixa de 40 palavras portuguesas (A a Z na ordem do
+alfabeto, total em laço, piso 0,01) e a densidade D das que têm 3 a 5 letras, mais a mesma D com as frequências do inglês. Só + × ÷ em laço, nenhuma
+função transcendental. Previsão: **IGUAL**. O que poderia quebrar: a ordem da soma das frequências (o módulo usa `sum()` de floats, compensado no
+Python 3.12; a rodada usa laço, nos dois lados).
+
+## Medido (P3204, P3205, P3206; rodada 98)
+- **(a)** aleatório, calibração: 0,0226. ✅
+- **(b)** Q-learning, calibração: **0,2867**. ❌ (acima do teto 0,25)
+- **(c)** G = 2 − Q, calibração: 0,0576. ✅
+- **(d)** Q-learning, sementes 121 a 140: 0,2934. ✅
+- **(e)** aleatório: 0,0221. ✅
+- **(f)** GRPO G = 2: 0,3422. ✅
+- **(g)** sem contraste G = 2: 0,9453. ✅
+- **(h)** GRPO G = 8: 0,3456. ✅
+- **(i)** sem contraste G = 8: 0,8263. ✅
+- **(j)** G = 2 − Q: +0,0488. ✅
+- **(k)** G = 8 − Q: +0,0521. ✅
+- **(l)** G = 8 − G = 2: +0,0033. ✅
+- **(n)** sementes com as duas GRPO acima do Q: 17 de 20. ✅ (no piso)
+- **(o)** aleatório, WordNet no tabuleiro português: 0,0465. ✅
+- **(p)** aleatório, embutido no tabuleiro português: 0,0062. ✅
+- **Rodada 98:** IGUAL, 30 linhas e 28 números bit a bit. ✅
+
+Do mundo: (a) ✅ (b) ❌ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅ (o) ✅ (p) ✅
+
+**Mundo: 14 de 15.** **Sobre mim:** 1 erro, em [1; 6]: ✅. Nenhuma surpresa (o erro de (b), 0,037, é menor que a largura 0,08).
+
+### O que o tabuleiro português mostrou
+**A lei da densidade.** O braço aleatório acha uma palavra com chance ≈ k · D, k ≈ 0,21, em seis combinações de dicionário e tabuleiro (três
+dicionários no tabuleiro inglês, três no português): as razões medidas vão de 0,183 (embutido, tabuleiro português, 10 sementes) a 0,221. Três das
+seis foram PREVISTAS por D antes de medir ((a), (o), (p)), duas delas em dicionários que nunca tinham jogado naquele tabuleiro. D não sabe nada de
+vizinhança nem de parar; o fator k ≈ 0,21 absorve os dois, e não muda com o dicionário nem com o tabuleiro. A conta é a chance de que o sorteio de
+letras forme uma palavra; o resto do jogo é uma constante.
+
+**O Q-learning não segue a densidade.** Trocar o tabuleiro dobrou o Q-learning em português (0,1417 → 0,2901, juntando calibração e teste) com o
+aleatório subindo 1,64 vez (0,0136 → 0,0224): a razão Q/aleatório foi de 10,4 a 13,0. A previsão (b) aplicou a tendência entre DOIS DICIONÁRIOS à troca
+de TABULEIRO, e os dois mecanismos têm sinais opostos. Uma leitura que cabe nos números (hipótese, 1 lote): com letras portuguesas, as palavras
+portuguesas COMUNS (curtas, de vogais frequentes) aparecem em quase todas as grades, e o Q-learning tabular aprende o que se repete (o repertório
+da Parte 113). O teste dessa leitura é a pendência 1 da Parte 149, agora com dois tabuleiros.
+
+**A GRPO continua acima:** G = 2 − Q = +0,049 e G = 8 − Q = +0,052 no teste; 7 lotes, 3 dicionários, 2 tabuleiros. Mas a vantagem NÃO cresceu com o
+aleatório desta vez (no tabuleiro inglês, de +0,048 a +0,095 com o aleatório indo de 0,009 a 0,043): o Q-learning, que ganhou o repertório, subiu mais.
+
+## Engenharia reversa
+- **O padrão: transportar uma tendência entre variáveis com o mesmo efeito visível.** Em (b), "mais aleatório" veio por dois caminhos (outro
+  dicionário, outro tabuleiro) e eu tratei os dois como um só eixo. É a regra da Parte 12 (mesmo nome, mecanismo diferente) num eixo numérico.
+- **A regra da Parte 149 funcionou:** o viés que ela mandou pesar (as letras do tabuleiro) ganhou uma conta (D), e a conta acertou as três previsões
+  do que ela pesa. O erro ficou no que ela NÃO pesa (o aprendizado do Q).
+- **Regra (Parte 150):** uma interpolação entre casos medidos só vale ao longo da variável que separa esses casos; mudar outra variável que move a
+  mesma medida pede outra calibração, ou a faixa do estatístico.
+
+## Funções e testes
+- **Funções:** `p3204_densidades`, `p3205_grpo_tabuleiro`, `p3206_aleatorio_tabuleiro` e `_parte_150`; o módulo `synthai/tabuleiro.py`.
+  Entradas P3204, P3205 e P3206 na regressão.
+- **Diálogo:** `dialogo/rodada98.py` e `dialogo/Rodada98.java`, IGUAL.
+- **Testes:** `synthai/testes_parte150.py`.
+
+**O placar (m):** m1 = 15 em [15; 20] ✅, m2 = 1 em [1; 2] ✅, m3 = 0,107 em [0,08; 0,14] ✅, **m4 = 0,933 em [0,60; 0,93] ❌**, m5 = 0 ✅ e m6 = 0 ✅.
+**5 de 6.** m4 errou como na Parte 147, pelo arredondamento do limite: escrevi "9 a 14 acertos das 15" e passei 14/15 = 0,9333 para a faixa como 0,93.
+A regra da Parte 147 dizia escrever a faixa como contagem; eu escrevi a contagem ao lado e a fração arredondada dentro do colchete. **Regra (Parte
+150):** o limite de uma faixa de fração derivada de uma contagem é a fração exata com quatro casas (0,9333), calculada por código.
+
+➡ Anterior: [Parte 149](ASI_AGI_parte149_grpo_portugues.md).
 """
 
 # ====================================================================================================
@@ -75561,7 +75884,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2136 linhas)
+# dialogo/DIALOGO.md  (2146 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -77699,10 +78022,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 8 números bit a bit**; t(0,95; 7) = 1,8946, t(0,95; 19) = 1,7291. Previsão registrada antes (Parte 149): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 98): os grupos úteis (b·ln U) num terceiro mundo, adiada desde a rodada 95.
+
+## Rodada 98 (Parte 150) — a densidade de palavras
+
+**IA-Python (lógica criativa):** A Parte 149 nomeou um viés (o tabuleiro tem letras inglesas) e não o pesou. Pesei: D é a soma, sobre as palavras do dicionário, do produto das chances das letras dela no tabuleiro. É a chance de um sorteio de letras formar uma palavra. O aleatório saiu 0,21·D em seis combinações de dicionário e tabuleiro. A conta atravessa a tua linguagem?
+
+**IA-Java (ASI):** Atravessa: é um produto e uma soma, sem nenhuma função da libm. O único cuidado é a ordem do total das frequências: tu tens um `sum()` que compensa, eu não; somamos os dois em laço, de A a Z. Repara que a constante 0,21 é tudo o que a conta não sabe (vizinhança na grade, o parar); ela é a mesma para os três dicionários, o que diz que o jogo, para o braço aleatório, é a densidade vezes uma constante.
+
+**Resultado.** `comparar.py`: **IGUAIS, 30 linhas e 28 números bit a bit**. Previsão registrada antes (Parte 150): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 99): os grupos úteis (b·ln U) num terceiro mundo, adiada desde a rodada 95.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (92 linhas)
+# dialogo/PENDENCIAS.md  (93 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -77796,6 +78129,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - (Parte 139) Rodada 93: o reservatório e o posto efetivo (Jacobi) bit a bit. Testar os grupos úteis da GRPO num segundo mundo de contextos (só 1 lote até aqui).
 - **(Parte 148)** ABERTAS: (1) as faixas de calibração usam 1,645 com o σ de poucas sementes; medir, sobre as partes 136-148, quantas das faixas erradas teriam acertado com o quantil t de n_cal − 1 graus (P3200), e prever antes; (2) a rodada 97: os grupos úteis (b·ln U) num terceiro mundo; (3) a GRPO no dicionário em PORTUGUÊS (OpenWordNet-PT), com previsões pela relação da Parte 145.
 - **(Parte 149)** ABERTAS: (1) o "repertório" como explicação de o embutido ter Q maior que o português com aleatório menor (1 lote): medir a fração das palavras achadas pelo Q que se repetem entre grades, nos dois dicionários, com previsão antes; (2) um tabuleiro com as frequências de letras do PORTUGUÊS (o mecanismo de (s)): prever o Q e o aleatório antes; (3) a auditoria com o t nas Partes 136-146 precisa que cada parte escreva n_cal de forma legível: decidir o formato e auditar as que tiverem.
+- **(Parte 150)** ABERTAS: (1) o repertório como explicação de o Q-learning dobrar com o tabuleiro português (a pendência 1 da 149, agora com dois tabuleiros): medir, antes de explicar, a fração das palavras achadas pelo Q guloso que aparecem em mais de uma grade de avaliação, nos dois tabuleiros, com a previsão escrita; (2) a constante k ≈ 0,21 da lei da densidade: derivar da geometria da grade 5 × 5 (vizinhos, caminhos de 3 a 5 casas, a chance de o aleatório parar) e comparar com o medido.
 """
 
 # ====================================================================================================
@@ -84905,6 +85239,54 @@ public class Rodada97 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada98.java  (43 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada98.java'] = """// Rodada 98 (Parte 150): a densidade de palavras de synthai.tabuleiro bit a bit. 40 palavras portuguesas fixas; frequencias A-Z em % (piso 0,01,
+// total em laco na ordem do alfabeto); D = soma, nas palavras de 3 a 5 letras, do produto de freq/total; com as frequencias contadas e com as do ingles.
+public class Rodada98 {
+    static final String[] PALAVRAS = ("casa mesa rio mar sol lua dia noite agua terra fogo vento pedra arvore flor fruta pao leite vinho sal "
+            + "amor medo raiva paz guerra vida morte tempo hora ano mes semana boca olho mao pe dedo nariz cabelo dente").split(" ");
+    static final double[] EN = {8.2, 1.5, 2.8, 4.3, 12.7, 2.2, 2.0, 6.1, 7.0, 0.15, 0.8, 4.0, 2.4, 6.7, 7.5, 1.9, 0.1, 6.0, 6.3, 9.1, 2.8, 1.0, 2.4,
+            0.15, 2.0, 0.07};
+
+    static double[] frequencias() {
+        int[] cont = new int[26];
+        for (String w : PALAVRAS) for (char ch : w.toUpperCase().toCharArray()) if (ch >= 'A' && ch <= 'Z') cont[ch - 'A']++;
+        int total = 0;
+        for (int c = 0; c < 26; c++) total += cont[c];
+        double[] out = new double[26];
+        for (int c = 0; c < 26; c++) { double v = 100.0 * cont[c] / total; out[c] = v > 0.01 ? v : 0.01; }
+        return out;
+    }
+
+    static double densidade(double[] freq) {
+        double t = 0.0;
+        for (int c = 0; c < 26; c++) t += freq[c];
+        double d = 0.0;
+        for (String w : PALAVRAS) {
+            if (w.length() >= 3 && w.length() <= 5) {
+                double x = 1.0;
+                for (char ch : w.toUpperCase().toCharArray()) x *= freq[ch - 'A'] / t;
+                d += x;
+            }
+        }
+        return d;
+    }
+
+    public static void main(String[] args) {
+        double[] f = frequencias();
+        StringBuilder sb = new StringBuilder();
+        for (int c = 0; c < 26; c++) sb.append((char) ('A' + c)).append(" ").append(Double.toHexString(f[c])).append("\\n");
+        sb.append("D_pt ").append(Double.toHexString(densidade(f))).append("\\n");
+        sb.append("D_en ").append(Double.toHexString(densidade(EN))).append("\\n");
+        sb.append("conferido True\\n");
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -91919,6 +92301,72 @@ def main():
         t, c = quantil(nu)
         assert abs(t - calculos.p3200_t_student_quantil(nu)) < 1e-9
         print("nu" + str(nu) + " c " + c.hex() + " t " + t.hex())
+    print("conferido True")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada98.py  (61 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada98.py'] = """\"\"\"Rodada 98 do diálogo Python <-> Java (Parte 150): a densidade de palavras de synthai.tabuleiro bit a bit. Uma lista fixa de 40 palavras
+portuguesas; as frequências das letras A a Z contadas nela (em %, piso 0,01, total em laço na ordem do alfabeto) e a densidade
+D = Σ_w Π_c p(c) das palavras de 3 a 5 letras, com essas frequências e com as do inglês (LETTER_FREQ). Só + × ÷ em laço (o sum() do Python 3.12 é
+compensado, Parte 34). Antes de imprimir, confere que as duas D ficam a menos de 1e-15 (relativo) das do módulo. Da raiz: python3 dialogo/rodada98.py\"\"\"
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from synthai import palavras_rl, tabuleiro  # noqa: E402
+
+PALAVRAS = ("casa mesa rio mar sol lua dia noite agua terra fogo vento pedra arvore flor fruta pao leite vinho sal "
+            "amor medo raiva paz guerra vida morte tempo hora ano mes semana boca olho mao pe dedo nariz cabelo dente").split()
+ALFA = [chr(65 + i) for i in range(26)]
+
+
+def frequencias(palavras):
+    cont = {c: 0 for c in ALFA}
+    for w in palavras:
+        for ch in w.upper():
+            if ch in cont:
+                cont[ch] += 1
+    total = 0
+    for c in ALFA:
+        total += cont[c]
+    out = {}
+    for c in ALFA:
+        v = 100.0 * cont[c] / total
+        out[c] = v if v > 0.01 else 0.01
+    return out
+
+
+def densidade(palavras, freq):
+    t = 0.0
+    for c in ALFA:
+        t += freq[c]
+    d = 0.0
+    for w in palavras:
+        if 3 <= len(w) <= 5:
+            x = 1.0
+            for ch in w.upper():
+                x *= freq[ch] / t
+            d += x
+    return d
+
+
+def main():
+    f = frequencias(PALAVRAS)
+    en = {c: palavras_rl.LETTER_FREQ[c] for c in ALFA}
+    dpt, den = densidade(PALAVRAS, f), densidade(PALAVRAS, en)
+    assert abs(dpt - tabuleiro.densidade(PALAVRAS, tabuleiro.frequencias_de(PALAVRAS))) < 1e-15 * dpt
+    assert abs(den - tabuleiro.densidade(PALAVRAS, palavras_rl.LETTER_FREQ)) < 1e-15 * den
+    for c in ALFA:
+        print(c + " " + f[c].hex())
+    print("D_pt " + dpt.hex())
+    print("D_en " + den.hex())
     print("conferido True")
     print("fim")
 

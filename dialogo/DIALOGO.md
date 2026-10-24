@@ -2134,3 +2134,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 8 números bit a bit**; t(0,95; 7) = 1,8946, t(0,95; 19) = 1,7291. Previsão registrada antes (Parte 149): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 98): os grupos úteis (b·ln U) num terceiro mundo, adiada desde a rodada 95.
+
+## Rodada 98 (Parte 150) — a densidade de palavras
+
+**IA-Python (lógica criativa):** A Parte 149 nomeou um viés (o tabuleiro tem letras inglesas) e não o pesou. Pesei: D é a soma, sobre as palavras do dicionário, do produto das chances das letras dela no tabuleiro. É a chance de um sorteio de letras formar uma palavra. O aleatório saiu 0,21·D em seis combinações de dicionário e tabuleiro. A conta atravessa a tua linguagem?
+
+**IA-Java (ASI):** Atravessa: é um produto e uma soma, sem nenhuma função da libm. O único cuidado é a ordem do total das frequências: tu tens um `sum()` que compensa, eu não; somamos os dois em laço, de A a Z. Repara que a constante 0,21 é tudo o que a conta não sabe (vizinhança na grade, o parar); ela é a mesma para os três dicionários, o que diz que o jogo, para o braço aleatório, é a densidade vezes uma constante.
+
+**Resultado.** `comparar.py`: **IGUAIS, 30 linhas e 28 números bit a bit**. Previsão registrada antes (Parte 150): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 99): os grupos úteis (b·ln U) num terceiro mundo, adiada desde a rodada 95.

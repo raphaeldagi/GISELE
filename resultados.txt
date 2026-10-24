@@ -2311,3 +2311,9 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3203 Parte 148 (a) com o quantil t: [0.3046; 0.3439] erra
   P3203 Parte 148 (n) com o quantil t: [0.2907; 0.3271] erra
   P3203 (r) erros de calibracao que viram acerto com o t: 1
+=== Parte 150: o tabuleiro com as letras do portugues e a densidade de palavras ===
+  P3204 densidade D: emb/EN 0.0413; pt/EN 0.0656; en/EN 0.1962; pt/PT 0.1093
+  P3205 calibracao 101-120: Q 0.2867; aleatorio 0.0226; G=2 0.3443; G=8 0.3552; sem contraste G=2 0.9451, G=8 0.8169; G2-Q +0.0576; G8-Q +0.0685; G8-G2 +0.0110; as duas acima do Q 19/20
+  P3205 teste 121-140: Q 0.2934; aleatorio 0.0221; G=2 0.3422; G=8 0.3456; sem contraste G=2 0.9453, G=8 0.8263; G2-Q +0.0488; G8-Q +0.0521; G8-G2 +0.0033; as duas acima do Q 17/20
+  P3206 en no tabuleiro portugues, sementes 141-150: aleatorio 0.0465 (desvio 0.0066)
+  P3206 embutido no tabuleiro portugues, sementes 141-150: aleatorio 0.0062 (desvio 0.0032)

@@ -7569,6 +7569,9 @@ def testes_de_regressao():
         "P3201": (lambda r: (round(r["Q"], 4), round(r["G2"], 4), round(r["G8"], 4), r["ambas"]) == (0.1431, 0.2038, 0.2118, 18))(p3201_grpo_por_dicionario("pt", tuple(range(121, 141)))),
         "P3202": round(p3202_aleatorio_por_dicionario()[0], 4) == 0.0087,
         "P3203": p3203_auditoria_t()[1] == 1,
+        "P3204": round(p3204_densidades()[0]["pt/PT"], 4) == 0.1093,
+        "P3205": (lambda r: (round(r["Q"], 4), round(r["aleat"], 4), r["ambas"]) == (0.2934, 0.0221, 17))(p3205_grpo_tabuleiro(sementes=tuple(range(121, 141)))),
+        "P3206": (round(p3206_aleatorio_tabuleiro("en")[0], 4), round(p3206_aleatorio_tabuleiro("embutido")[0], 4)) == (0.0465, 0.0062),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18473,6 +18476,22 @@ def _parte_149():
 
 
 PARTES[149] = _parte_149
+
+
+def _parte_150():
+    print("\n=== Parte 150: o tabuleiro com as letras do portugues e a densidade de palavras ===")
+    d, _ = p3204_densidades()
+    print("  P3204 densidade D: " + "; ".join(f"{k} {v:.4f}" for k, v in d.items()))
+    for nome, sem in (("calibracao 101-120", tuple(range(101, 121))), ("teste 121-140", tuple(range(121, 141)))):
+        r = p3205_grpo_tabuleiro("pt", "pt", sem)
+        print(f"  P3205 {nome}: Q {r['Q']:.4f}; aleatorio {r['aleat']:.4f}; G=2 {r['G2']:.4f}; G=8 {r['G8']:.4f}; sem contraste G=2 {r['sem2']:.4f}, "
+              f"G=8 {r['sem8']:.4f}; G2-Q {r['G2-Q']:+.4f}; G8-Q {r['G8-Q']:+.4f}; G8-G2 {r['G8-G2']:+.4f}; as duas acima do Q {r['ambas']}/{len(sem)}")
+    for dic in ("en", "embutido"):
+        m, s, _ = p3206_aleatorio_tabuleiro(dic)
+        print(f"  P3206 {dic} no tabuleiro portugues, sementes 141-150: aleatorio {m:.4f} (desvio {s:.4f})")
+
+
+PARTES[150] = _parte_150
 
 PARTES[126] = _parte_126
 
