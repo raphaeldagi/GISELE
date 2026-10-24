@@ -18522,6 +18522,49 @@ _MUNDOS_P152 = (("(a) uniforme", ("pt", "uniforme", 5, 3, 5)), ("(b) 3x3", ("pt"
                 ("(d) 3-6 letras", ("pt", "pt", 5, 3, 6)), ("(e) WordNet 4-5", ("en", "en", 5, 4, 5)))
 
 
+def _casos_p153():
+    """Os casos da Parte 153: (nome, palavras, freq). A: {a, b} meio a meio, palavras de 3 a 5 letras de 'a' a 'b'; B: {a, b, c} = (0,5; 0,3; 0,2), sem letras
+    iguais seguidas; controle: as letras de B e todas as palavras de 3 a 5 letras."""
+    import itertools
+    todas = {L: ["".join(x) for x in itertools.product("abc", repeat=L)] for L in (3, 4, 5)}
+    duas = ["".join(x) for L in (3, 4, 5) for x in itertools.product("ab", repeat=L)]
+    A = [w for w in duas if w[0] == "a" and w[-1] == "b"]
+    B = [w for L in (3, 4, 5) for w in todas[L] if all(a != b for a, b in zip(w, w[1:]))]
+    ctrl = [w for L in (3, 4, 5) for w in todas[L]]
+    fb = {"A": 0.5, "B": 0.3, "C": 0.2}
+    return (("A", A, {"A": 0.5, "B": 0.5}), ("B", B, fb), ("controle", ctrl, fb))
+
+
+def p3210_campo_medio_contra_exato():
+    """(a)-(d) da Parte 153 (P3210): na grade 3 x 3, o braco aleatorio exato (enumeracao de letras e caminhos) contra o campo medio da Parte 152, nos casos
+    A, B e controle. Devolve {nome: (exato, campo_medio, geometria, razao exato/campo medio)}."""
+    from synthai import tabuleiro as T
+    out = {}
+    for nome, palavras, freq in _casos_p153():
+        e = T.aleatorio_exato(palavras, freq, 3)
+        m = T.aleatorio_colapso(palavras, freq, 3)
+        g = T.aleatorio_geometrico(palavras, freq, 3)
+        out[nome] = (e, m, g, e / m)
+    return out
+
+
+def p3211_simulado_caso_b(episodios=200000, semente=153):
+    """(e) da Parte 153 (P3211): o jogo real (WordGridEnv + run_episode, braco aleatorio) no caso B, grade 3 x 3. Devolve (simulado, exato, z)."""
+    import math
+    import random
+    from synthai import palavras_rl as P
+    from synthai import tabuleiro as T
+    _, palavras, freq = _casos_p153()[1]
+    dic = P.Dicionario(set(palavras))
+    with T.com_frequencias(freq):
+        env = P.WordGridEnv(3, 3, 5, rng=random.Random(semente))
+        pol = P.QAgent(seed=semente + 1)
+        k = sum(P.run_episode(env, dic, pol, "random", learn=False)[1] for _ in range(episodios))
+    e = T.aleatorio_exato(palavras, freq, 3)
+    s = k / episodios
+    return s, e, (s - e) / math.sqrt(e * (1 - e) / episodios)
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()

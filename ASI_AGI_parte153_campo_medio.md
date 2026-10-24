@@ -41,3 +41,17 @@ soma); m1 em [5; 5 + 2E] = [5; 7,6], arredondado para cima. Acertos como contage
 
 ### Sobre mim, registrado
 Erros no mundo em **[0; 4]**, centro 1,3.
+
+## Um lote novo, registrado depois de ver (a)-(e) e antes de rodar os casos novos
+O caso A deu 0,25 EXATO nas três contas (exato, campo médio, geometria): com duas letras meio a meio e um dicionário "começa com a, termina com b", a primeira
+letra é "a" com chance 1/2 e a última escolhida é "b" com chance 1/2, com ou sem colapso, por simetria. O caso não podia medir o colapso; o erro de desenho é
+meu (a regra da Parte 127: conferir a chave contra o conteúdo antes do registro). Casos novos, sem essa simetria:
+- **A'**: letras {a, b} com p = (0,7; 0,3), o dicionário de A.
+- **C**: letras {a, b, c} uniformes, o dicionário de B.
+- **D**: letras {a, b} com p = (0,7; 0,3), as palavras de 3 a 5 letras que alternam (aba, bab, abab, …).
+
+Procedência: mecanismo, sem calibração além do caso B (razão 1,043). Faixas largas, centro 1,04 (o caso B):
+- **(f)** razão exato / campo médio em A' em **[0,85; 1,25]**
+- **(g)** razão exato / campo médio em C em **[0,85; 1,25]**
+- **(h)** razão exato / campo médio em D em **[0,85; 1,25]**
+- **(i)** |razão A' − 1| − |razão B − 1| em **[0,00; 0,25]**: a hipótese de (c), agora num caso que pode testá-la.
