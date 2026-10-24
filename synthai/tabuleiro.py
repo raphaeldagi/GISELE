@@ -43,3 +43,43 @@ def densidade(palavras, freq, minimo=3, maximo=5):
                 x *= p.get(c, 0.0)
             d += x
     return d
+
+
+def paradas_por_comprimento(tamanho=5, minimo=3, maximo=5):
+    """A geometria do braço aleatório (Parte 151), por enumeração exata dos caminhos sem repetir casa na grade com vizinhança de rei: começa numa casa
+    uniforme; em cada casa, as ações são as vizinhas ainda não visitadas mais PARAR (se o caminho já tem `minimo` letras), e com `maximo` letras só PARAR;
+    escolhe uma ação uniforme; sem ação, falha. Devolve {L: chance de parar com L letras}. Supõe que toda vizinha é uma ação distinta (ignora o colapso
+    de duas vizinhas com a mesma letra, que o `valid_actions` junta numa ação só)."""
+    def viz(r, c):
+        return [(r + a, c + b) for a in (-1, 0, 1) for b in (-1, 0, 1)
+                if (a or b) and 0 <= r + a < tamanho and 0 <= c + b < tamanho]
+    out = {L: 0.0 for L in range(minimo, maximo + 1)}
+
+    def anda(caminho, p):
+        L = len(caminho)
+        if L >= maximo:
+            out[L] += p
+            return
+        livres = [v for v in viz(*caminho[-1]) if v not in caminho]
+        n = len(livres) + (1 if L >= minimo else 0)
+        if n == 0:
+            return
+        if L >= minimo:
+            out[L] += p / n
+        for v in livres:
+            anda(caminho + [v], p / n)
+    for r in range(tamanho):
+        for c in range(tamanho):
+            anda([(r, c)], 1.0 / (tamanho * tamanho))
+    return out
+
+
+def densidade_por_comprimento(palavras, freq, minimo=3, maximo=5):
+    return {L: densidade(palavras, freq, L, L) for L in range(minimo, maximo + 1)}
+
+
+def aleatorio_geometrico(palavras, freq, tamanho=5, minimo=3, maximo=5):
+    """A previsão sem constante ajustada: Σ_L s_L · D_L (s da geometria, D das letras)."""
+    s = paradas_por_comprimento(tamanho, minimo, maximo)
+    d = densidade_por_comprimento(palavras, freq, minimo, maximo)
+    return sum(s[L] * d[L] for L in s)
