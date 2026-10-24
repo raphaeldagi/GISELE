@@ -7566,6 +7566,9 @@ def testes_de_regressao():
         "P3198": (lambda r: (round(r["Q"], 4), round(r["G2"], 4), round(r["G8"], 4)) == (0.1533, 0.2017, 0.1707))(p3198_grpo_no_jogo_de_palavras()),
         "P3199": (lambda r: (round(r["Q"], 4), round(r["G2"], 4), round(r["G8"], 4), r["ambas"]) == (0.302, 0.3966, 0.3973, 10))(p3199_grpo_no_dicionario_grande()),
         "P3200": (lambda r: (round(r["o"], 4), round(r["lotes"][(13, 23)][0], 4)) == (-0.0022, 0.3278))(p3200_lotes_do_q()),
+        "P3201": (lambda r: (round(r["Q"], 4), round(r["G2"], 4), round(r["G8"], 4), r["ambas"]) == (0.1431, 0.2038, 0.2118, 18))(p3201_grpo_por_dicionario("pt", tuple(range(121, 141)))),
+        "P3202": round(p3202_aleatorio_por_dicionario()[0], 4) == 0.0087,
+        "P3203": p3203_auditoria_t()[1] == 1,
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(

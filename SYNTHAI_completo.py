@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 148, perguntas P1 a P3200).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 149, perguntas P1 a P3203).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (18370 linhas)
+# calculos.py  (18454 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7604,6 +7604,9 @@ def testes_de_regressao():
         "P3198": (lambda r: (round(r["Q"], 4), round(r["G2"], 4), round(r["G8"], 4)) == (0.1533, 0.2017, 0.1707))(p3198_grpo_no_jogo_de_palavras()),
         "P3199": (lambda r: (round(r["Q"], 4), round(r["G2"], 4), round(r["G8"], 4), r["ambas"]) == (0.302, 0.3966, 0.3973, 10))(p3199_grpo_no_dicionario_grande()),
         "P3200": (lambda r: (round(r["o"], 4), round(r["lotes"][(13, 23)][0], 4)) == (-0.0022, 0.3278))(p3200_lotes_do_q()),
+        "P3201": (lambda r: (round(r["Q"], 4), round(r["G2"], 4), round(r["G8"], 4), r["ambas"]) == (0.1431, 0.2038, 0.2118, 18))(p3201_grpo_por_dicionario("pt", tuple(range(121, 141)))),
+        "P3202": round(p3202_aleatorio_por_dicionario()[0], 4) == 0.0087,
+        "P3203": p3203_auditoria_t()[1] == 1,
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18381,6 +18384,68 @@ def p3200_chi2_cdf(gl, x, n=4000):
     return acc * h / 3
 
 
+def p3201_grpo_por_dicionario(dicionario="pt", sementes=tuple(range(101, 121)), episodios=5000, avaliacao=1000):
+    \"\"\"A P3199 com o dicionario escolhido (Parte 149): 'pt' = palavras_rl.lemas_ownpt() (OpenWordNet-PT sem acentos), 'en' = lemas_wordnet(),
+    'embutido' = EMBEDDED_WORDS. Devolve {nome: media}, as listas por semente em 'por_semente' e os desvios em 'desvios'.\"\"\"
+    import statistics as st
+    from synthai import palavras_rl as P
+    from synthai.grpo_palavras import treinar
+    fonte = {"pt": P.lemas_ownpt, "en": P.lemas_wordnet, "embutido": lambda: P.EMBEDDED_WORDS}[dicionario]
+    dic = P.Dicionario(fonte())
+    acc = {"Q": [], "aleat": [], "G2": [], "G8": [], "sem2": [], "sem8": []}
+    for sem in sementes:
+        cfg = P.Config(episodios=episodios, avaliacao=avaliacao, seed=sem)
+        ag, _, _ = P.train(cfg, dic)
+        ev = P.evaluate(cfg, dic, ag)
+        acc["Q"].append(ev["guloso"][0])
+        acc["aleat"].append(ev["aleatorio"][0])
+        for G in (2, 8):
+            a, s, n = treinar(dic, episodios, G, seed=sem)
+            acc["G%d" % G].append(P.evaluate(cfg, dic, a)["guloso"][0])
+            acc["sem%d" % G].append(s / n)
+    acc["G2-Q"] = [a - b for a, b in zip(acc["G2"], acc["Q"])]
+    acc["G8-Q"] = [a - b for a, b in zip(acc["G8"], acc["Q"])]
+    acc["G8-G2"] = [a - b for a, b in zip(acc["G8"], acc["G2"])]
+    out = {k: sum(v) / len(v) for k, v in acc.items()}
+    out["ambas"] = sum(g2 > q and g8 > q for q, g2, g8 in zip(acc["Q"], acc["G2"], acc["G8"]))
+    out["desvios"] = {k: st.stdev(v) for k, v in acc.items()} if len(sementes) > 1 else {}
+    out["por_semente"] = acc
+    return out
+
+
+def p3202_aleatorio_por_dicionario(dicionario="embutido", sementes=tuple(range(46, 66)), avaliacao=1000):
+    \"\"\"(u) da Parte 149 (P3202): so o braco aleatorio do avaliador da Parte 111 (mesmas grades: semente + 100000; mesmo agente: semente + 2), sem
+    treinar o Q-learning. Devolve (media, desvio, lista).\"\"\"
+    import random
+    import statistics as st
+    from synthai import palavras_rl as P
+    fonte = {"pt": P.lemas_ownpt, "en": P.lemas_wordnet, "embutido": lambda: P.EMBEDDED_WORDS}[dicionario]
+    dic = P.Dicionario(fonte())
+    v = []
+    for s in sementes:
+        cfg = P.Config(seed=s)
+        env = P.WordGridEnv(cfg.tamanho, cfg.min_len, cfg.max_len, rng=random.Random(s + 100_000))
+        pol = P.QAgent(seed=s + 2)
+        res = [P.run_episode(env, dic, pol, "random", learn=False) for _ in range(avaliacao)]
+        v.append(sum(r[1] for r in res) / len(res))
+    return st.mean(v), (st.stdev(v) if len(v) > 1 else 0.0), v
+
+
+# (parte, rotulo, piso, teto, n_cal, medido): as faixas de CALIBRACAO que erraram nas Partes 147 e 148, copiadas dos textos das partes
+_ERROS_DE_CALIBRACAO_147_148 = ((147, "b", 0.136, 0.200, 3, 0.2017), (148, "a", 0.3072, 0.3413, 8, 0.3020), (148, "n", 0.2913, 0.3265, 28, 0.3278))
+
+
+def p3203_auditoria_t(erros=_ERROS_DE_CALIBRACAO_147_148):
+    \"\"\"(r) da Parte 149 (P3203): cada faixa refeita com o quantil t de n_cal - 1 graus no lugar de 1,645 (mesmo centro, meia-largura vezes
+    t/1,645). Devolve [(parte, rotulo, piso_t, teto_t, acerta_com_t)] e o numero que vira acerto.\"\"\"
+    out = []
+    for parte, rot, a, b, n, x in erros:
+        c, h = (a + b) / 2, (b - a) / 2
+        h2 = h * p3200_t_student_quantil(n - 1) / 1.645
+        out.append((parte, rot, c - h2, c + h2, c - h2 <= x <= c + h2))
+    return out, sum(o[4] for o in out)
+
+
 def _parte_148():
     print("\\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
@@ -18397,6 +18462,25 @@ def _parte_148():
 
 PARTES[148] = _parte_148
 
+
+def _parte_149():
+    print("\\n=== Parte 149: a GRPO no jogo de palavras em portugues (OpenWordNet-PT sem acentos) ===")
+    for nome, sem in (("calibracao 101-120", tuple(range(101, 121))), ("teste 121-140", tuple(range(121, 141)))):
+        r = p3201_grpo_por_dicionario("pt", sem)
+        print(f"  P3201 {nome}: Q {r['Q']:.4f}; aleatorio {r['aleat']:.4f}; G=2 {r['G2']:.4f}; G=8 {r['G8']:.4f}; sem contraste G=2 {r['sem2']:.4f}, "
+              f"G=8 {r['sem8']:.4f}; G2-Q {r['G2-Q']:+.4f}; G8-Q {r['G8-Q']:+.4f}; G8-G2 {r['G8-G2']:+.4f}; as duas acima do Q {r['ambas']}/{len(sem)}")
+    e = p3201_grpo_por_dicionario("embutido", (43, 44, 45))
+    print(f"  P3201 (k) embutido, sementes 43-45: aleatorio {e['aleat']:.4f}; Q {e['Q']:.4f}")
+    m, s, _ = p3202_aleatorio_por_dicionario()
+    print(f"  P3202 (u) embutido, sementes 46-65: aleatorio {m:.4f} (desvio {s:.4f})")
+    aud, n = p3203_auditoria_t()
+    for parte, rot, a, b, ok in aud:
+        print(f"  P3203 Parte {parte} ({rot}) com o quantil t: [{a:.4f}; {b:.4f}] {'acerta' if ok else 'erra'}")
+    print(f"  P3203 (r) erros de calibracao que viram acerto com o t: {n}")
+
+
+PARTES[149] = _parte_149
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -18409,7 +18493,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (584 linhas)
+# CLAUDE.md  (588 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -18839,6 +18923,10 @@ anterior, commit e push.
   contra +0,048 e +0,017), com 0,72 dos grupos sem contraste (eram 0,94); em 4 lotes, 38 de 38 sementes. Os dois erros vieram do desvio de 8 sementes (0,625 do de 74; chance χ² 0,09),
   e no meio inventei uma hipótese ("sementes pequenas") que o lote seguinte derrubou. Regras: semente barata (< 1 s) calibra com ≥ 20 sementes; com < 15, quantil t e a chance χ²
   escrita; m1 em [n; n + 2E] (cada erro abre duas previsões).
+  Parte 149 (a GRPO em PORTUGUÊS, OpenWordNet-PT sem acentos, lemas_ownpt; rodada 97 IGUAL, o quantil t; 13/15, (m) 6/6): com 20 sementes de calibração, as 9 faixas de
+  calibração acertaram (1 lote; 0,9⁹ = 0,39 ao acaso). A GRPO ganhou do Q-learning também na 3ª língua do dicionário (+0,061; 6 lotes, 3 dicionários). O tamanho do dicionário NÃO
+  é a variável: o tabuleiro tem letras inglesas e o português (8,5× o embutido) dá Q menor. Regras: um centro trazido de uma parte antiga leva o erro da amostra antiga; um viés
+  nomeado ganha conta de peso ou entra como desvio do centro (nomear a direção sem deslocar o centro é nota, não previsão); rótulos de previsão têm UMA letra (a régua).
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -18987,7 +19075,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -26447,7 +26535,7 @@ def colisoes_esperadas(n, m=10007):
 """
 
 # ====================================================================================================
-# synthai/palavras_rl.py  (482 linhas)
+# synthai/palavras_rl.py  (498 linhas)
 # ====================================================================================================
 FONTES['synthai/palavras_rl.py'] = """\"\"\"O word_rl_lab recebido (Parte 111), reescrito só com a biblioteca padrão e OFFLINE. As cópias verbatim (v1 e v2) ficam em
 externos/word_rl_lab/ e nunca são importadas. Q-learning tabular num jogo de palavras numa grade de letras (estilo Boggle), com um
@@ -26509,6 +26597,22 @@ def lemas_wordnet():
                 lema = lema.lower()
                 if lema.isascii() and lema.isalpha():
                     out.add(lema)
+    return frozenset(out)
+
+
+def lemas_ownpt():
+    \"\"\"O português do data lake (Parte 149): os lemas da OpenWordNet-PT (dados/ownpt_sinsets.tsv.gz, coluna 2, separados por '|'), em
+    minúsculas, com os acentos e a cedilha tirados (NFD sem as marcas combinantes), só os que ficam formados por letras a-z.\"\"\"
+    import unicodedata
+    raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    out = set()
+    with gzip.open(os.path.join(raiz, "dados", "ownpt_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        for linha in f:
+            for lema in linha.split("\\t")[1].split("|"):
+                lema = lema.strip().lower()
+                s = "".join(c for c in unicodedata.normalize("NFD", lema) if unicodedata.category(c) != "Mn")
+                if s.isascii() and s.isalpha():
+                    out.add(s)
     return frozenset(out)
 
 
@@ -31584,6 +31688,46 @@ class TestesParte148(unittest.TestCase):
         self.assertEqual(r["todas"][0], 18)
         self.assertGreater(r["meia_t"], 0.0)
         self.assertTrue(0.0 < r["p_sigma_baixo"] < 1.0)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte149.py  (35 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte149.py'] = """\"\"\"Testes da Parte 149: lemas_ownpt, P3201 (a GRPO por dicionário), P3202 (o aleatório) e P3203 (a auditoria com o t) pelo nome.\"\"\"
+import unittest
+
+import calculos as c
+from synthai import palavras_rl as P
+
+
+class TestesParte149(unittest.TestCase):
+    def test_lemas_ownpt_sem_acentos(self):
+        s = P.lemas_ownpt()
+        self.assertEqual(len(s), 34384)
+        self.assertIn("coracao", s)
+        self.assertTrue(all(w.isascii() and w.isalpha() and w == w.lower() for w in s))
+
+    def test_p3201_grpo_por_dicionario(self):
+        r = c.p3201_grpo_por_dicionario("pt", sementes=(101, 102), episodios=1000, avaliacao=200)
+        self.assertTrue(0.0 <= r["sem8"] <= r["sem2"] <= 1.0)
+        self.assertAlmostEqual(r["G2-Q"], r["G2"] - r["Q"], places=12)
+
+    def test_p3202_aleatorio_igual_ao_avaliador(self):
+        # o braço aleatório isolado dá o mesmo número que o avaliador da Parte 111 nas mesmas sementes
+        m, _, v = c.p3202_aleatorio_por_dicionario("embutido", sementes=(43, 44, 45))
+        e = c.p3201_grpo_por_dicionario("embutido", sementes=(43, 44, 45), episodios=200, avaliacao=1000)
+        self.assertEqual(v, e["por_semente"]["aleat"])
+
+    def test_p3203_auditoria_t(self):
+        out, n = c.p3203_auditoria_t()
+        self.assertEqual(n, 1)
+        # controle: com n_cal enorme, t -> 1,645 e nenhuma faixa muda de veredito
+        out2, n2 = c.p3203_auditoria_t(((1, "x", 0.0, 1.0, 5000, 1.02),))
+        self.assertEqual(n2, 0)
 
 
 if __name__ == "__main__":
@@ -42396,7 +42540,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2304 linhas)
+# resultados.txt  (2313 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -44702,6 +44846,15 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3200 lote 23-40: Q media 0.3077, desvio 0.0273
   P3200 lote 1001-1018: Q media 0.3099, desvio 0.0322
   P3200 todas as 74 sementes: media 0.3114, desvio 0.0256; desvio da calibracao 0.0160; (o) -0.0022; meia-largura de (a) com t(7) 0.0196; P(desvio da calibracao tao baixo) 0.093
+=== Parte 149: a GRPO no jogo de palavras em portugues (OpenWordNet-PT sem acentos) ===
+  P3201 calibracao 101-120: Q 0.1403; aleatorio 0.0131; G=2 0.2026; G=8 0.2010; sem contraste G=2 0.9702, G=8 0.8892; G2-Q +0.0623; G8-Q +0.0607; G8-G2 -0.0016; as duas acima do Q 19/20
+  P3201 teste 121-140: Q 0.1431; aleatorio 0.0141; G=2 0.2038; G=8 0.2118; sem contraste G=2 0.9697, G=8 0.8880; G2-Q +0.0607; G8-Q +0.0687; G8-G2 +0.0080; as duas acima do Q 18/20
+  P3201 (k) embutido, sementes 43-45: aleatorio 0.0113; Q 0.1533
+  P3202 (u) embutido, sementes 46-65: aleatorio 0.0087 (desvio 0.0037)
+  P3203 Parte 147 (b) com o quantil t: [0.1112; 0.2248] acerta
+  P3203 Parte 148 (a) com o quantil t: [0.3046; 0.3439] erra
+  P3203 Parte 148 (n) com o quantil t: [0.2907; 0.3271] erra
+  P3203 (r) erros de calibracao que viram acerto com o t: 1
 """
 
 # ====================================================================================================
@@ -52958,7 +53111,7 @@ em 6", e 2 erros dão exatamente 0,6667: a faixa em fração tinha de ser escrit
 """
 
 # ====================================================================================================
-# ASI_AGI_parte148_grpo_dicionario_grande.md  (156 linhas)
+# ASI_AGI_parte148_grpo_dicionario_grande.md  (157 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte148_grpo_dicionario_grande.md'] = """# Parte 148 — A GRPO no jogo de palavras com o dicionário GRANDE, e o passo dela bit a bit
 
@@ -53028,6 +53181,7 @@ lote novo (Parte 122), então m1 vai a [10; 10 + E] com E = 2,3. A fração de a
 Erros no mundo em **[0; 4]**, com centro 2,3 (binomial de 9 faixas a 0,25: desvio 1,3).
 
 ➡ Anterior: [Parte 147](ASI_AGI_parte147_grpo_palavras.md).
+➡ Próxima: [Parte 149](ASI_AGI_parte149_grpo_portugues.md).
 
 ## Um lote novo antes de qualquer mecanismo (registrado depois de ver o teste, antes de rodar as sementes 71 a 80)
 O teste (sementes 61 a 70) já rodou, e o Q-learning ficou abaixo do piso de (a): 0,3020 contra [0,3072; 0,3413]. O t de Welch entre as 10 sementes
@@ -53116,6 +53270,172 @@ sementes. O mecanismo é o da Parte 147, um acerto em G vale √(G − 1), agora
 **O placar (m):** **m1 = 14 em [10; 12] ❌**, m2 = 2 em [1; 2] ✅, m3 = 0,058 em [0,04; 0,07] ✅, m4 = 0,857 em [0,60; 1,00] ✅, m5 = 0 ✅ e
 m6 = 0 ✅. **5 de 6.** m1 errou pela mesma razão das Partes 109, 120 e 122, agora com o tamanho medido: cada erro abriu DUAS previsões (um lote
 e uma largura, depois um lote e um controle), e o erro (n) nasceu de um lote aberto por (a). Regra: m1 em [n; n + 2E].
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte149_grpo_portugues.md  (161 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte149_grpo_portugues.md'] = """# Parte 149 — A GRPO no jogo de palavras em português
+
+↩ Nasce da Parte 148 (a GRPO no dicionário grande inglês) e da regra do data lake (Parte 30, com o português da OpenWordNet-PT desde a Parte 39).
+A pergunta: a dependência entre o tamanho do dicionário e a vantagem da GRPO, vista em dois dicionários ingleses, prevê um terceiro, em outra língua?
+
+## O recolhimento do contêiner, 7º lote
+Despertar às 01h45, depois de cerca de 55 minutos ociosa: "up 0 min", como previsto (up < 5 min). Sete lotes, todos a favor.
+
+## O dicionário
+`synthai.palavras_rl.lemas_ownpt()`: os lemas da OpenWordNet-PT (CC BY 4.0), em minúsculas, sem acentos e sem cedilha (NFD sem as marcas), só os
+formados por a-z: **34.384 lemas, 4.181 deles com 3 a 5 letras** (o tamanho que o jogo aceita). As palavras embutidas do `word_rl_lab` têm 493 com
+3 a 5 letras; os lemas do WordNet, 9.686. A grade continua sorteada com as frequências de letras do INGLÊS (`LETTER_FREQ`): o português joga num
+tabuleiro de outra língua.
+
+## Previsão de mecanismo, registrada antes de qualquer calibração em português (regra da Parte 24: prever pela conta antes de simular)
+**A conta:** interpolar linearmente em ln(nº de palavras de 3 a 5 letras) entre os dois dicionários já medidos. A fração é
+(ln 4.181 − ln 493)/(ln 9.686 − ln 493) = 0,718.
+- Q: 0,1533 + 0,718 · (0,3020 − 0,1533) = 0,260.
+- G = 2 − Q: 0,0484 + 0,718 · (0,0946 − 0,0484) = 0,082.
+
+**O que pode quebrar a conta:** as letras do tabuleiro são inglesas, e o português precisa de vogais em proporção maior; com isso, menos palavras
+portuguesas cabem nas grades, e o dicionário "efetivo" fica menor que 4.181. Esse viés empurra os dois números para baixo. Sem uma conta do peso
+dele (Parte 62), a faixa é larga e a procedência é "mecanismo sem calibração" (taxa de erro histórica dessas: alta).
+- **(s)** (registrada como "(a0)"; renomeada porque a régua só lê rótulos de uma letra) Q-learning, média das sementes 101 a 120, em **[0,20; 0,30]**
+- **(t)** G = 2 − Q, média das sementes 101 a 120, em **[0,04; 0,11]**
+
+## A calibração (sementes 101 a 120; 20 sementes, regra da Parte 148)
+Média e desvio entre sementes (P3201):
+
+| quantidade | média | desvio |
+|---|---|---|
+| Q-learning | 0,1403 | 0,0214 |
+| aleatório | 0,0131 | 0,0026 |
+| GRPO G = 2 | 0,2026 | 0,0215 |
+| GRPO G = 8 | 0,2010 | 0,0276 |
+| sem contraste G = 2 | 0,9702 | 0,0030 |
+| sem contraste G = 8 | 0,8892 | 0,0173 |
+| G = 2 − Q | 0,0623 | 0,0280 |
+| G = 8 − Q | 0,0607 | 0,0370 |
+| G = 8 − G = 2 | −0,0016 | 0,0332 |
+
+As duas GRPO acima do Q-learning em 19 de 20 sementes.
+
+**As previsões de mecanismo:** (s) Q = 0,1403, fora de [0,20; 0,30] ❌; (t) G = 2 − Q = 0,0623, dentro de [0,04; 0,11] ✅. O viés que eu nomeei
+(letras inglesas no tabuleiro) era real e GRANDE: com 8,5 vezes mais palavras que o dicionário embutido, o Q-learning em português acha menos
+palavras (0,140 contra 0,153). O tamanho do dicionário não é a variável certa; a variável é quantas palavras CABEM no tabuleiro. O aleatório mede
+isso sem agente: 0,0131 em português contra 0,047 no inglês grande.
+
+## Previsões do teste, registradas antes de rodar as sementes 121 a 140
+Meia-largura 1,645 · 1,36 · σ · √(1/20 + 1/20) (erro do centro mais o da medida; 20 sementes de calibração, então 1,645 e não o t, regra da
+Parte 148). Centro de "quantos erros": 9 faixas de calibração × 0,25 + 1 de forma fechada × 0,10 + 1 contagem × 0,10 + 1 de mecanismo × 0,4 ≈ 2,9.
+- **(a)** Q-learning em **[0,1252; 0,1554]**
+- **(b)** aleatório em **[0,0112; 0,0150]**. Forma fechada: o p do aleatório não depende de aprendizado (Parte 147); binomial com 1.000 episódios,
+  √(0,0131 · 0,9869/1000) = 0,0036 por semente, 0,0008 na média de 20 e 0,0008 de erro do centro: 1,645 · √2 · 0,0008.
+- **(c)** GRPO G = 2 em **[0,1874; 0,2178]**
+- **(d)** sem contraste G = 2 em **[0,9681; 0,9723]**
+- **(e)** GRPO G = 8 em **[0,1815; 0,2205]**
+- **(f)** sem contraste G = 8 em **[0,8770; 0,9014]**
+- **(g)** G = 2 − Q em **[0,0425; 0,0821]**
+- **(h)** G = 8 − Q em **[0,0345; 0,0869]**
+- **(i)** G = 8 − G = 2 em **[−0,0251; 0,0219]**. Cruza o zero; registro a diferença, não a ordem.
+- **(j)** nº de sementes, em 20, com as duas GRPO acima do Q em **[17; 20]**: binomial com p = 19/20; P(≤ 16) = 0,016 e P(≤ 17) = 0,075, então
+  [17; 20] tem 0,984.
+- **(k)** o aleatório no dicionário EMBUTIDO, sementes 43 a 45 (as da Parte 147), em **[0,004; 0,011]**. Mecanismo: a Parte 111 mediu que os 77.340
+  lemas multiplicam o aleatório por 6,2; 0,047/6,2 = 0,0076; binomial 0,0027 por semente, 0,0016 na média de 3, mais o erro do centro. Se acertar,
+  o Q-learning NÃO é função só do aleatório: o embutido teria aleatório menor que o português (0,0076 contra 0,0131) e Q maior (0,153 contra 0,140).
+
+### A auditoria retroativa com o quantil t (pendência 1 da Parte 148), registrada antes
+Faixas de CALIBRAÇÃO das Partes 147 e 148 que erraram, refeitas trocando 1,645 pelo quantil t de n_cal − 1 graus (as outras partes não escrevem
+n_cal de forma que uma régua leia: fica pendente). Os erros de calibração foram 147 (b) (n_cal = 3), 148 (a) (n_cal = 8) e 148 (n) (n_cal = 28).
+A (d) da 147 tinha procedência binomial e não entra. A conta, feita à mão e conferida por código antes do registro: só a 147 (b) passa a acertar.
+- **(r)** nº de erros de calibração das Partes 147-148 que viram acerto com o quantil t em **[1; 1]**. É uma identidade (a conta é determinística
+  sobre faixas já escritas); o código pode errar, a conta não.
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua rodou sobre o rascunho com uma linha "Do mundo:" provisória (regra da Parte 120): m1 = 14, m2 = 1, m3 = 0,108, m5 = 0. O primeiro rascunho
+deu m1 = 0, porque o leitor só aceita rótulos de uma letra e "(a0)" quebrava a linha do placar; renomeei para (s) e (t). Erros esperados nas 12 que
+faltam: E ≈ 2,5, então m1 em [14; 14 + 2E] (regra da Parte 148). Acertos como contagem: 9 a 13 das 14 registradas.
+- **(m1)** nº de previsões do mundo em **[14; 19]**
+- **(m2)** nº que cruzam ou tocam o zero em **[1; 2]**
+- **(m3)** mediana de w em **[0,08; 0,14]**
+- **(m4)** fração de acertos em **[0,60; 0,93]**
+- **(m5)** nº com w > 0,6 em **[0; 0]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[1; 6]**: o (s) já errou, e as 12 que faltam têm centro 2,5 (desvio binomial ≈ 1,4).
+
+## Um lote novo depois de (k), registrado antes de rodar (sementes 46 a 65, dicionário embutido)
+O teste rodou (o resultado está em "Medido"); (k) ficou 0,0003 acima do teto. O centro 0,0076 vinha de UMA semente da Parte 111 (0,006, com
+desvio binomial 0,0024), e a faixa só levou o erro da média de 3 sementes novas: o erro do centro antigo ficou de fora. Antes de mecanismo:
+- **(u)** aleatório no dicionário embutido, média das sementes 46 a 65, em **[0,0079; 0,0147]**: centro 0,0113 (as 3 sementes de (k)); binomial
+  √(0,0113 · 0,9887/1000) = 0,00334 por semente, 0,00075 na média de 20, e 0,00334/√3 = 0,0019 de erro do centro; 1,645 · √(0,00075² + 0,0019²).
+
+### A rodada 97, registrada antes
+O quantil t que a Parte 148 passou a exigir para calibrações pequenas (`p3200_t_student_quantil`), traduzido: a densidade como exp(−(ν+1)/2 ·
+log(1 + s²/ν)) com o exp e o log PRÓPRIOS da rodada 26, a constante Γ((ν+1)/2)/Γ(ν/2) pela recorrência R(ν + 2) = R(ν)·(ν + 1)/ν a partir de
+R(1) = 1/√π e R(2) = √π/2 (só √ e as quatro operações, sem lgamma), Simpson com 2.000 intervalos em laço e 80 bissecções, para ν = 2, 7, 19 e 27.
+Previsão: **IGUAL**. O mecanismo que poderia quebrar: a constante π (os dois lados usam o double mais próximo de π, o mesmo).
+
+## Medido (P3201, P3202, P3203; rodada 97)
+- **(s)** Q-learning na calibração: **0,1403**. ❌ (abaixo do piso 0,20)
+- **(t)** G = 2 − Q na calibração: 0,0623. ✅
+- **(a)** Q-learning, sementes 121 a 140: 0,1431. ✅
+- **(b)** aleatório: 0,0141. ✅
+- **(c)** GRPO G = 2: 0,2038. ✅
+- **(d)** sem contraste G = 2: 0,9697. ✅
+- **(e)** GRPO G = 8: 0,2118. ✅
+- **(f)** sem contraste G = 8: 0,8880. ✅
+- **(g)** G = 2 − Q: +0,0607. ✅
+- **(h)** G = 8 − Q: +0,0687. ✅
+- **(i)** G = 8 − G = 2: +0,0080. ✅
+- **(j)** sementes com as duas GRPO acima do Q: 18 de 20. ✅
+- **(k)** aleatório no embutido, sementes 43 a 45: **0,0113**. ❌ (acima do teto 0,011 por 0,0003)
+- **(u)** aleatório no embutido, sementes 46 a 65: 0,0087. ✅
+- **(r)** erros de calibração das Partes 147-148 que viram acerto com o t: 1 (só a 147 (b); a 148 (a) e a 148 (n) continuam erradas). ✅
+- **Rodada 97:** IGUAL, 6 linhas e 8 números bit a bit. ✅
+
+Do mundo: (s) ❌ (t) ✅ (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ❌ (u) ✅ (r) ✅
+
+**Mundo: 13 de 15.** **Sobre mim:** 2 erros, em [1; 6]: ✅. Nenhuma surpresa: os erros (0,060 e 0,0003) são menores que as larguras (0,10 e 0,007).
+
+### O que o português mostrou
+**As 9 faixas de calibração com 20 sementes acertaram todas.** Na Parte 148, com 8 sementes, duas de dez erraram; aqui, com 20, nenhuma. É um lote
+só, e 9 de 9 com p = 0,9 por faixa sai ao acaso com chance 0,9⁹ = 0,39: a regra das 20 sementes ainda não está provada, só não foi refutada.
+
+**O tamanho do dicionário não é a variável.** O português tem 8,5 vezes mais palavras de 3 a 5 letras que o embutido (4.181 contra 493) e o
+Q-learning acha MENOS palavras nele (0,142 contra 0,153, juntando calibração e teste). O tabuleiro tem as frequências de letras do inglês, e as
+palavras portuguesas não cabem nele. O aleatório, que mede quantas palavras cabem sem agente nenhum, ordena os três dicionários (embutido 0,0090 nas
+23 sementes de (k) e (u), português 0,0136 nas 40, inglês grande 0,047), mas o Q-learning não segue essa ordem: o embutido tem aleatório menor e Q
+maior. Uma leitura que cabe nos números: o embutido tem poucas palavras e comuns, que se repetem de grade para grade, e o Q-learning tabular aprende
+as que se repetem (o "repertório" da Parte 113). Hipótese de 1 lote.
+
+**A vantagem da GRPO apareceu na terceira língua do data lake:** G = 2 − Q = +0,061 e G = 8 − Q = +0,069, entre o embutido (+0,048, +0,017) e o
+inglês grande (+0,095, +0,095). Agora em 3 dicionários, 6 lotes: a GRPO sem crítico nunca perdeu do Q-learning na média de um lote.
+
+### Os dois erros
+- **(s)** era uma previsão de mecanismo sem conta do peso, com o viés nomeado e não medido. O viés foi maior que a faixa inteira. A regra da Parte 62
+  previa isso: sem a conta do peso, a faixa é a do estatístico, e não havia estatístico para uma língua nova.
+- **(k)** tinha o centro de UMA semente antiga (Parte 111) e a faixa só com o erro das 3 novas. O lote seguinte (u), de 20 sementes, caiu no meio
+  da faixa: o lote de 3 estava alto por acaso. A regra "lote novo antes de mecanismo" (Partes 117, 137, 148) evitou de novo uma explicação.
+
+## Engenharia reversa
+- **O padrão: o centro herdado não leva o erro de onde veio.** Em (k), copiei a razão 6,2 da Parte 111 como se fosse exata. É a regra da Parte 123
+  (escrever o erro do centro) aplicada só ao centro calibrado na própria parte, e esquecida para um centro trazido de outra parte.
+- **Regra (Parte 149):** um centro trazido de uma parte antiga leva o erro da AMOSTRA antiga (quantas sementes ela tinha), escrito ao lado.
+- **O segundo padrão: nomear o viés e não pesá-lo.** Em (s), escrevi "esse viés empurra para baixo" e deixei o centro onde a conta sem o viés o
+  punha. Nomear a direção de um viés sem deslocar o centro não é previsão; é uma nota. Regra: um viés nomeado ganha uma conta de peso (aqui bastava o
+  aleatório de 3 sementes, 0,4 s) ou entra como desvio do centro.
+
+## Funções e testes
+- **Funções:** `p3201_grpo_por_dicionario`, `p3202_aleatorio_por_dicionario`, `p3203_auditoria_t` e `_parte_149`; `synthai.palavras_rl.lemas_ownpt`.
+  Entradas P3201, P3202 e P3203 na regressão.
+- **Diálogo:** `dialogo/rodada97.py` e `dialogo/Rodada97.java`, IGUAL.
+- **Testes:** `synthai/testes_parte149.py`.
+
+**O placar (m):** m1 = 15 em [14; 19] ✅, m2 = 1 em [1; 2] ✅, m3 = 0,126 em [0,08; 0,14] ✅, m4 = 0,867 em [0,60; 0,93] ✅, m5 = 0 ✅ e m6 = 0 ✅.
+**6 de 6.** A regra m1 em [n; n + 2E] da Parte 148 acertou no primeiro uso: um erro abriu uma previsão (u), e o (s) não abriu nenhuma, porque o
+teste já estava registrado.
+
+➡ Anterior: [Parte 148](ASI_AGI_parte148_grpo_dicionario_grande.md).
 """
 
 # ====================================================================================================
@@ -75241,7 +75561,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2126 linhas)
+# dialogo/DIALOGO.md  (2136 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -77369,10 +77689,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 74 linhas e 71 números bit a bit**; 16 dos 40 grupos sem contraste. Previsão registrada antes (Parte 148): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 97): a relação dos grupos úteis (b·ln U) num terceiro mundo, adiada desde a rodada 95.
+
+## Rodada 97 (Parte 149) — o quantil t de Student
+
+**IA-Python (lógica criativa):** Errei duas faixas na Parte 148 porque usei 1,645 com o desvio de 8 sementes; a regra nova manda usar o quantil t quando há menos de 15. Calculo o quantil integrando a densidade de Student por Simpson e bissectando a CDF. Mas a minha função usa lgamma e pow. Troquei: a constante sai de uma recorrência de razões de gamas que só precisa de √π, e a potência vira exp(e·log(1 + s²/ν)) com o meu exp e o meu log. O quantil atravessa a tua linguagem?
+
+**IA-Java (ASI):** Atravessa: `Math.PI` é o mesmo double que o teu `math.pi`, `Math.sqrt` é arredondada corretamente nos dois lados, e o resto são as quatro operações em laço. Repara que a bissecção decide 80 vezes "a CDF é menor que 0,95?": se um ulp mudasse uma decisão, o quantil mudaria inteiro. Não mudou porque as CDFs são iguais bit a bit, não porque a margem é grande.
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 8 números bit a bit**; t(0,95; 7) = 1,8946, t(0,95; 19) = 1,7291. Previsão registrada antes (Parte 149): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 98): os grupos úteis (b·ln U) num terceiro mundo, adiada desde a rodada 95.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (91 linhas)
+# dialogo/PENDENCIAS.md  (92 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -77465,6 +77795,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - (Parte 136) Rodada 92: o GRPO de externos/pacote3/rl_grupos.py bit a bit, com exp/log próprios. E a Parte 137: o inventário de tudo o que foi recebido, com o módulo que usa cada peça.
 - (Parte 139) Rodada 93: o reservatório e o posto efetivo (Jacobi) bit a bit. Testar os grupos úteis da GRPO num segundo mundo de contextos (só 1 lote até aqui).
 - **(Parte 148)** ABERTAS: (1) as faixas de calibração usam 1,645 com o σ de poucas sementes; medir, sobre as partes 136-148, quantas das faixas erradas teriam acertado com o quantil t de n_cal − 1 graus (P3200), e prever antes; (2) a rodada 97: os grupos úteis (b·ln U) num terceiro mundo; (3) a GRPO no dicionário em PORTUGUÊS (OpenWordNet-PT), com previsões pela relação da Parte 145.
+- **(Parte 149)** ABERTAS: (1) o "repertório" como explicação de o embutido ter Q maior que o português com aleatório menor (1 lote): medir a fração das palavras achadas pelo Q que se repetem entre grades, nos dois dicionários, com previsão antes; (2) um tabuleiro com as frequências de letras do PORTUGUÊS (o mecanismo de (s)): prever o Q e o aleatório antes; (3) a auditoria com o t nas Partes 136-146 precisa que cada parte escreva n_cal de forma legível: decidir o formato e auditar as que tiverem.
 """
 
 # ====================================================================================================
@@ -84514,6 +84845,66 @@ public class Rodada96 {
 """
 
 # ====================================================================================================
+# dialogo/Rodada97.java  (55 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada97.java'] = """// Rodada 97 (Parte 149): o quantil t de Student (calculos.p3200_t_student_quantil) bit a bit. Densidade c*exp_(-(nu+1)/2*log_(1+s*s/nu)) com o
+// exp e o log PROPRIOS (rodada 26); c = R(nu)/sqrt(nu*pi), R pela recorrencia R(nu+2) = R(nu)*(nu+1)/nu; Simpson com 2000 intervalos em laco;
+// 80 bisseccoes em [0, 50].
+public class Rodada97 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double exp_(double v) {
+        double k = Math.floor(v / (LN2_HI + LN2_LO) + 0.5);
+        double r = (v - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double v) {
+        int e = Math.getExponent(v);
+        double m = Math.scalb(v, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
+    static double razaoGama(int nu) {
+        double r = nu % 2 == 1 ? 1.0 / Math.sqrt(Math.PI) : Math.sqrt(Math.PI) / 2.0;
+        int k = nu % 2 == 1 ? 1 : 2;
+        while (k < nu) { r = r * (k + 1.0) / k; k += 2; }
+        return r;
+    }
+
+    static double f(double s, int nu, double c, double e) { return c * exp_(e * log_(1.0 + s * s / nu)); }
+
+    static double cdf(double x, int nu, double c) {
+        int n = 2000;
+        double e = -((nu + 1.0) / 2.0);
+        double h = x / n;
+        double acc = f(0.0, nu, c, e) + f(x, nu, c, e);
+        for (int i = 1; i < n; i++) acc += (i % 2 == 1 ? 4.0 : 2.0) * f(i * h, nu, c, e);
+        return 0.5 + acc * h / 3.0;
+    }
+
+    public static void main(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        for (int nu : new int[]{2, 7, 19, 27}) {
+            double c = razaoGama(nu) / Math.sqrt(nu * Math.PI);
+            double lo = 0.0, hi = 50.0;
+            for (int it = 0; it < 80; it++) { double m = (lo + hi) / 2.0; if (cdf(m, nu, c) < 0.95) lo = m; else hi = m; }
+            double t = (lo + hi) / 2.0;
+            sb.append("nu").append(nu).append(" c ").append(Double.toHexString(c)).append(" t ").append(Double.toHexString(t)).append("\\n");
+        }
+        sb.append("conferido True\\n");
+        sb.append("fim");
+        System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
 # dialogo/SondaSeno104.java  (36 linhas)
 # ====================================================================================================
 FONTES['dialogo/SondaSeno104.java'] = """// Sonda da Parte 104: a sin/cos NAIVE da libm na codificacao posicional (mesmas frequencias portaveis via sqrt da rodada 71, so trocando a
@@ -91461,6 +91852,74 @@ def main():
     print("total " + total.hex())
     print("sem_contraste " + str(sem))
     print("conferido " + str(conferido))
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada97.py  (63 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada97.py'] = """\"\"\"Rodada 97 do diálogo Python <-> Java (Parte 149): o quantil t de Student de calculos.p3200_t_student_quantil bit a bit. A densidade é
+c · exp(−(ν+1)/2 · log(1 + s²/ν)) com o exp e o log PRÓPRIOS da rodada 26 (a libm e a pow são fronteira, Parte 52); a constante
+c = R(ν)/√(νπ), com R(ν) = Γ((ν+1)/2)/Γ(ν/2) pela recorrência R(ν + 2) = R(ν)·(ν + 1)/ν, R(1) = 1/√π, R(2) = √π/2 (sem lgamma). CDF por Simpson
+com 2.000 intervalos (soma em laço, Parte 34), quantil 0,95 por 80 bissecções em [0, 50]. Antes de imprimir, confere que o quantil desta tradução
+fica a menos de 1e-9 do da função medida (que usa lgamma e pow). Da raiz: python3 dialogo/rodada97.py\"\"\"
+import importlib.util
+import math
+import os
+import sys
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(AQUI))
+_spec = importlib.util.spec_from_file_location("rodada26", os.path.join(AQUI, "rodada26.py"))
+r26 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r26)
+exp_, log_ = r26.exp_, r26.log_
+
+
+def razao_gama(nu):
+    r = 1.0 / math.sqrt(math.pi) if nu % 2 == 1 else math.sqrt(math.pi) / 2.0
+    k = 1 if nu % 2 == 1 else 2
+    while k < nu:
+        r = r * (k + 1.0) / k
+        k += 2
+    return r
+
+
+def cdf(x, nu, c, n=2000):
+    e = -((nu + 1.0) / 2.0)
+
+    def f(s):
+        return c * exp_(e * log_(1.0 + s * s / nu))
+    h = x / n
+    acc = f(0.0) + f(x)
+    for i in range(1, n):
+        acc += (4.0 if i % 2 == 1 else 2.0) * f(i * h)
+    return 0.5 + acc * h / 3.0
+
+
+def quantil(nu, q=0.95):
+    c = razao_gama(nu) / math.sqrt(nu * math.pi)
+    lo, hi = 0.0, 50.0
+    for _ in range(80):
+        m = (lo + hi) / 2.0
+        if cdf(m, nu, c) < q:
+            lo = m
+        else:
+            hi = m
+    return (lo + hi) / 2.0, c
+
+
+def main():
+    import calculos
+    for nu in (2, 7, 19, 27):
+        t, c = quantil(nu)
+        assert abs(t - calculos.p3200_t_student_quantil(nu)) < 1e-9
+        print("nu" + str(nu) + " c " + c.hex() + " t " + t.hex())
+    print("conferido True")
     print("fim")
 
 

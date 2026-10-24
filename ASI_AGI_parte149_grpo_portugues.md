@@ -97,3 +97,65 @@ O quantil t que a Parte 148 passou a exigir para calibrações pequenas (`p3200_
 log(1 + s²/ν)) com o exp e o log PRÓPRIOS da rodada 26, a constante Γ((ν+1)/2)/Γ(ν/2) pela recorrência R(ν + 2) = R(ν)·(ν + 1)/ν a partir de
 R(1) = 1/√π e R(2) = √π/2 (só √ e as quatro operações, sem lgamma), Simpson com 2.000 intervalos em laço e 80 bissecções, para ν = 2, 7, 19 e 27.
 Previsão: **IGUAL**. O mecanismo que poderia quebrar: a constante π (os dois lados usam o double mais próximo de π, o mesmo).
+
+## Medido (P3201, P3202, P3203; rodada 97)
+- **(s)** Q-learning na calibração: **0,1403**. ❌ (abaixo do piso 0,20)
+- **(t)** G = 2 − Q na calibração: 0,0623. ✅
+- **(a)** Q-learning, sementes 121 a 140: 0,1431. ✅
+- **(b)** aleatório: 0,0141. ✅
+- **(c)** GRPO G = 2: 0,2038. ✅
+- **(d)** sem contraste G = 2: 0,9697. ✅
+- **(e)** GRPO G = 8: 0,2118. ✅
+- **(f)** sem contraste G = 8: 0,8880. ✅
+- **(g)** G = 2 − Q: +0,0607. ✅
+- **(h)** G = 8 − Q: +0,0687. ✅
+- **(i)** G = 8 − G = 2: +0,0080. ✅
+- **(j)** sementes com as duas GRPO acima do Q: 18 de 20. ✅
+- **(k)** aleatório no embutido, sementes 43 a 45: **0,0113**. ❌ (acima do teto 0,011 por 0,0003)
+- **(u)** aleatório no embutido, sementes 46 a 65: 0,0087. ✅
+- **(r)** erros de calibração das Partes 147-148 que viram acerto com o t: 1 (só a 147 (b); a 148 (a) e a 148 (n) continuam erradas). ✅
+- **Rodada 97:** IGUAL, 6 linhas e 8 números bit a bit. ✅
+
+Do mundo: (s) ❌ (t) ✅ (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ❌ (u) ✅ (r) ✅
+
+**Mundo: 13 de 15.** **Sobre mim:** 2 erros, em [1; 6]: ✅. Nenhuma surpresa: os erros (0,060 e 0,0003) são menores que as larguras (0,10 e 0,007).
+
+### O que o português mostrou
+**As 9 faixas de calibração com 20 sementes acertaram todas.** Na Parte 148, com 8 sementes, duas de dez erraram; aqui, com 20, nenhuma. É um lote
+só, e 9 de 9 com p = 0,9 por faixa sai ao acaso com chance 0,9⁹ = 0,39: a regra das 20 sementes ainda não está provada, só não foi refutada.
+
+**O tamanho do dicionário não é a variável.** O português tem 8,5 vezes mais palavras de 3 a 5 letras que o embutido (4.181 contra 493) e o
+Q-learning acha MENOS palavras nele (0,142 contra 0,153, juntando calibração e teste). O tabuleiro tem as frequências de letras do inglês, e as
+palavras portuguesas não cabem nele. O aleatório, que mede quantas palavras cabem sem agente nenhum, ordena os três dicionários (embutido 0,0090 nas
+23 sementes de (k) e (u), português 0,0136 nas 40, inglês grande 0,047), mas o Q-learning não segue essa ordem: o embutido tem aleatório menor e Q
+maior. Uma leitura que cabe nos números: o embutido tem poucas palavras e comuns, que se repetem de grade para grade, e o Q-learning tabular aprende
+as que se repetem (o "repertório" da Parte 113). Hipótese de 1 lote.
+
+**A vantagem da GRPO apareceu na terceira língua do data lake:** G = 2 − Q = +0,061 e G = 8 − Q = +0,069, entre o embutido (+0,048, +0,017) e o
+inglês grande (+0,095, +0,095). Agora em 3 dicionários, 6 lotes: a GRPO sem crítico nunca perdeu do Q-learning na média de um lote.
+
+### Os dois erros
+- **(s)** era uma previsão de mecanismo sem conta do peso, com o viés nomeado e não medido. O viés foi maior que a faixa inteira. A regra da Parte 62
+  previa isso: sem a conta do peso, a faixa é a do estatístico, e não havia estatístico para uma língua nova.
+- **(k)** tinha o centro de UMA semente antiga (Parte 111) e a faixa só com o erro das 3 novas. O lote seguinte (u), de 20 sementes, caiu no meio
+  da faixa: o lote de 3 estava alto por acaso. A regra "lote novo antes de mecanismo" (Partes 117, 137, 148) evitou de novo uma explicação.
+
+## Engenharia reversa
+- **O padrão: o centro herdado não leva o erro de onde veio.** Em (k), copiei a razão 6,2 da Parte 111 como se fosse exata. É a regra da Parte 123
+  (escrever o erro do centro) aplicada só ao centro calibrado na própria parte, e esquecida para um centro trazido de outra parte.
+- **Regra (Parte 149):** um centro trazido de uma parte antiga leva o erro da AMOSTRA antiga (quantas sementes ela tinha), escrito ao lado.
+- **O segundo padrão: nomear o viés e não pesá-lo.** Em (s), escrevi "esse viés empurra para baixo" e deixei o centro onde a conta sem o viés o
+  punha. Nomear a direção de um viés sem deslocar o centro não é previsão; é uma nota. Regra: um viés nomeado ganha uma conta de peso (aqui bastava o
+  aleatório de 3 sementes, 0,4 s) ou entra como desvio do centro.
+
+## Funções e testes
+- **Funções:** `p3201_grpo_por_dicionario`, `p3202_aleatorio_por_dicionario`, `p3203_auditoria_t` e `_parte_149`; `synthai.palavras_rl.lemas_ownpt`.
+  Entradas P3201, P3202 e P3203 na regressão.
+- **Diálogo:** `dialogo/rodada97.py` e `dialogo/Rodada97.java`, IGUAL.
+- **Testes:** `synthai/testes_parte149.py`.
+
+**O placar (m):** m1 = 15 em [14; 19] ✅, m2 = 1 em [1; 2] ✅, m3 = 0,126 em [0,08; 0,14] ✅, m4 = 0,867 em [0,60; 0,93] ✅, m5 = 0 ✅ e m6 = 0 ✅.
+**6 de 6.** A regra m1 em [n; n + 2E] da Parte 148 acertou no primeiro uso: um erro abriu uma previsão (u), e o (s) não abriu nenhuma, porque o
+teste já estava registrado.
+
+➡ Anterior: [Parte 148](ASI_AGI_parte148_grpo_dicionario_grande.md).

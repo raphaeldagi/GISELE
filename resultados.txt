@@ -2302,3 +2302,12 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3200 lote 23-40: Q media 0.3077, desvio 0.0273
   P3200 lote 1001-1018: Q media 0.3099, desvio 0.0322
   P3200 todas as 74 sementes: media 0.3114, desvio 0.0256; desvio da calibracao 0.0160; (o) -0.0022; meia-largura de (a) com t(7) 0.0196; P(desvio da calibracao tao baixo) 0.093
+=== Parte 149: a GRPO no jogo de palavras em portugues (OpenWordNet-PT sem acentos) ===
+  P3201 calibracao 101-120: Q 0.1403; aleatorio 0.0131; G=2 0.2026; G=8 0.2010; sem contraste G=2 0.9702, G=8 0.8892; G2-Q +0.0623; G8-Q +0.0607; G8-G2 -0.0016; as duas acima do Q 19/20
+  P3201 teste 121-140: Q 0.1431; aleatorio 0.0141; G=2 0.2038; G=8 0.2118; sem contraste G=2 0.9697, G=8 0.8880; G2-Q +0.0607; G8-Q +0.0687; G8-G2 +0.0080; as duas acima do Q 18/20
+  P3201 (k) embutido, sementes 43-45: aleatorio 0.0113; Q 0.1533
+  P3202 (u) embutido, sementes 46-65: aleatorio 0.0087 (desvio 0.0037)
+  P3203 Parte 147 (b) com o quantil t: [0.1112; 0.2248] acerta
+  P3203 Parte 148 (a) com o quantil t: [0.3046; 0.3439] erra
+  P3203 Parte 148 (n) com o quantil t: [0.2907; 0.3271] erra
+  P3203 (r) erros de calibracao que viram acerto com o t: 1

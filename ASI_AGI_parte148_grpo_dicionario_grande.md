@@ -66,6 +66,7 @@ lote novo (Parte 122), então m1 vai a [10; 10 + E] com E = 2,3. A fração de a
 Erros no mundo em **[0; 4]**, com centro 2,3 (binomial de 9 faixas a 0,25: desvio 1,3).
 
 ➡ Anterior: [Parte 147](ASI_AGI_parte147_grpo_palavras.md).
+➡ Próxima: [Parte 149](ASI_AGI_parte149_grpo_portugues.md).
 
 ## Um lote novo antes de qualquer mecanismo (registrado depois de ver o teste, antes de rodar as sementes 71 a 80)
 O teste (sementes 61 a 70) já rodou, e o Q-learning ficou abaixo do piso de (a): 0,3020 contra [0,3072; 0,3413]. O t de Welch entre as 10 sementes

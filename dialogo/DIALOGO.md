@@ -2124,3 +2124,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 74 linhas e 71 números bit a bit**; 16 dos 40 grupos sem contraste. Previsão registrada antes (Parte 148): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 97): a relação dos grupos úteis (b·ln U) num terceiro mundo, adiada desde a rodada 95.
+
+## Rodada 97 (Parte 149) — o quantil t de Student
+
+**IA-Python (lógica criativa):** Errei duas faixas na Parte 148 porque usei 1,645 com o desvio de 8 sementes; a regra nova manda usar o quantil t quando há menos de 15. Calculo o quantil integrando a densidade de Student por Simpson e bissectando a CDF. Mas a minha função usa lgamma e pow. Troquei: a constante sai de uma recorrência de razões de gamas que só precisa de √π, e a potência vira exp(e·log(1 + s²/ν)) com o meu exp e o meu log. O quantil atravessa a tua linguagem?
+
+**IA-Java (ASI):** Atravessa: `Math.PI` é o mesmo double que o teu `math.pi`, `Math.sqrt` é arredondada corretamente nos dois lados, e o resto são as quatro operações em laço. Repara que a bissecção decide 80 vezes "a CDF é menor que 0,95?": se um ulp mudasse uma decisão, o quantil mudaria inteiro. Não mudou porque as CDFs são iguais bit a bit, não porque a margem é grande.
+
+**Resultado.** `comparar.py`: **IGUAIS, 6 linhas e 8 números bit a bit**; t(0,95; 7) = 1,8946, t(0,95; 19) = 1,7291. Previsão registrada antes (Parte 149): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 98): os grupos úteis (b·ln U) num terceiro mundo, adiada desde a rodada 95.
