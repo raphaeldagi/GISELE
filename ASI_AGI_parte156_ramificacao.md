@@ -63,3 +63,36 @@ Erros no mundo em **[0; 5]**, centro 2,8.
 ### A rodada 104, registrada antes
 `ramificacao_exata` traduzida (caso B, primeira, 3 a 4 letras): por caminho, o vetor (acerto, falha, decisões, opções, livres, ações); os filhos somados na ordem das
 ações, divididos por n, e a decisão do nó somada depois da divisão (1, n, livres, ações). Só + × ÷ de inteiros convertidos. Previsão: **IGUAL**.
+
+## Medido (P3216, 3 a 6 letras)
+
+| caso | casa | acerto | decisões | opções | casas livres | ações |
+|---|---|---|---|---|---|---|
+| B | primeira | 0,287548 | 4,232621 | 10,29002 | 14,32981 | 8,05740 |
+| B | uniforme | 0,291766 | 4,238228 | 10,36243 | 14,64650 | 8,12420 |
+| A' | primeira | 0,239541 | 4,095943 | 8,28449 | 13,78481 | 6,18855 |
+| A' | uniforme | 0,246073 | 4,097846 | 8,33813 | 14,41022 | 6,24028 |
+
+Razões primeira/uniforme: B casas livres 0,97838, ações 0,99178, acerto 0,98554; A' casas livres 0,95660, ações 0,99171, acerto 0,97345. Déficit do acerto sobre o das
+casas livres: B 0,669, A' 0,612.
+- **(a)** decisões de B (primeira) = 4,23262149714652, o comprimento da P3215 (diferença 0). ✅
+- **(b)** casas livres da primeira menores nos 2 casos. ✅
+- **(c)** casas livres de B **0,97838** em [0,9761; 0,9786]. ✅
+- **(d)** ações de B **0,99178**, acima de [0,9903; 0,9910]. ❌
+- **(e)** acerto de B **0,98554**, acima de [0,9809; 0,9847]. ❌
+- **(f)** casas livres de A' **0,95660** em [0,9514; 0,9595]. ✅
+- **(g)** ações de A' **0,99171**, acima de [0,9883; 0,9914]. ❌
+- **(h)** acerto de A' **0,97345** em [0,9719; 0,9991]. ✅
+- **(i)** déficit do acerto menor que o das casas livres nos 2 casos (0,669 e 0,612). ✅
+
+**O erro de mecanismo:** eu levei a DESACELERAÇÃO da deriva da Parte 155 (um passo de 0,66 do anterior) para três quantidades que não são a deriva. As casas livres
+seguiram perto do previsto, mas a razão das ações ACELEROU para 1 (passos de B: +0,00048 e depois +0,00145; de A': +0,0023 e +0,0034), e o acerto de B voltou para
+cima (0,9875, 0,9847, 0,9855: não é monótono). A regra da Parte 12 (o mesmo nome, "a tendência de dois pontos", não é o mesmo mecanismo) desobedecida dentro da própria
+regra que a Parte 155 escreveu.
+
+## Um lote novo, registrado antes de rodar (3 a 7 letras)
+Sem mecanismo para a forma da série, a faixa das ações vai de "parou" (o valor de 3 a 6) a "dois últimos passos" (a aceleração observada), centro num passo; o acerto de
+B, que não é monótono, fica entre o menor e o maior dos três valores ± 0,001 (por código):
+- **(j)** razão das ações de B, 3 a 7 letras, em **[0,9918; 0,9947]** (centro 0,9932)
+- **(k)** razão das ações de A', 3 a 7 letras, em **[0,9917; 0,9985]** (centro 0,9951)
+- **(l)** razão do acerto de B, 3 a 7 letras, em **[0,9837; 0,9885]** (centro 0,9851)
