@@ -18565,6 +18565,22 @@ def p3211_simulado_caso_b(episodios=200000, semente=153):
     return s, e, (s - e) / math.sqrt(e * (1 - e) / episodios)
 
 
+def p3212_campo_medio_lote_novo():
+    """(f)-(i) da Parte 153 (P3212): os casos sem a simetria de A. A': {a, b} = (0,7; 0,3) com o dicionario de A; C: {a, b, c} uniformes com o de B;
+    D: {a, b} = (0,7; 0,3) com as palavras alternadas de 3 a 5 letras. Devolve {nome: (exato, campo_medio, razao)}."""
+    import itertools
+    from synthai import tabuleiro as T
+    casos = _casos_p153()
+    A, B = casos[0][1], casos[1][1]
+    alt = [w for L in (3, 4, 5) for w in ("".join(x) for x in itertools.product("ab", repeat=L)) if all(a != b for a, b in zip(w, w[1:]))]
+    out = {}
+    for nome, palavras, freq in (("A'", A, {"A": 0.7, "B": 0.3}), ("C", B, {"A": 1.0, "B": 1.0, "C": 1.0}), ("D", alt, {"A": 0.7, "B": 0.3})):
+        e = T.aleatorio_exato(palavras, freq, 3)
+        m = T.aleatorio_colapso(palavras, freq, 3)
+        out[nome] = (e, m, e / m)
+    return out
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()

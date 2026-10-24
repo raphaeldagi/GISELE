@@ -55,3 +55,8 @@ Procedência: mecanismo, sem calibração além do caso B (razão 1,043). Faixas
 - **(g)** razão exato / campo médio em C em **[0,85; 1,25]**
 - **(h)** razão exato / campo médio em D em **[0,85; 1,25]**
 - **(i)** |razão A' − 1| − |razão B − 1| em **[0,00; 0,25]**: a hipótese de (c), agora num caso que pode testá-la.
+
+### A rodada 101, registrada antes
+O enumerador exato traduzido: as atribuições na ordem do `itertools.product` (a última casa varia mais depressa), o peso como produto na ordem das casas, as ações
+num dicionário ordenado pela inserção (`LinkedHashMap` em Java), a soma dos filhos na ordem das ações e a divisão por n no fim, nos casos A' e B. Só + × ÷.
+Previsão: **IGUAL**. O que poderia quebrar: a ordem das ações (a da inserção, que é a das vizinhas) e a ordem das atribuições.
