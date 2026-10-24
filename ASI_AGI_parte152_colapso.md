@@ -51,3 +51,22 @@ modelo, este vezes o fator da Parte 79 (ele foi estimado de 10 casos). Procedên
 - **(d)** português / português, de 3 a 6 letras: em **[0,0195; 0,0234]** (centro 0,02142)
 - **(e)** WordNet / inglês, de 4 a 5 letras: em **[0,0071; 0,0094]** (centro 0,00824)
 - **(f)** a média das cinco razões medido / colapso em **[0,959; 1,041]**: ruído relativo médio de cada mundo ≈ 5%, dividido por √5, mais 1% de modelo.
+- **(g)** a mesma média de (f), com a faixa calculada por código (o ruído relativo de cada mundo é 11%, 4,1%, 4,8%, 4,8% e 7,8%; o desvio da média é 0,0312; o
+  erro de modelo, 0,021 · 1,36/√5 = 0,0128): em **[0,945; 1,055]**.
+
+**Lapso registrado antes de rodar:** a faixa de (f) saiu de uma estimativa de cabeça ("≈ 5%", regra da Parte 63 desobedecida); o mundo uniforme tem 11%. (f) fica
+como foi registrada e conta no placar; (g) é a versão por código, registrada antes de qualquer execução dos mundos novos.
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua sobre o rascunho com "Do mundo:" provisória: m1 = 7, m2 = 0, m3 = 0,091, m5 = 0. As 7 são de conta com erro calibrado: E = 7 × 0,10 = 0,7; m1 em
+[7; 7 + 2E] = [7; 8]. (f) e (g) medem a mesma coisa e erram juntas ou acertam juntas, salvo se a média cair entre 1,041 e 1,055 (ou entre 0,945 e 0,959).
+Acertos como contagem: 5 a 7 das 7 (5/7 = 0,7143).
+- **(m1)** nº de previsões do mundo em **[7; 9]**
+- **(m2)** nº que cruzam ou tocam o zero em **[0; 0]**
+- **(m3)** mediana de w em **[0,07; 0,12]**
+- **(m4)** fração de acertos em **[0,7143; 1,0000]**
+- **(m5)** nº com w > 0,6 em **[0; 0]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 3]**, centro 0,7.

@@ -18494,6 +18494,33 @@ def p3208_repertorio(dicionario="pt", tabuleiro="pt", sementes=tuple(range(101, 
     return out
 
 
+def p3209_aleatorio_colapso(dicionario="pt", tabuleiro="pt", tamanho=5, minimo=3, maximo=5, sementes=tuple(range(181, 201)), avaliacao=1000):
+    """(a)-(g) da Parte 152 (P3209): o braco aleatorio num mundo (dicionario, tabuleiro 'pt'/'en'/'uniforme', grade, comprimentos) e as duas contas:
+    a geometria sem colapso (Parte 151) e o colapso em campo medio (synthai.tabuleiro.aleatorio_colapso). Devolve (medido, desvio, geometria, colapso)."""
+    import random
+    import statistics as st
+    from synthai import palavras_rl as P
+    from synthai import tabuleiro as T
+    fonte = {"pt": P.lemas_ownpt, "en": P.lemas_wordnet, "embutido": lambda: P.EMBEDDED_WORDS}[dicionario]
+    palavras = fonte()
+    dic = P.Dicionario(palavras)
+    freq = {"pt": lambda: T.frequencias_de(P.lemas_ownpt()), "en": lambda: P.LETTER_FREQ,
+            "uniforme": lambda: {chr(65 + i): 1.0 for i in range(26)}}[tabuleiro]()
+    v = []
+    with T.com_frequencias(freq):
+        for s in sementes:
+            env = P.WordGridEnv(tamanho, minimo, maximo, rng=random.Random(s + 100_000))
+            pol = P.QAgent(seed=s + 2)
+            res = [P.run_episode(env, dic, pol, "random", learn=False) for _ in range(avaliacao)]
+            v.append(sum(r[1] for r in res) / len(res))
+    return (st.mean(v), (st.stdev(v) if len(v) > 1 else 0.0), T.aleatorio_geometrico(palavras, freq, tamanho, minimo, maximo),
+            T.aleatorio_colapso(palavras, freq, tamanho, minimo, maximo))
+
+
+_MUNDOS_P152 = (("(a) uniforme", ("pt", "uniforme", 5, 3, 5)), ("(b) 3x3", ("pt", "pt", 3, 3, 5)), ("(c) 7x7", ("pt", "pt", 7, 3, 5)),
+                ("(d) 3-6 letras", ("pt", "pt", 5, 3, 6)), ("(e) WordNet 4-5", ("en", "en", 5, 4, 5)))
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
