@@ -61,6 +61,22 @@ def lemas_wordnet():
     return frozenset(out)
 
 
+def lemas_ownpt():
+    """O português do data lake (Parte 149): os lemas da OpenWordNet-PT (dados/ownpt_sinsets.tsv.gz, coluna 2, separados por '|'), em
+    minúsculas, com os acentos e a cedilha tirados (NFD sem as marcas combinantes), só os que ficam formados por letras a-z."""
+    import unicodedata
+    raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    out = set()
+    with gzip.open(os.path.join(raiz, "dados", "ownpt_sinsets.tsv.gz"), "rt", encoding="utf-8") as f:
+        for linha in f:
+            for lema in linha.split("\t")[1].split("|"):
+                lema = lema.strip().lower()
+                s = "".join(c for c in unicodedata.normalize("NFD", lema) if unicodedata.category(c) != "Mn")
+                if s.isascii() and s.isalpha():
+                    out.add(s)
+    return frozenset(out)
+
+
 class Dicionario:
     def __init__(self, palavras):
         self.palavras = palavras
