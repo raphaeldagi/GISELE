@@ -74,3 +74,10 @@ sementes juntas (média 0,3119, desvio 0,0234):
 - **(k)** Q-learning, média das sementes 71 a 80, em **[0,2912; 0,3325]**: 1,645 · 1,36 · √(0,0234²/18 + 0,0234²/10).
 - **(l)** desvio do Q-learning entre as sementes 71 a 80 em **[0,0142; 0,0321]**: σ · √(χ²₉/9) com os quantis 5% e 95% do χ² de 9 graus (3,325 e
   16,919), σ = 0,0234. A forma é fechada se o desvio de 18 sementes for o σ verdadeiro, o que não é (o fator de 18 sementes não entra aqui).
+
+**Medido no lote 71 a 80:** Q-learning 0,3035 (k ✅) e desvio 0,0172 (l ✅). O lote ficou de novo abaixo da média da calibração (0,3242): agora
+são 20 sementes de teste contra 8 de calibração, t = −2,95. Lotes depois do que disparou, do mesmo lado: 1 de 1 (P = 0,5 ao acaso). A largura
+passou; falta um caminho independente (regra da Parte 143). As sementes da calibração (5 a 12) são pequenas e vizinhas; as de teste, grandes.
+Se o número da semente não importa, um lote de sementes PEQUENAS novas (13 a 22) cai na média das 28:
+- **(n)** Q-learning, média das sementes 13 a 22, em **[0,2913; 0,3265]**: média 0,3089 e desvio 0,0214 das 28, 1,645 · 1,36 · √(σ²/28 + σ²/10).
+  Se as sementes pequenas fossem diferentes de verdade, o lote ficaria perto de 0,324, acima do teto.
