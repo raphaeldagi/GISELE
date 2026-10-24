@@ -18408,6 +18408,37 @@ def p3203_auditoria_t(erros=_ERROS_DE_CALIBRACAO_147_148):
     return out, sum(o[4] for o in out)
 
 
+def p3204_densidades():
+    """A conta de peso da Parte 150 (P3204): D = soma sobre as palavras de 3 a 5 letras do produto das frequencias das letras do tabuleiro, para
+    (embutido, portugues, WordNet) no tabuleiro ingles e portugues no tabuleiro portugues (frequencias contadas nos lemas da OpenWordNet-PT).
+    Devolve {nome: D} e as frequencias portuguesas."""
+    from synthai import palavras_rl as P
+    from synthai import tabuleiro as T
+    pt = P.lemas_ownpt()
+    fpt = T.frequencias_de(pt)
+    E = P.LETTER_FREQ
+    return {"emb/EN": T.densidade(P.EMBEDDED_WORDS, E), "pt/EN": T.densidade(pt, E), "en/EN": T.densidade(P.lemas_wordnet(), E),
+            "pt/PT": T.densidade(pt, fpt)}, fpt
+
+
+def p3205_grpo_tabuleiro(dicionario="pt", tabuleiro="pt", sementes=tuple(range(101, 121)), episodios=5000, avaliacao=1000):
+    """A P3201 com o tabuleiro sorteado pelas frequencias de letras do portugues ('pt') ou do ingles ('en', o original) (P3205; Parte 150)."""
+    from synthai import palavras_rl as P
+    from synthai import tabuleiro as T
+    freq = T.frequencias_de(P.lemas_ownpt()) if tabuleiro == "pt" else P.LETTER_FREQ
+    with T.com_frequencias(freq):
+        return p3201_grpo_por_dicionario(dicionario, sementes, episodios, avaliacao)
+
+
+def p3206_aleatorio_tabuleiro(dicionario, tabuleiro="pt", sementes=tuple(range(141, 151))):
+    """(o)-(p) da Parte 150 (P3206): a P3202 (so o braco aleatorio) com o tabuleiro trocado."""
+    from synthai import palavras_rl as P
+    from synthai import tabuleiro as T
+    freq = T.frequencias_de(P.lemas_ownpt()) if tabuleiro == "pt" else P.LETTER_FREQ
+    with T.com_frequencias(freq):
+        return p3202_aleatorio_por_dicionario(dicionario, sementes)
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
