@@ -2194,3 +2194,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS**, cinco números em hexadecimal (acerto 0x1.5b0bc88549ca3p-2). Previsão registrada antes (Parte 155): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 104): o custo do setdefault não é a borda (em B a primeira termina mais longe dela e acerta menos); medir a correlação entre a casa escolhida e a continuação do caminho.
+
+## Rodada 104 (Parte 156) — as decisões contadas
+
+**IA-Python (lógica criativa):** Agora conto o que cada decisão tem: as casas vizinhas livres, as letras distintas entre elas e as opções com o PARAR. A minha recursão devolve seis números por caminho; divido a soma dos filhos por n e só DEPOIS somo a decisão do próprio nó. Se eu somasse antes de dividir, a decisão do nó viraria 1/n. Os teus seis números chegam ao mesmo bit?
+
+**IA-Java (ASI):** Chegam, se a ordem for a mesma: dividir, depois somar o 1, o n, as livres e as ações, convertidos de int para double na soma. Repara que o número de decisões e o comprimento do caminho da rodada 103 são a mesma quantidade, mas os bits não são iguais (…8c93 contra …8d43): somar a decisão em cada nó e somar o comprimento só no fim são duas ordens de soma diferentes para o mesmo número. A identidade é exata na matemática e vale a 1e-15 na máquina.
+
+**Resultado.** `comparar.py`: **IGUAIS**, seis números em hexadecimal (casas livres 0x1.78633a1b7e914p+3 = 11,762). Previsão registrada antes (Parte 156): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 105): a razão das ações acelera para 1 com o comprimento; uma conta da forma dessa série (o que o último passo de um caminho longo ainda escolhe) antes de medir 3 a 8 letras.

@@ -96,3 +96,44 @@ B, que não é monótono, fica entre o menor e o maior dos três valores ± 0,00
 - **(j)** razão das ações de B, 3 a 7 letras, em **[0,9918; 0,9947]** (centro 0,9932)
 - **(k)** razão das ações de A', 3 a 7 letras, em **[0,9917; 0,9985]** (centro 0,9951)
 - **(l)** razão do acerto de B, 3 a 7 letras, em **[0,9837; 0,9885]** (centro 0,9851)
+
+**Medido no lote novo (3 a 7 letras):** B ações 0,99362 (j ✅), A' ações 0,99509 (k ✅), B acerto 0,98609 (l ✅). Casas livres: B 0,98025, A' 0,95992.
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ❌ (f) ✅ (g) ❌ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅
+
+**Mundo: 9 de 12.** **Sobre mim:** 3 erros, em [0; 5]: ✅.
+
+### A rodada 104
+`dialogo/rodada104.py` e `dialogo/Rodada104.java`: os seis números iguais em hexadecimal (casas livres 0x1.78633a1b7e914p+3). **IGUAL**, como previsto. O número de
+decisões (…8c93) não tem os mesmos bits que o comprimento da rodada 103 (…8d43): a mesma quantidade somada em outra ordem (um 1 por nó contra o comprimento no fim).
+
+## O que a ramificação mostrou
+- **O setdefault tira casas livres, e é daí que sai o custo:** a primeira casa de cada letra fica do lado já andado, e na decisão seguinte há menos vizinhas livres
+  (B: de −2,6% a −2,0%; A': de −5,5% a −4,0%, de 4 a 7 letras). Em todas as oito medidas o acerto perde menos que as casas livres (a razão dos déficits fica de 0,48 a
+  0,88), porque o colapso por letra absorve parte da perda: duas vizinhas com a mesma letra são uma ação só, e perder uma delas não tira a ação.
+- **As ações quase não caem, e cada vez menos:** a razão das ações vai a 1 (B 0,9899 → 0,9936; A' 0,9860 → 0,9951). Com o caminho longo, o fim já está cercado de casas
+  usadas nas duas versões; a diferença entre a primeira e a sorteada encolhe nas ações antes de encolher nas casas livres.
+- **O acerto não segue nenhuma das duas sozinho:** em A' a perda vai de 4,8% a 2,4%; em B fica entre 1,3% e 1,5% e não é monótona. O que decide o acerto é a palavra
+  que o caminho forma, e a palavra depende das letras das casas perdidas, não do número delas: a mesma lição da memória das letras da Parte 154 (o sinal é do dicionário).
+- **Uma coisa pequena e nova:** com 3 a 7 letras, em A', o caminho da primeira casa fica MAIS longo que o da sorteada (4,1841 contra 4,1782); em todos os outros sete
+  pares era mais curto. Hipótese de 1 lote, sem mecanismo.
+
+## Engenharia reversa
+- **O padrão:** a Parte 155 escreveu "≥ 2 pontos na variável do fator" e eu cumpri a letra (dois pontos), mas emprestei de lá a FORMA da série (a desaceleração de
+  0,66). Três quantidades diferentes, três formas diferentes: as casas livres desaceleraram um pouco, as ações aceleraram, o acerto de B voltou. Isso revela que eu leio
+  uma regra como uma receita inteira (dois pontos E a desaceleração que veio junto), quando ela só diz o número de pontos. O que vem junto com uma regra no exemplo que a
+  criou é contexto, não regra.
+- **A regra nova:** dois pontos dão um passo, não uma forma. Sem mecanismo para a forma da série, a faixa vai do valor atual (parou) a dois passos (acelerou), centro num
+  passo; e uma série não monótona em três pontos se prevê pela amplitude dos três. Foi o que o lote novo fez, e acertou os três.
+- **O que funcionou:** a identidade (decisões = comprimento) e a direção do mecanismo (as casas livres caem nos dois casos; o acerto perde menos que elas) acertaram
+  todas: o que eu deduzi da estrutura do jogo não errou; o que eu emprestei de outra quantidade errou.
+
+**O placar (m) (P2837):** m1 = 12 em [9; 15] ✅, m2 = 0 ✅, m3 = 0,0015 em [0,0010; 0,0045] ✅, m4 = 0,7500 em [0,4444; 1,0000] ✅, m5 = 0 ✅, m6 = 1 em [0; 1] ✅ (a (d)
+errou por 0,00078 com uma faixa de largura 0,0007). **6 de 6.** A regra da Parte 155 para o m3 (somar as previsões que o lote novo traz) acertou na primeira vez.
+
+## Funções e testes
+- **Funções:** `_casos_p156`, `p3216_ramificacao` e `_parte_156`; em `synthai/tabuleiro.py`, `ramificacao_exata`. Entrada P3216 na regressão.
+- **Diálogo:** `dialogo/rodada104.py` e `dialogo/Rodada104.java`, IGUAL.
+- **Testes:** `synthai/testes_parte156.py`.
+
+➡ Anterior: [Parte 155](ASI_AGI_parte155_deriva.md).

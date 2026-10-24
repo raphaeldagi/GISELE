@@ -2364,3 +2364,12 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3215 B 3-4 letras, primeira: dr -0.39840; dc -0.17914; borda 0.16744; comprimento 3.63447
   P3215 B 3-5 letras, primeira: dr -0.33628; dc -0.13730; borda 0.13922; comprimento 4.01884
   P3215 B 3-6 letras, primeira: dr -0.29525; dc -0.11634; borda 0.12226; comprimento 4.23262
+=== Parte 156: a ramificacao, o que a primeira casa tira de cada decisao ===
+  P3216 3-4 letras B: acerto 0.338912/0.343204; decisoes 3.634472/3.640001; livres 11.76211/12.07388; acoes 6.37375/6.43911; razoes livres 0.97418, acoes 0.98985, acerto 0.98749
+  P3216 3-4 letras A': acerto 0.239770/0.251897; decisoes 3.583084/3.591352; livres 11.41517/12.07421; acoes 4.90576/4.97530; razoes livres 0.94542, acoes 0.98602, acerto 0.95186
+  P3216 3-5 letras B: acerto 0.301690/0.306377; decisoes 4.018842/4.025977; livres 13.50926/13.84047; acoes 7.48124/7.55427; razoes livres 0.97607, acoes 0.99033, acerto 0.98470
+  P3216 3-5 letras A': acerto 0.241437/0.248427; decisoes 3.916715/3.924356; livres 13.04594/13.71251; acoes 5.75178/5.81975; razoes livres 0.95139, acoes 0.98832, acerto 0.97186
+  P3216 3-6 letras B: acerto 0.287548/0.291766; decisoes 4.232621/4.238228; livres 14.32981/14.64650; acoes 8.05740/8.12420; razoes livres 0.97838, acoes 0.99178, acerto 0.98554
+  P3216 3-6 letras A': acerto 0.239541/0.246073; decisoes 4.095943/4.097846; livres 13.78481/14.41022; acoes 6.18855/6.24028; razoes livres 0.95660, acoes 0.99171, acerto 0.97345
+  P3216 3-7 letras B: acerto 0.283175/0.287170; decisoes 4.339298/4.340488; livres 14.67993/14.97571; acoes 8.32784/8.38134; razoes livres 0.98025, acoes 0.99362, acerto 0.98609
+  P3216 3-7 letras A': acerto 0.239450/0.245321; decisoes 4.184141/4.178181; livres 14.09264/14.68105; acoes 6.39610/6.42767; razoes livres 0.95992, acoes 0.99509, acerto 0.97607

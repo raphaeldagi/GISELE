@@ -99,3 +99,6 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
   medir, por enumeração, quanto a escolha da primeira casa reduz o número de continuações distintas (as casas da mesma letra têm vizinhanças diferentes) e prever o custo
   de 3 a 6 letras pela tendência de dois pontos; (2) a queda da deriva com o comprimento em forma fechada (a cadeia do fim do caminho numa grade 3 × 3); (3) a da 154:
   o sinal da memória das letras por uma conta de segunda ordem.
+- **(Parte 156)** FECHADA: a pendência 1 da 155 (o custo do setdefault são as casas livres perdidas, absorvidas em parte pelo colapso). ABERTAS: (1) a forma da série da
+  razão das ações (acelera para 1): uma conta do que a última decisão de um caminho longo ainda escolhe, antes de medir 3 a 8 letras; (2) a hipótese de 1 lote: em A' com
+  3 a 7 letras o caminho da primeira casa fica mais longo que o da sorteada; (3) as da 154/155: o sinal da memória das letras; a queda da deriva em forma fechada.

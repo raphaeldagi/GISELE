@@ -7581,6 +7581,7 @@ def testes_de_regressao():
         "P3213": (lambda r: tuple(round(r[k][3], 4) for k in ("B", "A'", "C", "D")) == (1.0155, 1.029, 1.0134, 1.0303))(p3213_setdefault_e_memoria()),
         "P3214": (lambda r: (round(r["B"]["direta"]["dr"], 4), round(r["A'"]["direta"]["dr"], 4), round(r["B"]["reversa"]["dr"], 4)) == (-0.3363, -0.4591, 0.3363))(p3214_deriva_do_setdefault()),
         "P3215": (lambda r: tuple(round(r[m]["dr"], 4) for m in (4, 5, 6)) == (-0.3984, -0.3363, -0.2952))(p3215_deriva_por_comprimento()),
+        "P3216": (lambda r: (round(r["A'"]["primeira"]["livres"] / r["A'"]["uniforme"]["livres"], 4), round(r["A'"]["primeira"]["acoes"] / r["A'"]["uniforme"]["acoes"], 4)) == (0.9454, 0.986))(p3216_ramificacao(4, casos=("A'",))),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18776,6 +18777,18 @@ def _parte_155():
 
 
 PARTES[155] = _parte_155
+
+def _parte_156():
+    print("\n=== Parte 156: a ramificacao, o que a primeira casa tira de cada decisao ===")
+    for m in (4, 5, 6, 7):
+        for nome, v in p3216_ramificacao(m).items():
+            p, u = v["primeira"], v["uniforme"]
+            print(f"  P3216 3-{m} letras {nome}: acerto {p['acerto']:.6f}/{u['acerto']:.6f}; decisoes {p['decisoes']:.6f}/{u['decisoes']:.6f}; "
+                  f"livres {p['livres']:.5f}/{u['livres']:.5f}; acoes {p['acoes']:.5f}/{u['acoes']:.5f}; razoes livres {p['livres'] / u['livres']:.5f}, "
+                  f"acoes {p['acoes'] / u['acoes']:.5f}, acerto {p['acerto'] / u['acerto']:.5f}")
+
+
+PARTES[156] = _parte_156
 
 PARTES[126] = _parte_126
 

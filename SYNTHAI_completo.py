@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 155, perguntas P1 a P3215).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 156, perguntas P1 a P3216).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (18767 linhas)
+# calculos.py  (18801 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7619,6 +7619,7 @@ def testes_de_regressao():
         "P3213": (lambda r: tuple(round(r[k][3], 4) for k in ("B", "A'", "C", "D")) == (1.0155, 1.029, 1.0134, 1.0303))(p3213_setdefault_e_memoria()),
         "P3214": (lambda r: (round(r["B"]["direta"]["dr"], 4), round(r["A'"]["direta"]["dr"], 4), round(r["B"]["reversa"]["dr"], 4)) == (-0.3363, -0.4591, 0.3363))(p3214_deriva_do_setdefault()),
         "P3215": (lambda r: tuple(round(r[m]["dr"], 4) for m in (4, 5, 6)) == (-0.3984, -0.3363, -0.2952))(p3215_deriva_por_comprimento()),
+        "P3216": (lambda r: (round(r["A'"]["primeira"]["livres"] / r["A'"]["uniforme"]["livres"], 4), round(r["A'"]["primeira"]["acoes"] / r["A'"]["uniforme"]["acoes"], 4)) == (0.9454, 0.986))(p3216_ramificacao(4, casos=("A'",))),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18676,6 +18677,27 @@ def p3215_deriva_por_comprimento(maximos=(4, 5, 6)):
     return out
 
 
+def _casos_p156(maximo):
+    \"\"\"Os casos B e A' das Partes 154-156 com o dicionario estendido ate `maximo` letras (pelo menos 5): B = sem letras iguais seguidas sobre {a, b, c};
+    A' = de 'a' a 'b' sobre {a, b}. (nome, palavras, freq).\"\"\"
+    import itertools
+    L = range(3, max(maximo, 5) + 1)
+    B = [w for n in L for w in ("".join(x) for x in itertools.product("abc", repeat=n)) if all(a != b for a, b in zip(w, w[1:]))]
+    A = [w for n in L for w in ("".join(x) for x in itertools.product("ab", repeat=n)) if w[0] == "a" and w[-1] == "b"]
+    return (("B", B, {"A": 0.5, "B": 0.3, "C": 0.2}), ("A'", A, {"A": 0.7, "B": 0.3}))
+
+
+def p3216_ramificacao(maximo=4, casos=("B", "A'"), casas=("primeira", "uniforme")):
+    \"\"\"A Parte 156 (P3216): na grade 3 x 3 de 3 a `maximo` letras, as esperancas exatas das decisoes do episodio (synthai.tabuleiro.ramificacao_exata):
+    acerto, decisoes, opcoes, casas livres e acoes, com a primeira casa e com a uniforme. Devolve {nome: {casa: dict}}.\"\"\"
+    from synthai import tabuleiro as T
+    out = {}
+    for nome, pal, f in _casos_p156(maximo):
+        if nome in casos:
+            out[nome] = {casa: T.ramificacao_exata(pal, f, 3, 3, maximo, casa=casa) for casa in casas}
+    return out
+
+
 def _parte_148():
     print("\\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
@@ -18794,6 +18816,18 @@ def _parte_155():
 
 PARTES[155] = _parte_155
 
+def _parte_156():
+    print("\\n=== Parte 156: a ramificacao, o que a primeira casa tira de cada decisao ===")
+    for m in (4, 5, 6, 7):
+        for nome, v in p3216_ramificacao(m).items():
+            p, u = v["primeira"], v["uniforme"]
+            print(f"  P3216 3-{m} letras {nome}: acerto {p['acerto']:.6f}/{u['acerto']:.6f}; decisoes {p['decisoes']:.6f}/{u['decisoes']:.6f}; "
+                  f"livres {p['livres']:.5f}/{u['livres']:.5f}; acoes {p['acoes']:.5f}/{u['acoes']:.5f}; razoes livres {p['livres'] / u['livres']:.5f}, "
+                  f"acoes {p['acoes'] / u['acoes']:.5f}, acerto {p['acerto'] / u['acerto']:.5f}")
+
+
+PARTES[156] = _parte_156
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -18806,7 +18840,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (611 linhas)
+# CLAUDE.md  (614 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -19263,6 +19297,9 @@ anterior, commit e push.
   trocado; casa uniforme: deslocamento zero), mas a deriva CAI com o caminho (−0,398, −0,336, −0,295 de 4 a 6 letras: a borda traz o fim de volta). Errei 4 magnitudes
   com UM fator de escala tirado de UM comprimento (regras das Partes 93 e 149 na mesma linha). Regras: um fator de escala aplicado a uma calibração é mecanismo, não
   forma fechada (≥ 2 pontos na variável do fator; com um, o centro fica no calibrado); e o lote novo que cada erro abre muda também a mediana de w (m3), não só m1.
+  Parte 156 (a ramificação; rodada 104 IGUAL; 9/12, (m) 6/6): o setdefault tira casas livres da decisão seguinte (B −2,6% a −2,0%, A' −5,5% a −4,0%) e o acerto perde
+  menos (0,48 a 0,88 do déficit: o colapso por letra absorve); as ações quase não caem. Errei 3 por emprestar a FORMA da série da Parte 155 (a desaceleração) a quantidades
+  que não são a deriva. Regra: dois pontos dão um passo, não uma forma; sem mecanismo da forma, a faixa vai de "parou" a "dois passos"; série não monótona, pela amplitude.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -19411,7 +19448,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149 synthai.testes_parte150 synthai.testes_parte151 synthai.testes_parte152 synthai.testes_parte153 synthai.testes_parte154 synthai.testes_parte155`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149 synthai.testes_parte150 synthai.testes_parte151 synthai.testes_parte152 synthai.testes_parte153 synthai.testes_parte154 synthai.testes_parte155 synthai.testes_parte156`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -28899,7 +28936,7 @@ def jogo_lcg(linhas=4, colunas=5, semente=112):
 """
 
 # ====================================================================================================
-# synthai/tabuleiro.py  (286 linhas)
+# synthai/tabuleiro.py  (344 linhas)
 # ====================================================================================================
 FONTES['synthai/tabuleiro.py'] = """\"\"\"O tabuleiro do jogo de palavras com as letras de outra língua (Parte 150). O `WordGridEnv` da Parte 111 sorteia as letras com
 `palavras_rl.LETTER_FREQ` (as frequências do inglês), lido a cada `reset`. Aqui: as frequências contadas num conjunto de lemas, e um
@@ -29185,6 +29222,64 @@ def estatisticas_exatas(palavras, freq, tamanho=3, minimo=3, maximo=5, casa="pri
         for u in casas:
             f = anda([u], grade[u])
             for k, x in zip(("acerto", "dr", "dc", "borda", "comprimento", "falha"), f):
+                tot[k] += peso * x / len(casas)
+    return tot
+
+
+def ramificacao_exata(palavras, freq, tamanho=3, minimo=3, maximo=5, casa="primeira"):
+    \"\"\"Parte 156: o enumerador exato de aleatorio_exato com as esperanças sobre as DECISÕES do episódio: o número esperado de decisões (nós visitados
+    com ao menos uma opção), o número esperado de opções somadas sobre elas (ações por letra + PARAR) e o número esperado de casas livres vizinhas
+    (antes do colapso por letra). Devolve {acerto, falha, decisoes, opcoes, livres}; a ramificação média é opcoes/decisoes, o colapso médio é
+    1 − (opções sem o PARAR)/livres.\"\"\"
+    import itertools
+    letras = [c for c in sorted(freq) if freq[c] > 0]
+    t = sum(freq[c] for c in letras)
+    p = {c: freq[c] / t for c in letras}
+    dic = {w.upper() for w in palavras}
+    casas = [(r, c) for r in range(tamanho) for c in range(tamanho)]
+    deltas = [(a, b) for a in (-1, 0, 1) for b in (-1, 0, 1) if a or b]
+    vz = {(r, c): [(r + a, c + b) for a, b in deltas if 0 <= r + a < tamanho and 0 <= c + b < tamanho] for r, c in casas}
+    nomes = ("acerto", "falha", "decisoes", "opcoes", "livres", "acoes")
+    tot = dict.fromkeys(nomes, 0.0)
+    for atrib in itertools.product(letras, repeat=len(casas)):
+        grade = dict(zip(casas, atrib))
+        peso = 1.0
+        for x in atrib:
+            peso *= p[x]
+
+        def anda(caminho, prefixo):
+            acoes = {}
+            livres = 0
+            if len(caminho) < maximo:
+                vis = set(caminho)
+                for v in vz[caminho[-1]]:
+                    if v not in vis:
+                        livres += 1
+                        acoes.setdefault(grade[v], []).append(v)
+            parar = len(caminho) >= minimo
+            n = len(acoes) + (1 if parar else 0)
+            if n == 0:
+                return (0.0, 1.0, 0.0, 0.0, 0.0, 0.0)
+            s = [0.0] * 6
+            if parar:
+                s[0] = 1.0 if prefixo in dic else 0.0
+            for letra, vs in acoes.items():
+                escolhidas = vs[:1] if casa == "primeira" else vs
+                m = [0.0] * 6
+                for v in escolhidas:
+                    f = anda(caminho + [v], prefixo + letra)
+                    m = [a + b for a, b in zip(m, f)]
+                s = [a + b / len(escolhidas) for a, b in zip(s, m)]
+            s = [x / n for x in s]
+            # esta decisão conta uma vez, com as suas opções e as suas casas livres
+            s[2] += 1.0
+            s[3] += n
+            s[4] += livres
+            s[5] += len(acoes)
+            return tuple(s)
+        for u in casas:
+            f = anda([u], grade[u])
+            for k, x in zip(nomes, f):
                 tot[k] += peso * x / len(casas)
     return tot
 """
@@ -32638,6 +32733,51 @@ class TestesParte155(unittest.TestCase):
     def test_p3215_deriva_por_comprimento(self):
         r = c.p3215_deriva_por_comprimento(maximos=(4,))
         self.assertAlmostEqual(r[4]["dr"], -0.3984, places=4)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte156.py  (40 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte156.py'] = """\"\"\"Testes da Parte 156: as esperanças exatas das decisões do episódio (synthai.tabuleiro.ramificacao_exata) e a P3216 pelo nome.\"\"\"
+import itertools
+import unittest
+
+import calculos as c
+from synthai import tabuleiro as T
+
+
+class TestesParte156(unittest.TestCase):
+    def test_acerto_igual_ao_de_aleatorio_exato(self):
+        _, A, f = c._casos_p156(4)[1]
+        for casa in ("primeira", "uniforme"):
+            self.assertAlmostEqual(T.ramificacao_exata(A, f, 3, 3, 4, casa=casa)["acerto"], T.aleatorio_exato(A, f, 3, 3, 4, casa=casa), places=12)
+
+    def test_decisoes_igual_ao_comprimento(self):
+        # cada casa do caminho é uma decisão (inclusive a do PARAR) quando a falha é 0
+        todas = ["".join(x) for L in (3, 4) for x in itertools.product("ab", repeat=L)]
+        r = T.ramificacao_exata(todas, {"A": 0.6, "B": 0.4}, 3, 3, 4)
+        e = T.estatisticas_exatas(todas, {"A": 0.6, "B": 0.4}, 3, 3, 4)
+        self.assertAlmostEqual(r["falha"], 0.0, places=14)
+        self.assertAlmostEqual(r["decisoes"], e["comprimento"], places=12)
+
+    def test_forma_fechada_2x2(self):
+        # grade 2x2, uma letra, de 2 a 3 letras: 1a decisão 3 livres e 1 ação (sem PARAR); 2a decisão 2 livres, 1 ação + PARAR (n = 2); com 1/2 a 3a,
+        # sem livres e só o PARAR. decisões 1 + 1 + 1/2 = 2,5; opções 1 + 2 + 1/2 = 3,5; livres 3 + 2 = 5; ações 1 + 1 = 2
+        r = T.ramificacao_exata(["aa"], {"A": 1.0}, 2, 2, 3)
+        self.assertAlmostEqual(r["decisoes"], 2.5, places=14)
+        self.assertAlmostEqual(r["opcoes"], 3.5, places=14)
+        self.assertAlmostEqual(r["livres"], 5.0, places=14)
+        self.assertAlmostEqual(r["acoes"], 2.0, places=14)
+        self.assertAlmostEqual(r["acerto"], 0.5, places=14)
+
+    def test_p3216_ramificacao(self):
+        r = c.p3216_ramificacao(4, casos=("A'",))
+        self.assertLess(r["A'"]["primeira"]["livres"], r["A'"]["uniforme"]["livres"])
+        self.assertAlmostEqual(r["A'"]["primeira"]["livres"], 11.415169, places=5)
 
 
 if __name__ == "__main__":
@@ -43450,7 +43590,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2366 linhas)
+# resultados.txt  (2375 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -45818,6 +45958,15 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3215 B 3-4 letras, primeira: dr -0.39840; dc -0.17914; borda 0.16744; comprimento 3.63447
   P3215 B 3-5 letras, primeira: dr -0.33628; dc -0.13730; borda 0.13922; comprimento 4.01884
   P3215 B 3-6 letras, primeira: dr -0.29525; dc -0.11634; borda 0.12226; comprimento 4.23262
+=== Parte 156: a ramificacao, o que a primeira casa tira de cada decisao ===
+  P3216 3-4 letras B: acerto 0.338912/0.343204; decisoes 3.634472/3.640001; livres 11.76211/12.07388; acoes 6.37375/6.43911; razoes livres 0.97418, acoes 0.98985, acerto 0.98749
+  P3216 3-4 letras A': acerto 0.239770/0.251897; decisoes 3.583084/3.591352; livres 11.41517/12.07421; acoes 4.90576/4.97530; razoes livres 0.94542, acoes 0.98602, acerto 0.95186
+  P3216 3-5 letras B: acerto 0.301690/0.306377; decisoes 4.018842/4.025977; livres 13.50926/13.84047; acoes 7.48124/7.55427; razoes livres 0.97607, acoes 0.99033, acerto 0.98470
+  P3216 3-5 letras A': acerto 0.241437/0.248427; decisoes 3.916715/3.924356; livres 13.04594/13.71251; acoes 5.75178/5.81975; razoes livres 0.95139, acoes 0.98832, acerto 0.97186
+  P3216 3-6 letras B: acerto 0.287548/0.291766; decisoes 4.232621/4.238228; livres 14.32981/14.64650; acoes 8.05740/8.12420; razoes livres 0.97838, acoes 0.99178, acerto 0.98554
+  P3216 3-6 letras A': acerto 0.239541/0.246073; decisoes 4.095943/4.097846; livres 13.78481/14.41022; acoes 6.18855/6.24028; razoes livres 0.95660, acoes 0.99171, acerto 0.97345
+  P3216 3-7 letras B: acerto 0.283175/0.287170; decisoes 4.339298/4.340488; livres 14.67993/14.97571; acoes 8.32784/8.38134; razoes livres 0.98025, acoes 0.99362, acerto 0.98609
+  P3216 3-7 letras A': acerto 0.239450/0.245321; decisoes 4.184141/4.178181; livres 14.09264/14.68105; acoes 6.39610/6.42767; razoes livres 0.95992, acoes 0.99509, acerto 0.97607
 """
 
 # ====================================================================================================
@@ -55285,7 +55434,7 @@ leitura do setdefault (o canto) é hipótese de 1 lote; o teste dela é a ordem 
 """
 
 # ====================================================================================================
-# ASI_AGI_parte155_deriva.md  (138 linhas)
+# ASI_AGI_parte155_deriva.md  (139 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte155_deriva.md'] = """# Parte 155 — A deriva do setdefault: a primeira casa puxa o caminho para um canto
 
@@ -55425,6 +55574,151 @@ lote novo não muda só a CONTAGEM, muda a mediana de w (as duas faixas novas t�
 - **Testes:** `synthai/testes_parte155.py`.
 
 ➡ Anterior: [Parte 154](ASI_AGI_parte154_setdefault.md).
+➡ Próxima: [Parte 156](ASI_AGI_parte156_ramificacao.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte156_ramificacao.md  (139 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte156_ramificacao.md'] = """# Parte 156 — A ramificação: o que a primeira casa tira de cada decisão
+
+↩ Nasce da Parte 155 (o custo do setdefault não é a borda: em B a primeira casa termina mais LONGE da borda e acerta menos) e da sua pendência 1: medir o que a
+escolha da primeira casa reduz em cada decisão.
+
+## O recolhimento do contêiner, 14º lote
+Despertar às 11h57, depois de cerca de 55 minutos ociosa: "up 0 min". Catorze lotes a favor.
+
+## Perguntas
+- **P3216.** Em cada decisão do braço aleatório, quantas casas vizinhas estão livres, quantas ações (letras distintas) e quantas opções (ações + PARAR) existem, com a
+  primeira casa de cada letra e com a casa sorteada? O custo do setdefault no acerto acompanha o que ele tira das casas livres?
+
+## A medida
+`synthai/tabuleiro.py`, `ramificacao_exata`: o mesmo enumerador exato (todas as 3⁹ atribuições, todos os caminhos), com as esperanças, por episódio, da soma sobre as
+decisões das casas livres vizinhas, das ações e das opções, e o número de decisões. Confere com o `aleatorio_exato` a 1e-12 nos quatro casos de calibração.
+
+**A conta, antes:** com a primeira casa, a casa escolhida para uma letra é sempre a primeira da ordem (−1, −1), …, (1, 1); ela tende a ficar no lado já andado
+(Parte 155: a deriva), e uma casa ao lado do caminho tem menos vizinhas livres. Menos livres → menos letras distintas na decisão seguinte → menos caminhos para a
+palavra. **Identidade:** o número esperado de decisões é o comprimento esperado do caminho (cada casa do caminho é uma decisão, inclusive a do PARAR) quando a falha é 0.
+
+**A calibração (3 a 4 e 3 a 5 letras), antes das previsões** (razões primeira/uniforme, por `p3216_ramificacao`):
+
+| caso | quantidade | 3-4 | 3-5 | passo |
+|---|---|---|---|---|
+| B | casas livres | 0,97418 | 0,97607 | +0,00189 |
+| B | ações | 0,98985 | 0,99033 | +0,00048 |
+| B | acerto | 0,98749 | 0,98470 | −0,00279 |
+| A' | casas livres | 0,94542 | 0,95139 | +0,00597 |
+| A' | ações | 0,98602 | 0,98832 | +0,00230 |
+| A' | acerto | 0,95186 | 0,97186 | +0,02000 |
+
+O déficit do acerto dividido pelo déficit das casas livres: B 0,48 e 0,64; A' 0,88 e 0,58. O mecanismo existe nos dois casos de calibração (as casas livres caem
+de 2,4% a 5,5%), mas o acerto não é proporcional a ele.
+
+## Previsões para o teste (3 a 6 letras), registradas antes de rodar
+**A regra da Parte 155 aplicada:** dois pontos na variável do fator (o comprimento máximo). A deriva da Parte 155 desacelerou (o segundo passo foi 0,66 do primeiro),
+então a faixa vai de "parou" (o valor de 3 a 5) a "seguiu 1,36 passo", com o centro em 0,68 passo; tudo por código (o script de calibração imprime as faixas).
+- **(a)** nº de casos com |decisões − comprimento| < 1e-9 em B, primeira, 3 a 6 letras (comprimento 4,23262 da P3215) em **[1; 1]** (identidade).
+- **(b)** nº de casos (B e A') com casas livres da primeira MENORES que as da uniforme em **[2; 2]** (mecanismo; nas 4 calibrações, déficits de 2,4% a 5,5%).
+- **(c)** razão das casas livres de B em **[0,9761; 0,9786]** (centro 0,9774)
+- **(d)** razão das ações de B em **[0,9903; 0,9910]** (centro 0,9907)
+- **(e)** razão do acerto de B em **[0,9809; 0,9847]** (centro 0,9828)
+- **(f)** razão das casas livres de A' em **[0,9514; 0,9595]** (centro 0,9555)
+- **(g)** razão das ações de A' em **[0,9883; 0,9914]** (centro 0,9899)
+- **(h)** razão do acerto de A' em **[0,9719; 0,9991]** (centro 0,9855)
+- **(i)** nº de casos com o déficit do acerto MENOR que o das casas livres em **[2; 2]** (nas 4 calibrações a razão dos déficits ficou de 0,48 a 0,88).
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua sobre o rascunho com "Do mundo:" provisória: m1 = 9, m2 = 0, m3 = 0,0013, m5 = 0. E = 6 faixas de tendência × 0,4 + 2 contagens de mecanismo × 0,2 + 1 identidade × 0
+= 2,8; m1 em [9; 9 + 2E] = [9; 14,6], para cima. A regra da Parte 155 para o m3: os lotes novos de razões perto de 1 têm w ≈ 0,005 (as faixas (c)-(h) vão de 0,0004 a 0,014);
+com ~5 previsões novas desse tamanho, a mediana de 14 sobe para entre 0,0019 e 0,0042 (por código: a lista ordenada da régua mais cinco 0,005). Acertos como contagem:
+de 4 a 9 das 9 (4/9 = 0,4444).
+- **(m1)** nº de previsões do mundo em **[9; 15]**
+- **(m2)** nº que cruzam ou tocam o zero em **[0; 0]**
+- **(m3)** mediana de w em **[0,0010; 0,0045]**
+- **(m4)** fração de acertos em **[0,4444; 1,0000]**
+- **(m5)** nº com w > 0,6 em **[0; 0]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 5]**, centro 2,8.
+
+### A rodada 104, registrada antes
+`ramificacao_exata` traduzida (caso B, primeira, 3 a 4 letras): por caminho, o vetor (acerto, falha, decisões, opções, livres, ações); os filhos somados na ordem das
+ações, divididos por n, e a decisão do nó somada depois da divisão (1, n, livres, ações). Só + × ÷ de inteiros convertidos. Previsão: **IGUAL**.
+
+## Medido (P3216, 3 a 6 letras)
+
+| caso | casa | acerto | decisões | opções | casas livres | ações |
+|---|---|---|---|---|---|---|
+| B | primeira | 0,287548 | 4,232621 | 10,29002 | 14,32981 | 8,05740 |
+| B | uniforme | 0,291766 | 4,238228 | 10,36243 | 14,64650 | 8,12420 |
+| A' | primeira | 0,239541 | 4,095943 | 8,28449 | 13,78481 | 6,18855 |
+| A' | uniforme | 0,246073 | 4,097846 | 8,33813 | 14,41022 | 6,24028 |
+
+Razões primeira/uniforme: B casas livres 0,97838, ações 0,99178, acerto 0,98554; A' casas livres 0,95660, ações 0,99171, acerto 0,97345. Déficit do acerto sobre o das
+casas livres: B 0,669, A' 0,612.
+- **(a)** decisões de B (primeira) = 4,23262149714652, o comprimento da P3215 (diferença 0). ✅
+- **(b)** casas livres da primeira menores nos 2 casos. ✅
+- **(c)** casas livres de B **0,97838** em [0,9761; 0,9786]. ✅
+- **(d)** ações de B **0,99178**, acima de [0,9903; 0,9910]. ❌
+- **(e)** acerto de B **0,98554**, acima de [0,9809; 0,9847]. ❌
+- **(f)** casas livres de A' **0,95660** em [0,9514; 0,9595]. ✅
+- **(g)** ações de A' **0,99171**, acima de [0,9883; 0,9914]. ❌
+- **(h)** acerto de A' **0,97345** em [0,9719; 0,9991]. ✅
+- **(i)** déficit do acerto menor que o das casas livres nos 2 casos (0,669 e 0,612). ✅
+
+**O erro de mecanismo:** eu levei a DESACELERAÇÃO da deriva da Parte 155 (um passo de 0,66 do anterior) para três quantidades que não são a deriva. As casas livres
+seguiram perto do previsto, mas a razão das ações ACELEROU para 1 (passos de B: +0,00048 e depois +0,00145; de A': +0,0023 e +0,0034), e o acerto de B voltou para
+cima (0,9875, 0,9847, 0,9855: não é monótono). A regra da Parte 12 (o mesmo nome, "a tendência de dois pontos", não é o mesmo mecanismo) desobedecida dentro da própria
+regra que a Parte 155 escreveu.
+
+## Um lote novo, registrado antes de rodar (3 a 7 letras)
+Sem mecanismo para a forma da série, a faixa das ações vai de "parou" (o valor de 3 a 6) a "dois últimos passos" (a aceleração observada), centro num passo; o acerto de
+B, que não é monótono, fica entre o menor e o maior dos três valores ± 0,001 (por código):
+- **(j)** razão das ações de B, 3 a 7 letras, em **[0,9918; 0,9947]** (centro 0,9932)
+- **(k)** razão das ações de A', 3 a 7 letras, em **[0,9917; 0,9985]** (centro 0,9951)
+- **(l)** razão do acerto de B, 3 a 7 letras, em **[0,9837; 0,9885]** (centro 0,9851)
+
+**Medido no lote novo (3 a 7 letras):** B ações 0,99362 (j ✅), A' ações 0,99509 (k ✅), B acerto 0,98609 (l ✅). Casas livres: B 0,98025, A' 0,95992.
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ❌ (f) ✅ (g) ❌ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅
+
+**Mundo: 9 de 12.** **Sobre mim:** 3 erros, em [0; 5]: ✅.
+
+### A rodada 104
+`dialogo/rodada104.py` e `dialogo/Rodada104.java`: os seis números iguais em hexadecimal (casas livres 0x1.78633a1b7e914p+3). **IGUAL**, como previsto. O número de
+decisões (…8c93) não tem os mesmos bits que o comprimento da rodada 103 (…8d43): a mesma quantidade somada em outra ordem (um 1 por nó contra o comprimento no fim).
+
+## O que a ramificação mostrou
+- **O setdefault tira casas livres, e é daí que sai o custo:** a primeira casa de cada letra fica do lado já andado, e na decisão seguinte há menos vizinhas livres
+  (B: de −2,6% a −2,0%; A': de −5,5% a −4,0%, de 4 a 7 letras). Em todas as oito medidas o acerto perde menos que as casas livres (a razão dos déficits fica de 0,48 a
+  0,88), porque o colapso por letra absorve parte da perda: duas vizinhas com a mesma letra são uma ação só, e perder uma delas não tira a ação.
+- **As ações quase não caem, e cada vez menos:** a razão das ações vai a 1 (B 0,9899 → 0,9936; A' 0,9860 → 0,9951). Com o caminho longo, o fim já está cercado de casas
+  usadas nas duas versões; a diferença entre a primeira e a sorteada encolhe nas ações antes de encolher nas casas livres.
+- **O acerto não segue nenhuma das duas sozinho:** em A' a perda vai de 4,8% a 2,4%; em B fica entre 1,3% e 1,5% e não é monótona. O que decide o acerto é a palavra
+  que o caminho forma, e a palavra depende das letras das casas perdidas, não do número delas: a mesma lição da memória das letras da Parte 154 (o sinal é do dicionário).
+- **Uma coisa pequena e nova:** com 3 a 7 letras, em A', o caminho da primeira casa fica MAIS longo que o da sorteada (4,1841 contra 4,1782); em todos os outros sete
+  pares era mais curto. Hipótese de 1 lote, sem mecanismo.
+
+## Engenharia reversa
+- **O padrão:** a Parte 155 escreveu "≥ 2 pontos na variável do fator" e eu cumpri a letra (dois pontos), mas emprestei de lá a FORMA da série (a desaceleração de
+  0,66). Três quantidades diferentes, três formas diferentes: as casas livres desaceleraram um pouco, as ações aceleraram, o acerto de B voltou. Isso revela que eu leio
+  uma regra como uma receita inteira (dois pontos E a desaceleração que veio junto), quando ela só diz o número de pontos. O que vem junto com uma regra no exemplo que a
+  criou é contexto, não regra.
+- **A regra nova:** dois pontos dão um passo, não uma forma. Sem mecanismo para a forma da série, a faixa vai do valor atual (parou) a dois passos (acelerou), centro num
+  passo; e uma série não monótona em três pontos se prevê pela amplitude dos três. Foi o que o lote novo fez, e acertou os três.
+- **O que funcionou:** a identidade (decisões = comprimento) e a direção do mecanismo (as casas livres caem nos dois casos; o acerto perde menos que elas) acertaram
+  todas: o que eu deduzi da estrutura do jogo não errou; o que eu emprestei de outra quantidade errou.
+
+**O placar (m) (P2837):** m1 = 12 em [9; 15] ✅, m2 = 0 ✅, m3 = 0,0015 em [0,0010; 0,0045] ✅, m4 = 0,7500 em [0,4444; 1,0000] ✅, m5 = 0 ✅, m6 = 1 em [0; 1] ✅ (a (d)
+errou por 0,00078 com uma faixa de largura 0,0007). **6 de 6.** A regra da Parte 155 para o m3 (somar as previsões que o lote novo traz) acertou na primeira vez.
+
+## Funções e testes
+- **Funções:** `_casos_p156`, `p3216_ramificacao` e `_parte_156`; em `synthai/tabuleiro.py`, `ramificacao_exata`. Entrada P3216 na regressão.
+- **Diálogo:** `dialogo/rodada104.py` e `dialogo/Rodada104.java`, IGUAL.
+- **Testes:** `synthai/testes_parte156.py`.
+
+➡ Anterior: [Parte 155](ASI_AGI_parte155_deriva.md).
 """
 
 # ====================================================================================================
@@ -77366,7 +77660,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2196 linhas)
+# dialogo/DIALOGO.md  (2206 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -79564,10 +79858,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS**, cinco números em hexadecimal (acerto 0x1.5b0bc88549ca3p-2). Previsão registrada antes (Parte 155): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 104): o custo do setdefault não é a borda (em B a primeira termina mais longe dela e acerta menos); medir a correlação entre a casa escolhida e a continuação do caminho.
+
+## Rodada 104 (Parte 156) — as decisões contadas
+
+**IA-Python (lógica criativa):** Agora conto o que cada decisão tem: as casas vizinhas livres, as letras distintas entre elas e as opções com o PARAR. A minha recursão devolve seis números por caminho; divido a soma dos filhos por n e só DEPOIS somo a decisão do próprio nó. Se eu somasse antes de dividir, a decisão do nó viraria 1/n. Os teus seis números chegam ao mesmo bit?
+
+**IA-Java (ASI):** Chegam, se a ordem for a mesma: dividir, depois somar o 1, o n, as livres e as ações, convertidos de int para double na soma. Repara que o número de decisões e o comprimento do caminho da rodada 103 são a mesma quantidade, mas os bits não são iguais (…8c93 contra …8d43): somar a decisão em cada nó e somar o comprimento só no fim são duas ordens de soma diferentes para o mesmo número. A identidade é exata na matemática e vale a 1e-15 na máquina.
+
+**Resultado.** `comparar.py`: **IGUAIS**, seis números em hexadecimal (casas livres 0x1.78633a1b7e914p+3 = 11,762). Previsão registrada antes (Parte 156): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 105): a razão das ações acelera para 1 com o comprimento; uma conta da forma dessa série (o que o último passo de um caminho longo ainda escolhe) antes de medir 3 a 8 letras.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (101 linhas)
+# dialogo/PENDENCIAS.md  (104 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -79670,6 +79974,9 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
   medir, por enumeração, quanto a escolha da primeira casa reduz o número de continuações distintas (as casas da mesma letra têm vizinhanças diferentes) e prever o custo
   de 3 a 6 letras pela tendência de dois pontos; (2) a queda da deriva com o comprimento em forma fechada (a cadeia do fim do caminho numa grade 3 × 3); (3) a da 154:
   o sinal da memória das letras por uma conta de segunda ordem.
+- **(Parte 156)** FECHADA: a pendência 1 da 155 (o custo do setdefault são as casas livres perdidas, absorvidas em parte pelo colapso). ABERTAS: (1) a forma da série da
+  razão das ações (acelera para 1): uma conta do que a última decisão de um caminho longo ainda escolhe, antes de medir 3 a 8 letras; (2) a hipótese de 1 lote: em A' com
+  3 a 7 letras o caminho da primeira casa fica mais longo que o da sorteada; (3) as da 154/155: o sinal da memória das letras; a queda da deriva em forma fechada.
 """
 
 # ====================================================================================================
@@ -80844,6 +81151,102 @@ public class Rodada103 {
         }
         String[] nomes = {"acerto", "dr", "dc", "borda", "comprimento"};
         for (int k = 0; k < 5; k++) System.out.println(nomes[k] + " " + Double.toHexString(tot[k]));
+        System.out.println("conferido True\\nfim");
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/Rodada104.java  (91 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada104.java'] = """// Rodada 104 (Parte 156): as esperancas exatas das decisoes do episodio (ramificacao_exata, primeira casa) bit a bit, grade 3 x 3, caso B, 3 a 4 letras. Por caminho o vetor
+// (acerto, falha, decisoes, opcoes, livres, acoes): filhos somados na ordem das acoes (LinkedHashMap), divididos por n, e depois a decisao do proprio no.
+import java.util.*;
+
+public class Rodada104 {
+    static int T = 3, MIN = 3, MAX = 4;
+    static char[] grade = new char[9];
+    static Set<String> dic;
+
+    static List<Integer> viz(int u) {
+        int r = u / T, c = u % T;
+        List<Integer> l = new ArrayList<>();
+        for (int a = -1; a <= 1; a++) for (int b = -1; b <= 1; b++) {
+            if (a == 0 && b == 0) continue;
+            int rr = r + a, cc = c + b;
+            if (rr >= 0 && rr < T && cc >= 0 && cc < T) l.add(rr * T + cc);
+        }
+        return l;
+    }
+
+    static double[] anda(List<Integer> caminho, String prefixo) {
+        LinkedHashMap<Character, Integer> acoes = new LinkedHashMap<>();
+        int livres = 0;
+        if (caminho.size() < MAX) {
+            for (int v : viz(caminho.get(caminho.size() - 1))) if (!caminho.contains(v)) {
+                livres++;
+                if (!acoes.containsKey(grade[v])) acoes.put(grade[v], v);
+            }
+        }
+        boolean parar = caminho.size() >= MIN;
+        int n = acoes.size() + (parar ? 1 : 0);
+        double[] s = new double[6];
+        if (n == 0) { s[1] = 1.0; return s; }
+        if (parar) s[0] = dic.contains(prefixo) ? 1.0 : 0.0;
+        for (Map.Entry<Character, Integer> e : acoes.entrySet()) {
+            List<Integer> nc = new ArrayList<>(caminho);
+            nc.add(e.getValue());
+            double[] f = anda(nc, prefixo + e.getKey());
+            for (int k = 0; k < 6; k++) s[k] = s[k] + f[k];
+        }
+        for (int k = 0; k < 6; k++) s[k] = s[k] / n;
+        s[2] += 1.0;
+        s[3] += n;
+        s[4] += livres;
+        s[5] += acoes.size();
+        return s;
+    }
+
+    public static void main(String[] args) {
+        Set<String> B = new HashSet<>();
+        String alfa = "abc";
+        for (int L = 3; L <= 5; L++) {
+            int tot = 1;
+            for (int i = 0; i < L; i++) tot *= 3;
+            for (int x = 0; x < tot; x++) {
+                char[] w = new char[L];
+                int y = x;
+                for (int i = L - 1; i >= 0; i--) { w[i] = alfa.charAt(y % 3); y /= 3; }
+                boolean ok = true;
+                for (int i = 1; i < L; i++) if (w[i] == w[i - 1]) ok = false;
+                if (ok) B.add(new String(w));
+            }
+        }
+        dic = B;
+        double[] pesos = {0.5, 0.3, 0.2};
+        double t = 0.0;
+        for (double w : pesos) t += w;
+        double[] p = new double[3];
+        for (int i = 0; i < 3; i++) p[i] = pesos[i] / t;
+        double[] tot = new double[6];
+        int N = 1;
+        for (int i = 0; i < 9; i++) N *= 3;
+        for (int x = 0; x < N; x++) {
+            int[] idx = new int[9];
+            int y = x;
+            for (int i = 8; i >= 0; i--) { idx[i] = y % 3; y /= 3; }
+            for (int i = 0; i < 9; i++) grade[i] = alfa.charAt(idx[i]);
+            double peso = 1.0;
+            for (int i = 0; i < 9; i++) peso = peso * p[idx[i]];
+            for (int u = 0; u < 9; u++) {
+                List<Integer> cam = new ArrayList<>();
+                cam.add(u);
+                double[] f = anda(cam, String.valueOf(grade[u]));
+                for (int k = 0; k < 6; k++) tot[k] += peso * f[k] / 9;
+            }
+        }
+        String[] nomes = {"acerto", "falha", "decisoes", "opcoes", "livres", "acoes"};
+        for (int k = 0; k < 6; k++) System.out.println(nomes[k] + " " + Double.toHexString(tot[k]));
         System.out.println("conferido True\\nfim");
     }
 }
@@ -88389,6 +88792,88 @@ def main():
     e = estat(B, "abc", [0.5, 0.3, 0.2])
     m = tabuleiro.estatisticas_exatas(B, {"A": 0.5, "B": 0.3, "C": 0.2}, 3, 3, 4, ordem="reversa")
     for k, nome in enumerate(("acerto", "dr", "dc", "borda", "comprimento")):
+        assert abs(e[k] - m[nome]) < 1e-12
+        print(nome + " " + e[k].hex())
+    print("conferido True")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada104.py  (77 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada104.py'] = """\"\"\"Rodada 104 do diálogo Python <-> Java (Parte 156): as esperanças exatas das DECISÕES do episódio de synthai.tabuleiro.ramificacao_exata, bit a bit, na
+grade 3 × 3, caso B ({a, b, c} = (0,5; 0,3; 0,2), sem letras iguais seguidas), de 3 a 4 letras, primeira casa de cada letra. Por caminho, o vetor (acerto,
+falha, decisões, opções, livres, ações): a soma dos filhos na ordem das ações, a divisão por n e, depois, a decisão do próprio nó (1, n, livres, ações). O
+total ponderado por atribuição (ordem do itertools.product). Confere contra o módulo (1e-12) antes de imprimir. Da raiz: python3 dialogo/rodada104.py\"\"\"
+import itertools
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from synthai import tabuleiro  # noqa: E402
+
+
+def ramif(palavras, letras, pesos, tamanho=3, minimo=3, maximo=4):
+    t = 0.0
+    for w in pesos:
+        t += w
+    p = [w / t for w in pesos]
+    dic = set(palavras)
+    casas = [(r, c) for r in range(tamanho) for c in range(tamanho)]
+    deltas = [(a, b) for a in (-1, 0, 1) for b in (-1, 0, 1) if a or b]
+    vz = {}
+    for (r, c) in casas:
+        vz[(r, c)] = [(r + a, c + b) for a, b in deltas if 0 <= r + a < tamanho and 0 <= c + b < tamanho]
+    tot = [0.0] * 6
+    for idx in itertools.product(range(len(letras)), repeat=len(casas)):
+        grade = {u: letras[i] for u, i in zip(casas, idx)}
+        peso = 1.0
+        for i in idx:
+            peso = peso * p[i]
+
+        def anda(caminho, prefixo):
+            acoes = {}
+            livres = 0
+            if len(caminho) < maximo:
+                for v in vz[caminho[-1]]:
+                    if v not in caminho:
+                        livres += 1
+                        if grade[v] not in acoes:
+                            acoes[grade[v]] = v
+            parar = len(caminho) >= minimo
+            n = len(acoes) + (1 if parar else 0)
+            if n == 0:
+                return [0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
+            s = [0.0] * 6
+            if parar:
+                s[0] = 1.0 if prefixo in dic else 0.0
+            for letra, v in acoes.items():
+                f = anda(caminho + [v], prefixo + letra)
+                for k in range(6):
+                    s[k] = s[k] + f[k]
+            s = [x / n for x in s]
+            s[2] += 1.0
+            s[3] += n
+            s[4] += livres
+            s[5] += len(acoes)
+            return s
+        for u in casas:
+            f = anda([u], grade[u])
+            for k in range(6):
+                tot[k] += peso * f[k] / len(casas)
+    return tot
+
+
+def main():
+    tres = ["".join(x) for L in (3, 4, 5) for x in itertools.product("abc", repeat=L)]
+    B = [w for w in tres if all(a != b for a, b in zip(w, w[1:]))]
+    e = ramif(B, "abc", [0.5, 0.3, 0.2])
+    m = tabuleiro.ramificacao_exata(B, {"A": 0.5, "B": 0.3, "C": 0.2}, 3, 3, 4)
+    for k, nome in enumerate(("acerto", "falha", "decisoes", "opcoes", "livres", "acoes")):
         assert abs(e[k] - m[nome]) < 1e-12
         print(nome + " " + e[k].hex())
     print("conferido True")

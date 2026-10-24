@@ -136,3 +136,4 @@ lote novo não muda só a CONTAGEM, muda a mediana de w (as duas faixas novas t�
 - **Testes:** `synthai/testes_parte155.py`.
 
 ➡ Anterior: [Parte 154](ASI_AGI_parte154_setdefault.md).
+➡ Próxima: [Parte 156](ASI_AGI_parte156_ramificacao.md).
