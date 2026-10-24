@@ -53,3 +53,35 @@ A régua sobre o rascunho com "Do mundo:" provisória: m1 = 8, m2 = 0, m3 = 0,12
 
 ### Sobre mim, registrado
 Erros no mundo em **[0; 4]**, centro 1,8.
+
+## Medido (P3214)
+
+| caso | versão | acerto | dr | dc | distância à borda | comprimento |
+|---|---|---|---|---|---|---|
+| B | direta | 0,301690 | −0,33628 | −0,13730 | 0,13922 | 4,01884 |
+| B | reversa | 0,301690 | +0,33628 | +0,13730 | 0,13922 | 4,01884 |
+| B | uniforme | 0,306377 | 0,00000 | 0,00000 | 0,13684 | 4,02598 |
+| A' | direta | 0,241437 | −0,45915 | −0,17743 | 0,14769 | 3,91672 |
+| A' | reversa | 0,241437 | +0,45915 | +0,17743 | 0,14769 | 3,91672 |
+| A' | uniforme | 0,248427 | 0,00000 | 0,00000 | 0,15026 | 3,92436 |
+
+- **(a)** acerto reverso = direto nos 2 casos (diferenças 8e-15 e 4e-16). ✅
+- **(b)** deslocamento reverso = −direto nos 4. ✅
+- **(c)** deslocamento uniforme = 0 nos 4 (|x| < 2e-16). ✅
+- **(d)** dr de B: **−0,3363**, fora de [−0,5899; −0,3539]. ❌
+- **(e)** dc de B: **−0,1373**, fora de [−0,2652; −0,1591]. ❌
+- **(f)** dr de A': **−0,4591**, fora de [−0,7797; −0,4678]. ❌
+- **(g)** dc de A': **−0,1774**, fora de [−0,3634; −0,2180]. ❌
+- **(h)** a primeira termina mais perto da borda: só em A' (0,1477 contra 0,1503); em B termina mais LONGE (0,1392 contra 0,1368). **1 de 2**. ❌
+
+**O erro de mecanismo:** a deriva não cresceu com o caminho mais longo, DIMINUIU (B: dr −0,398 com 3 a 4 letras, −0,336 com 3 a 5). Numa grade 3 × 3, um caminho sem
+repetir casa que deriva para um canto bate na borda e tem de voltar; o passo a mais traz o fim de volta para o meio. Eu escalei a deriva linearmente pelo número de
+passos a partir de UM comprimento de calibração (a regra da Parte 93: o tamanho de um efeito pede ≥ 2 condições cobrindo a variável que o move), e escrevi "a deriva
+satura" ao lado sem deslocar o centro (a regra da Parte 149: um viés nomeado ganha conta de peso ou entra como desvio do centro). As duas regras desobedecidas na
+mesma previsão.
+
+## Um lote novo, registrado antes de rodar (B, de 3 a 6 letras)
+Antes de qualquer explicação, o próximo comprimento. Com o mecanismo "o fim volta para o meio", |dr| continua caindo, sem chegar a zero (a primeira casa ainda
+puxa). Pela tendência de 4 para 5 letras (−0,398 → −0,336, queda de 0,062), mais um passo de queda de mesmo tamanho daria −0,274; faixa larga (2 pontos):
+- **(i)** dr de B, primeira, de 3 a 6 letras, em **[−0,336; −0,15]** (centro −0,274, por código: −0,3363 + (−0,3363 − (−0,3984)))
+- **(j)** dc de B, primeira, de 3 a 6 letras, em **[−0,137; −0,05]** (centro −0,137 + (−0,137 + 0,179) = −0,095)

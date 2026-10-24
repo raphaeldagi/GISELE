@@ -18608,6 +18608,20 @@ def p3213_setdefault_e_memoria(maximo=5):
     return out
 
 
+def p3214_deriva_do_setdefault(maximo=5, casos=("B", "A'")):
+    """A Parte 155 (P3214): para os casos pedidos (de _casos_p154), na grade 3 x 3 de 3 a `maximo` letras, as estatisticas exatas do fim do episodio com a
+    primeira casa na ordem direta, a primeira casa na ordem reversa e a casa uniforme. Devolve {nome: {versao: dict}}."""
+    from synthai import tabuleiro as T
+    out = {}
+    for nome, palavras, freq in _casos_p154():
+        if nome not in casos:
+            continue
+        out[nome] = {"direta": T.estatisticas_exatas(palavras, freq, 3, 3, maximo),
+                     "reversa": T.estatisticas_exatas(palavras, freq, 3, 3, maximo, ordem="reversa"),
+                     "uniforme": T.estatisticas_exatas(palavras, freq, 3, 3, maximo, casa="uniforme")}
+    return out
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
