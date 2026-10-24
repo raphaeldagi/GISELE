@@ -57,6 +57,7 @@ tema, e a régua procura `parte147_*`. Renomeado, deu m1 = 6, m2 = 1, m3 = 0,164
 Erros no mundo em **[0; 3]**, com centro 1,2.
 
 ➡ Anterior: [Parte 146](ASI_AGI_parte146_volta10.md).
+➡ Próxima: [Parte 148](ASI_AGI_parte148_grpo_dicionario_grande.md).
 
 ## Medido (P3198; sementes 43 a 45)
 - **(a)** Q-learning: 0,1533. ✅
