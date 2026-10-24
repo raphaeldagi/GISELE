@@ -7564,6 +7564,8 @@ def testes_de_regressao():
         "P3196": (lambda r: abs(r[2][0] - 3) < 1e-6 and round(r[5][1], 5) == 0.0003 and round(r[7][1], 5) == 0.00008)(p3196_benford16_potencias()),
         "P3197": (lambda r: (round(r[0][2][0], 4), round(r[0][16][0], 4), r[2]) == (0.8756, 0.8467, False))(p3197_grupos_uteis_mundo_novo()),
         "P3198": (lambda r: (round(r["Q"], 4), round(r["G2"], 4), round(r["G8"], 4)) == (0.1533, 0.2017, 0.1707))(p3198_grpo_no_jogo_de_palavras()),
+        "P3199": (lambda r: (round(r["Q"], 4), round(r["G2"], 4), round(r["G8"], 4), r["ambas"]) == (0.302, 0.3966, 0.3973, 10))(p3199_grpo_no_dicionario_grande()),
+        "P3200": (lambda r: (round(r["o"], 4), round(r["lotes"][(13, 23)][0], 4)) == (-0.0022, 0.3278))(p3200_lotes_do_q()),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18259,6 +18261,103 @@ def _parte_147():
 
 
 PARTES[147] = _parte_147
+
+def p3199_grpo_no_dicionario_grande(sementes=tuple(range(61, 71)), episodios=5000, avaliacao=1000):
+    """(a)-(j) da Parte 148: a P3198 com os 77.340 lemas do WordNet (palavras_rl.lemas_wordnet) no lugar das palavras embutidas, 10 sementes.
+    Devolve {nome: media das sementes} mais 'ambas' (nº de sementes em que G=2 e G=8 superam o Q-learning)."""
+    from synthai import palavras_rl as P
+    from synthai.grpo_palavras import treinar
+    dic = P.Dicionario(P.lemas_wordnet())
+    acc = {"Q": [], "aleat": [], "G2": [], "G8": [], "sem2": [], "sem8": []}
+    for sem in sementes:
+        cfg = P.Config(episodios=episodios, avaliacao=avaliacao, seed=sem)
+        ag, _, _ = P.train(cfg, dic)
+        ev = P.evaluate(cfg, dic, ag)
+        acc["Q"].append(ev["guloso"][0])
+        acc["aleat"].append(ev["aleatorio"][0])
+        for G in (2, 8):
+            a, s, n = treinar(dic, episodios, G, seed=sem)
+            acc["G%d" % G].append(P.evaluate(cfg, dic, a)["guloso"][0])
+            acc["sem%d" % G].append(s / n)
+    out = {k: sum(v) / len(v) for k, v in acc.items()}
+    out["G2-Q"] = out["G2"] - out["Q"]
+    out["G8-Q"] = out["G8"] - out["Q"]
+    out["G8-G2"] = out["G8"] - out["G2"]
+    out["ambas"] = sum(g2 > q and g8 > q for q, g2, g8 in zip(acc["Q"], acc["G2"], acc["G8"]))
+    out["por_semente"] = acc
+    return out
+
+
+def p3200_t_student_quantil(gl, q=0.95):
+    """O quantil q da t de Student com gl graus de liberdade (P3200 usa), por bissecao sobre a CDF integrada por Simpson (so biblioteca padrao)."""
+    import math
+    c = math.exp(math.lgamma((gl + 1) / 2) - math.lgamma(gl / 2)) / math.sqrt(gl * math.pi)
+
+    def cdf(x, n=2000):
+        h = x / n
+        f = lambda s: c * (1 + s * s / gl) ** (-(gl + 1) / 2)
+        acc = f(0) + f(x)
+        for i in range(1, n):
+            acc += (4 if i % 2 else 2) * f(i * h)
+        return 0.5 + acc * h / 3
+    lo, hi = 0.0, 50.0
+    for _ in range(80):
+        m = (lo + hi) / 2
+        lo, hi = (m, hi) if cdf(m) < q else (lo, m)
+    return (lo + hi) / 2
+
+
+def p3200_lotes_do_q(lotes=((5, 13), (61, 71), (71, 81), (13, 23), (23, 41), (1001, 1019))):
+    """A investigacao da Parte 148 (P3200): o Q-learning no dicionario grande em seis lotes de sementes (a calibracao 5-12, o teste 61-70 e os
+    lotes 71-80, 13-22, 23-40 e 1001-1018). Devolve {'lotes': {(ini, fim): (media, desvio)}, 'todas': (n, media, desvio), 'o': media(23-40) -
+    media(1001-1018), 'sigma_cal': desvio das 8 da calibracao, 'meia_t': a meia-largura de (a) com o quantil t de 7 graus no lugar de 1,645}."""
+    import math
+    import statistics as st
+    from synthai import palavras_rl as P
+    dic = P.Dicionario(P.lemas_wordnet())
+    por = {}
+    for ini, fim in lotes:
+        v = []
+        for s in range(ini, fim):
+            cfg = P.Config(seed=s)
+            ag, _, _ = P.train(cfg, dic)
+            v.append(P.evaluate(cfg, dic, ag)["guloso"][0])
+        por[(ini, fim)] = v
+    tudo = [x for v in por.values() for x in v]
+    s_cal = st.stdev(por[lotes[0]])  # o 1o lote e a calibracao; (o) e o 5o menos o 6o
+    return {"lotes": {k: (st.mean(v), st.stdev(v)) for k, v in por.items()}, "todas": (len(tudo), st.mean(tudo), st.stdev(tudo)),
+            "o": st.mean(por[lotes[4]]) - st.mean(por[lotes[5]]), "sigma_cal": s_cal,
+            "meia_t": p3200_t_student_quantil(7) * 1.36 * math.sqrt(s_cal * s_cal / 8 + s_cal * s_cal / 10),
+            "p_sigma_baixo": p3200_chi2_cdf(len(por[lotes[0]]) - 1, (len(por[lotes[0]]) - 1) * s_cal * s_cal / st.stdev(tudo) ** 2)}
+
+
+def p3200_chi2_cdf(gl, x, n=4000):
+    """P(chi2 com gl graus <= x), por Simpson sobre a densidade (P3200: a chance de a calibracao subestimar o desvio tanto quanto subestimou)."""
+    import math
+    c = -(gl / 2) * math.log(2) - math.lgamma(gl / 2)
+    f = lambda s: 0.0 if s <= 0 else math.exp(c + (gl / 2 - 1) * math.log(s) - s / 2)
+    h = x / n
+    acc = f(0) + f(x)
+    for i in range(1, n):
+        acc += (4 if i % 2 else 2) * f(i * h)
+    return acc * h / 3
+
+
+def _parte_148():
+    print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
+    r = p3199_grpo_no_dicionario_grande()
+    print(f"  P3199 (a) Q {r['Q']:.4f}; (b) aleatorio {r['aleat']:.4f}; (c) G=2 {r['G2']:.4f}; (d) sem contraste G=2 {r['sem2']:.4f}; "
+          f"(e) G=8 {r['G8']:.4f}; (f) sem contraste G=8 {r['sem8']:.4f}")
+    print(f"  P3199 (g) G2-Q {r['G2-Q']:+.4f}; (h) G8-Q {r['G8-Q']:+.4f}; (i) G8-G2 {r['G8-G2']:+.4f}; (j) sementes com as duas acima do Q {r['ambas']}/10")
+    L = p3200_lotes_do_q()
+    for (a, b), (m, s) in L["lotes"].items():
+        print(f"  P3200 lote {a}-{b - 1}: Q media {m:.4f}, desvio {s:.4f}")
+    n, m, s = L["todas"]
+    print(f"  P3200 todas as {n} sementes: media {m:.4f}, desvio {s:.4f}; desvio da calibracao {L['sigma_cal']:.4f}; (o) {L['o']:+.4f}; "
+          f"meia-largura de (a) com t(7) {L['meia_t']:.4f}; P(desvio da calibracao tao baixo) {L['p_sigma_baixo']:.3f}")
+
+
+PARTES[148] = _parte_148
 
 PARTES[126] = _parte_126
 

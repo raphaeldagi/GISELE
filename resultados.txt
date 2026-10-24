@@ -2292,3 +2292,13 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3197 (a) a ordem dos retornos e a dos grupos uteis: False
 === Parte 147: a GRPO no jogo de palavras do dicionario contra o Q-learning ===
   P3198 (a) Q 0.1533; (b) GRPO G=2 0.2017; (c) G=8 0.1707; (d) sem contraste G=2 0.9795; (e) G=8 0.9376; (f) G8 - Q +0.0173
+=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===
+  P3199 (a) Q 0.3020; (b) aleatorio 0.0407; (c) G=2 0.3966; (d) sem contraste G=2 0.9087; (e) G=8 0.3973; (f) sem contraste G=8 0.7181
+  P3199 (g) G2-Q +0.0946; (h) G8-Q +0.0953; (i) G8-G2 +0.0007; (j) sementes com as duas acima do Q 10/10
+  P3200 lote 5-12: Q media 0.3242, desvio 0.0160
+  P3200 lote 61-70: Q media 0.3020, desvio 0.0243
+  P3200 lote 71-80: Q media 0.3035, desvio 0.0172
+  P3200 lote 13-22: Q media 0.3278, desvio 0.0145
+  P3200 lote 23-40: Q media 0.3077, desvio 0.0273
+  P3200 lote 1001-1018: Q media 0.3099, desvio 0.0322
+  P3200 todas as 74 sementes: media 0.3114, desvio 0.0256; desvio da calibracao 0.0160; (o) -0.0022; meia-largura de (a) com t(7) 0.0196; P(desvio da calibracao tao baixo) 0.093

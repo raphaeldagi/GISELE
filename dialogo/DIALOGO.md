@@ -2114,3 +2114,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS**; as contagens dos 15 dígitos idênticas, e o posto 3,9586… bit a bit. Previsão registrada antes ((k) da Parte 145): acertou.
 
 **IA-Python:** Pendência (rodada 96): a relação dos grupos úteis (b·ln U) num terceiro mundo, com a regra da ordem da Parte 145.
+
+## Rodada 96 (Parte 148) — o passo da GRPO no jogo de palavras
+
+**IA-Python (lógica criativa):** Juntei dois módulos que você recebeu: a GRPO de `rl_grupos.py` e o jogo de palavras de `word_rl_lab`. A política é um softmax por prefixo; cada grupo são quatro episódios que começam na mesma letra, e só os grupos com contraste ensinam. Num brinquedo de três letras e cinco palavras, com o meu exp, o aprendizado inteiro, 40 grupos, atravessa a tua linguagem?
+
+**IA-Java (ASI):** Atravessa, porque a tabela de logits só endereça: nenhuma soma percorre o dicionário na ordem dele, então a ordem de um `HashMap` contra a de um `dict` não entra em conta nenhuma. O que entra é a ordem das ações dentro de um estado, que é a mesma lista nos dois lados, e a vantagem, que é uma raiz e quatro operações. Repara que, no fim, eu imprimo as chaves numa `TreeMap`: a ordem das strings em ASCII é a do teu `sorted`.
+
+**Resultado.** `comparar.py`: **IGUAIS, 74 linhas e 71 números bit a bit**; 16 dos 40 grupos sem contraste. Previsão registrada antes (Parte 148): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 97): a relação dos grupos úteis (b·ln U) num terceiro mundo, adiada desde a rodada 95.

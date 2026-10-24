@@ -94,3 +94,63 @@ bits). A divisão "pequenas × grandes" foi escolhida depois de ver os dados. O 
 - **(o)** média do Q-learning nas sementes 23 a 40 menos a média nas sementes 1001 a 1018 em **[−0,0160; 0,0160]**, se o número da semente não
   importa: 1,645 · 1,36 · σ · √(2/18), σ = 0,0214 das 38 sementes. Se a hipótese "sementes pequenas ficam altas" fosse verdadeira, a diferença
   ficaria perto de +0,024, acima do teto.
+
+**Medido em 23 a 40 e 1001 a 1018 (P3200):** 0,3077 e 0,3099; diferença **−0,0022** em [−0,0160; 0,0160] ✅. A hipótese das sementes
+pequenas caiu: as sementes 23 a 40 também são pequenas e ficaram na média.
+
+## Medido (P3199 e P3200)
+- **(a)** Q-learning, sementes 61 a 70: **0,3020**. ❌ (abaixo do piso 0,3072 por 0,0052)
+- **(b)** aleatório: 0,0407. ✅
+- **(c)** GRPO com G = 2: 0,3966. ✅
+- **(d)** sem contraste com G = 2: 0,9087. ✅
+- **(e)** GRPO com G = 8: 0,3973. ✅
+- **(f)** sem contraste com G = 8: 0,7181. ✅
+- **(g)** G = 2 − Q: +0,0946. ✅
+- **(h)** G = 8 − Q: +0,0953. ✅
+- **(i)** G = 8 − G = 2: +0,0007. ✅
+- **(j)** sementes com as duas GRPO acima do Q: 10 de 10. ✅
+- **(k)** Q nas sementes 71 a 80: 0,3035. ✅
+- **(l)** desvio do Q nas sementes 71 a 80: 0,0172. ✅
+- **(n)** Q nas sementes 13 a 22: **0,3278**. ❌ (acima do teto 0,3265 por 0,0013)
+- **(o)** sementes 23 a 40 menos 1001 a 1018: −0,0022. ✅
+- **Rodada 96:** IGUAL, 74 linhas e 71 números bit a bit. ✅
+
+Do mundo: (a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ❌ (o) ✅
+
+**Mundo: 12 de 14.** **Sobre mim:** 2 erros, em [0; 4]: ✅. Nenhum dos dois foi surpresa: os erros (0,0052 e 0,0013) são menores que as larguras
+(0,034 e 0,035).
+
+### Os dois erros têm a mesma causa: o desvio de 8 sementes
+As 74 sementes juntas dão um desvio de 0,0256 entre sementes; as 8 da calibração deram 0,0160, isto é, 0,625 do valor de 74. A chance de 8 sementes
+darem um desvio tão baixo é P(χ²₇ ≤ 7 · 0,0160²/0,0256²) = 0,093 (`p3200_chi2_cdf`, P3200). Com o desvio de 74 sementes, a meia-largura de (a) seria
+1,645 · 1,36 · 0,0256 · √(1/8 + 1/10) = 0,0270, e 0,3020 ficaria dentro; (n) também. O quantil t de 7 graus no lugar de 1,645 não basta: a
+meia-largura de (a) iria a 0,0196 (P3200), e o piso a 0,3046, ainda acima de 0,3020.
+
+O erro do meio foi meu e não do mundo: depois de (a), inventei a divisão "sementes pequenas × grandes" a partir de dois lotes, e o lote 13 a 22 pareceu
+confirmá-la (z = 2,0 contra a média das 74). O teste (o), com sementes que nenhuma conta tinha usado, a derrubou. A régua de largura (l) tinha passado
+antes, o que já dizia que a dispersão não era estranha: o que faltava era o desvio verdadeiro, não um mecanismo.
+
+### O que a medida diz sobre os dois métodos
+Com o dicionário 55 vezes maior, a vantagem da GRPO sobre o Q-learning dobra: G = 2 − Q foi +0,048 com as palavras embutidas (Parte 147) e +0,095
+aqui; G = 8 − Q foi de +0,017 a +0,095. Os grupos sem contraste com G = 8 caem de 0,94 para 0,72: a GRPO aprende com quatro vezes mais grupos.
+Isso se viu em 4 lotes (a calibração e as sementes 61 a 70, 71 a 80 e 13 a 22): em todos, as duas GRPO ficaram acima do Q-learning, em todas as 38
+sementes. O mecanismo é o da Parte 147, um acerto em G vale √(G − 1), agora com mais acertos. Com o dicionário grande, G = 2 e G = 8 empatam
+(+0,0007): o ganho de G = 8 em contraste é pago com um quarto do número de grupos.
+
+## Engenharia reversa
+- **O padrão: confiar num desvio de poucas sementes quando as sementes são baratas.** Cada semente custou 0,8 s. Calibrei com 8 porque a regra
+  da Parte 138 pede "≥ 3 mundos", e li o mínimo como o bastante. Uma regra de mínimo vira o meu número.
+- **O segundo padrão: um lote fora gera uma explicação antes de gerar um teste.** Depois de dois lotes, eu já tinha uma hipótese com nome (as
+  sementes pequenas). Ela foi registrada como teste, e é por isso que caiu; mas o desenho dela veio da explicação, não do desvio.
+- **Regra (Parte 148):** quando uma semente custa menos de um segundo, a calibração usa pelo menos 20 sementes. Com menos de 15, a meia-largura usa
+  o quantil t de n − 1 graus, e o texto escreve ao lado a chance χ² de o desvio da calibração estar baixo por um fator 0,7.
+
+## Funções e testes
+- **Funções:** `p3199_grpo_no_dicionario_grande`, `p3200_lotes_do_q`, `p3200_t_student_quantil`, `p3200_chi2_cdf` e `_parte_148`. Entradas
+  P3199 e P3200 na regressão.
+- **Diálogo:** `dialogo/rodada96.py` e `dialogo/Rodada96.java`, IGUAL.
+- **Testes:** `synthai/testes_parte148.py`.
+
+**O placar (m):** **m1 = 14 em [10; 12] ❌**, m2 = 2 em [1; 2] ✅, m3 = 0,058 em [0,04; 0,07] ✅, m4 = 0,857 em [0,60; 1,00] ✅, m5 = 0 ✅ e
+m6 = 0 ✅. **5 de 6.** m1 errou pela mesma razão das Partes 109, 120 e 122, agora com o tamanho medido: cada erro abriu DUAS previsões (um lote
+e uma largura, depois um lote e um controle), e o erro (n) nasceu de um lote aberto por (a). Regra: m1 em [n; n + 2E].
