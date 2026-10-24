@@ -40,6 +40,10 @@ class TestesParte155(unittest.TestCase):
         self.assertLess(r["B"]["direta"]["dr"], 0.0)
         self.assertGreater(r["B"]["reversa"]["dr"], 0.0)
 
+    def test_p3215_deriva_por_comprimento(self):
+        r = c.p3215_deriva_por_comprimento(maximos=(4,))
+        self.assertAlmostEqual(r[4]["dr"], -0.3984, places=4)
+
 
 if __name__ == "__main__":
     unittest.main()

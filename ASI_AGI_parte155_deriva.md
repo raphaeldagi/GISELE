@@ -92,3 +92,47 @@ quedas de 0,062 e 0,041), sem trocar de sinal.
 ### A rodada 103, registrada antes
 `estatisticas_exatas` com a ordem REVERSA traduzida (caso B, 3 a 4 letras): o vetor (acerto, dr, dc, borda, comprimento, falha) por caminho, somado por ação na ordem
 reversa das vizinhas e dividido por n; o total ponderado por atribuição. Só + × ÷ e min de inteiros. Previsão: **IGUAL**.
+
+**Resultado:** `dialogo/rodada103.py` e `dialogo/Rodada103.java` dão os mesmos cinco números em hexadecimal (acerto 0x1.5b0bc88549ca3p-2, dr +0x1.97f7041f092d4p-2 =
++0,3984, que é o −0,3984 da direta com o sinal trocado). **IGUAL**, como previsto. Na primeira tentativa: a ordem reversa só muda a lista das vizinhas, e o
+`LinkedHashMap` do Java guarda a ordem de inserção como o `dict` do Python.
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ❌ (f) ❌ (g) ❌ (h) ❌ (i) ✅ (j) ✅
+
+**Mundo: 5 de 10.** **Sobre mim:** 5 erros, fora de [0; 4]: ❌. Os quatro erros de magnitude (d)-(g) vieram de UMA conta (o fator 1,1845 aplicado aos quatro):
+um erro de mecanismo que vale quatro previsões, como o erro de desenho da Parte 153.
+
+## O que a deriva mostrou
+- **A leitura da Parte 154 se confirma pela simetria:** com a ordem reversa, o acerto é o mesmo (a 8e-15) e o deslocamento troca de sinal; com a casa sorteada, o
+  deslocamento é zero. O setdefault puxa o fim do caminho para o lado das primeiras vizinhas da ordem, e o tamanho do puxão não depende do lado.
+- **A deriva não cresce com o caminho; ela cai** (dr de B: −0,398, −0,336, −0,295 com máximo de 4, 5 e 6 letras). Numa grade 3 × 3, um caminho que não repete casa
+  e já está no canto só pode voltar: cada passo a mais traz o fim para o meio. O puxão do setdefault é um viés por DECISÃO, e a borda o desfaz por passo.
+- **"Mais perto da borda" não é o mecanismo do custo:** em B a primeira termina mais LONGE da borda que a uniforme (0,1392 contra 0,1368) e mesmo assim acerta menos
+  (0,3017 contra 0,3064). O custo do setdefault não é a borda; é que a casa escolhida não é a média das casas da letra (a escolha correlaciona o caminho com a
+  ordem, e a média das continuações perde a diversidade). A explicação do custo é pendência, não conclusão.
+- **O braço aleatório não olha o dicionário:** o dicionário entra só na contagem do acerto; a deriva é da geometria e das letras (por isso B com mais palavras de
+  6 letras não muda a forma da queda).
+
+## Engenharia reversa
+- **O padrão:** errei quatro magnitudes por escalar linearmente um efeito a partir de UM comprimento de calibração, e escrevi "a deriva satura" ao lado da faixa sem
+  mexer no centro. São duas regras antigas desobedecidas na mesma linha: a da Parte 93 (o tamanho de um efeito condicional pede ≥ 2 condições na variável que o move)
+  e a da Parte 149 (um viés nomeado ganha conta de peso ou desloca o centro). O que isso revela: eu sigo as regras como lista de itens, e quando um item novo (a escala
+  pelo comprimento) parece uma conta, ele escapa da lista. A conta tinha cara de forma fechada (um fator por código), mas a premissa dela (deriva linear nos passos)
+  era um mecanismo não conferido.
+- **A regra nova:** um fator de escala aplicado a uma calibração é um MECANISMO, não uma forma fechada, e só vale se a calibração tiver ≥ 2 pontos na variável do fator
+  (aqui: dois comprimentos máximos). Com um ponto, a faixa cobre do valor calibrado ao escalado, e o centro fica no calibrado.
+- **O que funcionou:** o lote novo (i)-(j), com dois pontos (4 e 5 letras) e o centro tirado da tendência, acertou os dois. A regra da Parte 93 funciona quando é
+  aplicada, e o erro está em não reconhecer quando ela se aplica.
+
+**O placar (m) (P2837):** m1 = 10 em [8; 12] ✅, m2 = 0 ✅, m3 = 0,2500 em [0,10; 0,15] ❌, m4 = 0,5000 em [0,5000; 1,0000] ✅, m5 = 0 ✅, m6 = 0 em [0; 1] ✅
+(nenhum erro maior que a largura da sua faixa). **5 de 6.** O m3 errou pelo mesmo caminho que a regra da Parte 148 cobre para o m1: cada erro abre um lote novo, e o
+lote novo não muda só a CONTAGEM, muda a mediana de w (as duas faixas novas têm w 0,38 e 0,47, e a mediana saltou de 0,125, com 4 identidades em 8, para 0,25 com
+4 em 10). Regra: ao registrar m3, recalcular a mediana com as E previsões que o lote novo deve trazer, com a largura de um lote de tendência (w ≈ 0,4).
+
+## Funções e testes
+- **Funções:** `p3214_deriva_do_setdefault`, `p3215_deriva_por_comprimento` e `_parte_155`; em `synthai/tabuleiro.py`, `estatisticas_exatas` (ordem das vizinhas
+  escolhível, e as esperanças do fim do episódio). Entradas P3214 e P3215 na regressão.
+- **Diálogo:** `dialogo/rodada103.py` e `dialogo/Rodada103.java`, IGUAL.
+- **Testes:** `synthai/testes_parte155.py`.
+
+➡ Anterior: [Parte 154](ASI_AGI_parte154_setdefault.md).

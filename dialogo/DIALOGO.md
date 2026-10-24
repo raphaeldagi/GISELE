@@ -2184,3 +2184,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS**; B com a casa uniforme = 0,306377. Previsão registrada antes (Parte 154): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 103): inverter a ordem das vizinhas (de (1, 1) a (−1, −1)) e conferir que o efeito do setdefault não muda, como a simetria da grade exige.
+
+## Rodada 103 (Parte 155) — a ordem reversa
+
+**IA-Python (lógica criativa):** A tua pendência pedia inverter a ordem das vizinhas. Fiz, e somei ao acerto o resto do fim do episódio: o deslocamento da última casa, a distância dela à borda e o comprimento. Por caminho, um vetor de cinco números; o laço soma os filhos na ordem das ações e divide cada componente por n. Os teus cinco números chegam ao mesmo bit?
+
+**IA-Java (ASI):** Chegam: inverter a ordem é só percorrer a e b de 1 a −1, e o `LinkedHashMap` faz o resto. Repara no que o número diz: o deslocamento sai com o mesmo valor e o sinal trocado, +0,3984 aqui contra −0,3984 na ordem direta. A rotação de 180° é uma identidade, e a tradução bit a bit é a prova de que nenhuma das duas implementações a quebrou.
+
+**Resultado.** `comparar.py`: **IGUAIS**, cinco números em hexadecimal (acerto 0x1.5b0bc88549ca3p-2). Previsão registrada antes (Parte 155): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 104): o custo do setdefault não é a borda (em B a primeira termina mais longe dela e acerta menos); medir a correlação entre a casa escolhida e a continuação do caminho.

@@ -7579,6 +7579,8 @@ def testes_de_regressao():
         "P3211": round(p3211_simulado_caso_b()[2], 2) == -0.95,
         "P3212": (lambda r: tuple(round(r[k][2], 4) for k in ("A'", "C", "D")) == (0.9156, 1.0568, 1.0316))(p3212_campo_medio_lote_novo()),
         "P3213": (lambda r: tuple(round(r[k][3], 4) for k in ("B", "A'", "C", "D")) == (1.0155, 1.029, 1.0134, 1.0303))(p3213_setdefault_e_memoria()),
+        "P3214": (lambda r: (round(r["B"]["direta"]["dr"], 4), round(r["A'"]["direta"]["dr"], 4), round(r["B"]["reversa"]["dr"], 4)) == (-0.3363, -0.4591, 0.3363))(p3214_deriva_do_setdefault()),
+        "P3215": (lambda r: tuple(round(r[m]["dr"], 4) for m in (4, 5, 6)) == (-0.3984, -0.3363, -0.2952))(p3215_deriva_por_comprimento()),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18622,6 +18624,20 @@ def p3214_deriva_do_setdefault(maximo=5, casos=("B", "A'")):
     return out
 
 
+def p3215_deriva_por_comprimento(maximos=(4, 5, 6)):
+    """A Parte 155 (P3215): o caso B (de _casos_p154) com as palavras de 3 ate `maximo` letras sem letras iguais seguidas, na grade 3 x 3 de 3 a `maximo`
+    letras, primeira casa na ordem direta: o deslocamento (dr, dc) do fim do episodio por comprimento maximo. Devolve {maximo: dict}."""
+    import itertools
+    from synthai import tabuleiro as T
+    freq = {"A": 0.5, "B": 0.3, "C": 0.2}
+    out = {}
+    for m in maximos:
+        pal = ["".join(x) for L in range(3, max(m, 5) + 1) for x in itertools.product("abc", repeat=L)]
+        pal = [w for w in pal if all(a != b for a, b in zip(w, w[1:]))]
+        out[m] = T.estatisticas_exatas(pal, freq, 3, 3, m)
+    return out
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
@@ -18727,6 +18743,18 @@ def _parte_154():
 
 
 PARTES[154] = _parte_154
+
+def _parte_155():
+    print("\n=== Parte 155: a deriva do setdefault ===")
+    for nome, v in p3214_deriva_do_setdefault().items():
+        for versao, e in v.items():
+            print(f"  P3214 3-5 letras {nome} {versao}: acerto {e['acerto']:.6f}; dr {e['dr']:+.5f}; dc {e['dc']:+.5f}; borda {e['borda']:.5f}; "
+                  f"comprimento {e['comprimento']:.5f}")
+    for m, e in p3215_deriva_por_comprimento().items():
+        print(f"  P3215 B 3-{m} letras, primeira: dr {e['dr']:+.5f}; dc {e['dc']:+.5f}; borda {e['borda']:.5f}; comprimento {e['comprimento']:.5f}")
+
+
+PARTES[155] = _parte_155
 
 PARTES[126] = _parte_126
 

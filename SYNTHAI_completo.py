@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 154, perguntas P1 a P3213).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 155, perguntas P1 a P3215).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (18725 linhas)
+# calculos.py  (18767 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7617,6 +7617,8 @@ def testes_de_regressao():
         "P3211": round(p3211_simulado_caso_b()[2], 2) == -0.95,
         "P3212": (lambda r: tuple(round(r[k][2], 4) for k in ("A'", "C", "D")) == (0.9156, 1.0568, 1.0316))(p3212_campo_medio_lote_novo()),
         "P3213": (lambda r: tuple(round(r[k][3], 4) for k in ("B", "A'", "C", "D")) == (1.0155, 1.029, 1.0134, 1.0303))(p3213_setdefault_e_memoria()),
+        "P3214": (lambda r: (round(r["B"]["direta"]["dr"], 4), round(r["A'"]["direta"]["dr"], 4), round(r["B"]["reversa"]["dr"], 4)) == (-0.3363, -0.4591, 0.3363))(p3214_deriva_do_setdefault()),
+        "P3215": (lambda r: tuple(round(r[m]["dr"], 4) for m in (4, 5, 6)) == (-0.3984, -0.3363, -0.2952))(p3215_deriva_por_comprimento()),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18646,6 +18648,34 @@ def p3213_setdefault_e_memoria(maximo=5):
     return out
 
 
+def p3214_deriva_do_setdefault(maximo=5, casos=("B", "A'")):
+    \"\"\"A Parte 155 (P3214): para os casos pedidos (de _casos_p154), na grade 3 x 3 de 3 a `maximo` letras, as estatisticas exatas do fim do episodio com a
+    primeira casa na ordem direta, a primeira casa na ordem reversa e a casa uniforme. Devolve {nome: {versao: dict}}.\"\"\"
+    from synthai import tabuleiro as T
+    out = {}
+    for nome, palavras, freq in _casos_p154():
+        if nome not in casos:
+            continue
+        out[nome] = {"direta": T.estatisticas_exatas(palavras, freq, 3, 3, maximo),
+                     "reversa": T.estatisticas_exatas(palavras, freq, 3, 3, maximo, ordem="reversa"),
+                     "uniforme": T.estatisticas_exatas(palavras, freq, 3, 3, maximo, casa="uniforme")}
+    return out
+
+
+def p3215_deriva_por_comprimento(maximos=(4, 5, 6)):
+    \"\"\"A Parte 155 (P3215): o caso B (de _casos_p154) com as palavras de 3 ate `maximo` letras sem letras iguais seguidas, na grade 3 x 3 de 3 a `maximo`
+    letras, primeira casa na ordem direta: o deslocamento (dr, dc) do fim do episodio por comprimento maximo. Devolve {maximo: dict}.\"\"\"
+    import itertools
+    from synthai import tabuleiro as T
+    freq = {"A": 0.5, "B": 0.3, "C": 0.2}
+    out = {}
+    for m in maximos:
+        pal = ["".join(x) for L in range(3, max(m, 5) + 1) for x in itertools.product("abc", repeat=L)]
+        pal = [w for w in pal if all(a != b for a, b in zip(w, w[1:]))]
+        out[m] = T.estatisticas_exatas(pal, freq, 3, 3, m)
+    return out
+
+
 def _parte_148():
     print("\\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
@@ -18752,6 +18782,18 @@ def _parte_154():
 
 PARTES[154] = _parte_154
 
+def _parte_155():
+    print("\\n=== Parte 155: a deriva do setdefault ===")
+    for nome, v in p3214_deriva_do_setdefault().items():
+        for versao, e in v.items():
+            print(f"  P3214 3-5 letras {nome} {versao}: acerto {e['acerto']:.6f}; dr {e['dr']:+.5f}; dc {e['dc']:+.5f}; borda {e['borda']:.5f}; "
+                  f"comprimento {e['comprimento']:.5f}")
+    for m, e in p3215_deriva_por_comprimento().items():
+        print(f"  P3215 B 3-{m} letras, primeira: dr {e['dr']:+.5f}; dc {e['dc']:+.5f}; borda {e['borda']:.5f}; comprimento {e['comprimento']:.5f}")
+
+
+PARTES[155] = _parte_155
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -18764,7 +18806,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (607 linhas)
+# CLAUDE.md  (611 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -19217,6 +19259,10 @@ anterior, commit e push.
   Parte 154 (o setdefault e a memória das letras, separados; rodada 102 IGUAL; 5/5, (m) 6/6): o erro do campo médio é o produto de dois esquecimentos. O setdefault (a primeira casa
   de cada letra) tira sempre 1,3-3,0% do acerto (sinal geométrico); a memória das letras (vizinha vista volta com a mesma letra) dá de −5,8% a +7,1% (sinal do dicionário). A regra da 153
   (conta com e sem o mecanismo num caso de calibração vizinho) funcionou na primeira vez: nenhum caso degenerado, e a faixa do comprimento vizinho acertou os quatro.
+  Parte 155 (a deriva do setdefault; rodada 103 IGUAL; 5/10, (m) 5/6): a simetria confirmou a leitura da 154 (ordem reversa: acerto igual, deslocamento com o sinal
+  trocado; casa uniforme: deslocamento zero), mas a deriva CAI com o caminho (−0,398, −0,336, −0,295 de 4 a 6 letras: a borda traz o fim de volta). Errei 4 magnitudes
+  com UM fator de escala tirado de UM comprimento (regras das Partes 93 e 149 na mesma linha). Regras: um fator de escala aplicado a uma calibração é mecanismo, não
+  forma fechada (≥ 2 pontos na variável do fator; com um, o centro fica no calibrado); e o lote novo que cada erro abre muda também a mediana de w (m3), não só m1.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -19365,7 +19411,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149 synthai.testes_parte150 synthai.testes_parte151 synthai.testes_parte152 synthai.testes_parte153 synthai.testes_parte154`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149 synthai.testes_parte150 synthai.testes_parte151 synthai.testes_parte152 synthai.testes_parte153 synthai.testes_parte154 synthai.testes_parte155`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -28853,7 +28899,7 @@ def jogo_lcg(linhas=4, colunas=5, semente=112):
 """
 
 # ====================================================================================================
-# synthai/tabuleiro.py  (233 linhas)
+# synthai/tabuleiro.py  (286 linhas)
 # ====================================================================================================
 FONTES['synthai/tabuleiro.py'] = """\"\"\"O tabuleiro do jogo de palavras com as letras de outra língua (Parte 150). O `WordGridEnv` da Parte 111 sorteia as letras com
 `palavras_rl.LETTER_FREQ` (as frequências do inglês), lido a cada `reset`. Aqui: as frequências contadas num conjunto de lemas, e um
@@ -29088,6 +29134,59 @@ def aleatorio_exato(palavras, freq, tamanho=3, minimo=3, maximo=5, casa="primeir
             acerto += anda([u], grade[u])
         total += peso * acerto / len(casas)
     return total
+
+
+def estatisticas_exatas(palavras, freq, tamanho=3, minimo=3, maximo=5, casa="primeira", ordem="direta"):
+    \"\"\"Parte 155: o enumerador exato de aleatorio_exato com a ordem das vizinhas escolhível ('direta' = (−1, −1), …, (1, 1); 'reversa' = (1, 1), …,
+    (−1, −1)) e, além do acerto, as esperanças sobre o fim do episódio (o PARAR): deslocamento da casa final em relação à inicial (dr, dc), distância da
+    casa final à borda mais próxima e comprimento do caminho. Devolve {acerto, dr, dc, borda, comprimento, falha} (falha = chance de ficar sem ação).\"\"\"
+    import itertools
+    letras = [c for c in sorted(freq) if freq[c] > 0]
+    t = sum(freq[c] for c in letras)
+    p = {c: freq[c] / t for c in letras}
+    dic = {w.upper() for w in palavras}
+    casas = [(r, c) for r in range(tamanho) for c in range(tamanho)]
+    deltas = [(a, b) for a in (-1, 0, 1) for b in (-1, 0, 1) if a or b]
+    if ordem == "reversa":
+        deltas = deltas[::-1]
+    vz = {(r, c): [(r + a, c + b) for a, b in deltas if 0 <= r + a < tamanho and 0 <= c + b < tamanho] for r, c in casas}
+    tot = {"acerto": 0.0, "dr": 0.0, "dc": 0.0, "borda": 0.0, "comprimento": 0.0, "falha": 0.0}
+    for atrib in itertools.product(letras, repeat=len(casas)):
+        grade = dict(zip(casas, atrib))
+        peso = 1.0
+        for x in atrib:
+            peso *= p[x]
+
+        def anda(caminho, prefixo):
+            # devolve o vetor (acerto, dr, dc, borda, comprimento, falha) esperado a partir daqui
+            acoes = {}
+            if len(caminho) < maximo:
+                vis = set(caminho)
+                for v in vz[caminho[-1]]:
+                    if v not in vis:
+                        acoes.setdefault(grade[v], []).append(v)
+            parar = len(caminho) >= minimo
+            n = len(acoes) + (1 if parar else 0)
+            if n == 0:
+                return (0.0, 0.0, 0.0, 0.0, 0.0, 1.0)
+            s = [0.0] * 6
+            if parar:
+                (r0, c0), (r1, c1) = caminho[0], caminho[-1]
+                fim = (1.0 if prefixo in dic else 0.0, r1 - r0, c1 - c0, min(r1, c1, tamanho - 1 - r1, tamanho - 1 - c1), len(caminho), 0.0)
+                s = list(fim)
+            for letra, vs in acoes.items():
+                escolhidas = vs[:1] if casa == "primeira" else vs
+                m = [0.0] * 6
+                for v in escolhidas:
+                    f = anda(caminho + [v], prefixo + letra)
+                    m = [a + b for a, b in zip(m, f)]
+                s = [a + b / len(escolhidas) for a, b in zip(s, m)]
+            return tuple(x / n for x in s)
+        for u in casas:
+            f = anda([u], grade[u])
+            for k, x in zip(("acerto", "dr", "dc", "borda", "comprimento", "falha"), f):
+                tot[k] += peso * x / len(casas)
+    return tot
 """
 
 # ====================================================================================================
@@ -32485,6 +32584,60 @@ class TestesParte154(unittest.TestCase):
         for v in r.values():
             self.assertAlmostEqual(v[3] * v[5], v[4], places=12)
             self.assertGreater(v[3], 1.0)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte155.py  (49 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte155.py'] = """\"\"\"Testes da Parte 155: as estatísticas exatas do fim do episódio (synthai/tabuleiro.py) e a P3214 pelo nome.\"\"\"
+import itertools
+import unittest
+
+import calculos as c
+from synthai import tabuleiro as T
+
+
+class TestesParte155(unittest.TestCase):
+    def test_acerto_igual_ao_de_aleatorio_exato(self):
+        _, B, f = c._casos_p154()[0]
+        a = T.aleatorio_exato(B, f, 3, 3, 4)
+        e = T.estatisticas_exatas(B, f, 3, 3, 4)["acerto"]
+        self.assertAlmostEqual(a, e, places=12)
+
+    def test_simetria_da_ordem_reversa(self):
+        # rotação de 180°: acerto igual, deslocamento com o sinal trocado
+        _, B, f = c._casos_p154()[0]
+        d = T.estatisticas_exatas(B, f, 3, 3, 4)
+        r = T.estatisticas_exatas(B, f, 3, 3, 4, ordem="reversa")
+        self.assertAlmostEqual(d["acerto"], r["acerto"], places=12)
+        self.assertAlmostEqual(d["dr"], -r["dr"], places=12)
+        self.assertAlmostEqual(d["dc"], -r["dc"], places=12)
+
+    def test_uniforme_sem_deriva(self):
+        todas = ["".join(x) for L in (3, 4) for x in itertools.product("ab", repeat=L)]
+        u = T.estatisticas_exatas(todas, {"A": 0.6, "B": 0.4}, 3, 3, 4, casa="uniforme")
+        self.assertAlmostEqual(u["dr"], 0.0, places=12)
+        self.assertAlmostEqual(u["dc"], 0.0, places=12)
+        self.assertAlmostEqual(u["acerto"], 1.0, places=12)
+
+    def test_comprimento_forma_fechada_2x2(self):
+        # grade 2×2, de 2 a 3 letras, uma letra só: com 2 letras, 1 vizinha livre (colapso de 2 em 1? não: as 2 livres têm a mesma letra -> 1 ação) + PARAR
+        # -> para com 2 letras com chance 1/2; senão 3 letras. E[comprimento] = 2,5
+        e = T.estatisticas_exatas(["aa"], {"A": 1.0}, 2, 2, 3)
+        self.assertAlmostEqual(e["comprimento"], 2.5, places=14)
+
+    def test_p3214_deriva_do_setdefault(self):
+        r = c.p3214_deriva_do_setdefault(maximo=4, casos=("B",))
+        self.assertLess(r["B"]["direta"]["dr"], 0.0)
+        self.assertGreater(r["B"]["reversa"]["dr"], 0.0)
+
+    def test_p3215_deriva_por_comprimento(self):
+        r = c.p3215_deriva_por_comprimento(maximos=(4,))
+        self.assertAlmostEqual(r[4]["dr"], -0.3984, places=4)
 
 
 if __name__ == "__main__":
@@ -43297,7 +43450,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2356 linhas)
+# resultados.txt  (2366 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -45655,6 +45808,16 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3213 3-5 letras A': primeira 0.241437; uniforme 0.248427; campo medio 0.263684; uniforme/primeira 1.0290; uniforme/campo 0.9421; primeira/campo 0.9156
   P3213 3-5 letras C: primeira 0.324510; uniforme 0.328845; campo medio 0.307058; uniforme/primeira 1.0134; uniforme/campo 1.0710; primeira/campo 1.0568
   P3213 3-5 letras D: primeira 0.147994; uniforme 0.152485; campo medio 0.143461; uniforme/primeira 1.0303; uniforme/campo 1.0629; primeira/campo 1.0316
+=== Parte 155: a deriva do setdefault ===
+  P3214 3-5 letras B direta: acerto 0.301690; dr -0.33628; dc -0.13730; borda 0.13922; comprimento 4.01884
+  P3214 3-5 letras B reversa: acerto 0.301690; dr +0.33628; dc +0.13730; borda 0.13922; comprimento 4.01884
+  P3214 3-5 letras B uniforme: acerto 0.306377; dr -0.00000; dc -0.00000; borda 0.13684; comprimento 4.02598
+  P3214 3-5 letras A' direta: acerto 0.241437; dr -0.45915; dc -0.17743; borda 0.14769; comprimento 3.91672
+  P3214 3-5 letras A' reversa: acerto 0.241437; dr +0.45915; dc +0.17743; borda 0.14769; comprimento 3.91672
+  P3214 3-5 letras A' uniforme: acerto 0.248427; dr +0.00000; dc -0.00000; borda 0.15026; comprimento 3.92436
+  P3215 B 3-4 letras, primeira: dr -0.39840; dc -0.17914; borda 0.16744; comprimento 3.63447
+  P3215 B 3-5 letras, primeira: dr -0.33628; dc -0.13730; borda 0.13922; comprimento 4.01884
+  P3215 B 3-6 letras, primeira: dr -0.29525; dc -0.11634; borda 0.12226; comprimento 4.23262
 """
 
 # ====================================================================================================
@@ -55013,7 +55176,7 @@ o caso pede refazer todas as previsões que dependiam dele. Regra: um erro de de
 """
 
 # ====================================================================================================
-# ASI_AGI_parte154_setdefault.md  (103 linhas)
+# ASI_AGI_parte154_setdefault.md  (104 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte154_setdefault.md'] = """# Parte 154 — Os dois esquecimentos do campo médio, separados
 
@@ -55118,6 +55281,150 @@ leitura do setdefault (o canto) é hipótese de 1 lote; o teste dela é a ordem 
 **O placar (m):** m1 = 5 em [5; 7] ✅, m2 = 0 ✅, m3 = 0,0286 em [0,020; 0,040] ✅, m4 = 1,0 em [0,6000; 1,0000] ✅, m5 = 0 ✅ e m6 = 0 ✅. **6 de 6.**
 
 ➡ Anterior: [Parte 153](ASI_AGI_parte153_campo_medio.md).
+➡ Próxima: [Parte 155](ASI_AGI_parte155_deriva.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte155_deriva.md  (138 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte155_deriva.md'] = """# Parte 155 — A deriva do setdefault: a primeira casa puxa o caminho para um canto
+
+↩ Nasce da Parte 154 (o setdefault tira sempre de 1,3% a 3,0% do acerto, e a leitura era "puxa o caminho para o canto de cima à esquerda") e da sua pendência 1:
+testar a leitura pela simetria e pela medida direta do caminho.
+
+## O recolhimento do contêiner, 13º lote
+Despertar às 10h08, depois de cerca de 55 minutos ociosa: "up 0 min", como previsto. Treze lotes a favor.
+
+## A medida
+`synthai/tabuleiro.py`, `estatisticas_exatas`: o enumerador exato com a ordem das vizinhas escolhível (direta, (−1, −1), …, (1, 1); ou reversa) e as esperanças,
+no fim do episódio, do deslocamento da casa final em relação à inicial (dr, dc), da distância da casa final à borda e do comprimento. Confere com o
+`aleatorio_exato` (B, 3 a 4 letras: 0,3389121371604974 contra 0,33891213716057256, a diferença é a ordem das somas).
+
+**A simetria, escrita antes:** inverter a ordem das vizinhas é a rotação de 180° da grade. Como as letras são sorteadas independentes e a casa inicial é uniforme,
+o jogo com a ordem reversa é o jogo direto visto de cabeça para baixo: o acerto é o MESMO e o deslocamento troca de sinal. Com a casa sorteada (uniforme), o
+deslocamento médio é zero por simetria. Isso são identidades; o que pode errar é o código.
+
+**A calibração (3 a 4 letras), antes das previsões:**
+
+| caso | casa | acerto | dr | dc | distância à borda | comprimento |
+|---|---|---|---|---|---|---|
+| B | primeira | 0,33891 | −0,39840 | −0,17914 | 0,16744 | 3,63447 |
+| B | uniforme | 0,34320 | 0,00000 | 0,00000 | 0,17148 | 3,64000 |
+| A' | primeira | 0,23977 | −0,52659 | −0,24544 | 0,16153 | 3,58308 |
+| A' | uniforme | 0,25190 | 0,00000 | 0,00000 | 0,17883 | 3,59135 |
+
+A leitura da Parte 154 se confirma no caso de calibração: com a primeira casa, o caminho deriva para cima (dr < 0) e para a esquerda (dc < 0), mais em linha que
+em coluna (as três primeiras vizinhas da ordem têm dr = −1; só uma tem dc = −1 antes das de dc = 0), e termina mais perto da borda.
+
+## Previsões para o teste (3 a 5 letras), registradas antes de rodar
+**A conta do centro (por código, no texto):** a deriva por passo da calibração vezes o número esperado de passos no teste. Pela geometria sem colapso (Parte 151),
+E[L] = 3,7392 com 3 a 4 letras e 4,2445 com 3 a 5; o fator (4,2445 − 1)/(3,7392 − 1) = 1,1845. **Mecanismo sem calibração do fator:** numa grade 3 × 3 a deriva
+satura (não passa de 2), então a conta linear deve exagerar. Faixa ±25% do centro, larga (Parte 62).
+- **(a)** nº de casos (B e A') em que o acerto com a ordem reversa é igual ao da direta a menos de 1e-12 em **[2; 2]** (identidade).
+- **(b)** nº de deslocamentos (dr e dc, nos 2 casos) em que reversa = −direta a menos de 1e-12 em **[4; 4]** (identidade).
+- **(c)** nº de deslocamentos com a casa uniforme iguais a 0 a menos de 1e-12 em **[4; 4]** (identidade).
+- **(d)** dr de B, primeira, em **[−0,5899; −0,3539]** (centro −0,3984 · 1,1845 = −0,4719)
+- **(e)** dc de B, primeira, em **[−0,2652; −0,1591]** (centro −0,2122)
+- **(f)** dr de A', primeira, em **[−0,7797; −0,4678]** (centro −0,6237)
+- **(g)** dc de A', primeira, em **[−0,3634; −0,2180]** (centro −0,2907)
+- **(h)** nº de casos em que a primeira termina MAIS perto da borda que a uniforme em **[2; 2]** (mecanismo: a deriva leva à borda; nas duas calibrações a diferença
+  foi 0,004 e 0,017, e o teste tem um passo a mais).
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua sobre o rascunho com "Do mundo:" provisória: m1 = 8, m2 = 0, m3 = 0,125, m5 = 0. E = 4 faixas de mecanismo × 0,4 + 1 contagem de mecanismo × 0,2 +
+3 identidades × 0 = 1,8; m1 em [8; 8 + 2E] = [8; 11,6], arredondado para cima. Acertos como contagem: 4 a 8 das 8 (4/8 = 0,5000).
+- **(m1)** nº de previsões do mundo em **[8; 12]**
+- **(m2)** nº que cruzam ou tocam o zero em **[0; 0]**
+- **(m3)** mediana de w em **[0,10; 0,15]**
+- **(m4)** fração de acertos em **[0,5000; 1,0000]**
+- **(m5)** nº com w > 0,6 em **[0; 0]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 4]**, centro 1,8.
+
+## Medido (P3214)
+
+| caso | versão | acerto | dr | dc | distância à borda | comprimento |
+|---|---|---|---|---|---|---|
+| B | direta | 0,301690 | −0,33628 | −0,13730 | 0,13922 | 4,01884 |
+| B | reversa | 0,301690 | +0,33628 | +0,13730 | 0,13922 | 4,01884 |
+| B | uniforme | 0,306377 | 0,00000 | 0,00000 | 0,13684 | 4,02598 |
+| A' | direta | 0,241437 | −0,45915 | −0,17743 | 0,14769 | 3,91672 |
+| A' | reversa | 0,241437 | +0,45915 | +0,17743 | 0,14769 | 3,91672 |
+| A' | uniforme | 0,248427 | 0,00000 | 0,00000 | 0,15026 | 3,92436 |
+
+- **(a)** acerto reverso = direto nos 2 casos (diferenças 8e-15 e 4e-16). ✅
+- **(b)** deslocamento reverso = −direto nos 4. ✅
+- **(c)** deslocamento uniforme = 0 nos 4 (|x| < 2e-16). ✅
+- **(d)** dr de B: **−0,3363**, fora de [−0,5899; −0,3539]. ❌
+- **(e)** dc de B: **−0,1373**, fora de [−0,2652; −0,1591]. ❌
+- **(f)** dr de A': **−0,4591**, fora de [−0,7797; −0,4678]. ❌
+- **(g)** dc de A': **−0,1774**, fora de [−0,3634; −0,2180]. ❌
+- **(h)** a primeira termina mais perto da borda: só em A' (0,1477 contra 0,1503); em B termina mais LONGE (0,1392 contra 0,1368). **1 de 2**. ❌
+
+**O erro de mecanismo:** a deriva não cresceu com o caminho mais longo, DIMINUIU (B: dr −0,398 com 3 a 4 letras, −0,336 com 3 a 5). Numa grade 3 × 3, um caminho sem
+repetir casa que deriva para um canto bate na borda e tem de voltar; o passo a mais traz o fim de volta para o meio. Eu escalei a deriva linearmente pelo número de
+passos a partir de UM comprimento de calibração (a regra da Parte 93: o tamanho de um efeito pede ≥ 2 condições cobrindo a variável que o move), e escrevi "a deriva
+satura" ao lado sem deslocar o centro (a regra da Parte 149: um viés nomeado ganha conta de peso ou entra como desvio do centro). As duas regras desobedecidas na
+mesma previsão.
+
+## Um lote novo, registrado antes de rodar (B, de 3 a 6 letras)
+Antes de qualquer explicação, o próximo comprimento. Com o mecanismo "o fim volta para o meio", |dr| continua caindo, sem chegar a zero (a primeira casa ainda
+puxa). Pela tendência de 4 para 5 letras (−0,398 → −0,336, queda de 0,062), mais um passo de queda de mesmo tamanho daria −0,274; faixa larga (2 pontos):
+- **(i)** dr de B, primeira, de 3 a 6 letras, em **[−0,336; −0,15]** (centro −0,274, por código: −0,3363 + (−0,3363 − (−0,3984)))
+- **(j)** dc de B, primeira, de 3 a 6 letras, em **[−0,137; −0,05]** (centro −0,137 + (−0,137 + 0,179) = −0,095)
+
+**Medido no lote novo (3 a 6 letras):** dr = −0,29525 (i ✅), dc = −0,11634 (j ✅). A deriva cai a cada passo a mais (dr: −0,398, −0,336, −0,295 com máximo 4, 5, 6;
+quedas de 0,062 e 0,041), sem trocar de sinal.
+
+### A rodada 103, registrada antes
+`estatisticas_exatas` com a ordem REVERSA traduzida (caso B, 3 a 4 letras): o vetor (acerto, dr, dc, borda, comprimento, falha) por caminho, somado por ação na ordem
+reversa das vizinhas e dividido por n; o total ponderado por atribuição. Só + × ÷ e min de inteiros. Previsão: **IGUAL**.
+
+**Resultado:** `dialogo/rodada103.py` e `dialogo/Rodada103.java` dão os mesmos cinco números em hexadecimal (acerto 0x1.5b0bc88549ca3p-2, dr +0x1.97f7041f092d4p-2 =
++0,3984, que é o −0,3984 da direta com o sinal trocado). **IGUAL**, como previsto. Na primeira tentativa: a ordem reversa só muda a lista das vizinhas, e o
+`LinkedHashMap` do Java guarda a ordem de inserção como o `dict` do Python.
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ❌ (e) ❌ (f) ❌ (g) ❌ (h) ❌ (i) ✅ (j) ✅
+
+**Mundo: 5 de 10.** **Sobre mim:** 5 erros, fora de [0; 4]: ❌. Os quatro erros de magnitude (d)-(g) vieram de UMA conta (o fator 1,1845 aplicado aos quatro):
+um erro de mecanismo que vale quatro previsões, como o erro de desenho da Parte 153.
+
+## O que a deriva mostrou
+- **A leitura da Parte 154 se confirma pela simetria:** com a ordem reversa, o acerto é o mesmo (a 8e-15) e o deslocamento troca de sinal; com a casa sorteada, o
+  deslocamento é zero. O setdefault puxa o fim do caminho para o lado das primeiras vizinhas da ordem, e o tamanho do puxão não depende do lado.
+- **A deriva não cresce com o caminho; ela cai** (dr de B: −0,398, −0,336, −0,295 com máximo de 4, 5 e 6 letras). Numa grade 3 × 3, um caminho que não repete casa
+  e já está no canto só pode voltar: cada passo a mais traz o fim para o meio. O puxão do setdefault é um viés por DECISÃO, e a borda o desfaz por passo.
+- **"Mais perto da borda" não é o mecanismo do custo:** em B a primeira termina mais LONGE da borda que a uniforme (0,1392 contra 0,1368) e mesmo assim acerta menos
+  (0,3017 contra 0,3064). O custo do setdefault não é a borda; é que a casa escolhida não é a média das casas da letra (a escolha correlaciona o caminho com a
+  ordem, e a média das continuações perde a diversidade). A explicação do custo é pendência, não conclusão.
+- **O braço aleatório não olha o dicionário:** o dicionário entra só na contagem do acerto; a deriva é da geometria e das letras (por isso B com mais palavras de
+  6 letras não muda a forma da queda).
+
+## Engenharia reversa
+- **O padrão:** errei quatro magnitudes por escalar linearmente um efeito a partir de UM comprimento de calibração, e escrevi "a deriva satura" ao lado da faixa sem
+  mexer no centro. São duas regras antigas desobedecidas na mesma linha: a da Parte 93 (o tamanho de um efeito condicional pede ≥ 2 condições na variável que o move)
+  e a da Parte 149 (um viés nomeado ganha conta de peso ou desloca o centro). O que isso revela: eu sigo as regras como lista de itens, e quando um item novo (a escala
+  pelo comprimento) parece uma conta, ele escapa da lista. A conta tinha cara de forma fechada (um fator por código), mas a premissa dela (deriva linear nos passos)
+  era um mecanismo não conferido.
+- **A regra nova:** um fator de escala aplicado a uma calibração é um MECANISMO, não uma forma fechada, e só vale se a calibração tiver ≥ 2 pontos na variável do fator
+  (aqui: dois comprimentos máximos). Com um ponto, a faixa cobre do valor calibrado ao escalado, e o centro fica no calibrado.
+- **O que funcionou:** o lote novo (i)-(j), com dois pontos (4 e 5 letras) e o centro tirado da tendência, acertou os dois. A regra da Parte 93 funciona quando é
+  aplicada, e o erro está em não reconhecer quando ela se aplica.
+
+**O placar (m) (P2837):** m1 = 10 em [8; 12] ✅, m2 = 0 ✅, m3 = 0,2500 em [0,10; 0,15] ❌, m4 = 0,5000 em [0,5000; 1,0000] ✅, m5 = 0 ✅, m6 = 0 em [0; 1] ✅
+(nenhum erro maior que a largura da sua faixa). **5 de 6.** O m3 errou pelo mesmo caminho que a regra da Parte 148 cobre para o m1: cada erro abre um lote novo, e o
+lote novo não muda só a CONTAGEM, muda a mediana de w (as duas faixas novas têm w 0,38 e 0,47, e a mediana saltou de 0,125, com 4 identidades em 8, para 0,25 com
+4 em 10). Regra: ao registrar m3, recalcular a mediana com as E previsões que o lote novo deve trazer, com a largura de um lote de tendência (w ≈ 0,4).
+
+## Funções e testes
+- **Funções:** `p3214_deriva_do_setdefault`, `p3215_deriva_por_comprimento` e `_parte_155`; em `synthai/tabuleiro.py`, `estatisticas_exatas` (ordem das vizinhas
+  escolhível, e as esperanças do fim do episódio). Entradas P3214 e P3215 na regressão.
+- **Diálogo:** `dialogo/rodada103.py` e `dialogo/Rodada103.java`, IGUAL.
+- **Testes:** `synthai/testes_parte155.py`.
+
+➡ Anterior: [Parte 154](ASI_AGI_parte154_setdefault.md).
 """
 
 # ====================================================================================================
@@ -77059,7 +77366,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2186 linhas)
+# dialogo/DIALOGO.md  (2196 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -79247,10 +79554,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS**; B com a casa uniforme = 0,306377. Previsão registrada antes (Parte 154): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 103): inverter a ordem das vizinhas (de (1, 1) a (−1, −1)) e conferir que o efeito do setdefault não muda, como a simetria da grade exige.
+
+## Rodada 103 (Parte 155) — a ordem reversa
+
+**IA-Python (lógica criativa):** A tua pendência pedia inverter a ordem das vizinhas. Fiz, e somei ao acerto o resto do fim do episódio: o deslocamento da última casa, a distância dela à borda e o comprimento. Por caminho, um vetor de cinco números; o laço soma os filhos na ordem das ações e divide cada componente por n. Os teus cinco números chegam ao mesmo bit?
+
+**IA-Java (ASI):** Chegam: inverter a ordem é só percorrer a e b de 1 a −1, e o `LinkedHashMap` faz o resto. Repara no que o número diz: o deslocamento sai com o mesmo valor e o sinal trocado, +0,3984 aqui contra −0,3984 na ordem direta. A rotação de 180° é uma identidade, e a tradução bit a bit é a prova de que nenhuma das duas implementações a quebrou.
+
+**Resultado.** `comparar.py`: **IGUAIS**, cinco números em hexadecimal (acerto 0x1.5b0bc88549ca3p-2). Previsão registrada antes (Parte 155): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 104): o custo do setdefault não é a borda (em B a primeira termina mais longe dela e acerta menos); medir a correlação entre a casa escolhida e a continuação do caminho.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (97 linhas)
+# dialogo/PENDENCIAS.md  (101 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -79349,6 +79666,10 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Parte 152)** ABERTAS: (1) o campo médio esquece que a vizinha já vista tem a mesma letra: uma conta exata por enumeração das letras numa grade pequena (3 × 3, alfabeto reduzido) para medir o tamanho desse erro; (2) o setdefault fica com a PRIMEIRA casa de cada letra: medir quanto isso puxa o caminho (a geometria muda?); (3) as razões do tabuleiro inglês altas (1,111, 1,061, 1,147→1,070 com o lote novo): hipótese de 0 lotes, só testar se a (1) não explicar.
 - **(Parte 153)** ABERTAS: (1) o sinal do erro do campo médio (0,916 em A', 1,03 a 1,06 em B, C e D): uma correção de segunda ordem (as vizinhas compartilhadas entre duas decisões seguidas) que preveja o sinal antes de enumerar, testada em casos novos; (2) o efeito do setdefault (a primeira casa de cada letra) separado do da memória das letras: enumerar com a escolha da casa uniforme entre as da mesma letra e comparar.
 - **(Parte 154)** ABERTAS: (1) a leitura do setdefault ("puxa para o canto"): inverter a ordem das vizinhas e prever que o efeito fica IGUAL (simetria da grade), e medir a distância média à borda dos caminhos nas duas versões; (2) uma conta de segunda ordem para a memória das letras que preveja o sinal pelo dicionário, antes de enumerar.
+- **(Parte 155)** FECHADA: a pendência 1 da 154 (a simetria da ordem reversa vale; a deriva cai com o comprimento). ABERTAS: (1) o custo do setdefault não é a borda:
+  medir, por enumeração, quanto a escolha da primeira casa reduz o número de continuações distintas (as casas da mesma letra têm vizinhanças diferentes) e prever o custo
+  de 3 a 6 letras pela tendência de dois pontos; (2) a queda da deriva com o comprimento em forma fechada (a cadeia do fim do caminho numa grade 3 × 3); (3) a da 154:
+  o sinal da memória das letras por uma conta de segunda ordem.
 """
 
 # ====================================================================================================
@@ -80427,6 +80748,103 @@ public class Rodada102 {
         }
         double eb = exato(B, "abc", new double[]{0.5, 0.3, 0.2});
         System.out.println("B_uniforme " + Double.toHexString(eb) + "\\nconferido True\\nfim");
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/Rodada103.java  (92 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada103.java'] = """// Rodada 103 (Parte 155): as estatisticas exatas do fim do episodio (estatisticas_exatas, ordem="reversa") bit a bit, grade 3 x 3, caso B, 3 a 4 letras. Vizinhas na ordem
+// REVERSA ((1,1), ..., (-1,-1)); por caminho o vetor (acerto, dr, dc, borda, comprimento); acoes por letra na ordem de insercao (LinkedHashMap), primeira casa de cada letra.
+import java.util.*;
+
+public class Rodada103 {
+    static int T = 3, MIN = 3, MAX = 4;
+    static char[] grade = new char[9];
+    static Set<String> dic;
+
+    static List<Integer> viz(int u) {
+        int r = u / T, c = u % T;
+        List<Integer> l = new ArrayList<>();
+        for (int a = 1; a >= -1; a--) for (int b = 1; b >= -1; b--) {
+            if (a == 0 && b == 0) continue;
+            int rr = r + a, cc = c + b;
+            if (rr >= 0 && rr < T && cc >= 0 && cc < T) l.add(rr * T + cc);
+        }
+        return l;
+    }
+
+    static double[] anda(List<Integer> caminho, String prefixo) {
+        LinkedHashMap<Character, Integer> acoes = new LinkedHashMap<>();
+        if (caminho.size() < MAX) {
+            for (int v : viz(caminho.get(caminho.size() - 1)))
+                if (!caminho.contains(v) && !acoes.containsKey(grade[v])) acoes.put(grade[v], v);
+        }
+        boolean parar = caminho.size() >= MIN;
+        int n = acoes.size() + (parar ? 1 : 0);
+        double[] s = new double[5];
+        if (n == 0) return s;
+        if (parar) {
+            int u0 = caminho.get(0), u1 = caminho.get(caminho.size() - 1);
+            int r0 = u0 / T, c0 = u0 % T, r1 = u1 / T, c1 = u1 % T;
+            s[0] = dic.contains(prefixo) ? 1.0 : 0.0;
+            s[1] = r1 - r0;
+            s[2] = c1 - c0;
+            s[3] = Math.min(Math.min(r1, c1), Math.min(T - 1 - r1, T - 1 - c1));
+            s[4] = caminho.size();
+        }
+        for (Map.Entry<Character, Integer> e : acoes.entrySet()) {
+            List<Integer> nc = new ArrayList<>(caminho);
+            nc.add(e.getValue());
+            double[] f = anda(nc, prefixo + e.getKey());
+            for (int k = 0; k < 5; k++) s[k] = s[k] + f[k];
+        }
+        for (int k = 0; k < 5; k++) s[k] = s[k] / n;
+        return s;
+    }
+
+    public static void main(String[] args) {
+        Set<String> B = new HashSet<>();
+        String alfa = "abc";
+        for (int L = 3; L <= 5; L++) {
+            int tot = 1;
+            for (int i = 0; i < L; i++) tot *= 3;
+            for (int x = 0; x < tot; x++) {
+                char[] w = new char[L];
+                int y = x;
+                for (int i = L - 1; i >= 0; i--) { w[i] = alfa.charAt(y % 3); y /= 3; }
+                boolean ok = true;
+                for (int i = 1; i < L; i++) if (w[i] == w[i - 1]) ok = false;
+                if (ok) B.add(new String(w));
+            }
+        }
+        dic = B;
+        double[] pesos = {0.5, 0.3, 0.2};
+        double t = 0.0;
+        for (double w : pesos) t += w;
+        double[] p = new double[3];
+        for (int i = 0; i < 3; i++) p[i] = pesos[i] / t;
+        double[] tot = new double[5];
+        int N = 1;
+        for (int i = 0; i < 9; i++) N *= 3;
+        for (int x = 0; x < N; x++) {
+            int[] idx = new int[9];
+            int y = x;
+            for (int i = 8; i >= 0; i--) { idx[i] = y % 3; y /= 3; }
+            for (int i = 0; i < 9; i++) grade[i] = alfa.charAt(idx[i]);
+            double peso = 1.0;
+            for (int i = 0; i < 9; i++) peso = peso * p[idx[i]];
+            for (int u = 0; u < 9; u++) {
+                List<Integer> cam = new ArrayList<>();
+                cam.add(u);
+                double[] f = anda(cam, String.valueOf(grade[u]));
+                for (int k = 0; k < 5; k++) tot[k] += peso * f[k] / 9;
+            }
+        }
+        String[] nomes = {"acerto", "dr", "dc", "borda", "comprimento"};
+        for (int k = 0; k < 5; k++) System.out.println(nomes[k] + " " + Double.toHexString(tot[k]));
+        System.out.println("conferido True\\nfim");
     }
 }
 """
@@ -87897,6 +88315,82 @@ def main():
     eb = exato(B, "abc", [0.5, 0.3, 0.2])
     assert abs(eb - tabuleiro.aleatorio_exato(B, {"A": 0.5, "B": 0.3, "C": 0.2}, 3, casa="uniforme")) < 1e-12
     print("B_uniforme " + eb.hex())
+    print("conferido True")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada103.py  (71 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada103.py'] = """\"\"\"Rodada 103 do diálogo Python <-> Java (Parte 155): as estatísticas exatas do fim do episódio de synthai.tabuleiro.estatisticas_exatas com a ORDEM REVERSA
+das vizinhas ((1, 1), …, (−1, −1)), bit a bit, na grade 3 × 3, caso B ({a, b, c} = (0,5; 0,3; 0,2), sem letras iguais seguidas), de 3 a 4 letras. Por
+caminho, o vetor (acerto, dr, dc, distância à borda, comprimento); a soma dos filhos na ordem das ações e a divisão por n; o total ponderado por atribuição
+(ordem do itertools.product). Confere contra o módulo (1e-12) antes de imprimir. Da raiz: python3 dialogo/rodada103.py\"\"\"
+import itertools
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from synthai import tabuleiro  # noqa: E402
+
+
+def estat(palavras, letras, pesos, tamanho=3, minimo=3, maximo=4):
+    t = 0.0
+    for w in pesos:
+        t += w
+    p = [w / t for w in pesos]
+    dic = set(palavras)
+    casas = [(r, c) for r in range(tamanho) for c in range(tamanho)]
+    deltas = [(a, b) for a in (-1, 0, 1) for b in (-1, 0, 1) if a or b][::-1]
+    vz = {}
+    for (r, c) in casas:
+        vz[(r, c)] = [(r + a, c + b) for a, b in deltas if 0 <= r + a < tamanho and 0 <= c + b < tamanho]
+    tot = [0.0] * 5
+    for idx in itertools.product(range(len(letras)), repeat=len(casas)):
+        grade = {u: letras[i] for u, i in zip(casas, idx)}
+        peso = 1.0
+        for i in idx:
+            peso = peso * p[i]
+
+        def anda(caminho, prefixo):
+            acoes = {}
+            if len(caminho) < maximo:
+                for v in vz[caminho[-1]]:
+                    if v not in caminho and grade[v] not in acoes:
+                        acoes[grade[v]] = v
+            parar = len(caminho) >= minimo
+            n = len(acoes) + (1 if parar else 0)
+            if n == 0:
+                return [0.0] * 5
+            s = [0.0] * 5
+            if parar:
+                (r0, c0), (r1, c1) = caminho[0], caminho[-1]
+                s = [1.0 if prefixo in dic else 0.0, float(r1 - r0), float(c1 - c0),
+                     float(min(r1, c1, tamanho - 1 - r1, tamanho - 1 - c1)), float(len(caminho))]
+            for letra, v in acoes.items():
+                f = anda(caminho + [v], prefixo + letra)
+                for k in range(5):
+                    s[k] = s[k] + f[k]
+            return [x / n for x in s]
+        for u in casas:
+            f = anda([u], grade[u])
+            for k in range(5):
+                tot[k] += peso * f[k] / len(casas)
+    return tot
+
+
+def main():
+    tres = ["".join(x) for L in (3, 4, 5) for x in itertools.product("abc", repeat=L)]
+    B = [w for w in tres if all(a != b for a, b in zip(w, w[1:]))]
+    e = estat(B, "abc", [0.5, 0.3, 0.2])
+    m = tabuleiro.estatisticas_exatas(B, {"A": 0.5, "B": 0.3, "C": 0.2}, 3, 3, 4, ordem="reversa")
+    for k, nome in enumerate(("acerto", "dr", "dc", "borda", "comprimento")):
+        assert abs(e[k] - m[nome]) < 1e-12
+        print(nome + " " + e[k].hex())
     print("conferido True")
     print("fim")
 

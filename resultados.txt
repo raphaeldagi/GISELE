@@ -2354,3 +2354,13 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3213 3-5 letras A': primeira 0.241437; uniforme 0.248427; campo medio 0.263684; uniforme/primeira 1.0290; uniforme/campo 0.9421; primeira/campo 0.9156
   P3213 3-5 letras C: primeira 0.324510; uniforme 0.328845; campo medio 0.307058; uniforme/primeira 1.0134; uniforme/campo 1.0710; primeira/campo 1.0568
   P3213 3-5 letras D: primeira 0.147994; uniforme 0.152485; campo medio 0.143461; uniforme/primeira 1.0303; uniforme/campo 1.0629; primeira/campo 1.0316
+=== Parte 155: a deriva do setdefault ===
+  P3214 3-5 letras B direta: acerto 0.301690; dr -0.33628; dc -0.13730; borda 0.13922; comprimento 4.01884
+  P3214 3-5 letras B reversa: acerto 0.301690; dr +0.33628; dc +0.13730; borda 0.13922; comprimento 4.01884
+  P3214 3-5 letras B uniforme: acerto 0.306377; dr -0.00000; dc -0.00000; borda 0.13684; comprimento 4.02598
+  P3214 3-5 letras A' direta: acerto 0.241437; dr -0.45915; dc -0.17743; borda 0.14769; comprimento 3.91672
+  P3214 3-5 letras A' reversa: acerto 0.241437; dr +0.45915; dc +0.17743; borda 0.14769; comprimento 3.91672
+  P3214 3-5 letras A' uniforme: acerto 0.248427; dr +0.00000; dc -0.00000; borda 0.15026; comprimento 3.92436
+  P3215 B 3-4 letras, primeira: dr -0.39840; dc -0.17914; borda 0.16744; comprimento 3.63447
+  P3215 B 3-5 letras, primeira: dr -0.33628; dc -0.13730; borda 0.13922; comprimento 4.01884
+  P3215 B 3-6 letras, primeira: dr -0.29525; dc -0.11634; borda 0.12226; comprimento 4.23262

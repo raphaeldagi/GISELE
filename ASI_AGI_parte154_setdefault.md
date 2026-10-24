@@ -101,3 +101,4 @@ leitura do setdefault (o canto) é hipótese de 1 lote; o teste dela é a ordem 
 **O placar (m):** m1 = 5 em [5; 7] ✅, m2 = 0 ✅, m3 = 0,0286 em [0,020; 0,040] ✅, m4 = 1,0 em [0,6000; 1,0000] ✅, m5 = 0 ✅ e m6 = 0 ✅. **6 de 6.**
 
 ➡ Anterior: [Parte 153](ASI_AGI_parte153_campo_medio.md).
+➡ Próxima: [Parte 155](ASI_AGI_parte155_deriva.md).
