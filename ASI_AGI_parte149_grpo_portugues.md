@@ -91,3 +91,9 @@ O teste rodou (o resultado está em "Medido"); (k) ficou 0,0003 acima do teto. O
 desvio binomial 0,0024), e a faixa só levou o erro da média de 3 sementes novas: o erro do centro antigo ficou de fora. Antes de mecanismo:
 - **(u)** aleatório no dicionário embutido, média das sementes 46 a 65, em **[0,0079; 0,0147]**: centro 0,0113 (as 3 sementes de (k)); binomial
   √(0,0113 · 0,9887/1000) = 0,00334 por semente, 0,00075 na média de 20, e 0,00334/√3 = 0,0019 de erro do centro; 1,645 · √(0,00075² + 0,0019²).
+
+### A rodada 97, registrada antes
+O quantil t que a Parte 148 passou a exigir para calibrações pequenas (`p3200_t_student_quantil`), traduzido: a densidade como exp(−(ν+1)/2 ·
+log(1 + s²/ν)) com o exp e o log PRÓPRIOS da rodada 26, a constante Γ((ν+1)/2)/Γ(ν/2) pela recorrência R(ν + 2) = R(ν)·(ν + 1)/ν a partir de
+R(1) = 1/√π e R(2) = √π/2 (só √ e as quatro operações, sem lgamma), Simpson com 2.000 intervalos em laço e 80 bissecções, para ν = 2, 7, 19 e 27.
+Previsão: **IGUAL**. O mecanismo que poderia quebrar: a constante π (os dois lados usam o double mais próximo de π, o mesmo).

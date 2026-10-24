@@ -18372,6 +18372,39 @@ def p3201_grpo_por_dicionario(dicionario="pt", sementes=tuple(range(101, 121)), 
     return out
 
 
+def p3202_aleatorio_por_dicionario(dicionario="embutido", sementes=tuple(range(46, 66)), avaliacao=1000):
+    """(u) da Parte 149 (P3202): so o braco aleatorio do avaliador da Parte 111 (mesmas grades: semente + 100000; mesmo agente: semente + 2), sem
+    treinar o Q-learning. Devolve (media, desvio, lista)."""
+    import random
+    import statistics as st
+    from synthai import palavras_rl as P
+    fonte = {"pt": P.lemas_ownpt, "en": P.lemas_wordnet, "embutido": lambda: P.EMBEDDED_WORDS}[dicionario]
+    dic = P.Dicionario(fonte())
+    v = []
+    for s in sementes:
+        cfg = P.Config(seed=s)
+        env = P.WordGridEnv(cfg.tamanho, cfg.min_len, cfg.max_len, rng=random.Random(s + 100_000))
+        pol = P.QAgent(seed=s + 2)
+        res = [P.run_episode(env, dic, pol, "random", learn=False) for _ in range(avaliacao)]
+        v.append(sum(r[1] for r in res) / len(res))
+    return st.mean(v), (st.stdev(v) if len(v) > 1 else 0.0), v
+
+
+# (parte, rotulo, piso, teto, n_cal, medido): as faixas de CALIBRACAO que erraram nas Partes 147 e 148, copiadas dos textos das partes
+_ERROS_DE_CALIBRACAO_147_148 = ((147, "b", 0.136, 0.200, 3, 0.2017), (148, "a", 0.3072, 0.3413, 8, 0.3020), (148, "n", 0.2913, 0.3265, 28, 0.3278))
+
+
+def p3203_auditoria_t(erros=_ERROS_DE_CALIBRACAO_147_148):
+    """(r) da Parte 149 (P3203): cada faixa refeita com o quantil t de n_cal - 1 graus no lugar de 1,645 (mesmo centro, meia-largura vezes
+    t/1,645). Devolve [(parte, rotulo, piso_t, teto_t, acerta_com_t)] e o numero que vira acerto."""
+    out = []
+    for parte, rot, a, b, n, x in erros:
+        c, h = (a + b) / 2, (b - a) / 2
+        h2 = h * p3200_t_student_quantil(n - 1) / 1.645
+        out.append((parte, rot, c - h2, c + h2, c - h2 <= x <= c + h2))
+    return out, sum(o[4] for o in out)
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
@@ -18387,6 +18420,25 @@ def _parte_148():
 
 
 PARTES[148] = _parte_148
+
+
+def _parte_149():
+    print("\n=== Parte 149: a GRPO no jogo de palavras em portugues (OpenWordNet-PT sem acentos) ===")
+    for nome, sem in (("calibracao 101-120", tuple(range(101, 121))), ("teste 121-140", tuple(range(121, 141)))):
+        r = p3201_grpo_por_dicionario("pt", sem)
+        print(f"  P3201 {nome}: Q {r['Q']:.4f}; aleatorio {r['aleat']:.4f}; G=2 {r['G2']:.4f}; G=8 {r['G8']:.4f}; sem contraste G=2 {r['sem2']:.4f}, "
+              f"G=8 {r['sem8']:.4f}; G2-Q {r['G2-Q']:+.4f}; G8-Q {r['G8-Q']:+.4f}; G8-G2 {r['G8-G2']:+.4f}; as duas acima do Q {r['ambas']}/{len(sem)}")
+    e = p3201_grpo_por_dicionario("embutido", (43, 44, 45))
+    print(f"  P3201 (k) embutido, sementes 43-45: aleatorio {e['aleat']:.4f}; Q {e['Q']:.4f}")
+    m, s, _ = p3202_aleatorio_por_dicionario()
+    print(f"  P3202 (u) embutido, sementes 46-65: aleatorio {m:.4f} (desvio {s:.4f})")
+    aud, n = p3203_auditoria_t()
+    for parte, rot, a, b, ok in aud:
+        print(f"  P3203 Parte {parte} ({rot}) com o quantil t: [{a:.4f}; {b:.4f}] {'acerta' if ok else 'erra'}")
+    print(f"  P3203 (r) erros de calibracao que viram acerto com o t: {n}")
+
+
+PARTES[149] = _parte_149
 
 PARTES[126] = _parte_126
 
