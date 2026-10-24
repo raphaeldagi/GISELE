@@ -18442,6 +18442,56 @@ def p3206_aleatorio_tabuleiro(dicionario, tabuleiro="pt", sementes=tuple(range(1
         return p3202_aleatorio_por_dicionario(dicionario, sementes)
 
 
+def p3207_aleatorio_geometria(dicionario="pt", tabuleiro="pt", tamanho=5, minimo=3, maximo=5, sementes=tuple(range(161, 181)), avaliacao=1000):
+    """(a)-(d) da Parte 151 (P3207): so o braco aleatorio, com o tamanho da grade e os comprimentos trocados, e a previsao geometrica
+    1,054 * sum_L s_L D_L. Devolve (medido, desvio, geometria)."""
+    import random
+    import statistics as st
+    from synthai import palavras_rl as P
+    from synthai import tabuleiro as T
+    fonte = {"pt": P.lemas_ownpt, "en": P.lemas_wordnet, "embutido": lambda: P.EMBEDDED_WORDS}[dicionario]
+    palavras = fonte()
+    dic = P.Dicionario(palavras)
+    freq = T.frequencias_de(P.lemas_ownpt()) if tabuleiro == "pt" else P.LETTER_FREQ
+    v = []
+    with T.com_frequencias(freq):
+        for s in sementes:
+            env = P.WordGridEnv(tamanho, minimo, maximo, rng=random.Random(s + 100_000))
+            pol = P.QAgent(seed=s + 2)
+            res = [P.run_episode(env, dic, pol, "random", learn=False) for _ in range(avaliacao)]
+            v.append(sum(r[1] for r in res) / len(res))
+    return st.mean(v), (st.stdev(v) if len(v) > 1 else 0.0), T.aleatorio_geometrico(palavras, freq, tamanho, minimo, maximo)
+
+
+def p3208_repertorio(dicionario="pt", tabuleiro="pt", sementes=tuple(range(101, 106)), episodios=5000, avaliacao=1000):
+    """A pendencia 1 da Parte 149 (P3208): nas avaliacoes do Q-learning guloso, a fracao dos acertos cuja palavra aparece em pelo menos dois episodios
+    (cada episodio e uma grade nova): o REPERTORIO. Devolve {taxa, distintas, repete} medias das sementes, e as listas."""
+    import random
+    import statistics as st
+    from synthai import palavras_rl as P
+    from synthai import tabuleiro as T
+    from collections import Counter
+    fonte = {"pt": P.lemas_ownpt, "en": P.lemas_wordnet, "embutido": lambda: P.EMBEDDED_WORDS}[dicionario]
+    dic = P.Dicionario(fonte())
+    freq = T.frequencias_de(P.lemas_ownpt()) if tabuleiro == "pt" else P.LETTER_FREQ
+    acc = {"taxa": [], "distintas": [], "repete": []}
+    with T.com_frequencias(freq):
+        for s in sementes:
+            cfg = P.Config(episodios=episodios, avaliacao=avaliacao, seed=s)
+            ag, _, _ = P.train(cfg, dic)
+            env = P.WordGridEnv(cfg.tamanho, cfg.min_len, cfg.max_len, rng=random.Random(s + 100_000))
+            res = [P.run_episode(env, dic, ag, "greedy", learn=False) for _ in range(avaliacao)]
+            achadas = Counter(r[0] for r in res if r[1])
+            k = sum(achadas.values())
+            acc["taxa"].append(k / avaliacao)
+            acc["distintas"].append(len(achadas))
+            acc["repete"].append(sum(n for n in achadas.values() if n >= 2) / k if k else 0.0)
+    out = {x: st.mean(v) for x, v in acc.items()}
+    out["desvios"] = {x: st.stdev(v) for x, v in acc.items()} if len(sementes) > 1 else {}
+    out["listas"] = acc
+    return out
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
