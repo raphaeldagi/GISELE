@@ -177,3 +177,50 @@ def aleatorio_colapso(palavras, freq, tamanho=5, minimo=3, maximo=5):
             s += x
         total += peso * parar * s
     return total
+
+
+# --- o braço aleatório EXATO numa grade pequena (Parte 153) ---
+
+def aleatorio_exato(palavras, freq, tamanho=3, minimo=3, maximo=5):
+    """A chance exata de o braço aleatório achar uma palavra, somando sobre TODAS as atribuições de letras às casas (peso Π p) e, em cada uma, sobre
+    todos os caminhos com a regra real do `valid_actions` (Parte 111): as vizinhas livres na ordem (−1, −1), …, (1, 1), uma ação por LETRA com a primeira
+    casa daquela letra (setdefault), PARAR com `minimo` letras ou mais, só PARAR com `maximo`; escolha uniforme entre as ações; sem ação, falha. Só para
+    grades pequenas e alfabetos pequenos (len(freq) ** (tamanho²) atribuições)."""
+    import itertools
+    letras = [c for c in sorted(freq) if freq[c] > 0]
+    t = sum(freq[c] for c in letras)
+    p = {c: freq[c] / t for c in letras}
+    dic = {w.upper() for w in palavras}
+    casas = [(r, c) for r in range(tamanho) for c in range(tamanho)]
+
+    def viz(r, c):
+        return [(r + a, c + b) for a in (-1, 0, 1) for b in (-1, 0, 1)
+                if (a or b) and 0 <= r + a < tamanho and 0 <= c + b < tamanho]
+    vz = {u: viz(*u) for u in casas}
+    total = 0.0
+    for atrib in itertools.product(letras, repeat=len(casas)):
+        grade = dict(zip(casas, atrib))
+        peso = 1.0
+        for x in atrib:
+            peso *= p[x]
+
+        def anda(caminho, prefixo):
+            acoes = {}
+            if len(caminho) < maximo:
+                vis = set(caminho)
+                for v in vz[caminho[-1]]:
+                    if v not in vis:
+                        acoes.setdefault(grade[v], v)
+            parar = len(caminho) >= minimo
+            n = len(acoes) + (1 if parar else 0)
+            if n == 0:
+                return 0.0
+            s = (1.0 if prefixo in dic else 0.0) if parar else 0.0
+            for letra, v in acoes.items():
+                s += anda(caminho + [v], prefixo + letra)
+            return s / n
+        acerto = 0.0
+        for u in casas:
+            acerto += anda([u], grade[u])
+        total += peso * acerto / len(casas)
+    return total
