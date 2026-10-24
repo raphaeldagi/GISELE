@@ -181,11 +181,12 @@ def aleatorio_colapso(palavras, freq, tamanho=5, minimo=3, maximo=5):
 
 # --- o braço aleatório EXATO numa grade pequena (Parte 153) ---
 
-def aleatorio_exato(palavras, freq, tamanho=3, minimo=3, maximo=5):
+def aleatorio_exato(palavras, freq, tamanho=3, minimo=3, maximo=5, casa="primeira"):
     """A chance exata de o braço aleatório achar uma palavra, somando sobre TODAS as atribuições de letras às casas (peso Π p) e, em cada uma, sobre
     todos os caminhos com a regra real do `valid_actions` (Parte 111): as vizinhas livres na ordem (−1, −1), …, (1, 1), uma ação por LETRA com a primeira
     casa daquela letra (setdefault), PARAR com `minimo` letras ou mais, só PARAR com `maximo`; escolha uniforme entre as ações; sem ação, falha. Só para
-    grades pequenas e alfabetos pequenos (len(freq) ** (tamanho²) atribuições)."""
+    grades pequenas e alfabetos pequenos (len(freq) ** (tamanho²) atribuições). casa = "uniforme" (Parte 154): em vez da primeira casa de cada letra,
+    uma casa sorteada uniforme entre as livres daquela letra (separa o efeito do setdefault do da memória das letras)."""
     import itertools
     letras = [c for c in sorted(freq) if freq[c] > 0]
     t = sum(freq[c] for c in letras)
@@ -210,14 +211,20 @@ def aleatorio_exato(palavras, freq, tamanho=3, minimo=3, maximo=5):
                 vis = set(caminho)
                 for v in vz[caminho[-1]]:
                     if v not in vis:
-                        acoes.setdefault(grade[v], v)
+                        acoes.setdefault(grade[v], []).append(v)
             parar = len(caminho) >= minimo
             n = len(acoes) + (1 if parar else 0)
             if n == 0:
                 return 0.0
             s = (1.0 if prefixo in dic else 0.0) if parar else 0.0
-            for letra, v in acoes.items():
-                s += anda(caminho + [v], prefixo + letra)
+            for letra, vs in acoes.items():
+                if casa == "primeira":
+                    s += anda(caminho + [vs[0]], prefixo + letra)
+                else:
+                    m = 0.0
+                    for v in vs:
+                        m += anda(caminho + [v], prefixo + letra)
+                    s += m / len(vs)
             return s / n
         acerto = 0.0
         for u in casas:
