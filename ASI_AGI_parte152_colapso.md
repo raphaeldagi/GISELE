@@ -75,3 +75,9 @@ Erros no mundo em **[0; 3]**, centro 0,7.
 Os cinco mundos rodaram (resultado em "Medido"); (e) ficou 0,00005 acima do teto, com razão medido/colapso 1,147, z ≈ 1,8 contra o ruído binomial e o erro do
 modelo juntos. Antes de qualquer mecanismo (Partes 117 e 148), 40 sementes novas, o mesmo centro:
 - **(h)** aleatório, WordNet / inglês, 4 a 5 letras, média das sementes 201 a 240, em **[0,0074; 0,0091]**: 1,645 · √(binomial/40 + (0,021 · 1,36 · 0,00824)²).
+
+### A rodada 100, registrada antes (a centésima)
+A tabela do colapso traduzida: a programação dinâmica sobre as 26 letras (estados (sorteios usados, distintas) numa matriz percorrida na ordem fixa t, k
+crescentes, em vez do dicionário do módulo), o peso multinomial com p^m por MULTIPLICAÇÃO REPETIDA (a `**` do módulo é a pow da libm; expoente inteiro sai
+portável assim, regra da Parte 92) e m! exato; P(parar | n) e P(c | n) com e sem PARAR para n = 1..8, com as letras do inglês. Só + × ÷. Previsão: **IGUAL**.
+O que poderia quebrar: a ordem das somas dentro da programação dinâmica (os dois lados percorrem a matriz na mesma ordem).
