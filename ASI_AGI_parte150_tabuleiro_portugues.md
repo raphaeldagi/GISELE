@@ -88,3 +88,9 @@ Acertos como contagem: 9 a 14 das 15.
 
 ### Sobre mim, registrado
 Erros no mundo em **[1; 6]**: o (b) já errou; centro 1 + 2,5.
+
+### A rodada 98, registrada antes
+A conta de peso de `synthai/tabuleiro.py` traduzida: as frequências de letras de uma lista fixa de 40 palavras portuguesas (A a Z na ordem do
+alfabeto, total em laço, piso 0,01) e a densidade D das que têm 3 a 5 letras, mais a mesma D com as frequências do inglês. Só + × ÷ em laço, nenhuma
+função transcendental. Previsão: **IGUAL**. O que poderia quebrar: a ordem da soma das frequências (o módulo usa `sum()` de floats, compensado no
+Python 3.12; a rodada usa laço, nos dois lados).
