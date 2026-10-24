@@ -49,3 +49,7 @@ A régua sobre o rascunho com "Do mundo:" provisória: m1 = 5, m2 = 0, m3 = 0,02
 
 ### Sobre mim, registrado
 Erros no mundo em **[0; 3]**, centro 1,0.
+
+### A rodada 102, registrada antes
+O enumerador com a casa uniforme traduzido (caso B, 3 a 5 letras): para cada letra, a média sobre as casas livres dela (soma na ordem das vizinhas, dividida pela
+contagem), e depois a soma das ações e a divisão por n como na rodada 101. Só + × ÷. Previsão: **IGUAL**.

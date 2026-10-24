@@ -18584,6 +18584,29 @@ def p3212_campo_medio_lote_novo():
     return out
 
 
+def _casos_p154():
+    """Os quatro casos sem simetria das Partes 153-154: B, A', C e D (nome, palavras, freq)."""
+    import itertools
+    casos = _casos_p153()
+    A, B = casos[0][1], casos[1][1]
+    alt = [w for L in (3, 4, 5) for w in ("".join(x) for x in itertools.product("ab", repeat=L)) if all(a != b for a, b in zip(w, w[1:]))]
+    return (("B", B, {"A": 0.5, "B": 0.3, "C": 0.2}), ("A'", A, {"A": 0.7, "B": 0.3}), ("C", B, {"A": 1.0, "B": 1.0, "C": 1.0}),
+            ("D", alt, {"A": 0.7, "B": 0.3}))
+
+
+def p3213_setdefault_e_memoria(maximo=5):
+    """A Parte 154 (P3213): na grade 3 x 3, de 3 a `maximo` letras, o exato com a primeira casa de cada letra (o jogo), o exato com a casa sorteada entre as da
+    letra, e o campo medio. Devolve {nome: (primeira, uniforme, campo, uniforme/primeira, uniforme/campo, primeira/campo)}."""
+    from synthai import tabuleiro as T
+    out = {}
+    for nome, palavras, freq in _casos_p154():
+        p = T.aleatorio_exato(palavras, freq, 3, 3, maximo)
+        u = T.aleatorio_exato(palavras, freq, 3, 3, maximo, casa="uniforme")
+        m = T.aleatorio_colapso(palavras, freq, 3, 3, maximo)
+        out[nome] = (p, u, m, u / p, u / m, p / m)
+    return out
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
