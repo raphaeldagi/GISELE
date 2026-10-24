@@ -21,8 +21,8 @@ tabuleiro de outra língua.
 **O que pode quebrar a conta:** as letras do tabuleiro são inglesas, e o português precisa de vogais em proporção maior; com isso, menos palavras
 portuguesas cabem nas grades, e o dicionário "efetivo" fica menor que 4.181. Esse viés empurra os dois números para baixo. Sem uma conta do peso
 dele (Parte 62), a faixa é larga e a procedência é "mecanismo sem calibração" (taxa de erro histórica dessas: alta).
-- **(a0)** Q-learning, média das sementes 101 a 120, em **[0,20; 0,30]**
-- **(b0)** G = 2 − Q, média das sementes 101 a 120, em **[0,04; 0,11]**
+- **(s)** (registrada como "(a0)"; renomeada porque a régua só lê rótulos de uma letra) Q-learning, média das sementes 101 a 120, em **[0,20; 0,30]**
+- **(t)** G = 2 − Q, média das sementes 101 a 120, em **[0,04; 0,11]**
 
 ## A calibração (sementes 101 a 120; 20 sementes, regra da Parte 148)
 Média e desvio entre sementes (P3201):
@@ -41,7 +41,7 @@ Média e desvio entre sementes (P3201):
 
 As duas GRPO acima do Q-learning em 19 de 20 sementes.
 
-**As previsões de mecanismo:** (a0) Q = 0,1403, fora de [0,20; 0,30] ❌; (b0) G = 2 − Q = 0,0623, dentro de [0,04; 0,11] ✅. O viés que eu nomeei
+**As previsões de mecanismo:** (s) Q = 0,1403, fora de [0,20; 0,30] ❌; (t) G = 2 − Q = 0,0623, dentro de [0,04; 0,11] ✅. O viés que eu nomeei
 (letras inglesas no tabuleiro) era real e GRANDE: com 8,5 vezes mais palavras que o dicionário embutido, o Q-learning em português acha menos
 palavras (0,140 contra 0,153). O tamanho do dicionário não é a variável certa; a variável é quantas palavras CABEM no tabuleiro. O aleatório mede
 isso sem agente: 0,0131 em português contra 0,047 no inglês grande.
@@ -71,3 +71,17 @@ n_cal de forma que uma régua leia: fica pendente). Os erros de calibração for
 A (d) da 147 tinha procedência binomial e não entra. A conta, feita à mão e conferida por código antes do registro: só a 147 (b) passa a acertar.
 - **(r)** nº de erros de calibração das Partes 147-148 que viram acerto com o quantil t em **[1; 1]**. É uma identidade (a conta é determinística
   sobre faixas já escritas); o código pode errar, a conta não.
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua rodou sobre o rascunho com uma linha "Do mundo:" provisória (regra da Parte 120): m1 = 14, m2 = 1, m3 = 0,108, m5 = 0. O primeiro rascunho
+deu m1 = 0, porque o leitor só aceita rótulos de uma letra e "(a0)" quebrava a linha do placar; renomeei para (s) e (t). Erros esperados nas 12 que
+faltam: E ≈ 2,5, então m1 em [14; 14 + 2E] (regra da Parte 148). Acertos como contagem: 9 a 13 das 14 registradas.
+- **(m1)** nº de previsões do mundo em **[14; 19]**
+- **(m2)** nº que cruzam ou tocam o zero em **[1; 2]**
+- **(m3)** mediana de w em **[0,08; 0,14]**
+- **(m4)** fração de acertos em **[0,60; 0,93]**
+- **(m5)** nº com w > 0,6 em **[0; 0]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[1; 6]**: o (s) já errou, e as 12 que faltam têm centro 2,5 (desvio binomial ≈ 1,4).
