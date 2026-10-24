@@ -7575,6 +7575,9 @@ def testes_de_regressao():
         "P3207": tuple(round(p3207_aleatorio_geometria(tamanho=a, minimo=b, maximo=d)[0], 4) for a, b, d in ((4, 3, 5), (6, 3, 5), (5, 3, 4), (5, 4, 5))) == (0.0251, 0.0204, 0.0368, 0.007),
         "P3208": (lambda r: (round(r["repete"], 4), round(r["distintas"], 2)) == (0.9425, 22.35))(p3208_repertorio("embutido", "en", tuple(range(121, 141)))),
         "P3209": tuple(round(p3209_aleatorio_colapso(*a)[0], 5) for _, a in _MUNDOS_P152) == (0.00405, 0.03115, 0.0215, 0.0215, 0.00945),
+        "P3210": (lambda r: (round(r["B"][3], 4), round(r["A"][0], 6), round(r["controle"][0], 6)) == (1.0429, 0.25, 1.0))(p3210_campo_medio_contra_exato()),
+        "P3211": round(p3211_simulado_caso_b()[2], 2) == -0.95,
+        "P3212": (lambda r: tuple(round(r[k][2], 4) for k in ("A'", "C", "D")) == (0.9156, 1.0568, 1.0316))(p3212_campo_medio_lote_novo()),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18662,6 +18665,19 @@ def _parte_152():
 
 
 PARTES[152] = _parte_152
+
+
+def _parte_153():
+    print("\n=== Parte 153: o erro do campo medio, por enumeracao exata na grade 3x3 ===")
+    for nome, (e, m, g, r) in p3210_campo_medio_contra_exato().items():
+        print(f"  P3210 {nome}: exato {e:.6f}; campo medio {m:.6f}; geometria {g:.6f}; exato/campo medio {r:.4f}")
+    s, e, z = p3211_simulado_caso_b()
+    print(f"  P3211 (e) jogo real, caso B, 200000 episodios: {s:.5f} contra exato {e:.5f}; z = {z:+.2f}")
+    for nome, (e, m, r) in p3212_campo_medio_lote_novo().items():
+        print(f"  P3212 {nome}: exato {e:.6f}; campo medio {m:.6f}; exato/campo medio {r:.4f}")
+
+
+PARTES[153] = _parte_153
 
 PARTES[126] = _parte_126
 

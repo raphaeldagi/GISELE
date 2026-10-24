@@ -2337,3 +2337,11 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3209 (e) WordNet 4-5: medido 0.00945 (desvio 0.00327); geometria 0.00825; colapso 0.00824; medido/colapso 1.147
   P3209 (f)/(g) media das razoes medido/colapso: 1.0453
   P3209 (h) WordNet 4-5, sementes 201-240: medido 0.00850; medido/colapso 1.032
+=== Parte 153: o erro do campo medio, por enumeracao exata na grade 3x3 ===
+  P3210 A: exato 0.250000; campo medio 0.250000; geometria 0.250000; exato/campo medio 1.0000
+  P3210 B: exato 0.301690; campo medio 0.289281; geometria 0.244764; exato/campo medio 1.0429
+  P3210 controle: exato 1.000000; campo medio 1.000000; geometria 1.000000; exato/campo medio 1.0000
+  P3211 (e) jogo real, caso B, 200000 episodios: 0.30072 contra exato 0.30169; z = -0.95
+  P3212 A': exato 0.241437; campo medio 0.263684; exato/campo medio 0.9156
+  P3212 C: exato 0.324510; campo medio 0.307058; exato/campo medio 1.0568
+  P3212 D: exato 0.147994; campo medio 0.143461; exato/campo medio 1.0316

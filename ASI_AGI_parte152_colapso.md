@@ -136,3 +136,4 @@ antes. O sinal é o esperado (uma vizinha já vista tem a mesma letra, e o colap
 **O placar (m):** m1 = 8 em [7; 9] ✅, m2 = 0 em [0; 0] ✅, m3 = 0,092 em [0,07; 0,12] ✅, m4 = 0,75 em [0,7143; 1,0000] ✅, m5 = 0 ✅ e m6 = 0 ✅. **6 de 6.**
 
 ➡ Anterior: [Parte 151](ASI_AGI_parte151_geometria_do_acaso.md).
+➡ Próxima: [Parte 153](ASI_AGI_parte153_campo_medio.md).

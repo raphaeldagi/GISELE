@@ -60,3 +60,63 @@ Procedência: mecanismo, sem calibração além do caso B (razão 1,043). Faixas
 O enumerador exato traduzido: as atribuições na ordem do `itertools.product` (a última casa varia mais depressa), o peso como produto na ordem das casas, as ações
 num dicionário ordenado pela inserção (`LinkedHashMap` em Java), a soma dos filhos na ordem das ações e a divisão por n no fim, nos casos A' e B. Só + × ÷.
 Previsão: **IGUAL**. O que poderia quebrar: a ordem das ações (a da inserção, que é a das vizinhas) e a ordem das atribuições.
+
+## Medido (P3210, P3211, P3212; rodada 101)
+
+| caso | exato | campo médio | geometria (sem colapso) | exato / campo médio |
+|---|---|---|---|---|
+| A ({a, b} meio a meio) | 0,250000 | 0,250000 | 0,250000 | 1,000 |
+| B ({a, b, c} = 0,5; 0,3; 0,2) | 0,301690 | 0,289281 | 0,244764 | 1,043 |
+| controle | 1,000000 | 1,000000 | 1,000000 | 1,000 |
+| A' ({a, b} = 0,7; 0,3) | 0,241437 | 0,263684 | | 0,916 |
+| C ({a, b, c} uniformes) | 0,324510 | 0,307058 | | 1,057 |
+| D ({a, b} = 0,7; 0,3, alternadas) | 0,147994 | 0,143461 | | 1,032 |
+
+O jogo real, caso B, 200.000 episódios: 0,30072 contra o exato 0,30169, z = −0,95.
+
+- **(a)** B: 1,043 em [0,80; 1,20]. ✅
+- **(b)** A: 1,000 em [0,70; 1,30]. ✅ (por simetria, não por acerto do mecanismo)
+- **(c)** |A − 1| − |B − 1| = **−0,043**, fora de [0,00; 0,25]. ❌
+- **(d)** controle: 1,0 nas duas contas. ✅
+- **(e)** z = −0,95. ✅
+- **(f)** A': 0,916. ✅
+- **(g)** C: 1,057. ✅
+- **(h)** D: 1,032. ✅
+- **(i)** |A' − 1| − |B − 1| = +0,042. ✅
+- **Rodada 101:** IGUAL, 4 linhas e 2 números bit a bit. ✅
+
+Do mundo: (a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅
+
+**Mundo: 8 de 9.** **Sobre mim:** 1 erro, em [0; 4]: ✅. O erro (c) é de DESENHO (o caso A não podia mostrar o efeito), não de mecanismo: o teste refeito em A', (i),
+acertou.
+
+### O que a enumeração mostrou
+**O campo médio erra pouco, e para os dois lados.** Em quatro casos sem simetria, a razão exato / campo médio vai de 0,916 a 1,057: o erro tem o tamanho de 4% a
+8% e o sinal depende do dicionário. Com o dicionário "de a até b" e letras desiguais (A'), o campo médio SUPERESTIMA; com os dicionários sem repetição (B, C, D),
+SUBESTIMA. A leitura: uma vizinha já vista volta com a mesma letra; num dicionário que proíbe letras iguais seguidas, isso empobrece as escolhas de um jeito que
+o campo médio não vê, e o caminho real tem MAIS letras diferentes ao alcance do que um sorteio novo daria (hipótese; 4 casos, um lote).
+
+**A grade 3 × 3 em inglês** (Parte 152, razão medido / campo médio 1,076 ± 0,041) cabe nessa faixa: o campo médio subestima ali de 4% a 6% nos casos com 3 letras;
+com 26 letras as coincidências são mais raras, e o erro deveria ser menor. A 1,076 tinha um ruído de medida do mesmo tamanho: não separa.
+
+**O enumerador é o jogo:** contra 200.000 episódios do `WordGridEnv` real, z = −0,95. O enumerador é agora a régua exata para grades pequenas, e o campo médio é
+a conta para as grandes.
+
+## Engenharia reversa
+- **O padrão: um caso de teste com uma simetria que anula o efeito.** O caso A tinha letras meio a meio E um dicionário que só olha a primeira e a última letra;
+  as duas simetrias juntas fazem o colapso não importar. É a regra da Parte 30 ("um teste usa um caso em que TODOS os termos são diferentes de zero") aplicada a
+  experimentos e não só a fórmulas: o caso A tinha o termo do colapso nulo.
+- **Regra (Parte 153):** antes de registrar um caso de teste de um mecanismo, rodar a conta que o mecanismo muda em DUAS versões (com e sem o mecanismo, aqui
+  geometria e campo médio); se as duas dão o mesmo número, o caso não testa o mecanismo. Aqui isso custava 1 segundo e teria mostrado 0,25 = 0,25 = 0,25.
+
+## Funções e testes
+- **Funções:** `_casos_p153`, `p3210_campo_medio_contra_exato`, `p3211_simulado_caso_b`, `p3212_campo_medio_lote_novo` e `_parte_153`; em `synthai/tabuleiro.py`,
+  `aleatorio_exato`. Entradas P3210, P3211 e P3212 na regressão.
+- **Diálogo:** `dialogo/rodada101.py` e `dialogo/Rodada101.java`, IGUAL.
+- **Testes:** `synthai/testes_parte153.py`.
+
+**O placar (m):** **m1 = 9 em [5; 8] ❌**, m2 = 3 em [2; 3] ✅, m3 = 0,190 em [0,15; 0,30] ✅, m4 = 0,889 em [0,4000; 1,0000] ✅, m5 = 0 ✅ e m6 = 0 ✅.
+**5 de 6.** A regra m1 em [n; n + 2E] (Parte 148) supõe duas previsões por erro; um erro de DESENHO (o caso inteiro não testava nada) abriu quatro, porque refazer
+o caso pede refazer todas as previsões que dependiam dele. Regra: um erro de desenho conta como tantos erros quantas previsões usam o caso.
+
+➡ Anterior: [Parte 152](ASI_AGI_parte152_colapso.md).

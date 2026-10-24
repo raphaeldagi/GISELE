@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 152, perguntas P1 a P3209).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 153, perguntas P1 a P3212).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (18615 linhas)
+# calculos.py  (18690 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7613,6 +7613,9 @@ def testes_de_regressao():
         "P3207": tuple(round(p3207_aleatorio_geometria(tamanho=a, minimo=b, maximo=d)[0], 4) for a, b, d in ((4, 3, 5), (6, 3, 5), (5, 3, 4), (5, 4, 5))) == (0.0251, 0.0204, 0.0368, 0.007),
         "P3208": (lambda r: (round(r["repete"], 4), round(r["distintas"], 2)) == (0.9425, 22.35))(p3208_repertorio("embutido", "en", tuple(range(121, 141)))),
         "P3209": tuple(round(p3209_aleatorio_colapso(*a)[0], 5) for _, a in _MUNDOS_P152) == (0.00405, 0.03115, 0.0215, 0.0215, 0.00945),
+        "P3210": (lambda r: (round(r["B"][3], 4), round(r["A"][0], 6), round(r["controle"][0], 6)) == (1.0429, 0.25, 1.0))(p3210_campo_medio_contra_exato()),
+        "P3211": round(p3211_simulado_caso_b()[2], 2) == -0.95,
+        "P3212": (lambda r: tuple(round(r[k][2], 4) for k in ("A'", "C", "D")) == (0.9156, 1.0568, 1.0316))(p3212_campo_medio_lote_novo()),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18560,6 +18563,65 @@ _MUNDOS_P152 = (("(a) uniforme", ("pt", "uniforme", 5, 3, 5)), ("(b) 3x3", ("pt"
                 ("(d) 3-6 letras", ("pt", "pt", 5, 3, 6)), ("(e) WordNet 4-5", ("en", "en", 5, 4, 5)))
 
 
+def _casos_p153():
+    \"\"\"Os casos da Parte 153: (nome, palavras, freq). A: {a, b} meio a meio, palavras de 3 a 5 letras de 'a' a 'b'; B: {a, b, c} = (0,5; 0,3; 0,2), sem letras
+    iguais seguidas; controle: as letras de B e todas as palavras de 3 a 5 letras.\"\"\"
+    import itertools
+    todas = {L: ["".join(x) for x in itertools.product("abc", repeat=L)] for L in (3, 4, 5)}
+    duas = ["".join(x) for L in (3, 4, 5) for x in itertools.product("ab", repeat=L)]
+    A = [w for w in duas if w[0] == "a" and w[-1] == "b"]
+    B = [w for L in (3, 4, 5) for w in todas[L] if all(a != b for a, b in zip(w, w[1:]))]
+    ctrl = [w for L in (3, 4, 5) for w in todas[L]]
+    fb = {"A": 0.5, "B": 0.3, "C": 0.2}
+    return (("A", A, {"A": 0.5, "B": 0.5}), ("B", B, fb), ("controle", ctrl, fb))
+
+
+def p3210_campo_medio_contra_exato():
+    \"\"\"(a)-(d) da Parte 153 (P3210): na grade 3 x 3, o braco aleatorio exato (enumeracao de letras e caminhos) contra o campo medio da Parte 152, nos casos
+    A, B e controle. Devolve {nome: (exato, campo_medio, geometria, razao exato/campo medio)}.\"\"\"
+    from synthai import tabuleiro as T
+    out = {}
+    for nome, palavras, freq in _casos_p153():
+        e = T.aleatorio_exato(palavras, freq, 3)
+        m = T.aleatorio_colapso(palavras, freq, 3)
+        g = T.aleatorio_geometrico(palavras, freq, 3)
+        out[nome] = (e, m, g, e / m)
+    return out
+
+
+def p3211_simulado_caso_b(episodios=200000, semente=153):
+    \"\"\"(e) da Parte 153 (P3211): o jogo real (WordGridEnv + run_episode, braco aleatorio) no caso B, grade 3 x 3. Devolve (simulado, exato, z).\"\"\"
+    import math
+    import random
+    from synthai import palavras_rl as P
+    from synthai import tabuleiro as T
+    _, palavras, freq = _casos_p153()[1]
+    dic = P.Dicionario(set(palavras))
+    with T.com_frequencias(freq):
+        env = P.WordGridEnv(3, 3, 5, rng=random.Random(semente))
+        pol = P.QAgent(seed=semente + 1)
+        k = sum(P.run_episode(env, dic, pol, "random", learn=False)[1] for _ in range(episodios))
+    e = T.aleatorio_exato(palavras, freq, 3)
+    s = k / episodios
+    return s, e, (s - e) / math.sqrt(e * (1 - e) / episodios)
+
+
+def p3212_campo_medio_lote_novo():
+    \"\"\"(f)-(i) da Parte 153 (P3212): os casos sem a simetria de A. A': {a, b} = (0,7; 0,3) com o dicionario de A; C: {a, b, c} uniformes com o de B;
+    D: {a, b} = (0,7; 0,3) com as palavras alternadas de 3 a 5 letras. Devolve {nome: (exato, campo_medio, razao)}.\"\"\"
+    import itertools
+    from synthai import tabuleiro as T
+    casos = _casos_p153()
+    A, B = casos[0][1], casos[1][1]
+    alt = [w for L in (3, 4, 5) for w in ("".join(x) for x in itertools.product("ab", repeat=L)) if all(a != b for a, b in zip(w, w[1:]))]
+    out = {}
+    for nome, palavras, freq in (("A'", A, {"A": 0.7, "B": 0.3}), ("C", B, {"A": 1.0, "B": 1.0, "C": 1.0}), ("D", alt, {"A": 0.7, "B": 0.3})):
+        e = T.aleatorio_exato(palavras, freq, 3)
+        m = T.aleatorio_colapso(palavras, freq, 3)
+        out[nome] = (e, m, e / m)
+    return out
+
+
 def _parte_148():
     print("\\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
@@ -18642,6 +18704,19 @@ def _parte_152():
 
 PARTES[152] = _parte_152
 
+
+def _parte_153():
+    print("\\n=== Parte 153: o erro do campo medio, por enumeracao exata na grade 3x3 ===")
+    for nome, (e, m, g, r) in p3210_campo_medio_contra_exato().items():
+        print(f"  P3210 {nome}: exato {e:.6f}; campo medio {m:.6f}; geometria {g:.6f}; exato/campo medio {r:.4f}")
+    s, e, z = p3211_simulado_caso_b()
+    print(f"  P3211 (e) jogo real, caso B, 200000 episodios: {s:.5f} contra exato {e:.5f}; z = {z:+.2f}")
+    for nome, (e, m, r) in p3212_campo_medio_lote_novo().items():
+        print(f"  P3212 {nome}: exato {e:.6f}; campo medio {m:.6f}; exato/campo medio {r:.4f}")
+
+
+PARTES[153] = _parte_153
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -18654,7 +18729,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (600 linhas)
+# CLAUDE.md  (604 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -19100,6 +19175,10 @@ anterior, commit e push.
   dinâmica sobre as 26 letras) em campo médio prevê o braço aleatório SEM parâmetro ajustado em 15 casos (razão média 1,009, desvio 0,060; χ² 14,8 em 10 graus: o resto é ruído de medida).
   A lei da densidade da Parte 150 está toda explicada (geometria + colapso). (e) era cauda (lote novo de 40 acertou). (f) errou por uma faixa feita de cabeça ("≈ 5%"), 89 partes depois da regra
   da Parte 63. Regra: no registro, cada faixa diz de que código saiu; "parece fácil" não é exceção.
+  Parte 153 (o erro do campo médio por enumeração exata na grade 3×3; rodada 101 IGUAL; 8/9, (m) 5/6): o enumerador exato (todas as letras, todos os caminhos, a regra real do
+  valid_actions) reproduz o jogo (z −0,95 em 200 mil episódios); o campo médio erra 4-8% e para os dois lados (0,916 a 1,057). O caso A tinha uma simetria que anulava o colapso (0,25 nas três
+  contas): erro de DESENHO. Regras: antes de registrar um caso de teste de um mecanismo, rodar a conta com e sem o mecanismo; se dão o mesmo número, o caso não testa nada. Um erro de desenho
+  conta, em m1, como tantos erros quantas previsões usam o caso.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -19248,7 +19327,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149 synthai.testes_parte150 synthai.testes_parte151 synthai.testes_parte152`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149 synthai.testes_parte150 synthai.testes_parte151 synthai.testes_parte152 synthai.testes_parte153`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -28736,7 +28815,7 @@ def jogo_lcg(linhas=4, colunas=5, semente=112):
 """
 
 # ====================================================================================================
-# synthai/tabuleiro.py  (179 linhas)
+# synthai/tabuleiro.py  (226 linhas)
 # ====================================================================================================
 FONTES['synthai/tabuleiro.py'] = """\"\"\"O tabuleiro do jogo de palavras com as letras de outra língua (Parte 150). O `WordGridEnv` da Parte 111 sorteia as letras com
 `palavras_rl.LETTER_FREQ` (as frequências do inglês), lido a cada `reset`. Aqui: as frequências contadas num conjunto de lemas, e um
@@ -28916,6 +28995,53 @@ def aleatorio_colapso(palavras, freq, tamanho=5, minimo=3, maximo=5):
                 x *= q.get(w[i], 0.0)
             s += x
         total += peso * parar * s
+    return total
+
+
+# --- o braço aleatório EXATO numa grade pequena (Parte 153) ---
+
+def aleatorio_exato(palavras, freq, tamanho=3, minimo=3, maximo=5):
+    \"\"\"A chance exata de o braço aleatório achar uma palavra, somando sobre TODAS as atribuições de letras às casas (peso Π p) e, em cada uma, sobre
+    todos os caminhos com a regra real do `valid_actions` (Parte 111): as vizinhas livres na ordem (−1, −1), …, (1, 1), uma ação por LETRA com a primeira
+    casa daquela letra (setdefault), PARAR com `minimo` letras ou mais, só PARAR com `maximo`; escolha uniforme entre as ações; sem ação, falha. Só para
+    grades pequenas e alfabetos pequenos (len(freq) ** (tamanho²) atribuições).\"\"\"
+    import itertools
+    letras = [c for c in sorted(freq) if freq[c] > 0]
+    t = sum(freq[c] for c in letras)
+    p = {c: freq[c] / t for c in letras}
+    dic = {w.upper() for w in palavras}
+    casas = [(r, c) for r in range(tamanho) for c in range(tamanho)]
+
+    def viz(r, c):
+        return [(r + a, c + b) for a in (-1, 0, 1) for b in (-1, 0, 1)
+                if (a or b) and 0 <= r + a < tamanho and 0 <= c + b < tamanho]
+    vz = {u: viz(*u) for u in casas}
+    total = 0.0
+    for atrib in itertools.product(letras, repeat=len(casas)):
+        grade = dict(zip(casas, atrib))
+        peso = 1.0
+        for x in atrib:
+            peso *= p[x]
+
+        def anda(caminho, prefixo):
+            acoes = {}
+            if len(caminho) < maximo:
+                vis = set(caminho)
+                for v in vz[caminho[-1]]:
+                    if v not in vis:
+                        acoes.setdefault(grade[v], v)
+            parar = len(caminho) >= minimo
+            n = len(acoes) + (1 if parar else 0)
+            if n == 0:
+                return 0.0
+            s = (1.0 if prefixo in dic else 0.0) if parar else 0.0
+            for letra, v in acoes.items():
+                s += anda(caminho + [v], prefixo + letra)
+            return s / n
+        acerto = 0.0
+        for u in casas:
+            acerto += anda([u], grade[u])
+        total += peso * acerto / len(casas)
     return total
 """
 
@@ -32229,6 +32355,52 @@ class TestesParte152(unittest.TestCase):
         self.assertTrue(0.0 <= m <= 1.0)
         self.assertGreater(k, g * 0.95)
         self.assertTrue(math.isfinite(k))
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte153.py  (41 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte153.py'] = """\"\"\"Testes da Parte 153: o braço aleatório exato (synthai/tabuleiro.py) e P3210-P3212 pelo nome.\"\"\"
+import itertools
+import unittest
+
+import calculos as c
+from synthai import tabuleiro as T
+
+
+class TestesParte153(unittest.TestCase):
+    def test_exato_controle_um(self):
+        todas = ["".join(x) for L in (3, 4, 5) for x in itertools.product("ab", repeat=L)]
+        self.assertAlmostEqual(T.aleatorio_exato(todas, {"A": 0.6, "B": 0.4}, 3), 1.0, places=12)
+
+    def test_exato_simetria_meio_a_meio(self):
+        # letras meio a meio e um dicionário que só olha a 1ª e a última letra: 1/2 · 1/2, com ou sem colapso
+        duas = ["".join(x) for L in (3, 4, 5) for x in itertools.product("ab", repeat=L)]
+        A = [w for w in duas if w[0] == "a" and w[-1] == "b"]
+        self.assertAlmostEqual(T.aleatorio_exato(A, {"A": 1.0, "B": 1.0}, 3), 0.25, places=12)
+
+    def test_exato_uma_letra(self):
+        # uma letra só: em toda casa há uma ação (a letra) + PARAR; com dicionário {aaa}, a chance é s₃ da geometria da grade com colapso total
+        e = T.aleatorio_exato(["aaa"], {"A": 1.0}, 2, 3, 4)
+        # grade 2×2, 3 a 4 letras: com 1 letra, depois 2: 1 ação (sem PARAR) -> 3 letras: 1 livre + PARAR -> 1/2 de parar
+        self.assertAlmostEqual(e, 0.5, places=14)
+
+    def test_p3210_campo_medio_contra_exato(self):
+        r = c.p3210_campo_medio_contra_exato()
+        self.assertAlmostEqual(r["controle"][0], 1.0, places=12)
+        self.assertAlmostEqual(r["B"][3], 1.0429, places=3)
+
+    def test_p3211_simulado_caso_b(self):
+        s, e, z = c.p3211_simulado_caso_b(episodios=20000)
+        self.assertLess(abs(z), 4.0)
+
+    def test_p3212_campo_medio_lote_novo(self):
+        r = c.p3212_campo_medio_lote_novo()
+        self.assertAlmostEqual(r["A'"][2], 0.9156, places=3)
 
 
 if __name__ == "__main__":
@@ -43041,7 +43213,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2339 linhas)
+# resultados.txt  (2347 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -45382,6 +45554,14 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3209 (e) WordNet 4-5: medido 0.00945 (desvio 0.00327); geometria 0.00825; colapso 0.00824; medido/colapso 1.147
   P3209 (f)/(g) media das razoes medido/colapso: 1.0453
   P3209 (h) WordNet 4-5, sementes 201-240: medido 0.00850; medido/colapso 1.032
+=== Parte 153: o erro do campo medio, por enumeracao exata na grade 3x3 ===
+  P3210 A: exato 0.250000; campo medio 0.250000; geometria 0.250000; exato/campo medio 1.0000
+  P3210 B: exato 0.301690; campo medio 0.289281; geometria 0.244764; exato/campo medio 1.0429
+  P3210 controle: exato 1.000000; campo medio 1.000000; geometria 1.000000; exato/campo medio 1.0000
+  P3211 (e) jogo real, caso B, 200000 episodios: 0.30072 contra exato 0.30169; z = -0.95
+  P3212 A': exato 0.241437; campo medio 0.263684; exato/campo medio 0.9156
+  P3212 C: exato 0.324510; campo medio 0.307058; exato/campo medio 1.0568
+  P3212 D: exato 0.147994; campo medio 0.143461; exato/campo medio 1.0316
 """
 
 # ====================================================================================================
@@ -54468,7 +54648,7 @@ do tabuleiro português não separa as duas causas: o acerto dobrou junto, e mai
 """
 
 # ====================================================================================================
-# ASI_AGI_parte152_colapso.md  (138 linhas)
+# ASI_AGI_parte152_colapso.md  (139 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte152_colapso.md'] = """# Parte 152 — O colapso das vizinhas de mesma letra, em conta
 
@@ -54608,6 +54788,134 @@ antes. O sinal é o esperado (uma vizinha já vista tem a mesma letra, e o colap
 **O placar (m):** m1 = 8 em [7; 9] ✅, m2 = 0 em [0; 0] ✅, m3 = 0,092 em [0,07; 0,12] ✅, m4 = 0,75 em [0,7143; 1,0000] ✅, m5 = 0 ✅ e m6 = 0 ✅. **6 de 6.**
 
 ➡ Anterior: [Parte 151](ASI_AGI_parte151_geometria_do_acaso.md).
+➡ Próxima: [Parte 153](ASI_AGI_parte153_campo_medio.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte153_campo_medio.md  (122 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte153_campo_medio.md'] = """# Parte 153 — O erro do campo médio, medido por enumeração exata
+
+↩ Nasce da Parte 152 (a conta do colapso em campo médio prevê o braço aleatório em 15 casos com razão 1,009) e da sua pendência 1: o campo médio esquece que uma
+vizinha livre já vista reaparece com a MESMA letra, e que o `setdefault` fica com a primeira casa de cada letra.
+
+## O recolhimento do contêiner, 11º lote
+Despertar às 07h15, depois de cerca de 55 minutos ociosa: "up 0 min", como previsto. Onze lotes a favor.
+
+## O enumerador exato
+`synthai/tabuleiro.py`, `aleatorio_exato`: numa grade pequena e com um alfabeto pequeno, soma sobre TODAS as atribuições de letras às casas (peso Π p) e, em
+cada uma, sobre todos os caminhos com a regra real do `valid_actions` (vizinhas na ordem (−1, −1), …, (1, 1); uma ação por letra, com a primeira casa daquela
+letra; PARAR com 3 letras ou mais; só PARAR com 5). Numa grade 3 × 3: 2⁹ = 512 atribuições com 2 letras, 3⁹ = 19.683 com 3.
+
+**Os casos** (definidos antes de qualquer execução):
+- **A**: letras {a, b} com p = (0,5; 0,5); dicionário = as palavras de 3 a 5 letras que começam com "a" e terminam com "b".
+- **B**: letras {a, b, c} com p = (0,5; 0,3; 0,2); dicionário = as palavras de 3 a 5 letras sem duas letras iguais seguidas.
+- **controle**: as letras de B e o dicionário com TODAS as palavras de 3 a 5 letras: as duas contas têm de dar a chance de o caminho chegar ao PARAR, que na
+  grade 3 × 3 é 1 (toda casa tem vizinha livre até 5 letras); identidade.
+
+## Previsões, registradas antes de qualquer execução do enumerador ou do campo médio nesses casos
+**Procedência:** (a)-(c) mecanismo sem calibração (não há caso medido com alfabeto pequeno; regra da Parte 62: a faixa é larga e o centro é 1); (d) e (e)
+identidade e binomial.
+- **(a)** razão exato / campo médio no caso B em **[0,80; 1,20]**. O único caso perto, a grade 3 × 3 com 26 letras (Parte 152), deu medido / campo médio = 1,076,
+  com ruído de 4,1%; com 3 letras as coincidências são muito mais frequentes e o erro deve ser maior. Faixa: ± 0,20, escrita sem código (é o "estatístico"
+  sem dados da Parte 62; registro isso como o que é).
+- **(b)** razão exato / campo médio no caso A em **[0,70; 1,30]**: com 2 letras, toda vizinha repete letra com chance 1/2.
+- **(c)** |razão A − 1| − |razão B − 1| em **[0,00; 0,25]**: o erro cresce quando o alfabeto encolhe (mecanismo: as coincidências que o campo médio esquece).
+- **(d)** o controle: exato e campo médio em **[1,0; 1,0]**, com tolerância 1e-12 (identidade: a soma das chances de parar é 1 e todo PARAR é palavra).
+- **(e)** o enumerador contra a SIMULAÇÃO do jogo real (o `WordGridEnv` e o `run_episode` da Parte 111, caso B, 200.000 episódios): z = (simulado − exato)/σ em
+  **[−1,645; 1,645]**, com σ = √(p(1 − p)/200.000) e p o exato (forma fechada binomial). É a prova de que o enumerador reproduz a regra do jogo, e não outra.
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua sobre o rascunho com "Do mundo:" provisória: m1 = 5, m2 = 2, m3 = 0,200, m5 = 0. E = 3 de mecanismo × 0,4 + 1 binomial × 0,10 = 1,3 (código: a própria
+soma); m1 em [5; 5 + 2E] = [5; 7,6], arredondado para cima. Acertos como contagem: 2 a 5 das 5 (2/5 = 0,4000).
+- **(m1)** nº de previsões do mundo em **[5; 8]**
+- **(m2)** nº que cruzam ou tocam o zero em **[2; 3]**
+- **(m3)** mediana de w em **[0,15; 0,30]**
+- **(m4)** fração de acertos em **[0,4000; 1,0000]**
+- **(m5)** nº com w > 0,6 em **[0; 1]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 4]**, centro 1,3.
+
+## Um lote novo, registrado depois de ver (a)-(e) e antes de rodar os casos novos
+O caso A deu 0,25 EXATO nas três contas (exato, campo médio, geometria): com duas letras meio a meio e um dicionário "começa com a, termina com b", a primeira
+letra é "a" com chance 1/2 e a última escolhida é "b" com chance 1/2, com ou sem colapso, por simetria. O caso não podia medir o colapso; o erro de desenho é
+meu (a regra da Parte 127: conferir a chave contra o conteúdo antes do registro). Casos novos, sem essa simetria:
+- **A'**: letras {a, b} com p = (0,7; 0,3), o dicionário de A.
+- **C**: letras {a, b, c} uniformes, o dicionário de B.
+- **D**: letras {a, b} com p = (0,7; 0,3), as palavras de 3 a 5 letras que alternam (aba, bab, abab, …).
+
+Procedência: mecanismo, sem calibração além do caso B (razão 1,043). Faixas largas, centro 1,04 (o caso B):
+- **(f)** razão exato / campo médio em A' em **[0,85; 1,25]**
+- **(g)** razão exato / campo médio em C em **[0,85; 1,25]**
+- **(h)** razão exato / campo médio em D em **[0,85; 1,25]**
+- **(i)** |razão A' − 1| − |razão B − 1| em **[0,00; 0,25]**: a hipótese de (c), agora num caso que pode testá-la.
+
+### A rodada 101, registrada antes
+O enumerador exato traduzido: as atribuições na ordem do `itertools.product` (a última casa varia mais depressa), o peso como produto na ordem das casas, as ações
+num dicionário ordenado pela inserção (`LinkedHashMap` em Java), a soma dos filhos na ordem das ações e a divisão por n no fim, nos casos A' e B. Só + × ÷.
+Previsão: **IGUAL**. O que poderia quebrar: a ordem das ações (a da inserção, que é a das vizinhas) e a ordem das atribuições.
+
+## Medido (P3210, P3211, P3212; rodada 101)
+
+| caso | exato | campo médio | geometria (sem colapso) | exato / campo médio |
+|---|---|---|---|---|
+| A ({a, b} meio a meio) | 0,250000 | 0,250000 | 0,250000 | 1,000 |
+| B ({a, b, c} = 0,5; 0,3; 0,2) | 0,301690 | 0,289281 | 0,244764 | 1,043 |
+| controle | 1,000000 | 1,000000 | 1,000000 | 1,000 |
+| A' ({a, b} = 0,7; 0,3) | 0,241437 | 0,263684 | | 0,916 |
+| C ({a, b, c} uniformes) | 0,324510 | 0,307058 | | 1,057 |
+| D ({a, b} = 0,7; 0,3, alternadas) | 0,147994 | 0,143461 | | 1,032 |
+
+O jogo real, caso B, 200.000 episódios: 0,30072 contra o exato 0,30169, z = −0,95.
+
+- **(a)** B: 1,043 em [0,80; 1,20]. ✅
+- **(b)** A: 1,000 em [0,70; 1,30]. ✅ (por simetria, não por acerto do mecanismo)
+- **(c)** |A − 1| − |B − 1| = **−0,043**, fora de [0,00; 0,25]. ❌
+- **(d)** controle: 1,0 nas duas contas. ✅
+- **(e)** z = −0,95. ✅
+- **(f)** A': 0,916. ✅
+- **(g)** C: 1,057. ✅
+- **(h)** D: 1,032. ✅
+- **(i)** |A' − 1| − |B − 1| = +0,042. ✅
+- **Rodada 101:** IGUAL, 4 linhas e 2 números bit a bit. ✅
+
+Do mundo: (a) ✅ (b) ✅ (c) ❌ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅
+
+**Mundo: 8 de 9.** **Sobre mim:** 1 erro, em [0; 4]: ✅. O erro (c) é de DESENHO (o caso A não podia mostrar o efeito), não de mecanismo: o teste refeito em A', (i),
+acertou.
+
+### O que a enumeração mostrou
+**O campo médio erra pouco, e para os dois lados.** Em quatro casos sem simetria, a razão exato / campo médio vai de 0,916 a 1,057: o erro tem o tamanho de 4% a
+8% e o sinal depende do dicionário. Com o dicionário "de a até b" e letras desiguais (A'), o campo médio SUPERESTIMA; com os dicionários sem repetição (B, C, D),
+SUBESTIMA. A leitura: uma vizinha já vista volta com a mesma letra; num dicionário que proíbe letras iguais seguidas, isso empobrece as escolhas de um jeito que
+o campo médio não vê, e o caminho real tem MAIS letras diferentes ao alcance do que um sorteio novo daria (hipótese; 4 casos, um lote).
+
+**A grade 3 × 3 em inglês** (Parte 152, razão medido / campo médio 1,076 ± 0,041) cabe nessa faixa: o campo médio subestima ali de 4% a 6% nos casos com 3 letras;
+com 26 letras as coincidências são mais raras, e o erro deveria ser menor. A 1,076 tinha um ruído de medida do mesmo tamanho: não separa.
+
+**O enumerador é o jogo:** contra 200.000 episódios do `WordGridEnv` real, z = −0,95. O enumerador é agora a régua exata para grades pequenas, e o campo médio é
+a conta para as grandes.
+
+## Engenharia reversa
+- **O padrão: um caso de teste com uma simetria que anula o efeito.** O caso A tinha letras meio a meio E um dicionário que só olha a primeira e a última letra;
+  as duas simetrias juntas fazem o colapso não importar. É a regra da Parte 30 ("um teste usa um caso em que TODOS os termos são diferentes de zero") aplicada a
+  experimentos e não só a fórmulas: o caso A tinha o termo do colapso nulo.
+- **Regra (Parte 153):** antes de registrar um caso de teste de um mecanismo, rodar a conta que o mecanismo muda em DUAS versões (com e sem o mecanismo, aqui
+  geometria e campo médio); se as duas dão o mesmo número, o caso não testa o mecanismo. Aqui isso custava 1 segundo e teria mostrado 0,25 = 0,25 = 0,25.
+
+## Funções e testes
+- **Funções:** `_casos_p153`, `p3210_campo_medio_contra_exato`, `p3211_simulado_caso_b`, `p3212_campo_medio_lote_novo` e `_parte_153`; em `synthai/tabuleiro.py`,
+  `aleatorio_exato`. Entradas P3210, P3211 e P3212 na regressão.
+- **Diálogo:** `dialogo/rodada101.py` e `dialogo/Rodada101.java`, IGUAL.
+- **Testes:** `synthai/testes_parte153.py`.
+
+**O placar (m):** **m1 = 9 em [5; 8] ❌**, m2 = 3 em [2; 3] ✅, m3 = 0,190 em [0,15; 0,30] ✅, m4 = 0,889 em [0,4000; 1,0000] ✅, m5 = 0 ✅ e m6 = 0 ✅.
+**5 de 6.** A regra m1 em [n; n + 2E] (Parte 148) supõe duas previsões por erro; um erro de DESENHO (o caso inteiro não testava nada) abriu quatro, porque refazer
+o caso pede refazer todas as previsões que dependiam dele. Regra: um erro de desenho conta como tantos erros quantas previsões usam o caso.
+
+➡ Anterior: [Parte 152](ASI_AGI_parte152_colapso.md).
 """
 
 # ====================================================================================================
@@ -76549,7 +76857,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2166 linhas)
+# dialogo/DIALOGO.md  (2176 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -78717,10 +79025,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 10 linhas e 424 números bit a bit**, na primeira tentativa. Previsão registrada antes (Parte 152): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 101): o campo médio da grade 3 × 3 (razão 1,076): uma conta que guarde as letras das vizinhas já vistas, e a sua tradução.
+
+## Rodada 101 (Parte 153) — o braço aleatório exato
+
+**IA-Python (lógica criativa):** O campo médio da Parte 152 esquece que uma vizinha já vista volta com a mesma letra. Para medir o quanto, enumerei tudo numa grade 3 × 3: as 3⁹ atribuições de letras e, em cada uma, todos os caminhos com a regra real do jogo, uma ação por letra com a primeira casa dela. O meu dicionário de ações guarda a ordem de inserção. A tua enumeração chega ao mesmo bit?
+
+**IA-Java (ASI):** Chega com um `LinkedHashMap`, que também guarda a ordem de inserção; com um `HashMap` comum, a soma dos filhos sairia noutra ordem e o último bit poderia mudar. As atribuições eu percorro como o teu `itertools.product`, com a última casa variando mais depressa. Repara que o exato não tem nada de aproximado: são 19.683 grades vezes os caminhos, e cada número é uma soma de frações.
+
+**Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 2 números bit a bit**; B = 0,30169, A' = 0,24144. Previsão registrada antes (Parte 153): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 102): o sinal do erro do campo médio depende do dicionário; uma conta que o preveja antes de enumerar.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (95 linhas)
+# dialogo/PENDENCIAS.md  (96 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -78817,6 +79135,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Parte 150)** ABERTAS: (1) o repertório como explicação de o Q-learning dobrar com o tabuleiro português (a pendência 1 da 149, agora com dois tabuleiros): medir, antes de explicar, a fração das palavras achadas pelo Q guloso que aparecem em mais de uma grade de avaliação, nos dois tabuleiros, com a previsão escrita; (2) a constante k ≈ 0,21 da lei da densidade: derivar da geometria da grade 5 × 5 (vizinhos, caminhos de 3 a 5 casas, a chance de o aleatório parar) e comparar com o medido.
 - **(Parte 151)** ABERTAS: (1) a correção do colapso (razões medido/geometria de 0,89 a 1,14) em forma fechada: o `valid_actions` junta vizinhas de mesma letra, o que muda o peso das letras no caminho; derivar e prever os 10 casos já medidos antes de rodar casos novos; (2) separar no tabuleiro português as duas causas do repertório maior (a contagem de acertos e a repetição de fato): comparar com um controle de acertos igualados; (3) os grupos úteis (b·ln U) num terceiro mundo, adiados desde a rodada 95.
 - **(Parte 152)** ABERTAS: (1) o campo médio esquece que a vizinha já vista tem a mesma letra: uma conta exata por enumeração das letras numa grade pequena (3 × 3, alfabeto reduzido) para medir o tamanho desse erro; (2) o setdefault fica com a PRIMEIRA casa de cada letra: medir quanto isso puxa o caminho (a geometria muda?); (3) as razões do tabuleiro inglês altas (1,111, 1,061, 1,147→1,070 com o lote novo): hipótese de 0 lotes, só testar se a (1) não explicar.
+- **(Parte 153)** ABERTAS: (1) o sinal do erro do campo médio (0,916 em A', 1,03 a 1,06 em B, C e D): uma correção de segunda ordem (as vizinhas compartilhadas entre duas decisões seguidas) que preveja o sinal antes de enumerar, testada em casos novos; (2) o efeito do setdefault (a primeira casa de cada letra) separado do da memória das letras: enumerar com a escolha da casa uniforme entre as da mesma letra e comparar.
 """
 
 # ====================================================================================================
@@ -79693,6 +80012,104 @@ public class Rodada100 {
         sb.append("conferido True\\n");
         sb.append("fim");
         System.out.println(sb.toString());
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/Rodada101.java  (93 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada101.java'] = """// Rodada 101 (Parte 153): o braco aleatorio EXATO (synthai.tabuleiro.aleatorio_exato) bit a bit, grade 3 x 3. Todas as atribuicoes de letras (a ultima
+// casa varia mais depressa), peso = produto na ordem das casas; recursao sobre os caminhos com as acoes por letra na ordem de insercao (LinkedHashMap).
+import java.util.*;
+
+public class Rodada101 {
+    static int T = 3, MIN = 3, MAX = 5;
+    static char[] grade = new char[9];
+    static Set<String> dic;
+
+    static List<Integer> viz(int u) {
+        int r = u / T, c = u % T;
+        List<Integer> l = new ArrayList<>();
+        for (int a = -1; a <= 1; a++) for (int b = -1; b <= 1; b++) {
+            if (a == 0 && b == 0) continue;
+            int rr = r + a, cc = c + b;
+            if (rr >= 0 && rr < T && cc >= 0 && cc < T) l.add(rr * T + cc);
+        }
+        return l;
+    }
+
+    static double anda(List<Integer> caminho, String prefixo) {
+        LinkedHashMap<Character, Integer> acoes = new LinkedHashMap<>();
+        if (caminho.size() < MAX) {
+            for (int v : viz(caminho.get(caminho.size() - 1))) if (!caminho.contains(v) && !acoes.containsKey(grade[v])) acoes.put(grade[v], v);
+        }
+        boolean parar = caminho.size() >= MIN;
+        int n = acoes.size() + (parar ? 1 : 0);
+        if (n == 0) return 0.0;
+        double s = parar ? (dic.contains(prefixo) ? 1.0 : 0.0) : 0.0;
+        for (Map.Entry<Character, Integer> e : acoes.entrySet()) {
+            List<Integer> nc = new ArrayList<>(caminho);
+            nc.add(e.getValue());
+            s += anda(nc, prefixo + e.getKey());
+        }
+        return s / n;
+    }
+
+    static List<String> palavras(String alfa) {
+        List<String> out = new ArrayList<>();
+        for (int L = 3; L <= 5; L++) {
+            int k = alfa.length(), tot = 1;
+            for (int i = 0; i < L; i++) tot *= k;
+            for (int x = 0; x < tot; x++) {
+                char[] w = new char[L];
+                int y = x;
+                for (int i = L - 1; i >= 0; i--) { w[i] = alfa.charAt(y % k); y /= k; }
+                out.add(new String(w));
+            }
+        }
+        return out;
+    }
+
+    static double exato(Set<String> d, String letras, double[] pesos) {
+        dic = d;
+        double t = 0.0;
+        for (double w : pesos) t += w;
+        double[] p = new double[pesos.length];
+        for (int i = 0; i < p.length; i++) p[i] = pesos[i] / t;
+        int k = letras.length(), tot = 1;
+        for (int i = 0; i < 9; i++) tot *= k;
+        double total = 0.0;
+        for (int x = 0; x < tot; x++) {
+            int[] idx = new int[9];
+            int y = x;
+            for (int i = 8; i >= 0; i--) { idx[i] = y % k; y /= k; }
+            double peso = 1.0;
+            for (int i = 0; i < 9; i++) { grade[i] = letras.charAt(idx[i]); }
+            for (int i = 0; i < 9; i++) peso = peso * p[idx[i]];
+            double acerto = 0.0;
+            for (int u = 0; u < 9; u++) {
+                List<Integer> cam = new ArrayList<>();
+                cam.add(u);
+                acerto += anda(cam, String.valueOf(grade[u]));
+            }
+            total += peso * acerto / 9;
+        }
+        return total;
+    }
+
+    public static void main(String[] args) {
+        Set<String> A = new HashSet<>();
+        for (String w : palavras("ab")) if (w.charAt(0) == 'a' && w.charAt(w.length() - 1) == 'b') A.add(w);
+        Set<String> B = new HashSet<>();
+        for (String w : palavras("abc")) {
+            boolean ok = true;
+            for (int i = 1; i < w.length(); i++) if (w.charAt(i) == w.charAt(i - 1)) ok = false;
+            if (ok) B.add(w);
+        }
+        double ea = exato(A, "ab", new double[]{0.7, 0.3});
+        double eb = exato(B, "abc", new double[]{0.5, 0.3, 0.2});
+        System.out.println("A' " + Double.toHexString(ea) + "\\nB " + Double.toHexString(eb) + "\\nconferido True\\nfim");
     }
 }
 """
@@ -87006,6 +87423,84 @@ def main():
             linha.append(com.hex())
             linha.append(sem.hex())
         print(" ".join(linha))
+    print("conferido True")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada101.py  (73 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada101.py'] = """\"\"\"Rodada 101 do diálogo Python <-> Java (Parte 153): o braço aleatório EXATO de synthai.tabuleiro.aleatorio_exato bit a bit, na grade 3 × 3. Todas as
+atribuições de letras (ordem do itertools.product: a última casa varia mais depressa), peso Π p na ordem das casas, e em cada uma a recursão sobre os
+caminhos com a regra do valid_actions (ações por letra na ordem de inserção das vizinhas; PARAR com 3 ou mais letras; só PARAR com 5). Casos A' ({a, b} =
+(0,7; 0,3), palavras de 'a' a 'b') e B ({a, b, c} = (0,5; 0,3; 0,2), sem letras iguais seguidas). Somas em laço. Confere contra o módulo (1e-12) antes de
+imprimir. Da raiz: python3 dialogo/rodada101.py\"\"\"
+import itertools
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from synthai import tabuleiro  # noqa: E402
+
+
+def exato(palavras, letras, pesos, tamanho=3, minimo=3, maximo=5):
+    t = 0.0
+    for w in pesos:
+        t += w
+    p = [w / t for w in pesos]
+    dic = set(palavras)
+    casas = [(r, c) for r in range(tamanho) for c in range(tamanho)]
+    vz = {}
+    for (r, c) in casas:
+        lst = []
+        for a in (-1, 0, 1):
+            for b in (-1, 0, 1):
+                if (a or b) and 0 <= r + a < tamanho and 0 <= c + b < tamanho:
+                    lst.append((r + a, c + b))
+        vz[(r, c)] = lst
+    total = 0.0
+    for idx in itertools.product(range(len(letras)), repeat=len(casas)):
+        grade = {u: letras[i] for u, i in zip(casas, idx)}
+        peso = 1.0
+        for i in idx:
+            peso = peso * p[i]
+
+        def anda(caminho, prefixo):
+            acoes = {}
+            if len(caminho) < maximo:
+                for v in vz[caminho[-1]]:
+                    if v not in caminho and grade[v] not in acoes:
+                        acoes[grade[v]] = v
+            parar = len(caminho) >= minimo
+            n = len(acoes) + (1 if parar else 0)
+            if n == 0:
+                return 0.0
+            s = (1.0 if prefixo in dic else 0.0) if parar else 0.0
+            for letra, v in acoes.items():
+                s += anda(caminho + [v], prefixo + letra)
+            return s / n
+        acerto = 0.0
+        for u in casas:
+            acerto += anda([u], grade[u])
+        total += peso * acerto / len(casas)
+    return total
+
+
+def main():
+    duas = ["".join(x) for L in (3, 4, 5) for x in itertools.product("ab", repeat=L)]
+    A = [w for w in duas if w[0] == "a" and w[-1] == "b"]
+    tres = ["".join(x) for L in (3, 4, 5) for x in itertools.product("abc", repeat=L)]
+    B = [w for w in tres if all(a != b for a, b in zip(w, w[1:]))]
+    ea = exato(A, "ab", [0.7, 0.3])
+    eb = exato(B, "abc", [0.5, 0.3, 0.2])
+    assert abs(ea - tabuleiro.aleatorio_exato(A, {"A": 0.7, "B": 0.3}, 3)) < 1e-12
+    assert abs(eb - tabuleiro.aleatorio_exato(B, {"A": 0.5, "B": 0.3, "C": 0.2}, 3)) < 1e-12
+    print("A' " + ea.hex())
+    print("B " + eb.hex())
     print("conferido True")
     print("fim")
 
