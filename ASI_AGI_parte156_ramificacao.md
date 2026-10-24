@@ -59,3 +59,7 @@ de 4 a 9 das 9 (4/9 = 0,4444).
 
 ### Sobre mim, registrado
 Erros no mundo em **[0; 5]**, centro 2,8.
+
+### A rodada 104, registrada antes
+`ramificacao_exata` traduzida (caso B, primeira, 3 a 4 letras): por caminho, o vetor (acerto, falha, decisões, opções, livres, ações); os filhos somados na ordem das
+ações, divididos por n, e a decisão do nó somada depois da divisão (1, n, livres, ações). Só + × ÷ de inteiros convertidos. Previsão: **IGUAL**.
