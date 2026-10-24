@@ -231,3 +231,56 @@ def aleatorio_exato(palavras, freq, tamanho=3, minimo=3, maximo=5, casa="primeir
             acerto += anda([u], grade[u])
         total += peso * acerto / len(casas)
     return total
+
+
+def estatisticas_exatas(palavras, freq, tamanho=3, minimo=3, maximo=5, casa="primeira", ordem="direta"):
+    """Parte 155: o enumerador exato de aleatorio_exato com a ordem das vizinhas escolhível ('direta' = (−1, −1), …, (1, 1); 'reversa' = (1, 1), …,
+    (−1, −1)) e, além do acerto, as esperanças sobre o fim do episódio (o PARAR): deslocamento da casa final em relação à inicial (dr, dc), distância da
+    casa final à borda mais próxima e comprimento do caminho. Devolve {acerto, dr, dc, borda, comprimento, falha} (falha = chance de ficar sem ação)."""
+    import itertools
+    letras = [c for c in sorted(freq) if freq[c] > 0]
+    t = sum(freq[c] for c in letras)
+    p = {c: freq[c] / t for c in letras}
+    dic = {w.upper() for w in palavras}
+    casas = [(r, c) for r in range(tamanho) for c in range(tamanho)]
+    deltas = [(a, b) for a in (-1, 0, 1) for b in (-1, 0, 1) if a or b]
+    if ordem == "reversa":
+        deltas = deltas[::-1]
+    vz = {(r, c): [(r + a, c + b) for a, b in deltas if 0 <= r + a < tamanho and 0 <= c + b < tamanho] for r, c in casas}
+    tot = {"acerto": 0.0, "dr": 0.0, "dc": 0.0, "borda": 0.0, "comprimento": 0.0, "falha": 0.0}
+    for atrib in itertools.product(letras, repeat=len(casas)):
+        grade = dict(zip(casas, atrib))
+        peso = 1.0
+        for x in atrib:
+            peso *= p[x]
+
+        def anda(caminho, prefixo):
+            # devolve o vetor (acerto, dr, dc, borda, comprimento, falha) esperado a partir daqui
+            acoes = {}
+            if len(caminho) < maximo:
+                vis = set(caminho)
+                for v in vz[caminho[-1]]:
+                    if v not in vis:
+                        acoes.setdefault(grade[v], []).append(v)
+            parar = len(caminho) >= minimo
+            n = len(acoes) + (1 if parar else 0)
+            if n == 0:
+                return (0.0, 0.0, 0.0, 0.0, 0.0, 1.0)
+            s = [0.0] * 6
+            if parar:
+                (r0, c0), (r1, c1) = caminho[0], caminho[-1]
+                fim = (1.0 if prefixo in dic else 0.0, r1 - r0, c1 - c0, min(r1, c1, tamanho - 1 - r1, tamanho - 1 - c1), len(caminho), 0.0)
+                s = list(fim)
+            for letra, vs in acoes.items():
+                escolhidas = vs[:1] if casa == "primeira" else vs
+                m = [0.0] * 6
+                for v in escolhidas:
+                    f = anda(caminho + [v], prefixo + letra)
+                    m = [a + b for a, b in zip(m, f)]
+                s = [a + b / len(escolhidas) for a, b in zip(s, m)]
+            return tuple(x / n for x in s)
+        for u in casas:
+            f = anda([u], grade[u])
+            for k, x in zip(("acerto", "dr", "dc", "borda", "comprimento", "falha"), f):
+                tot[k] += peso * x / len(casas)
+    return tot
