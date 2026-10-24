@@ -2329,3 +2329,11 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3208 teste 121-140 pt/EN: acerto 0.1431; distintas 33.30; repertorio 0.8844
   P3208 teste 121-140 pt/PT: acerto 0.2934; distintas 50.10; repertorio 0.9351
   P3208 teste 121-140 emb/EN: acerto 0.1348; distintas 22.35; repertorio 0.9425
+=== Parte 152: o colapso das vizinhas de mesma letra, em conta ===
+  P3209 (a) uniforme: medido 0.00405 (desvio 0.00188); geometria 0.00393; colapso 0.00415; medido/colapso 0.976
+  P3209 (b) 3x3: medido 0.03115 (desvio 0.00574); geometria 0.02873; colapso 0.02896; medido/colapso 1.076
+  P3209 (c) 7x7: medido 0.02150 (desvio 0.00411); geometria 0.02036; colapso 0.02099; medido/colapso 1.024
+  P3209 (d) 3-6 letras: medido 0.02150 (desvio 0.00530); geometria 0.02059; colapso 0.02142; medido/colapso 1.004
+  P3209 (e) WordNet 4-5: medido 0.00945 (desvio 0.00327); geometria 0.00825; colapso 0.00824; medido/colapso 1.147
+  P3209 (f)/(g) media das razoes medido/colapso: 1.0453
+  P3209 (h) WordNet 4-5, sementes 201-240: medido 0.00850; medido/colapso 1.032

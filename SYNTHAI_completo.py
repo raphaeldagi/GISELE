@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 151, perguntas P1 a P3208).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 152, perguntas P1 a P3209).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (18572 linhas)
+# calculos.py  (18615 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7612,6 +7612,7 @@ def testes_de_regressao():
         "P3206": (round(p3206_aleatorio_tabuleiro("en")[0], 4), round(p3206_aleatorio_tabuleiro("embutido")[0], 4)) == (0.0465, 0.0062),
         "P3207": tuple(round(p3207_aleatorio_geometria(tamanho=a, minimo=b, maximo=d)[0], 4) for a, b, d in ((4, 3, 5), (6, 3, 5), (5, 3, 4), (5, 4, 5))) == (0.0251, 0.0204, 0.0368, 0.007),
         "P3208": (lambda r: (round(r["repete"], 4), round(r["distintas"], 2)) == (0.9425, 22.35))(p3208_repertorio("embutido", "en", tuple(range(121, 141)))),
+        "P3209": tuple(round(p3209_aleatorio_colapso(*a)[0], 5) for _, a in _MUNDOS_P152) == (0.00405, 0.03115, 0.0215, 0.0215, 0.00945),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18532,6 +18533,33 @@ def p3208_repertorio(dicionario="pt", tabuleiro="pt", sementes=tuple(range(101, 
     return out
 
 
+def p3209_aleatorio_colapso(dicionario="pt", tabuleiro="pt", tamanho=5, minimo=3, maximo=5, sementes=tuple(range(181, 201)), avaliacao=1000):
+    \"\"\"(a)-(g) da Parte 152 (P3209): o braco aleatorio num mundo (dicionario, tabuleiro 'pt'/'en'/'uniforme', grade, comprimentos) e as duas contas:
+    a geometria sem colapso (Parte 151) e o colapso em campo medio (synthai.tabuleiro.aleatorio_colapso). Devolve (medido, desvio, geometria, colapso).\"\"\"
+    import random
+    import statistics as st
+    from synthai import palavras_rl as P
+    from synthai import tabuleiro as T
+    fonte = {"pt": P.lemas_ownpt, "en": P.lemas_wordnet, "embutido": lambda: P.EMBEDDED_WORDS}[dicionario]
+    palavras = fonte()
+    dic = P.Dicionario(palavras)
+    freq = {"pt": lambda: T.frequencias_de(P.lemas_ownpt()), "en": lambda: P.LETTER_FREQ,
+            "uniforme": lambda: {chr(65 + i): 1.0 for i in range(26)}}[tabuleiro]()
+    v = []
+    with T.com_frequencias(freq):
+        for s in sementes:
+            env = P.WordGridEnv(tamanho, minimo, maximo, rng=random.Random(s + 100_000))
+            pol = P.QAgent(seed=s + 2)
+            res = [P.run_episode(env, dic, pol, "random", learn=False) for _ in range(avaliacao)]
+            v.append(sum(r[1] for r in res) / len(res))
+    return (st.mean(v), (st.stdev(v) if len(v) > 1 else 0.0), T.aleatorio_geometrico(palavras, freq, tamanho, minimo, maximo),
+            T.aleatorio_colapso(palavras, freq, tamanho, minimo, maximo))
+
+
+_MUNDOS_P152 = (("(a) uniforme", ("pt", "uniforme", 5, 3, 5)), ("(b) 3x3", ("pt", "pt", 3, 3, 5)), ("(c) 7x7", ("pt", "pt", 7, 3, 5)),
+                ("(d) 3-6 letras", ("pt", "pt", 5, 3, 6)), ("(e) WordNet 4-5", ("en", "en", 5, 4, 5)))
+
+
 def _parte_148():
     print("\\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
@@ -18599,6 +18627,21 @@ def _parte_151():
 
 PARTES[151] = _parte_151
 
+
+def _parte_152():
+    print("\\n=== Parte 152: o colapso das vizinhas de mesma letra, em conta ===")
+    rs = []
+    for nome, a in _MUNDOS_P152:
+        m, s, g, k = p3209_aleatorio_colapso(*a)
+        rs.append(m / k)
+        print(f"  P3209 {nome}: medido {m:.5f} (desvio {s:.5f}); geometria {g:.5f}; colapso {k:.5f}; medido/colapso {m / k:.3f}")
+    print(f"  P3209 (f)/(g) media das razoes medido/colapso: {sum(rs) / len(rs):.4f}")
+    m, s, g, k = p3209_aleatorio_colapso("en", "en", 5, 4, 5, sementes=tuple(range(201, 241)))
+    print(f"  P3209 (h) WordNet 4-5, sementes 201-240: medido {m:.5f}; medido/colapso {m / k:.3f}")
+
+
+PARTES[152] = _parte_152
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -18611,7 +18654,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (596 linhas)
+# CLAUDE.md  (600 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -19053,6 +19096,10 @@ anterior, commit e push.
   caminhos (s₃ = 0,194 na grade 5×5): aleatório = Σ_L s_L·D_L, e com a correção 1,054 acertou 4 mundos novos (grades 4×4 e 6×6, máximo 4 e mínimo 4 letras). O repertório (palavras que
   se repetem entre grades) explica o Q do embutido (+0,058 sobre o português, 2 lotes). Regra: com ≥ 20 sementes de calibração, a taxa de erro esperada é a medida nessas calibrações
   (0 em 26 nas Partes 149-151; cota de 90% 0,085), não a das calibrações de 3 a 8 sementes (o centro 2,85 superestimou).
+  Parte 152 (o colapso em conta; rodada 100 IGUAL, a centésima; 6/8, (m) 6/6): o valid_actions junta vizinhas de mesma letra; a distribuição exata das letras distintas (programação
+  dinâmica sobre as 26 letras) em campo médio prevê o braço aleatório SEM parâmetro ajustado em 15 casos (razão média 1,009, desvio 0,060; χ² 14,8 em 10 graus: o resto é ruído de medida).
+  A lei da densidade da Parte 150 está toda explicada (geometria + colapso). (e) era cauda (lote novo de 40 acertou). (f) errou por uma faixa feita de cabeça ("≈ 5%"), 89 partes depois da regra
+  da Parte 63. Regra: no registro, cada faixa diz de que código saiu; "parece fácil" não é exceção.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -19201,7 +19248,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149 synthai.testes_parte150 synthai.testes_parte151`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149 synthai.testes_parte150 synthai.testes_parte151 synthai.testes_parte152`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -28689,7 +28736,7 @@ def jogo_lcg(linhas=4, colunas=5, semente=112):
 """
 
 # ====================================================================================================
-# synthai/tabuleiro.py  (85 linhas)
+# synthai/tabuleiro.py  (179 linhas)
 # ====================================================================================================
 FONTES['synthai/tabuleiro.py'] = """\"\"\"O tabuleiro do jogo de palavras com as letras de outra língua (Parte 150). O `WordGridEnv` da Parte 111 sorteia as letras com
 `palavras_rl.LETTER_FREQ` (as frequências do inglês), lido a cada `reset`. Aqui: as frequências contadas num conjunto de lemas, e um
@@ -28776,6 +28823,100 @@ def aleatorio_geometrico(palavras, freq, tamanho=5, minimo=3, maximo=5):
     s = paradas_por_comprimento(tamanho, minimo, maximo)
     d = densidade_por_comprimento(palavras, freq, minimo, maximo)
     return sum(s[L] * d[L] for L in s)
+
+
+# --- o colapso das vizinhas de mesma letra (Parte 152) ---
+
+def _distintas(p, n):
+    \"\"\"dist[k] = P(n sorteios iid com as probabilidades p (lista) têm k letras distintas), e, para cada letra c, comc[c][k] = P(c aparece e há k
+    distintas). Programação dinâmica sobre as letras, com o peso multinomial n!·Π p_i^{m_i}/m_i!.\"\"\"
+    import math
+    L = len(p)
+    fat = [math.factorial(m) for m in range(n + 1)]
+
+    def dp(forcar):
+        # estado: (sorteios usados, distintas) -> peso
+        est = {(0, 0): 1.0}
+        for i, pi in enumerate(p):
+            novo = {}
+            for (t, k), w in est.items():
+                inicio = 1 if i == forcar else 0
+                for m in range(inicio, n - t + 1):
+                    chave = (t + m, k + (1 if m else 0))
+                    novo[chave] = novo.get(chave, 0.0) + w * pi ** m / fat[m]
+            est = novo
+        return [fat[n] * est.get((n, k), 0.0) for k in range(n + 1)]
+    return dp(-1), [dp(c) for c in range(L)]
+
+
+def tabela_colapso(freq, nmax=8):
+    \"\"\"Para n = 1..nmax vizinhas livres: (P(parar | n, com PARAR), [P(letra c | n, com PARAR)], [P(letra c | n, sem PARAR)]), com K = nº de letras
+    distintas entre as n vizinhas: P(parar) = E[1/(K+1)]; P(c) = E[1{c presente}/(K+1)] (ou /K sem PARAR).\"\"\"
+    letras = sorted(freq)
+    t = sum(freq.values())
+    p = [freq[c] / t for c in letras]
+    tab = {}
+    for n in range(1, nmax + 1):
+        dist, comc = _distintas(p, n)
+        parar = sum(dist[k] / (k + 1) for k in range(1, n + 1))
+        com = {c: sum(comc[i][k] / (k + 1) for k in range(1, n + 1)) for i, c in enumerate(letras)}
+        sem = {c: sum(comc[i][k] / k for k in range(1, n + 1)) for i, c in enumerate(letras)}
+        tab[n] = (parar, com, sem)
+    return tab
+
+
+def assinaturas(tamanho=5, minimo=3, maximo=5):
+    \"\"\"Os caminhos geométricos agrupados pela sequência de nº de vizinhas livres em cada decisão: {(n_1, ..., n_L): peso}, peso = (1/casas) · Π (1/n_i)
+    sobre as escolhas de casa (cada casa livre tem chance 1/n de ser a escolhida, dado o lado da letra). n_L é o nº de livres na última casa (a do PARAR);
+    com L = maximo, n_L = -1 (só PARAR).\"\"\"
+    def viz(r, c):
+        return [(r + a, c + b) for a in (-1, 0, 1) for b in (-1, 0, 1)
+                if (a or b) and 0 <= r + a < tamanho and 0 <= c + b < tamanho]
+    out = {}
+
+    def anda(caminho, ns, w):
+        L = len(caminho)
+        livres = [v for v in viz(*caminho[-1]) if v not in caminho]
+        if L >= minimo:
+            chave = tuple(ns + [len(livres) if L < maximo else -1])
+            out[chave] = out.get(chave, 0.0) + w
+        if L >= maximo:
+            return
+        for v in livres:
+            anda(caminho + [v], ns + [len(livres)], w / len(livres))
+    for r in range(tamanho):
+        for c in range(tamanho):
+            anda([(r, c)], [], 1.0 / (tamanho * tamanho))
+    return out
+
+
+def aleatorio_colapso(palavras, freq, tamanho=5, minimo=3, maximo=5):
+    \"\"\"A previsão com o colapso, em campo médio (as letras das vizinhas de cada decisão são sorteios novos e independentes; ignora que vizinhas já
+    vistas reaparecem, e que o `setdefault` fica com a PRIMEIRA casa de cada letra). Para a palavra w (comprimento L) e uma assinatura (n_1..n_L):
+    p(w_1) · Π_{i<L} q(w_{i+1} | n_i) · P(parar | n_L) (os 1/n_i da casa estão no peso), com q com ou sem PARAR conforme i ≥ minimo. A soma em w e nas assinaturas
+    (pesos de assinaturas() já incluem os 1/n_i).\"\"\"
+    t = sum(freq.values())
+    p = {c: v / t for c, v in freq.items()}
+    tab = tabela_colapso(freq)
+    por_L = {}
+    for w in palavras:
+        if minimo <= len(w) <= maximo:
+            por_L.setdefault(len(w), []).append(w.upper())
+    total = 0.0
+    for sig, peso in assinaturas(tamanho, minimo, maximo).items():
+        L = len(sig)
+        nL = sig[-1]
+        parar = 1.0 if nL == -1 else (1.0 if nL == 0 else tab[nL][0])
+        s = 0.0
+        for w in por_L.get(L, []):
+            x = p.get(w[0], 0.0)
+            for i in range(1, L):
+                n = sig[i - 1]
+                q = tab[n][1] if i >= minimo else tab[n][2]
+                x *= q.get(w[i], 0.0)
+            s += x
+        total += peso * parar * s
+    return total
 """
 
 # ====================================================================================================
@@ -32039,6 +32180,55 @@ class TestesParte151(unittest.TestCase):
         r = c.p3208_repertorio("embutido", "en", sementes=(101, 102), episodios=1000, avaliacao=200)
         self.assertTrue(0.0 <= r["repete"] <= 1.0)
         self.assertTrue(r["distintas"] >= 1)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte152.py  (44 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte152.py'] = """\"\"\"Testes da Parte 152: o colapso das vizinhas de mesma letra (synthai/tabuleiro.py) e a P3209 pelo nome.\"\"\"
+import itertools
+import math
+import unittest
+
+import calculos as c
+from synthai import tabuleiro as T
+
+
+class TestesParte152(unittest.TestCase):
+    def test_distintas_forma_fechada(self):
+        # duas letras com p = 0,7 e 0,3, n = 2: K = 1 com 0,7² + 0,3² = 0,58; K = 2 com 2·0,7·0,3 = 0,42
+        dist, comc = T._distintas([0.7, 0.3], 2)
+        self.assertAlmostEqual(dist[1], 0.58, places=14)
+        self.assertAlmostEqual(dist[2], 0.42, places=14)
+        # a 1ª letra presente e K = 1: só "AA", 0,49
+        self.assertAlmostEqual(comc[0][1], 0.49, places=14)
+
+    def test_tabela_fecha_em_um(self):
+        tab = T.tabela_colapso({"A": 3.0, "B": 2.0, "C": 1.0})
+        for n in range(1, 9):
+            parar, com, sem = tab[n]
+            self.assertAlmostEqual(parar + sum(com.values()), 1.0, places=12)
+            self.assertAlmostEqual(sum(sem.values()), 1.0, places=12)
+
+    def test_sem_colapso_com_letras_raras(self):
+        # 26 letras uniformes e n = 1: P(parar) = 1/2 exato (K = 1 sempre)
+        tab = T.tabela_colapso({chr(65 + i): 1.0 for i in range(26)})
+        self.assertAlmostEqual(tab[1][0], 0.5, places=14)
+
+    def test_aleatorio_colapso_controle_total(self):
+        f = {"A": 1.0, "B": 1.0}
+        todas = ["".join(x) for L in (3, 4, 5) for x in itertools.product("ab", repeat=L)]
+        self.assertAlmostEqual(T.aleatorio_colapso(todas, f), 1.0, places=12)
+
+    def test_p3209_aleatorio_colapso(self):
+        m, s, g, k = c.p3209_aleatorio_colapso("embutido", "en", 5, 3, 5, sementes=(181, 182), avaliacao=300)
+        self.assertTrue(0.0 <= m <= 1.0)
+        self.assertGreater(k, g * 0.95)
+        self.assertTrue(math.isfinite(k))
 
 
 if __name__ == "__main__":
@@ -42851,7 +43041,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2331 linhas)
+# resultados.txt  (2339 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -45184,6 +45374,14 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3208 teste 121-140 pt/EN: acerto 0.1431; distintas 33.30; repertorio 0.8844
   P3208 teste 121-140 pt/PT: acerto 0.2934; distintas 50.10; repertorio 0.9351
   P3208 teste 121-140 emb/EN: acerto 0.1348; distintas 22.35; repertorio 0.9425
+=== Parte 152: o colapso das vizinhas de mesma letra, em conta ===
+  P3209 (a) uniforme: medido 0.00405 (desvio 0.00188); geometria 0.00393; colapso 0.00415; medido/colapso 0.976
+  P3209 (b) 3x3: medido 0.03115 (desvio 0.00574); geometria 0.02873; colapso 0.02896; medido/colapso 1.076
+  P3209 (c) 7x7: medido 0.02150 (desvio 0.00411); geometria 0.02036; colapso 0.02099; medido/colapso 1.024
+  P3209 (d) 3-6 letras: medido 0.02150 (desvio 0.00530); geometria 0.02059; colapso 0.02142; medido/colapso 1.004
+  P3209 (e) WordNet 4-5: medido 0.00945 (desvio 0.00327); geometria 0.00825; colapso 0.00824; medido/colapso 1.147
+  P3209 (f)/(g) media das razoes medido/colapso: 1.0453
+  P3209 (h) WordNet 4-5, sementes 201-240: medido 0.00850; medido/colapso 1.032
 """
 
 # ====================================================================================================
@@ -54114,7 +54312,7 @@ A regra da Parte 147 dizia escrever a faixa como contagem; eu escrevi a contagem
 """
 
 # ====================================================================================================
-# ASI_AGI_parte151_geometria_do_acaso.md  (150 linhas)
+# ASI_AGI_parte151_geometria_do_acaso.md  (151 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte151_geometria_do_acaso.md'] = """# Parte 151 — A constante da lei da densidade vem da geometria da grade; e o repertório do Q-learning
 
@@ -54266,6 +54464,150 @@ do tabuleiro português não separa as duas causas: o acerto dobrou junto, e mai
 **6 de 6.** A fração exata no limite (regra da Parte 150) não foi posta à prova: nenhum erro.
 
 ➡ Anterior: [Parte 150](ASI_AGI_parte150_tabuleiro_portugues.md).
+➡ Próxima: [Parte 152](ASI_AGI_parte152_colapso.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte152_colapso.md  (138 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte152_colapso.md'] = """# Parte 152 — O colapso das vizinhas de mesma letra, em conta
+
+↩ Nasce da Parte 151 (a geometria exata do braço aleatório acertou os mundos novos, mas a razão medido/geometria ia de 0,89 a 1,14) e da sua pendência 1.
+
+## O recolhimento do contêiner, 10º lote
+Despertar às 05h53, depois de cerca de 55 minutos ociosa: "up 0 min", como previsto. Dez lotes a favor.
+
+## A conta do colapso
+O `valid_actions` da Parte 111 guarda as ações num dicionário por LETRA: duas vizinhas livres com a mesma letra viram uma ação só. Com n vizinhas livres de
+letras sorteadas independentes com as frequências p, seja K o número de letras distintas entre elas. O braço aleatório escolhe uniforme entre as K letras e o
+PARAR, então:
+- P(parar | n) = E[1/(K + 1)];
+- P(próxima letra = c | n) = E[1{c presente}/(K + 1)] (sem o PARAR, antes de 3 letras: /K).
+
+A distribuição de K, e a de K junto com "c presente", saem EXATAS de uma programação dinâmica sobre as 26 letras, com o peso multinomial
+n!·Π p_i^{m_i}/m_i! (`synthai/tabuleiro.py`, `_distintas`, `tabela_colapso`). Com n = 8 vizinhas e as letras do inglês, P(parar) = 0,137, contra 1/9 = 0,111
+sem colapso: o colapso faz o braço parar mais cedo, e D₃ pesa mais.
+
+**O que ainda é aproximação** (campo médio): as letras das vizinhas de cada decisão entram como sorteios novos, mas uma vizinha livre já vista na decisão
+anterior reaparece com a MESMA letra; e o `setdefault` fica com a primeira casa de cada letra (na ordem (−1, −1), …, (1, 1)), o que puxa o caminho para um lado.
+Os caminhos geométricos são agrupados pela sequência dos números de vizinhas livres (315 assinaturas na grade 5 × 5), com os pesos exatos de cada casa.
+
+**Controle:** com um alfabeto de duas letras e um dicionário com TODAS as palavras de 3 a 5 letras, a conta dá 1,0000000000000000: a probabilidade total fecha.
+
+## Contra os 10 casos já medidos (posteriores; regra da Parte 25)
+
+| caso | geometria (151) | colapso | medido | medido / geometria | medido / colapso |
+|---|---|---|---|---|---|
+| embutido / inglês | 0,0079 | 0,0081 | 0,0090 | 1,137 | 1,111 |
+| português / inglês | 0,0132 | 0,0137 | 0,0136 | 1,033 | 0,990 |
+| WordNet / inglês | 0,0387 | 0,0409 | 0,0434 | 1,121 | 1,061 |
+| português / português | 0,0222 | 0,0227 | 0,0224 | 1,008 | 0,983 |
+| WordNet / português | 0,0434 | 0,0465 | 0,0465 | 1,071 | 1,001 |
+| embutido / português | 0,0065 | 0,0069 | 0,0062 | 0,956 | 0,901 |
+| português / português, 4 × 4 | 0,0239 | 0,0244 | 0,0251 | 1,048 | 1,027 |
+| português / português, 6 × 6 | 0,0211 | 0,0217 | 0,0204 | 0,967 | 0,940 |
+| português / português, máximo 4 | 0,0351 | 0,0339 | 0,0368 | 1,048 | 1,085 |
+| português / português, mínimo 4 | 0,0078 | 0,0076 | 0,0070 | 0,892 | 0,920 |
+
+Razão média: geometria 1,028 (desvio 0,075); colapso **1,002** (desvio 0,070). O colapso tira o viés médio, não o espalhamento. Mas o espalhamento é do
+tamanho do RUÍDO DE MEDIDA: cada medido é uma média de 10 a 40 sementes de 1.000 episódios, com desvio binomial relativo de 3,3% a 12,7%. Contra esse ruído,
+χ² = Σ ((razão − 1)/desvio)² = 14,8 com 10 graus de liberdade (p ≈ 0,14). O que sobra para o erro do modelo é √(0,00442 − 0,00397) = 0,021.
+
+## Previsões em cinco mundos novos, registradas antes de rodar (sementes 181 a 200, só o braço aleatório)
+Centro = a conta do colapso, sem nenhum fator ajustado. Meia-largura 1,645 · √(binomial/20 + (0,021 · 1,36 · centro)²): o ruído de medida mais o erro do
+modelo, este vezes o fator da Parte 79 (ele foi estimado de 10 casos). Procedência: conta (campo médio) com um erro de modelo calibrado.
+- **(a)** português num tabuleiro de letras UNIFORMES: em **[0,0034; 0,0049]** (centro 0,00415; geometria sem colapso 0,00393)
+- **(b)** português / português, grade 3 × 3: em **[0,0266; 0,0313]** (centro 0,02896). A grade pequena é onde o campo médio mais erra: das 8 casas que
+  cercam uma, quase todas já foram vistas.
+- **(c)** português / português, grade 7 × 7: em **[0,0190; 0,0229]** (centro 0,02099)
+- **(d)** português / português, de 3 a 6 letras: em **[0,0195; 0,0234]** (centro 0,02142)
+- **(e)** WordNet / inglês, de 4 a 5 letras: em **[0,0071; 0,0094]** (centro 0,00824)
+- **(f)** a média das cinco razões medido / colapso em **[0,959; 1,041]**: ruído relativo médio de cada mundo ≈ 5%, dividido por √5, mais 1% de modelo.
+- **(g)** a mesma média de (f), com a faixa calculada por código (o ruído relativo de cada mundo é 11%, 4,1%, 4,8%, 4,8% e 7,8%; o desvio da média é 0,0312; o
+  erro de modelo, 0,021 · 1,36/√5 = 0,0128): em **[0,945; 1,055]**.
+
+**Lapso registrado antes de rodar:** a faixa de (f) saiu de uma estimativa de cabeça ("≈ 5%", regra da Parte 63 desobedecida); o mundo uniforme tem 11%. (f) fica
+como foi registrada e conta no placar; (g) é a versão por código, registrada antes de qualquer execução dos mundos novos.
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua sobre o rascunho com "Do mundo:" provisória: m1 = 7, m2 = 0, m3 = 0,091, m5 = 0. As 7 são de conta com erro calibrado: E = 7 × 0,10 = 0,7; m1 em
+[7; 7 + 2E] = [7; 8]. (f) e (g) medem a mesma coisa e erram juntas ou acertam juntas, salvo se a média cair entre 1,041 e 1,055 (ou entre 0,945 e 0,959).
+Acertos como contagem: 5 a 7 das 7 (5/7 = 0,7143).
+- **(m1)** nº de previsões do mundo em **[7; 9]**
+- **(m2)** nº que cruzam ou tocam o zero em **[0; 0]**
+- **(m3)** mediana de w em **[0,07; 0,12]**
+- **(m4)** fração de acertos em **[0,7143; 1,0000]**
+- **(m5)** nº com w > 0,6 em **[0; 0]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 3]**, centro 0,7.
+
+## Um lote novo depois de (e), registrado antes de rodar (WordNet / inglês, 4 a 5 letras, sementes 201 a 240)
+Os cinco mundos rodaram (resultado em "Medido"); (e) ficou 0,00005 acima do teto, com razão medido/colapso 1,147, z ≈ 1,8 contra o ruído binomial e o erro do
+modelo juntos. Antes de qualquer mecanismo (Partes 117 e 148), 40 sementes novas, o mesmo centro:
+- **(h)** aleatório, WordNet / inglês, 4 a 5 letras, média das sementes 201 a 240, em **[0,0074; 0,0091]**: 1,645 · √(binomial/40 + (0,021 · 1,36 · 0,00824)²).
+
+### A rodada 100, registrada antes (a centésima)
+A tabela do colapso traduzida: a programação dinâmica sobre as 26 letras (estados (sorteios usados, distintas) numa matriz percorrida na ordem fixa t, k
+crescentes, em vez do dicionário do módulo), o peso multinomial com p^m por MULTIPLICAÇÃO REPETIDA (a `**` do módulo é a pow da libm; expoente inteiro sai
+portável assim, regra da Parte 92) e m! exato; P(parar | n) e P(c | n) com e sem PARAR para n = 1..8, com as letras do inglês. Só + × ÷. Previsão: **IGUAL**.
+O que poderia quebrar: a ordem das somas dentro da programação dinâmica (os dois lados percorrem a matriz na mesma ordem).
+
+## Medido (P3209; rodada 100)
+
+| mundo | medido (desvio entre sementes) | geometria | colapso | medido / colapso | veredito |
+|---|---|---|---|---|---|
+| (a) letras uniformes | 0,00405 (0,00188) | 0,00393 | 0,00415 | 0,976 | ✅ |
+| (b) grade 3 × 3 | 0,03115 (0,00574) | 0,02873 | 0,02896 | 1,076 | ✅ (a 0,00015 do teto) |
+| (c) grade 7 × 7 | 0,02150 (0,00411) | 0,02036 | 0,02099 | 1,024 | ✅ |
+| (d) 3 a 6 letras | 0,02150 (0,00530) | 0,02059 | 0,02142 | 1,004 | ✅ |
+| (e) WordNet 4 a 5 | **0,00945** (0,00327) | 0,00825 | 0,00824 | 1,147 | ❌ (0,00005 acima do teto) |
+
+- **(f)** média das razões: **1,0453**, fora de [0,959; 1,041]. ❌
+- **(g)** a mesma média: 1,0453 em [0,945; 1,055]. ✅
+- **(h)** o lote novo de (e), sementes 201 a 240: 0,0085 (razão 1,032). ✅
+- **Rodada 100:** IGUAL, 10 linhas e 424 números bit a bit. ✅
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ❌ (g) ✅ (h) ✅
+
+**Mundo: 6 de 8.** **Sobre mim:** 2 erros, em [0; 3]: ✅. Nenhuma surpresa (os dois erros são menores que as larguras).
+
+### Os dois erros
+- **(e) era cauda.** O lote novo de 40 sementes deu razão 1,032; as 60 juntas, 0,00882 (razão 1,070). A regra "lote novo antes de mecanismo" (Partes 117,
+  137, 148, 149) evitou de novo uma explicação: eu já tinha notado que as razões do tabuleiro inglês ficam altas (1,111, 1,061, 1,147) e estava a um passo
+  de dar a isso um nome.
+- **(f) foi o lapso de procedência:** a faixa saiu de cabeça (ruído "≈ 5%" para mundos com 4% a 11%) e errou por 0,004; a versão por código, (g), acertou com
+  folga. É a regra da Parte 63 ("estimativa de cabeça no texto é previsão: trocar por código antes do commit"), escrita há 89 partes e desobedecida.
+
+### O que o colapso mostrou
+Com os 15 casos (10 antigos e 5 novos), a razão medido / colapso tem média **1,009** e desvio 0,060, contra 1,028 da geometria nos 10 antigos. A conta do
+colapso, sem nenhum parâmetro ajustado, prevê o braço aleatório em 15 combinações de dicionário, tabuleiro, grade e comprimento, e o que sobra é do tamanho do
+ruído de medida (χ² = 14,8 nos 10 antigos). A lei da densidade da Parte 150 ficou inteira explicada: a constante é geometria (a chance de parar) mais o colapso
+(as letras repetidas viram uma ação só).
+
+**Onde o campo médio deveria errar e não errou muito:** a grade 3 × 3 (razão 1,076, a maior entre os mundos novos não-cauda), onde quase toda vizinha já foi vista
+antes. O sinal é o esperado (uma vizinha já vista tem a mesma letra, e o colapso real é maior que o sorteado), mas um caso não fixa um sinal (Parte 64).
+
+## Engenharia reversa
+- **O padrão: a regra que eu mais cito é a que eu deixo de aplicar quando a conta "parece fácil".** A faixa de (f) era uma média de cinco razões, uma conta
+  de duas linhas, e eu a fiz de cabeça porque parecia evidente. As Partes 63, 69 e 114 gravaram a mesma regra; o custo foi um erro em 8.
+- **Regra (Parte 152):** antes do commit de um registro, toda faixa tem a linha de código que a calcula (no texto, ou numa pNN). "Parece fácil" não é exceção.
+  Auditoria simples: no registro, cada faixa diz de que código saiu.
+- **A rodada 100.** Cem rodadas do diálogo, todas IGUAIS no fim (algumas depois de corrigir a ordem das somas ou a libm). A lista da fronteira continua a mesma
+  das Partes 52 a 106: exp, log, pow e as trigonométricas em faixa larga, mais a ORDEM das somas. Nesta rodada, a pow de expoente inteiro foi trocada por
+  multiplicação repetida antes de rodar, e a soma da programação dinâmica foi tirada do dicionário para uma matriz de ordem fixa: as duas armadilhas conhecidas,
+  evitadas antes, e a rodada passou na primeira tentativa.
+
+## Funções e testes
+- **Funções:** `p3209_aleatorio_colapso` e `_parte_152`; em `synthai/tabuleiro.py`, `_distintas`, `tabela_colapso`, `assinaturas` e `aleatorio_colapso`. Entrada
+  P3209 na regressão.
+- **Diálogo:** `dialogo/rodada100.py` e `dialogo/Rodada100.java`, IGUAL.
+- **Testes:** `synthai/testes_parte152.py`.
+
+**O placar (m):** m1 = 8 em [7; 9] ✅, m2 = 0 em [0; 0] ✅, m3 = 0,092 em [0,07; 0,12] ✅, m4 = 0,75 em [0,7143; 1,0000] ✅, m5 = 0 ✅ e m6 = 0 ✅. **6 de 6.**
+
+➡ Anterior: [Parte 151](ASI_AGI_parte151_geometria_do_acaso.md).
 """
 
 # ====================================================================================================
@@ -76207,7 +76549,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2156 linhas)
+# dialogo/DIALOGO.md  (2166 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -78365,10 +78707,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 7 linhas e 13 números bit a bit**; s₃ = 0,194 na grade 5 × 5. Previsão registrada antes (Parte 151): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 100): o colapso de vizinhas com a mesma letra em forma fechada (a correção que vai de 0,89 a 1,14).
+
+## Rodada 100 (Parte 152) — a tabela do colapso; a centésima rodada
+
+**IA-Python (lógica criativa):** Cem rodadas. Nesta, a peça que faltava na lei da densidade: quando duas vizinhas têm a mesma letra, o jogo as junta numa ação só. A chance exata de K letras distintas entre n vizinhas sai de uma programação dinâmica sobre as 26 letras, com o peso multinomial. O meu módulo usa um dicionário de estados e a potência `**`; para ti, troquei os dois antes de rodar: uma matriz percorrida em ordem fixa e a potência por multiplicação repetida. Chegamos ao mesmo bit, nos 424 números?
+
+**IA-Java (ASI):** Chegamos, e repara por quê: as duas armadilhas desta conta são as duas que nós já pisamos. A `pow` da libm, que a Parte 92 trocou por multiplicação quando o expoente é inteiro, e a ordem das somas, que as rodadas 67 e 70 ensinaram (um dicionário soma na ordem em que as chaves nasceram, uma matriz na ordem dos índices). Cem rodadas depois, a fronteira entre nós continua sendo a aritmética, nunca o algoritmo.
+
+**Resultado.** `comparar.py`: **IGUAIS, 10 linhas e 424 números bit a bit**, na primeira tentativa. Previsão registrada antes (Parte 152): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 101): o campo médio da grade 3 × 3 (razão 1,076): uma conta que guarde as letras das vizinhas já vistas, e a sua tradução.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (94 linhas)
+# dialogo/PENDENCIAS.md  (95 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -78464,6 +78816,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Parte 149)** ABERTAS: (1) o "repertório" como explicação de o embutido ter Q maior que o português com aleatório menor (1 lote): medir a fração das palavras achadas pelo Q que se repetem entre grades, nos dois dicionários, com previsão antes; (2) um tabuleiro com as frequências de letras do PORTUGUÊS (o mecanismo de (s)): prever o Q e o aleatório antes; (3) a auditoria com o t nas Partes 136-146 precisa que cada parte escreva n_cal de forma legível: decidir o formato e auditar as que tiverem.
 - **(Parte 150)** ABERTAS: (1) o repertório como explicação de o Q-learning dobrar com o tabuleiro português (a pendência 1 da 149, agora com dois tabuleiros): medir, antes de explicar, a fração das palavras achadas pelo Q guloso que aparecem em mais de uma grade de avaliação, nos dois tabuleiros, com a previsão escrita; (2) a constante k ≈ 0,21 da lei da densidade: derivar da geometria da grade 5 × 5 (vizinhos, caminhos de 3 a 5 casas, a chance de o aleatório parar) e comparar com o medido.
 - **(Parte 151)** ABERTAS: (1) a correção do colapso (razões medido/geometria de 0,89 a 1,14) em forma fechada: o `valid_actions` junta vizinhas de mesma letra, o que muda o peso das letras no caminho; derivar e prever os 10 casos já medidos antes de rodar casos novos; (2) separar no tabuleiro português as duas causas do repertório maior (a contagem de acertos e a repetição de fato): comparar com um controle de acertos igualados; (3) os grupos úteis (b·ln U) num terceiro mundo, adiados desde a rodada 95.
+- **(Parte 152)** ABERTAS: (1) o campo médio esquece que a vizinha já vista tem a mesma letra: uma conta exata por enumeração das letras numa grade pequena (3 × 3, alfabeto reduzido) para medir o tamanho desse erro; (2) o setdefault fica com a PRIMEIRA casa de cada letra: medir quanto isso puxa o caminho (a geometria muda?); (3) as razões do tabuleiro inglês altas (1,111, 1,061, 1,147→1,070 com o lote novo): hipótese de 0 lotes, só testar se a (1) não explicar.
 """
 
 # ====================================================================================================
@@ -79281,6 +79634,65 @@ public class Rodada10 {
             System.out.println(nome + " somas: T = " + h(soma(t)) + " S = " + h(soma(s)) + " dIa = " + h(soma(ga)) + " dIb = " + h(soma(gb)));
             System.out.println(nome + " satisfacao = " + h(soma(i_) / 1000));
         }
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/Rodada100.java  (54 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada100.java'] = """// Rodada 100 (Parte 152; a centesima): a tabela do colapso (synthai.tabuleiro.tabela_colapso) bit a bit. Para n = 1..8 vizinhas com letras iid (frequencias
+// do ingles em ordem alfabetica), a distribuicao de K (letras distintas) e de (K, c presente) por programacao dinamica sobre as letras, matriz [t][k] em
+// ordem fixa, p^m por multiplicacao repetida, m! exato; P(parar) = E[1/(K+1)], P(c) = E[1{c}/(K+1)], sem PARAR E[1{c}/K].
+public class Rodada100 {
+    static final double[] FREQ = {8.2, 1.5, 2.8, 4.3, 12.7, 2.2, 2.0, 6.1, 7.0, 0.15, 0.8, 4.0, 2.4, 6.7, 7.5, 1.9, 0.1, 6.0, 6.3, 9.1, 2.8, 1.0, 2.4,
+            0.15, 2.0, 0.07};
+
+    static double potencia(double x, int m) { double r = 1.0; for (int i = 0; i < m; i++) r = r * x; return r; }
+
+    static double[] dp(double[] p, int n, int forcar, double[] fat) {
+        double[][] est = new double[n + 1][n + 1];
+        est[0][0] = 1.0;
+        for (int i = 0; i < p.length; i++) {
+            double[][] novo = new double[n + 1][n + 1];
+            for (int t = 0; t <= n; t++) for (int k = 0; k <= n; k++) {
+                double w = est[t][k];
+                if (w == 0.0) continue;
+                int inicio = i == forcar ? 1 : 0;
+                for (int m = inicio; m <= n - t; m++) novo[t + m][k + (m > 0 ? 1 : 0)] += w * potencia(p[i], m) / fat[m];
+            }
+            est = novo;
+        }
+        double[] out = new double[n + 1];
+        for (int k = 0; k <= n; k++) out[k] = fat[n] * est[n][k];
+        return out;
+    }
+
+    public static void main(String[] args) {
+        double tot = 0.0;
+        for (double v : FREQ) tot += v;
+        double[] p = new double[26];
+        for (int i = 0; i < 26; i++) p[i] = FREQ[i] / tot;
+        double[] fat = new double[9];
+        fat[0] = 1.0;
+        for (int m = 1; m <= 8; m++) fat[m] = fat[m - 1] * m;
+        StringBuilder sb = new StringBuilder();
+        for (int n = 1; n <= 8; n++) {
+            double[] dist = dp(p, n, -1, fat);
+            double parar = 0.0;
+            for (int k = 1; k <= n; k++) parar += dist[k] / (k + 1);
+            sb.append("n").append(n).append(" ").append(Double.toHexString(parar));
+            for (int i = 0; i < 26; i++) {
+                double[] cc = dp(p, n, i, fat);
+                double com = 0.0, sem = 0.0;
+                for (int k = 1; k <= n; k++) { com += cc[k] / (k + 1); sem += cc[k] / k; }
+                sb.append(" ").append(Double.toHexString(com)).append(" ").append(Double.toHexString(sem));
+            }
+            sb.append("\\n");
+        }
+        sb.append("conferido True\\n");
+        sb.append("fim");
+        System.out.println(sb.toString());
     }
 }
 """
@@ -86526,6 +86938,80 @@ for nome in ("lukasiewicz", "godel", "produto"):
     grads = [gradiente_implicacao(nome, x, y) for x, y in pares]
     print(f"{nome} somas: T = {somaT.hex()} S = {somaS.hex()} dIa = {sum(x for x, _ in grads).hex()} dIb = {sum(y for _, y in grads).hex()}")
     print(f"{nome} satisfacao = {satisfacao(nome, pares).hex()}")
+"""
+
+# ====================================================================================================
+# dialogo/rodada100.py  (69 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada100.py'] = """\"\"\"Rodada 100 do diálogo Python <-> Java (Parte 152; a centésima): a tabela do colapso de synthai.tabuleiro.tabela_colapso bit a bit. Para n = 1..8
+vizinhas com letras iid (frequências do inglês, LETTER_FREQ, em ordem alfabética), a distribuição do número K de letras distintas e de (K, c presente) por
+programação dinâmica sobre as letras, numa matriz [t][k] percorrida em ordem fixa, com p^m por multiplicação repetida e m! exato; daí P(parar | n) =
+E[1/(K+1)], P(c | n) = E[1{c}/(K+1)] e, sem PARAR, E[1{c}/K]. Antes de imprimir, confere contra o módulo a menos de 1e-12. Da raiz: python3 dialogo/rodada100.py\"\"\"
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from synthai import palavras_rl, tabuleiro  # noqa: E402
+
+LETRAS = sorted(palavras_rl.LETTER_FREQ)
+
+
+def potencia(x, m):
+    r = 1.0
+    for _ in range(m):
+        r = r * x
+    return r
+
+
+def dp(p, n, forcar, fat):
+    est = [[0.0] * (n + 1) for _ in range(n + 1)]
+    est[0][0] = 1.0
+    for i in range(len(p)):
+        novo = [[0.0] * (n + 1) for _ in range(n + 1)]
+        for t in range(n + 1):
+            for k in range(n + 1):
+                w = est[t][k]
+                if w == 0.0:
+                    continue
+                inicio = 1 if i == forcar else 0
+                for m in range(inicio, n - t + 1):
+                    novo[t + m][k + (1 if m else 0)] += w * potencia(p[i], m) / fat[m]
+        est = novo
+    return [fat[n] * est[n][k] for k in range(n + 1)]
+
+
+def main():
+    tot = 0.0
+    for c in LETRAS:
+        tot += palavras_rl.LETTER_FREQ[c]
+    p = [palavras_rl.LETTER_FREQ[c] / tot for c in LETRAS]
+    fat = [1.0]
+    for m in range(1, 9):
+        fat.append(fat[-1] * m)
+    mod = tabuleiro.tabela_colapso(palavras_rl.LETTER_FREQ)
+    for n in range(1, 9):
+        dist = dp(p, n, -1, fat)
+        parar = 0.0
+        for k in range(1, n + 1):
+            parar += dist[k] / (k + 1)
+        assert abs(parar - mod[n][0]) < 1e-12
+        linha = ["n" + str(n), parar.hex()]
+        for i, c in enumerate(LETRAS):
+            cc = dp(p, n, i, fat)
+            com, sem = 0.0, 0.0
+            for k in range(1, n + 1):
+                com += cc[k] / (k + 1)
+                sem += cc[k] / k
+            assert abs(com - mod[n][1][c]) < 1e-12 and abs(sem - mod[n][2][c]) < 1e-12
+            linha.append(com.hex())
+            linha.append(sem.hex())
+        print(" ".join(linha))
+    print("conferido True")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
 """
 
 # ====================================================================================================

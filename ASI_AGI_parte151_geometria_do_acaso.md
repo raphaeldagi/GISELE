@@ -148,3 +148,4 @@ do tabuleiro português não separa as duas causas: o acerto dobrou junto, e mai
 **6 de 6.** A fração exata no limite (regra da Parte 150) não foi posta à prova: nenhum erro.
 
 ➡ Anterior: [Parte 150](ASI_AGI_parte150_tabuleiro_portugues.md).
+➡ Próxima: [Parte 152](ASI_AGI_parte152_colapso.md).

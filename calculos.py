@@ -7574,6 +7574,7 @@ def testes_de_regressao():
         "P3206": (round(p3206_aleatorio_tabuleiro("en")[0], 4), round(p3206_aleatorio_tabuleiro("embutido")[0], 4)) == (0.0465, 0.0062),
         "P3207": tuple(round(p3207_aleatorio_geometria(tamanho=a, minimo=b, maximo=d)[0], 4) for a, b, d in ((4, 3, 5), (6, 3, 5), (5, 3, 4), (5, 4, 5))) == (0.0251, 0.0204, 0.0368, 0.007),
         "P3208": (lambda r: (round(r["repete"], 4), round(r["distintas"], 2)) == (0.9425, 22.35))(p3208_repertorio("embutido", "en", tuple(range(121, 141)))),
+        "P3209": tuple(round(p3209_aleatorio_colapso(*a)[0], 5) for _, a in _MUNDOS_P152) == (0.00405, 0.03115, 0.0215, 0.0215, 0.00945),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18587,6 +18588,21 @@ def _parte_151():
 
 
 PARTES[151] = _parte_151
+
+
+def _parte_152():
+    print("\n=== Parte 152: o colapso das vizinhas de mesma letra, em conta ===")
+    rs = []
+    for nome, a in _MUNDOS_P152:
+        m, s, g, k = p3209_aleatorio_colapso(*a)
+        rs.append(m / k)
+        print(f"  P3209 {nome}: medido {m:.5f} (desvio {s:.5f}); geometria {g:.5f}; colapso {k:.5f}; medido/colapso {m / k:.3f}")
+    print(f"  P3209 (f)/(g) media das razoes medido/colapso: {sum(rs) / len(rs):.4f}")
+    m, s, g, k = p3209_aleatorio_colapso("en", "en", 5, 4, 5, sementes=tuple(range(201, 241)))
+    print(f"  P3209 (h) WordNet 4-5, sementes 201-240: medido {m:.5f}; medido/colapso {m / k:.3f}")
+
+
+PARTES[152] = _parte_152
 
 PARTES[126] = _parte_126
 

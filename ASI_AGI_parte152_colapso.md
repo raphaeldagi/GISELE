@@ -81,3 +81,58 @@ A tabela do colapso traduzida: a programação dinâmica sobre as 26 letras (est
 crescentes, em vez do dicionário do módulo), o peso multinomial com p^m por MULTIPLICAÇÃO REPETIDA (a `**` do módulo é a pow da libm; expoente inteiro sai
 portável assim, regra da Parte 92) e m! exato; P(parar | n) e P(c | n) com e sem PARAR para n = 1..8, com as letras do inglês. Só + × ÷. Previsão: **IGUAL**.
 O que poderia quebrar: a ordem das somas dentro da programação dinâmica (os dois lados percorrem a matriz na mesma ordem).
+
+## Medido (P3209; rodada 100)
+
+| mundo | medido (desvio entre sementes) | geometria | colapso | medido / colapso | veredito |
+|---|---|---|---|---|---|
+| (a) letras uniformes | 0,00405 (0,00188) | 0,00393 | 0,00415 | 0,976 | ✅ |
+| (b) grade 3 × 3 | 0,03115 (0,00574) | 0,02873 | 0,02896 | 1,076 | ✅ (a 0,00015 do teto) |
+| (c) grade 7 × 7 | 0,02150 (0,00411) | 0,02036 | 0,02099 | 1,024 | ✅ |
+| (d) 3 a 6 letras | 0,02150 (0,00530) | 0,02059 | 0,02142 | 1,004 | ✅ |
+| (e) WordNet 4 a 5 | **0,00945** (0,00327) | 0,00825 | 0,00824 | 1,147 | ❌ (0,00005 acima do teto) |
+
+- **(f)** média das razões: **1,0453**, fora de [0,959; 1,041]. ❌
+- **(g)** a mesma média: 1,0453 em [0,945; 1,055]. ✅
+- **(h)** o lote novo de (e), sementes 201 a 240: 0,0085 (razão 1,032). ✅
+- **Rodada 100:** IGUAL, 10 linhas e 424 números bit a bit. ✅
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ❌ (g) ✅ (h) ✅
+
+**Mundo: 6 de 8.** **Sobre mim:** 2 erros, em [0; 3]: ✅. Nenhuma surpresa (os dois erros são menores que as larguras).
+
+### Os dois erros
+- **(e) era cauda.** O lote novo de 40 sementes deu razão 1,032; as 60 juntas, 0,00882 (razão 1,070). A regra "lote novo antes de mecanismo" (Partes 117,
+  137, 148, 149) evitou de novo uma explicação: eu já tinha notado que as razões do tabuleiro inglês ficam altas (1,111, 1,061, 1,147) e estava a um passo
+  de dar a isso um nome.
+- **(f) foi o lapso de procedência:** a faixa saiu de cabeça (ruído "≈ 5%" para mundos com 4% a 11%) e errou por 0,004; a versão por código, (g), acertou com
+  folga. É a regra da Parte 63 ("estimativa de cabeça no texto é previsão: trocar por código antes do commit"), escrita há 89 partes e desobedecida.
+
+### O que o colapso mostrou
+Com os 15 casos (10 antigos e 5 novos), a razão medido / colapso tem média **1,009** e desvio 0,060, contra 1,028 da geometria nos 10 antigos. A conta do
+colapso, sem nenhum parâmetro ajustado, prevê o braço aleatório em 15 combinações de dicionário, tabuleiro, grade e comprimento, e o que sobra é do tamanho do
+ruído de medida (χ² = 14,8 nos 10 antigos). A lei da densidade da Parte 150 ficou inteira explicada: a constante é geometria (a chance de parar) mais o colapso
+(as letras repetidas viram uma ação só).
+
+**Onde o campo médio deveria errar e não errou muito:** a grade 3 × 3 (razão 1,076, a maior entre os mundos novos não-cauda), onde quase toda vizinha já foi vista
+antes. O sinal é o esperado (uma vizinha já vista tem a mesma letra, e o colapso real é maior que o sorteado), mas um caso não fixa um sinal (Parte 64).
+
+## Engenharia reversa
+- **O padrão: a regra que eu mais cito é a que eu deixo de aplicar quando a conta "parece fácil".** A faixa de (f) era uma média de cinco razões, uma conta
+  de duas linhas, e eu a fiz de cabeça porque parecia evidente. As Partes 63, 69 e 114 gravaram a mesma regra; o custo foi um erro em 8.
+- **Regra (Parte 152):** antes do commit de um registro, toda faixa tem a linha de código que a calcula (no texto, ou numa pNN). "Parece fácil" não é exceção.
+  Auditoria simples: no registro, cada faixa diz de que código saiu.
+- **A rodada 100.** Cem rodadas do diálogo, todas IGUAIS no fim (algumas depois de corrigir a ordem das somas ou a libm). A lista da fronteira continua a mesma
+  das Partes 52 a 106: exp, log, pow e as trigonométricas em faixa larga, mais a ORDEM das somas. Nesta rodada, a pow de expoente inteiro foi trocada por
+  multiplicação repetida antes de rodar, e a soma da programação dinâmica foi tirada do dicionário para uma matriz de ordem fixa: as duas armadilhas conhecidas,
+  evitadas antes, e a rodada passou na primeira tentativa.
+
+## Funções e testes
+- **Funções:** `p3209_aleatorio_colapso` e `_parte_152`; em `synthai/tabuleiro.py`, `_distintas`, `tabela_colapso`, `assinaturas` e `aleatorio_colapso`. Entrada
+  P3209 na regressão.
+- **Diálogo:** `dialogo/rodada100.py` e `dialogo/Rodada100.java`, IGUAL.
+- **Testes:** `synthai/testes_parte152.py`.
+
+**O placar (m):** m1 = 8 em [7; 9] ✅, m2 = 0 em [0; 0] ✅, m3 = 0,092 em [0,07; 0,12] ✅, m4 = 0,75 em [0,7143; 1,0000] ✅, m5 = 0 ✅ e m6 = 0 ✅. **6 de 6.**
+
+➡ Anterior: [Parte 151](ASI_AGI_parte151_geometria_do_acaso.md).
