@@ -81,3 +81,16 @@ passou; falta um caminho independente (regra da Parte 143). As sementes da calib
 Se o número da semente não importa, um lote de sementes PEQUENAS novas (13 a 22) cai na média das 28:
 - **(n)** Q-learning, média das sementes 13 a 22, em **[0,2913; 0,3265]**: média 0,3089 e desvio 0,0214 das 28, 1,645 · 1,36 · √(σ²/28 + σ²/10).
   Se as sementes pequenas fossem diferentes de verdade, o lote ficaria perto de 0,324, acima do teto.
+
+**Medido no lote 13 a 22:** Q-learning **0,3278**, acima do teto de (n) ❌. As sementes pequenas ficaram altas de novo. Antes de qualquer mecanismo,
+duas medidas sem previsão, para separar o que carrega a diferença (não são evidência; servem para desenhar o teste seguinte):
+- **cruzando treino e avaliação** (18 sementes pequenas, 5 a 22, e 18 grandes, 61 a 78): treino pequeno/avaliação pequena 0,3262; pequeno/grande
+  0,3139; grande/pequeno 0,3163; grande/grande 0,3032. As duas metades contribuem quase igual (cerca de +0,012 cada).
+- **o aleatório, que mede a facilidade das grades sem agente:** desvio 0,0058 por semente, contra 0,0066 do binomial com 1.000 episódios.
+  As grades não variam mais do que o sorteio; o excesso do Q-learning (desvio 0,021 contra 0,0146 do binomial) vem do treino.
+
+Nenhum mecanismo conhecido faz o número da semente do `random.Random` mudar a dificuldade (as sementes de 5 a 80 cabem todas numa palavra de 32
+bits). A divisão "pequenas × grandes" foi escolhida depois de ver os dados. O teste decisivo, com sementes que nenhuma conta usou:
+- **(o)** média do Q-learning nas sementes 23 a 40 menos a média nas sementes 1001 a 1018 em **[−0,0160; 0,0160]**, se o número da semente não
+  importa: 1,645 · 1,36 · σ · √(2/18), σ = 0,0214 das 38 sementes. Se a hipótese "sementes pequenas ficam altas" fosse verdadeira, a diferença
+  ficaria perto de +0,024, acima do teto.
