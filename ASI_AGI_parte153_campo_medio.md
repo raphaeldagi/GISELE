@@ -28,3 +28,16 @@ identidade e binomial.
 - **(d)** o controle: exato e campo médio em **[1,0; 1,0]**, com tolerância 1e-12 (identidade: a soma das chances de parar é 1 e todo PARAR é palavra).
 - **(e)** o enumerador contra a SIMULAÇÃO do jogo real (o `WordGridEnv` e o `run_episode` da Parte 111, caso B, 200.000 episódios): z = (simulado − exato)/σ em
   **[−1,645; 1,645]**, com σ = √(p(1 − p)/200.000) e p o exato (forma fechada binomial). É a prova de que o enumerador reproduz a regra do jogo, e não outra.
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua sobre o rascunho com "Do mundo:" provisória: m1 = 5, m2 = 2, m3 = 0,200, m5 = 0. E = 3 de mecanismo × 0,4 + 1 binomial × 0,10 = 1,3 (código: a própria
+soma); m1 em [5; 5 + 2E] = [5; 7,6], arredondado para cima. Acertos como contagem: 2 a 5 das 5 (2/5 = 0,4000).
+- **(m1)** nº de previsões do mundo em **[5; 8]**
+- **(m2)** nº que cruzam ou tocam o zero em **[2; 3]**
+- **(m3)** mediana de w em **[0,15; 0,30]**
+- **(m4)** fração de acertos em **[0,4000; 1,0000]**
+- **(m5)** nº com w > 0,6 em **[0; 1]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 4]**, centro 1,3.
