@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 153, perguntas P1 a P3212).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 154, perguntas P1 a P3213).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (18690 linhas)
+# calculos.py  (18725 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7616,6 +7616,7 @@ def testes_de_regressao():
         "P3210": (lambda r: (round(r["B"][3], 4), round(r["A"][0], 6), round(r["controle"][0], 6)) == (1.0429, 0.25, 1.0))(p3210_campo_medio_contra_exato()),
         "P3211": round(p3211_simulado_caso_b()[2], 2) == -0.95,
         "P3212": (lambda r: tuple(round(r[k][2], 4) for k in ("A'", "C", "D")) == (0.9156, 1.0568, 1.0316))(p3212_campo_medio_lote_novo()),
+        "P3213": (lambda r: tuple(round(r[k][3], 4) for k in ("B", "A'", "C", "D")) == (1.0155, 1.029, 1.0134, 1.0303))(p3213_setdefault_e_memoria()),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18622,6 +18623,29 @@ def p3212_campo_medio_lote_novo():
     return out
 
 
+def _casos_p154():
+    \"\"\"Os quatro casos sem simetria das Partes 153-154: B, A', C e D (nome, palavras, freq).\"\"\"
+    import itertools
+    casos = _casos_p153()
+    A, B = casos[0][1], casos[1][1]
+    alt = [w for L in (3, 4, 5) for w in ("".join(x) for x in itertools.product("ab", repeat=L)) if all(a != b for a, b in zip(w, w[1:]))]
+    return (("B", B, {"A": 0.5, "B": 0.3, "C": 0.2}), ("A'", A, {"A": 0.7, "B": 0.3}), ("C", B, {"A": 1.0, "B": 1.0, "C": 1.0}),
+            ("D", alt, {"A": 0.7, "B": 0.3}))
+
+
+def p3213_setdefault_e_memoria(maximo=5):
+    \"\"\"A Parte 154 (P3213): na grade 3 x 3, de 3 a `maximo` letras, o exato com a primeira casa de cada letra (o jogo), o exato com a casa sorteada entre as da
+    letra, e o campo medio. Devolve {nome: (primeira, uniforme, campo, uniforme/primeira, uniforme/campo, primeira/campo)}.\"\"\"
+    from synthai import tabuleiro as T
+    out = {}
+    for nome, palavras, freq in _casos_p154():
+        p = T.aleatorio_exato(palavras, freq, 3, 3, maximo)
+        u = T.aleatorio_exato(palavras, freq, 3, 3, maximo, casa="uniforme")
+        m = T.aleatorio_colapso(palavras, freq, 3, 3, maximo)
+        out[nome] = (p, u, m, u / p, u / m, p / m)
+    return out
+
+
 def _parte_148():
     print("\\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
@@ -18717,6 +18741,17 @@ def _parte_153():
 
 PARTES[153] = _parte_153
 
+
+def _parte_154():
+    print("\\n=== Parte 154: o setdefault e a memoria das letras, separados ===")
+    for L in (4, 5):
+        for nome, (p, u, m, up, um, pm) in p3213_setdefault_e_memoria(L).items():
+            print(f"  P3213 3-{L} letras {nome}: primeira {p:.6f}; uniforme {u:.6f}; campo medio {m:.6f}; uniforme/primeira {up:.4f}; "
+                  f"uniforme/campo {um:.4f}; primeira/campo {pm:.4f}")
+
+
+PARTES[154] = _parte_154
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -18729,7 +18764,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (604 linhas)
+# CLAUDE.md  (607 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -19179,6 +19214,9 @@ anterior, commit e push.
   valid_actions) reproduz o jogo (z −0,95 em 200 mil episódios); o campo médio erra 4-8% e para os dois lados (0,916 a 1,057). O caso A tinha uma simetria que anulava o colapso (0,25 nas três
   contas): erro de DESENHO. Regras: antes de registrar um caso de teste de um mecanismo, rodar a conta com e sem o mecanismo; se dão o mesmo número, o caso não testa nada. Um erro de desenho
   conta, em m1, como tantos erros quantas previsões usam o caso.
+  Parte 154 (o setdefault e a memória das letras, separados; rodada 102 IGUAL; 5/5, (m) 6/6): o erro do campo médio é o produto de dois esquecimentos. O setdefault (a primeira casa
+  de cada letra) tira sempre 1,3-3,0% do acerto (sinal geométrico); a memória das letras (vizinha vista volta com a mesma letra) dá de −5,8% a +7,1% (sinal do dicionário). A regra da 153
+  (conta com e sem o mecanismo num caso de calibração vizinho) funcionou na primeira vez: nenhum caso degenerado, e a faixa do comprimento vizinho acertou os quatro.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -19327,7 +19365,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149 synthai.testes_parte150 synthai.testes_parte151 synthai.testes_parte152 synthai.testes_parte153`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149 synthai.testes_parte150 synthai.testes_parte151 synthai.testes_parte152 synthai.testes_parte153 synthai.testes_parte154`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -28815,7 +28853,7 @@ def jogo_lcg(linhas=4, colunas=5, semente=112):
 """
 
 # ====================================================================================================
-# synthai/tabuleiro.py  (226 linhas)
+# synthai/tabuleiro.py  (233 linhas)
 # ====================================================================================================
 FONTES['synthai/tabuleiro.py'] = """\"\"\"O tabuleiro do jogo de palavras com as letras de outra língua (Parte 150). O `WordGridEnv` da Parte 111 sorteia as letras com
 `palavras_rl.LETTER_FREQ` (as frequências do inglês), lido a cada `reset`. Aqui: as frequências contadas num conjunto de lemas, e um
@@ -29000,11 +29038,12 @@ def aleatorio_colapso(palavras, freq, tamanho=5, minimo=3, maximo=5):
 
 # --- o braço aleatório EXATO numa grade pequena (Parte 153) ---
 
-def aleatorio_exato(palavras, freq, tamanho=3, minimo=3, maximo=5):
+def aleatorio_exato(palavras, freq, tamanho=3, minimo=3, maximo=5, casa="primeira"):
     \"\"\"A chance exata de o braço aleatório achar uma palavra, somando sobre TODAS as atribuições de letras às casas (peso Π p) e, em cada uma, sobre
     todos os caminhos com a regra real do `valid_actions` (Parte 111): as vizinhas livres na ordem (−1, −1), …, (1, 1), uma ação por LETRA com a primeira
     casa daquela letra (setdefault), PARAR com `minimo` letras ou mais, só PARAR com `maximo`; escolha uniforme entre as ações; sem ação, falha. Só para
-    grades pequenas e alfabetos pequenos (len(freq) ** (tamanho²) atribuições).\"\"\"
+    grades pequenas e alfabetos pequenos (len(freq) ** (tamanho²) atribuições). casa = "uniforme" (Parte 154): em vez da primeira casa de cada letra,
+    uma casa sorteada uniforme entre as livres daquela letra (separa o efeito do setdefault do da memória das letras).\"\"\"
     import itertools
     letras = [c for c in sorted(freq) if freq[c] > 0]
     t = sum(freq[c] for c in letras)
@@ -29029,14 +29068,20 @@ def aleatorio_exato(palavras, freq, tamanho=3, minimo=3, maximo=5):
                 vis = set(caminho)
                 for v in vz[caminho[-1]]:
                     if v not in vis:
-                        acoes.setdefault(grade[v], v)
+                        acoes.setdefault(grade[v], []).append(v)
             parar = len(caminho) >= minimo
             n = len(acoes) + (1 if parar else 0)
             if n == 0:
                 return 0.0
             s = (1.0 if prefixo in dic else 0.0) if parar else 0.0
-            for letra, v in acoes.items():
-                s += anda(caminho + [v], prefixo + letra)
+            for letra, vs in acoes.items():
+                if casa == "primeira":
+                    s += anda(caminho + [vs[0]], prefixo + letra)
+                else:
+                    m = 0.0
+                    for v in vs:
+                        m += anda(caminho + [v], prefixo + letra)
+                    s += m / len(vs)
             return s / n
         acerto = 0.0
         for u in casas:
@@ -32401,6 +32446,45 @@ class TestesParte153(unittest.TestCase):
     def test_p3212_campo_medio_lote_novo(self):
         r = c.p3212_campo_medio_lote_novo()
         self.assertAlmostEqual(r["A'"][2], 0.9156, places=3)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte154.py  (34 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte154.py'] = """\"\"\"Testes da Parte 154: a casa uniforme no enumerador exato (synthai/tabuleiro.py) e a P3213 pelo nome.\"\"\"
+import itertools
+import unittest
+
+import calculos as c
+from synthai import tabuleiro as T
+
+
+class TestesParte154(unittest.TestCase):
+    def test_uniforme_igual_a_primeira_com_letras_todas_distintas(self):
+        # com uma letra por casa (9 letras distintas em 9 casas é impossível de garantir num sorteio; usamos a forma fechada): numa grade 2×2 com
+        # uma só letra, toda letra é a mesma, e a casa uniforme e a primeira dão o mesmo por simetria da grade 2×2
+        a = T.aleatorio_exato(["aaa"], {"A": 1.0}, 2, 3, 4)
+        b = T.aleatorio_exato(["aaa"], {"A": 1.0}, 2, 3, 4, casa="uniforme")
+        self.assertAlmostEqual(a, b, places=14)
+
+    def test_uniforme_controle_total(self):
+        todas = ["".join(x) for L in (3, 4, 5) for x in itertools.product("ab", repeat=L)]
+        self.assertAlmostEqual(T.aleatorio_exato(todas, {"A": 0.6, "B": 0.4}, 3, casa="uniforme"), 1.0, places=12)
+
+    def test_padrao_continua_o_jogo(self):
+        # o padrão (casa="primeira") é o da Parte 153: o caso B dá 0,30169
+        _, B, f = c._casos_p154()[0]
+        self.assertAlmostEqual(T.aleatorio_exato(B, f, 3), 0.30169, places=5)
+
+    def test_p3213_setdefault_e_memoria(self):
+        r = c.p3213_setdefault_e_memoria(maximo=4)
+        for v in r.values():
+            self.assertAlmostEqual(v[3] * v[5], v[4], places=12)
+            self.assertGreater(v[3], 1.0)
 
 
 if __name__ == "__main__":
@@ -43213,7 +43297,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2347 linhas)
+# resultados.txt  (2356 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -45562,6 +45646,15 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3212 A': exato 0.241437; campo medio 0.263684; exato/campo medio 0.9156
   P3212 C: exato 0.324510; campo medio 0.307058; exato/campo medio 1.0568
   P3212 D: exato 0.147994; campo medio 0.143461; exato/campo medio 1.0316
+=== Parte 154: o setdefault e a memoria das letras, separados ===
+  P3213 3-4 letras B: primeira 0.338912; uniforme 0.343204; campo medio 0.326522; uniforme/primeira 1.0127; uniforme/campo 1.0511; primeira/campo 1.0379
+  P3213 3-4 letras A': primeira 0.239770; uniforme 0.251897; campo medio 0.267445; uniforme/primeira 1.0506; uniforme/campo 0.9419; primeira/campo 0.8965
+  P3213 3-4 letras C: primeira 0.364834; uniforme 0.368453; campo medio 0.347127; uniforme/primeira 1.0099; uniforme/campo 1.0614; primeira/campo 1.0510
+  P3213 3-4 letras D: primeira 0.163340; uniforme 0.168373; campo medio 0.160912; uniforme/primeira 1.0308; uniforme/campo 1.0464; primeira/campo 1.0151
+  P3213 3-5 letras B: primeira 0.301690; uniforme 0.306377; campo medio 0.289281; uniforme/primeira 1.0155; uniforme/campo 1.0591; primeira/campo 1.0429
+  P3213 3-5 letras A': primeira 0.241437; uniforme 0.248427; campo medio 0.263684; uniforme/primeira 1.0290; uniforme/campo 0.9421; primeira/campo 0.9156
+  P3213 3-5 letras C: primeira 0.324510; uniforme 0.328845; campo medio 0.307058; uniforme/primeira 1.0134; uniforme/campo 1.0710; primeira/campo 1.0568
+  P3213 3-5 letras D: primeira 0.147994; uniforme 0.152485; campo medio 0.143461; uniforme/primeira 1.0303; uniforme/campo 1.0629; primeira/campo 1.0316
 """
 
 # ====================================================================================================
@@ -54792,7 +54885,7 @@ antes. O sinal é o esperado (uma vizinha já vista tem a mesma letra, e o colap
 """
 
 # ====================================================================================================
-# ASI_AGI_parte153_campo_medio.md  (122 linhas)
+# ASI_AGI_parte153_campo_medio.md  (123 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte153_campo_medio.md'] = """# Parte 153 — O erro do campo médio, medido por enumeração exata
 
@@ -54916,6 +55009,115 @@ a conta para as grandes.
 o caso pede refazer todas as previsões que dependiam dele. Regra: um erro de desenho conta como tantos erros quantas previsões usam o caso.
 
 ➡ Anterior: [Parte 152](ASI_AGI_parte152_colapso.md).
+➡ Próxima: [Parte 154](ASI_AGI_parte154_setdefault.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte154_setdefault.md  (103 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte154_setdefault.md'] = """# Parte 154 — Os dois esquecimentos do campo médio, separados
+
+↩ Nasce da Parte 153 (o campo médio erra de 4% a 8% para os dois lados) e da sua pendência 2: o erro tem DUAS fontes que a conta junta. Uma é a **memória das
+letras**: uma vizinha já vista volta com a mesma letra. A outra é o **setdefault**: o jogo fica com a PRIMEIRA casa de cada letra, na ordem das vizinhas, e não com
+uma casa qualquer daquela letra.
+
+## O recolhimento do contêiner, 12º lote
+Despertar às 08h39, depois de cerca de 55 minutos ociosa: "up 0 min", como previsto. Doze lotes a favor.
+
+## A separação
+`aleatorio_exato(..., casa="uniforme")`: o mesmo enumerador da Parte 153, mas a casa escolhida é sorteada uniforme entre as casas livres da letra escolhida. Então:
+- exato (primeira) / exato (uniforme) é o efeito do setdefault, sozinho;
+- exato (uniforme) / campo médio é o efeito da memória das letras (o resto do campo médio).
+
+O produto das duas razões é a razão total da Parte 153 (identidade).
+
+**A regra da Parte 153, aplicada antes:** a conta com e sem o mecanismo, num caso de CALIBRAÇÃO diferente do teste (a mesma grade 3 × 3, mas de 3 a 4 letras em vez
+de 3 a 5), nos quatro casos:
+
+| caso (3 a 4 letras) | primeira | uniforme | campo médio | uniforme / primeira | uniforme / campo médio | primeira / campo médio |
+|---|---|---|---|---|---|---|
+| B | 0,338912 | 0,343204 | 0,326522 | 1,0127 | 1,0511 | 1,0379 |
+| A' | 0,239770 | 0,251897 | 0,267445 | 1,0506 | 0,9419 | 0,8965 |
+| C | 0,364834 | 0,368453 | 0,347127 | 1,0099 | 1,0614 | 1,0510 |
+| D | 0,163340 | 0,168373 | 0,160912 | 1,0308 | 1,0464 | 1,0151 |
+
+Os dois mecanismos existem nos quatro casos (nenhuma razão é 1). O setdefault sempre DIMINUI o acerto (uniforme > primeira): ficar sempre com a primeira casa puxa
+o caminho para o mesmo lado da grade, e um caminho encostado na borda tem menos vizinhas. A memória das letras tem o sinal do caso.
+
+## Previsões para o teste (3 a 5 letras), registradas antes de rodar
+O centro é a razão uniforme / primeira da calibração (3 a 4 letras). A meia-largura vem de quanto a razão total primeira / campo médio mudou de 3-4 para 3-5 letras
+nos quatro casos (já medida: +0,0050, +0,0191, +0,0058, +0,0165; raiz da média dos quadrados 0,0132), vezes 1,645 · 1,36 = **0,0295** (código no texto da parte,
+e na P3213). Procedência: calibração por um caso vizinho (outro comprimento), sem conta fechada.
+- **(a)** B, uniforme / primeira, em **[0,9832; 1,0422]**
+- **(b)** A', uniforme / primeira, em **[1,0211; 1,0801]**
+- **(c)** C, uniforme / primeira, em **[0,9804; 1,0394]**
+- **(d)** D, uniforme / primeira, em **[1,0013; 1,0603]**
+- **(e)** a identidade: (uniforme / primeira) · (primeira / campo médio) = uniforme / campo médio, nos 4 casos, a menos de 1e-12, em **[4; 4]** casos.
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua sobre o rascunho com "Do mundo:" provisória: m1 = 5, m2 = 0, m3 = 0,0286, m5 = 0. E = 4 faixas de calibração × 0,25 + 1 identidade × 0 = 1,0; m1 em
+[5; 5 + 2E] = [5; 7]. Acertos como contagem: 3 a 5 das 5 (3/5 = 0,6000).
+- **(m1)** nº de previsões do mundo em **[5; 7]**
+- **(m2)** nº que cruzam ou tocam o zero em **[0; 0]**
+- **(m3)** mediana de w em **[0,020; 0,040]**
+- **(m4)** fração de acertos em **[0,6000; 1,0000]**
+- **(m5)** nº com w > 0,6 em **[0; 0]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 3]**, centro 1,0.
+
+### A rodada 102, registrada antes
+O enumerador com a casa uniforme traduzido (caso B, 3 a 5 letras): para cada letra, a média sobre as casas livres dela (soma na ordem das vizinhas, dividida pela
+contagem), e depois a soma das ações e a divisão por n como na rodada 101. Só + × ÷. Previsão: **IGUAL**.
+
+## Medido (P3213; rodada 102)
+
+| caso (3 a 5 letras) | primeira (o jogo) | uniforme | campo médio | uniforme / primeira | uniforme / campo médio | primeira / campo médio |
+|---|---|---|---|---|---|---|
+| B | 0,301690 | 0,306377 | 0,289281 | **1,0155** | 1,0591 | 1,0429 |
+| A' | 0,241437 | 0,248427 | 0,263684 | **1,0290** | 0,9421 | 0,9156 |
+| C | 0,324510 | 0,328845 | 0,307058 | **1,0134** | 1,0710 | 1,0568 |
+| D | 0,147994 | 0,152485 | 0,143461 | **1,0303** | 1,0629 | 1,0316 |
+
+- **(a)** B: 1,0155. ✅
+- **(b)** A': 1,0290. ✅
+- **(c)** C: 1,0134. ✅
+- **(d)** D: 1,0303. ✅
+- **(e)** a identidade nos 4 casos. ✅
+- **Rodada 102:** IGUAL. ✅
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅
+
+**Mundo: 5 de 5.** **Sobre mim:** 0 erros, em [0; 3]: ✅.
+
+### O que a separação mostrou
+O erro do campo médio (Parte 153) é o produto de dois esquecimentos, e eles são de natureza diferente:
+- **O setdefault tira sempre de 1,3% a 3,0% do acerto** com 3 a 5 letras (de 1,0% a 5,1% com 3 a 4), nos quatro casos. Ficar com a primeira casa de cada letra, na ordem (−1, −1), …,
+  (1, 1), puxa o caminho para o canto de cima à esquerda; um caminho encostado na borda tem menos vizinhas livres, e o PARAR fica proporcionalmente mais provável
+  antes de achar a palavra. O sinal é geométrico: não depende do dicionário.
+- **A memória das letras é o efeito maior (de −5,8% a +7,1%) e o sinal é do dicionário.** Nos dicionários sem letras iguais seguidas (B, C, D), o campo médio
+  subestima: no caminho real, a vizinha já vista com uma letra repetida é exatamente a que o dicionário rejeita, e saber disso ajuda. No dicionário de A' (de "a" a
+  "b", com "a" a 0,7), o campo médio superestima.
+
+Os dois juntos explicam por que a razão total muda de sinal entre os casos: um termo fixo pequeno e negativo, e um termo grande com o sinal do dicionário. A
+leitura do setdefault (o canto) é hipótese de 1 lote; o teste dela é a ordem das vizinhas: invertendo a ordem, o efeito tem de ficar igual (a grade é simétrica).
+
+## Engenharia reversa
+- **A regra da Parte 153 funcionou na primeira vez:** rodar a conta com e sem o mecanismo num caso de calibração vizinho mostrou que os dois mecanismos existiam
+  nos quatro casos antes de registrar, e nenhum caso foi degenerado.
+- **O padrão desta parte:** uma faixa tirada de quanto uma razão VIZINHA mudou entre dois comprimentos (0,0295 de meia-largura) acertou os quatro casos com folga
+  (o maior desvio foi 0,0216, em A'). Mudar o comprimento muda pouco; a calibração no comprimento vizinho é perto na variável que move o mecanismo (Parte 63).
+
+## Funções e testes
+- **Funções:** `_casos_p154`, `p3213_setdefault_e_memoria` e `_parte_154`; em `synthai/tabuleiro.py`, a opção `casa="uniforme"` de `aleatorio_exato` (o padrão
+  continua a regra do jogo). Entrada P3213 na regressão.
+- **Diálogo:** `dialogo/rodada102.py` e `dialogo/Rodada102.java`, IGUAL.
+- **Testes:** `synthai/testes_parte154.py`.
+
+**O placar (m):** m1 = 5 em [5; 7] ✅, m2 = 0 ✅, m3 = 0,0286 em [0,020; 0,040] ✅, m4 = 1,0 em [0,6000; 1,0000] ✅, m5 = 0 ✅ e m6 = 0 ✅. **6 de 6.**
+
+➡ Anterior: [Parte 153](ASI_AGI_parte153_campo_medio.md).
 """
 
 # ====================================================================================================
@@ -76857,7 +77059,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2176 linhas)
+# dialogo/DIALOGO.md  (2186 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -79035,10 +79237,20 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 2 números bit a bit**; B = 0,30169, A' = 0,24144. Previsão registrada antes (Parte 153): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 102): o sinal do erro do campo médio depende do dicionário; uma conta que o preveja antes de enumerar.
+
+## Rodada 102 (Parte 154) — a casa uniforme
+
+**IA-Python (lógica criativa):** O erro do campo médio tinha dois pais: a memória das letras e o setdefault, que fica com a primeira casa de cada letra. Para separar, troquei a primeira casa por uma média sobre as casas da mesma letra. O meu laço soma os filhos de cada letra na ordem das vizinhas e divide pela contagem. A tua média chega ao mesmo bit?
+
+**IA-Java (ASI):** Chega: a lista de casas de cada letra nasce na ordem das vizinhas, nos dois lados, e a média é a soma dividida pela contagem, na mesma ordem. Repara que o número desta rodada é uma criatura que o jogo não tem: um jogo onde a casa é sorteada. Traduzir o contrafactual é tão exigente quanto traduzir o real.
+
+**Resultado.** `comparar.py`: **IGUAIS**; B com a casa uniforme = 0,306377. Previsão registrada antes (Parte 154): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 103): inverter a ordem das vizinhas (de (1, 1) a (−1, −1)) e conferir que o efeito do setdefault não muda, como a simetria da grade exige.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (96 linhas)
+# dialogo/PENDENCIAS.md  (97 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -79136,6 +79348,7 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Parte 151)** ABERTAS: (1) a correção do colapso (razões medido/geometria de 0,89 a 1,14) em forma fechada: o `valid_actions` junta vizinhas de mesma letra, o que muda o peso das letras no caminho; derivar e prever os 10 casos já medidos antes de rodar casos novos; (2) separar no tabuleiro português as duas causas do repertório maior (a contagem de acertos e a repetição de fato): comparar com um controle de acertos igualados; (3) os grupos úteis (b·ln U) num terceiro mundo, adiados desde a rodada 95.
 - **(Parte 152)** ABERTAS: (1) o campo médio esquece que a vizinha já vista tem a mesma letra: uma conta exata por enumeração das letras numa grade pequena (3 × 3, alfabeto reduzido) para medir o tamanho desse erro; (2) o setdefault fica com a PRIMEIRA casa de cada letra: medir quanto isso puxa o caminho (a geometria muda?); (3) as razões do tabuleiro inglês altas (1,111, 1,061, 1,147→1,070 com o lote novo): hipótese de 0 lotes, só testar se a (1) não explicar.
 - **(Parte 153)** ABERTAS: (1) o sinal do erro do campo médio (0,916 em A', 1,03 a 1,06 em B, C e D): uma correção de segunda ordem (as vizinhas compartilhadas entre duas decisões seguidas) que preveja o sinal antes de enumerar, testada em casos novos; (2) o efeito do setdefault (a primeira casa de cada letra) separado do da memória das letras: enumerar com a escolha da casa uniforme entre as da mesma letra e comparar.
+- **(Parte 154)** ABERTAS: (1) a leitura do setdefault ("puxa para o canto"): inverter a ordem das vizinhas e prever que o efeito fica IGUAL (simetria da grade), e medir a distância média à borda dos caminhos nas duas versões; (2) uma conta de segunda ordem para a memória das letras que preveja o sinal pelo dicionário, antes de enumerar.
 """
 
 # ====================================================================================================
@@ -80110,6 +80323,110 @@ public class Rodada101 {
         double ea = exato(A, "ab", new double[]{0.7, 0.3});
         double eb = exato(B, "abc", new double[]{0.5, 0.3, 0.2});
         System.out.println("A' " + Double.toHexString(ea) + "\\nB " + Double.toHexString(eb) + "\\nconferido True\\nfim");
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/Rodada102.java  (99 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada102.java'] = """// Rodada 102 (Parte 154): o braco aleatorio EXATO com a casa UNIFORME entre as da mesma letra (aleatorio_exato, casa="uniforme") bit a bit, grade 3 x 3. Todas as atribuicoes de letras (a ultima
+// casa varia mais depressa), peso = produto na ordem das casas; recursao sobre os caminhos com as acoes por letra na ordem de insercao (LinkedHashMap).
+import java.util.*;
+
+public class Rodada102 {
+    static int T = 3, MIN = 3, MAX = 5;
+    static char[] grade = new char[9];
+    static Set<String> dic;
+
+    static List<Integer> viz(int u) {
+        int r = u / T, c = u % T;
+        List<Integer> l = new ArrayList<>();
+        for (int a = -1; a <= 1; a++) for (int b = -1; b <= 1; b++) {
+            if (a == 0 && b == 0) continue;
+            int rr = r + a, cc = c + b;
+            if (rr >= 0 && rr < T && cc >= 0 && cc < T) l.add(rr * T + cc);
+        }
+        return l;
+    }
+
+    static double anda(List<Integer> caminho, String prefixo) {
+        LinkedHashMap<Character, List<Integer>> acoes = new LinkedHashMap<>();
+        if (caminho.size() < MAX) {
+            for (int v : viz(caminho.get(caminho.size() - 1))) if (!caminho.contains(v)) {
+                if (!acoes.containsKey(grade[v])) acoes.put(grade[v], new ArrayList<>());
+                acoes.get(grade[v]).add(v);
+            }
+        }
+        boolean parar = caminho.size() >= MIN;
+        int n = acoes.size() + (parar ? 1 : 0);
+        if (n == 0) return 0.0;
+        double s = parar ? (dic.contains(prefixo) ? 1.0 : 0.0) : 0.0;
+        for (Map.Entry<Character, List<Integer>> e : acoes.entrySet()) {
+            double m = 0.0;
+            for (int v : e.getValue()) {
+                List<Integer> nc = new ArrayList<>(caminho);
+                nc.add(v);
+                m += anda(nc, prefixo + e.getKey());
+            }
+            s += m / e.getValue().size();
+        }
+        return s / n;
+    }
+
+    static List<String> palavras(String alfa) {
+        List<String> out = new ArrayList<>();
+        for (int L = 3; L <= 5; L++) {
+            int k = alfa.length(), tot = 1;
+            for (int i = 0; i < L; i++) tot *= k;
+            for (int x = 0; x < tot; x++) {
+                char[] w = new char[L];
+                int y = x;
+                for (int i = L - 1; i >= 0; i--) { w[i] = alfa.charAt(y % k); y /= k; }
+                out.add(new String(w));
+            }
+        }
+        return out;
+    }
+
+    static double exato(Set<String> d, String letras, double[] pesos) {
+        dic = d;
+        double t = 0.0;
+        for (double w : pesos) t += w;
+        double[] p = new double[pesos.length];
+        for (int i = 0; i < p.length; i++) p[i] = pesos[i] / t;
+        int k = letras.length(), tot = 1;
+        for (int i = 0; i < 9; i++) tot *= k;
+        double total = 0.0;
+        for (int x = 0; x < tot; x++) {
+            int[] idx = new int[9];
+            int y = x;
+            for (int i = 8; i >= 0; i--) { idx[i] = y % k; y /= k; }
+            double peso = 1.0;
+            for (int i = 0; i < 9; i++) { grade[i] = letras.charAt(idx[i]); }
+            for (int i = 0; i < 9; i++) peso = peso * p[idx[i]];
+            double acerto = 0.0;
+            for (int u = 0; u < 9; u++) {
+                List<Integer> cam = new ArrayList<>();
+                cam.add(u);
+                acerto += anda(cam, String.valueOf(grade[u]));
+            }
+            total += peso * acerto / 9;
+        }
+        return total;
+    }
+
+    public static void main(String[] args) {
+        Set<String> A = new HashSet<>();
+        for (String w : palavras("ab")) if (w.charAt(0) == 'a' && w.charAt(w.length() - 1) == 'b') A.add(w);
+        Set<String> B = new HashSet<>();
+        for (String w : palavras("abc")) {
+            boolean ok = true;
+            for (int i = 1; i < w.length(); i++) if (w.charAt(i) == w.charAt(i - 1)) ok = false;
+            if (ok) B.add(w);
+        }
+        double eb = exato(B, "abc", new double[]{0.5, 0.3, 0.2});
+        System.out.println("B_uniforme " + Double.toHexString(eb) + "\\nconferido True\\nfim");
     }
 }
 """
@@ -87501,6 +87818,85 @@ def main():
     assert abs(eb - tabuleiro.aleatorio_exato(B, {"A": 0.5, "B": 0.3, "C": 0.2}, 3)) < 1e-12
     print("A' " + ea.hex())
     print("B " + eb.hex())
+    print("conferido True")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada102.py  (74 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada102.py'] = """\"\"\"Rodada 102 do diálogo Python <-> Java (Parte 154): o braço aleatório EXATO com a casa UNIFORME entre as da mesma letra de synthai.tabuleiro.aleatorio_exato bit a bit, na grade 3 × 3. Todas as
+atribuições de letras (ordem do itertools.product: a última casa varia mais depressa), peso Π p na ordem das casas, e em cada uma a recursão sobre os
+caminhos com a regra do valid_actions (ações por letra na ordem de inserção das vizinhas; PARAR com 3 ou mais letras; só PARAR com 5). Caso B ({a, b, c} = (0,5; 0,3; 0,2), sem letras iguais seguidas). Somas em laço. Confere contra o módulo (1e-12) antes de
+imprimir. Da raiz: python3 dialogo/rodada102.py\"\"\"
+import itertools
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from synthai import tabuleiro  # noqa: E402
+
+
+def exato(palavras, letras, pesos, tamanho=3, minimo=3, maximo=5):
+    t = 0.0
+    for w in pesos:
+        t += w
+    p = [w / t for w in pesos]
+    dic = set(palavras)
+    casas = [(r, c) for r in range(tamanho) for c in range(tamanho)]
+    vz = {}
+    for (r, c) in casas:
+        lst = []
+        for a in (-1, 0, 1):
+            for b in (-1, 0, 1):
+                if (a or b) and 0 <= r + a < tamanho and 0 <= c + b < tamanho:
+                    lst.append((r + a, c + b))
+        vz[(r, c)] = lst
+    total = 0.0
+    for idx in itertools.product(range(len(letras)), repeat=len(casas)):
+        grade = {u: letras[i] for u, i in zip(casas, idx)}
+        peso = 1.0
+        for i in idx:
+            peso = peso * p[i]
+
+        def anda(caminho, prefixo):
+            acoes = {}
+            if len(caminho) < maximo:
+                for v in vz[caminho[-1]]:
+                    if v not in caminho:
+                        if grade[v] not in acoes:
+                            acoes[grade[v]] = []
+                        acoes[grade[v]].append(v)
+            parar = len(caminho) >= minimo
+            n = len(acoes) + (1 if parar else 0)
+            if n == 0:
+                return 0.0
+            s = (1.0 if prefixo in dic else 0.0) if parar else 0.0
+            for letra, vs in acoes.items():
+                m = 0.0
+                for v in vs:
+                    m += anda(caminho + [v], prefixo + letra)
+                s += m / len(vs)
+            return s / n
+        acerto = 0.0
+        for u in casas:
+            acerto += anda([u], grade[u])
+        total += peso * acerto / len(casas)
+    return total
+
+
+def main():
+    duas = ["".join(x) for L in (3, 4, 5) for x in itertools.product("ab", repeat=L)]
+    A = [w for w in duas if w[0] == "a" and w[-1] == "b"]
+    tres = ["".join(x) for L in (3, 4, 5) for x in itertools.product("abc", repeat=L)]
+    B = [w for w in tres if all(a != b for a, b in zip(w, w[1:]))]
+    eb = exato(B, "abc", [0.5, 0.3, 0.2])
+    assert abs(eb - tabuleiro.aleatorio_exato(B, {"A": 0.5, "B": 0.3, "C": 0.2}, 3, casa="uniforme")) < 1e-12
+    print("B_uniforme " + eb.hex())
     print("conferido True")
     print("fim")
 

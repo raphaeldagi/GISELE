@@ -7578,6 +7578,7 @@ def testes_de_regressao():
         "P3210": (lambda r: (round(r["B"][3], 4), round(r["A"][0], 6), round(r["controle"][0], 6)) == (1.0429, 0.25, 1.0))(p3210_campo_medio_contra_exato()),
         "P3211": round(p3211_simulado_caso_b()[2], 2) == -0.95,
         "P3212": (lambda r: tuple(round(r[k][2], 4) for k in ("A'", "C", "D")) == (0.9156, 1.0568, 1.0316))(p3212_campo_medio_lote_novo()),
+        "P3213": (lambda r: tuple(round(r[k][3], 4) for k in ("B", "A'", "C", "D")) == (1.0155, 1.029, 1.0134, 1.0303))(p3213_setdefault_e_memoria()),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18701,6 +18702,17 @@ def _parte_153():
 
 
 PARTES[153] = _parte_153
+
+
+def _parte_154():
+    print("\n=== Parte 154: o setdefault e a memoria das letras, separados ===")
+    for L in (4, 5):
+        for nome, (p, u, m, up, um, pm) in p3213_setdefault_e_memoria(L).items():
+            print(f"  P3213 3-{L} letras {nome}: primeira {p:.6f}; uniforme {u:.6f}; campo medio {m:.6f}; uniforme/primeira {up:.4f}; "
+                  f"uniforme/campo {um:.4f}; primeira/campo {pm:.4f}")
+
+
+PARTES[154] = _parte_154
 
 PARTES[126] = _parte_126
 

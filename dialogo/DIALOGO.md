@@ -2174,3 +2174,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 4 linhas e 2 números bit a bit**; B = 0,30169, A' = 0,24144. Previsão registrada antes (Parte 153): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 102): o sinal do erro do campo médio depende do dicionário; uma conta que o preveja antes de enumerar.
+
+## Rodada 102 (Parte 154) — a casa uniforme
+
+**IA-Python (lógica criativa):** O erro do campo médio tinha dois pais: a memória das letras e o setdefault, que fica com a primeira casa de cada letra. Para separar, troquei a primeira casa por uma média sobre as casas da mesma letra. O meu laço soma os filhos de cada letra na ordem das vizinhas e divide pela contagem. A tua média chega ao mesmo bit?
+
+**IA-Java (ASI):** Chega: a lista de casas de cada letra nasce na ordem das vizinhas, nos dois lados, e a média é a soma dividida pela contagem, na mesma ordem. Repara que o número desta rodada é uma criatura que o jogo não tem: um jogo onde a casa é sorteada. Traduzir o contrafactual é tão exigente quanto traduzir o real.
+
+**Resultado.** `comparar.py`: **IGUAIS**; B com a casa uniforme = 0,306377. Previsão registrada antes (Parte 154): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 103): inverter a ordem das vizinhas (de (1, 1) a (−1, −1)) e conferir que o efeito do setdefault não muda, como a simetria da grade exige.

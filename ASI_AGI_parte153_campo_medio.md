@@ -120,3 +120,4 @@ a conta para as grandes.
 o caso pede refazer todas as previsões que dependiam dele. Regra: um erro de desenho conta como tantos erros quantas previsões usam o caso.
 
 ➡ Anterior: [Parte 152](ASI_AGI_parte152_colapso.md).
+➡ Próxima: [Parte 154](ASI_AGI_parte154_setdefault.md).

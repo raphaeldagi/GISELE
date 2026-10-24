@@ -2345,3 +2345,12 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3212 A': exato 0.241437; campo medio 0.263684; exato/campo medio 0.9156
   P3212 C: exato 0.324510; campo medio 0.307058; exato/campo medio 1.0568
   P3212 D: exato 0.147994; campo medio 0.143461; exato/campo medio 1.0316
+=== Parte 154: o setdefault e a memoria das letras, separados ===
+  P3213 3-4 letras B: primeira 0.338912; uniforme 0.343204; campo medio 0.326522; uniforme/primeira 1.0127; uniforme/campo 1.0511; primeira/campo 1.0379
+  P3213 3-4 letras A': primeira 0.239770; uniforme 0.251897; campo medio 0.267445; uniforme/primeira 1.0506; uniforme/campo 0.9419; primeira/campo 0.8965
+  P3213 3-4 letras C: primeira 0.364834; uniforme 0.368453; campo medio 0.347127; uniforme/primeira 1.0099; uniforme/campo 1.0614; primeira/campo 1.0510
+  P3213 3-4 letras D: primeira 0.163340; uniforme 0.168373; campo medio 0.160912; uniforme/primeira 1.0308; uniforme/campo 1.0464; primeira/campo 1.0151
+  P3213 3-5 letras B: primeira 0.301690; uniforme 0.306377; campo medio 0.289281; uniforme/primeira 1.0155; uniforme/campo 1.0591; primeira/campo 1.0429
+  P3213 3-5 letras A': primeira 0.241437; uniforme 0.248427; campo medio 0.263684; uniforme/primeira 1.0290; uniforme/campo 0.9421; primeira/campo 0.9156
+  P3213 3-5 letras C: primeira 0.324510; uniforme 0.328845; campo medio 0.307058; uniforme/primeira 1.0134; uniforme/campo 1.0710; primeira/campo 1.0568
+  P3213 3-5 letras D: primeira 0.147994; uniforme 0.152485; campo medio 0.143461; uniforme/primeira 1.0303; uniforme/campo 1.0629; primeira/campo 1.0316
