@@ -84,3 +84,8 @@ A régua sobre o rascunho com "Do mundo:" provisória: m1 = 13, m2 = 0, m3 = 0,1
 
 ### Sobre mim, registrado
 Erros no mundo em **[0; 6]**, centro 2,85 (desvio binomial ≈ 1,5).
+
+### A rodada 99, registrada antes
+`paradas_por_comprimento` traduzida: a recursão sobre os caminhos sem repetir casa, nas grades 4 × 4, 5 × 5 e 6 × 6 e nos comprimentos (3, 5), (3, 4), (4, 5), com
+as somas p/n acumuladas na MESMA ordem (vizinhas na ordem (−1, −1), (−1, 0), …, (1, 1), casas de partida por linha). Só + e ÷. Previsão: **IGUAL**. O que
+poderia quebrar: a ordem em que as parcelas entram em s_L (a soma de ponto flutuante não é associativa); os dois lados fazem a mesma recursão em profundidade.
