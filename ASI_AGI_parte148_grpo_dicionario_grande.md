@@ -66,3 +66,11 @@ lote novo (Parte 122), então m1 vai a [10; 10 + E] com E = 2,3. A fração de a
 Erros no mundo em **[0; 4]**, com centro 2,3 (binomial de 9 faixas a 0,25: desvio 1,3).
 
 ➡ Anterior: [Parte 147](ASI_AGI_parte147_grpo_palavras.md).
+
+## Um lote novo antes de qualquer mecanismo (registrado depois de ver o teste, antes de rodar as sementes 71 a 80)
+O teste (sementes 61 a 70) já rodou, e o Q-learning ficou abaixo do piso de (a): 0,3020 contra [0,3072; 0,3413]. O t de Welch entre as 10 sementes
+de teste e as 8 de calibração é −2,33. Antes de procurar um mecanismo (regra das Partes 25 e 117), um lote novo, com o centro e o desvio das 18
+sementes juntas (média 0,3119, desvio 0,0234):
+- **(k)** Q-learning, média das sementes 71 a 80, em **[0,2912; 0,3325]**: 1,645 · 1,36 · √(0,0234²/18 + 0,0234²/10).
+- **(l)** desvio do Q-learning entre as sementes 71 a 80 em **[0,0142; 0,0321]**: σ · √(χ²₉/9) com os quantis 5% e 95% do χ² de 9 graus (3,325 e
+  16,919), σ = 0,0234. A forma é fechada se o desvio de 18 sementes for o σ verdadeiro, o que não é (o fator de 18 sementes não entra aqui).
