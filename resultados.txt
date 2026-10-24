@@ -2317,3 +2317,15 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3205 teste 121-140: Q 0.2934; aleatorio 0.0221; G=2 0.3422; G=8 0.3456; sem contraste G=2 0.9453, G=8 0.8263; G2-Q +0.0488; G8-Q +0.0521; G8-G2 +0.0033; as duas acima do Q 17/20
   P3206 en no tabuleiro portugues, sementes 141-150: aleatorio 0.0465 (desvio 0.0066)
   P3206 embutido no tabuleiro portugues, sementes 141-150: aleatorio 0.0062 (desvio 0.0032)
+=== Parte 151: a geometria do braco aleatorio e o repertorio do Q-learning ===
+  P3207 s_L na grade 5x5: s3 0.1940; s4 0.1685; s5 0.6375
+  P3207 (a) 4x4: aleatorio 0.0251 (desvio 0.0049); geometria 0.0239; razao 1.048
+  P3207 (b) 6x6: aleatorio 0.0204 (desvio 0.0035); geometria 0.0211; razao 0.969
+  P3207 (c) max 4: aleatorio 0.0368 (desvio 0.0056); geometria 0.0351; razao 1.048
+  P3207 (d) min 4: aleatorio 0.0070 (desvio 0.0027); geometria 0.0078; razao 0.892
+  P3208 calibracao 101-120 pt/EN: acerto 0.1403; distintas 32.10; repertorio 0.8886
+  P3208 calibracao 101-120 pt/PT: acerto 0.2867; distintas 49.85; repertorio 0.9323
+  P3208 calibracao 101-120 emb/EN: acerto 0.1343; distintas 23.20; repertorio 0.9356
+  P3208 teste 121-140 pt/EN: acerto 0.1431; distintas 33.30; repertorio 0.8844
+  P3208 teste 121-140 pt/PT: acerto 0.2934; distintas 50.10; repertorio 0.9351
+  P3208 teste 121-140 emb/EN: acerto 0.1348; distintas 22.35; repertorio 0.9425

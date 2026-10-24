@@ -7572,6 +7572,8 @@ def testes_de_regressao():
         "P3204": round(p3204_densidades()[0]["pt/PT"], 4) == 0.1093,
         "P3205": (lambda r: (round(r["Q"], 4), round(r["aleat"], 4), r["ambas"]) == (0.2934, 0.0221, 17))(p3205_grpo_tabuleiro(sementes=tuple(range(121, 141)))),
         "P3206": (round(p3206_aleatorio_tabuleiro("en")[0], 4), round(p3206_aleatorio_tabuleiro("embutido")[0], 4)) == (0.0465, 0.0062),
+        "P3207": tuple(round(p3207_aleatorio_geometria(tamanho=a, minimo=b, maximo=d)[0], 4) for a, b, d in ((4, 3, 5), (6, 3, 5), (5, 3, 4), (5, 4, 5))) == (0.0251, 0.0204, 0.0368, 0.007),
+        "P3208": (lambda r: (round(r["repete"], 4), round(r["distintas"], 2)) == (0.9425, 22.35))(p3208_repertorio("embutido", "en", tuple(range(121, 141)))),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18542,6 +18544,22 @@ def _parte_150():
 
 
 PARTES[150] = _parte_150
+
+
+def _parte_151():
+    print("\n=== Parte 151: a geometria do braco aleatorio e o repertorio do Q-learning ===")
+    from synthai import tabuleiro as T
+    print("  P3207 s_L na grade 5x5: " + "; ".join(f"s{L} {v:.4f}" for L, v in T.paradas_por_comprimento().items()))
+    for nome, (a, b, d) in (("(a) 4x4", (4, 3, 5)), ("(b) 6x6", (6, 3, 5)), ("(c) max 4", (5, 3, 4)), ("(d) min 4", (5, 4, 5))):
+        m, s, g = p3207_aleatorio_geometria(tamanho=a, minimo=b, maximo=d)
+        print(f"  P3207 {nome}: aleatorio {m:.4f} (desvio {s:.4f}); geometria {g:.4f}; razao {m / g:.3f}")
+    for nome, sem in (("calibracao 101-120", tuple(range(101, 121))), ("teste 121-140", tuple(range(121, 141)))):
+        for rot, (dic, tab) in (("pt/EN", ("pt", "en")), ("pt/PT", ("pt", "pt")), ("emb/EN", ("embutido", "en"))):
+            r = p3208_repertorio(dic, tab, sem)
+            print(f"  P3208 {nome} {rot}: acerto {r['taxa']:.4f}; distintas {r['distintas']:.2f}; repertorio {r['repete']:.4f}")
+
+
+PARTES[151] = _parte_151
 
 PARTES[126] = _parte_126
 

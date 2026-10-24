@@ -89,3 +89,62 @@ Erros no mundo em **[0; 6]**, centro 2,85 (desvio binomial ≈ 1,5).
 `paradas_por_comprimento` traduzida: a recursão sobre os caminhos sem repetir casa, nas grades 4 × 4, 5 × 5 e 6 × 6 e nos comprimentos (3, 5), (3, 4), (4, 5), com
 as somas p/n acumuladas na MESMA ordem (vizinhas na ordem (−1, −1), (−1, 0), …, (1, 1), casas de partida por linha). Só + e ÷. Previsão: **IGUAL**. O que
 poderia quebrar: a ordem em que as parcelas entram em s_L (a soma de ponto flutuante não é associativa); os dois lados fazem a mesma recursão em profundidade.
+
+## Medido (P3207, P3208; rodada 99)
+- **(a)** grade 4 × 4: 0,0251 (geometria 0,0239; razão 1,048). ✅
+- **(b)** grade 6 × 6: 0,0204 (geometria 0,0211; 0,969). ✅
+- **(c)** no máximo 4 letras: 0,0368 (0,0351; 1,048). ✅
+- **(d)** no mínimo 4 letras: 0,0070 (0,0078; 0,892). ✅ (a 0,0001 do piso)
+- **(e)** distintas, português / inglês: 33,3. ✅
+- **(f)** repertório, português / inglês: 0,8844. ✅
+- **(g)** distintas, português / português: 50,1. ✅
+- **(h)** repertório, português / português: 0,9351. ✅
+- **(i)** acerto do Q, embutido: 0,1348. ✅
+- **(j)** distintas, embutido: 22,35. ✅
+- **(k)** repertório, embutido: 0,9425. ✅
+- **(l)** embutido − português, repertório: +0,0582. ✅
+- **(n)** tabuleiro português − inglês, repertório: +0,0507. ✅
+- **Rodada 99:** IGUAL, 7 linhas e 13 números bit a bit. ✅
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅
+
+**Mundo: 13 de 13.** **Sobre mim:** 0 erros, em [0; 6]: ✅. A chance de 13 de 13 com p = 0,9 por faixa é 0,9¹³ = 0,25; com as taxas de procedência usadas no
+centro (0,85 e 0,75), 0,85⁴ · 0,75⁹ = 0,039. As faixas foram mais largas do que precisavam: o centro de erros (2,85) superestimou, como nas Partes 116 e 117.
+
+Os acertos do português nas sementes 121 a 140 saíram iguais aos das Partes 149 e 150 (0,1431 e 0,2934): a P3208 reproduz o avaliador de outra função pelo
+mesmo caminho.
+
+### O que a geometria mostrou
+**A constante não é ajustada: é a chance de parar.** A lei da Parte 150, aleatório ≈ 0,21 · D, é Σ_L s_L · D_L com s_L tirado da enumeração exata dos caminhos
+(s₃ = 0,194 na grade 5 × 5), e D₃ domina. Em quatro mundos que a calibração não tinha (outras grades, outros comprimentos), a conta com a correção média
+1,054 acertou os quatro. A grade quase não importa (4 × 4: 0,0251; 6 × 6: 0,0204): o que muda é a chance de parar cedo (s₃ cai de 0,212 para 0,183, porque com
+mais vizinhas o PARAR é uma opção entre mais). O comprimento importa muito: exigir 4 letras dividiu o acaso por 3,2 (0,0224 → 0,0070), porque tira D₃.
+
+**A correção 1,054 não é uma constante.** As razões medido/geometria vão de 0,89 (mínimo 4 letras) a 1,14 (embutido no tabuleiro inglês). O colapso de vizinhas
+com a mesma letra (`valid_actions` junta numa ação só) muda o peso de cada letra no caminho de forma diferente em cada dicionário. É o resto da conta; a forma
+fechada dele é a pendência.
+
+### O que o repertório mostrou
+Em 2 lotes (calibração e teste), nas duas comparações: o embutido repete mais palavras que o português no mesmo tabuleiro (+0,047 e +0,058), com menos
+palavras distintas (23 contra 32-33); e o tabuleiro português sobe o repertório do português (+0,044 e +0,051). A leitura da Parte 149 ganha um número: o
+Q-learning tabular rende mais onde as palavras se REPETEM entre grades, e o embutido (493 palavras de 3 a 5 letras, comuns) é o caso extremo. Mas a comparação
+do tabuleiro português não separa as duas causas: o acerto dobrou junto, e mais acertos repetem mais por pura contagem.
+
+## Engenharia reversa
+- **O padrão desta parte é o oposto do das Partes 149-150:** lá eu previ com mecanismos sem peso e errei; aqui a conta exata (a enumeração dos caminhos) veio
+  antes, e os quatro mundos novos ficaram dentro. A regra da Parte 24 ("prever pela conta antes de simular") deu 13 de 13.
+- **E a minha largura ficou grande demais:** 0 erros para um centro de 2,85. O centro de erros das calibrações com 20 sementes usa a taxa histórica 0,25,
+  que vem das calibrações de 3 a 8 sementes. Com 20 sementes, as Partes 149-151 tiveram 0 erros em 9 + 8 + 9 = 26 faixas de calibração.
+- **Regra (Parte 151):** a taxa de erro esperada de uma faixa de calibração depende do número de sementes; com ≥ 20, usar a taxa medida nas partes que já
+  calibraram assim (0 em 26 até aqui: a cota superior de 90% é 1 − 0,1^(1/26) = 0,085), e não a das calibrações pequenas.
+
+## Funções e testes
+- **Funções:** `p3207_aleatorio_geometria`, `p3208_repertorio` e `_parte_151`; em `synthai/tabuleiro.py`, `paradas_por_comprimento`,
+  `densidade_por_comprimento` e `aleatorio_geometrico`. Entradas P3207 e P3208 na regressão.
+- **Diálogo:** `dialogo/rodada99.py` e `dialogo/Rodada99.java`, IGUAL.
+- **Testes:** `synthai/testes_parte151.py`.
+
+**O placar (m):** m1 = 13 em [13; 19] ✅, m2 = 0 em [0; 1] ✅, m3 = 0,123 em [0,09; 0,16] ✅, m4 = 1,0 em [0,5385; 1,0000] ✅, m5 = 1 em [1; 2] ✅ e m6 = 0 ✅.
+**6 de 6.** A fração exata no limite (regra da Parte 150) não foi posta à prova: nenhum erro.
+
+➡ Anterior: [Parte 150](ASI_AGI_parte150_tabuleiro_portugues.md).

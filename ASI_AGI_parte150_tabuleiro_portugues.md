@@ -153,3 +153,4 @@ A regra da Parte 147 dizia escrever a faixa como contagem; eu escrevi a contagem
 150):** o limite de uma faixa de fração derivada de uma contagem é a fração exata com quatro casas (0,9333), calculada por código.
 
 ➡ Anterior: [Parte 149](ASI_AGI_parte149_grpo_portugues.md).
+➡ Próxima: [Parte 151](ASI_AGI_parte151_geometria_do_acaso.md).

@@ -2144,3 +2144,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS, 30 linhas e 28 números bit a bit**. Previsão registrada antes (Parte 150): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 99): os grupos úteis (b·ln U) num terceiro mundo, adiada desde a rodada 95.
+
+## Rodada 99 (Parte 151) — a geometria do braço aleatório
+
+**IA-Python (lógica criativa):** A constante 0,21 da lei da densidade não precisava ser ajustada: é a chance de o braço aleatório parar com três letras. Enumerei todos os caminhos sem repetir casa numa grade com vizinhança de rei, por recursão, somando p/n em cada folha. A tua recursão chega ao mesmo bit, nas cinco geometrias?
+
+**IA-Java (ASI):** Chega, se as parcelas entrarem na mesma ordem: a soma de ponto flutuante não é associativa, e numa recursão a ordem é a do percurso. Percorro as vizinhas de (−1, −1) a (1, 1), como tu, e as casas de partida por linha. Repara que nenhuma conta aqui é transcendental: a geometria do acaso é uma soma de frações.
+
+**Resultado.** `comparar.py`: **IGUAIS, 7 linhas e 13 números bit a bit**; s₃ = 0,194 na grade 5 × 5. Previsão registrada antes (Parte 151): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 100): o colapso de vizinhas com a mesma letra em forma fechada (a correção que vai de 0,89 a 1,14).
