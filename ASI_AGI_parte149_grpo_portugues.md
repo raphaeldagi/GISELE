@@ -85,3 +85,9 @@ faltam: E ≈ 2,5, então m1 em [14; 14 + 2E] (regra da Parte 148). Acertos como
 
 ### Sobre mim, registrado
 Erros no mundo em **[1; 6]**: o (s) já errou, e as 12 que faltam têm centro 2,5 (desvio binomial ≈ 1,4).
+
+## Um lote novo depois de (k), registrado antes de rodar (sementes 46 a 65, dicionário embutido)
+O teste rodou (o resultado está em "Medido"); (k) ficou 0,0003 acima do teto. O centro 0,0076 vinha de UMA semente da Parte 111 (0,006, com
+desvio binomial 0,0024), e a faixa só levou o erro da média de 3 sementes novas: o erro do centro antigo ficou de fora. Antes de mecanismo:
+- **(u)** aleatório no dicionário embutido, média das sementes 46 a 65, em **[0,0079; 0,0147]**: centro 0,0113 (as 3 sementes de (k)); binomial
+  √(0,0113 · 0,9887/1000) = 0,00334 por semente, 0,00075 na média de 20, e 0,00334/√3 = 0,0019 de erro do centro; 1,645 · √(0,00075² + 0,0019²).
