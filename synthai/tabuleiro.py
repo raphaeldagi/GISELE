@@ -83,3 +83,97 @@ def aleatorio_geometrico(palavras, freq, tamanho=5, minimo=3, maximo=5):
     s = paradas_por_comprimento(tamanho, minimo, maximo)
     d = densidade_por_comprimento(palavras, freq, minimo, maximo)
     return sum(s[L] * d[L] for L in s)
+
+
+# --- o colapso das vizinhas de mesma letra (Parte 152) ---
+
+def _distintas(p, n):
+    """dist[k] = P(n sorteios iid com as probabilidades p (lista) têm k letras distintas), e, para cada letra c, comc[c][k] = P(c aparece e há k
+    distintas). Programação dinâmica sobre as letras, com o peso multinomial n!·Π p_i^{m_i}/m_i!."""
+    import math
+    L = len(p)
+    fat = [math.factorial(m) for m in range(n + 1)]
+
+    def dp(forcar):
+        # estado: (sorteios usados, distintas) -> peso
+        est = {(0, 0): 1.0}
+        for i, pi in enumerate(p):
+            novo = {}
+            for (t, k), w in est.items():
+                inicio = 1 if i == forcar else 0
+                for m in range(inicio, n - t + 1):
+                    chave = (t + m, k + (1 if m else 0))
+                    novo[chave] = novo.get(chave, 0.0) + w * pi ** m / fat[m]
+            est = novo
+        return [fat[n] * est.get((n, k), 0.0) for k in range(n + 1)]
+    return dp(-1), [dp(c) for c in range(L)]
+
+
+def tabela_colapso(freq, nmax=8):
+    """Para n = 1..nmax vizinhas livres: (P(parar | n, com PARAR), [P(letra c | n, com PARAR)], [P(letra c | n, sem PARAR)]), com K = nº de letras
+    distintas entre as n vizinhas: P(parar) = E[1/(K+1)]; P(c) = E[1{c presente}/(K+1)] (ou /K sem PARAR)."""
+    letras = sorted(freq)
+    t = sum(freq.values())
+    p = [freq[c] / t for c in letras]
+    tab = {}
+    for n in range(1, nmax + 1):
+        dist, comc = _distintas(p, n)
+        parar = sum(dist[k] / (k + 1) for k in range(1, n + 1))
+        com = {c: sum(comc[i][k] / (k + 1) for k in range(1, n + 1)) for i, c in enumerate(letras)}
+        sem = {c: sum(comc[i][k] / k for k in range(1, n + 1)) for i, c in enumerate(letras)}
+        tab[n] = (parar, com, sem)
+    return tab
+
+
+def assinaturas(tamanho=5, minimo=3, maximo=5):
+    """Os caminhos geométricos agrupados pela sequência de nº de vizinhas livres em cada decisão: {(n_1, ..., n_L): peso}, peso = (1/casas) · Π (1/n_i)
+    sobre as escolhas de casa (cada casa livre tem chance 1/n de ser a escolhida, dado o lado da letra). n_L é o nº de livres na última casa (a do PARAR);
+    com L = maximo, n_L = -1 (só PARAR)."""
+    def viz(r, c):
+        return [(r + a, c + b) for a in (-1, 0, 1) for b in (-1, 0, 1)
+                if (a or b) and 0 <= r + a < tamanho and 0 <= c + b < tamanho]
+    out = {}
+
+    def anda(caminho, ns, w):
+        L = len(caminho)
+        livres = [v for v in viz(*caminho[-1]) if v not in caminho]
+        if L >= minimo:
+            chave = tuple(ns + [len(livres) if L < maximo else -1])
+            out[chave] = out.get(chave, 0.0) + w
+        if L >= maximo:
+            return
+        for v in livres:
+            anda(caminho + [v], ns + [len(livres)], w / len(livres))
+    for r in range(tamanho):
+        for c in range(tamanho):
+            anda([(r, c)], [], 1.0 / (tamanho * tamanho))
+    return out
+
+
+def aleatorio_colapso(palavras, freq, tamanho=5, minimo=3, maximo=5):
+    """A previsão com o colapso, em campo médio (as letras das vizinhas de cada decisão são sorteios novos e independentes; ignora que vizinhas já
+    vistas reaparecem, e que o `setdefault` fica com a PRIMEIRA casa de cada letra). Para a palavra w (comprimento L) e uma assinatura (n_1..n_L):
+    p(w_1) · Π_{i<L} q(w_{i+1} | n_i) · P(parar | n_L) (os 1/n_i da casa estão no peso), com q com ou sem PARAR conforme i ≥ minimo. A soma em w e nas assinaturas
+    (pesos de assinaturas() já incluem os 1/n_i)."""
+    t = sum(freq.values())
+    p = {c: v / t for c, v in freq.items()}
+    tab = tabela_colapso(freq)
+    por_L = {}
+    for w in palavras:
+        if minimo <= len(w) <= maximo:
+            por_L.setdefault(len(w), []).append(w.upper())
+    total = 0.0
+    for sig, peso in assinaturas(tamanho, minimo, maximo).items():
+        L = len(sig)
+        nL = sig[-1]
+        parar = 1.0 if nL == -1 else (1.0 if nL == 0 else tab[nL][0])
+        s = 0.0
+        for w in por_L.get(L, []):
+            x = p.get(w[0], 0.0)
+            for i in range(1, L):
+                n = sig[i - 1]
+                q = tab[n][1] if i >= minimo else tab[n][2]
+                x *= q.get(w[i], 0.0)
+            s += x
+        total += peso * parar * s
+    return total
