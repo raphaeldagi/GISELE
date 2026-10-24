@@ -18343,6 +18343,35 @@ def p3200_chi2_cdf(gl, x, n=4000):
     return acc * h / 3
 
 
+def p3201_grpo_por_dicionario(dicionario="pt", sementes=tuple(range(101, 121)), episodios=5000, avaliacao=1000):
+    """A P3199 com o dicionario escolhido (Parte 149): 'pt' = palavras_rl.lemas_ownpt() (OpenWordNet-PT sem acentos), 'en' = lemas_wordnet(),
+    'embutido' = EMBEDDED_WORDS. Devolve {nome: media}, as listas por semente em 'por_semente' e os desvios em 'desvios'."""
+    import statistics as st
+    from synthai import palavras_rl as P
+    from synthai.grpo_palavras import treinar
+    fonte = {"pt": P.lemas_ownpt, "en": P.lemas_wordnet, "embutido": lambda: P.EMBEDDED_WORDS}[dicionario]
+    dic = P.Dicionario(fonte())
+    acc = {"Q": [], "aleat": [], "G2": [], "G8": [], "sem2": [], "sem8": []}
+    for sem in sementes:
+        cfg = P.Config(episodios=episodios, avaliacao=avaliacao, seed=sem)
+        ag, _, _ = P.train(cfg, dic)
+        ev = P.evaluate(cfg, dic, ag)
+        acc["Q"].append(ev["guloso"][0])
+        acc["aleat"].append(ev["aleatorio"][0])
+        for G in (2, 8):
+            a, s, n = treinar(dic, episodios, G, seed=sem)
+            acc["G%d" % G].append(P.evaluate(cfg, dic, a)["guloso"][0])
+            acc["sem%d" % G].append(s / n)
+    acc["G2-Q"] = [a - b for a, b in zip(acc["G2"], acc["Q"])]
+    acc["G8-Q"] = [a - b for a, b in zip(acc["G8"], acc["Q"])]
+    acc["G8-G2"] = [a - b for a, b in zip(acc["G8"], acc["G2"])]
+    out = {k: sum(v) / len(v) for k, v in acc.items()}
+    out["ambas"] = sum(g2 > q and g8 > q for q, g2, g8 in zip(acc["Q"], acc["G2"], acc["G8"]))
+    out["desvios"] = {k: st.stdev(v) for k, v in acc.items()} if len(sementes) > 1 else {}
+    out["por_semente"] = acc
+    return out
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
