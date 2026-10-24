@@ -85,3 +85,10 @@ Antes de qualquer explicação, o próximo comprimento. Com o mecanismo "o fim v
 puxa). Pela tendência de 4 para 5 letras (−0,398 → −0,336, queda de 0,062), mais um passo de queda de mesmo tamanho daria −0,274; faixa larga (2 pontos):
 - **(i)** dr de B, primeira, de 3 a 6 letras, em **[−0,336; −0,15]** (centro −0,274, por código: −0,3363 + (−0,3363 − (−0,3984)))
 - **(j)** dc de B, primeira, de 3 a 6 letras, em **[−0,137; −0,05]** (centro −0,137 + (−0,137 + 0,179) = −0,095)
+
+**Medido no lote novo (3 a 6 letras):** dr = −0,29525 (i ✅), dc = −0,11634 (j ✅). A deriva cai a cada passo a mais (dr: −0,398, −0,336, −0,295 com máximo 4, 5, 6;
+quedas de 0,062 e 0,041), sem trocar de sinal.
+
+### A rodada 103, registrada antes
+`estatisticas_exatas` com a ordem REVERSA traduzida (caso B, 3 a 4 letras): o vetor (acerto, dr, dc, borda, comprimento, falha) por caminho, somado por ação na ordem
+reversa das vizinhas e dividido por n; o total ponderado por atribuição. Só + × ÷ e min de inteiros. Previsão: **IGUAL**.
