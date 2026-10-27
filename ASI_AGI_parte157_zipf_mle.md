@@ -101,3 +101,7 @@ Centro = média das 40 sementes já medidas; meia-largura 1,36 · 1,645 · σ ·
 - **(k)** viés do MLE empírico (N = vistos) em A em **[−0,0185; −0,0167]** (centro −0,01760)
 - **(l)** viés do OLS em A em **[−0,0212; −0,0164]** (centro −0,01878)
 - **(n)** correlação entre o MLE verdadeiro e o empírico nas 20 sementes novas em **[0,848; 0,988]**
+
+### A rodada 105, registrada antes
+`synthai.zipf_mle.mle` traduzido (contagens ⌊1000/r⌋ em 50 postos, 60 passos fixos de bisseção), com r^−s = e^(−s ln r) pelo exp e pelo log próprios da rodada 26, porque a
+pow da libm com expoente não inteiro é a fronteira da Parte 92. Previsão: **IGUAL**.
