@@ -71,3 +71,33 @@ mediana de w desce um pouco, não sobe. Acertos como contagem: de 6 a 10 das 10.
 
 ### Sobre mim, registrado
 Erros no mundo em **[0; 3]**, centro 1,3.
+
+## Medido (P3217, sementes 100-119)
+
+| caso | σ_F | desvio/σ_F | MLE verdadeiros | MLE empíricos, N = vistos | MLE empíricos, N = 10.000 | OLS log-log |
+|---|---|---|---|---|---|---|
+| A | 0,00159 | 0,8512 | −0,00048 (0,00136) | −0,01837 (0,00147) | +0,00777 (0,00133) | −0,01698 (0,00317) |
+| B | 0,00800 | 1,0075 | −0,00036 (0,00806) | −0,05828 (0,00971) | +0,02010 (0,00828) | −0,34073 (0,02232) |
+| C | 0,00277 | 0,9182 | −0,00004 (0,00255) | −0,04532 (0,00262) | +0,01296 (0,00255) | −0,23676 (0,00710) |
+
+- **(a)** −0,00048 em [−0,00059; 0,00059]. ✅
+- **(b)** −0,00036 em [−0,0029; 0,0029]. ✅
+- **(c)** 0,8512 em [0,7297; 1,2596]. ✅
+- **(d)** 1,0075 em [0,7297; 1,2596]. ✅
+- **(e)** **−0,01837**, abaixo de [−0,0176; −0,0160]. ❌
+- **(f)** −0,05828 em [−0,0633; −0,0529]. ✅
+- **(g)** **−0,01698**, acima de [−0,0233; −0,0179]. ❌
+- **(h)** −0,34073 em [−0,3581; −0,3273]. ✅
+- **(i)** −0,23676 em [−0,3427; −0,0206]. ✅
+- **(j)** −0,00004 em [−0,0010; 0,0010]. ✅
+
+**Os dois erros são do mesmo caso (A), e não pela mesma causa.** O lote de calibração de A tinha o MLE verdadeiro alto (z = +1,95 contra a forma fechada; o de teste,
+z = −1,36), e o MLE empírico anda junto com ele (correlação 0,956 entre sementes, nos 40): (e) é esse lote, uma cauda que passa de um estimador para o outro porque os dois
+leem a mesma amostra. O OLS não anda junto (correlação −0,099) e mudou do mesmo jeito (z ≈ 3,3 entre os lotes, sem valor isolado: as 20 sementes de cada lote se
+deslocaram juntas): esse não tem explicação. Pela regra da Parte 118, lote novo antes de mecanismo.
+
+## Um lote novo, registrado antes de rodar (A, sementes 200-219)
+Centro = média das 40 sementes já medidas; meia-largura 1,36 · 1,645 · σ · √(1/20 + 1/40) (por código); a correlação pela transformação de Fisher.
+- **(k)** viés do MLE empírico (N = vistos) em A em **[−0,0185; −0,0167]** (centro −0,01760)
+- **(l)** viés do OLS em A em **[−0,0212; −0,0164]** (centro −0,01878)
+- **(n)** correlação entre o MLE verdadeiro e o empírico nas 20 sementes novas em **[0,848; 0,988]**

@@ -18660,6 +18660,36 @@ def p3216_ramificacao(maximo=4, casos=("B", "A'"), casas=("primeira", "uniforme"
     return out
 
 
+def p3217_zipf_mle_contra_ols(casos=(("A", 1.0, 50000), ("B", 1.5, 5000), ("C", 1.2, 20000)), sementes=range(100, 120), N=10000):
+    """A Parte 157 (P3217): o expoente de Zipf por maxima verossimilhanca (postos verdadeiros e empiricos) contra o OLS em log-log de
+    synthai.dicionario.zipf, em amostras de Zipf(s) em 1..N com n fichas. Devolve {nome: {estimador: (vies medio, desvio entre sementes)}} e, por caso,
+    sigma_F = 1/sqrt(n Var_s(ln r)) (Fisher) e a razao desvio/sigma_F do MLE verdadeiro."""
+    import math
+    import statistics as st
+    from synthai import zipf_mle as Z
+    out = {}
+    for nome, s, n in casos:
+        r = {"verd": [], "emp_vistos": [], "emp_N": [], "ols": []}
+        for sem in sementes:
+            cont = Z.amostrar(s, N, n, sem)
+            e = Z.empiricas(cont)
+            r["verd"].append(Z.mle(cont))
+            r["emp_vistos"].append(Z.mle(e))
+            r["emp_N"].append(Z.mle(e, N=N))
+            r["ols"].append(Z.ols_loglog(e))
+        m = Z.media_log_esperada(N, s)
+        num = den = 0.0
+        for k in range(1, N + 1):
+            w = k ** -s
+            num += w * (math.log(k) - m) ** 2
+            den += w
+        sf = 1 / math.sqrt(n * num / den)
+        out[nome] = {k: (st.mean(v) - s, st.stdev(v)) for k, v in r.items()}
+        out[nome]["sigma_F"] = sf
+        out[nome]["razao_desvio"] = st.stdev(r["verd"]) / sf
+    return out
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
@@ -18789,6 +18819,15 @@ def _parte_156():
 
 
 PARTES[156] = _parte_156
+
+def _parte_157():
+    print("\n=== Parte 157: um modulo so, o expoente de Zipf por maxima verossimilhanca ===")
+    for nome, v in p3217_zipf_mle_contra_ols().items():
+        print(f"  P3217 {nome}: sigma_F {v['sigma_F']:.5f}; desvio/sigma_F {v['razao_desvio']:.4f}; " +
+              "; ".join(f"{k} vies {v[k][0]:+.5f} desvio {v[k][1]:.5f}" for k in ("verd", "emp_vistos", "emp_N", "ols")))
+
+
+PARTES[157] = _parte_157
 
 PARTES[126] = _parte_126
 
