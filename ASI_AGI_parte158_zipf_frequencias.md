@@ -48,3 +48,27 @@ A régua sobre o rascunho com "Do mundo:" provisória: m1 = 6, m2 = 0, m3 = 0,16
 
 ### Sobre mim, registrado
 Erros no mundo em **[0; 3]**, centro 1,0.
+
+## Medido (sementes 100-119)
+
+| caso | x_min | viés | desvio |
+|---|---|---|---|
+| A | 2 | −0,0480 | 0,0067 |
+| A | 5 | −0,0636 | 0,0149 |
+| B | 2 | −0,1755 | 0,0470 |
+| B | 5 | −0,0792 | 0,0751 |
+| C | 2 | −0,1640 | 0,0171 |
+
+- **(a)** **−0,0480**, acima de [−0,0600; −0,0494]. ❌
+- **(b)** −0,0636 em [−0,0707; −0,0541]. ✅
+- **(c)** −0,1755 em [−0,2138; −0,1422]. ✅
+- **(d)** −0,0792 em [−0,1592; −0,0676]. ✅
+- **(e)** −0,1640 em [−0,1780; −0,0547]. ✅
+- **(f)** o viés pelas frequências é maior que o do MLE com postos empíricos nos 3 casos (0,048 > 0,018; 0,176 > 0,058; 0,164 > 0,045). ✅
+
+**O erro (a) é a regra que eu escrevi na Parte 157, desobedecida na parte seguinte:** o lote de calibração de A são as sementes 0-19, o mesmo lote cujo MLE verdadeiro
+estava a z = +1,95 da forma fechada. A regra mandava conferir isso antes de centrar faixas nele; eu não conferi, e a cauda passou para o estimador novo do mesmo jeito.
+
+## Um lote novo, registrado antes de rodar (A, x_min = 2, sementes 200-219)
+Centro = média das 40 sementes já medidas; meia-largura 1,36 · 1,645 · σ · √(1/20 + 1/40) (por código).
+- **(g)** viés com x_min = 2 em A em **[−0,0557; −0,0470]** (centro −0,05135)
