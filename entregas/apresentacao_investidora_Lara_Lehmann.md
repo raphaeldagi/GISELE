@@ -62,7 +62,33 @@ registro de onde a formalização funciona e onde quebra.
 
 *Valor, participação e prazos: a definir na conversa.*
 
-## 8. Como verificar em 5 minutos
+## 8. Sonhando grande: o caminho até 1 trilhão de dólares
+Isto é uma **visão**, não uma projeção. A conta abaixo mostra o tamanho do sonho e o que teria de ser verdade para ele se cumprir.
+
+**O mercado.** A IDC projeta que os gastos mundiais com inteligência artificial chegam a **US$ 632 bilhões em 2028**, crescendo 29% ao ano de 2024 a 2028
+([IDC, via Business Wire, agosto de 2024](https://www.businesswire.com/news/home/20240819177906/en)). Todo esse dinheiro compra sistemas que hoje não publicam quantas das
+próprias previsões acertam.
+
+**A tese.** Quanto mais decisões passam por IA, mais vale saber **quando ela erra**. A SYNTHAI quer ser a camada de confiança dessa economia: o "auditor" que mede, registra
+e prova o acerto de qualquer modelo, como uma agência de classificação de risco faz com a dívida, ou como uma auditoria contábil faz com as empresas.
+
+**A conta do trilhão.** Uma empresa de software avaliada em US$ 1 trilhão com um múltiplo de 10 vezes a receita precisaria faturar **US$ 100 bilhões por ano**. Contra o mercado de
+2028, isso é 100 ÷ 632 = **15,8% de todo o gasto mundial com IA**. É um alvo enorme, e ele só faz sentido se a verificação deixar de ser um serviço e virar infraestrutura, presente
+em toda decisão automatizada.
+
+**Os degraus (cada um com um marco que pode ser medido):**
+
+| degrau | o que precisa acontecer | marco |
+|---|---|---|
+| 1. Prova | o método funciona fora do laboratório | 1 cliente piloto com o placar de calibração publicado |
+| 2. Produto | a auditoria vira ferramenta | uma equipe externa audita um modelo próprio sem ajuda nossa |
+| 3. Padrão | o placar vira referência | reguladores ou compradores pedindo "calibração medida" em contrato |
+| 4. Infraestrutura | a verificação roda em toda decisão | a camada de confiança cobrada por decisão, em escala de nuvem |
+
+**O que teria de ser verdade.** A regulação de IA exigir prova de acerto (e não só uma promessa); o método escalar de modelos de brinquedo para modelos de produção; e ninguém chegar
+antes com um padrão aceito. Nenhuma dessas três coisas está provada hoje. O primeiro degrau é o que este investimento compraria.
+
+## 9. Como verificar em 5 minutos
 ```
 python3 SYNTHAI_completo.py         # o projeto inteiro em um arquivo
 python3 calculos.py 158             # uma parte, com a regressão no final
