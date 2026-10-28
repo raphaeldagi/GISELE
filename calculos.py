@@ -7582,6 +7582,8 @@ def testes_de_regressao():
         "P3214": (lambda r: (round(r["B"]["direta"]["dr"], 4), round(r["A'"]["direta"]["dr"], 4), round(r["B"]["reversa"]["dr"], 4)) == (-0.3363, -0.4591, 0.3363))(p3214_deriva_do_setdefault()),
         "P3215": (lambda r: tuple(round(r[m]["dr"], 4) for m in (4, 5, 6)) == (-0.3984, -0.3363, -0.2952))(p3215_deriva_por_comprimento()),
         "P3216": (lambda r: (round(r["A'"]["primeira"]["livres"] / r["A'"]["uniforme"]["livres"], 4), round(r["A'"]["primeira"]["acoes"] / r["A'"]["uniforme"]["acoes"], 4)) == (0.9454, 0.986))(p3216_ramificacao(4, casos=("A'",))),
+        "P3217": (lambda r: (round(r["B"]["ols"][0], 3), round(r["C"]["ols"][0], 3), round(r["A"]["verd"][0], 4)) == (-0.341, -0.237, -0.0005))(p3217_zipf_mle_contra_ols()),
+        "P3218": (lambda t: (round(t[1], 4), round(t[2], 4), round(t[3], 3)) == (-0.0169, -0.0193, 0.968))(p3218_lote_novo_de_a()),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18690,6 +18692,24 @@ def p3217_zipf_mle_contra_ols(casos=(("A", 1.0, 50000), ("B", 1.5, 5000), ("C", 
     return out
 
 
+def p3218_lote_novo_de_a(sementes=range(200, 220)):
+    """A Parte 157 (P3218): o lote novo do caso A (s = 1, N = 10.000, n = 50.000): vies medio do MLE verdadeiro, do MLE empirico (N = vistos) e do OLS, e a
+    correlacao, entre sementes, do MLE verdadeiro com o empirico. Devolve (verd, emp, ols, correlacao)."""
+    import math
+    import statistics as st
+    from synthai import zipf_mle as Z
+    v, e, o = [], [], []
+    for sem in sementes:
+        c = Z.amostrar(1.0, 10000, 50000, sem)
+        em = Z.empiricas(c)
+        v.append(Z.mle(c))
+        e.append(Z.mle(em))
+        o.append(Z.ols_loglog(em))
+    mv, me = st.mean(v), st.mean(e)
+    r = sum((x - mv) * (y - me) for x, y in zip(v, e)) / math.sqrt(sum((x - mv) ** 2 for x in v) * sum((y - me) ** 2 for y in e))
+    return mv - 1, me - 1, st.mean(o) - 1, r
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
@@ -18825,6 +18845,8 @@ def _parte_157():
     for nome, v in p3217_zipf_mle_contra_ols().items():
         print(f"  P3217 {nome}: sigma_F {v['sigma_F']:.5f}; desvio/sigma_F {v['razao_desvio']:.4f}; " +
               "; ".join(f"{k} vies {v[k][0]:+.5f} desvio {v[k][1]:.5f}" for k in ("verd", "emp_vistos", "emp_N", "ols")))
+    v, e, o, r = p3218_lote_novo_de_a()
+    print(f"  P3218 lote novo de A (200-219): verd {v:+.5f}; emp {e:+.5f}; ols {o:+.5f}; correlacao verd-emp {r:.4f}")
 
 
 PARTES[157] = _parte_157

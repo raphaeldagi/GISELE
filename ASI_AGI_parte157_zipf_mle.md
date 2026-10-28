@@ -105,3 +105,54 @@ Centro = média das 40 sementes já medidas; meia-largura 1,36 · 1,645 · σ ·
 ### A rodada 105, registrada antes
 `synthai.zipf_mle.mle` traduzido (contagens ⌊1000/r⌋ em 50 postos, 60 passos fixos de bisseção), com r^−s = e^(−s ln r) pelo exp e pelo log próprios da rodada 26, porque a
 pow da libm com expoente não inteiro é a fronteira da Parte 92. Previsão: **IGUAL**.
+
+**Resultado:** `dialogo/rodada105.py` e `dialogo/Rodada105.java` dão os mesmos dois números (s = 0x1.0107dc23f946ep+0 = 1,0040). **IGUAL**, como previsto.
+
+**Medido no lote novo (P3218, sementes 200-219):** MLE empírico −0,01693 (k ✅), OLS −0,01928 (l ✅), correlação 0,9676 (n ✅). O MLE verdadeiro do lote: +0,00056
+(z = +1,58). O OLS voltou para o meio das 40 anteriores: o deslocamento entre os lotes 0-19 e 100-119 foi uma cauda dos dois lados (−0,0206 e −0,0170, com o terceiro lote
+em −0,0193), não um mecanismo.
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ❌ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅
+
+**Mundo: 11 de 13.** **Sobre mim:** 2 erros, em [0; 3]: ✅.
+
+## O que o módulo mostrou (a resposta à P3217)
+- **O relatório tem razão no sinal e erra no tamanho que importa:** o OLS em log-log subestima s sempre, mas o viés vai de −0,018 (A: muitos dados, s = 1) a −0,34 (B:
+  poucos dados, s = 1,5). O que o move é a fração da cauda em escada (contagens 1, 2, 3 repetidas), maior quando a amostra é esparsa; com o corpus denso, o OLS erra 2%.
+- **A máxima verossimilhança só cura com os postos verdadeiros.** Com eles, o viés é zero dentro da forma fechada (σ_F = 1/√(n·Var ln r) acertou o desvio nos três casos:
+  razões 0,85, 1,01 e 0,92). Com os postos EMPÍRICOS, o MLE herda outro viés: −0,017 em A, −0,058 em B, −0,045 em C (ordenar as contagens da mesma amostra entorta a lei),
+  e com o N verdadeiro o viés troca de sinal (+0,008 a +0,020). Num corpus de verdade só há postos empíricos: "use MLE" sozinho não remove o viés, o diminui (de −0,34 para
+  −0,06 em B). O remédio clássico (Clauset, Shalizi e Newman 2009) é ajustar a distribuição das FREQUÊNCIAS, não a curva posto-frequência.
+- **O que isso muda no projeto:** `synthai.dicionario.zipf` mede entre os postos 10 e 10.000 de um corpus grande (o regime A): o viés dela é da ordem de 2%, e as conclusões
+  antigas que a usam (Partes 30-31) comparam expoentes entre corpora com o mesmo método, o que cancela parte do viés. Não reescrevo a função medida (regra das Partes 14 e 16);
+  o `zipf_mle` fica ao lado.
+
+## Engenharia reversa
+- **O padrão:** os dois erros vieram de um lote de calibração que caiu na cauda (z = +1,95 no MLE verdadeiro, que é a forma fechada) e eu centrei faixas estreitas de
+  quatro estimadores nele. A correlação de 0,96 entre estimadores que leem a mesma amostra transforma UMA cauda em vários erros. O que isso revela: eu trato cada estimador
+  como uma calibração independente, mas eles dividem o sorteio. A regra nova: antes de centrar várias faixas no mesmo lote de calibração, comparar a quantidade de forma
+  fechada desse lote com a sua conta; se ela estiver a |z| > 1,5, centrar as outras no lote corrigido (ou num segundo lote), porque a cauda passa para todas as que se
+  correlacionam com ela.
+- **O que funcionou:** as cinco faixas de forma fechada (Fisher e χ²) acertaram todas, e a faixa sem mecanismo (i), larga, acertou como deve. A regra da Parte 118 (lote novo
+  antes de mecanismo) impediu uma explicação para o OLS: o terceiro lote ficou no meio.
+- **Sobre o relatório:** a sua estrutura (cada seção um algoritmo canônico com nome próprio: Dowling-Gallier, Tarjan, Firth, Amari, Zipf-Mandelbrot) é a da literatura, não a do
+  código; por isso acerta o que a literatura diz e erra o que o código tem. Medir uma afirmação dele no regime do projeto foi o que separou o certo (OLS enviesado) do exagerado
+  ("falácia", quando no regime do dicionário o erro é de 2%).
+
+## Fontes
+- W. F. Dowling e J. H. Gallier (1984), "Linear-time algorithms for testing the satisfiability of propositional Horn formulae", *J. Logic Programming* 1(3).
+- R. Tarjan (1972), "Depth-first search and linear graph algorithms", *SIAM J. Computing* 1(2).
+- D. Firth (1993), "Bias reduction of maximum likelihood estimates", *Biometrika* 80(1).
+- A. Clauset, C. R. Shalizi e M. E. J. Newman (2009), "Power-law distributions in empirical data", *SIAM Review* 51(4), 661-703 ([arXiv:0706.1062](https://arxiv.org/abs/0706.1062), conferido nesta sessão: mínimos quadrados dão estimativas "substancialmente imprecisas"; o método proposto é máxima verossimilhança com teste de Kolmogorov-Smirnov e razões de verossimilhança).
+- S. Amari (1998), "Natural gradient works efficiently in learning", *Neural Computation* 10(2).
+
+**O placar (m) (P2837):** m1 = 13 em [10; 13] ✅, m2 = 3 em [3; 4] ✅, m3 = 0,1086 em [0,08; 0,15] ✅, m4 = 0,8462 em [0,6000; 1,0000] ✅, m5 = 1 em [1; 2] ✅, m6 = 0 em
+[0; 1] ✅ (os dois erros ficaram dentro da largura das suas faixas). **6 de 6.**
+
+## Funções e testes
+- **Módulo:** `synthai/zipf_mle.py` (o único da parte, como pedido).
+- **Funções:** `p3217_zipf_mle_contra_ols`, `p3218_lote_novo_de_a` e `_parte_157`. Entradas P3217 e P3218 na regressão.
+- **Diálogo:** `dialogo/rodada105.py` e `dialogo/Rodada105.java`, IGUAL.
+- **Testes:** `synthai/testes_parte157.py`.
+
+➡ Anterior: [Parte 156](ASI_AGI_parte156_ramificacao.md).

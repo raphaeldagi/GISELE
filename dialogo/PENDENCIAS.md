@@ -102,3 +102,6 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Parte 156)** FECHADA: a pendência 1 da 155 (o custo do setdefault são as casas livres perdidas, absorvidas em parte pelo colapso). ABERTAS: (1) a forma da série da
   razão das ações (acelera para 1): uma conta do que a última decisão de um caminho longo ainda escolhe, antes de medir 3 a 8 letras; (2) a hipótese de 1 lote: em A' com
   3 a 7 letras o caminho da primeira casa fica mais longo que o da sorteada; (3) as da 154/155: o sinal da memória das letras; a queda da deriva em forma fechada.
+- **(Parte 157)** ABERTAS: (1) o expoente pelas FREQUÊNCIAS (máxima verossimilhança sobre a distribuição das contagens, com x_min, à Clauset-Shalizi-Newman) contra o MLE com
+  postos empíricos, nos três casos A, B e C, com previsão antes; (2) medir o viés de `synthai.dicionario.zipf` (postos 10 a 10.000) no próprio dicionário por reamostragem, para dizer
+  quanto das conclusões das Partes 30-31 depende dele; (3) as da 156 (a forma da série das ações; o caminho mais longo de A' com 3 a 7 letras).

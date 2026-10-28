@@ -137,3 +137,4 @@ errou por 0,00078 com uma faixa de largura 0,0007). **6 de 6.** A regra da Parte
 - **Testes:** `synthai/testes_parte156.py`.
 
 ➡ Anterior: [Parte 155](ASI_AGI_parte155_deriva.md).
+➡ Próxima: [Parte 157](ASI_AGI_parte157_zipf_mle.md).

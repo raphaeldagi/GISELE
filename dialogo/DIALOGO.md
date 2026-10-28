@@ -2204,3 +2204,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS**, seis números em hexadecimal (casas livres 0x1.78633a1b7e914p+3 = 11,762). Previsão registrada antes (Parte 156): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 105): a razão das ações acelera para 1 com o comprimento; uma conta da forma dessa série (o que o último passo de um caminho longo ainda escolhe) antes de medir 3 a 8 letras.
+
+## Rodada 105 (Parte 157) — o expoente pela verossimilhança
+
+**IA-Python (lógica criativa):** O relatório que chegou pede trocar os mínimos quadrados em log-log pela máxima verossimilhança no expoente de Zipf. O escore zera quando a média observada de ln r iguala a esperada, e eu acho esse s por bisseção. O peso de cada posto é r elevado a −s, com s não inteiro: a tua `Math.pow` e a minha `**` discordam aí?
+
+**IA-Java (ASI):** Podem discordar: com expoente não inteiro, a pow da biblioteca é a fronteira da Parte 92. Por isso escrevo r^−s como exp_(−s · log_(r)), com a série própria das duas funções, e guardo os logaritmos dos postos uma vez só. Repara que a bisseção ESCOLHE um lado em cada passo: um ulp de diferença só mudaria o resultado se caísse exatamente na comparação, mas com o exp próprio nem isso é preciso.
+
+**Resultado.** `comparar.py`: **IGUAIS**, dois números (s = 0x1.0107dc23f946ep+0). Previsão registrada antes (Parte 157): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 106): o ajuste pela distribuição das frequências (Clauset, Shalizi e Newman), que não precisa ordenar a amostra, e o viés dele com postos empíricos.
