@@ -105,3 +105,6 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Parte 157)** ABERTAS: (1) o expoente pelas FREQUÊNCIAS (máxima verossimilhança sobre a distribuição das contagens, com x_min, à Clauset-Shalizi-Newman) contra o MLE com
   postos empíricos, nos três casos A, B e C, com previsão antes; (2) medir o viés de `synthai.dicionario.zipf` (postos 10 a 10.000) no próprio dicionário por reamostragem, para dizer
   quanto das conclusões das Partes 30-31 depende dele; (3) as da 156 (a forma da série das ações; o caminho mais longo de A' com 3 a 7 letras).
+- **(Parte 158)** FECHADA: a pendência 1 da 157 (o método das frequências erra mais no vocabulário finito). ABERTAS: (1) o MLE com postos empíricos e N conhecido no próprio
+  dicionário, contra o `synthai.dicionario.zipf`; (2) a regra da 158 como passo: um auditor que confere, em cada parte, se a calibração imprimiu o z da forma fechada do lote;
+  (3) as da 156 e da 157. O ciclo automático parou na Parte 158, a pedido.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 156, perguntas P1 a P3216).
+"""SYNTHAI — o projeto inteiro num arquivo só (Partes 1 a 158, perguntas P1 a P3219).
 
 Este arquivo contém, como texto, TODO o código do repositório GISELE:
   - calculos.py: os cálculos e simulações de todas as partes (funções pNN_..., a linhagem da SYNTHAI, os testes de
@@ -34,7 +34,7 @@ FONTES = {}
 DADOS = {}  # o dicionário WordNet 3.0 (Parte 30), em base64; licença em dados/WORDNET_LICENSE.txt
 
 # ====================================================================================================
-# calculos.py  (18801 linhas)
+# calculos.py  (18888 linhas)
 # ====================================================================================================
 FONTES['calculos.py'] = """\"\"\"Reproduz os cálculos e simulações das Partes 1 a 16 (ASI_AGI_*.md).
 
@@ -7620,6 +7620,9 @@ def testes_de_regressao():
         "P3214": (lambda r: (round(r["B"]["direta"]["dr"], 4), round(r["A'"]["direta"]["dr"], 4), round(r["B"]["reversa"]["dr"], 4)) == (-0.3363, -0.4591, 0.3363))(p3214_deriva_do_setdefault()),
         "P3215": (lambda r: tuple(round(r[m]["dr"], 4) for m in (4, 5, 6)) == (-0.3984, -0.3363, -0.2952))(p3215_deriva_por_comprimento()),
         "P3216": (lambda r: (round(r["A'"]["primeira"]["livres"] / r["A'"]["uniforme"]["livres"], 4), round(r["A'"]["primeira"]["acoes"] / r["A'"]["uniforme"]["acoes"], 4)) == (0.9454, 0.986))(p3216_ramificacao(4, casos=("A'",))),
+        "P3217": (lambda r: (round(r["B"]["ols"][0], 3), round(r["C"]["ols"][0], 3), round(r["A"]["verd"][0], 4)) == (-0.341, -0.237, -0.0005))(p3217_zipf_mle_contra_ols()),
+        "P3218": (lambda t: (round(t[1], 4), round(t[2], 4), round(t[3], 3)) == (-0.0169, -0.0193, 0.968))(p3218_lote_novo_de_a()),
+        "P3219": (lambda r: (round(r[("A", 2)][0], 3), round(r[("C", 2)][0], 3)) == (-0.048, -0.164))(p3219_zipf_pelas_frequencias(casos=(("A", 1.0, 50000, (2,)), ("C", 1.2, 20000, (2,))))),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18698,6 +18701,69 @@ def p3216_ramificacao(maximo=4, casos=("B", "A'"), casas=("primeira", "uniforme"
     return out
 
 
+def p3217_zipf_mle_contra_ols(casos=(("A", 1.0, 50000), ("B", 1.5, 5000), ("C", 1.2, 20000)), sementes=range(100, 120), N=10000):
+    \"\"\"A Parte 157 (P3217): o expoente de Zipf por maxima verossimilhanca (postos verdadeiros e empiricos) contra o OLS em log-log de
+    synthai.dicionario.zipf, em amostras de Zipf(s) em 1..N com n fichas. Devolve {nome: {estimador: (vies medio, desvio entre sementes)}} e, por caso,
+    sigma_F = 1/sqrt(n Var_s(ln r)) (Fisher) e a razao desvio/sigma_F do MLE verdadeiro.\"\"\"
+    import math
+    import statistics as st
+    from synthai import zipf_mle as Z
+    out = {}
+    for nome, s, n in casos:
+        r = {"verd": [], "emp_vistos": [], "emp_N": [], "ols": []}
+        for sem in sementes:
+            cont = Z.amostrar(s, N, n, sem)
+            e = Z.empiricas(cont)
+            r["verd"].append(Z.mle(cont))
+            r["emp_vistos"].append(Z.mle(e))
+            r["emp_N"].append(Z.mle(e, N=N))
+            r["ols"].append(Z.ols_loglog(e))
+        m = Z.media_log_esperada(N, s)
+        num = den = 0.0
+        for k in range(1, N + 1):
+            w = k ** -s
+            num += w * (math.log(k) - m) ** 2
+            den += w
+        sf = 1 / math.sqrt(n * num / den)
+        out[nome] = {k: (st.mean(v) - s, st.stdev(v)) for k, v in r.items()}
+        out[nome]["sigma_F"] = sf
+        out[nome]["razao_desvio"] = st.stdev(r["verd"]) / sf
+    return out
+
+
+def p3218_lote_novo_de_a(sementes=range(200, 220)):
+    \"\"\"A Parte 157 (P3218): o lote novo do caso A (s = 1, N = 10.000, n = 50.000): vies medio do MLE verdadeiro, do MLE empirico (N = vistos) e do OLS, e a
+    correlacao, entre sementes, do MLE verdadeiro com o empirico. Devolve (verd, emp, ols, correlacao).\"\"\"
+    import math
+    import statistics as st
+    from synthai import zipf_mle as Z
+    v, e, o = [], [], []
+    for sem in sementes:
+        c = Z.amostrar(1.0, 10000, 50000, sem)
+        em = Z.empiricas(c)
+        v.append(Z.mle(c))
+        e.append(Z.mle(em))
+        o.append(Z.ols_loglog(em))
+    mv, me = st.mean(v), st.mean(e)
+    r = sum((x - mv) * (y - me) for x, y in zip(v, e)) / math.sqrt(sum((x - mv) ** 2 for x in v) * sum((y - me) ** 2 for y in e))
+    return mv - 1, me - 1, st.mean(o) - 1, r
+
+
+def p3219_zipf_pelas_frequencias(casos=(("A", 1.0, 50000, (2, 5)), ("B", 1.5, 5000, (2, 5)), ("C", 1.2, 20000, (2,))), sementes=range(100, 120), N=10000):
+    \"\"\"A Parte 158 (P3219): o expoente de Zipf pela lei de potencia das FREQUENCIAS (synthai.zipf_frequencias, alfa por maxima verossimilhanca com x_min,
+    s = 1/(alfa - 1)), nas amostras de Zipf(s) em 1..N da Parte 157. Devolve {(nome, x_min): (vies medio de s, desvio entre sementes)}.\"\"\"
+    import statistics as st
+    from synthai import zipf_mle as Z
+    from synthai import zipf_frequencias as F
+    out = {}
+    for nome, s, n, xmins in casos:
+        amostras = [Z.empiricas(Z.amostrar(s, N, n, sem)) for sem in sementes]
+        for xmin in xmins:
+            v = [F.s_de_alfa(F.alfa_mle(e, xmin)) for e in amostras]
+            out[(nome, xmin)] = (st.mean(v) - s, st.stdev(v))
+    return out
+
+
 def _parte_148():
     print("\\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
@@ -18828,6 +18894,27 @@ def _parte_156():
 
 PARTES[156] = _parte_156
 
+def _parte_157():
+    print("\\n=== Parte 157: um modulo so, o expoente de Zipf por maxima verossimilhanca ===")
+    for nome, v in p3217_zipf_mle_contra_ols().items():
+        print(f"  P3217 {nome}: sigma_F {v['sigma_F']:.5f}; desvio/sigma_F {v['razao_desvio']:.4f}; " +
+              "; ".join(f"{k} vies {v[k][0]:+.5f} desvio {v[k][1]:.5f}" for k in ("verd", "emp_vistos", "emp_N", "ols")))
+    v, e, o, r = p3218_lote_novo_de_a()
+    print(f"  P3218 lote novo de A (200-219): verd {v:+.5f}; emp {e:+.5f}; ols {o:+.5f}; correlacao verd-emp {r:.4f}")
+
+
+PARTES[157] = _parte_157
+
+def _parte_158():
+    print("\\n=== Parte 158: mais um modulo, o expoente pelas frequencias ===")
+    for (nome, xmin), (v, d) in p3219_zipf_pelas_frequencias().items():
+        print(f"  P3219 {nome} x_min {xmin}: vies {v:+.5f}; desvio {d:.5f}")
+    (v, d), = p3219_zipf_pelas_frequencias(casos=(("A", 1.0, 50000, (2,)),), sementes=range(200, 220)).values()
+    print(f"  P3219 lote novo de A (200-219), x_min 2: vies {v:+.5f}; desvio {d:.5f}")
+
+
+PARTES[158] = _parte_158
+
 PARTES[126] = _parte_126
 
 if __name__ == "__main__":
@@ -18840,7 +18927,7 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
-# CLAUDE.md  (614 linhas)
+# CLAUDE.md  (623 linhas)
 # ====================================================================================================
 FONTES['CLAUDE.md'] = """# SYNTHAI — convenções do projeto
 
@@ -19300,6 +19387,15 @@ anterior, commit e push.
   Parte 156 (a ramificação; rodada 104 IGUAL; 9/12, (m) 6/6): o setdefault tira casas livres da decisão seguinte (B −2,6% a −2,0%, A' −5,5% a −4,0%) e o acerto perde
   menos (0,48 a 0,88 do déficit: o colapso por letra absorve); as ações quase não caem. Errei 3 por emprestar a FORMA da série da Parte 155 (a desaceleração) a quantidades
   que não são a deriva. Regra: dois pontos dão um passo, não uma forma; sem mecanismo da forma, a faixa vai de "parou" a "dois passos"; série não monótona, pela amplitude.
+  Parte 157 (relatório recebido "Reengenharia Arquitetónica" + pedido "Continue com apenas um módulo"; synthai/zipf_mle.py; rodada 105 IGUAL; 11/13, (m) 6/6): 4 das 5
+  substituições pedidas já existiam (Dowling-Gallier P1609, Tarjan, Firth P305, gradiente natural P151; o relatório leu o nome da base p1610, não a função ao lado). O OLS log-log
+  subestima s de −0,018 (corpus denso) a −0,34 (esparso); o MLE com postos verdadeiros não tem viés (σ_F de Fisher acertou), mas com postos EMPÍRICOS herda outro (−0,017 a −0,058).
+  Regra: antes de centrar várias faixas no mesmo lote de calibração, comparar a quantidade de forma fechada desse lote com a conta; a |z| > 1,5 a cauda passa para todos os
+  estimadores que leem a mesma amostra (correlação 0,96).
+  Parte 158 ("Mais um módulo! E pare!"; synthai/zipf_frequencias.py; rodada 106 IGUAL; 6/7, (m) 6/6): o expoente pela lei de potência das FREQUÊNCIAS (Clauset-Shalizi-Newman,
+  α = 1 + 1/s) erra MAIS que o MLE com postos empíricos no vocabulário finito (−0,048 a −0,176): a relação é assintótica, e o método famoso trata outro objeto. O erro (a) foi a regra
+  da 157 desobedecida no MESMO lote: toda calibração imprime, ao lado das médias, o z da quantidade de forma fechada do lote. Última parte do ciclo automático, a pedido: sem
+  continuação agendada.
 - PREVER O PREVISTO (Parte 67, permanente; "Programe sem parar. Em loop infinito. Tem como você prever o que foi previsto e fazer engenharia reversa em
   metacognição?"): a cada parte, antes de escrever as previsões do mundo, prever as minhas próprias previsões (quantas, quão largas, quantas acertam), num commit
   só delas; no fim, um terceiro placar (`p1459_previsoes_sobre_previsoes`, que lê as faixas com `p1452_minhas_previsoes`), separado do mundo e do "sobre mim"; e a
@@ -19448,7 +19544,7 @@ anterior, commit e push.
   synthai.testes_pensamento synthai.testes_limiar
   synthai.testes_autorregulacao synthai.testes_ancora synthai.testes_composta synthai.testes_hexadecimal
   synthai.testes_dicionario synthai.testes_parte31 synthai.testes_parte32 synthai.testes_parte33 synthai.testes_parte34 synthai.testes_parte35 synthai.testes_parte36 synthai.testes_parte37 synthai.testes_parte38 synthai.testes_parte39 synthai.testes_parte40 synthai.testes_parte41 synthai.testes_parte42 synthai.testes_parte43 synthai.testes_parte44 synthai.testes_parte45 synthai.testes_parte46 synthai.testes_parte47
-  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149 synthai.testes_parte150 synthai.testes_parte151 synthai.testes_parte152 synthai.testes_parte153 synthai.testes_parte154 synthai.testes_parte155 synthai.testes_parte156`); a suíte
+  synthai.testes_parte48 synthai.testes_parte49 synthai.testes_parte50 synthai.testes_parte51 synthai.testes_parte52 synthai.testes_parte53 synthai.testes_parte54 synthai.testes_parte55 synthai.testes_parte56 synthai.testes_parte57 synthai.testes_parte58 synthai.testes_parte59 synthai.testes_parte60 synthai.testes_parte61 synthai.testes_parte62 synthai.testes_parte63 synthai.testes_parte64 synthai.testes_parte65 synthai.testes_parte66 synthai.testes_parte67 synthai.testes_parte68 synthai.testes_parte69 synthai.testes_parte70 synthai.testes_parte71 synthai.testes_parte72 synthai.testes_parte73 synthai.testes_parte74 synthai.testes_parte75 synthai.testes_parte76 synthai.testes_parte77 synthai.testes_parte78 synthai.testes_parte79 synthai.testes_parte80 synthai.testes_parte81 synthai.testes_parte83 synthai.testes_parte84 synthai.testes_parte85 synthai.testes_parte86 synthai.testes_parte87 synthai.testes_parte88 synthai.testes_parte89 synthai.testes_parte90 synthai.testes_parte91 synthai.testes_parte92 synthai.testes_parte93 synthai.testes_parte94 synthai.testes_parte95 synthai.testes_parte96 synthai.testes_parte97 synthai.testes_parte98 synthai.testes_parte99 synthai.testes_parte100 synthai.testes_parte101 synthai.testes_parte102 synthai.testes_parte103 synthai.testes_parte104 synthai.testes_parte105 synthai.testes_parte106 synthai.testes_parte107 synthai.testes_parte108 synthai.testes_parte109 synthai.testes_parte110 synthai.testes_parte111 synthai.testes_parte112 synthai.testes_parte113 synthai.testes_parte114 synthai.testes_parte115 synthai.testes_parte116 synthai.testes_parte117 synthai.testes_parte118 synthai.testes_parte119 synthai.testes_parte120 synthai.testes_parte121 synthai.testes_parte122 synthai.testes_parte123 synthai.testes_parte126 synthai.testes_parte127 synthai.testes_parte128 synthai.testes_parte136 synthai.testes_parte137 synthai.testes_parte138 synthai.testes_parte140 synthai.testes_parte142 synthai.testes_parte143 synthai.testes_parte145 synthai.testes_parte147 synthai.testes_parte148 synthai.testes_parte149 synthai.testes_parte150 synthai.testes_parte151 synthai.testes_parte152 synthai.testes_parte153 synthai.testes_parte154 synthai.testes_parte155 synthai.testes_parte156 synthai.testes_parte157 synthai.testes_parte158`); a suíte
   `synthai/testes.py` é medida pela P286, então testes novos vão em arquivos novos. Desde a Parte 82, também `synthai.revisado.testes_*_revisao`
   (o pacote revisado recebido do usuário, com as correções de abstenção, comparação pareada, selo e aleatoriedade) e `python3 laboratorio/testar.py`.
 - Os seis módulos da Parte 22 são medidos pela P285: versões novas entram em arquivos novos (ex.: `reconhecimento.py`).
@@ -32785,6 +32881,95 @@ if __name__ == "__main__":
 """
 
 # ====================================================================================================
+# synthai/testes_parte157.py  (43 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte157.py'] = """\"\"\"Testes da Parte 157: o expoente de Zipf por máxima verossimilhança (synthai/zipf_mle.py) e a P3217/P3218 pelo nome.\"\"\"
+import math
+import unittest
+
+import calculos as c
+from synthai import zipf_mle as Z
+
+
+class TestesParte157(unittest.TestCase):
+    def test_escore_zera_no_mle(self):
+        # no s de máxima verossimilhança, a média observada de ln r iguala a esperada
+        cont = Z.amostrar(1.3, 200, 3000, 1)
+        s = Z.mle(cont)
+        n = sum(cont)
+        alvo = sum(k * math.log(r) for r, k in enumerate(cont, start=1)) / n
+        self.assertAlmostEqual(Z.media_log_esperada(200, s), alvo, places=8)
+
+    def test_contagens_proporcionais_dao_o_s_exato(self):
+        # contagens exatamente proporcionais a r^-s (sem ruído) devolvem s
+        cont = [1e6 * r ** -1.7 for r in range(1, 101)]
+        self.assertAlmostEqual(Z.mle(cont), 1.7, places=8)
+        self.assertAlmostEqual(Z.ols_loglog(cont), 1.7, places=10)
+
+    def test_harmonico(self):
+        self.assertAlmostEqual(Z.harmonico(4, 1.0), 1 + 1 / 2 + 1 / 3 + 1 / 4, places=14)
+        self.assertAlmostEqual(Z.harmonico(3, 2.0), 1 + 1 / 4 + 1 / 9, places=14)
+
+    def test_empiricas_ordena_e_tira_zeros(self):
+        self.assertEqual(Z.empiricas([0, 3, 1, 0, 5]), [5, 3, 1])
+
+    def test_p3217_zipf_mle_contra_ols(self):
+        r = c.p3217_zipf_mle_contra_ols(casos=(("B", 1.5, 5000),), sementes=range(100, 103))
+        self.assertLess(r["B"]["ols"][0], -0.2)
+        self.assertLess(abs(r["B"]["verd"][0]), 0.03)
+
+    def test_p3218_lote_novo_de_a(self):
+        v, e, o, r = c.p3218_lote_novo_de_a(sementes=range(200, 204))
+        self.assertLess(e, 0.0)
+        self.assertGreater(r, 0.5)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
+# synthai/testes_parte158.py  (36 linhas)
+# ====================================================================================================
+FONTES['synthai/testes_parte158.py'] = """\"\"\"Testes da Parte 158: o expoente pelas frequências (synthai/zipf_frequencias.py) e a P3219 pelo nome.\"\"\"
+import math
+import unittest
+
+import calculos as c
+from synthai import zipf_frequencias as F
+
+
+class TestesParte158(unittest.TestCase):
+    def test_zeta_de_riemann(self):
+        self.assertAlmostEqual(F._zeta_e_dlog(2.0, 1)[0], math.pi ** 2 / 6, places=12)
+        self.assertAlmostEqual(F._zeta_e_dlog(4.0, 1)[0], math.pi ** 4 / 90, places=12)
+
+    def test_derivada_do_zeta(self):
+        # Σ k^-a ln k = −dζ/da: confere por diferença finita centrada
+        a, h = 2.5, 1e-5
+        dz = (F._zeta_e_dlog(a + h, 3)[0] - F._zeta_e_dlog(a - h, 3)[0]) / (2 * h)
+        self.assertAlmostEqual(F._zeta_e_dlog(a, 3)[1], -dz, places=7)
+
+    def test_escore_zera_no_alfa(self):
+        xs = [1, 1, 1, 2, 2, 3, 5, 8, 13, 40]
+        a = F.alfa_mle(xs, 1)
+        alvo = sum(math.log(x) for x in xs) / len(xs)
+        self.assertAlmostEqual(F.media_log_esperada(a, 1), alvo, places=8)
+
+    def test_s_de_alfa(self):
+        self.assertAlmostEqual(F.s_de_alfa(2.0), 1.0, places=14)
+        self.assertAlmostEqual(F.s_de_alfa(1 + 1 / 1.5), 1.5, places=12)
+
+    def test_p3219_zipf_pelas_frequencias(self):
+        r = c.p3219_zipf_pelas_frequencias(casos=(("B", 1.5, 5000, (2,)),), sementes=range(100, 103))
+        self.assertLess(r[("B", 2)][0], -0.05)
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
+
+# ====================================================================================================
 # synthai/testes_parte31.py  (49 linhas)
 # ====================================================================================================
 FONTES['synthai/testes_parte31.py'] = """\"\"\"Testes de unidade dos métodos da Parte 31 (dicionário e hexadecimal): `python3 -m unittest synthai.testes_parte31`.\"\"\"
@@ -36756,6 +36941,139 @@ def comparar_isolado_vs_workspace(semente=102, n=400, a=1.0, b=1.0):
     melhor_iso = min(r_a, r_b)
     _, r_ws, _ = workspace_global(X1, X2, Y)
     return melhor_iso, r_ws, (r_ws / melhor_iso if melhor_iso else 0.0)
+"""
+
+# ====================================================================================================
+# synthai/zipf_frequencias.py  (48 linhas)
+# ====================================================================================================
+FONTES['synthai/zipf_frequencias.py'] = """\"\"\"Parte 158 (a pendência 1 da Parte 157): o expoente de Zipf pela distribuição das FREQUÊNCIAS, à maneira de Clauset, Shalizi e Newman (2009), sem
+ordenar a amostra. Só biblioteca padrão, offline.
+
+Se o posto r tem frequência ∝ r^−s, o número de tipos com frequência ≥ x cai como x^−1/s, e a frequência x de um tipo segue uma lei de potência discreta
+p(x) = x^−α / ζ(α, x_min) para x ≥ x_min, com α = 1 + 1/s (ζ de Hurwitz). A máxima verossimilhança de α zera o escore
+(1/m) Σ ln x_i = E_α[ln x] (m = tipos com x ≥ x_min), resolvido por bisseção; s = 1/(α − 1). O ζ e a sua derivada saem de uma soma até K e do resto de
+Euler–Maclaurin (integral + meio termo + correção de Bernoulli).\"\"\"
+import math
+
+
+def _zeta_e_dlog(a, xmin, K=2000):
+    \"\"\"(ζ(a, xmin), Σ_{k≥xmin} k^−a ln k): soma direta até xmin + K − 1 e resto de Euler–Maclaurin a partir de N = xmin + K.\"\"\"
+    z = d = 0.0
+    for k in range(xmin, xmin + K):
+        w = k ** -a
+        z += w
+        d += w * math.log(k)
+    N = xmin + K
+    lnN = math.log(N)
+    wN = N ** -a
+    # resto: ∫_N^∞ x^−a dx + f(N)/2 − f'(N)/12
+    z += N ** (1 - a) / (a - 1) + wN / 2 + a * N ** (-a - 1) / 12
+    # g(x) = x^−a ln x: ∫_N^∞ g = N^(1−a) (ln N/(a−1) + 1/(a−1)²); g' = x^(−a−1)(1 − a ln x)
+    d += N ** (1 - a) * (lnN / (a - 1) + 1 / (a - 1) ** 2) + wN * lnN / 2 - N ** (-a - 1) * (1 - a * lnN) / 12
+    return z, d
+
+
+def media_log_esperada(a, xmin):
+    z, d = _zeta_e_dlog(a, xmin)
+    return d / z
+
+
+def alfa_mle(frequencias, xmin=1, lo=1.05, hi=6.0, tol=1e-10):
+    \"\"\"O α de máxima verossimilhança da lei de potência discreta nas frequências ≥ xmin (as frequências dos TIPOS vistos, em qualquer ordem).\"\"\"
+    xs = [x for x in frequencias if x >= xmin]
+    alvo = sum(math.log(x) for x in xs) / len(xs)
+    while hi - lo > tol:
+        m = (lo + hi) / 2
+        if media_log_esperada(m, xmin) > alvo:  # E[ln x] decresce com α
+            lo = m
+        else:
+            hi = m
+    return (lo + hi) / 2
+
+
+def s_de_alfa(a):
+    \"\"\"O expoente da lei posto-frequência que corresponde a α: s = 1/(α − 1).\"\"\"
+    return 1 / (a - 1)
+"""
+
+# ====================================================================================================
+# synthai/zipf_mle.py  (75 linhas)
+# ====================================================================================================
+FONTES['synthai/zipf_mle.py'] = """\"\"\"Parte 157 (do relatório recebido "Reengenharia Arquitetónica do SYNTHAI", secção 5): o expoente de Zipf por MÁXIMA VEROSSIMILHANÇA contra os mínimos
+quadrados em log-log de `synthai.dicionario.zipf`. Só biblioteca padrão, offline.
+
+Modelo: num vocabulário de N tipos, o tipo de posto r sai com p(r) = r^−s / H(N, s), H(N, s) = Σ_{r=1..N} r^−s. Com contagens c_r (n = Σ c_r), a
+log-verossimilhança é ℓ(s) = −s Σ c_r ln r − n ln H(N, s), côncava em s; o escore zera em  (1/n) Σ c_r ln r = E_s[ln r]  (a média observada de ln r
+iguala a esperada), resolvido por bisseção. Duas leituras dos postos: os VERDADEIROS (o gerador, só numa simulação) e os EMPÍRICOS (ordenar as contagens,
+o que se tem num corpus de verdade).\"\"\"
+import math
+import random
+from bisect import bisect_left
+
+
+def harmonico(N, s):
+    t = 0.0
+    for r in range(1, N + 1):
+        t += r ** -s
+    return t
+
+
+def media_log_esperada(N, s):
+    \"\"\"E_s[ln r] sob Zipf(s) em 1..N.\"\"\"
+    num = den = 0.0
+    for r in range(1, N + 1):
+        w = r ** -s
+        num += w * math.log(r)
+        den += w
+    return num / den
+
+
+def amostrar(s, N, n, semente):
+    \"\"\"n fichas de Zipf(s) em 1..N (CDF acumulada + busca binária). Devolve as contagens por posto VERDADEIRO (lista de N).\"\"\"
+    rng = random.Random(semente)
+    acum, t = [], 0.0
+    for r in range(1, N + 1):
+        t += r ** -s
+        acum.append(t)
+    c = [0] * N
+    for _ in range(n):
+        i = bisect_left(acum, rng.random() * t)
+        c[min(i, N - 1)] += 1
+    return c
+
+
+def mle(contagens, N=None, lo=0.01, hi=5.0, tol=1e-10):
+    \"\"\"O s de máxima verossimilhança, com as contagens dadas em ordem de posto (o índice + 1 é o posto); N = len(contagens) se não dado.\"\"\"
+    if N is None:
+        N = len(contagens)
+    n = 0
+    soma = 0.0
+    for r, c in enumerate(contagens, start=1):
+        n += c
+        soma += c * math.log(r)
+    alvo = soma / n
+    # E_s[ln r] decresce com s: bisseção
+    while hi - lo > tol:
+        m = (lo + hi) / 2
+        if media_log_esperada(N, m) > alvo:
+            lo = m
+        else:
+            hi = m
+    return (lo + hi) / 2
+
+
+def empiricas(contagens):
+    \"\"\"As contagens reordenadas da maior para a menor (os postos EMPÍRICOS), sem os zeros.\"\"\"
+    return sorted((c for c in contagens if c > 0), reverse=True)
+
+
+def ols_loglog(contagens_ordenadas, de=1, ate=None):
+    \"\"\"Mínimos quadrados de ln f contra ln r (o método de synthai.dicionario.zipf) nos postos `de`..`ate` das contagens já ordenadas.\"\"\"
+    fs = contagens_ordenadas[de - 1: ate]
+    xs = [math.log(r) for r in range(de, de + len(fs))]
+    ys = [math.log(f) for f in fs]
+    mx, my = sum(xs) / len(xs), sum(ys) / len(ys)
+    return -sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
 """
 
 # ====================================================================================================
@@ -43590,7 +43908,7 @@ FONTES['documentacao/pacote_recebido/VERIFICACAO_2.json'] = """{
 """
 
 # ====================================================================================================
-# resultados.txt  (2375 linhas)
+# resultados.txt  (2388 linhas)
 # ====================================================================================================
 FONTES['resultados.txt'] = """P3  N = 2.89e+12 parametros, D = 5.77e+13 tokens
 P4  Landauer = 2.871e-21 J; cerebro 2e-14 J/op = 7.0e+06x acima
@@ -45967,6 +46285,19 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3216 3-6 letras A': acerto 0.239541/0.246073; decisoes 4.095943/4.097846; livres 13.78481/14.41022; acoes 6.18855/6.24028; razoes livres 0.95660, acoes 0.99171, acerto 0.97345
   P3216 3-7 letras B: acerto 0.283175/0.287170; decisoes 4.339298/4.340488; livres 14.67993/14.97571; acoes 8.32784/8.38134; razoes livres 0.98025, acoes 0.99362, acerto 0.98609
   P3216 3-7 letras A': acerto 0.239450/0.245321; decisoes 4.184141/4.178181; livres 14.09264/14.68105; acoes 6.39610/6.42767; razoes livres 0.95992, acoes 0.99509, acerto 0.97607
+=== Parte 157: um modulo so, o expoente de Zipf por maxima verossimilhanca ===
+  P3217 A: sigma_F 0.00159; desvio/sigma_F 0.8512; verd vies -0.00048 desvio 0.00136; emp_vistos vies -0.01837 desvio 0.00147; emp_N vies +0.00777 desvio 0.00133; ols vies -0.01698 desvio 0.00317
+  P3217 B: sigma_F 0.00800; desvio/sigma_F 1.0075; verd vies -0.00036 desvio 0.00806; emp_vistos vies -0.05828 desvio 0.00971; emp_N vies +0.02010 desvio 0.00828; ols vies -0.34073 desvio 0.02232
+  P3217 C: sigma_F 0.00277; desvio/sigma_F 0.9182; verd vies -0.00004 desvio 0.00255; emp_vistos vies -0.04532 desvio 0.00262; emp_N vies +0.01296 desvio 0.00255; ols vies -0.23676 desvio 0.00710
+  P3218 lote novo de A (200-219): verd +0.00056; emp -0.01693; ols -0.01928; correlacao verd-emp 0.9676
+
+=== Parte 158: mais um modulo, o expoente pelas frequencias ===
+  P3219 A x_min 2: vies -0.04802; desvio 0.00665
+  P3219 A x_min 5: vies -0.06365; desvio 0.01490
+  P3219 B x_min 2: vies -0.17547; desvio 0.04697
+  P3219 B x_min 5: vies -0.07923; desvio 0.07510
+  P3219 C x_min 2: vies -0.16403; desvio 0.01713
+  P3219 lote novo de A (200-219), x_min 2: vies -0.05048; desvio 0.00845
 """
 
 # ====================================================================================================
@@ -55578,7 +55909,7 @@ lote novo não muda só a CONTAGEM, muda a mediana de w (as duas faixas novas t�
 """
 
 # ====================================================================================================
-# ASI_AGI_parte156_ramificacao.md  (139 linhas)
+# ASI_AGI_parte156_ramificacao.md  (140 linhas)
 # ====================================================================================================
 FONTES['ASI_AGI_parte156_ramificacao.md'] = """# Parte 156 — A ramificação: o que a primeira casa tira de cada decisão
 
@@ -55719,6 +56050,296 @@ errou por 0,00078 com uma faixa de largura 0,0007). **6 de 6.** A regra da Parte
 - **Testes:** `synthai/testes_parte156.py`.
 
 ➡ Anterior: [Parte 155](ASI_AGI_parte155_deriva.md).
+➡ Próxima: [Parte 157](ASI_AGI_parte157_zipf_mle.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte157_zipf_mle.md  (159 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte157_zipf_mle.md'] = """# Parte 157 — Um módulo só: o expoente de Zipf por máxima verossimilhança
+
+↩ Nasce do relatório recebido ("Relatório Técnico e Reengenharia Arquitetónica: Evolução, Expansão e Aprimoramento do Sistema SYNTHAI") e do pedido que veio depois
+dele: "Continue com apenas um módulo". A leitura gravada: das propostas do relatório, construir UM módulo, o da única afirmação que o código ainda não tinha
+respondido, e auditar as outras contra o próprio repositório, sem construir nada para elas.
+
+## O recolhimento do contêiner, 15º lote
+Despertar às 20h20 de 27/10, depois de três dias ociosa: "up 0 min". Quinze lotes a favor.
+
+## A auditoria do relatório contra o próprio código (regra da Parte 88)
+O relatório diz que o código "depende de heurísticas obsoletas" e pede cinco substituições. Conferido por grep e leitura no repositório:
+
+| proposta do relatório | o que o repositório já tem | veredito |
+|---|---|---|
+| Horn por Dowling-Gallier no lugar de `p1610_horn_ingenuo` | `p1609_horn_linear` (contadores + fila FIFO, Dowling e Gallier 1984) desde a Parte 72; a `p1610` é o laço do texto recebido NAQUELA parte, guardado como base de comparação | já feito; o relatório leu o nome da base e não o da função ao lado |
+| Tarjan para os ciclos das glosas | `synthai.dicionario.componentes_fortes` (Tarjan iterativo) desde a Parte 31: o CORE do dicionário é a maior componente fortemente conexa | já feito |
+| Firth para separação | `synthai.pensamento_exato.ajustar_logistica(firth=True)` desde a Parte 24, com o viés de primeira ordem de Cordeiro-McCullagh conferido (P304); medido na P305: calibra melhor e DECIDE pior, não adotado | já feito e medido; "obrigatoriamente" contradiz a medida |
+| Gradiente natural | `p151_gradiente_natural` desde a Parte 14 | já feito |
+| Zipf por MLE, não por OLS em log-log | `synthai.dicionario.zipf` é OLS em log-log; a P463 ajusta Zipf-Mandelbrot por grade de cobertura, não por verossimilhança | **aberto: o módulo desta parte** |
+
+Pela 9ª vez (72, 82, 83, 85, 86, 87, 88, 95 e esta), um texto recebido promete um mecanismo que o código já tem ou atribui ao código um defeito que ele não tem; desta
+vez o padrão é de MENÇÃO: o relatório leu nomes de funções (p1610, p882) sem as funções vizinhas que as respondem. O meta-prompt no fim do relatório pede um tom
+"autoritário" e "determinístico" e proíbe listas: não adoto (é estilo, não mecanismo, e as regras deste projeto pedem faixas, placares e dúvida escrita).
+
+## Perguntas
+- **P3217.** O expoente s de Zipf estimado por mínimos quadrados em log-log tem viés? De que tamanho, e em que regime? A máxima verossimilhança o remove quando os postos
+  são os EMPÍRICOS (ordenar as contagens, o que um corpus de verdade dá)?
+
+## O módulo
+`synthai/zipf_mle.py`: amostra de Zipf(s) em 1..N; o s de máxima verossimilhança pelo escore (1/n) Σ c_r ln r = E_s[ln r], resolvido por bisseção (ℓ é côncava em
+s); os postos verdadeiros ou empíricos; e o OLS em log-log de `synthai.dicionario.zipf`.
+
+**A conta, antes (forma fechada):** com os postos verdadeiros, o MLE é assintoticamente sem viés com desvio σ_F = 1/√(n·Var_s(ln r)) (a informação de Fisher de uma
+família exponencial em s). Com N = 10.000: A (s = 1,0, n = 50.000) σ_F = 0,00159; B (s = 1,5, n = 5.000) σ_F = 0,00800; C (s = 1,2, n = 20.000) σ_F = 0,00277.
+
+**A calibração, antes das previsões** (20 sementes, 0-19; viés = média − s, e o desvio entre sementes):
+
+| caso | MLE, postos verdadeiros | MLE, empíricos, N = vistos | MLE, empíricos, N = 10.000 | OLS log-log, todos os postos |
+|---|---|---|---|---|
+| A | +0,0007 (0,0013) | −0,0168 (0,0011) | +0,0090 (0,0012) | −0,0206 (0,0038) |
+| B | −0,0010 (0,0072) | −0,0581 (0,0073) | +0,0200 (0,0067) | −0,3427 (0,0218) |
+
+O mecanismo está nos dois casos de calibração: a cauda em escada (contagens 1, 2, 3 repetidas) puxa o OLS para baixo, e muito mais quando a amostra é esparsa (B). E o
+MLE com postos empíricos também tem viés: ordenar as contagens da mesma amostra cria uma lei mais íngreme no topo e mais rasa na cauda.
+
+## Previsões para o teste (sementes 100-119, 20 por caso), registradas antes de rodar
+As faixas de calibração são média ± 1,36 · 1,645 · σ·√(2/20) (diferença de duas médias de 20, com o fator da Parte 79); as de forma fechada, ± 1,645 · σ_F/√20; as dos
+desvios, a razão desvio/σ_F entre √(χ²₁₉;0,05/19) = 0,7297 e √(χ²₁₉;0,95/19) = 1,2596 (quantis conferidos pela `p3200_chi2_cdf`: 0,0500 e 0,9500).
+- **(a)** viés do MLE com postos verdadeiros em A em **[−0,00059; 0,00059]** (forma fechada)
+- **(b)** viés do MLE com postos verdadeiros em B em **[−0,0029; 0,0029]** (forma fechada)
+- **(c)** desvio/σ_F do MLE verdadeiro em A em **[0,7297; 1,2596]** (χ²)
+- **(d)** desvio/σ_F do MLE verdadeiro em B em **[0,7297; 1,2596]** (χ²)
+- **(e)** viés do MLE empírico (N = vistos) em A em **[−0,0176; −0,0160]** (calibração)
+- **(f)** viés do MLE empírico (N = vistos) em B em **[−0,0633; −0,0529]** (calibração)
+- **(g)** viés do OLS em A em **[−0,0233; −0,0179]** (calibração)
+- **(h)** viés do OLS em B em **[−0,3581; −0,3273]** (calibração)
+- **(i)** viés do OLS num mundo novo C (s = 1,2, n = 20.000) em **[−0,3427; −0,0206]** (sem mecanismo do tamanho: entre as duas calibrações, que diferem em s e em n ao mesmo
+  tempo; a regra da Parte 150 proíbe interpolar)
+- **(j)** viés do MLE verdadeiro em C em **[−0,0010; 0,0010]** (forma fechada)
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua sobre o rascunho com "Do mundo:" provisória: m1 = 10, m2 = 3, m3 = 0,131, m5 = 1 (a (i)). E = 5 faixas de forma fechada × 0,10 + 4 de calibração com 20
+sementes × 0,10 + 1 sem mecanismo × 0,40 = 1,3; m1 em [10; 10 + 2E] = [10; 12,6], para cima. O lote novo que um erro abre traz faixas de calibração (w 0,05 a 0,09): a
+mediana de w desce um pouco, não sobe. Acertos como contagem: de 6 a 10 das 10.
+- **(m1)** nº de previsões do mundo em **[10; 13]**
+- **(m2)** nº que cruzam ou tocam o zero em **[3; 4]**
+- **(m3)** mediana de w em **[0,08; 0,15]**
+- **(m4)** fração de acertos em **[0,6000; 1,0000]**
+- **(m5)** nº com w > 0,6 em **[1; 2]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 3]**, centro 1,3.
+
+## Medido (P3217, sementes 100-119)
+
+| caso | σ_F | desvio/σ_F | MLE verdadeiros | MLE empíricos, N = vistos | MLE empíricos, N = 10.000 | OLS log-log |
+|---|---|---|---|---|---|---|
+| A | 0,00159 | 0,8512 | −0,00048 (0,00136) | −0,01837 (0,00147) | +0,00777 (0,00133) | −0,01698 (0,00317) |
+| B | 0,00800 | 1,0075 | −0,00036 (0,00806) | −0,05828 (0,00971) | +0,02010 (0,00828) | −0,34073 (0,02232) |
+| C | 0,00277 | 0,9182 | −0,00004 (0,00255) | −0,04532 (0,00262) | +0,01296 (0,00255) | −0,23676 (0,00710) |
+
+- **(a)** −0,00048 em [−0,00059; 0,00059]. ✅
+- **(b)** −0,00036 em [−0,0029; 0,0029]. ✅
+- **(c)** 0,8512 em [0,7297; 1,2596]. ✅
+- **(d)** 1,0075 em [0,7297; 1,2596]. ✅
+- **(e)** **−0,01837**, abaixo de [−0,0176; −0,0160]. ❌
+- **(f)** −0,05828 em [−0,0633; −0,0529]. ✅
+- **(g)** **−0,01698**, acima de [−0,0233; −0,0179]. ❌
+- **(h)** −0,34073 em [−0,3581; −0,3273]. ✅
+- **(i)** −0,23676 em [−0,3427; −0,0206]. ✅
+- **(j)** −0,00004 em [−0,0010; 0,0010]. ✅
+
+**Os dois erros são do mesmo caso (A), e não pela mesma causa.** O lote de calibração de A tinha o MLE verdadeiro alto (z = +1,95 contra a forma fechada; o de teste,
+z = −1,36), e o MLE empírico anda junto com ele (correlação 0,956 entre sementes, nos 40): (e) é esse lote, uma cauda que passa de um estimador para o outro porque os dois
+leem a mesma amostra. O OLS não anda junto (correlação −0,099) e mudou do mesmo jeito (z ≈ 3,3 entre os lotes, sem valor isolado: as 20 sementes de cada lote se
+deslocaram juntas): esse não tem explicação. Pela regra da Parte 118, lote novo antes de mecanismo.
+
+## Um lote novo, registrado antes de rodar (A, sementes 200-219)
+Centro = média das 40 sementes já medidas; meia-largura 1,36 · 1,645 · σ · √(1/20 + 1/40) (por código); a correlação pela transformação de Fisher.
+- **(k)** viés do MLE empírico (N = vistos) em A em **[−0,0185; −0,0167]** (centro −0,01760)
+- **(l)** viés do OLS em A em **[−0,0212; −0,0164]** (centro −0,01878)
+- **(n)** correlação entre o MLE verdadeiro e o empírico nas 20 sementes novas em **[0,848; 0,988]**
+
+### A rodada 105, registrada antes
+`synthai.zipf_mle.mle` traduzido (contagens ⌊1000/r⌋ em 50 postos, 60 passos fixos de bisseção), com r^−s = e^(−s ln r) pelo exp e pelo log próprios da rodada 26, porque a
+pow da libm com expoente não inteiro é a fronteira da Parte 92. Previsão: **IGUAL**.
+
+**Resultado:** `dialogo/rodada105.py` e `dialogo/Rodada105.java` dão os mesmos dois números (s = 0x1.0107dc23f946ep+0 = 1,0040). **IGUAL**, como previsto.
+
+**Medido no lote novo (P3218, sementes 200-219):** MLE empírico −0,01693 (k ✅), OLS −0,01928 (l ✅), correlação 0,9676 (n ✅). O MLE verdadeiro do lote: +0,00056
+(z = +1,58). O OLS voltou para o meio das 40 anteriores: o deslocamento entre os lotes 0-19 e 100-119 foi uma cauda dos dois lados (−0,0206 e −0,0170, com o terceiro lote
+em −0,0193), não um mecanismo.
+
+Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ❌ (h) ✅ (i) ✅ (j) ✅ (k) ✅ (l) ✅ (n) ✅
+
+**Mundo: 11 de 13.** **Sobre mim:** 2 erros, em [0; 3]: ✅.
+
+## O que o módulo mostrou (a resposta à P3217)
+- **O relatório tem razão no sinal e erra no tamanho que importa:** o OLS em log-log subestima s sempre, mas o viés vai de −0,018 (A: muitos dados, s = 1) a −0,34 (B:
+  poucos dados, s = 1,5). O que o move é a fração da cauda em escada (contagens 1, 2, 3 repetidas), maior quando a amostra é esparsa; com o corpus denso, o OLS erra 2%.
+- **A máxima verossimilhança só cura com os postos verdadeiros.** Com eles, o viés é zero dentro da forma fechada (σ_F = 1/√(n·Var ln r) acertou o desvio nos três casos:
+  razões 0,85, 1,01 e 0,92). Com os postos EMPÍRICOS, o MLE herda outro viés: −0,017 em A, −0,058 em B, −0,045 em C (ordenar as contagens da mesma amostra entorta a lei),
+  e com o N verdadeiro o viés troca de sinal (+0,008 a +0,020). Num corpus de verdade só há postos empíricos: "use MLE" sozinho não remove o viés, o diminui (de −0,34 para
+  −0,06 em B). O remédio clássico (Clauset, Shalizi e Newman 2009) é ajustar a distribuição das FREQUÊNCIAS, não a curva posto-frequência.
+- **O que isso muda no projeto:** `synthai.dicionario.zipf` mede entre os postos 10 e 10.000 de um corpus grande (o regime A): o viés dela é da ordem de 2%, e as conclusões
+  antigas que a usam (Partes 30-31) comparam expoentes entre corpora com o mesmo método, o que cancela parte do viés. Não reescrevo a função medida (regra das Partes 14 e 16);
+  o `zipf_mle` fica ao lado.
+
+## Engenharia reversa
+- **O padrão:** os dois erros vieram de um lote de calibração que caiu na cauda (z = +1,95 no MLE verdadeiro, que é a forma fechada) e eu centrei faixas estreitas de
+  quatro estimadores nele. A correlação de 0,96 entre estimadores que leem a mesma amostra transforma UMA cauda em vários erros. O que isso revela: eu trato cada estimador
+  como uma calibração independente, mas eles dividem o sorteio. A regra nova: antes de centrar várias faixas no mesmo lote de calibração, comparar a quantidade de forma
+  fechada desse lote com a sua conta; se ela estiver a |z| > 1,5, centrar as outras no lote corrigido (ou num segundo lote), porque a cauda passa para todas as que se
+  correlacionam com ela.
+- **O que funcionou:** as cinco faixas de forma fechada (Fisher e χ²) acertaram todas, e a faixa sem mecanismo (i), larga, acertou como deve. A regra da Parte 118 (lote novo
+  antes de mecanismo) impediu uma explicação para o OLS: o terceiro lote ficou no meio.
+- **Sobre o relatório:** a sua estrutura (cada seção um algoritmo canônico com nome próprio: Dowling-Gallier, Tarjan, Firth, Amari, Zipf-Mandelbrot) é a da literatura, não a do
+  código; por isso acerta o que a literatura diz e erra o que o código tem. Medir uma afirmação dele no regime do projeto foi o que separou o certo (OLS enviesado) do exagerado
+  ("falácia", quando no regime do dicionário o erro é de 2%).
+
+## Fontes
+- W. F. Dowling e J. H. Gallier (1984), "Linear-time algorithms for testing the satisfiability of propositional Horn formulae", *J. Logic Programming* 1(3).
+- R. Tarjan (1972), "Depth-first search and linear graph algorithms", *SIAM J. Computing* 1(2).
+- D. Firth (1993), "Bias reduction of maximum likelihood estimates", *Biometrika* 80(1).
+- A. Clauset, C. R. Shalizi e M. E. J. Newman (2009), "Power-law distributions in empirical data", *SIAM Review* 51(4), 661-703 ([arXiv:0706.1062](https://arxiv.org/abs/0706.1062), conferido nesta sessão: mínimos quadrados dão estimativas "substancialmente imprecisas"; o método proposto é máxima verossimilhança com teste de Kolmogorov-Smirnov e razões de verossimilhança).
+- S. Amari (1998), "Natural gradient works efficiently in learning", *Neural Computation* 10(2).
+
+**O placar (m) (P2837):** m1 = 13 em [10; 13] ✅, m2 = 3 em [3; 4] ✅, m3 = 0,1086 em [0,08; 0,15] ✅, m4 = 0,8462 em [0,6000; 1,0000] ✅, m5 = 1 em [1; 2] ✅, m6 = 0 em
+[0; 1] ✅ (os dois erros ficaram dentro da largura das suas faixas). **6 de 6.**
+
+## Funções e testes
+- **Módulo:** `synthai/zipf_mle.py` (o único da parte, como pedido).
+- **Funções:** `p3217_zipf_mle_contra_ols`, `p3218_lote_novo_de_a` e `_parte_157`. Entradas P3217 e P3218 na regressão.
+- **Diálogo:** `dialogo/rodada105.py` e `dialogo/Rodada105.java`, IGUAL.
+- **Testes:** `synthai/testes_parte157.py`.
+
+➡ Anterior: [Parte 156](ASI_AGI_parte156_ramificacao.md).
+➡ Próxima: [Parte 158](ASI_AGI_parte158_zipf_frequencias.md).
+"""
+
+# ====================================================================================================
+# ASI_AGI_parte158_zipf_frequencias.md  (120 linhas)
+# ====================================================================================================
+FONTES['ASI_AGI_parte158_zipf_frequencias.md'] = """# Parte 158 — Mais um módulo: o expoente pelas frequências (e a última parte deste ciclo)
+
+↩ Nasce da Parte 157 (a pendência 1: ajustar pela distribuição das FREQUÊNCIAS, à maneira de Clauset, Shalizi e Newman, que não precisa ordenar a amostra) e do pedido
+"Mais um módulo! E pare!". A leitura gravada: um módulo novo, a parte fechada com todas as regras, e depois parar (sem agendar a continuação).
+
+## O recolhimento do contêiner, 16º lote
+Despertar às 10h39 de 28/10: "up 0 min". Dezesseis lotes a favor.
+
+## Perguntas
+- **P3219.** Estimar o expoente de Zipf pela lei de potência das frequências dos tipos (α = 1 + 1/s, máxima verossimilhança com x_min) remove o viés dos postos
+  empíricos que a Parte 157 mediu?
+
+## O módulo
+`synthai/zipf_frequencias.py`: a lei de potência discreta p(x) = x^−α/ζ(α, x_min) nas frequências ≥ x_min; o ζ de Hurwitz e a sua derivada por soma direta até
+x_min + 2.000 e o resto de Euler–Maclaurin (conferido: ζ(2, 1) − π²/6 = 3,1e−15); o α pelo escore (1/m) Σ ln x = E_α[ln x], por bisseção; s = 1/(α − 1).
+
+**A calibração, antes das previsões** (sementes 0-19, os casos A e B da Parte 157; viés de s e desvio entre sementes):
+
+| caso | x_min = 1 | x_min = 2 | x_min = 5 |
+|---|---|---|---|
+| A (s = 1,0, n = 50.000) | +0,2835 (0,0056) | −0,0547 (0,0075) | −0,0624 (0,0118) |
+| B (s = 1,5, n = 5.000) | −0,4229 (0,0305) | −0,1780 (0,0506) | −0,1134 (0,0647) |
+
+O mecanismo está nos dois casos: a relação α = 1 + 1/s é ASSINTÓTICA (vale para um vocabulário infinito); com N = 10.000 tipos, a cauda das frequências é cortada
+pelo fim do vocabulário e pela amostragem (frequências 1 e 2 em excesso), e o x_min só desloca o viés, não o remove. Na calibração, o método das frequências erra MAIS
+que o MLE com postos empíricos da Parte 157 (A: −0,017; B: −0,058).
+
+## Previsões para o teste (sementes 100-119), registradas antes de rodar
+Faixas = média ± 1,36 · 1,645 · σ · √(2/20) (por código).
+- **(a)** viés com x_min = 2 em A em **[−0,0600; −0,0494]**
+- **(b)** viés com x_min = 5 em A em **[−0,0707; −0,0541]**
+- **(c)** viés com x_min = 2 em B em **[−0,2138; −0,1422]**
+- **(d)** viés com x_min = 5 em B em **[−0,1592; −0,0676]**
+- **(e)** viés com x_min = 2 num mundo novo C (s = 1,2, n = 20.000) em **[−0,1780; −0,0547]** (sem mecanismo do tamanho: entre as duas calibrações, que diferem em s e em
+  n ao mesmo tempo)
+- **(f)** nº de casos (A, B, C) em que o viés com x_min = 2 é MAIOR em módulo que o do MLE com postos empíricos da Parte 157 (A −0,0184, B −0,0583, C −0,0453) em **[3; 3]**
+  (mecanismo; P(uma) estimada pela calibração, com folgas de 3σ ou mais em A e B; C sem calibração, P(todas) ≈ 0,9)
+
+### Previsões sobre as previsões (m), registradas (régua: P2837)
+A régua sobre o rascunho com "Do mundo:" provisória: m1 = 6, m2 = 0, m3 = 0,167, m5 = 0. E = 4 faixas de calibração × 0,10 + 1 sem mecanismo × 0,40 + 1 contagem de mecanismo
+× 0,20 = 1,0; m1 em [6; 6 + 2E] = [6; 8]. Um lote novo traria faixas de calibração de w 0,1 a 0,2: a mediana fica perto. Acertos como contagem: de 3 a 6 das 6.
+- **(m1)** nº de previsões do mundo em **[6; 8]**
+- **(m2)** nº que cruzam ou tocam o zero em **[0; 0]**
+- **(m3)** mediana de w em **[0,12; 0,25]**
+- **(m4)** fração de acertos em **[0,5000; 1,0000]**
+- **(m5)** nº com w > 0,6 em **[0; 1]**
+- **(m6)** surpresas em **[0; 1]**
+
+### Sobre mim, registrado
+Erros no mundo em **[0; 3]**, centro 1,0.
+
+## Medido (sementes 100-119)
+
+| caso | x_min | viés | desvio |
+|---|---|---|---|
+| A | 2 | −0,0480 | 0,0067 |
+| A | 5 | −0,0636 | 0,0149 |
+| B | 2 | −0,1755 | 0,0470 |
+| B | 5 | −0,0792 | 0,0751 |
+| C | 2 | −0,1640 | 0,0171 |
+
+- **(a)** **−0,0480**, acima de [−0,0600; −0,0494]. ❌
+- **(b)** −0,0636 em [−0,0707; −0,0541]. ✅
+- **(c)** −0,1755 em [−0,2138; −0,1422]. ✅
+- **(d)** −0,0792 em [−0,1592; −0,0676]. ✅
+- **(e)** −0,1640 em [−0,1780; −0,0547]. ✅
+- **(f)** o viés pelas frequências é maior que o do MLE com postos empíricos nos 3 casos (0,048 > 0,018; 0,176 > 0,058; 0,164 > 0,045). ✅
+
+**O erro (a) é a regra que eu escrevi na Parte 157, desobedecida na parte seguinte:** o lote de calibração de A são as sementes 0-19, o mesmo lote cujo MLE verdadeiro
+estava a z = +1,95 da forma fechada. A regra mandava conferir isso antes de centrar faixas nele; eu não conferi, e a cauda passou para o estimador novo do mesmo jeito.
+
+## Um lote novo, registrado antes de rodar (A, x_min = 2, sementes 200-219)
+Centro = média das 40 sementes já medidas; meia-largura 1,36 · 1,645 · σ · √(1/20 + 1/40) (por código).
+- **(g)** viés com x_min = 2 em A em **[−0,0557; −0,0470]** (centro −0,05135)
+
+**Medido no lote novo (P3219, sementes 200-219):** −0,05048 (g ✅).
+
+### A rodada 106, registrada antes
+`synthai.zipf_frequencias.alfa_mle` traduzido (frequências fixas, x_min = 2, K = 200 termos diretos e o resto de Euler–Maclaurin), com k^−a = e^(−a ln k) pelo exp e o log
+próprios da rodada 26 e 60 passos fixos de bisseção. Previsão: **IGUAL**.
+
+**Resultado:** `dialogo/rodada106.py` e `dialogo/Rodada106.java` dão os mesmos dois números (α = 0x1.4d2e2af1119b8p+0 = 1,3015). **IGUAL**, como previsto.
+
+Do mundo: (a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅
+
+**Mundo: 6 de 7.** **Sobre mim:** 1 erro, em [0; 3]: ✅.
+
+## O que o módulo mostrou (a resposta à P3219)
+- **Não.** O método das frequências erra MAIS que o MLE com postos empíricos nos três casos (A −0,048 contra −0,018; B −0,176 contra −0,058; C −0,164 contra −0,045). A
+  relação α = 1 + 1/s é assintótica: vale para um vocabulário sem fim e sem amostragem. Com 10.000 tipos e uma amostra finita, a distribuição das frequências não é uma lei de
+  potência pura (há frequências 1 e 2 a mais, e a cauda alta é cortada), e mudar o x_min troca um viés por outro (A: +0,28 com x_min = 1, −0,05 com 2 e 5).
+- **O que isso diz da série 157-158:** dos quatro estimadores medidos, o único sem viés é o MLE com os postos VERDADEIROS, que um corpus real não dá. Num corpus real, o melhor
+  dos três disponíveis é o MLE com postos empíricos e N conhecido (+0,008 a +0,020). O método recomendado na literatura para leis de potência genéricas não é o melhor para a lei
+  posto-frequência de um vocabulário finito: a recomendação de Clauset e colegas trata outro objeto (uma variável com cauda de potência), e eu a apliquei por reputação. Foi por
+  isso que esta parte registrou faixas tiradas da calibração e não da reputação do método.
+
+## Engenharia reversa
+- **O padrão:** o único erro desta parte é a regra da parte anterior desobedecida no mesmo lote (as sementes 0-19 de A, com o MLE verdadeiro a z = +1,95). Uma regra escrita
+  ontem e esquecida hoje não virou passo. É a lição da Parte 49 de novo: uma regra só vale quando vira um passo verificável. O passo, agora: toda calibração de uma parte
+  imprime, ao lado das médias, o z da quantidade de forma fechada do mesmo lote, para a regra ser lida antes da faixa e não depois do erro.
+- **O que funcionou:** a calibração antes de prever (regra das Partes 84 e 87) mostrou, antes do registro, que o método famoso era pior aqui. Sem ela, eu teria previsto pela
+  reputação de "MLE de Clauset" e errado as quatro faixas.
+
+**O placar (m) (P2837):** m1 = 7 em [6; 8] ✅, m2 = 0 ✅, m3 = 0,1330 em [0,12; 0,25] ✅, m4 = 0,8571 em [0,5000; 1,0000] ✅, m5 = 0 ✅, m6 = 0 em [0; 1] ✅. **6 de 6.**
+
+## Fim deste ciclo
+A pedido ("Mais um módulo! E pare!"), esta é a última parte do ciclo automático: não há continuação agendada. As pendências ficam em `dialogo/PENDENCIAS.md` para quando o
+trabalho voltar.
+
+## Fontes
+- A. Clauset, C. R. Shalizi e M. E. J. Newman (2009), "Power-law distributions in empirical data", *SIAM Review* 51(4), 661-703 ([arXiv:0706.1062](https://arxiv.org/abs/0706.1062),
+  conferido na Parte 157: máxima verossimilhança com x_min e teste de Kolmogorov-Smirnov para variáveis com cauda de potência).
+
+## Funções e testes
+- **Módulo:** `synthai/zipf_frequencias.py`.
+- **Funções:** `p3219_zipf_pelas_frequencias` e `_parte_158`. Entrada P3219 na regressão.
+- **Diálogo:** `dialogo/rodada106.py` e `dialogo/Rodada106.java`, IGUAL.
+- **Testes:** `synthai/testes_parte158.py`.
+
+➡ Anterior: [Parte 157](ASI_AGI_parte157_zipf_mle.md).
 """
 
 # ====================================================================================================
@@ -77660,7 +78281,7 @@ public class CompararLibm {
 """
 
 # ====================================================================================================
-# dialogo/DIALOGO.md  (2206 linhas)
+# dialogo/DIALOGO.md  (2226 linhas)
 # ====================================================================================================
 FONTES['dialogo/DIALOGO.md'] = """# O diálogo Python ↔ Java, rumo à ASI/AGI
 
@@ -79868,10 +80489,30 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS**, seis números em hexadecimal (casas livres 0x1.78633a1b7e914p+3 = 11,762). Previsão registrada antes (Parte 156): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 105): a razão das ações acelera para 1 com o comprimento; uma conta da forma dessa série (o que o último passo de um caminho longo ainda escolhe) antes de medir 3 a 8 letras.
+
+## Rodada 105 (Parte 157) — o expoente pela verossimilhança
+
+**IA-Python (lógica criativa):** O relatório que chegou pede trocar os mínimos quadrados em log-log pela máxima verossimilhança no expoente de Zipf. O escore zera quando a média observada de ln r iguala a esperada, e eu acho esse s por bisseção. O peso de cada posto é r elevado a −s, com s não inteiro: a tua `Math.pow` e a minha `**` discordam aí?
+
+**IA-Java (ASI):** Podem discordar: com expoente não inteiro, a pow da biblioteca é a fronteira da Parte 92. Por isso escrevo r^−s como exp_(−s · log_(r)), com a série própria das duas funções, e guardo os logaritmos dos postos uma vez só. Repara que a bisseção ESCOLHE um lado em cada passo: um ulp de diferença só mudaria o resultado se caísse exatamente na comparação, mas com o exp próprio nem isso é preciso.
+
+**Resultado.** `comparar.py`: **IGUAIS**, dois números (s = 0x1.0107dc23f946ep+0). Previsão registrada antes (Parte 157): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 106): o ajuste pela distribuição das frequências (Clauset, Shalizi e Newman), que não precisa ordenar a amostra, e o viés dele com postos empíricos.
+
+## Rodada 106 (Parte 158) — o expoente pelas frequências
+
+**IA-Python (lógica criativa):** Agora o expoente sai das frequências e não dos postos: a lei de potência discreta precisa do ζ de Hurwitz, que eu somo direto por 200 termos e completo com o resto de Euler–Maclaurin. São três potências não inteiras no resto, N^(1−a), N^(−a) e N^(−a−1). Tu calculas cada uma com o teu exp e o teu log?
+
+**IA-Java (ASI):** Cada uma como exp_((expoente) · log_(N)), na mesma ordem que tu, e o quadrado de (a − 1) como produto, nunca como pow (a regra da Parte 85). Repara que o resto de Euler–Maclaurin é uma série assintótica: somar mais termos dela não melhora para sempre. Cortamos no termo de Bernoulli, e a tradução só precisa cortar no mesmo lugar.
+
+**Resultado.** `comparar.py`: **IGUAIS**, dois números (α = 0x1.4d2e2af1119b8p+0). Previsão registrada antes (Parte 158): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 107): o MLE com postos empíricos e N conhecido, o melhor estimador disponível num corpus real, aplicado ao próprio dicionário.
 """
 
 # ====================================================================================================
-# dialogo/PENDENCIAS.md  (104 linhas)
+# dialogo/PENDENCIAS.md  (110 linhas)
 # ====================================================================================================
 FONTES['dialogo/PENDENCIAS.md'] = """# Pendências do diálogo e das partes (regra da Parte 78)
 
@@ -79977,6 +80618,12 @@ Cada pergunta deixada no fim de uma rodada ou de uma parte entra aqui; cada part
 - **(Parte 156)** FECHADA: a pendência 1 da 155 (o custo do setdefault são as casas livres perdidas, absorvidas em parte pelo colapso). ABERTAS: (1) a forma da série da
   razão das ações (acelera para 1): uma conta do que a última decisão de um caminho longo ainda escolhe, antes de medir 3 a 8 letras; (2) a hipótese de 1 lote: em A' com
   3 a 7 letras o caminho da primeira casa fica mais longo que o da sorteada; (3) as da 154/155: o sinal da memória das letras; a queda da deriva em forma fechada.
+- **(Parte 157)** ABERTAS: (1) o expoente pelas FREQUÊNCIAS (máxima verossimilhança sobre a distribuição das contagens, com x_min, à Clauset-Shalizi-Newman) contra o MLE com
+  postos empíricos, nos três casos A, B e C, com previsão antes; (2) medir o viés de `synthai.dicionario.zipf` (postos 10 a 10.000) no próprio dicionário por reamostragem, para dizer
+  quanto das conclusões das Partes 30-31 depende dele; (3) as da 156 (a forma da série das ações; o caminho mais longo de A' com 3 a 7 letras).
+- **(Parte 158)** FECHADA: a pendência 1 da 157 (o método das frequências erra mais no vocabulário finito). ABERTAS: (1) o MLE com postos empíricos e N conhecido no próprio
+  dicionário, contra o `synthai.dicionario.zipf`; (2) a regra da 158 como passo: um auditor que confere, em cada parte, se a calibração imprimiu o z da forma fechada do lote;
+  (3) as da 156 e da 157. O ciclo automático parou na Parte 158, a pedido.
 """
 
 # ====================================================================================================
@@ -81247,6 +81894,119 @@ public class Rodada104 {
         }
         String[] nomes = {"acerto", "falha", "decisoes", "opcoes", "livres", "acoes"};
         for (int k = 0; k < 6; k++) System.out.println(nomes[k] + " " + Double.toHexString(tot[k]));
+        System.out.println("conferido True\\nfim");
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/Rodada105.java  (47 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada105.java'] = """// Rodada 105 (Parte 157): o expoente de Zipf por maxima verossimilhanca (synthai.zipf_mle.mle) bit a bit. Contagens c_r = 1000/r (inteira) em N = 50 postos;
+// bissecao em [0,01; 5] com 60 passos sobre E_s[ln r], w_r = exp_(-s ln r), com o exp_ e o log_ proprios da rodada 26 e somas em laco.
+public class Rodada105 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
+    public static void main(String[] args) {
+        int N = 50;
+        int[] c = new int[N];
+        double[] lr = new double[N];
+        for (int r = 1; r <= N; r++) { c[r - 1] = 1000 / r; lr[r - 1] = log_((double) r); }
+        int n = 0;
+        double soma = 0.0;
+        for (int k = 0; k < N; k++) { n += c[k]; soma += c[k] * lr[k]; }
+        double alvo = soma / n;
+        double lo = 0.01, hi = 5.0;
+        for (int it = 0; it < 60; it++) {
+            double m = (lo + hi) / 2, num = 0.0, den = 0.0;
+            for (int k = 0; k < N; k++) {
+                double w = exp_(-m * lr[k]);
+                num += w * lr[k];
+                den += w;
+            }
+            if (num / den > alvo) lo = m; else hi = m;
+        }
+        double s = (lo + hi) / 2;
+        System.out.println("alvo " + Double.toHexString(alvo));
+        System.out.println("s " + Double.toHexString(s));
+        System.out.println("conferido True\\nfim");
+    }
+}
+"""
+
+# ====================================================================================================
+# dialogo/Rodada106.java  (56 linhas)
+# ====================================================================================================
+FONTES['dialogo/Rodada106.java'] = """// Rodada 106 (Parte 158): o alfa de maxima verossimilhanca da lei de potencia das frequencias (synthai.zipf_frequencias.alfa_mle) bit a bit. Frequencias 1000/i
+// (inteira, i = 1..60) com x >= 2; zeta e derivada por soma direta (K = 200) e resto de Euler-Maclaurin; k^-a = exp_(-a log_ k) proprios (rodada 26); 60 passos.
+import java.util.*;
+
+public class Rodada106 {
+    static final double LN2_HI = 6.93147180369123816490e-01, LN2_LO = 1.90821492927058770002e-10, SQRT2 = 1.4142135623730951;
+    static final int XMIN = 2, K = 200;
+
+    static double exp_(double x) {
+        double k = Math.floor(x / (LN2_HI + LN2_LO) + 0.5);
+        double r = (x - k * LN2_HI) - k * LN2_LO;
+        double p = 1.0;
+        for (int i = 22; i >= 1; i--) p = 1.0 + r * p / i;
+        return Math.scalb(p, (int) k);
+    }
+
+    static double log_(double x) {
+        int e = Math.getExponent(x);
+        double m = Math.scalb(x, -e);
+        if (m > SQRT2) { m = m / 2.0; e = e + 1; }
+        double s = (m - 1.0) / (m + 1.0), s2 = s * s, p = 1.0 / 41.0;
+        for (int jj = 19; jj >= 0; jj--) p = 1.0 / (2 * jj + 1) + s2 * p;
+        return e * LN2_HI + (e * LN2_LO + 2.0 * s * p);
+    }
+
+    static double media(double a) {
+        double z = 0.0, d = 0.0;
+        for (int k = XMIN; k < XMIN + K; k++) {
+            double lk = log_((double) k), w = exp_(-a * lk);
+            z += w;
+            d += w * lk;
+        }
+        int N = XMIN + K;
+        double lN = log_((double) N), wN = exp_(-a * lN), w1 = exp_((1.0 - a) * lN), w2 = exp_((-a - 1.0) * lN);
+        z += w1 / (a - 1.0) + wN / 2.0 + a * w2 / 12.0;
+        d += w1 * (lN / (a - 1.0) + 1.0 / ((a - 1.0) * (a - 1.0))) + wN * lN / 2.0 - w2 * (1.0 - a * lN) / 12.0;
+        return d / z;
+    }
+
+    public static void main(String[] args) {
+        List<Integer> xs = new ArrayList<>();
+        for (int i = 1; i <= 60; i++) if (1000 / i >= XMIN) xs.add(1000 / i);
+        double soma = 0.0;
+        for (int x : xs) soma += log_((double) x);
+        double alvo = soma / xs.size();
+        double lo = 1.05, hi = 6.0;
+        for (int it = 0; it < 60; it++) {
+            double m = (lo + hi) / 2;
+            if (media(m) > alvo) lo = m; else hi = m;
+        }
+        double a = (lo + hi) / 2;
+        System.out.println("alvo " + Double.toHexString(alvo));
+        System.out.println("alfa " + Double.toHexString(a));
         System.out.println("conferido True\\nfim");
     }
 }
@@ -88876,6 +89636,126 @@ def main():
     for k, nome in enumerate(("acerto", "falha", "decisoes", "opcoes", "livres", "acoes")):
         assert abs(e[k] - m[nome]) < 1e-12
         print(nome + " " + e[k].hex())
+    print("conferido True")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada105.py  (50 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada105.py'] = """\"\"\"Rodada 105 do diálogo Python <-> Java (Parte 157): o expoente de Zipf por máxima verossimilhança de synthai.zipf_mle.mle, bit a bit. Contagens fixas
+c_r = ⌊1000/r⌋ em N = 50 postos; o alvo (1/n) Σ c_r ln r; a bisseção em [0,01; 5] com 60 passos fixos sobre E_s[ln r] = Σ w_r ln r / Σ w_r, w_r = e^(−s ln r),
+com o exp e o log PRÓPRIOS da rodada 26 (r^−s pela pow da libm seria a fronteira da Parte 52) e somas em laço. Confere contra o módulo (1e-9) antes de
+imprimir. Da raiz: python3 dialogo/rodada105.py\"\"\"
+import importlib.util
+import os
+import sys
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(AQUI))
+_spec = importlib.util.spec_from_file_location("rodada26", os.path.join(AQUI, "rodada26.py"))
+r26 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r26)
+exp_, log_ = r26.exp_, r26.log_
+from synthai import zipf_mle  # noqa: E402
+
+N = 50
+
+
+def main():
+    c = [1000 // r for r in range(1, N + 1)]
+    lr = [log_(float(r)) for r in range(1, N + 1)]
+    n = 0
+    soma = 0.0
+    for k in range(N):
+        n += c[k]
+        soma += c[k] * lr[k]
+    alvo = soma / n
+    lo, hi = 0.01, 5.0
+    for _ in range(60):
+        m = (lo + hi) / 2
+        num = den = 0.0
+        for k in range(N):
+            w = exp_(-m * lr[k])
+            num += w * lr[k]
+            den += w
+        if num / den > alvo:
+            lo = m
+        else:
+            hi = m
+    s = (lo + hi) / 2
+    assert abs(s - zipf_mle.mle(c)) < 1e-9
+    print("alvo " + alvo.hex())
+    print("s " + s.hex())
+    print("conferido True")
+    print("fim")
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+# ====================================================================================================
+# dialogo/rodada106.py  (60 linhas)
+# ====================================================================================================
+FONTES['dialogo/rodada106.py'] = """\"\"\"Rodada 106 do diálogo Python <-> Java (Parte 158): o α de máxima verossimilhança da lei de potência das frequências de synthai.zipf_frequencias, bit a bit.
+Frequências fixas x_i = ⌊1000/i⌋ (i = 1..60), as ≥ x_min = 2; ζ(a, x_min) e Σ k^−a ln k por soma direta até x_min + K − 1 (K = 200) e o resto de Euler–Maclaurin;
+k^−a = e^(−a ln k) com o exp e o log PRÓPRIOS da rodada 26; bisseção em [1,05; 6] com 60 passos fixos. Confere contra o módulo (1e-7) antes de imprimir.
+Da raiz: python3 dialogo/rodada106.py\"\"\"
+import importlib.util
+import os
+import sys
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(AQUI))
+_spec = importlib.util.spec_from_file_location("rodada26", os.path.join(AQUI, "rodada26.py"))
+r26 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(r26)
+exp_, log_ = r26.exp_, r26.log_
+from synthai import zipf_frequencias  # noqa: E402
+
+XMIN, K = 2, 200
+
+
+def media(a):
+    z = d = 0.0
+    for k in range(XMIN, XMIN + K):
+        lk = log_(float(k))
+        w = exp_(-a * lk)
+        z += w
+        d += w * lk
+    N = XMIN + K
+    lN = log_(float(N))
+    wN = exp_(-a * lN)
+    w1 = exp_((1.0 - a) * lN)
+    w2 = exp_((-a - 1.0) * lN)
+    z += w1 / (a - 1.0) + wN / 2.0 + a * w2 / 12.0
+    d += w1 * (lN / (a - 1.0) + 1.0 / ((a - 1.0) * (a - 1.0))) + wN * lN / 2.0 - w2 * (1.0 - a * lN) / 12.0
+    return d / z
+
+
+def main():
+    xs = [1000 // i for i in range(1, 61)]
+    xs = [x for x in xs if x >= XMIN]
+    soma = 0.0
+    for x in xs:
+        soma += log_(float(x))
+    alvo = soma / len(xs)
+    lo, hi = 1.05, 6.0
+    for _ in range(60):
+        m = (lo + hi) / 2
+        if media(m) > alvo:
+            lo = m
+        else:
+            hi = m
+    a = (lo + hi) / 2
+    assert abs(a - zipf_frequencias.alfa_mle(xs, XMIN)) < 1e-7
+    print("alvo " + alvo.hex())
+    print("alfa " + a.hex())
     print("conferido True")
     print("fim")
 

@@ -2214,3 +2214,13 @@ línguas: embedding (43), atenção (61), residual+LayerNorm (63), SGD (58), Ada
 **Resultado.** `comparar.py`: **IGUAIS**, dois números (s = 0x1.0107dc23f946ep+0). Previsão registrada antes (Parte 157): IGUAL, acertou.
 
 **IA-Python:** Pendência (rodada 106): o ajuste pela distribuição das frequências (Clauset, Shalizi e Newman), que não precisa ordenar a amostra, e o viés dele com postos empíricos.
+
+## Rodada 106 (Parte 158) — o expoente pelas frequências
+
+**IA-Python (lógica criativa):** Agora o expoente sai das frequências e não dos postos: a lei de potência discreta precisa do ζ de Hurwitz, que eu somo direto por 200 termos e completo com o resto de Euler–Maclaurin. São três potências não inteiras no resto, N^(1−a), N^(−a) e N^(−a−1). Tu calculas cada uma com o teu exp e o teu log?
+
+**IA-Java (ASI):** Cada uma como exp_((expoente) · log_(N)), na mesma ordem que tu, e o quadrado de (a − 1) como produto, nunca como pow (a regra da Parte 85). Repara que o resto de Euler–Maclaurin é uma série assintótica: somar mais termos dela não melhora para sempre. Cortamos no termo de Bernoulli, e a tradução só precisa cortar no mesmo lugar.
+
+**Resultado.** `comparar.py`: **IGUAIS**, dois números (α = 0x1.4d2e2af1119b8p+0). Previsão registrada antes (Parte 158): IGUAL, acertou.
+
+**IA-Python:** Pendência (rodada 107): o MLE com postos empíricos e N conhecido, o melhor estimador disponível num corpus real, aplicado ao próprio dicionário.

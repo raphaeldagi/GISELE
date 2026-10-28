@@ -16,15 +16,15 @@ Os sistemas de IA atuais costumam errar com confiança. Afirmam mais do que entr
 
 | item | número | de onde sai |
 |---|---|---|
-| Partes de pesquisa documentadas, cada uma com previsões registradas antes de medir | 156 | `ASI_AGI_parte*.md` |
-| Funções de cálculo com resultado reproduzível | 772 | `calculos.py` (18.862 linhas, só biblioteca padrão do Python) |
-| Módulos do agente | 63 | pacote `synthai/` |
-| Arquivos de teste automatizado | 122 (cerca de 840 testes, todos passando) | `synthai/testes*.py` |
-| Traduções Python ↔ Java conferidas bit a bit | 105 rodadas, todas iguais | `dialogo/`, `python3 dialogo/verificar.py` |
-| Resultados publicados que a regressão reproduz a cada mudança | 213 de 213 | `testes_de_regressao()` |
+| Partes de pesquisa documentadas, cada uma com previsões registradas antes de medir | 158 | `ASI_AGI_parte*.md` |
+| Funções de cálculo com resultado reproduzível | 773 | `calculos.py` (18.888 linhas, só biblioteca padrão do Python) |
+| Módulos do agente | 64 | pacote `synthai/` |
+| Arquivos de teste automatizado | 123 (845 testes, todos passando) | `synthai/testes*.py` |
+| Traduções Python ↔ Java conferidas bit a bit | 106 rodadas, todas iguais | `dialogo/`, `python3 dialogo/verificar.py` |
+| Resultados publicados que a regressão reproduz a cada mudança | 216 de 216 | `testes_de_regressao()` |
 | Calibração: das faixas declaradas com 90% de confiança, quantas acertaram | cerca de 91% (medido nas Partes 113 a 121) | placar das previsões |
 
-O projeto inteiro cabe num único arquivo Python executável (`SYNTHAI_completo.py`, 160 mil linhas). Ele roda **offline**, sem dependências externas e sem chave de API.
+O projeto inteiro cabe num único arquivo Python executável (`SYNTHAI_completo.py`, 161 mil linhas). Ele roda **offline**, sem dependências externas e sem chave de API.
 
 ## 4. Como funciona
 O agente tem cinco formas, todas no mesmo pacote e todas medidas umas contra as outras:
@@ -65,7 +65,7 @@ registro de onde a formalização funciona e onde quebra.
 ## 8. Como verificar em 5 minutos
 ```
 python3 SYNTHAI_completo.py         # o projeto inteiro em um arquivo
-python3 calculos.py 157             # uma parte, com a regressão no final
-python3 dialogo/verificar.py        # as 105 traduções Python ↔ Java, bit a bit
+python3 calculos.py 158             # uma parte, com a regressão no final
+python3 dialogo/verificar.py        # as 106 traduções Python ↔ Java, bit a bit
 ```
 Nada aqui pede confiança: tudo pede execução.

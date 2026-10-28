@@ -2373,3 +2373,16 @@ Regressao: 174/174 resultados publicados reproduzidos; falhas = []
   P3216 3-6 letras A': acerto 0.239541/0.246073; decisoes 4.095943/4.097846; livres 13.78481/14.41022; acoes 6.18855/6.24028; razoes livres 0.95660, acoes 0.99171, acerto 0.97345
   P3216 3-7 letras B: acerto 0.283175/0.287170; decisoes 4.339298/4.340488; livres 14.67993/14.97571; acoes 8.32784/8.38134; razoes livres 0.98025, acoes 0.99362, acerto 0.98609
   P3216 3-7 letras A': acerto 0.239450/0.245321; decisoes 4.184141/4.178181; livres 14.09264/14.68105; acoes 6.39610/6.42767; razoes livres 0.95992, acoes 0.99509, acerto 0.97607
+=== Parte 157: um modulo so, o expoente de Zipf por maxima verossimilhanca ===
+  P3217 A: sigma_F 0.00159; desvio/sigma_F 0.8512; verd vies -0.00048 desvio 0.00136; emp_vistos vies -0.01837 desvio 0.00147; emp_N vies +0.00777 desvio 0.00133; ols vies -0.01698 desvio 0.00317
+  P3217 B: sigma_F 0.00800; desvio/sigma_F 1.0075; verd vies -0.00036 desvio 0.00806; emp_vistos vies -0.05828 desvio 0.00971; emp_N vies +0.02010 desvio 0.00828; ols vies -0.34073 desvio 0.02232
+  P3217 C: sigma_F 0.00277; desvio/sigma_F 0.9182; verd vies -0.00004 desvio 0.00255; emp_vistos vies -0.04532 desvio 0.00262; emp_N vies +0.01296 desvio 0.00255; ols vies -0.23676 desvio 0.00710
+  P3218 lote novo de A (200-219): verd +0.00056; emp -0.01693; ols -0.01928; correlacao verd-emp 0.9676
+
+=== Parte 158: mais um modulo, o expoente pelas frequencias ===
+  P3219 A x_min 2: vies -0.04802; desvio 0.00665
+  P3219 A x_min 5: vies -0.06365; desvio 0.01490
+  P3219 B x_min 2: vies -0.17547; desvio 0.04697
+  P3219 B x_min 5: vies -0.07923; desvio 0.07510
+  P3219 C x_min 2: vies -0.16403; desvio 0.01713
+  P3219 lote novo de A (200-219), x_min 2: vies -0.05048; desvio 0.00845

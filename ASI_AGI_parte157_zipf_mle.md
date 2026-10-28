@@ -156,3 +156,4 @@ Do mundo: (a) ✅ (b) ✅ (c) ✅ (d) ✅ (e) ❌ (f) ✅ (g) ❌ (h) ✅ (i) �
 - **Testes:** `synthai/testes_parte157.py`.
 
 ➡ Anterior: [Parte 156](ASI_AGI_parte156_ramificacao.md).
+➡ Próxima: [Parte 158](ASI_AGI_parte158_zipf_frequencias.md).

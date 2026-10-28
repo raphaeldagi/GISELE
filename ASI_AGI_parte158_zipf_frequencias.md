@@ -78,3 +78,43 @@ Centro = média das 40 sementes já medidas; meia-largura 1,36 · 1,645 · σ ·
 ### A rodada 106, registrada antes
 `synthai.zipf_frequencias.alfa_mle` traduzido (frequências fixas, x_min = 2, K = 200 termos diretos e o resto de Euler–Maclaurin), com k^−a = e^(−a ln k) pelo exp e o log
 próprios da rodada 26 e 60 passos fixos de bisseção. Previsão: **IGUAL**.
+
+**Resultado:** `dialogo/rodada106.py` e `dialogo/Rodada106.java` dão os mesmos dois números (α = 0x1.4d2e2af1119b8p+0 = 1,3015). **IGUAL**, como previsto.
+
+Do mundo: (a) ❌ (b) ✅ (c) ✅ (d) ✅ (e) ✅ (f) ✅ (g) ✅
+
+**Mundo: 6 de 7.** **Sobre mim:** 1 erro, em [0; 3]: ✅.
+
+## O que o módulo mostrou (a resposta à P3219)
+- **Não.** O método das frequências erra MAIS que o MLE com postos empíricos nos três casos (A −0,048 contra −0,018; B −0,176 contra −0,058; C −0,164 contra −0,045). A
+  relação α = 1 + 1/s é assintótica: vale para um vocabulário sem fim e sem amostragem. Com 10.000 tipos e uma amostra finita, a distribuição das frequências não é uma lei de
+  potência pura (há frequências 1 e 2 a mais, e a cauda alta é cortada), e mudar o x_min troca um viés por outro (A: +0,28 com x_min = 1, −0,05 com 2 e 5).
+- **O que isso diz da série 157-158:** dos quatro estimadores medidos, o único sem viés é o MLE com os postos VERDADEIROS, que um corpus real não dá. Num corpus real, o melhor
+  dos três disponíveis é o MLE com postos empíricos e N conhecido (+0,008 a +0,020). O método recomendado na literatura para leis de potência genéricas não é o melhor para a lei
+  posto-frequência de um vocabulário finito: a recomendação de Clauset e colegas trata outro objeto (uma variável com cauda de potência), e eu a apliquei por reputação. Foi por
+  isso que esta parte registrou faixas tiradas da calibração e não da reputação do método.
+
+## Engenharia reversa
+- **O padrão:** o único erro desta parte é a regra da parte anterior desobedecida no mesmo lote (as sementes 0-19 de A, com o MLE verdadeiro a z = +1,95). Uma regra escrita
+  ontem e esquecida hoje não virou passo. É a lição da Parte 49 de novo: uma regra só vale quando vira um passo verificável. O passo, agora: toda calibração de uma parte
+  imprime, ao lado das médias, o z da quantidade de forma fechada do mesmo lote, para a regra ser lida antes da faixa e não depois do erro.
+- **O que funcionou:** a calibração antes de prever (regra das Partes 84 e 87) mostrou, antes do registro, que o método famoso era pior aqui. Sem ela, eu teria previsto pela
+  reputação de "MLE de Clauset" e errado as quatro faixas.
+
+**O placar (m) (P2837):** m1 = 7 em [6; 8] ✅, m2 = 0 ✅, m3 = 0,1330 em [0,12; 0,25] ✅, m4 = 0,8571 em [0,5000; 1,0000] ✅, m5 = 0 ✅, m6 = 0 em [0; 1] ✅. **6 de 6.**
+
+## Fim deste ciclo
+A pedido ("Mais um módulo! E pare!"), esta é a última parte do ciclo automático: não há continuação agendada. As pendências ficam em `dialogo/PENDENCIAS.md` para quando o
+trabalho voltar.
+
+## Fontes
+- A. Clauset, C. R. Shalizi e M. E. J. Newman (2009), "Power-law distributions in empirical data", *SIAM Review* 51(4), 661-703 ([arXiv:0706.1062](https://arxiv.org/abs/0706.1062),
+  conferido na Parte 157: máxima verossimilhança com x_min e teste de Kolmogorov-Smirnov para variáveis com cauda de potência).
+
+## Funções e testes
+- **Módulo:** `synthai/zipf_frequencias.py`.
+- **Funções:** `p3219_zipf_pelas_frequencias` e `_parte_158`. Entrada P3219 na regressão.
+- **Diálogo:** `dialogo/rodada106.py` e `dialogo/Rodada106.java`, IGUAL.
+- **Testes:** `synthai/testes_parte158.py`.
+
+➡ Anterior: [Parte 157](ASI_AGI_parte157_zipf_mle.md).
