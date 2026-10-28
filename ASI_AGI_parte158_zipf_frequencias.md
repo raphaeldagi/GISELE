@@ -72,3 +72,9 @@ estava a z = +1,95 da forma fechada. A regra mandava conferir isso antes de cent
 ## Um lote novo, registrado antes de rodar (A, x_min = 2, sementes 200-219)
 Centro = média das 40 sementes já medidas; meia-largura 1,36 · 1,645 · σ · √(1/20 + 1/40) (por código).
 - **(g)** viés com x_min = 2 em A em **[−0,0557; −0,0470]** (centro −0,05135)
+
+**Medido no lote novo (P3219, sementes 200-219):** −0,05048 (g ✅).
+
+### A rodada 106, registrada antes
+`synthai.zipf_frequencias.alfa_mle` traduzido (frequências fixas, x_min = 2, K = 200 termos diretos e o resto de Euler–Maclaurin), com k^−a = e^(−a ln k) pelo exp e o log
+próprios da rodada 26 e 60 passos fixos de bisseção. Previsão: **IGUAL**.

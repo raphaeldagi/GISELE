@@ -7584,6 +7584,7 @@ def testes_de_regressao():
         "P3216": (lambda r: (round(r["A'"]["primeira"]["livres"] / r["A'"]["uniforme"]["livres"], 4), round(r["A'"]["primeira"]["acoes"] / r["A'"]["uniforme"]["acoes"], 4)) == (0.9454, 0.986))(p3216_ramificacao(4, casos=("A'",))),
         "P3217": (lambda r: (round(r["B"]["ols"][0], 3), round(r["C"]["ols"][0], 3), round(r["A"]["verd"][0], 4)) == (-0.341, -0.237, -0.0005))(p3217_zipf_mle_contra_ols()),
         "P3218": (lambda t: (round(t[1], 4), round(t[2], 4), round(t[3], 3)) == (-0.0169, -0.0193, 0.968))(p3218_lote_novo_de_a()),
+        "P3219": (lambda r: (round(r[("A", 2)][0], 3), round(r[("C", 2)][0], 3)) == (-0.048, -0.164))(p3219_zipf_pelas_frequencias(casos=(("A", 1.0, 50000, (2,)), ("C", 1.2, 20000, (2,))))),
         "P3176v10": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (15, 0, 138))(
             p3176_comparar_voltas_v2("reproducao/volta9", "reproducao/volta10")),
         "P3176v9": (lambda r: (r["diferentes"], r["categorias"]["mundo"], r["blocos_sem_excecao"]) == (17, 0, 137))(
@@ -18710,6 +18711,21 @@ def p3218_lote_novo_de_a(sementes=range(200, 220)):
     return mv - 1, me - 1, st.mean(o) - 1, r
 
 
+def p3219_zipf_pelas_frequencias(casos=(("A", 1.0, 50000, (2, 5)), ("B", 1.5, 5000, (2, 5)), ("C", 1.2, 20000, (2,))), sementes=range(100, 120), N=10000):
+    """A Parte 158 (P3219): o expoente de Zipf pela lei de potencia das FREQUENCIAS (synthai.zipf_frequencias, alfa por maxima verossimilhanca com x_min,
+    s = 1/(alfa - 1)), nas amostras de Zipf(s) em 1..N da Parte 157. Devolve {(nome, x_min): (vies medio de s, desvio entre sementes)}."""
+    import statistics as st
+    from synthai import zipf_mle as Z
+    from synthai import zipf_frequencias as F
+    out = {}
+    for nome, s, n, xmins in casos:
+        amostras = [Z.empiricas(Z.amostrar(s, N, n, sem)) for sem in sementes]
+        for xmin in xmins:
+            v = [F.s_de_alfa(F.alfa_mle(e, xmin)) for e in amostras]
+            out[(nome, xmin)] = (st.mean(v) - s, st.stdev(v))
+    return out
+
+
 def _parte_148():
     print("\n=== Parte 148: a GRPO no jogo de palavras com o dicionario grande (77.340 lemas) ===")
     r = p3199_grpo_no_dicionario_grande()
@@ -18850,6 +18866,16 @@ def _parte_157():
 
 
 PARTES[157] = _parte_157
+
+def _parte_158():
+    print("\n=== Parte 158: mais um modulo, o expoente pelas frequencias ===")
+    for (nome, xmin), (v, d) in p3219_zipf_pelas_frequencias().items():
+        print(f"  P3219 {nome} x_min {xmin}: vies {v:+.5f}; desvio {d:.5f}")
+    (v, d), = p3219_zipf_pelas_frequencias(casos=(("A", 1.0, 50000, (2,)),), sementes=range(200, 220)).values()
+    print(f"  P3219 lote novo de A (200-219), x_min 2: vies {v:+.5f}; desvio {d:.5f}")
+
+
+PARTES[158] = _parte_158
 
 PARTES[126] = _parte_126
 
